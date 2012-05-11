@@ -1,0 +1,8 @@
+{
+"shell-version": ["3.2", "3.4"], 
+"uuid": "dash-to-dock@micxgx.gmail.com",
+"name": "Dash to Dock", "description": "Transform the dash into an intellihide dock.",
+"original-author": "micxgx@gmail.com",
+"url": "https://github.com/micheleg/dash-to-dock",
+"version": 0
+}
