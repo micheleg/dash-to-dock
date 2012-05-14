@@ -32,6 +32,7 @@ dockedDash.prototype = {
         this._showing = false;
         this._queuedHiding = false;
         this._queuedShowing = false;
+        this.hidden = false;
 
         // Hide usual Dash
         Main.overview._dash.actor.hide();
@@ -39,9 +40,11 @@ dockedDash.prototype = {
         // Create a new dash object
         this.dash = new Dash.Dash(); // this.dash = new MyDash.myDash();
 
-        // Create the main container
+        // Create the main container, turn on track hover, add hoverChange signal
         this.actor = new St.Bin({ name: 'mydash', reactive: true, style_class: 'box', y_align: St.Align.START});
+        this.actor.connect("notify::hover", Lang.bind(this, this._hoverChanged));
 
+        this.actor.set_track_hover(true);
         // Create and apply height constraint to the dash
         this.constrainHeight = new Clutter.BindConstraint({ source: Main.overview._viewSelector._pageArea,
                                                             coordinate: Clutter.BindCoordinate.HEIGHT });
@@ -60,19 +63,6 @@ dockedDash.prototype = {
                                                            Shell.StageInputMode.NORMAL;}));
         // Make the dash background dark
         this.dash._box.set_style('background-color: rgba(0,0,0,0.9)');
-
-        // Connect main autohide signals
-        this.actor.connect("leave-event", Lang.bind(this, this.hide));
-        this.actor.connect("enter-event", Lang.bind(this, this.show));
-
-        // These events seem unnecessary  //TODO
-        //this.actor.connect("button-press-event", Lang.bind(this, this.show));
-        //this.actor.connect("button-release-event", Lang.bind(this, this.show));
-        //this.actor.connect("captured-event", Lang.bind(this, this.show));
-
-        //TODO this.actor.set_track_hover(true);
-        //this.actor.connect("notify::hover", Lang.bind(this, function(){global.log("hover: "+ this.actor.get_hover());}));
-
 
         //Add dash to the container actor and the latter to the Chrome.
         this.actor.add_actor(this.dash.actor);
@@ -99,6 +89,15 @@ dockedDash.prototype = {
         // Reshow normal dash previously hidden
         Main.overview._dash.actor.show();
 
+    },
+
+    _hoverChanged: function() {
+
+        if( this.actor.hover ) {
+            this.show();
+        } else {
+            this.hide();
+        }
     },
 
     // Reset variables function. Be carefull to prevent jamming.
