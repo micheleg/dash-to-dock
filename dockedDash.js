@@ -32,7 +32,7 @@ dockedDash.prototype = {
         this._showing = false;
         this._queuedHiding = false;
         this._queuedShowing = false;
-        this.hidden = false;
+        this._hidden = false;
 
         // Hide usual Dash
         Main.overview._dash.actor.hide();
@@ -121,22 +121,28 @@ dockedDash.prototype = {
 
             this._queuedShowing = true;
 
-            // I just let the new animation overwrite the old one if present, 
-            // so onOverwrite is automatically call.
             // suppress all potential queued hiding animations (always give priority to show)
-            //if( this._hiding ||   this._queuedHiding){
-                //Tweener.removeTweens(this.actor, "x");
+            if( this._hiding ||   this._queuedHiding){
+                Tweener.removeTweens(this.actor, "x");
                 // As onComplete is not executed, ensure _hiding variable is reset. 
-                // this._hiding = false; this._queuedHiding = false;
-            //}
+                this._resetHide();
+            }
+
+            let delta = 0;
+
+            // If the dock is hidden, wait SHOW_DELAY before showing it; 
+            // otherwise show it immediately.
+            if(this._hidden==true) {
+                delta = SHOW_DELAY;
+            }
 
             Tweener.addTween(this.actor,{
                 x: 0,
                 time: ANIMATION_TIME,
-                delay: SHOW_DELAY,
+                delay: delta,
                 transition: 'easeOutQuad',
                 overwrite: true,
-                onStart:  Lang.bind(this, function() {this._showing=true;this._queuedShowing = false; }),
+                onStart:  Lang.bind(this, function() {this._hidden=false; this._showing=true;this._queuedShowing = false; }),
                 onComplete: Lang.bind(this, function() {this._showing=false; }),
                 onOverwrite: Lang.bind(this, this._resetShow),
                 onError: Lang.bind(this, this._resetShow)
@@ -155,22 +161,20 @@ dockedDash.prototype = {
                 let delta  = 0;
                 let shouldOverwrite = true;
 
-                // I just let the new animation overwrite the old one if present, 
-                // so onOverwrite is automatically call.
                 // If a show is queued but still not started (i.e the mouse was 
                 // over the screen  border but then went away, i.e not a sufficient 
                 // amount of time is passeed to trigger the dock showing) remove it.
-                //if(this._queuedShowing && !this._showing){
-                    //Tweener.removeTweens(this.actor, "x"); 
-                    // this._showing = false; this._queuedShowing = false;
-                //}
+                if(this._queuedShowing && !this._showing){
+                    Tweener.removeTweens(this.actor, "x"); 
+                    this._resetShow();
+                }
 
-                // if a show already started, queue hide without removing the show.
+                // If a show already started, let it finishes; queue hide without removing the show.
                 // to obtain this I increase the delay to avoid the overlap and interference 
                 // between the animations and disable the overwrite tweener property;
 
-                if(this._showing ){
-                    delta = 0.500;
+                if(this._showing){
+                    delta = 2*ANIMATION_TIME + SHOW_DELAY;
                     shouldOverwrite=false;
                     //this._showing=false; 
                 }
@@ -182,7 +186,7 @@ dockedDash.prototype = {
                     transition: 'easeOutQuad',
                     overwrite: shouldOverwrite,
                     onStart:  Lang.bind(this, function() {this._hiding=true; this._queuedHiding = false; }),
-                    onComplete: Lang.bind(this, function() {this._hiding=false;}),
+                    onComplete: Lang.bind(this, function() {this._hiding=false;this._hidden=true; }),
                     onOverwrite: Lang.bind(this, this._resetHide),
                     onError: Lang.bind(this, this._resetHide)
                 });
