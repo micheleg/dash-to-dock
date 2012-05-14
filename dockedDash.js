@@ -32,7 +32,7 @@ dockedDash.prototype = {
         this._showing = false;
         this._queuedHiding = false;
         this._queuedShowing = false;
-        this._hidden = false;
+        this._hidden = false; //Dock is create visible
 
         // Hide usual Dash
         Main.overview._dash.actor.hide();
@@ -155,6 +155,7 @@ dockedDash.prototype = {
 
         if(_DEBUG_) global.log("leave-event " + this._showing + " " + this._hiding);
 
+            // If it is already hiding or the animation is already queed do nothing
             if(this._hideable && !this._hiding && !this._qeuedHiding){
 
                 this._queuedHiding = true;
@@ -176,7 +177,6 @@ dockedDash.prototype = {
                 if(this._showing){
                     delta = 2*ANIMATION_TIME + SHOW_DELAY;
                     shouldOverwrite=false;
-                    //this._showing=false; 
                 }
 
                 Tweener.addTween(this.actor,{
