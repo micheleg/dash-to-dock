@@ -11,6 +11,10 @@ const Shell = imports.gi.Shell;
 
 const Dash = imports.ui.dash;
 
+// timings settings
+const ANIMATION_TIME = 0.200;
+const SHOW_DELAY = 0.500;
+const HIDE_DELAY =  0.250;
 
 function dockedDash() {
 
@@ -129,8 +133,8 @@ dockedDash.prototype = {
 
             Tweener.addTween(this.actor,{
                 x: 0,
-                time: 0.250,
-                delay:0.250,
+                time: ANIMATION_TIME,
+                delay: SHOW_DELAY,
                 transition: 'easeOutQuad',
                 overwrite: true,
                 onStart:  Lang.bind(this, function() {this._showing=true;this._queuedShowing = false; }),
@@ -174,8 +178,8 @@ dockedDash.prototype = {
 
                 Tweener.addTween(this.actor,{
                     x: -this.actor.width+1,
-                    time: 0.250,
-                    delay:0.250 + delta ,
+                    time: ANIMATION_TIME,
+                    delay: HIDE_DELAY + delta ,
                     transition: 'easeOutQuad',
                     overwrite: shouldOverwrite,
                     onStart:  Lang.bind(this, function() {this._hiding=true; this._queuedHiding = false; }),
