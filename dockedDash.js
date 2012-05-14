@@ -91,12 +91,22 @@ dockedDash.prototype = {
 
     },
 
+    // public methods to be called from outside.
+    // At the moment just call respective private methods.
+    show: function(){
+        this._show();
+    },
+
+    hide: function() {
+        this._hide();
+    },
+
     _hoverChanged: function() {
 
         if( this.actor.hover ) {
-            this.show();
+            this._show();
         } else {
-            this.hide();
+            this._hide();
         }
     },
 
@@ -111,7 +121,7 @@ dockedDash.prototype = {
         this._queuedHiding =false;
     },
 
-    show: function(actor, event) {  
+    _show: function() {  
 
 
         if(_DEBUG_) global.log("enter-event " + this._showing + " " + this._hiding + this._queuedShowing);
@@ -151,7 +161,7 @@ dockedDash.prototype = {
         }
     },
 
-    hide: function(actor, event) {
+    _hide: function() {
 
         if(_DEBUG_) global.log("leave-event " + this._showing + " " + this._hiding);
 
@@ -170,7 +180,7 @@ dockedDash.prototype = {
                     this._resetShow();
                 }
 
-                // If a show already started, let it finishes; queue hide without removing the show.
+                // However, if a show already started, let it finishes; queue hide without removing the show.
                 // to obtain this I increase the delay to avoid the overlap and interference 
                 // between the animations and disable the overwrite tweener property;
 
@@ -204,13 +214,13 @@ dockedDash.prototype = {
     },
 
     disableAutoHide: function() {
-        this.show();
+        this._show();
         this._hideable = false;
     },
 
     enableAutoHide: function() {
         this._hideable = true;
-        this.hide();
+        this._hide();
     } 
 };
 
