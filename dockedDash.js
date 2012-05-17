@@ -91,16 +91,6 @@ dockedDash.prototype = {
 
     },
 
-    // public methods to be called from outside.
-    // At the moment just call respective private methods.
-    show: function(){
-        this._show();
-    },
-
-    hide: function() {
-        this._hide();
-    },
-
     _hoverChanged: function() {
 
         if( this.actor.hover ) {
