@@ -32,7 +32,8 @@ dockedDash.prototype = {
         this._showing = false;
         this._queuedHiding = false;
         this._queuedShowing = false;
-        this._hidden = false; //Dock is create visible
+        this._hidden = false; //Whether the dock is completely hidden or not. Dock is create visible
+        this._visible = true; //Whether the dock is completely visible or not. Dock is create visible
 
         // Hide usual Dash
         Main.overview._dash.actor.hide();
@@ -92,11 +93,12 @@ dockedDash.prototype = {
     },
 
     _hoverChanged: function() {
-
-        if( this.actor.hover ) {
-            this._show();
-        } else {
-            this._hide();
+        if(this._autohide){
+            if( this.actor.hover ) {
+                this._show();
+            } else {
+                this._hide();
+            }
         }
     },
 
@@ -117,7 +119,7 @@ dockedDash.prototype = {
         if(_DEBUG_) global.log("enter-event " + this._showing + " " + this._hiding + this._queuedShowing);
 
         // If it is already showing or the animation is already queed do nothing
-        if( this._autohide && !this._showing && !this._queuedShowing ){
+        if( !this._visible && !this._showing && !this._queuedShowing ){
 
             this._queuedShowing = true;
 
@@ -145,10 +147,10 @@ dockedDash.prototype = {
         if(_DEBUG_) global.log("leave-event " + this._showing + " " + this._hiding);
 
             // If it is already hiding or the animation is already queed do nothing
-            if(this._autohide && !this._hiding && !this._qeuedHiding){
+            if(!this._hidden && !this._hiding && !this._qeuedHiding){
 
                 this._queuedHiding = true;
-                let delta  = 0;
+                let delta  = HIDE_DELAY;
                 let shouldOverwrite = true;
 
                 // If a show is queued but still not started (i.e the mouse was 
@@ -181,7 +183,7 @@ dockedDash.prototype = {
             transition: 'easeOutQuad',
             overwrite: shouldOverwrite,
             onStart:  Lang.bind(this, function() {this._hidden=false; this._showing=true;this._queuedShowing = false; }),
-            onComplete: Lang.bind(this, function() {this._showing=false; }),
+            onComplete: Lang.bind(this, function() {this._showing=false; this._visible=true}),
             onOverwrite: Lang.bind(this, this._resetShow),
             onError: Lang.bind(this, this._resetShow)
         });
@@ -195,7 +197,7 @@ dockedDash.prototype = {
             delay: delay ,
             transition: 'easeOutQuad',
             overwrite: shouldOverwrite,
-            onStart:  Lang.bind(this, function() {this._hiding=true; this._queuedHiding = false; }),
+            onStart:  Lang.bind(this, function() {this._visible=false; this._hiding=true; this._queuedHiding = false; }),
             onComplete: Lang.bind(this, function() {this._hiding=false;this._hidden=true; }),
             onOverwrite: Lang.bind(this, this._resetHide),
             onError: Lang.bind(this, this._resetHide)
