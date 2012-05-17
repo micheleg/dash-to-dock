@@ -146,18 +146,7 @@ dockedDash.prototype = {
                 delta = SHOW_DELAY;
             }
 
-            Tweener.addTween(this.actor,{
-                x: 0,
-                time: ANIMATION_TIME,
-                delay: delta,
-                transition: 'easeOutQuad',
-                overwrite: true,
-                onStart:  Lang.bind(this, function() {this._hidden=false; this._showing=true;this._queuedShowing = false; }),
-                onComplete: Lang.bind(this, function() {this._showing=false; }),
-                onOverwrite: Lang.bind(this, this._resetShow),
-                onError: Lang.bind(this, this._resetShow)
-            });
-
+            this._animateIn(ANIMATION_TIME, delta, true) 
         }
     },
 
@@ -185,22 +174,42 @@ dockedDash.prototype = {
                 // between the animations and disable the overwrite tweener property;
 
                 if(this._showing){
-                    delta = 2*ANIMATION_TIME + SHOW_DELAY;
+                    delta = HIDE_DELAY + 2*ANIMATION_TIME + SHOW_DELAY;
                     shouldOverwrite=false;
                 }
 
-                Tweener.addTween(this.actor,{
-                    x: -this.actor.width+1,
-                    time: ANIMATION_TIME,
-                    delay: HIDE_DELAY + delta ,
-                    transition: 'easeOutQuad',
-                    overwrite: shouldOverwrite,
-                    onStart:  Lang.bind(this, function() {this._hiding=true; this._queuedHiding = false; }),
-                    onComplete: Lang.bind(this, function() {this._hiding=false;this._hidden=true; }),
-                    onOverwrite: Lang.bind(this, this._resetHide),
-                    onError: Lang.bind(this, this._resetHide)
-                });
+                this._animateOut(ANIMATION_TIME, delta, shouldOverwrite);
+
         }
+    },
+
+    _animateIn: function(time, delay, shouldOverwrite) {
+        Tweener.addTween(this.actor,{
+            x: 0,
+            time: time,
+            delay: delay,
+            transition: 'easeOutQuad',
+            overwrite: shouldOverwrite,
+            onStart:  Lang.bind(this, function() {this._hidden=false; this._showing=true;this._queuedShowing = false; }),
+            onComplete: Lang.bind(this, function() {this._showing=false; }),
+            onOverwrite: Lang.bind(this, this._resetShow),
+            onError: Lang.bind(this, this._resetShow)
+        });
+
+    },
+
+    _animateOut: function(time, delay, shouldOverwrite){
+        Tweener.addTween(this.actor,{
+            x: -this.actor.width+1,
+            time: time,
+            delay: delay ,
+            transition: 'easeOutQuad',
+            overwrite: shouldOverwrite,
+            onStart:  Lang.bind(this, function() {this._hiding=true; this._queuedHiding = false; }),
+            onComplete: Lang.bind(this, function() {this._hiding=false;this._hidden=true; }),
+            onOverwrite: Lang.bind(this, this._resetHide),
+            onError: Lang.bind(this, this._resetHide)
+        });
     },
 
     _redisplay: function() {
