@@ -25,8 +25,8 @@ dockedDash.prototype = {
  
     _init: function() {
 
-        // turn on/off hide function; default on;
-        this._hideable = true;
+        // authohide on hover effect on/off
+        this._autohide = true;
         // Whether show/hide animation are running;
         this._hiding = false;
         this._showing = false;
@@ -117,7 +117,7 @@ dockedDash.prototype = {
         if(_DEBUG_) global.log("enter-event " + this._showing + " " + this._hiding + this._queuedShowing);
 
         // If it is already showing or the animation is already queed do nothing
-        if( this._hideable && !this._showing && !this._queuedShowing ){
+        if( this._autohide && !this._showing && !this._queuedShowing ){
 
             this._queuedShowing = true;
 
@@ -145,7 +145,7 @@ dockedDash.prototype = {
         if(_DEBUG_) global.log("leave-event " + this._showing + " " + this._hiding);
 
             // If it is already hiding or the animation is already queed do nothing
-            if(this._hideable && !this._hiding && !this._qeuedHiding){
+            if(this._autohide && !this._hiding && !this._qeuedHiding){
 
                 this._queuedHiding = true;
                 let delta  = 0;
@@ -214,11 +214,11 @@ dockedDash.prototype = {
 
     disableAutoHide: function() {
         this._show();
-        this._hideable = false;
+        this._autohide = false;
     },
 
     enableAutoHide: function() {
-        this._hideable = true;
+        this._autohide = true;
         this._hide();
     } 
 };
