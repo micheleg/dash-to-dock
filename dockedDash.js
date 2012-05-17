@@ -27,13 +27,8 @@ dockedDash.prototype = {
 
         // authohide on hover effect on/off
         this._autohide = true;
-        // Whether show/hide animation are running;
-        this._hiding = false;
-        this._showing = false;
-        this._queuedHiding = false;
-        this._queuedShowing = false;
-        this._hidden = false; //Whether the dock is completely hidden or not. Dock is create visible
-        this._visible = true; //Whether the dock is completely visible or not. Dock is create visible
+        // initialize animation status object
+        this._animStatus = new animationStatus(true);
 
         // Hide usual Dash
         Main.overview._dash.actor.hide();
@@ -102,43 +97,30 @@ dockedDash.prototype = {
         }
     },
 
-    // Reset variables function. Be carefull to prevent jamming.
-    _resetShow : function(){
-        this._showing = false;
-        this._queuedShowing =false;
-    },
-
-    _resetHide : function(){
-        this._hiding = false;
-        this._queuedHiding =false;
-    },
-
     _show: function() {  
 
-
+        var anim = this._animStatus;
         if(_DEBUG_) global.log("enter-event " + this._showing + " " + this._hiding + this._queuedShowing);
 
-        // If it is already showing or the animation is already queed do nothing
-        if( !this._visible && !this._showing && !this._queuedShowing ){
+        // If no showing animation is running or queued
+        if( this._autohide && (anim.hiding() || anim.hidden()) ){
 
-            this._queuedShowing = true;
+            let delay;
 
             // suppress all potential queued hiding animations (always give priority to show)
-            if( this._hiding ||   this._queuedHiding){
+            if( anim.queued ){
                 Tweener.removeTweens(this.actor, "x");
-                // As onComplete is not executed, ensure _hiding variable is reset. 
-                this._resetHide();
             }
-
-            let delta = 0;
 
             // If the dock is hidden, wait SHOW_DELAY before showing it; 
             // otherwise show it immediately.
-            if(this._hidden==true) {
-                delta = SHOW_DELAY;
+            if(anim.hidden()){
+                delay = SHOW_DELAY;
+            } else {
+                delay = 0;
             }
 
-            this._animateIn(ANIMATION_TIME, delta, true) 
+            this._animateIn(ANIMATION_TIME, delay, true);
         }
     },
 
@@ -146,62 +128,66 @@ dockedDash.prototype = {
 
         if(_DEBUG_) global.log("leave-event " + this._showing + " " + this._hiding);
 
-            // If it is already hiding or the animation is already queed do nothing
-            if(!this._hidden && !this._hiding && !this._qeuedHiding){
+            var anim = this._animStatus; 
 
-                this._queuedHiding = true;
-                let delta  = HIDE_DELAY;
-                let shouldOverwrite = true;
+            // If no hiding animation is running or queued
+            if( this._autohide && (anim.showing() || anim.shown() ) ){
+
+                let delay;
+                let shouldOverwrite;
 
                 // If a show is queued but still not started (i.e the mouse was 
                 // over the screen  border but then went away, i.e not a sufficient 
                 // amount of time is passeed to trigger the dock showing) remove it.
-                if(this._queuedShowing && !this._showing){
+                if(anim.queued){
                     Tweener.removeTweens(this.actor, "x"); 
-                    this._resetShow();
                 }
 
-                // However, if a show already started, let it finishes; queue hide without removing the show.
+                // However, if a show already started, let it finish; queue hide without removing the show.
                 // to obtain this I increase the delay to avoid the overlap and interference 
                 // between the animations and disable the overwrite tweener property;
-
-                if(this._showing){
-                    delta = HIDE_DELAY + 2*ANIMATION_TIME + SHOW_DELAY;
+                if(anim.running){
+                    delay = HIDE_DELAY + 2*ANIMATION_TIME + SHOW_DELAY;
                     shouldOverwrite=false;
+                } else {
+                    delay = HIDE_DELAY;
+                    shouldOverwrite=true;
                 }
 
-                this._animateOut(ANIMATION_TIME, delta, shouldOverwrite);
+                this._animateOut(ANIMATION_TIME, delay, shouldOverwrite);
 
         }
     },
 
     _animateIn: function(time, delay, shouldOverwrite) {
+
+        this._animStatus.queue(true);
+
         Tweener.addTween(this.actor,{
             x: 0,
             time: time,
             delay: delay,
             transition: 'easeOutQuad',
             overwrite: shouldOverwrite,
-            onStart:  Lang.bind(this, function() {this._hidden=false; this._showing=true;this._queuedShowing = false; }),
-            onComplete: Lang.bind(this, function() {this._showing=false; this._visible=true}),
-            onOverwrite: Lang.bind(this, this._resetShow),
-            onError: Lang.bind(this, this._resetShow)
+            onStart:  Lang.bind(this, function() {this._animStatus.start(); }),
+            onComplete: Lang.bind(this, function() {this._animStatus.end()})
         });
 
     },
 
     _animateOut: function(time, delay, shouldOverwrite){
+
+        this._animStatus.queue(false);
+
         Tweener.addTween(this.actor,{
             x: -this.actor.width+1,
             time: time,
             delay: delay ,
             transition: 'easeOutQuad',
             overwrite: shouldOverwrite,
-            onStart:  Lang.bind(this, function() {this._visible=false; this._hiding=true; this._queuedHiding = false; }),
-            onComplete: Lang.bind(this, function() {this._hiding=false;this._hidden=true; }),
-            onOverwrite: Lang.bind(this, this._resetHide),
-            onError: Lang.bind(this, this._resetHide)
-        });
+            onStart:  Lang.bind(this, function() {this._animStatus.start();}),
+            onComplete: Lang.bind(this, function() {this._animStatus.end() })
+        })
     },
 
     _redisplay: function() {
@@ -230,4 +216,68 @@ dockedDash.prototype = {
         }
     } 
 };
+
+/*
+ * Store animation status in a perhaps overcomplicated way.
+ * status is true for visible, false for hidden
+ */
+function animationStatus(initialStatus){
+    this._init(initialStatus);
+}
+
+animationStatus.prototype = {
+
+    _init: function(initialStatus){
+        this.status  = initialStatus;
+        this.nextStatus  = initialStatus;
+        this.queued = false;
+        this.running = false;
+    },
+
+    queue: function(nextStatus){
+        this.nextStatus = nextStatus;
+        this.queued = true;
+    },
+
+    start: function(){
+        this.queued = false;
+        this.running = true;
+    },
+
+    end: function(){
+        this.running=false;
+        this.status = this.nextStatus;
+    },
+
+    // Return true if a showing animation is running or queued
+    showing: function(){
+        if( this.status==false && this.nextStatus == true)
+            return true;
+        else
+            return false;
+    },
+
+    shown: function(){
+        if( this.status==true && !(this.queued || this.running) )
+            return true;
+        else
+            return false;
+    },
+
+    // Return true if an hiding animation is running or queued
+    hiding: function(){
+        if( this.status==true && this.nextStatus == false )
+            return true;
+        else
+            return false;
+    },
+
+    hidden: function(){
+        if( this.status==false && !(this.queued || this.running) )
+            return true;
+        else
+            return false;
+    },
+}
+
 
