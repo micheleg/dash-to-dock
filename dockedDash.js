@@ -212,14 +212,20 @@ dockedDash.prototype = {
         });
     },
 
+    // Disable autohide effect, thus show dash
     disableAutoHide: function() {
-        this._show();
-        this._autohide = false;
+        if(this._autohide==true){
+            this._autohide = false;
+            this._animateIn(ANIMATION_TIME, 0, true);
+        }
     },
 
+    // Enable autohide effect, hide dash
     enableAutoHide: function() {
-        this._autohide = true;
-        this._hide();
+        if(this._autohide==false){
+            this._autohide = true;
+            this._animateOut(ANIMATION_TIME, 0, true);
+        }
     } 
 };
 
