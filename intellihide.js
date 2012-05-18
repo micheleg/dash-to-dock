@@ -184,8 +184,7 @@ intellihide.prototype = {
 
     },
 
-    _updateDockVisibility: function() {  
-        
+    _updateDockVisibility: function() {
 
         // If we are in overview mode and the dock is set to be visible prevent 
         // it to be hidden by window events(window create, workspace change, 
@@ -195,37 +194,49 @@ intellihide.prototype = {
         }
         //else
 
-        var currentWorkspace = global.screen.get_active_workspace_index();
+        var edge;
+        var ctr=0;
 
-        var edge = 5000; // TODO: for the time being a very big number, bigger than any reasonable dock width.
-
-        /* Originally inspired by Opacify@gnome-shell.localdomain.pl extension */
-        global.get_window_actors().forEach(function(wa) {
-
+        // A closure for computing the minimum window position 
+        minEdge = function(wa){
             var meta_win = wa.get_meta_window();
-            if (!meta_win) {    //TODO michele: why? What does it mean?
-                return;
-            }   
-            
             var left_edge = meta_win.get_outer_rect().x
 
-
-            var wksp = meta_win.get_workspace();
-            var wksp_index = wksp.index();
-
-            if ( wksp_index == currentWorkspace && !meta_win.is_hidden() ) {
-
-                if(left_edge < edge ){
-                    edge=left_edge;
-                }         
+            if(left_edge < edge || ctr==0){
+                edge=left_edge;
             }
-        });
+            ctr++;
+        };
+
+        global.get_window_actors().filter(this._intellihideFilterInteresting, this).forEach(minEdge);
 
         if( edge < this._offset) {
             this.hide();
         } else {
             this.show();
         }
+    },
+
+    // Filter interesting windows to be considered for intellihide.
+    // Consider all windows visible on the current workspace.
+    _intellihideFilterInteresting: function(wa, edge){
+
+        var currentWorkspace = global.screen.get_active_workspace_index();
+
+        var meta_win = wa.get_meta_window();
+        if (!meta_win) {    //TODO michele: why? What does it mean?
+            return false;
+        }
+
+        var wksp = meta_win.get_workspace();
+        var wksp_index = wksp.index();
+
+        if ( wksp_index == currentWorkspace && !meta_win.is_hidden() ) {
+            return true;
+        } else {
+            return false;
+        }
+
     },
 
     _initializeAllWindowSignals: function () {
