@@ -63,7 +63,7 @@ intellihide.prototype = {
 
         // Set visibility in overview mode      
         this._onOverviewEnter = Main.overview.connect('showing', Lang.bind(this, this._overviewEnter));
-        this._onOverviewExit = Main.overview.connect('hidden', Lang.bind(this,this._overviewExit));
+        this._onOverviewExit = Main.overview.connect('hiding', Lang.bind(this,this._overviewExit));
 
         // Add signals to current windows
         this._initialize_all_window_signals();
