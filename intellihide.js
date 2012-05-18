@@ -42,10 +42,12 @@ let intellihide = function(show, hide, target) {
 intellihide.prototype = {
 
     _init: function(show, hide, target) {
-    
-        // Set base functions 
-        this.show = show;
-        this.hide = hide;
+
+        // current intellihide status
+        this.status;
+        // Set base functions
+        this.showFunction = show;
+        this.hideFunction = hide;
         // Target object
         this.target = target;
         // Keep track of the current overview mode (I mean if it is on/off)
@@ -67,6 +69,9 @@ intellihide.prototype = {
 
         // Add signals to current windows
         this._initializeAllWindowSignals();
+
+        // initialize: call show forcing to initialize status variable
+        this._show(true);
 
         // update visibility
         this._updateOffset();
@@ -114,6 +119,20 @@ intellihide.prototype = {
 
     },
 
+    _show: function(force) {
+        if (this.status==false || force){
+            this.status = true;
+            this.showFunction();
+        }
+    },
+
+    _hide: function(force) {
+        if (this.status==true || force){
+            this.status = false;
+            this.hideFunction();
+        }
+    },
+
     _updateOffset : function() {
 
         if(_DEBUG_) global.log("width: " + this.target.width);
@@ -138,9 +157,9 @@ intellihide.prototype = {
 
         this._inOverview = true;
         if(OVERVIEW_MODE == OverviewMode.SHOW){
-                this.show();
+                this._show();
         } else {
-                this.hide();
+                this._hide();
         }
     },
 
@@ -211,9 +230,9 @@ intellihide.prototype = {
         global.get_window_actors().filter(this._intellihideFilterInteresting, this).forEach(minEdge);
 
         if( edge < this._offset) {
-            this.hide();
+            this._hide();
         } else {
-            this.show();
+            this._show();
         }
     },
 
