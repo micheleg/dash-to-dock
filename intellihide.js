@@ -70,7 +70,6 @@ intellihide.prototype = {
 
         // update visibility
         this._updateOffset();
-        this._updateDockVisibility();
     },
 
     destroy: function() {
@@ -125,6 +124,8 @@ intellihide.prototype = {
         } else {
             this._offset = this.target.height;
         }
+
+        this._updateDockVisibility();
     },
 
     _overviewExit : function() {
