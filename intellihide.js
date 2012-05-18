@@ -66,7 +66,7 @@ intellihide.prototype = {
         this._onOverviewExit = Main.overview.connect('hiding', Lang.bind(this,this._overviewExit));
 
         // Add signals to current windows
-        this._initialize_all_window_signals();
+        this._initializeAllWindowSignals();
 
         // update visibility
         this._updateOffset();
@@ -107,7 +107,7 @@ intellihide.prototype = {
 
             var the_window = wa.get_meta_window();
 
-            this._remove_window_signals(the_window);
+            this._removeWindowSignals(the_window);
 
          }));
 
@@ -146,11 +146,11 @@ intellihide.prototype = {
 
     _windowCreated: function(__unused_display, the_window) {
 
-        this._add_window_signals(the_window);
+        this._addWindowSignals(the_window);
 
     },
 
-    _add_window_signals: function(the_window) {
+    _addWindowSignals: function(the_window) {
             
             // Looking for a way to avoid to add custom variables ...
             the_window._micheledash_onPositionChanged = the_window.get_compositor_private().connect(
@@ -163,7 +163,7 @@ intellihide.prototype = {
 
     },
 
-    _remove_window_signals: function(the_window) {
+    _removeWindowSignals: function(the_window) {
         
         var wa = the_window.get_compositor_private();
 
@@ -228,7 +228,7 @@ intellihide.prototype = {
         }
     },
 
-    _initialize_all_window_signals: function () {
+    _initializeAllWindowSignals: function () {
         
         global.get_window_actors().forEach(Lang.bind(this,function(wa) {
 
@@ -238,8 +238,8 @@ intellihide.prototype = {
             } 
             // First remove signals if already present. It should never happen 
             // if the extension is correctly unloaded.
-            this._remove_window_signals(meta_win);
-            this._add_window_signals(meta_win);
+            this._removeWindowSignals(meta_win);
+            this._addWindowSignals(meta_win);
 
         }));
     }
