@@ -40,6 +40,15 @@ dockedDash.prototype = {
         this.actor = new St.Bin({ name: 'mydash', reactive: true, style_class: 'box', y_align: St.Align.START});
         this.actor.connect("notify::hover", Lang.bind(this, this._hoverChanged));
 
+        // I create another actor with name #dash. This serves for applying an opaque background 
+        // for those themes like the default one that has a semi-transparent dash.
+        // I inherit all dash style of the current theme, then disable all those non interesting.
+        // I'm interested only on the shape, thus only on the border radius I think, in order
+        // to cover all and only the dash area. It is probably a little ugly workaround, but I 
+        // have not found a way to access the current style and simply change the background alpha.
+        this._box = new St.Bin({ name: 'dash', reactive: true, y_align: St.Align.START});
+        this._box.set_style('background-color: rgba(1,1,1,0.8);padding:0;margin:0;border:0;');
+
         this.actor.set_track_hover(true);
         // Create and apply height constraint to the dash
         this.constrainHeight = new Clutter.BindConstraint({ source: Main.overview._viewSelector._pageArea,
@@ -57,11 +66,10 @@ dockedDash.prototype = {
         this._dragEndId = Main.overview.connect('item-drag-end',
                               Lang.bind(this, function(){ if(Main.overview.visible==false) global.stage_input_mode =
                                                            Shell.StageInputMode.NORMAL;}));
-        // Make the dash background dark
-        this.dash._box.set_style('background-color: rgba(0,0,0,0.9)');
 
-        //Add dash to the container actor and the latter to the Chrome.
-        this.actor.add_actor(this.dash.actor);
+        //Add dash to the containers actors and the last of them to the Chrome.
+        this.actor.add_actor(this._box);
+        this._box.add_actor(this.dash.actor);
         Main.layoutManager.addChrome(this.actor, { affectsStruts: 0 });
 
         Main.overview._group.show(); //Workaround to get immediately the correct y position.
