@@ -202,10 +202,15 @@ dockedDash.prototype = {
         });
     },
 
+    _removeAnimations: function() {
+        Tweener.removeTweens(this.actor, "x");
+    },
+
     // Disable autohide effect, thus show dash
     disableAutoHide: function() {
         if(this._autohide==true){
             this._autohide = false;
+            this._removeAnimations();
             this._animateIn(ANIMATION_TIME, 0, true);
         }
     },
@@ -214,6 +219,7 @@ dockedDash.prototype = {
     enableAutoHide: function() {
         if(this._autohide==false){
             this._autohide = true;
+            this._removeAnimations();
             this._animateOut(ANIMATION_TIME, 0, true);
         }
     } 
