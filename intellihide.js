@@ -279,7 +279,7 @@ intellihide.prototype = {
     _handledWindowType: function(metaWindow) { 
         var wtype = metaWindow.get_window_type();
         for (var i = 0; i < handledWindowTypes.length; i++) {
-            hwtype = handledWindowTypes[i];
+            var hwtype = handledWindowTypes[i];
             if (hwtype == wtype) {
                 return true;
             } else if (hwtype > wtype) {
