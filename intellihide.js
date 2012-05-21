@@ -4,6 +4,19 @@ const _DEBUG_ = false;
 
 const Lang = imports.lang;
 const Main = imports.ui.main;
+const Meta = imports.gi.Meta;
+
+const handledWindowTypes = [
+  Meta.WindowType.NORMAL,
+  //Meta.WindowType.DESKTOP,    // skip nautilus dekstop window
+  Meta.WindowType.DOCK,
+  Meta.WindowType.DIALOG,
+  Meta.WindowType.MODAL_DIALOG,
+  Meta.WindowType.TOOLBAR,
+  Meta.WindowType.MENU,
+  Meta.WindowType.UTILITY,
+  Meta.WindowType.SPLASHSCREEN,
+]
 
 const OverviewMode = {
     HIDE: 0,
@@ -247,6 +260,9 @@ intellihide.prototype = {
             return false;
         }
 
+        if ( !this._handledWindowType(meta_win) ) 
+            return false;
+
         var wksp = meta_win.get_workspace();
         var wksp_index = wksp.index();
 
@@ -256,6 +272,21 @@ intellihide.prototype = {
             return false;
         }
 
+    },
+
+    // Filter windows by type
+    // inspired by Opacify@gnome-shell.localdomain.pl
+    _handledWindowType: function(metaWindow) { 
+        var wtype = metaWindow.get_window_type();
+        for (var i = 0; i < handledWindowTypes.length; i++) {
+            hwtype = handledWindowTypes[i];
+            if (hwtype == wtype) {
+                return true;
+            } else if (hwtype > wtype) {
+                return false;
+            }
+        }
+        return false;
     },
 
     _initializeAllWindowSignals: function () {
