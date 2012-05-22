@@ -263,6 +263,12 @@ intellihide.prototype = {
         if ( !this._handledWindowType(meta_win) ) 
             return false;
 
+        // keep only windows on the monitor where the dash is shown, 
+        // the primary monitor at the moment.
+        if (meta_win.get_monitor()!== Main.layoutManager.primaryIndex){
+            return false
+        }
+
         var wksp = meta_win.get_workspace();
         var wksp_index = wksp.index();
 
