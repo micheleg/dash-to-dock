@@ -37,7 +37,7 @@ dockedDash.prototype = {
         this.dash = new Dash.Dash(); // this.dash = new MyDash.myDash();
 
         // Create the main container, turn on track hover, add hoverChange signal
-        this.actor = new St.BoxLayout({ name: 'mydash', reactive: true, style_class: 'box', y_align: St.Align.START});
+        this.actor = new St.BoxLayout({ name: 'mydash', reactive: true, style_class: 'box'});
         this.actor.connect("notify::hover", Lang.bind(this, this._hoverChanged));
 
         // I create another actor with name #dash. This serves for applying an opaque background 
