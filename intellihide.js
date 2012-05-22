@@ -266,7 +266,7 @@ intellihide.prototype = {
         var wksp = meta_win.get_workspace();
         var wksp_index = wksp.index();
 
-        if ( wksp_index == currentWorkspace && !meta_win.is_hidden() ) {
+        if ( wksp_index == currentWorkspace && meta_win.showing_on_its_workspace() ) {
             return true;
         } else {
             return false;
