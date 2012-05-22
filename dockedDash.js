@@ -37,7 +37,7 @@ dockedDash.prototype = {
         this.dash = new Dash.Dash(); // this.dash = new MyDash.myDash();
 
         // Create the main container, turn on track hover, add hoverChange signal
-        this.actor = new St.Bin({ name: 'mydash', reactive: true, style_class: 'box', y_align: St.Align.START});
+        this.actor = new St.BoxLayout({ name: 'mydash', reactive: true, style_class: 'box', y_align: St.Align.START});
         this.actor.connect("notify::hover", Lang.bind(this, this._hoverChanged));
 
         // I create another actor with name #dash. This serves for applying an opaque background 
@@ -46,14 +46,18 @@ dockedDash.prototype = {
         // I'm interested only on the shape, thus only on the border radius I think, in order
         // to cover all and only the dash area. It is probably a little ugly workaround, but I 
         // have not found a way to access the current style and simply change the background alpha.
-        this._box = new St.Bin({ name: 'dash', reactive: true, y_align: St.Align.START});
-        this._box.set_style('background-color: rgba(1,1,1,0.8);padding:0;margin:0;border:0;');
+        this._backgroundBox = new St.Bin({ name: 'dash', reactive: false, y_align: St.Align.START});
+        this._backgroundBox.set_style('background-color: rgba(1,1,1,0.8);padding:0;margin:0;border:0;');
 
         this.actor.set_track_hover(true);
         // Create and apply height constraint to the dash
         this.constrainHeight = new Clutter.BindConstraint({ source: Main.overview._viewSelector._pageArea,
                                                             coordinate: Clutter.BindCoordinate.HEIGHT });
         this.dash.actor.add_constraint(this.constrainHeight);
+
+        this.constrainSize = new Clutter.BindConstraint({ source: this.dash._box,
+                                                            coordinate: Clutter.BindCoordinate.SIZE });
+        this._backgroundBox.add_constraint(this.constrainSize);
 
         // Connect events for updating dash vertical position
         this._resizeId1 = Main.overview._viewSelector._pageArea.connect("notify::y", Lang.bind(this, this._redisplay));
@@ -67,9 +71,9 @@ dockedDash.prototype = {
                               Lang.bind(this, function(){ if(Main.overview.visible==false) global.stage_input_mode =
                                                            Shell.StageInputMode.NORMAL;}));
 
-        //Add dash to the containers actors and the last of them to the Chrome.
-        this.actor.add_actor(this._box);
-        this._box.add_actor(this.dash.actor);
+        //Add dash and backgroundBox to the container actor and the last to the Chrome.
+        this.actor.add_actor(this._backgroundBox);
+        this.actor.add_actor(this.dash.actor);
         Main.layoutManager.addChrome(this.actor, { affectsStruts: 0 });
 
         // Put dock on the primary monitor and clip it
