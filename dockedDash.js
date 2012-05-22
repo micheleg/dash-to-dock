@@ -72,6 +72,13 @@ dockedDash.prototype = {
         this._box.add_actor(this.dash.actor);
         Main.layoutManager.addChrome(this.actor, { affectsStruts: 0 });
 
+        // Put dock on the primary monitor and clip it
+        this.monitor = Main.layoutManager.primaryMonitor;
+        this.position_x = this.monitor.x ;
+        this._updateClip();
+        // and update clip when allocation changes, that is when icons size and thus dash sise changes.
+        this.dash.actor.connect('allocation-changed', Lang.bind(this, this._updateClip));
+
         this._redisplay();
 
     },
@@ -172,11 +179,12 @@ dockedDash.prototype = {
         this._animStatus.queue(true);
 
         Tweener.addTween(this.actor,{
-            x: 0,
+            x: this.position_x,
             time: time,
             delay: delay,
             transition: 'easeOutQuad',
             overwrite: shouldOverwrite,
+            onUpdate: Lang.bind(this, this._updateClip),
             onStart:  Lang.bind(this, function() {this._animStatus.start(); }),
             onComplete: Lang.bind(this, function() {this._animStatus.end()})
         });
@@ -188,14 +196,40 @@ dockedDash.prototype = {
         this._animStatus.queue(false);
 
         Tweener.addTween(this.actor,{
-            x: -this.actor.width+1,
+            x: this.position_x-this.actor.width+1,
             time: time,
             delay: delay ,
             transition: 'easeOutQuad',
             overwrite: shouldOverwrite,
+            onUpdate: Lang.bind(this, this._updateClip),
             onStart:  Lang.bind(this, function() {this._animStatus.start();}),
             onComplete: Lang.bind(this, function() {this._animStatus.end() })
         })
+    },
+
+    // clip dock to its original allocation along x and to the current monito along y
+    // the current monitor; inspired by dock@gnome-shell-extensions.gcampax.github.com
+
+    _updateClip: function(){
+    global.log("updateClip");
+        // Here we implicitly assume that the stage and actor's parent
+        // share the same coordinate space
+        let clip = new Clutter.ActorBox({ x1: this.position_x,
+                          y1: this.monitor.y,
+                          x2: this.actor.allocation.x2,
+                          y2: this.monitor.y + this.monitor.height});
+
+        // Translate back into actor's coordinate space
+        // While the actor moves, the clip has to move in the opposite direction 
+        // to mantain its position in respect to the screen.
+        clip.x1 -= this.actor.x;
+        clip.x2 -= this.actor.x;
+        clip.y1 -= this.actor.y;
+        clip.y2 -= this.actor.y;
+
+        // Apply the clip
+        this.actor.set_clip(clip.x1, clip.y1, clip.x2-clip.x1, clip.y2 - clip.y1);
+
     },
 
     _redisplay: function() {
