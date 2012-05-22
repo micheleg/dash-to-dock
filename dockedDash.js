@@ -236,6 +236,28 @@ dockedDash.prototype = {
 
     },
 
+    _fadeOutBackground:function (time, delay, shouldOverwrite) {
+        Tweener.addTween(this._backgroundBox,{
+            opacity: 0,
+            time: time,
+            delay: delay,
+            transition: 'easeOutQuad',
+            overwrite: shouldOverwrite,
+        });
+
+    }, 
+
+    _fadeInBackground:function (time, delay, shouldOverwrite) {
+        Tweener.addTween(this._backgroundBox,{
+            opacity: 255,
+            time: time,
+            delay: delay,
+            transition: 'easeOutQuad',
+            overwrite: shouldOverwrite,
+        });
+
+    }, 
+
     _redisplay: function() {
         // Update dash y position animating it
         Tweener.addTween(this.actor,{
@@ -256,6 +278,7 @@ dockedDash.prototype = {
             this._autohide = false;
             this._removeAnimations();
             this._animateIn(ANIMATION_TIME, 0, true);
+            this._fadeOutBackground(ANIMATION_TIME, 0, false);
         }
     },
 
@@ -265,6 +288,7 @@ dockedDash.prototype = {
             this._autohide = true;
             this._removeAnimations();
             this._animateOut(ANIMATION_TIME, 0, true);
+            this._fadeInBackground(ANIMATION_TIME, ANIMATION_TIME, true);
         }
     } 
 };
