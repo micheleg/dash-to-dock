@@ -72,9 +72,7 @@ dockedDash.prototype = {
         this._box.add_actor(this.dash.actor);
         Main.layoutManager.addChrome(this.actor, { affectsStruts: 0 });
 
-        Main.overview._group.show(); //Workaround to get immediately the correct y position.
         this._redisplay();
-        Main.overview._group.hide();
 
     },
 
