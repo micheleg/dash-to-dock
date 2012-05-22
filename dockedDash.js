@@ -237,6 +237,9 @@ dockedDash.prototype = {
     },
 
     _fadeOutBackground:function (time, delay, shouldOverwrite) {
+
+        Tweener.removeTweens(this._backgroundBox, "opacity");
+
         Tweener.addTween(this._backgroundBox,{
             opacity: 0,
             time: time,
@@ -248,6 +251,9 @@ dockedDash.prototype = {
     }, 
 
     _fadeInBackground:function (time, delay, shouldOverwrite) {
+
+        Tweener.removeTweens(this._backgroundBox, "opacity");
+
         Tweener.addTween(this._backgroundBox,{
             opacity: 255,
             time: time,
