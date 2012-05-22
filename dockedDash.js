@@ -215,7 +215,7 @@ dockedDash.prototype = {
     // the current monitor; inspired by dock@gnome-shell-extensions.gcampax.github.com
 
     _updateClip: function(){
-    global.log("updateClip");
+
         // Here we implicitly assume that the stage and actor's parent
         // share the same coordinate space
         let clip = new Clutter.ActorBox({ x1: this.position_x,
@@ -278,7 +278,7 @@ dockedDash.prototype = {
             this._autohide = false;
             this._removeAnimations();
             this._animateIn(ANIMATION_TIME, 0, true);
-            this._fadeOutBackground(ANIMATION_TIME, 0, false);
+            this._fadeOutBackground(ANIMATION_TIME, 0, true);
         }
     },
 
