@@ -11,10 +11,20 @@ const Shell = imports.gi.Shell;
 
 const Dash = imports.ui.dash;
 
-// timings settings
-const ANIMATION_TIME = 0.200;
-const SHOW_DELAY = 0.500;
-const HIDE_DELAY =  0.250;
+
+// SETTINGS
+
+const ANIMATION_TIME = 0.200; // show/hide transition time
+const SHOW_DELAY     = 0.500; // delay before showing dash when it's hidden 
+const HIDE_DELAY     = 0.250; // delay befoee hiding dash when mouse goes out
+
+const OPAQUE_BACKGROUND = true; // make the dash opaque increasing readability.
+                                 // Some themes like the default one have a transparent bacground.
+
+const OPAQUE_BACKGROUND_ALWAYS = false; // whether the dash has always an opaque background or only when 
+                                        // in autohide mode
+
+// END OF SETTINGS
 
 function dockedDash() {
 
@@ -285,7 +295,13 @@ dockedDash.prototype = {
         } else if( this._animStatus.shown() ){
             this._animateIn(ANIMATION_TIME, 0, true);
         }
-        
+
+        // update background
+        if(OPAQUE_BACKGROUND==true) {
+            this._backgroundBox.show();
+        } else {
+            this._backgroundBox.hide();
+        }
 
         //update clip
         this._updateClip();
@@ -302,7 +318,8 @@ dockedDash.prototype = {
             this._autohide = false;
             this._removeAnimations();
             this._animateIn(ANIMATION_TIME, 0, true);
-            this._fadeOutBackground(ANIMATION_TIME, 0, true);
+            if(OPAQUE_BACKGROUND && !OPAQUE_BACKGROUND_ALWAYS)
+                this._fadeOutBackground(ANIMATION_TIME, 0, true);
         }
     },
 
@@ -312,7 +329,8 @@ dockedDash.prototype = {
             this._autohide = true;
             this._removeAnimations();
             this._animateOut(ANIMATION_TIME, 0, true);
-            this._fadeInBackground(ANIMATION_TIME, ANIMATION_TIME, true);
+            if(OPAQUE_BACKGROUND && !OPAQUE_BACKGROUND_ALWAYS)
+                this._fadeInBackground(ANIMATION_TIME, ANIMATION_TIME, true);
         }
     } 
 };
