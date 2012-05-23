@@ -18,6 +18,13 @@ const handledWindowTypes = [
   Meta.WindowType.SPLASHSCREEN,
 ]
 
+const IntellihideMode = {
+    HIDE: 0,            // Dash is always invisible
+    SHOW: 1,            // Dash is always visible
+    AUTOHIDE:3,         // Basic autohide mode: visible on mouse hover
+    INTELLIHIDE: 2      // Basic intellihide mode: visible if no window overlap the dash
+};
+
 const OverviewMode = {
     HIDE: 0,
     SHOW: 1
@@ -30,8 +37,18 @@ const PositionMode = { // ACHTUNG: Only LEFT working at the moment!
     BOTTOM: 3
 };
 
-// Settings
-const OVERVIEW_MODE = OverviewMode.SHOW;
+// Settings (ALl almost unusable...):
+//
+// Current limitations:
+//  1. IntellihideMode.HIDE does not exist.
+//  2. Using intellihideMode.AUTOHIDE  in OVERVIEW_MODE is not a good idea: you cannot
+//     anymore drag and drop icons on windows on the dash as it is hidden. Moreover you 
+//     get nothing in return. No space is saved currently like in hideDash extension. Use
+//     this mode only if you really hate to see the dash there!
+//  3. Also intellihideMode.INTELLIHIDE  in OVERVIEW_MODE doesn't make sense...
+//  4. Only PositionMode.LEFT works.
+const NORMAL_MODE = IntellihideMode.INTELLIHIDE;
+const OVERVIEW_MODE = IntellihideMode.SHOW;
 const POSITION_MODE = PositionMode.LEFT;
 
 
@@ -39,8 +56,7 @@ const POSITION_MODE = PositionMode.LEFT;
 /*
  * A rough and ugly implementation of the intellihide behaviour.
  * Intallihide object: call show()/hide() function based on the overlap with the
- * the target actor. Intellihide is disabled in overview mode: in this case
- * OVERVIEW_MODE state is applied.
+ * the target actor.
  * 
  * Hide is triggered whenever a window is near the screen border at a distance
  * less than the dock width, regardless of the dock vertical dimension.
@@ -169,10 +185,14 @@ intellihide.prototype = {
     _overviewEnter: function() {
 
         this._inOverview = true;
-        if(OVERVIEW_MODE == OverviewMode.SHOW){
+        if(OVERVIEW_MODE == IntellihideMode.SHOW){
                 this._show();
-        } else {
+        } else if (OVERVIEW_MODE == IntellihideMode.AUTOHIDE){
                 this._hide();
+        } else if (OVERVIEW_MODE == IntellihideMode.INTELLIHIDE){
+            this._show();
+        } else if (OVERVIEW_MODE == IntellihideMode.HIDE) {
+            /*TODO*/
         }
     },
 
@@ -221,31 +241,48 @@ intellihide.prototype = {
         // If we are in overview mode and the dock is set to be visible prevent 
         // it to be hidden by window events(window create, workspace change, 
         // window close...)
-        if( OVERVIEW_MODE == OverviewMode.SHOW && this._inOverview ) {
+
+        if(this._inOverview){
+            if( OVERVIEW_MODE !== IntellihideMode.INTELLIHIDE ) {
+                return;
+            }
+        }
+
+        //else in normal mode:
+        if(NORMAL_MODE == IntellihideMode.AUTOHIDE){
+            this._hide();
             return;
         }
-        //else
-
-        var edge;
-        var ctr=0;
-
-        // A closure for computing the minimum window position 
-        minEdge = function(wa){
-            var meta_win = wa.get_meta_window();
-            var left_edge = meta_win.get_outer_rect().x
-
-            if(left_edge < edge || ctr==0){
-                edge=left_edge;
-            }
-            ctr++;
-        };
-
-        global.get_window_actors().filter(this._intellihideFilterInteresting, this).forEach(minEdge);
-
-        if( edge < this._offset) {
-            this._hide();
-        } else {
+        if(NORMAL_MODE == IntellihideMode.SHOW){
             this._show();
+            return;
+        }
+        else if(NORMAL_MODE == IntellihideMode.HIDE){
+            /*TODO*/
+            return;
+        } else if(NORMAL_MODE == IntellihideMode.INTELLIHIDE){
+
+            var edge;
+            var ctr=0;
+
+            // A closure for computing the minimum window position 
+            var minEdge = function(wa){
+                var meta_win = wa.get_meta_window();
+                var left_edge = meta_win.get_outer_rect().x
+
+                if(left_edge < edge || ctr==0){
+                    edge=left_edge;
+                }
+                ctr++;
+            };
+
+            global.get_window_actors().filter(this._intellihideFilterInteresting, this).forEach(minEdge);
+
+            if( edge < this._offset) {
+                this._hide();
+            } else {
+                this._show();
+            }
         }
     },
 
