@@ -8,8 +8,8 @@ const Meta = imports.gi.Meta;
 
 const handledWindowTypes = [
   Meta.WindowType.NORMAL,
-  //Meta.WindowType.DESKTOP,    // skip nautilus dekstop window
-  Meta.WindowType.DOCK,
+  // Meta.WindowType.DESKTOP,    // skip nautilus dekstop window
+  // Meta.WindowType.DOCK,       // skip other docks
   Meta.WindowType.DIALOG,
   Meta.WindowType.MODAL_DIALOG,
   Meta.WindowType.TOOLBAR,
