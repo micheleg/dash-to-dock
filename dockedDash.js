@@ -80,8 +80,8 @@ dockedDash.prototype = {
         this.monitor = Main.layoutManager.primaryMonitor;
         this.position_x = this.monitor.x ;
         this._updateClip();
-        // and update clip when allocation changes, that is when icons size and thus dash sise changes.
-        this.dash.actor.connect('allocation-changed', Lang.bind(this, this._updateClip));
+        // and update position and clip when allocation changes, that is when icons size and thus dash sise changes.
+        this.dash.actor.connect('allocation-changed', Lang.bind(this, this._redisplay));
 
         this._redisplay();
 
@@ -265,6 +265,7 @@ dockedDash.prototype = {
     }, 
 
     _redisplay: function() {
+
         // Update dash y position animating it
         Tweener.addTween(this.actor,{
             y: Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y,
@@ -272,6 +273,20 @@ dockedDash.prototype = {
             delay:0.0,
             transition: 'easeOutQuad'
         });
+
+        // Update dash x position (for instance when its width changes due to icon are resized)
+        // using hidden() / shown() do nothing is dash is already animating
+
+        if( this._animStatus.hidden() ){
+            this._animateOut(0, 0, true);
+        } else if( this._animStatus.shown() ){
+            this._animateIn(ANIMATION_TIME, 0, true);
+        }
+        
+
+        //update clip
+        this._updateClip();
+
     },
 
     _removeAnimations: function() {
