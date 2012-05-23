@@ -220,7 +220,10 @@ dockedDash.prototype = {
         // share the same coordinate space
         let clip = new Clutter.ActorBox({ x1: this.position_x,
                           y1: this.monitor.y,
-                          x2: this.actor.allocation.x2,
+                          x2: this.actor.x+this.actor.width, // it was this.actor.allocation.x2 
+                                                        // but it does not work properly...
+                                                        // I don't know what the substantal
+                                                        // difference is between x and allocation.x
                           y2: this.monitor.y + this.monitor.height});
 
         // Translate back into actor's coordinate space
