@@ -356,6 +356,7 @@ animationStatus.prototype = {
     },
 
     end: function(){
+        this.queued=false; // in the case end is called and start was not
         this.running=false;
         this.status = this.nextStatus;
     },
