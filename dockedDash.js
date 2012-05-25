@@ -138,7 +138,7 @@ dockedDash.prototype = {
 
             // suppress all potential queued hiding animations (always give priority to show)
             if( anim.queued ){
-                Tweener.removeTweens(this.actor, "x");
+                Tweener.removeTweens(this.actor);
             }
 
             // If the dock is hidden, wait SHOW_DELAY before showing it; 
@@ -168,7 +168,7 @@ dockedDash.prototype = {
                 // over the screen  border but then went away, i.e not a sufficient 
                 // amount of time is passeed to trigger the dock showing) remove it.
                 if(anim.queued){
-                    Tweener.removeTweens(this.actor, "x"); 
+                    Tweener.removeTweens(this.actor); 
                 }
 
                 // However, if a show already started, let it finish; queue hide without removing the show.
@@ -246,7 +246,7 @@ dockedDash.prototype = {
 
     _fadeOutBackground:function (time, delay) {
 
-        Tweener.removeTweens(this._backgroundBox, "opacity");
+        Tweener.removeTweens(this._backgroundBox);
 
         Tweener.addTween(this._backgroundBox,{
             opacity: 0,
@@ -259,7 +259,7 @@ dockedDash.prototype = {
 
     _fadeInBackground:function (time, delay) {
 
-        Tweener.removeTweens(this._backgroundBox, "opacity");
+        Tweener.removeTweens(this._backgroundBox);
 
         Tweener.addTween(this._backgroundBox,{
             opacity: 255,
@@ -302,7 +302,7 @@ dockedDash.prototype = {
     },
 
     _removeAnimations: function() {
-        Tweener.removeTweens(this.actor, "x");
+        Tweener.removeTweens(this.actor);
     },
 
     // Disable autohide effect, thus show dash
