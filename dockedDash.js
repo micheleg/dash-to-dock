@@ -149,7 +149,7 @@ dockedDash.prototype = {
                 delay = 0;
             }
 
-            this._animateIn(ANIMATION_TIME, delay, true);
+            this._animateIn(ANIMATION_TIME, delay);
         }
     },
 
@@ -163,7 +163,6 @@ dockedDash.prototype = {
             if( this._autohide && (anim.showing() || anim.shown() ) ){
 
                 let delay;
-                let shouldOverwrite;
 
                 // If a show is queued but still not started (i.e the mouse was 
                 // over the screen  border but then went away, i.e not a sufficient 
@@ -174,21 +173,19 @@ dockedDash.prototype = {
 
                 // However, if a show already started, let it finish; queue hide without removing the show.
                 // to obtain this I increase the delay to avoid the overlap and interference 
-                // between the animations and disable the overwrite tweener property;
+                // between the animations
                 if(anim.running){
                     delay = HIDE_DELAY + 2*ANIMATION_TIME + SHOW_DELAY;
-                    shouldOverwrite=false;
                 } else {
                     delay = HIDE_DELAY;
-                    shouldOverwrite=true;
                 }
 
-                this._animateOut(ANIMATION_TIME, delay, shouldOverwrite);
+                this._animateOut(ANIMATION_TIME, delay);
 
         }
     },
 
-    _animateIn: function(time, delay, shouldOverwrite) {
+    _animateIn: function(time, delay) {
 
         this._animStatus.queue(true);
 
@@ -197,7 +194,6 @@ dockedDash.prototype = {
             time: time,
             delay: delay,
             transition: 'easeOutQuad',
-            overwrite: shouldOverwrite,
             onUpdate: Lang.bind(this, this._updateClip),
             onStart:  Lang.bind(this, function() {this._animStatus.start(); }),
             onComplete: Lang.bind(this, function() {this._animStatus.end()})
@@ -205,7 +201,7 @@ dockedDash.prototype = {
 
     },
 
-    _animateOut: function(time, delay, shouldOverwrite){
+    _animateOut: function(time, delay){
 
         this._animStatus.queue(false);
 
@@ -214,7 +210,6 @@ dockedDash.prototype = {
             time: time,
             delay: delay ,
             transition: 'easeOutQuad',
-            overwrite: shouldOverwrite,
             onUpdate: Lang.bind(this, this._updateClip),
             onStart:  Lang.bind(this, function() {this._animStatus.start();}),
             onComplete: Lang.bind(this, function() {this._animStatus.end() })
@@ -249,7 +244,7 @@ dockedDash.prototype = {
 
     },
 
-    _fadeOutBackground:function (time, delay, shouldOverwrite) {
+    _fadeOutBackground:function (time, delay) {
 
         Tweener.removeTweens(this._backgroundBox, "opacity");
 
@@ -257,13 +252,12 @@ dockedDash.prototype = {
             opacity: 0,
             time: time,
             delay: delay,
-            transition: 'easeOutQuad',
-            overwrite: shouldOverwrite,
+            transition: 'easeOutQuad'
         });
 
     }, 
 
-    _fadeInBackground:function (time, delay, shouldOverwrite) {
+    _fadeInBackground:function (time, delay) {
 
         Tweener.removeTweens(this._backgroundBox, "opacity");
 
@@ -271,8 +265,7 @@ dockedDash.prototype = {
             opacity: 255,
             time: time,
             delay: delay,
-            transition: 'easeOutQuad',
-            overwrite: shouldOverwrite,
+            transition: 'easeOutQuad'
         });
 
     }, 
@@ -291,9 +284,9 @@ dockedDash.prototype = {
         // using hidden() / shown() do nothing is dash is already animating
 
         if( this._animStatus.hidden() ){
-            this._animateOut(0, 0, true);
+            this._animateOut(0, 0);
         } else if( this._animStatus.shown() ){
-            this._animateIn(ANIMATION_TIME, 0, true);
+            this._animateIn(ANIMATION_TIME, 0);
         }
 
         // update background
@@ -317,9 +310,9 @@ dockedDash.prototype = {
         if(this._autohide==true){
             this._autohide = false;
             this._removeAnimations();
-            this._animateIn(ANIMATION_TIME, 0, true);
+            this._animateIn(ANIMATION_TIME, 0);
             if(OPAQUE_BACKGROUND && !OPAQUE_BACKGROUND_ALWAYS)
-                this._fadeOutBackground(ANIMATION_TIME, 0, true);
+                this._fadeOutBackground(ANIMATION_TIME, 0);
         }
     },
 
@@ -328,9 +321,9 @@ dockedDash.prototype = {
         if(this._autohide==false){
             this._autohide = true;
             this._removeAnimations();
-            this._animateOut(ANIMATION_TIME, 0, true);
+            this._animateOut(ANIMATION_TIME, 0);
             if(OPAQUE_BACKGROUND && !OPAQUE_BACKGROUND_ALWAYS)
-                this._fadeInBackground(ANIMATION_TIME, ANIMATION_TIME, true);
+                this._fadeInBackground(ANIMATION_TIME, ANIMATION_TIME);
         }
     } 
 };
