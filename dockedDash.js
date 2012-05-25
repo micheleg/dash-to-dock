@@ -129,7 +129,8 @@ dockedDash.prototype = {
     _show: function() {  
 
         var anim = this._animStatus;
-        if(_DEBUG_) global.log("enter-event " + this._showing + " " + this._hiding + this._queuedShowing);
+        if(_DEBUG_) global.log("show " + anim.showing() + " " + anim.hiding() +
+                                " " + anim.shown() + " " + anim.hidden());
 
         // If no showing animation is running or queued
         if( this._autohide && (anim.hiding() || anim.hidden()) ){
@@ -155,32 +156,33 @@ dockedDash.prototype = {
 
     _hide: function() {
 
-        if(_DEBUG_) global.log("leave-event " + this._showing + " " + this._hiding);
+        if(_DEBUG_) global.log("hide " + anim.showing() + " " + anim.hiding() +
+                            " " + anim.shown() + " " + anim.hidden());
 
-            var anim = this._animStatus; 
+        var anim = this._animStatus;
 
-            // If no hiding animation is running or queued
-            if( this._autohide && (anim.showing() || anim.shown() ) ){
+        // If no hiding animation is running or queued
+        if( this._autohide && (anim.showing() || anim.shown() ) ){
 
-                let delay;
+            let delay;
 
-                // If a show is queued but still not started (i.e the mouse was 
-                // over the screen  border but then went away, i.e not a sufficient 
-                // amount of time is passeed to trigger the dock showing) remove it.
-                if(anim.queued){
-                    Tweener.removeTweens(this.actor); 
-                }
+            // If a show is queued but still not started (i.e the mouse was 
+            // over the screen  border but then went away, i.e not a sufficient 
+            // amount of time is passeed to trigger the dock showing) remove it.
+            if(anim.queued){
+                Tweener.removeTweens(this.actor); 
+            }
 
-                // However, if a show already started, let it finish; queue hide without removing the show.
-                // to obtain this I increase the delay to avoid the overlap and interference 
-                // between the animations
-                if(anim.running){
-                    delay = HIDE_DELAY + 2*ANIMATION_TIME + SHOW_DELAY;
-                } else {
-                    delay = HIDE_DELAY;
-                }
+            // However, if a show already started, let it finish; queue hide without removing the show.
+            // to obtain this I increase the delay to avoid the overlap and interference 
+            // between the animations
+            if(anim.running){
+                delay = HIDE_DELAY + 2*ANIMATION_TIME + SHOW_DELAY;
+            } else {
+                delay = HIDE_DELAY;
+            }
 
-                this._animateOut(ANIMATION_TIME, delay);
+            this._animateOut(ANIMATION_TIME, delay);
 
         }
     },
