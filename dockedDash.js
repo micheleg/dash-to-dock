@@ -365,7 +365,7 @@ animationStatus.prototype = {
 
     // Return true if a showing animation is running or queued
     showing: function(){
-        if( this.status==false && this.nextStatus == true)
+        if( (this.running == true || this.queued == true) && this.nextStatus == true)
             return true;
         else
             return false;
@@ -380,7 +380,7 @@ animationStatus.prototype = {
 
     // Return true if an hiding animation is running or queued
     hiding: function(){
-        if( this.status==true && this.nextStatus == false )
+        if( (this.running == true || this.queued == true) && this.nextStatus == false )
             return true;
         else
             return false;
