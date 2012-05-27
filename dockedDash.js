@@ -289,6 +289,16 @@ dockedDash.prototype = {
 
     _redisplay: function() {
 
+        // Update dash x position (for instance when its width changes due to icon are resized)
+        // using hidden() / shown() do nothing fs dash is already animating
+        if( this._animStatus.hidden() ){
+            this._removeAnimations();
+            this._animateOut(0, 0);
+        } else if( this._animStatus.shown() ){
+            this._removeAnimations();
+            this._animateIn(ANIMATION_TIME, 0);
+        }
+
         // Update dash y position animating it
         Tweener.addTween(this.actor,{
             y: Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y,
@@ -296,15 +306,6 @@ dockedDash.prototype = {
             delay:0.0,
             transition: 'easeOutQuad'
         });
-
-        // Update dash x position (for instance when its width changes due to icon are resized)
-        // using hidden() / shown() do nothing fs dash is already animating
-
-        if( this._animStatus.hidden() ){
-            this._animateOut(0, 0);
-        } else if( this._animStatus.shown() ){
-            this._animateIn(ANIMATION_TIME, 0);
-        }
 
         // update background
         if(OPAQUE_BACKGROUND==true) {
