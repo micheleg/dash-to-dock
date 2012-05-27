@@ -8,7 +8,7 @@ const Main = imports.ui.main;
 const Tweener = imports.ui.tweener;
 const Clutter = imports.gi.Clutter;
 const Shell = imports.gi.Shell;
-
+const Mainloop = imports.mainloop;
 const Dash = imports.ui.dash;
 
 
@@ -86,13 +86,23 @@ dockedDash.prototype = {
         this.actor.add_actor(this.dash.actor);
         Main.layoutManager.addChrome(this.actor, { affectsStruts: 0 });
 
-        // Put dock on the primary monitor and clip it
+        // Put dock on the primary monitor 
         this.monitor = Main.layoutManager.primaryMonitor;
         this.position_x = this.monitor.x ;
-        this._updateClip();
+
         // and update position and clip when allocation changes, that is when icons size and thus dash sise changes.
         this.dash.actor.connect('allocation-changed', Lang.bind(this, this._redisplay));
 
+        Mainloop.idle_add(Lang.bind(this, this._initialize));
+
+    },
+
+    _initialize: function(){
+        /* This is a workaround I found to get correct size and positions of actor
+         * inside the overview
+        */
+        Main.overview._group.show();
+        Main.overview._group.hide();
         this._redisplay();
 
     },
