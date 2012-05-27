@@ -23,6 +23,8 @@ const OPAQUE_BACKGROUND = true; // make the dash opaque increasing readability.
 
 const OPAQUE_BACKGROUND_ALWAYS = false; // whether the dash has always an opaque background or only when 
                                         // in autohide mode
+const DISABLE_AUTOHIDE = false      // Disable autohide show/hide mouse events. 
+                                    // Dash is fixed: visibility can be manually controlled.
 
 // END OF SETTINGS
 
@@ -143,7 +145,7 @@ dockedDash.prototype = {
         if(_DEBUG_) global.log("show " + anim.showing() + " " + anim.hiding() +
                                 " " + anim.shown() + " " + anim.hidden());
 
-        if( this._autohide && ( anim.hidden() || anim.hiding() ) ){
+        if( this._autohide && ( anim.hidden() || anim.hiding() ) && !DISABLE_AUTOHIDE ){
 
             let delay;
             // If the dock is hidden, wait SHOW_DELAY before showing it; 
@@ -168,7 +170,7 @@ dockedDash.prototype = {
         var anim = this._animStatus;
 
         // If no hiding animation is running or queued
-        if( this._autohide && (anim.showing() || anim.shown() ) ){
+        if( this._autohide && (anim.showing() || anim.shown() ) && !DISABLE_AUTOHIDE ){
 
             let delay;
 
