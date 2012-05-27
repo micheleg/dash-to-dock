@@ -129,24 +129,20 @@ dockedDash.prototype = {
     _show: function() {  
 
         var anim = this._animStatus;
+
         if(_DEBUG_) global.log("show " + anim.showing() + " " + anim.hiding() +
                                 " " + anim.shown() + " " + anim.hidden());
 
-        // If no showing animation is running or queued
-        if( this._autohide && (anim.hiding() || anim.hidden()) ){
+        if( this._autohide && ( anim.hidden() || anim.hiding() ) ){
 
             let delay;
-
-            // suppress all potential queued hiding animations (always give priority to show)
-            if( anim.queued ){
-                Tweener.removeTweens(this.actor);
-            }
-
             // If the dock is hidden, wait SHOW_DELAY before showing it; 
             // otherwise show it immediately.
             if(anim.hidden()){
                 delay = SHOW_DELAY;
-            } else {
+            } else if(anim.hiding()){
+                // suppress all potential queued hiding animations (always give priority to show)
+                this._removeAnimations();
                 delay = 0;
             }
 
@@ -169,16 +165,18 @@ dockedDash.prototype = {
             // If a show is queued but still not started (i.e the mouse was 
             // over the screen  border but then went away, i.e not a sufficient 
             // amount of time is passeed to trigger the dock showing) remove it.
-            if(anim.queued){
-                Tweener.removeTweens(this.actor); 
-            }
+            if( anim.showing()) {
+                if(anim.running){
+                    //if a show already started, let it finish; queue hide without removing the show.
+                    // to obtain this I increase the delay to avoid the overlap and interference 
+                    // between the animations
+                    delay = HIDE_DELAY + 2*ANIMATION_TIME + SHOW_DELAY;
 
-            // However, if a show already started, let it finish; queue hide without removing the show.
-            // to obtain this I increase the delay to avoid the overlap and interference 
-            // between the animations
-            if(anim.running){
-                delay = HIDE_DELAY + 2*ANIMATION_TIME + SHOW_DELAY;
-            } else {
+                } else {
+                    this._removeAnimations();
+                    delay = 0;
+                }
+            } else if( anim.shown() ) {
                 delay = HIDE_DELAY;
             }
 
@@ -189,33 +187,40 @@ dockedDash.prototype = {
 
     _animateIn: function(time, delay) {
 
-        this._animStatus.queue(true);
+        var final_position = this.position_x;
 
-        Tweener.addTween(this.actor,{
-            x: this.position_x,
-            time: time,
-            delay: delay,
-            transition: 'easeOutQuad',
-            onUpdate: Lang.bind(this, this._updateClip),
-            onStart:  Lang.bind(this, function() {this._animStatus.start(); }),
-            onComplete: Lang.bind(this, function() {this._animStatus.end()})
-        });
-
+        if(final_position !== this.actor.x){
+            this._animStatus.queue(true);
+            Tweener.addTween(this.actor,{
+                x: final_position,
+                time: time,
+                delay: delay,
+                transition: 'easeOutQuad',
+                onUpdate: Lang.bind(this, this._updateClip),
+                onStart:  Lang.bind(this, function() {this._animStatus.start();}),
+                onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
+                onComplete: Lang.bind(this, function() {this._animStatus.end();})
+            });
+        }
     },
 
     _animateOut: function(time, delay){
 
-        this._animStatus.queue(false);
+        var final_position = this.position_x-this.actor.width+1;
 
-        Tweener.addTween(this.actor,{
-            x: this.position_x-this.actor.width+1,
-            time: time,
-            delay: delay ,
-            transition: 'easeOutQuad',
-            onUpdate: Lang.bind(this, this._updateClip),
-            onStart:  Lang.bind(this, function() {this._animStatus.start();}),
-            onComplete: Lang.bind(this, function() {this._animStatus.end() })
-        })
+        if(final_position !== this.actor.x){
+            this._animStatus.queue(false);
+            Tweener.addTween(this.actor,{
+                x: final_position,
+                time: time,
+                delay: delay ,
+                transition: 'easeOutQuad',
+                onUpdate: Lang.bind(this, this._updateClip),
+                onStart:  Lang.bind(this, function() {this._animStatus.start();}),
+                onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
+                onComplete: Lang.bind(this, function() {this._animStatus.end();})
+            });
+        }
     },
 
     // clip dock to its original allocation along x and to the current monito along y
@@ -283,7 +288,7 @@ dockedDash.prototype = {
         });
 
         // Update dash x position (for instance when its width changes due to icon are resized)
-        // using hidden() / shown() do nothing is dash is already animating
+        // using hidden() / shown() do nothing fs dash is already animating
 
         if( this._animStatus.hidden() ){
             this._animateOut(0, 0);
@@ -305,6 +310,7 @@ dockedDash.prototype = {
 
     _removeAnimations: function() {
         Tweener.removeTweens(this.actor);
+        this._animStatus.clear();
     },
 
     // Disable autohide effect, thus show dash
@@ -342,30 +348,40 @@ animationStatus.prototype = {
 
     _init: function(initialStatus){
         this.status  = initialStatus;
-        this.nextStatus  = initialStatus;
+        this.nextStatus  = [];
         this.queued = false;
         this.running = false;
     },
 
     queue: function(nextStatus){
-        this.nextStatus = nextStatus;
+        this.nextStatus.push(nextStatus);
         this.queued = true;
     },
 
     start: function(){
-        this.queued = false;
+        if(this.nextStatus.length==1){
+            this.queued = false;
+        }
         this.running = true;
     },
 
     end: function(){
-        this.queued=false; // in the case end is called and start was not
+        if(this.nextStatus.length==1){
+            this.queued=false; // in the case end is called and start was not
+        }
         this.running=false;
-        this.status = this.nextStatus;
+        this.status = this.nextStatus.shift();
+    },
+
+    clear: function(){
+        this.queued  = false;
+        this.running = false;
+        this.nextStatus.splice(0, this.nextStatus.length);
     },
 
     // Return true if a showing animation is running or queued
     showing: function(){
-        if( (this.running == true || this.queued == true) && this.nextStatus == true)
+        if( (this.running == true || this.queued == true) && this.nextStatus[0] == true)
             return true;
         else
             return false;
@@ -380,7 +396,7 @@ animationStatus.prototype = {
 
     // Return true if an hiding animation is running or queued
     hiding: function(){
-        if( (this.running == true || this.queued == true) && this.nextStatus == false )
+        if( (this.running == true || this.queued == true) && this.nextStatus[0] == false )
             return true;
         else
             return false;
@@ -391,7 +407,7 @@ animationStatus.prototype = {
             return true;
         else
             return false;
-    },
+    }
 }
 
 
