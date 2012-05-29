@@ -10,11 +10,12 @@ const Clutter = imports.gi.Clutter;
 const Shell = imports.gi.Shell;
 const Mainloop = imports.mainloop;
 const Dash = imports.ui.dash;
+const Overview = imports.ui.overview;
 
 
 // SETTINGS
 
-const ANIMATION_TIME = 0.200; // show/hide transition time
+const ANIMATION_TIME = Overview.ANIMATION_TIME; // show/hide transition time
 const SHOW_DELAY     = 0.500; // delay before showing dash when it's hidden 
 const HIDE_DELAY     = 0.250; // delay befoee hiding dash when mouse goes out
 
