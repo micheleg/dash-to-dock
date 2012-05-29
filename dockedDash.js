@@ -72,8 +72,8 @@ dockedDash.prototype = {
         this._backgroundBox.add_constraint(this.constrainSize);
 
         // Connect events for updating dash vertical position
-        this._resizeId1 = Main.overview._viewSelector._pageArea.connect("notify::y", Lang.bind(this, this._redisplay));
-        this._resizeId2 = Main.overview._viewSelector.connect("notify::y", Lang.bind(this, this._redisplay));
+        this._resizeId1 = Main.overview._viewSelector._pageArea.connect("notify::y", Lang.bind(this, this._updateYPosition));
+        this._resizeId2 = Main.overview._viewSelector.connect("notify::y", Lang.bind(this, this._updateYPosition));
 
         // Allow app icons do be dragged out of the chrome actors when reordering or deleting theme while not on overview mode
         // by changing global stage input mode
@@ -82,6 +82,10 @@ dockedDash.prototype = {
         this._dragEndId = Main.overview.connect('item-drag-end',
                               Lang.bind(this, function(){ if(Main.overview.visible==false) global.stage_input_mode =
                                                            Shell.StageInputMode.NORMAL;}));
+
+        //Hide the dock whilst setting positions
+        //this.actor.hide(); but I need to access its width, so I use opacity
+        this.actor.set_opacity(0);
 
         //Add dash and backgroundBox to the container actor and the last to the Chrome.
         this.actor.add_actor(this._backgroundBox);
@@ -92,8 +96,8 @@ dockedDash.prototype = {
         this.monitor = Main.layoutManager.primaryMonitor;
         this.position_x = this.monitor.x ;
 
-        // and update position and clip when allocation changes, that is when icons size and thus dash sise changes.
-        this.dash.actor.connect('allocation-changed', Lang.bind(this, this._redisplay));
+        // and update position and clip when width changes, that is when icons size and thus dash sise changes.
+        this.dash.actor.connect('notify::width', Lang.bind(this, this._redisplay));
 
         Mainloop.idle_add(Lang.bind(this, this._initialize));
 
@@ -105,6 +109,12 @@ dockedDash.prototype = {
         */
         Main.overview._group.show();
         Main.overview._group.hide();
+
+        // Set initial position
+        this._updateYPosition();
+        this.actor.x = this.position_x-this.actor.width+1;
+        // Show 
+        this.actor.set_opacity(255); //this.actor.show();
         this._redisplay();
 
     },
@@ -298,14 +308,6 @@ dockedDash.prototype = {
             this._animateIn(ANIMATION_TIME, 0);
         }
 
-        // Update dash y position animating it
-        Tweener.addTween(this.actor,{
-            y: Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y,
-            time: 0.150,
-            delay:0.0,
-            transition: 'easeOutQuad'
-        });
-
         // update background
         if(OPAQUE_BACKGROUND==true) {
             this._backgroundBox.show();
@@ -316,6 +318,10 @@ dockedDash.prototype = {
         //update clip
         this._updateClip();
 
+    },
+
+    _updateYPosition: function() {
+        this.actor.y = Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y;
     },
 
     _removeAnimations: function() {
