@@ -77,11 +77,9 @@ dockedDash.prototype = {
 
         // Allow app icons do be dragged out of the chrome actors when reordering or deleting theme while not on overview mode
         // by changing global stage input mode
-        this._dragStartId = Main.overview.connect('item-drag-begin',
-                              Lang.bind(this, function(){ global.stage_input_mode = Shell.StageInputMode.FULLSCREEN;}));
-        this._dragEndId = Main.overview.connect('item-drag-end',
-                              Lang.bind(this, function(){ if(Main.overview.visible==false) global.stage_input_mode =
-                                                           Shell.StageInputMode.NORMAL;}));
+        this._dragStartId = Main.overview.connect('item-drag-begin', Lang.bind(this, this._onDragStart));
+        this._dragEndId = Main.overview.connect('item-drag-end', Lang.bind(this, this._onDragEnd));
+        this._dragCancelledId = Main.overview.connect('item-drag-cancelled', Lang.bind(this, this._onDragEnd));
 
         //Hide the dock whilst setting positions
         //this.actor.hide(); but I need to access its width, so I use opacity
@@ -126,6 +124,7 @@ dockedDash.prototype = {
         Main.overview._viewSelector.disconnect(this._resizeId2);
         Main.overview.disconnect(this._dragStartId);
         Main.overview.disconnect(this._dragEndId);
+        Main.overview.disconnect(this._dragCancelledId);
 
         // Destroy main clutter actor: this should be sufficient
         // From clutter documentation:
@@ -329,6 +328,17 @@ dockedDash.prototype = {
         this._animStatus.clear();
     },
 
+    _onDragStart: function(){
+        global.stage_input_mode = Shell.StageInputMode.FULLSCREEN;
+    },
+
+    _onDragEnd: function(){
+        if(Main.overview.visible==false){ 
+            global.stage_input_mode = Shell.StageInputMode.NORMAL;
+        }
+
+        this.actor.sync_hover();
+    },
     // Disable autohide effect, thus show dash
     disableAutoHide: function() {
         if(this._autohide==true){
