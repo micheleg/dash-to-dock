@@ -358,7 +358,7 @@ dockedDash.prototype = {
             this._removeAnimations();
             if(!this.actor.hover && !DISABLE_AUTOHIDE) this._animateOut(ANIMATION_TIME, 0);
             if(OPAQUE_BACKGROUND && !OPAQUE_BACKGROUND_ALWAYS)
-                this._fadeInBackground(ANIMATION_TIME, ANIMATION_TIME);
+                this._fadeInBackground(ANIMATION_TIME, 0);
         }
     } 
 };
