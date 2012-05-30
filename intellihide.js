@@ -21,20 +21,8 @@ const handledWindowTypes = [
 const IntellihideMode = {
     HIDE: 0,            // Dash is always invisible
     SHOW: 1,            // Dash is always visible
-    AUTOHIDE:3,         // Basic autohide mode: visible on mouse hover
-    INTELLIHIDE: 2      // Basic intellihide mode: visible if no window overlap the dash
-};
-
-const OverviewMode = {
-    HIDE: 0,
-    SHOW: 1
-};
-
-const PositionMode = { // ACHTUNG: Only LEFT working at the moment!
-    LEFT:   0,
-    RIGHT:  1,
-    TOP:    2,
-    BOTTOM: 3
+    AUTOHIDE:2,         // Basic autohide mode: visible on mouse hover
+    INTELLIHIDE: 3      // Basic intellihide mode: visible if no window overlap the dash
 };
 
 // Settings (ALl almost unusable...):
@@ -46,11 +34,8 @@ const PositionMode = { // ACHTUNG: Only LEFT working at the moment!
 //     get nothing in return. No space is saved currently like in hideDash extension. Use
 //     this mode only if you really hate to see the dash there!
 //  3. Also intellihideMode.INTELLIHIDE  in OVERVIEW_MODE doesn't make sense...
-//  4. Only PositionMode.LEFT works.
 const NORMAL_MODE = IntellihideMode.INTELLIHIDE;
 const OVERVIEW_MODE = IntellihideMode.SHOW;
-const POSITION_MODE = PositionMode.LEFT;
-
 
 
 /*
@@ -63,14 +48,20 @@ const POSITION_MODE = PositionMode.LEFT;
  * 
 */
 
-let intellihide = function(show, hide, target) {
+let intellihide = function(show, hide, target, settings) {
 
-    this._init(show, hide, target);
+    this._init(show, hide, target, settings);
 } 
 
 intellihide.prototype = {
 
-    _init: function(show, hide, target) {
+    _init: function(show, hide, target, settings) {
+
+        this._settings = settings;
+        this._loadSettings();
+        if(this._settings){
+            this._bindSettingsChanges();
+        }
 
         // current intellihide status
         this.status;
@@ -148,6 +139,37 @@ intellihide.prototype = {
 
     },
 
+    _loadSettings: function(){
+
+        if(this._settings) {
+
+        let settings = this._settings;
+
+            this._SETTINGS = {
+
+                normal_mode: settings.get_enum('normal-mode'),
+                overview_mode: settings.get_enum('overview-mode')
+            };
+
+        } else{
+
+            this._SETTINGS = { 
+
+                normal_mode: NORMAL_MODE,
+                overview_mode: OVERVIEW_MODE
+            };
+        }
+    },
+
+    _bindSettingsChanges: function() {
+
+        this._settings.connect('changed::normal-mode', Lang.bind(this, function(){
+            this._SETTINGS['normal_mode'] = this._settings.get_enum('normal-mode');
+            this._updateDockVisibility();
+        }));
+    },
+
+
     _show: function(force) {
         if (this.status==false || force){
             this.status = true;
@@ -167,12 +189,7 @@ intellihide.prototype = {
         if(_DEBUG_) global.log("width: " + this.target.width);
         if(_DEBUG_) global.log("x: " + this.target.x);
 
-        if(POSITION_MODE <= 2) { 
-            this._offset = this.target.width ;
-        } else {
-            this._offset = this.target.height;
-        }
-
+        this._offset = this.target.width ;
         this._updateDockVisibility();
     },
 
@@ -185,13 +202,13 @@ intellihide.prototype = {
     _overviewEnter: function() {
 
         this._inOverview = true;
-        if(OVERVIEW_MODE == IntellihideMode.SHOW){
+        if(this._SETTINGS['overview_mode'] == IntellihideMode.SHOW){
                 this._show();
-        } else if (OVERVIEW_MODE == IntellihideMode.AUTOHIDE){
+        } else if (this._SETTINGS['overview_mode'] == IntellihideMode.AUTOHIDE){
                 this._hide();
-        } else if (OVERVIEW_MODE == IntellihideMode.INTELLIHIDE){
+        } else if (this._SETTINGS['overview_mode'] == IntellihideMode.INTELLIHIDE){
             this._show();
-        } else if (OVERVIEW_MODE == IntellihideMode.HIDE) {
+        } else if (this._SETTINGS['overview_mode'] == IntellihideMode.HIDE) {
             /*TODO*/
         }
     },
@@ -243,24 +260,24 @@ intellihide.prototype = {
         // window close...)
 
         if(this._inOverview){
-            if( OVERVIEW_MODE !== IntellihideMode.INTELLIHIDE ) {
+            if( this._SETTINGS['overview_mode'] !== IntellihideMode.INTELLIHIDE ) {
                 return;
             }
         }
 
         //else in normal mode:
-        if(NORMAL_MODE == IntellihideMode.AUTOHIDE){
+        if(this._SETTINGS['normal_mode'] == IntellihideMode.AUTOHIDE){
             this._hide();
             return;
         }
-        if(NORMAL_MODE == IntellihideMode.SHOW){
+        if(this._SETTINGS['normal_mode'] == IntellihideMode.SHOW){
             this._show();
             return;
         }
-        else if(NORMAL_MODE == IntellihideMode.HIDE){
+        else if(this._SETTINGS['normal_mode'] == IntellihideMode.HIDE){
             /*TODO*/
             return;
-        } else if(NORMAL_MODE == IntellihideMode.INTELLIHIDE){
+        } else if(this._SETTINGS['normal_mode'] == IntellihideMode.INTELLIHIDE){
 
             var edge;
             var ctr=0;

@@ -1,16 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="gnome-shell-extensions">
-  <enum id='org.gnome.shell.extensions.dash-to-dock/.PositionMode'>
-    <value value='0' nick='left'/>
-    <value value='1' nick='right'/>
-  </enum>
-  <enum id='org.gnome.shell.extensions.dash-to-dock/.AutoHideEffect'>
-    <value value='0' nick='resize'/>
-    <value value='1' nick='rescale'/>
-    <value value='2' nick='move'/>
+  <enum id='org.gnome.shell.extensions.dash-to-dock.IntellihideMode'>
+    <value value='0' nick='hide'/>
+    <value value='1' nick='show'/>
+    <value value='2' nick='autohide'/>
+    <value value='3' nick='intellihide'/>
   </enum>
 
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
+    <key type="d" name="animation-time">
+      <default>0.25</default>
+      <summary>Animation time</summary>
+      <description>Sets the time duration of the autohide effect.</description>
+    </key>
+    <key type="d" name="show-delay">
+      <default>0.5</default>
+      <summary>Show delay</summary>
+      <description>Sets the delay after the mouse reaches the screen border before showing the dock.</description>
+    </key>
+    <key type="d" name="hide-delay">
+      <default>0.2</default>
+      <summary>Show delay</summary>
+      <description>Sets the delay after the mouse left the dock before hiding it.</description>
+    </key>
+    <key type="b" name="opaque-background">
+      <default>true</default>
+      <summary>Dash background is opaque</summary>
+      <description>Makes the background of the dash opaque improving readability when in autohide mode.</description>
+    </key>
+    <key type="b" name="opaque-background-always">
+      <default>true</default>
+      <summary>Dash background always opaque</summary>
+      <description>Makes the background of the dash opaque improving readability even when not in autohide mode.</description>
+    </key>
+    <key type="d" name="background-opacity">
+      <default>0.9</default>
+      <summary>Opacity of the dash background</summary>
+      <description>Sets the opacity of the dash background  when in autohide mode.</description>
+    </key>
+    <key name="normal-mode" enum="org.gnome.shell.extensions.dash-to-dock.IntellihideMode">
+      <default>'intellihide'</default>
+      <summary>Intellihide behaviour</summary>
+      <description>Sets the intellihide behavior when in normal mode.</description>
+    </key>
+    <key name="overview-mode" enum="org.gnome.shell.extensions.dash-to-dock.IntellihideMode">
+      <default>'show'</default>
+      <summary>Dash visibility in overview</summary>
+      <description>Sets the dash visibility when in overview mode.</description>
+    </key>
+
 <!--
     <key name="position" enum="org.gnome.shell.extensions.dock.PositionMode">
       <default>'right'</default>

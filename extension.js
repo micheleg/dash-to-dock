@@ -42,8 +42,8 @@ if( versionGreaterThanOrEqualTo('3.4') ){
     let Convenience = Extension.imports.convenience;
     Intellihide = Extension.imports.intellihide;
     DockedDash = Extension.imports.dockedDash;
-    
-    settings = Convenience.getSettings('org.gnome.shell.extensions.dashtodock');
+
+    settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
 } 
 else if( versionGreaterThanOrEqualTo('3.2') ){
     /* This identifier string comes from your installation directory */
