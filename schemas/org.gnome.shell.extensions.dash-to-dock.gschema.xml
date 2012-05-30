@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-shell-extensions">
+  <enum id='org.gnome.shell.extensions.dash-to-dock/.PositionMode'>
+    <value value='0' nick='left'/>
+    <value value='1' nick='right'/>
+  </enum>
+  <enum id='org.gnome.shell.extensions.dash-to-dock/.AutoHideEffect'>
+    <value value='0' nick='resize'/>
+    <value value='1' nick='rescale'/>
+    <value value='2' nick='move'/>
+  </enum>
+
+  <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
+<!--
+    <key name="position" enum="org.gnome.shell.extensions.dock.PositionMode">
+      <default>'right'</default>
+      <summary>Position of the dock</summary>
+      <description>Sets the position of the dock in the screen. Allowed values are 'right' or 'left'</description>
+    </key>
+    <key type="i" name="size">
+      <default>48</default>
+      <summary>Icon size</summary>
+      <description>Sets icon size of the dock.</description>
+    </key>
+    <key type="b" name="autohide">
+      <default>true</default>
+      <summary>Enable/disable autohide</summary>
+    </key>
+    <key name="hide-effect" enum="org.gnome.shell.extensions.dock.AutoHideEffect">
+      <default>'move'</default>
+      <summary>Autohide effect</summary>
+      <description>Sets the effect of the hide dock. Allowed values are 'resize', 'rescale' and 'move'</description>
+    </key>
+    <key type="d" name="hide-effect-duration">
+      <default>0.3</default>
+      <summary>Autohide duration</summary>
+      <description>Sets the time duration of the autohide effect.</description>
+    </key>
+    <key type="i" name="monitor">
+      <default>-1</default>
+      <summary>Monitor</summary>
+      <description>Sets monitor to display dock in. The default value (-1) is the primary monitor.</description>
+    </key>-->
+  </schema>
+</schemalist>

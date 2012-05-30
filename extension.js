@@ -35,11 +35,15 @@ function versionGreaterThanOrEqualTo(minVer) {
 
 let Intellihide;
 let DockedDash;
+let settings = null;
 
 if( versionGreaterThanOrEqualTo('3.4') ){
     let Extension = imports.misc.extensionUtils.getCurrentExtension();
+    let Convenience = Extension.imports.convenience;
     Intellihide = Extension.imports.intellihide;
     DockedDash = Extension.imports.dockedDash;
+    
+    settings = Convenience.getSettings('org.gnome.shell.extensions.dashtodock');
 } 
 else if( versionGreaterThanOrEqualTo('3.2') ){
     /* This identifier string comes from your installation directory */
@@ -68,8 +72,8 @@ function hide(){
 
 function enable() {
 
-    dock = new DockedDash.dockedDash();
-    intellihide = new Intellihide.intellihide(show, hide, dock.dash.actor);
+    dock = new DockedDash.dockedDash(settings);
+    intellihide = new Intellihide.intellihide(show, hide, dock.dash.actor, settings);
 
 }
 
