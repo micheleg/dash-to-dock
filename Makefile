@@ -2,7 +2,7 @@
 
 UUID = dash-to-dock@micxgx.gmail.com
 BASE_MODULES = extension.js stylesheet.css metadata.json
-EXTRA_MODULES = dockedDash.js intellihide.js convenience.js
+EXTRA_MODULES = dockedDash.js intellihide.js convenience.js prefs.js
 
 all: extension
 
@@ -15,7 +15,9 @@ zip-file: all
 	-rm -fR ./_build 
 	mkdir -p _build 
 	cp $(BASE_MODULES) $(EXTRA_MODULES) _build
-	cp -r schemas _build
+	mkdir -p _build/schemas
+	cp schemas/*.xml _build/schemas/
+	cp schemas/gschemas.compiled _build/schemas/
 	cd _build ; \
 	zip -qr "$(UUID).zip" .
 	mv _build/$(UUID).zip ./ 
