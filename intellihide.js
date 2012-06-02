@@ -26,6 +26,8 @@ const IntellihideMode = {
 };
 
 // Settings (ALl almost unusable...):
+// These settings are ingored in gnome-shell 3.4+; 
+// Use gnome-shell-extension-prefs  "dash-to-dock@micxgx.gmail.com" instead.
 //
 // Current limitations:
 //  1. IntellihideMode.HIDE does not exist.
@@ -57,6 +59,7 @@ intellihide.prototype = {
 
     _init: function(show, hide, target, settings) {
 
+        // Load settings
         this._settings = settings;
         this._loadSettings();
         if(this._settings){
@@ -142,7 +145,7 @@ intellihide.prototype = {
     _loadSettings: function(){
 
         if(this._settings) {
-
+        // Gnome 3.4+
         let settings = this._settings;
 
             this._SETTINGS = {
@@ -152,7 +155,7 @@ intellihide.prototype = {
             };
 
         } else{
-
+        // Gnome 3.2
             this._SETTINGS = { 
 
                 normal_mode: NORMAL_MODE,

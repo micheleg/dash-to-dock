@@ -14,6 +14,8 @@ const Overview = imports.ui.overview;
 
 
 // SETTINGS
+// These settings are ingored in gnome-shell 3.4+ 
+// Use gnome-shell-extension-prefs  "dash-to-dock@micxgx.gmail.com" instead.
 
 const ANIMATION_TIME = Overview.ANIMATION_TIME; // show/hide transition time
 const SHOW_DELAY     = 0.500; // delay before showing dash when it's hidden 
@@ -21,7 +23,7 @@ const HIDE_DELAY     = 0.250; // delay befoee hiding dash when mouse goes out
 
 const OPAQUE_BACKGROUND = true; // make the dash opaque increasing readability.
                                  // Some themes like the default one have a transparent bacground.
-const BACKGROUND_OPACITY = 0.9; // set dash background opacity if key above is true
+const BACKGROUND_OPACITY = 0.8; // set dash background opacity if key above is true
 const OPAQUE_BACKGROUND_ALWAYS = false; // whether the dash has always an opaque background or only when 
                                         // in autohide mode
 const DISABLE_AUTOHIDE = false      // Disable autohide show/hide mouse events. 
@@ -38,6 +40,7 @@ dockedDash.prototype = {
  
     _init: function(settings) {
 
+        // Load settings
         this._settings = settings;
         this._loadSettings();
         if(this._settings){
@@ -150,6 +153,7 @@ dockedDash.prototype = {
 
     _loadSettings: function(){
 
+        // Gnome 3.4+
         if(this._settings) {
 
         let settings = this._settings;
@@ -165,6 +169,7 @@ dockedDash.prototype = {
 
             };
 
+        // Gnome 3.2
         } else{
 
             this._SETTINGS = { 
@@ -194,12 +199,6 @@ dockedDash.prototype = {
 
         this._settings.connect('changed::opaque-background', Lang.bind(this, function(){
             this._SETTINGS['opaque_background'] = this._settings.get_boolean('opaque-background');
-            /*this._redisplay();
-            if(this._SETTINGS['opaque_background']) {
-                this._fadeInBackground(this._SETTINGS['animation_time'], 0);
-            } else {
-                this._fadeOutBackground(this._SETTINGS['animation_time'], 0);
-            }*/
             this._updateBackgroundOpacity();
         }));
 
@@ -210,15 +209,7 @@ dockedDash.prototype = {
 
         this._settings.connect('changed::opaque-background-always', Lang.bind(this, function(){
             this._SETTINGS['opaque_background_always'] = this._settings.get_boolean('opaque-background-always');
-            this._updateBackgroundOpacity();/*
-            this._redisplay();
-            if(this._SETTINGS['opaque_background']) {
-                if(this._SETTINGS['opaque_background_always'])
-                    this._fadeInBackground(this._SETTINGS['animation_time'], 0);
-                else
-                    this._fadeOutBackground(this._SETTINGS['animation_time'], 0);
-            }*/
-
+            this._updateBackgroundOpacity();
         }));
     },
 
@@ -403,14 +394,8 @@ dockedDash.prototype = {
             this._animateIn(this._SETTINGS['animation_time'], 0);
         }
 
-        // update background
-        if(this._SETTINGS['opaque_background']==true) {
-            this._backgroundBox.show();
-        } else {
-            this._backgroundBox.hide();
-        }
+        this._updateBackgroundOpacity();
 
-        //update clip
         this._updateClip();
 
     },
