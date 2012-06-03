@@ -145,10 +145,6 @@ dockedDash.prototype = {
         // Reshow normal dash previously hidden
         Main.overview._dash.actor.show();
 
-        if(this._settings) {
-            this._settings.run_dispose();
-        }
-
     },
 
     _loadSettings: function(){

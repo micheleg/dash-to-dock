@@ -80,11 +80,12 @@ function enable() {
 function disable() {
     dock.destroy();
     intellihide.destroy();
-
+    if(settings) {
+        settings.run_dispose();
+    }
+    
+    settings = null;
     dock=null;
     intellihide=null;
 }
-
-
-
 
