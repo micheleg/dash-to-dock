@@ -4,6 +4,7 @@ const _DEBUG_ = false;
 
 const Lang = imports.lang;
 const Meta = imports.gi.Meta;
+const Mainloop = imports.mainloop;
 
 const Main = imports.ui.main;
 
@@ -64,6 +65,10 @@ intellihide.prototype = {
         // Keep track of the current overview mode (I mean if it is on/off)
         this._inOverview = false;
 
+        // Main id of the timeout controlling timeout for updateDockVisibility function 
+        // when windows are dragged around (move and resize)
+        this._windowChangedTimeout = 0;
+
         // Connect global signals
         this._pushSignals(
             // call updateVisibility when target actor changes
@@ -72,12 +77,30 @@ intellihide.prototype = {
                 'box-changed',
                 Lang.bind(this, this._updateDockVisibility)
             ],
-            // Add signals on windows created from now on
+            // Add timeout when window grab-operation begins and remove it when it ends.
+            // These signals only exist starting from Gnome-Shell 3.4
             [
                 global.display,
-                'window-created',
-                Lang.bind(this, this._windowCreated)
+                'grab-op-begin',
+                Lang.bind(this, this._grabOpBegin)
             ],
+            [
+                global.display,
+                'grab-op-end',
+                Lang.bind(this, this._grabOpEnd)
+            ],
+            // direct maximize/unmazimize are not included in grab-operations
+            [
+                global.window_manager,
+                'maximize', 
+                Lang.bind(this, this._updateDockVisibility )
+            ],
+            [
+                global.window_manager,
+                'unmaximize',
+                Lang.bind(this, this._updateDockVisibility )
+            ],
+            // Probably this is also included in restacked?
             [
                 global.window_manager,
                 'switch-workspace',
@@ -108,9 +131,6 @@ intellihide.prototype = {
             ]
         );
 
-        // Add signals to current windows
-        this._initializeAllWindowSignals();
-
         // initialize: call show forcing to initialize status variable
         this._show(true);
 
@@ -131,7 +151,6 @@ intellihide.prototype = {
             this._updateDockVisibility();
         }));
     },
-
 
     _show: function(force) {
         if (this.status==false || force){
@@ -167,38 +186,27 @@ intellihide.prototype = {
         }
     },
 
-    _windowCreated: function(__unused_display, the_window) {
+    _grabOpBegin: function() {
 
-        this._addWindowSignals(the_window);
+        let INTERVAL = 100; // A good compromise between reactivity and efficiency; to be tuned.
 
+        if(this._windowChangedTimeout>0)
+            Mainloop.source_remove(this._windowChangedTimeout); // Just to be sure
+
+        this._windowChangedTimeout = Mainloop.timeout_add(INTERVAL,
+            Lang.bind(this, function(){
+                this._updateDockVisibility();
+                return true; // to make the loop continue
+            })
+        );
     },
 
-    _addWindowSignals: function(the_window) {
-            
-            // Looking for a way to avoid to add custom variables ...
-            the_window._micheledash_onPositionChanged = the_window.get_compositor_private().connect(
-                'position-changed', Lang.bind(this, this._updateDockVisibility)
-            );
+    _grabOpEnd: function() {
 
-            the_window._micheledash_onSizeChanged = the_window.get_compositor_private().connect(
-                'size-changed', Lang.bind(this, this._updateDockVisibility)
-            );
+        if(this._windowChangedTimeout>0)
+            Mainloop.source_remove(this._windowChangedTimeout);
 
-    },
-
-    _removeWindowSignals: function(the_window) {
-        
-        var wa = the_window.get_compositor_private();
-
-        if( the_window && the_window._micheledash_onSizeChanged ) {
-               wa.disconnect(the_window._micheledash_onSizeChanged);
-               delete the_window._micheledash_onSizeChanged;
-        }
-
-        if( the_window && the_window._micheledash_onPositionChanged ) {
-               wa.disconnect(the_window._micheledash_onPositionChanged);
-               delete the_window._micheledash_onPositionChanged;
-        }
+        this._updateDockVisibility(); 
     },
 
     _switchWorkspace: function(shellwm, from, to, direction) {
@@ -301,6 +309,7 @@ intellihide.prototype = {
             }
         }
         return false;
+
     },
 
     // try to simplify global signals handling
@@ -321,6 +330,5 @@ intellihide.prototype = {
             this._signals[i][0].disconnect(this._signals[i][1]);
         }
     }
-
 
 };
