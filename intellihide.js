@@ -66,6 +66,9 @@ intellihide.prototype = {
             this._bindSettingsChanges();
         }
 
+        //store global signals identifiers via _pushSignals();
+        this._signals = [];
+
         // current intellihide status
         this.status;
         // Set base functions
@@ -80,15 +83,37 @@ intellihide.prototype = {
         // It is automatically updated by the below signal:
         this._onSizeChange = this.target.connect('notify::width', Lang.bind(this, this._updateOffset));
 
-        // Add signals on windows created from now on
-        this._onWindowCreated = global.display.connect('window-created', Lang.bind(this, this._windowCreated));
-        this._onSwitchWorkspace = global.window_manager.connect('switch-workspace', Lang.bind(this, this._switchWorkspace ));
-        // trigggered for instance when a window is closed.
-        this._onRestacked = global.screen.connect('restacked',  Lang.bind(this, this._updateDockVisibility ));
-
-        // Set visibility in overview mode      
-        this._onOverviewEnter = Main.overview.connect('showing', Lang.bind(this, this._overviewEnter));
-        this._onOverviewExit = Main.overview.connect('hiding', Lang.bind(this,this._overviewExit));
+        // Connect global signals
+        this._pushSignals(
+            // Add signals on windows created from now on
+            [
+                global.display,
+                'window-created',
+                Lang.bind(this, this._windowCreated)
+            ],
+            [
+                global.window_manager,
+                'switch-workspace',
+                Lang.bind(this, this._switchWorkspace)
+            ],
+            // trigggered for instance when a window is closed.
+            [
+                global.screen,
+                'restacked',
+                Lang.bind(this, this._updateDockVisibility)
+            ],
+            // Set visibility in overview mode
+            [
+                Main.overview,
+                'showing',
+                Lang.bind(this, this._overviewEnter)
+            ],
+            [
+                Main.overview,
+                'hiding',
+                Lang.bind(this,this._overviewExit)
+            ]
+        );
 
         // Add signals to current windows
         this._initializeAllWindowSignals();
@@ -101,33 +126,9 @@ intellihide.prototype = {
     },
 
     destroy: function() {
-       
-        // Clear global signals
 
-        if (this._onWindowCreated) {
-            global.display.disconnect(this._onWindowCreated);
-            delete this._onWindowCreated;
-        }
-
-        if (this._onSwitchWorkspace) {
-            global.window_manager.disconnect(this._onSwitchWorkspace);
-            delete this._onSwitchWorkspace;
-        }
-
-        if (this._onRestacked) {
-            global.screen.disconnect(this._onRestacked);
-            delete this._onRestacked;
-        }
-
-        if (this._onOverviewEnter) {
-            Main.overview.disconnect(this._onOverviewEnter);
-            delete this._onOverviewEnter;
-        }
-
-        if (this._onOverviewExit) {
-            Main.overview.disconnect(this._onOverviewExit);
-            delete this._onOverviewExit;
-        }
+        // Disconnect global signals
+        this._disconnectSignals();
 
         // Clear signals on existing windows 
 
@@ -366,6 +367,25 @@ intellihide.prototype = {
             this._addWindowSignals(meta_win);
 
         }));
+    },
+
+    // try to simplify global signals handling
+    _pushSignals: function(/*unlimited 3-long array arguments*/) {
+
+        for( let i = 0; i < arguments.length; i++ ) {
+            let object = arguments[i][0];
+            let event = arguments[i][1];
+
+            let id = object.connect(event, arguments[i][2]);
+            this._signals.push( [ object , id ] );
+        }
+    },
+
+    _disconnectSignals: function() {
+
+        for( let i = 0; i < this._signals.length; i++ ) {
+            this._signals[i][0].disconnect(this._signals[i][1]);
+        }
     }
 
 

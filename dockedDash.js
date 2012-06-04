@@ -47,6 +47,9 @@ dockedDash.prototype = {
             this._bindSettingsChanges();
         }
 
+        //store global signals identifiers via _pushSignals();
+        this._signals = [];
+
         // authohide on hover effect on/off
         this._autohide = true;
         // initialize animation status object
@@ -81,15 +84,37 @@ dockedDash.prototype = {
                                                             coordinate: Clutter.BindCoordinate.SIZE });
         this._backgroundBox.add_constraint(this.constrainSize);
 
-        // Connect events for updating dash vertical position
-        this._resizeId1 = Main.overview._viewSelector._pageArea.connect("notify::y", Lang.bind(this, this._updateYPosition));
-        this._resizeId2 = Main.overview._viewSelector.connect("notify::y", Lang.bind(this, this._updateYPosition));
-
-        // Allow app icons do be dragged out of the chrome actors when reordering or deleting theme while not on overview mode
-        // by changing global stage input mode
-        this._dragStartId = Main.overview.connect('item-drag-begin', Lang.bind(this, this._onDragStart));
-        this._dragEndId = Main.overview.connect('item-drag-end', Lang.bind(this, this._onDragEnd));
-        this._dragCancelledId = Main.overview.connect('item-drag-cancelled', Lang.bind(this, this._onDragEnd));
+        // Connect global signals
+        this._pushSignals(
+            // Connect events for updating dash vertical position
+            [
+                Main.overview._viewSelector._pageArea,
+                'notify::y',
+                Lang.bind(this, this._updateYPosition)
+            ],
+            [
+                Main.overview._viewSelector,
+                'notify::y',
+                Lang.bind(this, this._updateYPosition)
+            ],
+            // Allow app icons do be dragged out of the chrome actors when reordering or deleting theme while not on overview mode
+            // by changing global stage input mode
+            [
+                Main.overview,
+                'item-drag-begin',
+                Lang.bind(this, this._onDragStart)
+            ],
+            [
+                Main.overview,
+                'item-drag-end',
+                Lang.bind(this, this._onDragEnd)
+            ],
+            [
+                Main.overview,
+                'item-drag-cancelled',
+                Lang.bind(this, this._onDragEnd)
+            ]
+        );
 
         //Hide the dock whilst setting positions
         //this.actor.hide(); but I need to access its width, so I use opacity
@@ -129,13 +154,8 @@ dockedDash.prototype = {
 
     destroy: function(){
 
-        // Disconnect global signals 
-        Main.overview._viewSelector._pageArea.disconnect(this._resizeId1);
-        Main.overview._viewSelector.disconnect(this._resizeId2);
-        Main.overview.disconnect(this._dragStartId);
-        Main.overview.disconnect(this._dragEndId);
-        Main.overview.disconnect(this._dragCancelledId);
-
+        // Disconnect global signals
+        this._disconnectSignals();
         // Destroy main clutter actor: this should be sufficient
         // From clutter documentation:
         // If the actor is inside a container, the actor will be removed.
@@ -416,6 +436,26 @@ dockedDash.prototype = {
 
         this.actor.sync_hover();
     },
+
+    // try to simplify global signals handling
+    _pushSignals: function(/*unlimited 3-long array arguments*/) {
+
+        for( let i = 0; i < arguments.length; i++ ) {
+            let object = arguments[i][0];
+            let event = arguments[i][1];
+
+            let id = object.connect(event, arguments[i][2]);
+            this._signals.push( [ object , id ] );
+        }
+    },
+
+    _disconnectSignals: function() {
+
+        for( let i = 0; i < this._signals.length; i++ ) {
+            this._signals[i][0].disconnect(this._signals[i][1]);
+        }
+    },
+
     // Disable autohide effect, thus show dash
     disableAutoHide: function() {
         if(this._autohide==true){
