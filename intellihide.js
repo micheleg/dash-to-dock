@@ -3,8 +3,9 @@
 const _DEBUG_ = false;
 
 const Lang = imports.lang;
-const Main = imports.ui.main;
 const Meta = imports.gi.Meta;
+
+const Main = imports.ui.main;
 
 const handledWindowTypes = [
   Meta.WindowType.NORMAL,
@@ -15,8 +16,8 @@ const handledWindowTypes = [
   Meta.WindowType.TOOLBAR,
   Meta.WindowType.MENU,
   Meta.WindowType.UTILITY,
-  Meta.WindowType.SPLASHSCREEN,
-]
+  Meta.WindowType.SPLASHSCREEN
+];
 
 const IntellihideMode = {
     HIDE: 0,            // Dash is always invisible
@@ -25,20 +26,7 @@ const IntellihideMode = {
     INTELLIHIDE: 3      // Basic intellihide mode: visible if no window overlap the dash
 };
 
-// Settings (ALl almost unusable...):
-// These settings are ingored in gnome-shell 3.4+; 
-// Use gnome-shell-extension-prefs  "dash-to-dock@micxgx.gmail.com" instead.
-//
-// Current limitations:
-//  1. IntellihideMode.HIDE does not exist.
-//  2. Using intellihideMode.AUTOHIDE  in OVERVIEW_MODE is not a good idea: you cannot
-//     anymore drag and drop icons on windows on the dash as it is hidden. Moreover you 
-//     get nothing in return. No space is saved currently like in hideDash extension. Use
-//     this mode only if you really hate to see the dash there!
-//  3. Also intellihideMode.INTELLIHIDE  in OVERVIEW_MODE doesn't make sense...
-const NORMAL_MODE = IntellihideMode.INTELLIHIDE;
 const OVERVIEW_MODE = IntellihideMode.SHOW;
-
 
 /*
  * A rough and ugly implementation of the intellihide behaviour.
@@ -61,10 +49,7 @@ intellihide.prototype = {
 
         // Load settings
         this._settings = settings;
-        this._loadSettings();
-        if(this._settings){
-            this._bindSettingsChanges();
-        }
+        this._bindSettingsChanges();
 
         //store global signals identifiers via _pushSignals();
         this._signals = [];
@@ -138,45 +123,11 @@ intellihide.prototype = {
         // Disconnect global signals
         this._disconnectSignals();
 
-        // Clear signals on existing windows 
-
-        global.get_window_actors().forEach(Lang.bind(this,function(wa) { 
-
-            var the_window = wa.get_meta_window();
-
-            this._removeWindowSignals(the_window);
-
-         }));
-
-
-    },
-
-    _loadSettings: function(){
-
-        if(this._settings) {
-        // Gnome 3.4+
-        let settings = this._settings;
-
-            this._SETTINGS = {
-
-                normal_mode: settings.get_enum('normal-mode'),
-                overview_mode: settings.get_enum('overview-mode')
-            };
-
-        } else{
-        // Gnome 3.2
-            this._SETTINGS = { 
-
-                normal_mode: NORMAL_MODE,
-                overview_mode: OVERVIEW_MODE
-            };
-        }
     },
 
     _bindSettingsChanges: function() {
 
         this._settings.connect('changed::normal-mode', Lang.bind(this, function(){
-            this._SETTINGS['normal_mode'] = this._settings.get_enum('normal-mode');
             this._updateDockVisibility();
         }));
     },
@@ -205,13 +156,13 @@ intellihide.prototype = {
     _overviewEnter: function() {
 
         this._inOverview = true;
-        if(this._SETTINGS['overview_mode'] == IntellihideMode.SHOW){
+        if(OVERVIEW_MODE == IntellihideMode.SHOW){
                 this._show();
-        } else if (this._SETTINGS['overview_mode'] == IntellihideMode.AUTOHIDE){
+        } else if (OVERVIEW_MODE == IntellihideMode.AUTOHIDE){
                 this._hide();
-        } else if (this._SETTINGS['overview_mode'] == IntellihideMode.INTELLIHIDE){
+        } else if (OVERVIEW_MODE == IntellihideMode.INTELLIHIDE){
             this._show();
-        } else if (this._SETTINGS['overview_mode'] == IntellihideMode.HIDE) {
+        } else if (OVERVIEW_MODE == IntellihideMode.HIDE) {
             /*TODO*/
         }
     },
@@ -263,24 +214,24 @@ intellihide.prototype = {
         // window close...)
 
         if(this._inOverview){
-            if( this._SETTINGS['overview_mode'] !== IntellihideMode.INTELLIHIDE ) {
+            if( OVERVIEW_MODE !== IntellihideMode.INTELLIHIDE ) {
                 return;
             }
         }
 
         //else in normal mode:
-        if(this._SETTINGS['normal_mode'] == IntellihideMode.AUTOHIDE){
+        if(this._settings.get_enum('normal-mode') == IntellihideMode.AUTOHIDE){
             this._hide();
             return;
         }
-        else if(this._SETTINGS['normal_mode'] == IntellihideMode.SHOW){
+        else if(this._settings.get_enum('normal-mode') == IntellihideMode.SHOW){
             this._show();
             return;
         }
-        else if(this._SETTINGS['normal_mode'] == IntellihideMode.HIDE){
+        else if(this._settings.get_enum('normal-mode') == IntellihideMode.HIDE){
             /*TODO*/
             return;
-        } else if(this._SETTINGS['normal_mode'] == IntellihideMode.INTELLIHIDE){
+        } else if(this._settings.get_enum('normal-mode') == IntellihideMode.INTELLIHIDE){
 
             let overlaps = false;
 
@@ -350,22 +301,6 @@ intellihide.prototype = {
             }
         }
         return false;
-    },
-
-    _initializeAllWindowSignals: function () {
-        
-        global.get_window_actors().forEach(Lang.bind(this,function(wa) {
-
-            var meta_win = wa.get_meta_window();
-            if (!meta_win) {    //TODO michele: why? What does it mean?
-                return;
-            } 
-            // First remove signals if already present. It should never happen 
-            // if the extension is correctly unloaded.
-            this._removeWindowSignals(meta_win);
-            this._addWindowSignals(meta_win);
-
-        }));
     },
 
     // try to simplify global signals handling
