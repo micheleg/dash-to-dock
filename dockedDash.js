@@ -2,21 +2,19 @@
 
 const _DEBUG_= false;
 
-const St = imports.gi.St;
-const Signals = imports.signals;
-const Lang = imports.lang;
-const Main = imports.ui.main;
-const Tweener = imports.ui.tweener;
 const Clutter = imports.gi.Clutter;
+const Lang = imports.lang;
 const Shell = imports.gi.Shell;
+const Signals = imports.signals;
+const St = imports.gi.St;
 const Mainloop = imports.mainloop;
+
+const Main = imports.ui.main;
 const Dash = imports.ui.dash;
 const Overview = imports.ui.overview;
-
+const Tweener = imports.ui.tweener;
 
 // SETTINGS
-// These settings are ingored in gnome-shell 3.4+ 
-// Use gnome-shell-extension-prefs  "dash-to-dock@micxgx.gmail.com" instead.
 
 const ANIMATION_TIME = Overview.ANIMATION_TIME; // show/hide transition time
 const SHOW_DELAY     = 0.500; // delay before showing dash when it's hidden 
@@ -32,21 +30,14 @@ const DISABLE_AUTOHIDE = false      // Disable autohide show/hide mouse events.
 
 // END OF SETTINGS
 
-function dockedDash(settings) {
+function dockedDash() {
 
-    this._init(settings);
+    this._init();
 }
 
 dockedDash.prototype = {
  
-    _init: function(settings) {
-
-        // Load settings
-        this._settings = settings;
-        this._loadSettings();
-        if(this._settings){
-            this._bindSettingsChanges();
-        }
+    _init: function() {
 
         //store global signals identifiers via _pushSignals();
         this._signals = [];
@@ -73,7 +64,7 @@ dockedDash.prototype = {
         // to cover all and only the dash area. It is probably a little ugly workaround, but I 
         // have not found a way to access the current style and simply change the background alpha.
         this._backgroundBox = new St.Bin({ name: 'dash', reactive: false, y_align: St.Align.START});
-        this._backgroundBox.set_style('background-color: rgba(1,1,1,'+this._SETTINGS['background_opacity']+');padding:0;margin:0;border:0;');
+        this._backgroundBox.set_style('background-color: rgba(1,1,1,'+BACKGROUND_OPACITY+');padding:0;margin:0;border:0;');
 
         this.actor.set_track_hover(true);
         // Create and apply height constraint to the dash
@@ -179,68 +170,6 @@ dockedDash.prototype = {
 
     },
 
-    _loadSettings: function(){
-
-        // Gnome 3.4+
-        if(this._settings) {
-
-        let settings = this._settings;
-
-            this._SETTINGS = {
-
-                animation_time: settings.get_double('animation-time'),
-                show_delay: settings.get_double('show-delay'),
-                hide_delay: settings.get_double('hide-delay'),
-                opaque_background: settings.get_boolean('opaque-background'),
-                background_opacity: settings.get_double('background-opacity'),
-                opaque_background_always: settings.get_boolean('opaque-background-always')
-
-            };
-
-        // Gnome 3.2
-        } else{
-
-            this._SETTINGS = { 
-
-                animation_time: ANIMATION_TIME,
-                show_delay: SHOW_DELAY,
-                hide_delay: HIDE_DELAY,
-                opaque_background: OPAQUE_BACKGROUND,
-                background_opacity: BACKGROUND_OPACITY,
-                opaque_background_always: OPAQUE_BACKGROUND_ALWAYS
-
-            };
-        }
-    },
-
-    _bindSettingsChanges: function() {
-
-        let double_keys = ['hide-delay', 'show-delay', 'animation-time'];
-        for(let i=0; i<double_keys.length; i++){
-            let key = double_keys[i];
-            this._settings.connect('changed::'+key, Lang.bind(this, function() {
-                this._loadSettings(this._settings);
-                let keyJ = all_keys[i].replace('-', '_');
-                this._SETTINGS[keyJ] = this._settings.get_double(key);
-            }));
-        }
-
-        this._settings.connect('changed::opaque-background', Lang.bind(this, function(){
-            this._SETTINGS['opaque_background'] = this._settings.get_boolean('opaque-background');
-            this._updateBackgroundOpacity();
-        }));
-
-        this._settings.connect('changed::background-opacity', Lang.bind(this, function(){
-            this._SETTINGS['background_opacity'] = this._settings.get_double('background-opacity');
-            this._backgroundBox.set_style('background-color: rgba(1,1,1,'+this._SETTINGS['background_opacity']+');padding:0;margin:0;border:0;');
-        }));
-
-        this._settings.connect('changed::opaque-background-always', Lang.bind(this, function(){
-            this._SETTINGS['opaque_background_always'] = this._settings.get_boolean('opaque-background-always');
-            this._updateBackgroundOpacity();
-        }));
-    },
-
     _hoverChanged: function() {
         if(this._autohide){
             if( this.actor.hover ) {
@@ -261,17 +190,17 @@ dockedDash.prototype = {
         if( this._autohide && ( anim.hidden() || anim.hiding() ) && !DISABLE_AUTOHIDE ){
 
             let delay;
-            // If the dock is hidden, wait this._SETTINGS['show_delay'] before showing it; 
+            // If the dock is hidden, wait SHOW_DELAY before showing it; 
             // otherwise show it immediately.
             if(anim.hidden()){
-                delay = this._SETTINGS['show_delay'];
+                delay = SHOW_DELAY;
             } else if(anim.hiding()){
                 // suppress all potential queued hiding animations (always give priority to show)
                 this._removeAnimations();
                 delay = 0;
             }
 
-            this._animateIn(this._SETTINGS['animation_time'], delay);
+            this._animateIn(ANIMATION_TIME, delay);
         }
     },
 
@@ -295,17 +224,17 @@ dockedDash.prototype = {
                     //if a show already started, let it finish; queue hide without removing the show.
                     // to obtain this I increase the delay to avoid the overlap and interference 
                     // between the animations
-                    delay = this._SETTINGS['hide_delay'] + 2*this._SETTINGS['animation_time'] + this._SETTINGS['show_delay'];
+                    delay = HIDE_DELAY + 2*ANIMATION_TIME + SHOW_DELAY;
 
                 } else {
                     this._removeAnimations();
                     delay = 0;
                 }
             } else if( anim.shown() ) {
-                delay = this._SETTINGS['hide_delay'];
+                delay = HIDE_DELAY;
             }
 
-            this._animateOut(this._SETTINGS['animation_time'], delay);
+            this._animateOut(ANIMATION_TIME, delay);
 
         }
     },
@@ -401,12 +330,12 @@ dockedDash.prototype = {
 
     _updateBackgroundOpacity: function() {
 
-        if(this._SETTINGS['opaque_background'] && (this._autohide || this._SETTINGS['opaque_background_always'])){
+        if(OPAQUE_BACKGROUND && (this._autohide || OPAQUE_BACKGROUND_ALWAYS)){
             this._backgroundBox.show();
-            this._fadeInBackground(this._SETTINGS['animation_time'], 0);
+            this._fadeInBackground(ANIMATION_TIME, 0);
         }
-        else if(!this._SETTINGS['opaque_background'] || (!this._autohide && !this._SETTINGS['opaque_background_always'])) {
-            this._fadeOutBackground(this._SETTINGS['animation_time'], 0);
+        else if(!OPAQUE_BACKGROUND || (!this._autohide && !OPAQUE_BACKGROUND_ALWAYS)) {
+            this._fadeOutBackground(ANIMATION_TIME, 0);
         }
     },
 
@@ -423,7 +352,7 @@ dockedDash.prototype = {
             this._animateOut(0, 0);
         } else if( this._animStatus.shown() ){
             this._removeAnimations();
-            this._animateIn(this._SETTINGS['animation_time'], 0);
+            this._animateIn(ANIMATION_TIME, 0);
         }
 
         this._updateBackgroundOpacity();
@@ -492,9 +421,9 @@ dockedDash.prototype = {
         if(this._autohide==true){
             this._autohide = false;
             this._removeAnimations();
-            this._animateIn(this._SETTINGS['animation_time'], 0);
-            if(this._SETTINGS['opaque_background'] && !this._SETTINGS['opaque_background_always'])
-                this._fadeOutBackground(this._SETTINGS['animation_time'], 0);
+            this._animateIn(ANIMATION_TIME, 0);
+            if(OPAQUE_BACKGROUND && !OPAQUE_BACKGROUND_ALWAYS)
+                this._fadeOutBackground(ANIMATION_TIME, 0);
         }
     },
 
@@ -503,9 +432,15 @@ dockedDash.prototype = {
         if(this._autohide==false){
             this._autohide = true;
             this._removeAnimations();
-            if(!this.actor.hover && !DISABLE_AUTOHIDE) this._animateOut(this._SETTINGS['animation_time'], 0);
-            if(this._SETTINGS['opaque_background'] && !this._SETTINGS['opaque_background_always'])
-                this._fadeInBackground(this._SETTINGS['animation_time'], 0);
+            if(!this.actor.hover && !DISABLE_AUTOHIDE) {
+                this._animateOut(ANIMATION_TIME, 0);
+                delay = ANIMATION_TIME;
+            } else{
+                delay = 0;
+            }
+
+            if(OPAQUE_BACKGROUND && !OPAQUE_BACKGROUND_ALWAYS)
+                this._fadeInBackground(ANIMATION_TIME, 0);
         }
     } 
 };

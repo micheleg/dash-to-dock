@@ -3,8 +3,9 @@
 const _DEBUG_ = false;
 
 const Lang = imports.lang;
-const Main = imports.ui.main;
 const Meta = imports.gi.Meta;
+
+const Main = imports.ui.main;
 
 const handledWindowTypes = [
   Meta.WindowType.NORMAL,
@@ -15,8 +16,8 @@ const handledWindowTypes = [
   Meta.WindowType.TOOLBAR,
   Meta.WindowType.MENU,
   Meta.WindowType.UTILITY,
-  Meta.WindowType.SPLASHSCREEN,
-]
+  Meta.WindowType.SPLASHSCREEN
+];
 
 const IntellihideMode = {
     HIDE: 0,            // Dash is always invisible
@@ -25,10 +26,8 @@ const IntellihideMode = {
     INTELLIHIDE: 3      // Basic intellihide mode: visible if no window overlap the dash
 };
 
-// Settings (ALl almost unusable...):
-// These settings are ingored in gnome-shell 3.4+; 
-// Use gnome-shell-extension-prefs  "dash-to-dock@micxgx.gmail.com" instead.
-//
+// Settings:
+
 // Current limitations:
 //  1. IntellihideMode.HIDE does not exist.
 //  2. Using intellihideMode.AUTOHIDE  in OVERVIEW_MODE is not a good idea: you cannot
@@ -50,21 +49,14 @@ const OVERVIEW_MODE = IntellihideMode.SHOW;
  * 
 */
 
-let intellihide = function(show, hide, target, settings) {
+let intellihide = function(show, hide, target) {
 
-    this._init(show, hide, target, settings);
+    this._init(show, hide, target);
 } 
 
 intellihide.prototype = {
 
-    _init: function(show, hide, target, settings) {
-
-        // Load settings
-        this._settings = settings;
-        this._loadSettings();
-        if(this._settings){
-            this._bindSettingsChanges();
-        }
+    _init: function(show, hide, target) {
 
         //store global signals identifiers via _pushSignals();
         this._signals = [];
@@ -151,37 +143,6 @@ intellihide.prototype = {
 
     },
 
-    _loadSettings: function(){
-
-        if(this._settings) {
-        // Gnome 3.4+
-        let settings = this._settings;
-
-            this._SETTINGS = {
-
-                normal_mode: settings.get_enum('normal-mode'),
-                overview_mode: settings.get_enum('overview-mode')
-            };
-
-        } else{
-        // Gnome 3.2
-            this._SETTINGS = { 
-
-                normal_mode: NORMAL_MODE,
-                overview_mode: OVERVIEW_MODE
-            };
-        }
-    },
-
-    _bindSettingsChanges: function() {
-
-        this._settings.connect('changed::normal-mode', Lang.bind(this, function(){
-            this._SETTINGS['normal_mode'] = this._settings.get_enum('normal-mode');
-            this._updateDockVisibility();
-        }));
-    },
-
-
     _show: function(force) {
         if (this.status==false || force){
             this.status = true;
@@ -205,13 +166,13 @@ intellihide.prototype = {
     _overviewEnter: function() {
 
         this._inOverview = true;
-        if(this._SETTINGS['overview_mode'] == IntellihideMode.SHOW){
+        if(OVERVIEW_MODE == IntellihideMode.SHOW){
                 this._show();
-        } else if (this._SETTINGS['overview_mode'] == IntellihideMode.AUTOHIDE){
+        } else if (OVERVIEW_MODE == IntellihideMode.AUTOHIDE){
                 this._hide();
-        } else if (this._SETTINGS['overview_mode'] == IntellihideMode.INTELLIHIDE){
+        } else if (OVERVIEW_MODE == IntellihideMode.INTELLIHIDE){
             this._show();
-        } else if (this._SETTINGS['overview_mode'] == IntellihideMode.HIDE) {
+        } else if (OVERVIEW_MODE == IntellihideMode.HIDE) {
             /*TODO*/
         }
     },
@@ -263,24 +224,24 @@ intellihide.prototype = {
         // window close...)
 
         if(this._inOverview){
-            if( this._SETTINGS['overview_mode'] !== IntellihideMode.INTELLIHIDE ) {
+            if( OVERVIEW_MODE !== IntellihideMode.INTELLIHIDE ) {
                 return;
             }
         }
 
         //else in normal mode:
-        if(this._SETTINGS['normal_mode'] == IntellihideMode.AUTOHIDE){
+        if(NORMAL_MODE == IntellihideMode.AUTOHIDE){
             this._hide();
             return;
         }
-        else if(this._SETTINGS['normal_mode'] == IntellihideMode.SHOW){
+        else if(NORMAL_MODE == IntellihideMode.SHOW){
             this._show();
             return;
         }
-        else if(this._SETTINGS['normal_mode'] == IntellihideMode.HIDE){
+        else if(NORMAL_MODE == IntellihideMode.HIDE){
             /*TODO*/
             return;
-        } else if(this._SETTINGS['normal_mode'] == IntellihideMode.INTELLIHIDE){
+        } else if(NORMAL_MODE == IntellihideMode.INTELLIHIDE){
 
             let overlaps = false;
 
