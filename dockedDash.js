@@ -84,18 +84,28 @@ dockedDash.prototype = {
                                                             coordinate: Clutter.BindCoordinate.SIZE });
         this._backgroundBox.add_constraint(this.constrainSize);
 
+        // Put dock on the primary monitor
+        this._monitor = Main.layoutManager.primaryMonitor;
+
+        // this store size and the position where the dash is shown;
+        // used by intellihide module to check window overlap.
+        // I use a clutterActor and I have to add it to the stage because
+        // I want to connect to its 'allocation-changed' signal
+        this.dockBox = new Clutter.Actor({name: 'dashtodock.dockBox', reactive:false});
+        Main.layoutManager.addChrome(this.dockBox, { affectsStruts: 0, affectsInputRegion:0 });
+
         // Connect global signals
         this._pushSignals(
             // Connect events for updating dash vertical position
             [
                 Main.overview._viewSelector._pageArea,
                 'notify::y',
-                Lang.bind(this, this._updateYPosition)
+                Lang.bind(this, this._redisplay)
             ],
             [
                 Main.overview._viewSelector,
                 'notify::y',
-                Lang.bind(this, this._updateYPosition)
+                Lang.bind(this, this._redisplay)
             ],
             // Allow app icons do be dragged out of the chrome actors when reordering or deleting theme while not on overview mode
             // by changing global stage input mode
@@ -113,6 +123,12 @@ dockedDash.prototype = {
                 Main.overview,
                 'item-drag-cancelled',
                 Lang.bind(this, this._onDragEnd)
+            ],
+            // update wne monitor changes, for instance in multimonitor when monitor are attached
+            [
+                global.screen,
+                'monitors-changed',
+                Lang.bind(this, this._resetPosition )
             ]
         );
 
@@ -125,11 +141,7 @@ dockedDash.prototype = {
         this.actor.add_actor(this.dash.actor);
         Main.layoutManager.addChrome(this.actor, { affectsStruts: 0 });
 
-        // Put dock on the primary monitor 
-        this.monitor = Main.layoutManager.primaryMonitor;
-        this.position_x = this.monitor.x ;
-
-        // and update position and clip when width changes, that is when icons size and thus dash sise changes.
+        // and update position and clip when width changes, that is when icons size and thus dash size changes.
         this.dash.actor.connect('notify::width', Lang.bind(this, this._redisplay));
 
         Mainloop.idle_add(Lang.bind(this, this._initialize));
@@ -144,8 +156,10 @@ dockedDash.prototype = {
         Main.overview._group.hide();
 
         // Set initial position
-        this._updateYPosition();
-        this.actor.x = this.position_x-this.actor.width+1;
+        this._resetPosition();
+        //put out of the screen so its initial show is animated
+        this.actor.x = this.dockBox.x - this.dockBox.width+1;
+
         // Show 
         this.actor.set_opacity(255); //this.actor.show();
         this._redisplay();
@@ -161,6 +175,7 @@ dockedDash.prototype = {
         // If the actor is inside a container, the actor will be removed.
         // When you destroy a container, its children will be destroyed as well. 
         this.actor.destroy();
+        this.dockBox.destroy();
 
         // Reshow normal dash previously hidden
         Main.overview._dash.actor.show();
@@ -300,7 +315,7 @@ dockedDash.prototype = {
 
     _animateIn: function(time, delay) {
 
-        var final_position = this.position_x;
+        var final_position = this.dockBox.x;
 
         if(final_position !== this.actor.x){
             this._animStatus.queue(true);
@@ -319,7 +334,7 @@ dockedDash.prototype = {
 
     _animateOut: function(time, delay){
 
-        var final_position = this.position_x-this.actor.width+1;
+        var final_position = this.dockBox.x-this.actor.width+1;
 
         if(final_position !== this.actor.x){
             this._animStatus.queue(false);
@@ -343,10 +358,10 @@ dockedDash.prototype = {
 
         // Here we implicitly assume that the stage and actor's parent
         // share the same coordinate space
-        let clip = new Clutter.ActorBox({ x1: this.position_x,
-                          y1: this.monitor.y,
-                          x2: this.position_x + this.monitor.width,
-                          y2: this.monitor.y + this.monitor.height});
+        let clip = new Clutter.ActorBox({ x1: this._monitor.x,
+                          y1: this._monitor.y,
+                          x2: this._monitor.x + this._monitor.width,
+                          y2: this._monitor.y + this._monitor.height});
 
         // Translate back into actor's coordinate space
         // While the actor moves, the clip has to move in the opposite direction 
@@ -400,8 +415,12 @@ dockedDash.prototype = {
 
     _redisplay: function() {
 
-        // Update dash x position (for instance when its width changes due to icon are resized)
-        // using hidden() / shown() do nothing fs dash is already animating
+        this._updateDockBox();
+
+        // update y position
+        this.actor.y = this.dockBox.y;
+
+        // Update dash x position animating it
         if( this._animStatus.hidden() ){
             this._removeAnimations();
             this._animateOut(0, 0);
@@ -411,13 +430,22 @@ dockedDash.prototype = {
         }
 
         this._updateBackgroundOpacity();
-
         this._updateClip();
 
     },
 
-    _updateYPosition: function() {
-        this.actor.y = Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y;
+    _updateDockBox: function() {
+        this.dockBox.set_position(this._monitor.x,this._monitor.y + Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y);
+        this.dockBox.set_size(this.dash.actor.width, this.dash.actor.height);
+    },
+
+    // 'Hard' reset dock positon: called on start and when monitor changes
+    _resetPosition: function() {
+        this._monitor = Main.layoutManager.primaryMonitor;
+        this._updateDockBox();
+        this.actor.x = this.dockBox.x;
+        this.actor.y = this.dockBox.y;
+        this._updateClip();
     },
 
     _removeAnimations: function() {

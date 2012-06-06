@@ -75,16 +75,18 @@ intellihide.prototype = {
         this.showFunction = show;
         this.hideFunction = hide;
         // Target object
-        this.target = target;
+        this._target = target;
         // Keep track of the current overview mode (I mean if it is on/off)
         this._inOverview = false;
-        // dinstance from the border below which hide effect is triggered. It is update to match the dock width;
-        this._offset = 0; 
-        // It is automatically updated by the below signal:
-        this._onSizeChange = this.target.connect('notify::width', Lang.bind(this, this._updateOffset));
 
         // Connect global signals
         this._pushSignals(
+            // call updateVisibility when target actor changes
+            [
+                this._target,
+                'allocation-changed',
+                Lang.bind(this, this._updateDockVisibility)
+            ],
             // Add signals on windows created from now on
             [
                 global.display,
@@ -112,6 +114,12 @@ intellihide.prototype = {
                 Main.overview,
                 'hiding',
                 Lang.bind(this,this._overviewExit)
+            ],
+            // update wne monitor changes, for instance in multimonitor when monitor are attached
+            [
+                global.screen,
+                'monitors-changed',
+                Lang.bind(this, this._updateDockVisibility )
             ]
         );
 
@@ -122,7 +130,7 @@ intellihide.prototype = {
         this._show(true);
 
         // update visibility
-        this._updateOffset();
+        this._updateDockVisibility();
     },
 
     destroy: function() {
@@ -186,15 +194,6 @@ intellihide.prototype = {
             this.status = false;
             this.hideFunction();
         }
-    },
-
-    _updateOffset : function() {
-
-        if(_DEBUG_) global.log("width: " + this.target.width);
-        if(_DEBUG_) global.log("x: " + this.target.x);
-
-        this._offset = this.target.width ;
-        this._updateDockVisibility();
     },
 
     _overviewExit : function() {
@@ -274,7 +273,7 @@ intellihide.prototype = {
             this._hide();
             return;
         }
-        if(this._SETTINGS['normal_mode'] == IntellihideMode.SHOW){
+        else if(this._SETTINGS['normal_mode'] == IntellihideMode.SHOW){
             this._show();
             return;
         }
@@ -283,23 +282,29 @@ intellihide.prototype = {
             return;
         } else if(this._SETTINGS['normal_mode'] == IntellihideMode.INTELLIHIDE){
 
-            var edge;
-            var ctr=0;
+            let overlaps = false;
 
-            // A closure for computing the minimum window position 
-            var minEdge = function(wa){
-                var meta_win = wa.get_meta_window();
-                var left_edge = meta_win.get_outer_rect().x
+            let windows = global.get_window_actors().filter(this._intellihideFilterInteresting, this);
 
-                if(left_edge < edge || ctr==0){
-                    edge=left_edge;
+            for(let i=0; i< windows.length; i++){
+
+                let win = windows[i].get_meta_window();
+                if(win){
+                    let rect = win.get_outer_rect();
+
+                    let test = ( rect.x < this._target.allocation.x2) &&
+                               ( rect.x +rect.width > this._target.allocation.x1 ) &&
+                               ( rect.y < this._target.allocation.y2 ) &&
+                               ( rect.y +rect.height > this._target.allocation.y1 );
+
+                    if(test){
+                        overlaps = true;
+                        break;
+                    }
                 }
-                ctr++;
-            };
+            }
 
-            global.get_window_actors().filter(this._intellihideFilterInteresting, this).forEach(minEdge);
-
-            if( edge < this._offset) {
+            if(overlaps) {
                 this._hide();
             } else {
                 this._show();
@@ -320,12 +325,6 @@ intellihide.prototype = {
 
         if ( !this._handledWindowType(meta_win) ) 
             return false;
-
-        // keep only windows on the monitor where the dash is shown, 
-        // the primary monitor at the moment.
-        if (meta_win.get_monitor()!== Main.layoutManager.primaryIndex){
-            return false
-        }
 
         var wksp = meta_win.get_workspace();
         var wksp_index = wksp.index();
