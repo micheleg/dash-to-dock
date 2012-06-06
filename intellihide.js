@@ -43,10 +43,10 @@ const OVERVIEW_MODE = IntellihideMode.SHOW;
 /*
  * A rough and ugly implementation of the intellihide behaviour.
  * Intallihide object: call show()/hide() function based on the overlap with the
- * the target actor.
+ * the target actor object;
  * 
- * Hide is triggered whenever a window is near the screen border at a distance
- * less than the dock width, regardless of the dock vertical dimension.
+ * Target object has to contain a Clutter.ActorBox object named staticBox and 
+ * emit a 'box-changed' signal when this changes.
  * 
 */
 
@@ -84,7 +84,7 @@ intellihide.prototype = {
             // call updateVisibility when target actor changes
             [
                 this._target,
-                'allocation-changed',
+                'box-changed',
                 Lang.bind(this, this._updateDockVisibility)
             ],
             // Add signals on windows created from now on
@@ -292,10 +292,10 @@ intellihide.prototype = {
                 if(win){
                     let rect = win.get_outer_rect();
 
-                    let test = ( rect.x < this._target.allocation.x2) &&
-                               ( rect.x +rect.width > this._target.allocation.x1 ) &&
-                               ( rect.y < this._target.allocation.y2 ) &&
-                               ( rect.y +rect.height > this._target.allocation.y1 );
+                    let test = ( rect.x < this._target.staticBox.x2) &&
+                               ( rect.x +rect.width > this._target.staticBox.x1 ) &&
+                               ( rect.y < this._target.staticBox.y2 ) &&
+                               ( rect.y +rect.height > this._target.staticBox.y1 );
 
                     if(test){
                         overlaps = true;

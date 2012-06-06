@@ -3,6 +3,7 @@
 const _DEBUG_= false;
 
 const St = imports.gi.St;
+const Signals = imports.signals;
 const Lang = imports.lang;
 const Main = imports.ui.main;
 const Tweener = imports.ui.tweener;
@@ -89,10 +90,7 @@ dockedDash.prototype = {
 
         // this store size and the position where the dash is shown;
         // used by intellihide module to check window overlap.
-        // I use a clutterActor and I have to add it to the stage because
-        // I want to connect to its 'allocation-changed' signal
-        this.dockBox = new Clutter.Actor({name: 'dashtodock.dockBox', reactive:false});
-        Main.layoutManager.addChrome(this.dockBox, { affectsStruts: 0, affectsInputRegion:0 });
+        this.staticBox = new Clutter.ActorBox({x1:0, y1:0, x2:100, y2:500});
 
         // Connect global signals
         this._pushSignals(
@@ -158,7 +156,7 @@ dockedDash.prototype = {
         // Set initial position
         this._resetPosition();
         //put out of the screen so its initial show is animated
-        this.actor.x = this.dockBox.x - this.dockBox.width+1;
+        this.actor.x = this.staticBox.x1 - this.staticBox.x2+this.staticBox.x1+1;
 
         // Show 
         this.actor.set_opacity(255); //this.actor.show();
@@ -175,7 +173,6 @@ dockedDash.prototype = {
         // If the actor is inside a container, the actor will be removed.
         // When you destroy a container, its children will be destroyed as well. 
         this.actor.destroy();
-        this.dockBox.destroy();
 
         // Reshow normal dash previously hidden
         Main.overview._dash.actor.show();
@@ -315,7 +312,7 @@ dockedDash.prototype = {
 
     _animateIn: function(time, delay) {
 
-        var final_position = this.dockBox.x;
+        var final_position = this.staticBox.x1;
 
         if(final_position !== this.actor.x){
             this._animStatus.queue(true);
@@ -334,7 +331,7 @@ dockedDash.prototype = {
 
     _animateOut: function(time, delay){
 
-        var final_position = this.dockBox.x-this.actor.width+1;
+        var final_position = this.staticBox.x1-this.actor.width+1;
 
         if(final_position !== this.actor.x){
             this._animStatus.queue(false);
@@ -415,10 +412,10 @@ dockedDash.prototype = {
 
     _redisplay: function() {
 
-        this._updateDockBox();
+        this._updateStaticBox();
 
         // update y position
-        this.actor.y = this.dockBox.y;
+        this.actor.y = this.staticBox.y1;
 
         // Update dash x position animating it
         if( this._animStatus.hidden() ){
@@ -434,17 +431,23 @@ dockedDash.prototype = {
 
     },
 
-    _updateDockBox: function() {
-        this.dockBox.set_position(this._monitor.x,this._monitor.y + Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y);
-        this.dockBox.set_size(this.dash.actor.width, this.dash.actor.height);
+    _updateStaticBox: function() {
+        this.staticBox.init_rect(
+            this._monitor.x,
+            this._monitor.y + Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y,
+            this.dash.actor.width,
+            this.dash.actor.height
+        );
+
+        this.emit('box-changed');
     },
 
     // 'Hard' reset dock positon: called on start and when monitor changes
     _resetPosition: function() {
         this._monitor = Main.layoutManager.primaryMonitor;
-        this._updateDockBox();
-        this.actor.x = this.dockBox.x;
-        this.actor.y = this.dockBox.y;
+        this._updateStaticBox();
+        this.actor.x = this.staticBox.x1;
+        this.actor.y = this.staticBox.y1;
         this._updateClip();
     },
 
@@ -506,6 +509,8 @@ dockedDash.prototype = {
         }
     } 
 };
+
+Signals.addSignalMethods(dockedDash.prototype);
 
 /*
  * Store animation status in a perhaps overcomplicated way.

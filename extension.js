@@ -73,7 +73,7 @@ function hide(){
 function enable() {
 
     dock = new DockedDash.dockedDash(settings);
-    intellihide = new Intellihide.intellihide(show, hide, dock.dockBox, settings);
+    intellihide = new Intellihide.intellihide(show, hide, dock, settings);
 
 }
 
