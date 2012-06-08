@@ -443,11 +443,20 @@ dockedDash.prototype = {
     // Enable autohide effect, hide dash
     enableAutoHide: function() {
         if(this._autohide==false){
+
+            let delay=0; // immediately fadein background if hide is blocked by mouseover,
+                         // oterwise start fadein when dock is already hidden.
             this._autohide = true;
             this._removeAnimations();
-            if(!this.actor.hover && !DISABLE_AUTOHIDE) this._animateOut(this._settings.get_double('animation-time'), 0);
+            if(!this.actor.hover && !DISABLE_AUTOHIDE) {
+                this._animateOut(this._settings.get_double('animation-time'), 0);
+                delay = this._settings.get_double('animation-time');
+            } else{
+                delay = 0;
+            }
+            
             if(this._settings.get_boolean('opaque-background') && !this._settings.get_boolean('opaque-background-always'))
-                this._fadeInBackground(this._settings.get_double('animation-time'), 0);
+                this._fadeInBackground(this._settings.get_double('animation-time'), delay);
         }
     } 
 };
