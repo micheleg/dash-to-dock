@@ -429,6 +429,9 @@ dockedDash.prototype = {
     // Enable autohide effect, hide dash
     enableAutoHide: function() {
         if(this._autohide==false){
+
+            let delay=0; // immediately fadein background if hide is blocked by mouseover,
+                         // oterwise start fadein when dock is already hidden.
             this._autohide = true;
             this._removeAnimations();
             if(!this.actor.hover && !DISABLE_AUTOHIDE) {
@@ -439,7 +442,7 @@ dockedDash.prototype = {
             }
 
             if(OPAQUE_BACKGROUND && !OPAQUE_BACKGROUND_ALWAYS)
-                this._fadeInBackground(ANIMATION_TIME, 0);
+                this._fadeInBackground(ANIMATION_TIME, delay);
         }
     } 
 };
