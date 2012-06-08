@@ -48,5 +48,15 @@
       <summary>Dash visibility in overview</summary>
       <description>Sets the dash visibility when in overview mode.</description>
     </key>
+    <key type="b" name="scroll-switch-workspace">
+      <default>false</default>
+      <summary>Switch workspace by scrolling over the dock</summary>
+      <description>Add the possibility to switch workspace by mouse scrolling over the dock.</description>
+    </key>
+    <key type="b" name="scroll-switch-workspace-whole">
+      <default>false</default>
+      <summary>Whole dock is sensible to scroll events</summary>
+      <description>Whether thw whole dock when scrolled above is sensible to scroll events or only an 1px wide area close to the screen border.</description>
+    </key>
   </schema>
 </schemalist>

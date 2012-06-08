@@ -95,11 +95,26 @@ const WorkspaceSettingsWidget = new GObject.Class({
             this.settings.bind('opaque-background', scale23, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
             this.settings.bind('opaque-background', label22, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
+        let label24 =  new Gtk.CheckButton({label: "Switch workspace when scrolling over the dash",  margin_left: 20});
+            label24.set_active(this.settings.get_boolean('scroll-switch-workspace'));
+            label24.connect('toggled', Lang.bind(this, function(check){
+                this.settings.set_boolean('scroll-switch-workspace', check.get_active());
+            }));
+        let label25 =  new Gtk.CheckButton({label: "Whole dash is sensible",  margin_left: 40});
+            label25.set_active(this.settings.get_boolean('scroll-switch-workspace-whole'));
+            label25.connect('toggled', Lang.bind(this, function(check){
+                this.settings.set_boolean('scroll-switch-workspace-whole', check.get_active());
+            }));
+
+            this.settings.bind('scroll-switch-workspace', label25, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+
     general.attach(generalLabel,0,0,3,1);
     general.attach(label21,0,1,3,1);
     general.attach(label23,0,2,1,1);
     general.attach(scale23,1,2,1,1);
     general.attach(label22,2,2,1,1);
+    general.attach(label24,0,3,3,1);
+    general.attach(label25,0,4,3,1);
 
 
 
