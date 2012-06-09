@@ -108,6 +108,45 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
             this.settings.bind('scroll-switch-workspace', label25, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
+        let allSizes  =[ 16, 24, 32, 48, 64 ];
+        let label26 = new Gtk.Label({label: "Application icons", use_markup: true, xalign: 0, margin_left: 20, margin_top:5});
+
+        let label27 =  new Gtk.CheckButton({label: "Show favorites", margin_left: 20});
+            label27.set_active(this.settings.get_boolean('show-favorites'));
+            label27.connect('toggled', Lang.bind(this, function(check){
+                this.settings.set_boolean('show-favorites', check.get_active());
+            }));
+        let label28 =  new Gtk.CheckButton({label: "Show running", margin_left: 20});
+            label28.set_active(this.settings.get_boolean('show-running'));
+            label28.connect('toggled', Lang.bind(this, function(check){
+                this.settings.set_boolean('show-running', check.get_active());
+            }));
+
+        let label29 = new Gtk.Label({label: "Maximum icon size", use_markup: true, xalign: 0, margin_left: 20, valign: Gtk.Align.END, margin_bottom:5});
+        let scale29 =  new Gtk.Scale({orientation: Gtk.Orientation.HORIZONTAL, valuePos: Gtk.PositionType.RIGHT, margin_left: 20, valign: Gtk.Align.END/*, drawValue:false*/});
+            scale29.set_range(0, 4); // =[ 16, 24, 32, 48, 64 ]
+            scale29.set_value(this.settings.get_double('background-opacity')*100);
+            scale29.set_digits(0);
+            scale29.set_increments(1,1);
+            scale29.set_size_request(200, -1);
+
+            scale29.add_mark(0,Gtk.PositionType.TOP,"16");
+            scale29.add_mark(1,Gtk.PositionType.TOP,"24");
+            scale29.add_mark(2,Gtk.PositionType.TOP,"32");
+            scale29.add_mark(3,Gtk.PositionType.TOP,"48");
+            scale29.add_mark(4,Gtk.PositionType.TOP,"64");
+
+            scale29.connect('format-value', Lang.bind(this, function(button){
+                return allSizes[Math.floor(button.get_value())].toString();
+                
+            }));
+
+            scale29.connect('value-changed', Lang.bind(this, function(button){
+                let s = Math.floor(button.get_value());
+                this.settings.set_int('dash-max-icon-size', allSizes[s]);
+            }));
+
+
     general.attach(generalLabel,0,0,3,1);
     general.attach(label21,0,1,3,1);
     general.attach(label23,0,2,1,1);
@@ -115,6 +154,11 @@ const WorkspaceSettingsWidget = new GObject.Class({
     general.attach(label22,2,2,1,1);
     general.attach(label24,0,3,3,1);
     general.attach(label25,0,4,3,1);
+    general.attach(label26,0,5,1,1);
+    general.attach(label27,0,6,3,1);
+    general.attach(label28,0,7,3,1);
+    general.attach(label29,0,8,1,1);
+    general.attach(scale29,1,8,2,1);
 
 
 

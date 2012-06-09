@@ -15,6 +15,8 @@ const Overview = imports.ui.overview;
 const Tweener = imports.ui.tweener;
 const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const MyDash = Me.imports.myDash;
 
 // SETTINGS
 // Most settings are now store in via gsettings and exposed to gnome-shell-extension-prefs
@@ -50,7 +52,7 @@ dockedDash.prototype = {
         Main.overview._dash.actor.hide();
 
         // Create a new dash object
-        this.dash = new Dash.Dash(); // this.dash = new MyDash.myDash();
+        this.dash = new MyDash.myDash(this._settings); // this.dash = new MyDash.myDash();
 
         // Create the main container, turn on track hover, add hoverChange signal
         this.actor = new St.BoxLayout({ name: 'mydash', reactive: true, style_class: 'box'});
@@ -194,6 +196,18 @@ dockedDash.prototype = {
 
         this._settings.connect('changed::scroll-switch-workspace', Lang.bind(this, function(){
             this._OptionalScrollWorkspaceSwitch(this._settings.get_boolean('scroll-switch-workspace'));
+        }));
+
+        this._settings.connect('changed::dash-max-icon-size', Lang.bind(this, function(){
+            this.dash.setMaxIconSize(this._settings.get_int('dash-max-icon-size'));
+        }));
+
+        this._settings.connect('changed::show-favorites', Lang.bind(this, function(){
+            this.dash._redisplay();
+        }));
+
+        this._settings.connect('changed::show-running', Lang.bind(this, function(){
+            this.dash._redisplay();
         }));
     },
 

@@ -2,7 +2,7 @@
 
 UUID = dash-to-dock@micxgx.gmail.com
 BASE_MODULES = extension.js stylesheet.css metadata.json
-EXTRA_MODULES = dockedDash.js intellihide.js convenience.js prefs.js
+EXTRA_MODULES = dockedDash.js intellihide.js myDash.js convenience.js prefs.js
 
 all: extension
 
