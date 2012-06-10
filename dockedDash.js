@@ -435,8 +435,8 @@ dockedDash.prototype = {
         this.staticBox.init_rect(
             this._monitor.x,
             this._monitor.y + Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y,
-            this.dash.actor.width,
-            this.dash.actor.height
+            this.dash._box.width,
+            this.dash._box.height
         );
 
         this.emit('box-changed');
