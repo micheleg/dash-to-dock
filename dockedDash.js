@@ -361,12 +361,11 @@ dockedDash.prototype = {
     },
 
     _updateStaticBox: function() {
-        this.staticBox.init_rect(
-            this._monitor.x,
-            this._monitor.y + Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y,
-            this.dash._box.width,
-            this.dash._box.height
-        );
+
+        this.staticBox.x1 = this._monitor.x;
+        this.staticBox.y1 = this._monitor.y + Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y;
+        this.staticBox.x2 = this.staticBox.x1 + this.dash._box.width;
+        this.staticBox.y2 = this.staticBox.y1 + this.dash._box.height;
 
         this.emit('box-changed');
     },
