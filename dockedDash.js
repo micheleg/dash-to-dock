@@ -89,12 +89,12 @@ dockedDash.prototype = {
             [
                 Main.overview._viewSelector._pageArea,
                 'notify::y',
-                Lang.bind(this, this._redisplay)
+                Lang.bind(this, this._updateYPosition)
             ],
             [
                 Main.overview._viewSelector,
                 'notify::y',
-                Lang.bind(this, this._redisplay)
+                Lang.bind(this, this._updateYPosition)
             ],
             // Allow app icons do be dragged out of the chrome actors when reordering or deleting theme while not on overview mode
             // by changing global stage input mode
@@ -343,9 +343,6 @@ dockedDash.prototype = {
 
         this._updateStaticBox();
 
-        // update y position
-        this.actor.y = this.staticBox.y1;
-
         // Update dash x position animating it
         if( this._animStatus.hidden() ){
             this._removeAnimations();
@@ -358,6 +355,11 @@ dockedDash.prototype = {
         this._updateBackgroundOpacity();
         this._updateClip();
 
+    },
+
+    _updateYPosition: function() {
+        this._updateStaticBox();
+        this.actor.y = this.staticBox.y1;
     },
 
     _updateStaticBox: function() {
