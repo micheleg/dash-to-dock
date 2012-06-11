@@ -376,6 +376,13 @@ dockedDash.prototype = {
         this._updateStaticBox();
         this.actor.x = this.staticBox.x1;
         this.actor.y = this.staticBox.y1;
+
+        // Sometimes when monitor changes dock size is not update until
+        // the intellihide functions make it move even if its height is
+        // bound with a Clutter constraint
+        // This force the dock to update its size.
+        this.actor.queue_relayout();
+
         this._updateClip();
     },
 
