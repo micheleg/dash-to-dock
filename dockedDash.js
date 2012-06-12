@@ -118,6 +118,12 @@ dockedDash.prototype = {
                 global.screen,
                 'monitors-changed',
                 Lang.bind(this, this._resetPosition )
+            ],
+            // keep the dock above Main.wm._workspaceSwitcherPopup.actor
+            [
+                global.window_manager,
+                'switch-workspace',
+                Lang.bind(this, this._onSwitchWorkspace)
             ]
         );
 
@@ -403,6 +409,15 @@ dockedDash.prototype = {
         }
 
         this.actor.sync_hover();
+    },
+
+    _onSwitchWorkspace: function(){
+        // workspace switcher group actor is stealing my focus when 
+        // switching workspaces! Sometimes my actor is placed below it; 
+        // try to keep it above.
+        if(Main.wm._workspaceSwitcherPopup) {
+            this.actor.raise(Main.wm._workspaceSwitcherPopup.actor);
+        }
     },
 
     // try to simplify global signals handling
