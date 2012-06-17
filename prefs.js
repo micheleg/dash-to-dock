@@ -125,7 +125,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
         let label29 = new Gtk.Label({label: "Maximum icon size", use_markup: true, xalign: 0, margin_left: 20, valign: Gtk.Align.END, margin_bottom:5});
         let scale29 =  new Gtk.Scale({orientation: Gtk.Orientation.HORIZONTAL, valuePos: Gtk.PositionType.RIGHT, margin_left: 20, valign: Gtk.Align.END/*, drawValue:false*/});
             scale29.set_range(0, 4); // =[ 16, 24, 32, 48, 64 ]
-            scale29.set_value(this.settings.get_double('background-opacity')*100);
+            scale29.set_value(allSizes.indexOf(this.settings.get_int('dash-max-icon-size')));
             scale29.set_digits(0);
             scale29.set_increments(1,1);
             scale29.set_size_request(200, -1);
