@@ -1,9 +1,5 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const Main = imports.ui.main;
-const St = imports.gi.St;
-const Tweener = imports.ui.tweener;
-
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Intellihide = Me.imports.intellihide;

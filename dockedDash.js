@@ -243,9 +243,6 @@ dockedDash.prototype = {
 
         var anim = this._animStatus;
 
-        if(_DEBUG_) global.log("show " + anim.showing() + " " + anim.hiding() +
-                                " " + anim.shown() + " " + anim.hidden());
-
         if( this._autohideStatus && ( anim.hidden() || anim.hiding() ) ){
 
             let delay;
@@ -267,9 +264,6 @@ dockedDash.prototype = {
     },
 
     _hide: function() {
-
-        if(_DEBUG_) global.log("hide " + anim.showing() + " " + anim.hiding() +
-                            " " + anim.shown() + " " + anim.hidden());
 
         var anim = this._animStatus;
 

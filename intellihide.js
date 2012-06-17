@@ -1,7 +1,5 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const _DEBUG_ = false;
-
 const Lang = imports.lang;
 const Meta = imports.gi.Meta;
 const Mainloop = imports.mainloop;
