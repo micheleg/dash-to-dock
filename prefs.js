@@ -162,37 +162,46 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
 
 
-    let intellihide = new Gtk.Grid({row_spacing:5 });
-    let intellihideLabel = new Gtk.Label({label: "<b>Intellihide behaviour</b>", use_markup: true, xalign: 0, margin_top:5, margin_bottom:5}); 
-        let label31 =  new Gtk.RadioButton({label: "Hide", margin_left: 20});
-            label31.set_active(this.settings.get_enum('normal-mode') === 0);
-            label31.connect("toggled", Lang.bind(this, function(check){
-                if(check.get_active()) this.settings.set_enum('normal-mode', 0);
+    let dockSettings = new Gtk.Grid({row_spacing:5 });
+    let dockSettingsLabel = new Gtk.Label({label: "<b>Dock settings</b>", use_markup: true, xalign: 0, margin_top:5, margin_bottom:5}); 
+
+        let label33 = new Gtk.Label({label: "Always visible", use_markup: true, xalign: 0, margin_left: 20, margin_top:5});
+        let switch33 =  new Gtk.Switch({margin_left: 20});
+            switch33.set_active(this.settings.get_boolean('dock-fixed'));
+            switch33.connect("notify::active", Lang.bind(this, function(check){
+                this.settings.set_boolean('dock-fixed', check.get_active());
             }));
-        let label32 = new Gtk.RadioButton({label: "Show (reload extension to make it effective)", group: label31, margin_left: 20});
-            label32.set_active(this.settings.get_enum('normal-mode') === 1);
-            label32.connect("toggled", Lang.bind(this, function(check){
-                if(check.get_active()) this.settings.set_enum('normal-mode', 1);
+
+        let label31 = new Gtk.Label({label: "Autohide", use_markup: true, xalign: 0, margin_left: 20, margin_top:5});
+        let switch31 =  new Gtk.Switch({margin_left: 20});
+            switch31.set_active(this.settings.get_boolean('autohide'));
+            switch31.connect("notify::active", Lang.bind(this, function(check){
+                this.settings.set_boolean('autohide', check.get_active());
             }));
-        let label33 = new Gtk.RadioButton({label: "Autohide", group: label31, margin_left: 20});
-            label33.set_active(this.settings.get_enum('normal-mode') === 2);
-            label33.connect("toggled", Lang.bind(this, function(check){
-                if(check.get_active()) this.settings.set_enum('normal-mode', 2);
+
+        let label32 = new Gtk.Label({label: "intellihide", use_markup: true, xalign: 0, margin_left: 20, margin_top:5});
+        let switch32 =  new Gtk.Switch({margin_left: 20});
+            switch32.set_active(this.settings.get_boolean('intellihide'));
+            switch32.connect("notify::active", Lang.bind(this, function(check){
+                this.settings.set_boolean('intellihide', check.get_active());
             }));
-        let label34 = new Gtk.RadioButton({label: "Intellihide", group: label31, margin_left: 20});
-            label34.set_active(this.settings.get_enum('normal-mode') === 3);
-            label34.connect("toggled", Lang.bind(this, function(check){
-                if(check.get_active()) this.settings.set_enum('normal-mode', 3);
-            }));
-    intellihide.attach(intellihideLabel,0,0,2,1);
-//    intellihide.attach(label31,0,1,2,1);
-//    intellihide.attach(label32,0,2,2,1);
-    intellihide.attach(label33,0,3,2,1);
-    intellihide.attach(label34,0,4,2,1);
+
+        this.settings.bind('dock-fixed', label31, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this.settings.bind('dock-fixed', label32, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this.settings.bind('dock-fixed', switch31, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this.settings.bind('dock-fixed', switch32, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+
+    dockSettings.attach(dockSettingsLabel,0,0,2,1);
+    dockSettings.attach(label33,0,1,1,1);;
+    dockSettings.attach(switch33,1,1,2,1);
+    dockSettings.attach(label31,0,2,1,1);
+    dockSettings.attach(switch31,1,2,2,1)
+    dockSettings.attach(label32,0,3,1,1);;
+    dockSettings.attach(switch32,1,3,2,1);
 
     this.add(autohide);
     this.add(general);
-    this.add(intellihide);
+    this.add(dockSettings);
 
 
 

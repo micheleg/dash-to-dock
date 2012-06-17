@@ -38,10 +38,20 @@
       <summary>Opacity of the dash background</summary>
       <description>Sets the opacity of the dash background  when in autohide mode.</description>
     </key>
-    <key name="normal-mode" enum="org.gnome.shell.extensions.dash-to-dock.IntellihideMode">
-      <default>'intellihide'</default>
-      <summary>Intellihide behaviour</summary>
-      <description>Sets the intellihide behavior when in normal mode.</description>
+    <key type="b" name="intellihide">
+      <default>true</default>
+      <summary>Dock dodges windows</summary>
+      <description>Enable or disable intellihide mode</description>
+    </key>
+    <key type="b" name="autohide">
+      <default>true</default>
+      <summary>Dock shown on mouse over</summary>
+      <description>Enable or disable autohide mode</description>
+    </key>
+    <key type="b" name="dock-fixed">
+      <default>false</default>
+      <summary>Dock always visible</summary>
+      <description>Dock is always visible</description>
     </key>
     <key name="overview-mode" enum="org.gnome.shell.extensions.dash-to-dock.IntellihideMode">
       <default>'show'</default>
@@ -73,5 +83,6 @@
       <summary>Show favorites apps</summary>
       <description>Show or hide favorite appplications icons in the dash</description>
     </key>
+
   </schema>
 </schemalist>

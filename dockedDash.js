@@ -19,15 +19,6 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const MyDash = Me.imports.myDash;
 
-// SETTINGS
-// Most settings are now store in via gsettings and exposed to gnome-shell-extension-prefs
-// Use gnome-shell-extension-prefs  "dash-to-dock@micxgx.gmail.com".
-
-const DISABLE_AUTOHIDE = false      // Disable autohide show/hide mouse events. 
-                                    // Dash is fixed: visibility can be manually controlled.
-
-// END OF SETTINGS
-
 function dockedDash(settings) {
 
     this._init(settings);
@@ -46,8 +37,8 @@ dockedDash.prototype = {
         // Timeout id used to ensure the dash is hiddeen after some menu is shown
         this._dashShowTimeout = 0;
 
-        // authohide on hover effect on/off
-        this._autohide = true;
+        // authohide current status. Not to be confused with autohide enable/disagle global (g)settings
+        this._autohideStatus = this._settings.get_boolean('autohide') && !this._settings.get_boolean('dock-fixed');
         // initialize animation status object
         this._animStatus = new animationStatus(true);
 
@@ -138,7 +129,7 @@ dockedDash.prototype = {
         //Add dash and backgroundBox to the container actor and the last to the Chrome.
         this.actor.add_actor(this._backgroundBox);
         this.actor.add_actor(this.dash.actor);
-        Main.layoutManager.addChrome(this.actor, { affectsStruts: 0 });
+        Main.layoutManager.addChrome(this.actor, { affectsStruts: this._settings.get_boolean('dock-fixed')});
 
         // and update position and clip when width changes, that is when icons size and thus dash size changes.
         this.dash.actor.connect('notify::width', Lang.bind(this, this._redisplay));
@@ -218,10 +209,28 @@ dockedDash.prototype = {
         this._settings.connect('changed::show-running', Lang.bind(this, function(){
             this.dash.resetAppIcons();
         }));
+        this._settings.connect('changed::dock-fixed', Lang.bind(this, function(){
+            Main.layoutManager.removeChrome(this.actor);
+            Main.layoutManager.addChrome(this.actor,
+                                        { affectsStruts: this._settings.get_boolean('dock-fixed') });
+
+            if(this._settings.get_boolean('dock-fixed')) {
+                // show dash
+                this._autohideStatus = true; // It could be false but the dock could be hidden
+                this.disableAutoHide();
+            } else {
+                this.emit('box-changed');
+            }
+        }));
+        this._settings.connect('changed::autohide', Lang.bind(this, function(){
+            this._autohideStatus = this._settings.get_boolean('autohide');
+            this.emit('box-changed');
+        }));
     },
 
     _hoverChanged: function() {
-        if(this._autohide){
+        // Skip if dock is not in autohide mode for instance because it is shown by intellihide
+        if(this._settings.get_boolean('autohide') && this._autohideStatus){
             if( this.actor.hover ) {
                 this._show();
             } else {
@@ -237,7 +246,7 @@ dockedDash.prototype = {
         if(_DEBUG_) global.log("show " + anim.showing() + " " + anim.hiding() +
                                 " " + anim.shown() + " " + anim.hidden());
 
-        if( this._autohide && ( anim.hidden() || anim.hiding() ) && !DISABLE_AUTOHIDE ){
+        if( this._autohideStatus && ( anim.hidden() || anim.hiding() ) ){
 
             let delay;
             // If the dock is hidden, wait this._settings.get_double('show-delay') before showing it; 
@@ -265,7 +274,7 @@ dockedDash.prototype = {
         var anim = this._animStatus;
 
         // If no hiding animation is running or queued
-        if( this._autohide && (anim.showing() || anim.shown() ) && !DISABLE_AUTOHIDE ){
+        if( this._autohideStatus && (anim.showing() || anim.shown()) ){
 
             let delay;
 
@@ -386,11 +395,11 @@ dockedDash.prototype = {
 
     _updateBackgroundOpacity: function() {
 
-        if(this._settings.get_boolean('opaque-background') && (this._autohide || this._settings.get_boolean('opaque-background-always'))){
+        if(this._settings.get_boolean('opaque-background') && (this._autohideStatus || this._settings.get_boolean('opaque-background-always'))){
             this._backgroundBox.show();
             this._fadeInBackground(this._settings.get_double('animation-time'), 0);
         }
-        else if(!this._settings.get_boolean('opaque-background') || (!this._autohide && !this._settings.get_boolean('opaque-background-always'))) {
+        else if(!this._settings.get_boolean('opaque-background') || (!this._autohideStatus && !this._settings.get_boolean('opaque-background-always'))) {
             this._fadeOutBackground(this._settings.get_double('animation-time'), 0);
         }
     },
@@ -561,34 +570,36 @@ dockedDash.prototype = {
 
     // Disable autohide effect, thus show dash
     disableAutoHide: function() {
-        if(this._autohide==true){
-            this._autohide = false;
+        if(this._autohideStatus==true){
+            this._autohideStatus = false;
+
+            // clear unnecesssary potentially running loops
+            if(this._dashShowTimeout>0)
+                Mainloop.source_remove(this._dashShowTimeout);
+
             this._removeAnimations();
             this._animateIn(this._settings.get_double('animation-time'), 0);
             if(this._settings.get_boolean('opaque-background') && !this._settings.get_boolean('opaque-background-always'))
                 this._fadeOutBackground(this._settings.get_double('animation-time'), 0);
-            // If this loop exists clear it since it's no more necessary
-            if(this._dashShowTimeout>0)
-            Mainloop.source_remove(this._dashShowTimeout);
         }
     },
 
     // Enable autohide effect, hide dash
     enableAutoHide: function() {
-        if(this._autohide==false){
+        if(this._autohideStatus==false){
 
             let delay=0; // immediately fadein background if hide is blocked by mouseover,
                          // oterwise start fadein when dock is already hidden.
-            this._autohide = true;
+            this._autohideStatus = true;
             this._removeAnimations();
 
             if(this.actor.hover==true)
                 this.actor.sync_hover();
 
-            if(!this.actor.hover && !DISABLE_AUTOHIDE) {
+            if( !this.actor.hover || !this._settings.get_boolean('autohide')) {
                 this._animateOut(this._settings.get_double('animation-time'), 0);
                 delay = this._settings.get_double('animation-time');
-            } else{
+            } else if (this._settings.get_boolean('autohide') ) {
                 // I'm enabling autohide and the dash keeps being showed because of mouse hover
                 // so i start the loop usualy started by _show()
                 this._startDashShowLoop();

@@ -151,8 +151,20 @@ intellihide.prototype = {
 
     _bindSettingsChanges: function() {
 
-        this._settings.connect('changed::normal-mode', Lang.bind(this, function(){
+        this._settings.connect('changed::intellihide', Lang.bind(this, function(){
             this._updateDockVisibility();
+        }));
+
+        this._settings.connect('changed::dock-fixed', Lang.bind(this, function(){
+            if(this._settings.get_boolean('dock-fixed')) {
+                this.status = true; // Since the dock is now shown
+            } else {
+                // Wait that windows rearragne after struts change
+                Mainloop.idle_add(Lang.bind(this, function() {
+                    this._updateDockVisibility();
+                    return false;
+                }));
+            }
         }));
     },
 
@@ -192,25 +204,29 @@ intellihide.prototype = {
 
     _grabOpBegin: function() {
 
-        let INTERVAL = 100; // A good compromise between reactivity and efficiency; to be tuned.
+        if(this._settings.get_boolean('intellihide')){
+            let INTERVAL = 100; // A good compromise between reactivity and efficiency; to be tuned.
 
-        if(this._windowChangedTimeout>0)
-            Mainloop.source_remove(this._windowChangedTimeout); // Just to be sure
+            if(this._windowChangedTimeout>0)
+                Mainloop.source_remove(this._windowChangedTimeout); // Just to be sure
 
-        this._windowChangedTimeout = Mainloop.timeout_add(INTERVAL,
-            Lang.bind(this, function(){
-                this._updateDockVisibility();
-                return true; // to make the loop continue
-            })
-        );
+            this._windowChangedTimeout = Mainloop.timeout_add(INTERVAL,
+                Lang.bind(this, function(){
+                    this._updateDockVisibility();
+                    return true; // to make the loop continue
+                })
+            );
+        }
     },
 
     _grabOpEnd: function() {
 
-        if(this._windowChangedTimeout>0)
-            Mainloop.source_remove(this._windowChangedTimeout);
+        if(this._settings.get_boolean('intellihide')){
+            if(this._windowChangedTimeout>0)
+                Mainloop.source_remove(this._windowChangedTimeout);
 
-        this._updateDockVisibility(); 
+            this._updateDockVisibility();
+        }
     },
 
     _switchWorkspace: function(shellwm, from, to, direction) {
@@ -232,45 +248,38 @@ intellihide.prototype = {
         }
 
         //else in normal mode:
-        if(this._settings.get_enum('normal-mode') == IntellihideMode.AUTOHIDE){
-            this._hide();
-            return;
-        }
-        else if(this._settings.get_enum('normal-mode') == IntellihideMode.SHOW){
-            this._show();
-            return;
-        }
-        else if(this._settings.get_enum('normal-mode') == IntellihideMode.HIDE){
-            /*TODO*/
-            return;
-        } else if(this._settings.get_enum('normal-mode') == IntellihideMode.INTELLIHIDE){
+        else if( !this._settings.get_boolean('dock-fixed') ) {
+            if( this._settings.get_boolean('intellihide') ){
 
-            let overlaps = false;
+                let overlaps = false;
 
-            let windows = global.get_window_actors().filter(this._intellihideFilterInteresting, this);
+                let windows = global.get_window_actors().filter(this._intellihideFilterInteresting, this);
 
-            for(let i=0; i< windows.length; i++){
+                for(let i=0; i< windows.length; i++){
 
-                let win = windows[i].get_meta_window();
-                if(win){
-                    let rect = win.get_outer_rect();
+                    let win = windows[i].get_meta_window();
+                    if(win){
+                        let rect = win.get_outer_rect();
 
-                    let test = ( rect.x < this._target.staticBox.x2) &&
-                               ( rect.x +rect.width > this._target.staticBox.x1 ) &&
-                               ( rect.y < this._target.staticBox.y2 ) &&
-                               ( rect.y +rect.height > this._target.staticBox.y1 );
+                        let test = ( rect.x < this._target.staticBox.x2) &&
+                                   ( rect.x +rect.width > this._target.staticBox.x1 ) &&
+                                   ( rect.y < this._target.staticBox.y2 ) &&
+                                   ( rect.y +rect.height > this._target.staticBox.y1 );
 
-                    if(test){
-                        overlaps = true;
-                        break;
+                        if(test){
+                            overlaps = true;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if(overlaps) {
-                this._hide();
+                if(overlaps) {
+                    this._hide();
+                } else {
+                    this._show();
+                }
             } else {
-                this._show();
+                this._hide();
             }
         }
     },
