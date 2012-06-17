@@ -143,6 +143,8 @@ intellihide.prototype = {
         // Disconnect global signals
         this._disconnectSignals();
 
+        if(this._windowChangedTimeout>0)
+            Mainloop.source_remove(this._windowChangedTimeout); // Just to be sure
     },
 
     _bindSettingsChanges: function() {
