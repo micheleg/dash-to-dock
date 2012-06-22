@@ -306,6 +306,30 @@ const myDash = new Lang.Class({
             addedItems[i].item.animateIn();
     },
 
+    // I want to reset the displayed apps icon to mantain the correct order when changing
+    // show favorites/show running settings
+    resetAppIcons : function() {
+
+        let children = this._box.get_children().filter(function(actor) {
+            return actor._delegate.child &&
+                   actor._delegate.child._delegate &&
+                   actor._delegate.child._delegate.app;
+        });
+        for (let i = 0; i < children.length; i++) {
+            let item = children[i]._delegate;
+
+            // Do not animate, _redisplay should then be called
+            // after animations ended.
+            item.actor.destroy();
+        }
+
+        // TODO
+        // to avoid ugly animations, just suppress them like when dash is first loaded.
+        this._shownInitially = false;
+        this._redisplay();
+
+    },
+
     handleDragOver : function(source, actor, x, y, time) {
 
         // MICHELE: don't allow to add favourites if they are not displayed

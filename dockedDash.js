@@ -203,11 +203,11 @@ dockedDash.prototype = {
         }));
 
         this._settings.connect('changed::show-favorites', Lang.bind(this, function(){
-            this.dash._redisplay();
+            this.dash.resetAppIcons();
         }));
 
         this._settings.connect('changed::show-running', Lang.bind(this, function(){
-            this.dash._redisplay();
+            this.dash.resetAppIcons();
         }));
     },
 
