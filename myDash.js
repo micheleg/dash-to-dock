@@ -44,8 +44,14 @@ const myDash = new Lang.Class({
                 }
             );
 
+            // Changing too rapidly icon size settings cause the whole Shell to freeze
+            // I've not discovered exactly why, but disabling animation by setting
+            // shownInitially prevent the freeze from occuring
+
+            this._shownInitially = false;
             this._redisplay();
             return true;
+
         } else {
             return false
         }
