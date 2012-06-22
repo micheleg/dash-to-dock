@@ -16,6 +16,7 @@ const Tweener = imports.ui.tweener;
 const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Convenience = Me.imports.convenience;
 const MyDash = Me.imports.myDash;
 
 // SETTINGS
@@ -40,8 +41,7 @@ dockedDash.prototype = {
         this._settings = settings;
         this._bindSettingsChanges();
 
-        //store global signals identifiers via _pushSignals();
-        this._signals = [];
+        this._signalHandler = new Convenience.globalSignalHandler();
 
         // authohide on hover effect on/off
         this._autohide = true;
@@ -85,7 +85,7 @@ dockedDash.prototype = {
         this.staticBox = new Clutter.ActorBox({x1:0, y1:0, x2:100, y2:500});
 
         // Connect global signals
-        this._pushSignals(
+        this._signalHandler.push(
             // Connect events for updating dash vertical position
             [
                 Main.overview._viewSelector._pageArea,
@@ -168,7 +168,7 @@ dockedDash.prototype = {
     destroy: function(){
 
         // Disconnect global signals
-        this._disconnectSignals();
+        this._signalHandler.disconnect();
         // Destroy main clutter actor: this should be sufficient
         // From clutter documentation:
         // If the actor is inside a container, the actor will be removed.
@@ -446,25 +446,6 @@ dockedDash.prototype = {
         // try to keep it above.
         if(Main.wm._workspaceSwitcherPopup) {
             this.actor.raise(Main.wm._workspaceSwitcherPopup.actor);
-        }
-    },
-
-    // try to simplify global signals handling
-    _pushSignals: function(/*unlimited 3-long array arguments*/) {
-
-        for( let i = 0; i < arguments.length; i++ ) {
-            let object = arguments[i][0];
-            let event = arguments[i][1];
-
-            let id = object.connect(event, arguments[i][2]);
-            this._signals.push( [ object , id ] );
-        }
-    },
-
-    _disconnectSignals: function() {
-
-        for( let i = 0; i < this._signals.length; i++ ) {
-            this._signals[i][0].disconnect(this._signals[i][1]);
         }
     },
 

@@ -1,16 +1,19 @@
 /* -*- mode: js; js-basic-offset: 4; indent-tabs-mode: nil -*- */
 
 /*
- * This file comes from gnome-shell-extensions:
+ * Part of this file comes from gnome-shell-extensions:
  * http://git.gnome.org/browse/gnome-shell-extensions/
+ * 
  */
 
 
 const Gettext = imports.gettext;
 const Gio = imports.gi.Gio;
+const Lang = imports.lang;
 
 const Config = imports.misc.config;
 const ExtensionUtils = imports.misc.extensionUtils;
+
 
 /**
  * initTranslations:
@@ -71,4 +74,30 @@ function getSettings(schema) {
 
     return new Gio.Settings({ settings_schema: schemaObj });
 }
-								  
+
+// try to simplify global signals handling
+const globalSignalHandler = new Lang.Class({
+    Name: 'dashToDock.globalSignalHandler',
+
+    _init: function(){
+        this._signals = [];
+    },
+
+    push: function(/*unlimited 3-long array arguments*/) {
+
+        for( let i = 0; i < arguments.length; i++ ) {
+            let object = arguments[i][0];
+            let event = arguments[i][1];
+
+            let id = object.connect(event, arguments[i][2]);
+            this._signals.push( [ object , id ] );
+        }
+    },
+
+    disconnect: function() {
+
+        for( let i = 0; i < this._signals.length; i++ ) {
+            this._signals[i][0].disconnect(this._signals[i][1]);
+        }
+    },
+});
