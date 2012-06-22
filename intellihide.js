@@ -7,6 +7,9 @@ const Meta = imports.gi.Meta;
 
 const Main = imports.ui.main;
 
+const Me = imports.ui.extensionSystem.extensions["dash-to-dock@micxgx.gmail.com"];
+const Convenience = Me.convenience;
+
 const handledWindowTypes = [
   Meta.WindowType.NORMAL,
   // Meta.WindowType.DESKTOP,    // skip nautilus dekstop window
@@ -58,8 +61,7 @@ intellihide.prototype = {
 
     _init: function(show, hide, target) {
 
-        //store global signals identifiers via _pushSignals();
-        this._signals = [];
+        this._signalHandler = new Convenience.globalSignalHandler();
 
         // current intellihide status
         this.status;
@@ -72,7 +74,7 @@ intellihide.prototype = {
         this._inOverview = false;
 
         // Connect global signals
-        this._pushSignals(
+        this._signalHandler.push(
             // call updateVisibility when target actor changes
             [
                 this._target,
@@ -128,7 +130,7 @@ intellihide.prototype = {
     destroy: function() {
 
         // Disconnect global signals
-        this._disconnectSignals();
+        this._signalHandler.disconnect();
 
         // Clear signals on existing windows 
 
@@ -327,26 +329,6 @@ intellihide.prototype = {
             this._addWindowSignals(meta_win);
 
         }));
-    },
-
-    // try to simplify global signals handling
-    _pushSignals: function(/*unlimited 3-long array arguments*/) {
-
-        for( let i = 0; i < arguments.length; i++ ) {
-            let object = arguments[i][0];
-            let event = arguments[i][1];
-
-            let id = object.connect(event, arguments[i][2]);
-            this._signals.push( [ object , id ] );
-        }
-    },
-
-    _disconnectSignals: function() {
-
-        for( let i = 0; i < this._signals.length; i++ ) {
-            this._signals[i][0].disconnect(this._signals[i][1]);
-        }
     }
-
 
 };
