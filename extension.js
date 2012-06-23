@@ -5,7 +5,7 @@ const Convenience = Me.imports.convenience;
 const Intellihide = Me.imports.intellihide;
 const DockedDash = Me.imports.dockedDash;
 
-const settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
+let settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
 
 let intellihide;
 let dock;

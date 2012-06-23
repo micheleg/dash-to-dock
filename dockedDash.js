@@ -544,6 +544,8 @@ dockedDash.prototype = {
                 Main.wm.actionMoveWorkspaceDown();
                 break;
             }
+
+            return true;
         };
 
         //First disconnect old signal if present;
