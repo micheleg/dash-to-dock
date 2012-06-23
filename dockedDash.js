@@ -443,7 +443,7 @@ dockedDash.prototype = {
 
     _removeAnimations: function() {
         Tweener.removeTweens(this.actor);
-        this._animStatus.clear();
+        this._animStatus.clearAll();
     },
 
     _onDragStart: function(){
@@ -647,6 +647,15 @@ animationStatus.prototype = {
     },
 
     clear: function(){
+        if(this.nextStatus.length==1){
+            this.queued = false;
+        this.running = false;
+        }
+
+        this.nextStatus.splice(0, 1);
+    },
+
+    clearAll: function(){
         this.queued  = false;
         this.running = false;
         this.nextStatus.splice(0, this.nextStatus.length);
