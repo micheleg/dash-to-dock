@@ -57,6 +57,8 @@ intellihide.prototype = {
 
         // current intellihide status
         this.status;
+        // manually temporary disable intellihide update
+        this._disableIntellihide = false;
         // Set base functions
         this.showFunction = show;
         this.hideFunction = hide;
@@ -122,6 +124,23 @@ intellihide.prototype = {
                 Main.overview,
                 'hiding',
                 Lang.bind(this,this._overviewExit)
+            ],
+            // Basic bolt extension support
+            [
+                Main.overview,
+                'bolt-showing',
+                Lang.bind(this, function(){
+                    this._disableIntellihide = true;
+                    this._hide();
+                })
+            ],
+            [
+                Main.overview,
+                'bolt-hiding',
+                Lang.bind(this, function(){
+                    this._disableIntellihide = false;
+                    this._updateDockVisibility();
+                })
             ],
             // update wne monitor changes, for instance in multimonitor when monitor are attached
             [
@@ -234,6 +253,9 @@ intellihide.prototype = {
     },
 
     _updateDockVisibility: function() {
+
+        if (this._disableIntellihide)
+            return;
 
         // If we are in overview mode and the dock is set to be visible prevent 
         // it to be hidden by window events(window create, workspace change, 
