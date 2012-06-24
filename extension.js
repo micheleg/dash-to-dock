@@ -5,8 +5,7 @@ const Convenience = Me.imports.convenience;
 const Intellihide = Me.imports.intellihide;
 const DockedDash = Me.imports.dockedDash;
 
-let settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
-
+let settings;
 let intellihide;
 let dock;
 
@@ -26,6 +25,7 @@ function hide(){
 
 function enable() {
 
+    settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
     dock = new DockedDash.dockedDash(settings);
     intellihide = new Intellihide.intellihide(show, hide, dock, settings);
 
