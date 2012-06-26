@@ -135,7 +135,7 @@ dockedDash.prototype = {
         this.dash.actor.connect('notify::width', Lang.bind(this, this._redisplay));
 
         // Load optional features
-        this._OptionalScrollWorkspaceSwitch(this._settings.get_boolean('scroll-switch-workspace'));
+        this._optionalScrollWorkspaceSwitch();
 
         Mainloop.idle_add(Lang.bind(this, this._initialize));
 
@@ -195,7 +195,7 @@ dockedDash.prototype = {
         }));
 
         this._settings.connect('changed::scroll-switch-workspace', Lang.bind(this, function(){
-            this._OptionalScrollWorkspaceSwitch(this._settings.get_boolean('scroll-switch-workspace'));
+            this._optionalScrollWorkspaceSwitch(this._settings.get_boolean('scroll-switch-workspace'));
         }));
 
         this._settings.connect('changed::dash-max-icon-size', Lang.bind(this, function(){
@@ -514,19 +514,45 @@ dockedDash.prototype = {
     // Optional features enable/disable
 
     // Switch workspace by scrolling over the dock
-    _OptionalScrollWorkspaceSwitch: function( action ) {
+    _optionalScrollWorkspaceSwitch: function() {
 
-        // Sometimes Main.wm._workspaceSwitcherPopup is null when first loading the extension
-        if (Main.wm._workspaceSwitcherPopup == null)
-            Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+        let label = 'optionalScrollWorkspaceSwitch';
 
-        // Parent function shoul be called only when settings change,
-        // so it's non that bad if I redefine it everytime it's called
+        this._settings.connect('changed::scroll-switch-workspace',Lang.bind(this, function(){
+            if(this._settings.get_boolean('scroll-switch-workspace'))
+                Lang.bind(this, enable)();
+            else
+                Lang.bind(this, disable)();
+        }));
+
+        if(this._settings.get_boolean('scroll-switch-workspace'))
+            Lang.bind(this, enable)();
+
+        function enable(){
+
+            // Sometimes Main.wm._workspaceSwitcherPopup is null when first loading the extension
+            if (Main.wm._workspaceSwitcherPopup == null)
+                Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+
+            this._signalHandler.disconnectWithLabel(label);
+
+            this._signalHandler.pushWithLabel(label,
+                [
+                    this.actor,
+                    'scroll-event',
+                    Lang.bind(this, onScrollEvent)
+                ]
+            );
+        }
+
+        function disable() {
+            this._signalHandler.disconnectWithLabel(label);
+        }
 
         // This comes from desktop-scroller@obsidien.github.com
-        var _onScrollEvent = function (actor, event) {
+        function onScrollEvent(actor, event) {
 
-            // filter events occuring not near the screen border if erquired
+            // filter events occuring not near the screen border if required
             if(this._settings.get_boolean('scroll-switch-workspace-whole')==false) {
 
                 let [x,y] = event.get_coords();
@@ -547,20 +573,6 @@ dockedDash.prototype = {
 
             return true;
         };
-
-        //First disconnect old signal if present;
-
-        if( this._scrollWorkspaceSwitchId ){
-            this.actor.disconnect(this._scrollWorkspaceSwitchId );
-            this._scrollWorkspaceSwitchId = null;
-        }
-
-        // enable
-        if(action) {
-            this._scrollWorkspaceSwitchId = this.actor.connect('scroll-event',
-                Lang.bind(this, _onScrollEvent)
-                );
-        }
 
     },
 
