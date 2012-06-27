@@ -447,6 +447,8 @@ dockedDash.prototype = {
     },
 
     _onDragStart: function(){
+        this._oldAutohideStatus = this._autohideStatus;
+        this._autohideStatus = false;
         global.stage_input_mode = Shell.StageInputMode.FULLSCREEN;
     },
 
@@ -454,7 +456,8 @@ dockedDash.prototype = {
         if(Main.overview.visible==false){ 
             global.stage_input_mode = Shell.StageInputMode.NORMAL;
         }
-
+        if(this._oldAutohideStatus)
+            this._autohideStatus  = this._oldAutohideStatus;
         this.actor.sync_hover();
     },
 
