@@ -165,6 +165,20 @@ const WorkspaceSettingsWidget = new GObject.Class({
     let dockSettings = new Gtk.Grid({row_spacing:5 });
     let dockSettingsLabel = new Gtk.Label({label: "<b>Dock settings</b>", use_markup: true, xalign: 0, margin_top:5, margin_bottom:5}); 
 
+        let label34 = new Gtk.Label({label: "Vertically centered", xalign: 0, margin_left: 20, margin_top:5});
+        let switch34 = new Gtk.Switch({margin_left: 20});
+            switch34.set_active(this.settings.get_boolean('vertical-centered'));
+            switch34.connect('notify::active', Lang.bind(this, function(check){
+                this.settings.set_boolean('vertical-centered', check.get_active());
+            }));
+
+        let label35 = new Gtk.Label({label: "Expand height", xalign: 0, margin_left: 20, margin_top:5});
+        let switch35 = new Gtk.Switch({margin_left: 20});
+            switch35.set_active(this.settings.get_boolean('expand-height'));
+            switch35.connect('notify::active', Lang.bind(this, function(check){
+                this.settings.set_boolean('expand-height', check.get_active());
+            }));
+
         let label33 = new Gtk.Label({label: "Always visible", use_markup: true, xalign: 0, margin_left: 20, margin_top:5});
         let switch33 =  new Gtk.Switch({margin_left: 20});
             switch33.set_active(this.settings.get_boolean('dock-fixed'));
@@ -192,18 +206,20 @@ const WorkspaceSettingsWidget = new GObject.Class({
         this.settings.bind('dock-fixed', switch32, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
     dockSettings.attach(dockSettingsLabel,0,0,2,1);
-    dockSettings.attach(label33,0,1,1,1);;
-    dockSettings.attach(switch33,1,1,2,1);
-    dockSettings.attach(label31,0,2,1,1);
-    dockSettings.attach(switch31,1,2,2,1)
-    dockSettings.attach(label32,0,3,1,1);;
-    dockSettings.attach(switch32,1,3,2,1);
+    dockSettings.attach(label34,0,1,1,1);;
+    dockSettings.attach(switch34,1,1,2,1);;
+    dockSettings.attach(label35,0,2,1,1);;
+    dockSettings.attach(switch35,1,2,2,1);;
+    dockSettings.attach(label33,0,3,1,1);;
+    dockSettings.attach(switch33,1,3,2,1);
+    dockSettings.attach(label31,0,4,1,1);
+    dockSettings.attach(switch31,1,4,2,1)
+    dockSettings.attach(label32,0,5,1,1);;
+    dockSettings.attach(switch32,1,5,2,1);
 
     this.add(autohide);
     this.add(general);
     this.add(dockSettings);
-
-
 
     }
 });
