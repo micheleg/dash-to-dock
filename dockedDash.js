@@ -167,6 +167,9 @@ dockedDash.prototype = {
         this.dash.actor.connect('notify::width', Lang.bind(this, this._redisplay));
         this.dash._box.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
 
+        // sync hover after a popupmenu is closed
+        this.dash.connect('menu-closed', Lang.bind(this, function(){this._box.sync_hover();}));
+
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
 
