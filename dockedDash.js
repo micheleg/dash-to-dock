@@ -34,11 +34,9 @@ dockedDash.prototype = {
 
         this._signalHandler = new Convenience.globalSignalHandler();
 
-        // Timeout id used to ensure the dash is hiddeen after some menu is shown
-        this._dashShowTimeout = 0;
-
         // authohide current status. Not to be confused with autohide enable/disagle global (g)settings
         this._autohideStatus = this._settings.get_boolean('autohide') && !this._settings.get_boolean('dock-fixed');
+
         // initialize animation status object
         this._animStatus = new animationStatus(true);
 
@@ -174,12 +172,6 @@ dockedDash.prototype = {
 
         // Disconnect global signals
         this._signalHandler.disconnect();
-
-        // Clear loop used to ensure dash visibility update after closing
-        // an icon menu.
-        if(this._dashShowTimeout>0)
-            Mainloop.source_remove(this._dashShowTimeout);
-
         // Destroy main clutter actor: this should be sufficient
         // From clutter documentation:
         // If the actor is inside a container, the actor will be removed.
@@ -272,9 +264,6 @@ dockedDash.prototype = {
             }
 
             this._animateIn(this._settings.get_double('animation-time'), delay);
-
-            // Ensure dash is hidden after closing icon menu if necessary
-            this._startDashShowLoop();
         }
     },
 
@@ -307,9 +296,6 @@ dockedDash.prototype = {
 
             this._animateOut(this._settings.get_double('animation-time'), delay);
 
-            // Clear dashShow Loop
-            if(this._dashShowTimeout>0)
-                Mainloop.source_remove(this._dashShowTimeout);
         }
     },
 
@@ -528,21 +514,6 @@ dockedDash.prototype = {
         }
     },
 
-    // Start a loop to hide the dash when menu are closed.
-    _startDashShowLoop: function(){
-        // If a loop already exists clear it
-        if(this._dashShowTimeout>0)
-        Mainloop.source_remove(this._dashShowTimeout);
-
-        this._dashShowTimeout = Mainloop.timeout_add(500, Lang.bind(this, function() {
-            // I'm not sure why but I need not to sync hover if it results already false
-            if(!this._dashMenuIsUp() && this._box.hover==true){
-                this._box.sync_hover();
-            }
-            return true; // to make the loop continue;
-        }));
-    },
-
     // Check if some app icon's menu is up
     _dashMenuIsUp: function() {
 
@@ -642,10 +613,6 @@ dockedDash.prototype = {
         if(this._autohideStatus==true){
             this._autohideStatus = false;
 
-            // clear unnecesssary potentially running loops
-            if(this._dashShowTimeout>0)
-                Mainloop.source_remove(this._dashShowTimeout);
-
             this._removeAnimations();
             this._animateIn(this._settings.get_double('animation-time'), 0);
             if(this._settings.get_boolean('opaque-background') && !this._settings.get_boolean('opaque-background-always'))
@@ -668,11 +635,7 @@ dockedDash.prototype = {
             if( !this._box.hover || !this._settings.get_boolean('autohide')) {
                 this._animateOut(this._settings.get_double('animation-time'), 0);
                 delay = this._settings.get_double('animation-time');
-            } else if (this._settings.get_boolean('autohide') ) {
-                // I'm enabling autohide and the dash keeps being showed because of mouse hover
-                // so i start the loop usualy started by _show()
-                this._startDashShowLoop();
-
+            } else {
                 delay = 0;
             }
             
