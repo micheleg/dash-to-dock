@@ -3,7 +3,9 @@
 const _DEBUG_= false;
 
 const Clutter = imports.gi.Clutter;
+const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
+const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const Signals = imports.signals;
 const St = imports.gi.St;
@@ -145,6 +147,12 @@ dockedDash.prototype = {
 
         // sync hover after a popupmenu is closed
         this.dash.connect('menu-closed', Lang.bind(this, function(){this._box.sync_hover();}));
+
+        // Restore dash accessibility
+        Main.ctrlAltTabManager.addGroup(
+            this.dash.actor, _("Dash"),'user-bookmarks',
+                {focusCallback: Lang.bind(this, this._onAccessibilityFocus)});
+        this.actor.connect('key-press-event', Lang.bind(this, this._onKeyPress));
 
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
@@ -335,7 +343,11 @@ dockedDash.prototype = {
                 onUpdate: Lang.bind(this, this._updateClip),
                 onStart:  Lang.bind(this, function() {this._animStatus.start();}),
                 onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
-                onComplete: Lang.bind(this, function() {this._animStatus.end();})
+                onComplete: Lang.bind(this, function() {
+                    this._animStatus.end();
+                    // Disconnect unnecessary signals used for accessibility
+                    this._signalHandler.disconnectWithLabel('accessibility');
+                    })
             });
         }
     },
@@ -514,6 +526,57 @@ dockedDash.prototype = {
         // try to keep it above.
         if(Main.wm._workspaceSwitcherPopup) {
             this.actor.raise(Main.wm._workspaceSwitcherPopup.actor);
+        }
+    },
+
+    // Show dock and give key focus to it
+    _onAccessibilityFocus: function(){
+        this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
+        this._animateIn(this._settings.get_double('animation-time'), 0);
+
+        this._signalHandler.disconnectWithLabel('accessibility');
+        this._signalHandler.pushWithLabel('accessibility',
+            [
+                global.stage,
+                'notify::key-focus',
+                Lang.bind(this, accessibilityCheck)
+            ],
+            // This is needed because when launching a new app focus is still the dash
+            // for some reasons and the new window is still not focused when 
+            // notify::key-focus signal triggers.
+            // global.display 's 'window-created' doesn't work
+            [
+                global.screen,
+                'restacked',
+                Lang.bind(this, accessibilityCheck)
+            ]
+
+        );
+
+        function accessibilityCheck(){
+            if (!this._dashHasFocus() && ! this._dashMenuIsUp() ) {
+                this._signalHandler.disconnectWithLabel('accessibility');
+                this._box.sync_hover();this._hoverChanged();
+            }
+        };
+    },
+
+   _onKeyPress: function(entry, event) {
+        let symbol = event.get_key_symbol();
+
+        // Exit accessibility focus
+        if (symbol == Clutter.Escape) {
+
+            global.stage.set_key_focus(null);
+
+            // Force hover update
+            // Set hover true, thus do nothing since the dash is already shown;
+            // then sync hover, if mouse is away hide the dash.
+            this._box.hover = true;
+            this._box.sync_hover();
+
+            // TODO: find a way to restore focus on old window if nothing changed?
+
         }
     },
 
