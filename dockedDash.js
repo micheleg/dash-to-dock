@@ -116,6 +116,11 @@ dockedDash.prototype = {
                 'notify::y',
                 Lang.bind(this, this._updateYPosition)
             ],
+            [
+                Main.overview._viewSelector._pageArea,
+                'notify::height',
+                Lang.bind(this, this._updateYPosition)
+            ],
             // Allow app icons do be dragged out of the chrome actors when reordering or deleting theme while not on overview mode
             // by changing global stage input mode
             [
@@ -394,7 +399,6 @@ dockedDash.prototype = {
             this._animateIn(ANIMATION_TIME, 0);
         }
 
-    _
         this._updateBackgroundOpacity();
         this._updateStaticBox();
         this._updateClip();
@@ -432,8 +436,9 @@ dockedDash.prototype = {
     // 'Hard' reset dock positon: called on start and when monitor changes
     _resetPosition: function() {
         this._monitor = Main.layoutManager.primaryMonitor;
-        this.actor.x = this._monitor.x;
+        this._animateIn(0,0);
         this._updateYPosition();
+        this._updateClip();
     },
 
     _removeAnimations: function() {
