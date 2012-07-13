@@ -526,6 +526,11 @@ const myDash = new Lang.Class({
     },
 
     handleDragOver : function(source, actor, x, y, time) {
+
+        // Don't allow to add favourites if they are not displayed
+        if( !this._settings.get_boolean('show-favorites') )
+            return DND.DragMotionResult.NO_DROP;
+
         let app = null;
         if (source instanceof AppDisplay.AppWellIcon)
             app = this._appSystem.lookup_app(source.getId());
@@ -611,6 +616,11 @@ const myDash = new Lang.Class({
 
     // Draggable target interface
     acceptDrop : function(source, actor, x, y, time) {
+
+        // Don't allow to add favourites if they are not displayed
+        if( !this._settings.get_boolean('show-favorites') )
+            return true;
+
         let app = null;
         if (source instanceof AppDisplay.AppWellIcon) {
             app = this._appSystem.lookup_app(source.getId());
