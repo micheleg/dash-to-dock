@@ -82,6 +82,7 @@ const myDashActor = new Lang.Class({
  *
  * Summary of changes:
  * - disconnect global signals adding a destroy method;
+ * - play animations even when not in overview mode
  *
  */
 const myDash = new Lang.Class({
@@ -388,9 +389,9 @@ const myDash = new Lang.Class({
             icon.setIconSize(this.iconSize);
 
             // Don't animate the icon size change when the overview
-            // is transitioning, not visible or when initially filling
+            // is transitioning, or when initially filling
             // the dash
-            if (!Main.overview.visible || Main.overview.animationInProgress ||
+            if (Main.overview.animationInProgress ||
                 !this._shownInitially)
                 continue;
 
@@ -512,8 +513,7 @@ const myDash = new Lang.Class({
             let item = removedActors[i];
 
             // Don't animate item removal when the overview is transitioning
-            // or hidden
-            if (Main.overview.visible && !Main.overview.animationInProgress)
+            if (!Main.overview.animationInProgress)
                 item.animateOutAndDestroy();
             else
                 item.destroy();
