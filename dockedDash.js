@@ -44,6 +44,7 @@ const DOCK_FIXED = false; //Dock is always visible
 const EXPAND_HEIGHT = true; // Use all vertical available space
 const VERTICAL_CENTERED = true; //Center the dock verticaly
 
+const PREFERRED_MONITOR = -1; //Set on which monitor to put the dock, use -1 for the primary one. If the monitor does not exist for instance beacuse it's disconnected the primary monitor is used
 // END OF SETTINGS
 
 function dockedDash() {
@@ -409,12 +410,30 @@ dockedDash.prototype = {
 
     _updateYPosition: function() {
 
+        let unavailableTopSpace = 0;
+        let unavailableBottomSpace = 0;
+
+        // check if the dock is on the primary monitor
+        if ( this._monitor.x == Main.layoutManager.primaryMonitor.x &&
+             this._monitor.y == Main.layoutManager.primaryMonitor.y ){
+
+            unavailableTopSpace = Main.panel.actor.height;
+        }
+
+        let availableHeight = this._monitor.height - unavailableTopSpace - unavailableBottomSpace;
+        let defaultHeight = Main.overview._viewSelector._pageArea.height;
+
         if(EXPAND_HEIGHT){
-            this.actor.y = this._monitor.y + Main.panel.actor.height;
-            this.actor.height = this._monitor.height - Main.panel.actor.height;
+            this.actor.y = this._monitor.y + unavailableTopSpace;
+            this.actor.height = availableHeight;
         } else{
             this.actor.y = this._monitor.y + Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y;
-            this.actor.height = Main.overview._viewSelector._pageArea.height;
+
+            // It can occur if the monitor where the dock is displayed is not the primary one
+            if((defaultHeight + this.actor.y) > (this._monitor.y + this._monitor.height))
+                defaultHeight = this._monitor.height - 2*(this.actor.y - this._monitor.y);
+
+            this.actor.height = defaultHeight;
         }
 
         if(VERTICAL_CENTERED)
@@ -437,10 +456,23 @@ dockedDash.prototype = {
 
     // 'Hard' reset dock positon: called on start and when monitor changes
     _resetPosition: function() {
-        this._monitor = Main.layoutManager.primaryMonitor;
+        this._monitor = this._getMonitor();
         this._animateIn(0,0);
         this._updateYPosition();
         this._updateClip();
+    },
+
+    _getMonitor: function(){
+
+        let monitorIndex = PREFERRED_MONITOR;
+        let monitor;
+
+        if (monitorIndex >0 && monitorIndex< Main.layoutManager.monitors.length)
+            monitor = Main.layoutManager.monitors[monitorIndex];
+        else
+            monitor = Main.layoutManager.primaryMonitor;
+
+        return monitor;
     },
 
     _removeAnimations: function() {
