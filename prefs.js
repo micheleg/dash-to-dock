@@ -165,6 +165,8 @@ const WorkspaceSettingsWidget = new GObject.Class({
             this.settings.set_boolean('expand-height', check.get_active());
         }));
 
+    this.settings.bind('vertical-centered', expandHeight, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+
     dockSettingsMain2.add(verticalCenter);
     dockSettingsMain2.add(expandHeight);
 
@@ -175,7 +177,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
                                               xalign: 0, valign: Gtk.Align.END, margin_bottom:5});
 
     let maximumIconSize =  new Gtk.Scale({orientation: Gtk.Orientation.HORIZONTAL, valuePos: Gtk.PositionType.RIGHT,
-                                          valign: Gtk.Align.END, halign: Gtk.Align.FILL, hexpand:true, margin_top:5});
+                                          valign: Gtk.Align.END, halign: Gtk.Align.FILL, hexpand:true, margin_top:10});
         maximumIconSize.set_range(0, 4); // =[ 16, 24, 32, 48, 64 ]
         maximumIconSize.set_value(allSizes.indexOf(this.settings.get_int('dash-max-icon-size')));
         maximumIconSize.set_digits(0);

@@ -445,7 +445,7 @@ dockedDash.prototype = {
         let availableHeight = this._monitor.height - unavailableTopSpace - unavailableBottomSpace;
         let defaultHeight = Main.overview._viewSelector._pageArea.height;
 
-        if(this._settings.get_boolean('expand-height')){
+        if(this._settings.get_boolean('expand-height') && this._settings.get_boolean('vertical-centered')){
             this.actor.y = this._monitor.y + unavailableTopSpace;
             this.actor.height = availableHeight;
         } else{
