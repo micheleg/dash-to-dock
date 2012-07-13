@@ -16,6 +16,9 @@ const Main = imports.ui.main;
 const Overview = imports.ui.overview;
 const Tweener = imports.ui.tweener;
 
+let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
+let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
+
 // This class is a fork of the upstream dash class (ui.dash.js)
 const myDash = new Lang.Class({
     Name: 'dashToDock.myDash',
@@ -122,7 +125,7 @@ const myDash = new Lang.Class({
             dragEvent.source.actor &&
             this.actor.contains (dragEvent.source.actor) &&
             this._favRemoveTarget == null) {
-                this._favRemoveTarget = new RemoveFavoriteIcon();
+                this._favRemoveTarget = new Dash.RemoveFavoriteIcon();
                 this._favRemoveTarget.icon.setIconSize(this.iconSize);
                 this._box.add(this._favRemoveTarget.actor);
                 this._adjustIconSize();
@@ -167,7 +170,7 @@ const myDash = new Lang.Class({
                                        display.actor.opacity = 255;
                                    }));
 
-        let item = new DashItemContainer();
+        let item = new Dash.DashItemContainer();
         item.setChild(display.actor);
 
         item.setLabelText(app.get_name());
@@ -509,7 +512,7 @@ const myDash = new Lang.Class({
                 fadeIn = true;
             }
 
-            this._dragPlaceholder = new DragPlaceholderItem();
+            this._dragPlaceholder = new Dash.DragPlaceholderItem();
             this._dragPlaceholder.child.set_width (this.iconSize);
             this._dragPlaceholder.child.set_height (this.iconSize / 2);
             this._box.insert_child_at_index(this._dragPlaceholder.actor,
