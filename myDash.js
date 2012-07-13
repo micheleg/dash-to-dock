@@ -371,14 +371,18 @@ const myDash = new Lang.Class({
         // Apps supposed to be in the dash
         let newApps = [];
 
-        for (let id in favorites)
-            newApps.push(favorites[id]);
+        if( this._settings.get_boolean('show-favorites') ) {
+            for (let id in favorites)
+                newApps.push(favorites[id]);
+        }
 
-        for (let i = 0; i < running.length; i++) {
-            let app = running[i];
-            if (app.get_id() in favorites)
-                continue;
-            newApps.push(app);
+        if( this._settings.get_boolean('show-running') ) {
+            for (let i = 0; i < running.length; i++) {
+                let app = running[i];
+                if (this._settings.get_boolean('show-favorites') && (app.get_id() in favorites) )
+                    continue;
+                newApps.push(app);
+            }
         }
 
         // Figure out the actual changes to the list of items; we iterate
@@ -489,6 +493,26 @@ const myDash = new Lang.Class({
         // shownInitially prevent the freeze from occuring
         this._shownInitially = false;
 
+        this._redisplay();
+
+    },
+
+    // Reset the displayed apps icon to mantain the correct order when changing
+    // show favorites/show running settings
+    resetAppIcons : function() {
+
+        let children = this._box.get_children().filter(function(actor) {
+            return actor._delegate.child &&
+                   actor._delegate.child._delegate &&
+                   actor._delegate.child._delegate.app;
+        });
+        for (let i = 0; i < children.length; i++) {
+            let item = children[i]._delegate;
+            item.actor.destroy();
+        }
+
+        // to avoid ugly animations, just suppress them like when dash is first loaded.
+        this._shownInitially = false;
         this._redisplay();
 
     },
