@@ -83,16 +83,20 @@ const myDashActor = new Lang.Class({
  * Summary of changes:
  * - disconnect global signals adding a destroy method;
  * - play animations even when not in overview mode
+ * - set a maximum icon size
  *
  */
 const myDash = new Lang.Class({
     Name: 'dashToDock.myDash',
 
-    _init : function() {
+    _init : function(settings) {
         this._maxHeight = -1;
         this.iconSize = 64;
+        this._allIconSize = [ 16, 22, 24, 32, 48, 64 ];
+        this._avaiableIconSize = this._allIconSize;
         this._shownInitially = false;
 
+        this._settings = settings;
         this._signalHandler = new Convenience.globalSignalHandler();
 
         this._dragPlaceholder = null;
@@ -154,6 +158,8 @@ const myDash = new Lang.Class({
                 Lang.bind(this, this._onDragCancelled)
             ]
         );
+
+        this.setMaxIconSize(this._settings.get_int('dash-max-icon-size'));
 
     },
 
@@ -365,7 +371,7 @@ const myDash = new Lang.Class({
 
         let availSize = availHeight / iconChildren.length;
 
-        let iconSizes = [ 16, 22, 24, 32, 48, 64 ];
+        let iconSizes = this._avaiableIconSize;
 
         let newIconSize = 16;
         for (let i = 0; i < iconSizes.length; i++) {
@@ -537,6 +543,29 @@ const myDash = new Lang.Class({
         // Workaround for https://bugzilla.gnome.org/show_bug.cgi?id=692744
         // Without it, StBoxLayout may use a stale size cache
         this._box.queue_relayout();
+    },
+
+    setMaxIconSize: function(size) {
+
+        if( size>=this._allIconSize[0] ){
+
+            this._avaiableIconSize = this._allIconSize.filter(
+                function(val){
+                    return (val<=size);
+                }
+            );
+
+        } else {
+            this._availableIconSize = [ this._allIconSize[0] ];
+        }
+
+        // Changing too rapidly icon size settings cause the whole Shell to freeze
+        // I've not discovered exactly why, but disabling animation by setting
+        // shownInitially prevent the freeze from occuring
+        this._shownInitially = false;
+
+        this._redisplay();
+
     },
 
     _clearDragPlaceholder: function() {
