@@ -627,6 +627,11 @@ const myDash = new Lang.Class({
     },
 
     handleDragOver : function(source, actor, x, y, time) {
+
+        // Don't allow to add favourites if they are not displayed
+        if( !this._settings.get_boolean('show-favorites') )
+            return DND.DragMotionResult.NO_DROP;
+
         let app = Dash.getAppFromSource(source);
 
         // Don't allow favoriting of transient apps
@@ -705,6 +710,11 @@ const myDash = new Lang.Class({
 
     // Draggable target interface
     acceptDrop : function(source, actor, x, y, time) {
+
+        // Don't allow to add favourites if they are not displayed
+        if( !this._settings.get_boolean('show-favorites') )
+            return true;
+
         let app = Dash.getAppFromSource(source);
 
         // Don't allow favoriting of transient apps
