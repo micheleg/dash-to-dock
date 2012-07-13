@@ -463,15 +463,27 @@ const myDash = new Lang.Class({
 
         this._adjustIconSize();
 
-        // Skip animations on first run when adding the initial set
-        // of items, to avoid all items zooming in at once
-        if (!this._shownInitially) {
-            this._shownInitially = true;
-            return;
+        for (let i = 0; i < addedItems.length; i++){
+
+            // Skip animations on first run when adding the initial set
+            // of items, to avoid all items zooming in at once
+            if (this._shownInitially)
+                addedItems[i].item.animateIn();
+
+            // Emit a custom signal when a menu is closed
+            let item = addedItems[i].item;
+            let myDash = this;
+            let func = item.child._delegate._menuManager._onMenuOpenState;
+            item.child._delegate._menuManager._onMenuOpenState = function(menu, open){
+                if(!open)
+                    myDash.emit('menu-closed');
+                Lang.bind(item.child._delegate._menuManager,func)(menu, open);
+            }
         }
 
-        for (let i = 0; i < addedItems.length; i++)
-            addedItems[i].item.animateIn();
+        if (!this._shownInitially)
+            this._shownInitially = true;
+
     },
 
     setMaxIconSize: function(size) {
