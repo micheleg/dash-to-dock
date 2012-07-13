@@ -17,12 +17,19 @@ const Main = imports.ui.main;
 const Tweener = imports.ui.tweener;
 const Workspace = imports.ui.workspace;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Convenience = Me.imports.convenience;
+
 let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
 let DASH_ITEM_LABEL_SHOW_TIME = Dash.DASH_ITEM_LABEL_SHOW_TIME;
 let DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME;
 let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
 
 /* This class is a fork of the upstream dash class (ui.dash.js)
+ *
+ * Summary of changes:
+ * - disconnect global signals adding a destroy method;
+ *
  */
 const myDash = new Lang.Class({
     Name: 'dashToDock.myDash',
@@ -31,6 +38,8 @@ const myDash = new Lang.Class({
         this._maxHeight = -1;
         this.iconSize = 64;
         this._shownInitially = false;
+
+        this._signalHandler = new Convenience.globalSignalHandler();
 
         this._dragPlaceholder = null;
         this._dragPlaceholderPos = -1;
@@ -71,16 +80,32 @@ const myDash = new Lang.Class({
         AppFavorites.getAppFavorites().connect('changed', Lang.bind(this, this._queueRedisplay));
         this._appSystem.connect('app-state-changed', Lang.bind(this, this._queueRedisplay));
 
-        Main.overview.connect('item-drag-begin',
-                              Lang.bind(this, this._onDragBegin));
-        Main.overview.connect('item-drag-end',
-                              Lang.bind(this, this._onDragEnd));
-        Main.overview.connect('item-drag-cancelled',
-                              Lang.bind(this, this._onDragCancelled));
+        this._signalHandler.push(
+            [
+                Main.overview,
+                'item-drag-begin',
+                Lang.bind(this, this._onDragBegin)
+            ],
+            [
+                Main.overview,
+                'item-drag-end',
+                Lang.bind(this, this._onDragEnd)
+            ],
+            [
+                Main.overview,
+                'item-drag-cancelled',
+                Lang.bind(this, this._onDragCancelled)
+            ]
+        );
 
-        // Translators: this is the name of the dock/favorites area on
-        // the left of the overview
-        Main.ctrlAltTabManager.addGroup(this.actor, _("Dash"), 'user-bookmarks-symbolic');
+    },
+
+    // Translators: this is the name of the dock/favorites area on
+    // the left of the overview
+    Main.ctrlAltTabManager.addGroup(this.actor, _("Dash"), 'user-bookmarks-symbolic');
+
+    destroy: function() {
+        this._signalHandler.disconnect();
     },
 
     _onDragBegin: function() {
