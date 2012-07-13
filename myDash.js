@@ -27,7 +27,16 @@ const MAX_ICON_SIZE = 48; // Set the maximum dash icon size
 const SHOW_FAVORITES = true; // Show Favorite apps in the dash
 const SHOW_RUNNING = true; // Show Running apps in the dash
 
-// This class is a fork of the upstream dash class (ui.dash.js)
+/* This class is a fork of the upstream dash class (ui.dash.js)
+ *
+ * Summary of changes:
+ * - disconnect global signals adding a destroy method;
+ * - play animations even when not in overview mode
+ * - set a maximum icon size
+ * - show running and/or favorite applications
+ * - emit a custom signal when a popupmenu is closed
+ *
+ */
 function myDash() {
     this._init();
 }
