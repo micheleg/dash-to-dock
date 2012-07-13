@@ -126,6 +126,30 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     /* POISITION AND SIZE */
 
+    let dockMonitor = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
+        let dockMonitorLabel = new Gtk.Label({label: "Show the dock on following monitor (if attached)", hexpand:true, xalign:0});
+        let dockMonitorCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+            dockMonitorCombo.append_text('Primary (default)');
+            dockMonitorCombo.append_text('1');
+            dockMonitorCombo.append_text('2');
+            dockMonitorCombo.append_text('3');
+            dockMonitorCombo.append_text('4');
+            let active = this.settings.get_int('preferred-monitor');
+            if (active<0)
+                active = 0;
+            dockMonitorCombo.set_active(active);
+
+            dockMonitorCombo.connect('changed', Lang.bind (this, function(widget) {
+                let active = widget.get_active();
+                if (active <=0)
+                    this.settings.set_int('preferred-monitor', -1);
+                else
+                    this.settings.set_int('preferred-monitor', active );
+            }));
+
+    dockMonitor.add(dockMonitorLabel)
+    dockMonitor.add(dockMonitorCombo);
+
     let dockSettingsMain2 = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL, homogeneous:false,
                                         margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
 
@@ -181,6 +205,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
     dockSettings.add(dockSettingsControl1);
     dockSettings.add(dockSettingsMain1);
     //dockSettings.add(dockSettingsControl2);
+    dockSettings.add(dockMonitor);
     dockSettings.add(dockSettingsMain2);
 
     notebook.append_page(dockSettings, dockSettingsTitle);

@@ -97,5 +97,10 @@
       <summary>expand dock height</summary>
       <description>Use all vertical available space</description>
     </key>
+    <key type="i" name="preferred-monitor">
+      <default>-1</default>
+      <summary>Monitor on which putting the dock</summary>
+      <description>Set on which monitor to put the dock, use -1 for the primary one</description>
+    </key>
   </schema>
 </schemalist>
