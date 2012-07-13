@@ -22,7 +22,16 @@ const Convenience = Me.imports.convenience;
 let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
 let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
 
-// This class is a fork of the upstream dash class (ui.dash.js)
+/* This class is a fork of the upstream dash class (ui.dash.js)
+ *
+ * Summary of changes:
+ * - disconnect global signals adding a destroy method;
+ * - play animations even when not in overview mode
+ * - set a maximum icon size
+ * - show running and/or favorite applications
+ * - emit a custom signal when a popupmenu is closed
+ *
+ */
 const myDash = new Lang.Class({
     Name: 'dashToDock.myDash',
 
