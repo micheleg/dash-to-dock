@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="gnome-shell-extensions">
+  <enum id='org.gnome.shell.extensions.dash-to-dock.clickAction'>
+    <value value='0' nick='skip'/>
+    <value value='1' nick='minimize'/>
+    <value value='2' nick='launch'/>
+    <value value='3' nick='cycle-windows'/>
+  </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key type="d" name="animation-time">
       <default>0.25</default>
@@ -104,6 +110,24 @@
       <default>-1</default>
       <summary>Monitor on which putting the dock</summary>
       <description>Set on which monitor to put the dock, use -1 for the primary one</description>
+    </key>
+    <key type="b" name="customize-click">
+      <default>false</default>
+      <summary>Customize click behaviour</summary>
+      <description>Custmize action on various mouse events</description>
+    </key>
+    <key type="b" name="minimize-shift">
+      <default>true</default>
+      <summary>Minimize on shift+click</summary>
+    </key>
+    <key type="b" name="activate-single-window">
+      <default>true</default>
+      <summary>Activate only one window</summary>
+    </key>
+    <key name="click-action" enum="org.gnome.shell.extensions.dash-to-dock.clickAction">
+      <default>'cycle-windows'</default>
+      <summary>Action when clicking on a running app</summary>
+      <description>Set the action that is executed when clicking on the icon of a running application</description>
     </key>
   </schema>
 </schemalist>

@@ -350,6 +350,59 @@ const WorkspaceSettingsWidget = new GObject.Class({
     notebook.append_page(customization, customizationTitle);
 
 
+    /* CUSTOMIZE CLICK BEHAVIOUR */
+    let clickManagerTitle = new Gtk.Label({label:"Click behaviour"});
+    let clickManager = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
+
+    let clickControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
+
+    let clickLabel = new Gtk.Label({label: "Customize actions on mouse click",
+                                              xalign: 0, hexpand:true});
+    let click = new Gtk.Switch({halign:Gtk.Align.END});
+        click.set_active(this.settings.get_boolean('customize-click'));
+        click.connect('notify::active', Lang.bind(this, function(check){
+            this.settings.set_boolean('customize-click', check.get_active());
+        }));
+
+    clickControl.add(clickLabel);
+    clickControl.add(click);
+
+    let clickMain = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL, homogeneous:false,
+                                       margin_left:20, margin_top:5, margin_bottom:10, margin_right:10});
+
+    let clickAction =  new Gtk.Box({margin_bottom:5});
+        let clickActionLabel = new Gtk.Label({label: "Action on clicking on running app", hexpand:true, xalign:0});
+        let clickActionCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+            clickActionCombo.append_text('Do nothing (default)');
+            clickActionCombo.append_text('Minimize');
+            clickActionCombo.append_text('Launch new window');
+            clickActionCombo.append_text('Cycle through application windows');
+
+            clickActionCombo.set_active(this.settings.get_enum('click-action'));
+
+            clickActionCombo.connect('changed', Lang.bind (this, function(widget) {
+                    this.settings.set_enum('click-action', widget.get_active());
+            }));
+
+    clickAction.add(clickActionLabel)
+    clickAction.add(clickActionCombo);
+
+    let minimizeShift =  new Gtk.CheckButton({label: "Minimize window on shift+click (double click for all app windows)"});
+        minimizeShift.set_active(this.settings.get_boolean('minimize-shift'));
+        minimizeShift.connect('toggled', Lang.bind(this, function(check){
+            this.settings.set_boolean('minimize-shift', check.get_active());
+        }));
+
+    clickMain.add(clickAction);
+    clickMain.add(minimizeShift);
+
+    clickManager.add(clickControl);
+    clickManager.add(clickMain);
+
+    this.settings.bind('customize-click', clickMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+
+    notebook.append_page(clickManager, clickManagerTitle);
+
 /*
     let OptionalFeaturesTitle = new Gtk.Label({label: "Optional Features"});
     let OptionalFeatures = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
