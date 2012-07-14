@@ -86,6 +86,7 @@ const myDashActor = new Lang.Class({
  * - play animations even when not in overview mode
  * - set a maximum icon size
  * - show running and/or favorite applications
+ * - emit a custom signal when an app icon is added
  *
  */
 const myDash = new Lang.Class({
@@ -544,6 +545,11 @@ const myDash = new Lang.Class({
         }
 
         this._adjustIconSize();
+
+        for (let i = 0; i < addedItems.length; i++){
+            // Emit a custom signal notifying that a new item has been added
+            this.emit('item-added', addedItems[i]);
+        }
 
         // Skip animations on first run when adding the initial set
         // of items, to avoid all items zooming in at once
