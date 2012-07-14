@@ -30,6 +30,7 @@ let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
  * - set a maximum icon size
  * - show running and/or favorite applications
  * - emit a custom signal when a popupmenu is closed
+ * - emit a custom signal when an app icon is added
  *
  */
 const myDash = new Lang.Class({
@@ -488,6 +489,9 @@ const myDash = new Lang.Class({
                     myDash.emit('menu-closed');
                 Lang.bind(item.child._delegate._menuManager,func)(menu, open);
             }
+
+            // Emit a custom signal notifying that a new item has been added
+            this.emit('item-added', item);
         }
 
         if (!this._shownInitially)
