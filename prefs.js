@@ -5,6 +5,8 @@ const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
+const Mainloop = imports.mainloop;
+
 /*
 const Gettext = imports.gettext.domain('gnome-shell-extensions');
 const _ = Gettext.gettext;
@@ -221,8 +223,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     let opaqueLayerControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
 
-
-    let opaqueLayerLabel = new Gtk.Label({label: "Add an opaque layer below the dock", xalign: 0, hexpand:true});
+    let opaqueLayerLabel = new Gtk.Label({label: "Customize the dock background opacity", xalign: 0, hexpand:true});
     let opaqueLayer = new Gtk.Switch({halign:Gtk.Align.END});
             opaqueLayer.set_active(this.settings.get_boolean('opaque-background'));
             opaqueLayer.connect('notify::active', Lang.bind(this, function(check){
@@ -237,7 +238,8 @@ const WorkspaceSettingsWidget = new GObject.Class({
     let opaqueLayerMain = new Gtk.Box({spacing:30, orientation:Gtk.Orientation.HORIZONTAL, homogeneous:false,
                                        margin_left:20, margin_top:10, margin_bottom:10, margin_right:10});
 
-    let layerOpacityLabel = new Gtk.Label({label: "Layer opacity", use_markup: true, xalign: 0});
+    let opacityLayerTimeout=0; // Used to avoid to continuosly update the opacity
+    let layerOpacityLabel = new Gtk.Label({label: "Opacity", use_markup: true, xalign: 0});
     let layerOpacity =  new Gtk.Scale({orientation: Gtk.Orientation.HORIZONTAL, valuePos: Gtk.PositionType.RIGHT});
         layerOpacity.set_range(0, 100);
         layerOpacity.set_value(this.settings.get_double('background-opacity')*100);
@@ -246,12 +248,17 @@ const WorkspaceSettingsWidget = new GObject.Class({
         layerOpacity.set_size_request(200, -1);
         layerOpacity.connect('value-changed', Lang.bind(this, function(button){
             let s = button.get_value()/100;
-            this.settings.set_double('background-opacity', s);
+            if(opacityLayerTimeout>0)
+                Mainloop.source_remove(opacityLayerTimeout);
+            opacityLayerTimeout = Mainloop.timeout_add(250, Lang.bind(this, function(){
+                this.settings.set_double('background-opacity', s);
+                return false;
+            }));
         }));
-     let opaqueLayeralwaysVisible =  new Gtk.CheckButton({label: "always visible", margin_left: 20});
-        opaqueLayeralwaysVisible.set_active(this.settings.get_boolean('opaque-background-always'));
+     let opaqueLayeralwaysVisible =  new Gtk.CheckButton({label: "Only when in autohide"});
+        opaqueLayeralwaysVisible.set_active(!this.settings.get_boolean('opaque-background-always'));
         opaqueLayeralwaysVisible.connect('toggled', Lang.bind(this, function(check){
-            this.settings.set_boolean('opaque-background-always', check.get_active());
+            this.settings.set_boolean('opaque-background-always', !check.get_active());
         }));
 
     this.settings.bind('opaque-background', opaqueLayerMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
