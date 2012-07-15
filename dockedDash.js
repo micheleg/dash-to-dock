@@ -87,19 +87,6 @@ dockedDash.prototype = {
                                                             coordinate: Clutter.BindCoordinate.HEIGHT });
         this.dash.actor.add_constraint(this.constrainHeight);
 
-        // I create another actor with name #dash. This serves for applying an opaque background 
-        // for those themes like the default one that has a semi-transparent dash.
-        // I inherit all dash style of the current theme, then disable all those non interesting.
-        // I'm interested only on the shape, thus only on the border radius I think, in order
-        // to cover all and only the dash area. It is probably a little ugly workaround, but I 
-        // have not found a way to access the current style and simply change the background alpha.
-        this._backgroundBox = new St.Bin({ name: 'dash', reactive: false, y_align: St.Align.START});
-        this._backgroundBox.set_style('background-color: rgba(1,1,1,' + 
-            BACKGROUND_OPACITY+');padding:0;margin:0;border:0;');
-        this.constrainSize = new Clutter.BindConstraint({ source: this.dash._box,
-                                                            coordinate: Clutter.BindCoordinate.SIZE });
-        this._backgroundBox.add_constraint(this.constrainSize);
-
         // Put dock on the primary monitor
         this._monitor = Main.layoutManager.primaryMonitor;
 
@@ -153,6 +140,12 @@ dockedDash.prototype = {
                 global.window_manager,
                 'switch-workspace',
                 Lang.bind(this, this._onSwitchWorkspace)
+            ],
+            // When theme changes re-obtain default background color
+            [
+                St.ThemeContext.get_for_stage (global.stage),
+                'changed',
+                Lang.bind(this, this._onThemeChanged)
             ]
         );
 
@@ -160,11 +153,13 @@ dockedDash.prototype = {
         //this.actor.hide(); but I need to access its width, so I use opacity
         this.actor.set_opacity(0);
 
-        //Add dash and backgroundBox to the container actor and the last to the Chrome.
-        this._box.add_actor(this._backgroundBox);
+        //Add dash container actor and the container to the Chrome.
         this._box.add_actor(this.dash.actor);
         Main.layoutManager.addChrome(this.actor, { affectsInputRegion: false, affectsStruts: DOCK_FIXED});
         Main.layoutManager._chrome.trackActor(this._box, {affectsInputRegion:true});
+
+        // Now that the dash is on the stage retrieve its background color
+        this._getBackgroundColor();
 
         // and update position and clip when width changes, that is when icons size and thus dash size changes.
         this.dash.actor.connect('notify::width', Lang.bind(this, this._redisplay));
@@ -359,39 +354,59 @@ dockedDash.prototype = {
 
     _fadeOutBackground:function (time, delay) {
 
-        Tweener.removeTweens(this._backgroundBox);
-
-        Tweener.addTween(this._backgroundBox,{
-            opacity: 0,
-            time: time,
-            delay: delay,
-            transition: 'easeOutQuad'
-        });
-
+        // CSS time is in ms!
+        this.dash._box.set_style('transition-duration: ' + time*1000 + ';' +
+            'transition-delay: '+ delay*1000 +'; ' +
+            'background-color:'+ this._defaultBackground);
     }, 
 
     _fadeInBackground:function (time, delay) {
 
-        Tweener.removeTweens(this._backgroundBox);
-
-        Tweener.addTween(this._backgroundBox,{
-            opacity: 255,
-            time: time,
-            delay: delay,
-            transition: 'easeOutQuad'
-        });
-
+        // CSS time is in ms!
+        this.dash._box.set_style('transition-duration: ' + time*1000 + ';' +
+            'transition-delay: '+ delay*1000 +'; ' +
+            'background-color:'+ this._customizedBackground);
     },
 
     _updateBackgroundOpacity: function() {
 
+        let newAlpha = BACKGROUND_OPACITY;
+
+        this._defaultBackground = 'rgba('+
+            this._defaultBackgroundColor.red + ','+
+            this._defaultBackgroundColor.green + ','+
+            this._defaultBackgroundColor.blue + ','+
+            Math.round(this._defaultBackgroundColor.alpha/2.55)/100 + ')';
+
+        this._customizedBackground = 'rgba('+
+            this._defaultBackgroundColor.red + ','+
+            this._defaultBackgroundColor.green + ','+
+            this._defaultBackgroundColor.blue + ','+
+            newAlpha + ')';
+
         if(OPAQUE_BACKGROUND && (this._autohideStatus || OPAQUE_BACKGROUND_ALWAYS)){
-            this._backgroundBox.show();
             this._fadeInBackground(ANIMATION_TIME, 0);
         }
         else if(!OPAQUE_BACKGROUND || (!this._autohideStatus && !OPAQUE_BACKGROUND_ALWAYS)) {
             this._fadeOutBackground(ANIMATION_TIME, 0);
         }
+    },
+
+    _getBackgroundColor: function() {
+
+        // Remove custom style
+        let oldStyle = this.dash._box.get_style();
+        this.dash._box.set_style(null);
+
+        let themeNode = this.dash._box.get_theme_node();
+        this.dash._box.set_style(oldStyle);
+
+        this._defaultBackgroundColor = themeNode.get_background_color();
+    },
+
+    _onThemeChanged: function() {
+        this._getBackgroundColor();
+        this._updateBackgroundOpacity();
     },
 
     _redisplay: function() {
