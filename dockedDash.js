@@ -58,6 +58,7 @@ dockedDash.prototype = {
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
 
         // Create and apply height constraint to the dash. It's controlled by this.actor height
+        this.actor.height = Main.overview._viewSelector._pageArea.height; // Guess initial reasonable height.
         this.constrainHeight = new Clutter.BindConstraint({ source: this.actor,
                                                             coordinate: Clutter.BindCoordinate.HEIGHT });
         this.dash.actor.add_constraint(this.constrainHeight);
