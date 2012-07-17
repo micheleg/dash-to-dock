@@ -22,6 +22,9 @@ const Convenience = Me.convenience;
 let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
 let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
 
+// SETTINGS 
+const MAX_ICON_SIZE = 48; // Set the maximum dash icon size
+
 // This class is a fork of the upstream dash class (ui.dash.js)
 function myDash() {
     this._init();
@@ -31,6 +34,8 @@ myDash.prototype = {
     _init : function() {
         this._maxHeight = -1;
         this.iconSize = 64;
+        this._allIconSize = [ 16, 22, 24, 32, 48, 64 ];
+        this._avaiableIconSize = this._allIconSize;
         this._shownInitially = false;
 
         this._signalHandler = new Convenience.globalSignalHandler();
@@ -94,6 +99,8 @@ myDash.prototype = {
                 Lang.bind(this, this._onDragEnd)
             ]
         );
+
+        this.setMaxIconSize(MAX_ICON_SIZE);
 
     },
 
@@ -263,7 +270,7 @@ myDash.prototype = {
 
         let availSize = availHeight / iconChildren.length;
 
-        let iconSizes = [ 16, 22, 24, 32, 48, 64 ];
+        let iconSizes = this._avaiableIconSize;
 
         let newIconSize = 16;
         for (let i = 0; i < iconSizes.length; i++) {
@@ -424,6 +431,29 @@ myDash.prototype = {
 
         for (let i = 0; i < addedItems.length; i++)
             addedItems[i].item.animateIn();
+    },
+
+    setMaxIconSize: function(size) {
+
+        if( size>=this._allIconSize[0] ){
+
+            this._avaiableIconSize = this._allIconSize.filter(
+                function(val){
+                    return (val<=size);
+                }
+            );
+
+        } else {
+            this._availableIconSize = [ this._allIconSize[0] ];
+        }
+
+        // Changing too rapidly icon size settings cause the whole Shell to freeze
+        // I've not discovered exactly why, but disabling animation by setting
+        // shownInitially prevent the freeze from occuring
+        this._shownInitially = false;
+
+        this._redisplay();
+
     },
 
     _clearDragPlaceholder: function() {
