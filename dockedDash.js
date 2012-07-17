@@ -464,8 +464,8 @@ dockedDash.prototype = {
             } else{
                 delay = 0;
             }
-
-            if(OPAQUE_BACKGROUND && !OPAQUE_BACKGROUND_ALWAYS)
+            
+            if(OPAQUE_BACKGROUND && ! OPAQUE_BACKGROUND_ALWAYS)
                 this._fadeInBackground(ANIMATION_TIME, delay);
         }
     } 
