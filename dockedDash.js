@@ -147,7 +147,7 @@ dockedDash.prototype = {
         this.dash.actor.connect('notify::width', Lang.bind(this, this._redisplay));
 
         // Load optional features
-        this._OptionalScrollWorkspaceSwitch(SCROLL_SWITCH_WORKSPACE);
+        this._optionalScrollWorkspaceSwitch();
 
         Mainloop.idle_add(Lang.bind(this, this._initialize));
 
@@ -433,19 +433,38 @@ dockedDash.prototype = {
     // Optional features enable/disable
 
     // Switch workspace by scrolling over the dock
-    _OptionalScrollWorkspaceSwitch: function( action ) {
+    _optionalScrollWorkspaceSwitch: function() {
 
-        // Sometimes Main.wm._workspaceSwitcherPopup is null when first loading the extension
-        if (Main.wm._workspaceSwitcherPopup == null)
-            Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+        let label = 'optionalScrollWorkspaceSwitch';
 
-        // Parent function shoul be called only when settings change,
-        // so it's non that bad if I redefine it everytime it's called
+        if(SCROLL_SWITCH_WORKSPACE)
+            Lang.bind(this, enable)();
+
+        function enable(){
+
+            // Sometimes Main.wm._workspaceSwitcherPopup is null when first loading the extension
+            if (Main.wm._workspaceSwitcherPopup == null)
+                Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+
+            this._signalHandler.disconnectWithLabel(label);
+
+            this._signalHandler.pushWithLabel(label,
+                [
+                    this.actor,
+                    'scroll-event',
+                    Lang.bind(this, onScrollEvent)
+                ]
+            );
+        }
+
+        function disable() {
+            this._signalHandler.disconnectWithLabel(label);
+        }
 
         // This comes from desktop-scroller@obsidien.github.com
-        var _onScrollEvent = function (actor, event) {
+        function onScrollEvent(actor, event) {
 
-            // filter events occuring not near the screen border if erquired
+            // filter events occuring not near the screen border if required
             if(SCROLL_SWITCH_WORKSPACE_WHOLE==false) {
 
                 let [x,y] = event.get_coords();
@@ -464,20 +483,6 @@ dockedDash.prototype = {
                 break;
             }
         };
-
-        //First disconnect old signal if present;
-
-        if( this._scrollWorkspaceSwitchId ){
-            this.actor.disconnect(this._scrollWorkspaceSwitchId );
-            this._scrollWorkspaceSwitchId = null;
-        }
-
-        // enable
-        if(action) {
-            this._scrollWorkspaceSwitchId = this.actor.connect('scroll-event',
-                Lang.bind(this, _onScrollEvent)
-                );
-        }
 
     },
 
