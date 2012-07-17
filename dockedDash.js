@@ -69,7 +69,7 @@ dockedDash.prototype = {
         Main.overview._dash.actor.hide();
 
         // Create a new dash object
-        this.dash = new Dash.Dash(); // this.dash = new MyDash.myDash();
+        this.dash = new MyDash.myDash();
 
         // Create the main actor and the main container for centering, turn on track hover
 
