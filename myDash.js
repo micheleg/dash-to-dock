@@ -286,9 +286,8 @@ myDash.prototype = {
             // in sync with this.iconSize
             icon.setIconSize(this.iconSize);
 
-            // Don't animate the icon size change when the overview
-            // is not visible or when initially filling the dash
-            if (!Main.overview.visible || !this._shownInitially)
+            // Don't animate when initially filling the dash
+            if (!this._shownInitially)
                 continue;
 
             let [targetWidth, targetHeight] = icon.icon.get_size();
@@ -411,12 +410,7 @@ myDash.prototype = {
 
         for (let i = 0; i < removedActors.length; i++) {
             let item = removedActors[i]._delegate;
-
-            // Don't animate item removal when the overview is hidden
-            if (Main.overview.visible)
-                item.animateOutAndDestroy();
-            else
-                item.actor.destroy();
+            item.animateOutAndDestroy();
         }
 
         this._adjustIconSize();
@@ -427,10 +421,6 @@ myDash.prototype = {
             this._shownInitially = true;
             return;
         }
-
-        // Don't animate item addition when the overview is hidden
-        if (!Main.overview.visible)
-            return;
 
         for (let i = 0; i < addedItems.length; i++)
             addedItems[i].item.animateIn();
