@@ -39,6 +39,9 @@ const AUTOHIDE = true; // Enable or disable autohide mode
 const DOCK_FIXED = false; //Dock is always visible
                           // Also the same settings in intellihide.js has to be changed
 
+const EXPAND_HEIGHT = true; // Use all vertical available space
+const VERTICAL_CENTERED = true; //Center the dock verticaly
+
 // END OF SETTINGS
 
 function dockedDash() {
@@ -66,9 +69,19 @@ dockedDash.prototype = {
         // Create a new dash object
         this.dash = new Dash.Dash(); // this.dash = new MyDash.myDash();
 
-        // Create the main container, turn on track hover, add hoverChange signal
-        this.actor = new St.BoxLayout({ name: 'mydash', reactive: true, style_class: 'box'});
-        this.actor.connect("notify::hover", Lang.bind(this, this._hoverChanged));
+        // Create the main actor and the main container for centering, turn on track hover
+
+        this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true,
+            style_class: 'box'} );
+        this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
+            style_class: 'container', child: this._box});
+
+        this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
+
+        // Create and apply height constraint to the dash. It's controlled by this.actor height
+        this.constrainHeight = new Clutter.BindConstraint({ source: this.actor,
+                                                            coordinate: Clutter.BindCoordinate.HEIGHT });
+        this.dash.actor.add_constraint(this.constrainHeight);
 
         // I create another actor with name #dash. This serves for applying an opaque background 
         // for those themes like the default one that has a semi-transparent dash.
@@ -77,14 +90,8 @@ dockedDash.prototype = {
         // to cover all and only the dash area. It is probably a little ugly workaround, but I 
         // have not found a way to access the current style and simply change the background alpha.
         this._backgroundBox = new St.Bin({ name: 'dash', reactive: false, y_align: St.Align.START});
-        this._backgroundBox.set_style('background-color: rgba(1,1,1,'+BACKGROUND_OPACITY+');padding:0;margin:0;border:0;');
-
-        this.actor.set_track_hover(true);
-        // Create and apply height constraint to the dash
-        this.constrainHeight = new Clutter.BindConstraint({ source: Main.overview._viewSelector._pageArea,
-                                                            coordinate: Clutter.BindCoordinate.HEIGHT });
-        this.dash.actor.add_constraint(this.constrainHeight);
-
+        this._backgroundBox.set_style('background-color: rgba(1,1,1,' + 
+            BACKGROUND_OPACITY+');padding:0;margin:0;border:0;');
         this.constrainSize = new Clutter.BindConstraint({ source: this.dash._box,
                                                             coordinate: Clutter.BindCoordinate.SIZE });
         this._backgroundBox.add_constraint(this.constrainSize);
@@ -145,12 +152,14 @@ dockedDash.prototype = {
         this.actor.set_opacity(0);
 
         //Add dash and backgroundBox to the container actor and the last to the Chrome.
-        this.actor.add_actor(this._backgroundBox);
-        this.actor.add_actor(this.dash.actor);
-        Main.layoutManager.addChrome(this.actor, { affectsStruts: DOCK_FIXED});
+        this._box.add_actor(this._backgroundBox);
+        this._box.add_actor(this.dash.actor);
+        Main.layoutManager.addChrome(this.actor, { affectsInputRegion: false, affectsStruts: DOCK_FIXED});
+        Main.layoutManager._chrome.trackActor(this._box, {affectsInputRegion:true});
 
         // and update position and clip when width changes, that is when icons size and thus dash size changes.
         this.dash.actor.connect('notify::width', Lang.bind(this, this._redisplay));
+        this.dash._box.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
 
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
@@ -198,11 +207,10 @@ dockedDash.prototype = {
 
     },
 
-
     _hoverChanged: function() {
         // Skip if dock is not in autohide mode for instance because it is shown by intellihide
         if(AUTOHIDE && this._autohideStatus){
-            if( this.actor.hover ) {
+            if( this._box.hover ) {
                 this._show();
             } else {
                 this._hide();
@@ -377,8 +385,6 @@ dockedDash.prototype = {
 
     _redisplay: function() {
 
-        this._updateStaticBox();
-
         // Update dash x position animating it
         if( this._animStatus.hidden() ){
             this._removeAnimations();
@@ -388,22 +394,37 @@ dockedDash.prototype = {
             this._animateIn(ANIMATION_TIME, 0);
         }
 
+    _
         this._updateBackgroundOpacity();
+        this._updateStaticBox();
         this._updateClip();
 
     },
 
     _updateYPosition: function() {
+
+        if(EXPAND_HEIGHT){
+            this.actor.y = this._monitor.y + Main.panel.actor.height;
+            this.actor.height = this._monitor.height - Main.panel.actor.height;
+        } else{
+            this.actor.y = this._monitor.y + Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y;
+            this.actor.height = Main.overview._viewSelector._pageArea.height;
+        }
+
+        if(VERTICAL_CENTERED)
+            this.actor.y_align = St.Align.MIDDLE;
+        else
+            this.actor.y_align = St.Align.START;
+
         this._updateStaticBox();
-        this.actor.y = this.staticBox.y1;
     },
 
     _updateStaticBox: function() {
 
         this.staticBox.x1 = this._monitor.x;
-        this.staticBox.y1 = this._monitor.y + Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y;
-        this.staticBox.x2 = this.staticBox.x1 + this.dash._box.width;
-        this.staticBox.y2 = this.staticBox.y1 + this.dash._box.height;
+        this.staticBox.y1 = this.actor.y + this._box.y;
+        this.staticBox.x2 = this.staticBox.x1 + this._box.width;
+        this.staticBox.y2 = this.staticBox.y1 + this._box.height;
 
         this.emit('box-changed');
     },
@@ -411,17 +432,8 @@ dockedDash.prototype = {
     // 'Hard' reset dock positon: called on start and when monitor changes
     _resetPosition: function() {
         this._monitor = Main.layoutManager.primaryMonitor;
-        this._updateStaticBox();
-        this.actor.x = this.staticBox.x1;
-        this.actor.y = this.staticBox.y1;
-
-        // Sometimes when monitor changes dock size is not update until
-        // the intellihide functions make it move even if its height is
-        // bound with a Clutter constraint
-        // This force the dock to update its size.
-        this.actor.queue_relayout();
-
-        this._updateClip();
+        this.actor.x = this._monitor.x;
+        this._updateYPosition();
     },
 
     _removeAnimations: function() {
@@ -441,7 +453,7 @@ dockedDash.prototype = {
         }
         if(this._oldAutohideStatus)
             this._autohideStatus  = this._oldAutohideStatus;
-        this.actor.sync_hover();
+        this._box.sync_hover();
     },
 
     _onSwitchWorkspace: function(){
@@ -461,8 +473,8 @@ dockedDash.prototype = {
 
         this._dashShowTimeout = Mainloop.timeout_add(500, Lang.bind(this, function() {
             // I'm not sure why but I need not to sync hover if it results already false
-            if(!this._dashMenuIsUp() && this.actor.hover==true){
-                this.actor.sync_hover();
+            if(!this._dashMenuIsUp() && this._box.hover==true){
+                this._box.sync_hover();
             }
             return true; // to make the loop continue;
         }));
@@ -517,7 +529,7 @@ dockedDash.prototype = {
 
             this._signalHandler.pushWithLabel(label,
                 [
-                    this.actor,
+                    this._box,
                     'scroll-event',
                     Lang.bind(this, onScrollEvent)
                 ]
@@ -578,10 +590,10 @@ dockedDash.prototype = {
             this._autohideStatus = true;
             this._removeAnimations();
 
-            if(this.actor.hover==true)
-                this.actor.sync_hover();
+            if(this._box.hover==true)
+                this._box.sync_hover();
 
-            if( !this.actor.hover || !AUTOHIDE) {
+            if( !this._box.hover || !AUTOHIDE) {
                 this._animateOut(ANIMATION_TIME, 0);
                 delay = ANIMATION_TIME;
             } else if (AUTOHIDE ) {
