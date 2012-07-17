@@ -13,6 +13,7 @@ const Main = imports.ui.main;
 const Dash = imports.ui.dash;
 const Overview = imports.ui.overview;
 const Tweener = imports.ui.tweener;
+const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
 
 // SETTINGS
 
@@ -27,6 +28,10 @@ const OPAQUE_BACKGROUND_ALWAYS = false; // whether the dash has always an opaque
                                         // in autohide mode
 const DISABLE_AUTOHIDE = false      // Disable autohide show/hide mouse events. 
                                     // Dash is fixed: visibility can be manually controlled.
+
+const SCROLL_SWITCH_WORKSPACE = true; // Switch workspace by scrolling over the dock
+const SCROLL_SWITCH_WORKSPACE_WHOLE = false; // Whole dock is sensible to scroll events
+
 
 // END OF SETTINGS
 
@@ -138,6 +143,9 @@ dockedDash.prototype = {
 
         // and update position and clip when width changes, that is when icons size and thus dash size changes.
         this.dash.actor.connect('notify::width', Lang.bind(this, this._redisplay));
+
+        // Load optional features
+        this._OptionalScrollWorkspaceSwitch(SCROLL_SWITCH_WORKSPACE);
 
         Mainloop.idle_add(Lang.bind(this, this._initialize));
 
@@ -437,6 +445,57 @@ dockedDash.prototype = {
         for( let i = 0; i < this._signals.length; i++ ) {
             this._signals[i][0].disconnect(this._signals[i][1]);
         }
+    },
+
+    // Optional features enable/disable
+
+    // Switch workspace by scrolling over the dock
+    _OptionalScrollWorkspaceSwitch: function( action ) {
+
+        // Sometimes Main.wm._workspaceSwitcherPopup is null when first loading the extension
+        if (Main.wm._workspaceSwitcherPopup == null)
+            Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+
+        // Parent function shoul be called only when settings change,
+        // so it's non that bad if I redefine it everytime it's called
+
+        // This comes from desktop-scroller@obsidien.github.com
+        var _onScrollEvent = function (actor, event) {
+
+            // filter events occuring not near the screen border if erquired
+            if(SCROLL_SWITCH_WORKSPACE_WHOLE==false) {
+
+                let [x,y] = event.get_coords();
+
+                if(x > this.staticBox.x1 + 1){
+                    return false
+                }
+            }
+
+            switch ( event.get_scroll_direction() ) {
+            case Clutter.ScrollDirection.UP:
+                Main.wm.actionMoveWorkspaceUp();
+                break;
+            case Clutter.ScrollDirection.DOWN:
+                Main.wm.actionMoveWorkspaceDown();
+                break;
+            }
+        };
+
+        //First disconnect old signal if present;
+
+        if( this._scrollWorkspaceSwitchId ){
+            this.actor.disconnect(this._scrollWorkspaceSwitchId );
+            this._scrollWorkspaceSwitchId = null;
+        }
+
+        // enable
+        if(action) {
+            this._scrollWorkspaceSwitchId = this.actor.connect('scroll-event',
+                Lang.bind(this, _onScrollEvent)
+                );
+        }
+
     },
 
     // Disable autohide effect, thus show dash
