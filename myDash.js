@@ -491,6 +491,11 @@ myDash.prototype = {
     },
 
     handleDragOver : function(source, actor, x, y, time) {
+
+        // Don't allow to add favourites if they are not displayed
+        if( !SHOW_FAVORITES )
+            return DND.DragMotionResult.NO_DROP;
+
         let app = null;
         if (source instanceof AppDisplay.AppWellIcon)
             app = this._appSystem.lookup_app(source.getId());
@@ -578,6 +583,11 @@ myDash.prototype = {
 
     // Draggable target interface
     acceptDrop : function(source, actor, x, y, time) {
+
+        // Don't allow to add favourites if they are not displayed
+        if( !SHOW_FAVORITES )
+            return true;
+
         let app = null;
         if (source instanceof AppDisplay.AppWellIcon) {
             app = this._appSystem.lookup_app(source.getId());
