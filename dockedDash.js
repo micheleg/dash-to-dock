@@ -17,6 +17,8 @@ const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
 
 const Me = imports.ui.extensionSystem.extensions["dash-to-dock@micxgx.gmail.com"];
 const Convenience = Me.convenience;
+const MyDash = Me.myDash;
+
 
 // SETTINGS
 
