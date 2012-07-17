@@ -38,8 +38,11 @@ const IntellihideMode = {
 //     get nothing in return. No space is saved currently like in hideDash extension. Use
 //     this mode only if you really hate to see the dash there!
 //  3. Also intellihideMode.INTELLIHIDE  in OVERVIEW_MODE doesn't make sense...
-const NORMAL_MODE = IntellihideMode.INTELLIHIDE;
+
 const OVERVIEW_MODE = IntellihideMode.SHOW;
+const INTELLIHIDE = true; //Enable or disable intellihide mode
+const DOCK_FIXED = false; //Dock is always visible
+                          // Also the same settings in intellihide.js has to be changed
 
 
 /*
@@ -181,7 +184,8 @@ intellihide.prototype = {
 
     _windowCreated: function(__unused_display, the_window) {
 
-        this._addWindowSignals(the_window);
+        if(INTELLIHIDE)
+            this._addWindowSignals(the_window);
 
     },
 
@@ -210,6 +214,7 @@ intellihide.prototype = {
         if( the_window && the_window._micheledash_onPositionChanged ) {
                wa.disconnect(the_window._micheledash_onPositionChanged);
                delete the_window._micheledash_onPositionChanged;
+
         }
     },
 
@@ -230,47 +235,38 @@ intellihide.prototype = {
                 return;
             }
         }
+        else if( !DOCK_FIXED ) {
+            if( INTELLIHIDE ){
 
-        //else in normal mode:
-        if(NORMAL_MODE == IntellihideMode.AUTOHIDE){
-            this._hide();
-            return;
-        }
-        else if(NORMAL_MODE == IntellihideMode.SHOW){
-            this._show();
-            return;
-        }
-        else if(NORMAL_MODE == IntellihideMode.HIDE){
-            /*TODO*/
-            return;
-        } else if(NORMAL_MODE == IntellihideMode.INTELLIHIDE){
+                let overlaps = false;
 
-            let overlaps = false;
+                let windows = global.get_window_actors().filter(this._intellihideFilterInteresting, this);
 
-            let windows = global.get_window_actors().filter(this._intellihideFilterInteresting, this);
+                for(let i=0; i< windows.length; i++){
 
-            for(let i=0; i< windows.length; i++){
+                    let win = windows[i].get_meta_window();
+                    if(win){
+                        let rect = win.get_outer_rect();
 
-                let win = windows[i].get_meta_window();
-                if(win){
-                    let rect = win.get_outer_rect();
+                        let test = ( rect.x < this._target.staticBox.x2) &&
+                                   ( rect.x +rect.width > this._target.staticBox.x1 ) &&
+                                   ( rect.y < this._target.staticBox.y2 ) &&
+                                   ( rect.y +rect.height > this._target.staticBox.y1 );
 
-                    let test = ( rect.x < this._target.staticBox.x2) &&
-                               ( rect.x +rect.width > this._target.staticBox.x1 ) &&
-                               ( rect.y < this._target.staticBox.y2 ) &&
-                               ( rect.y +rect.height > this._target.staticBox.y1 );
-
-                    if(test){
-                        overlaps = true;
-                        break;
+                        if(test){
+                            overlaps = true;
+                            break;
+                        }
                     }
                 }
-            }
 
-            if(overlaps) {
-                this._hide();
+                if(overlaps) {
+                    this._hide();
+                } else {
+                    this._show();
+                }
             } else {
-                this._show();
+                this._hide();
             }
         }
     },

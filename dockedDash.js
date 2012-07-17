@@ -35,6 +35,9 @@ const DISABLE_AUTOHIDE = false      // Disable autohide show/hide mouse events.
 const SCROLL_SWITCH_WORKSPACE = true; // Switch workspace by scrolling over the dock
 const SCROLL_SWITCH_WORKSPACE_WHOLE = false; // Whole dock is sensible to scroll events
 
+const AUTOHIDE = true; // Enable or disable autohide mode
+const DOCK_FIXED = false; //Dock is always visible
+                          // Also the same settings in intellihide.js has to be changed
 
 // END OF SETTINGS
 
@@ -52,8 +55,8 @@ dockedDash.prototype = {
         // Timeout id used to ensure the dash is hiddeen after some menu is shown
         this._dashShowTimeout = 0;
 
-        // authohide on hover effect on/off
-        this._autohide = true;
+        // authohide current status. Not to be confused with autohide enable/disagle global (g)settings
+        this._autohideStatus = AUTOHIDE && !DOCK_FIXED;
         // initialize animation status object
         this._animStatus = new animationStatus(true);
 
@@ -144,7 +147,7 @@ dockedDash.prototype = {
         //Add dash and backgroundBox to the container actor and the last to the Chrome.
         this.actor.add_actor(this._backgroundBox);
         this.actor.add_actor(this.dash.actor);
-        Main.layoutManager.addChrome(this.actor, { affectsStruts: 0 });
+        Main.layoutManager.addChrome(this.actor, { affectsStruts: DOCK_FIXED});
 
         // and update position and clip when width changes, that is when icons size and thus dash size changes.
         this.dash.actor.connect('notify::width', Lang.bind(this, this._redisplay));
@@ -195,8 +198,10 @@ dockedDash.prototype = {
 
     },
 
+
     _hoverChanged: function() {
-        if(this._autohide){
+        // Skip if dock is not in autohide mode for instance because it is shown by intellihide
+        if(AUTOHIDE && this._autohideStatus){
             if( this.actor.hover ) {
                 this._show();
             } else {
@@ -212,7 +217,7 @@ dockedDash.prototype = {
         if(_DEBUG_) global.log("show " + anim.showing() + " " + anim.hiding() +
                                 " " + anim.shown() + " " + anim.hidden());
 
-        if( this._autohide && ( anim.hidden() || anim.hiding() ) && !DISABLE_AUTOHIDE ){
+        if( this._autohideStatus && ( anim.hidden() || anim.hiding() ) ){
 
             let delay;
             // If the dock is hidden, wait SHOW_DELAY before showing it; 
@@ -240,7 +245,7 @@ dockedDash.prototype = {
         var anim = this._animStatus;
 
         // If no hiding animation is running or queued
-        if( this._autohide && (anim.showing() || anim.shown() ) && !DISABLE_AUTOHIDE ){
+        if( this._autohideStatus && (anim.showing() || anim.shown()) ){
 
             let delay;
 
@@ -361,11 +366,11 @@ dockedDash.prototype = {
 
     _updateBackgroundOpacity: function() {
 
-        if(OPAQUE_BACKGROUND && (this._autohide || OPAQUE_BACKGROUND_ALWAYS)){
+        if(OPAQUE_BACKGROUND && (this._autohideStatus || OPAQUE_BACKGROUND_ALWAYS)){
             this._backgroundBox.show();
             this._fadeInBackground(ANIMATION_TIME, 0);
         }
-        else if(!OPAQUE_BACKGROUND || (!this._autohide && !OPAQUE_BACKGROUND_ALWAYS)) {
+        else if(!OPAQUE_BACKGROUND || (!this._autohideStatus && !OPAQUE_BACKGROUND_ALWAYS)) {
             this._fadeOutBackground(ANIMATION_TIME, 0);
         }
     },
@@ -550,34 +555,36 @@ dockedDash.prototype = {
 
     // Disable autohide effect, thus show dash
     disableAutoHide: function() {
-        if(this._autohide==true){
-            this._autohide = false;
+        if(this._autohideStatus==true){
+            this._autohideStatus = false;
+
+            // clear unnecesssary potentially running loops
+            if(this._dashShowTimeout>0)
+                Mainloop.source_remove(this._dashShowTimeout);
+
             this._removeAnimations();
             this._animateIn(ANIMATION_TIME, 0);
             if(OPAQUE_BACKGROUND && !OPAQUE_BACKGROUND_ALWAYS)
                 this._fadeOutBackground(ANIMATION_TIME, 0);
-            // If this loop exists clear it since it's no more necessary
-            if(this._dashShowTimeout>0)
-            Mainloop.source_remove(this._dashShowTimeout);
         }
     },
 
     // Enable autohide effect, hide dash
     enableAutoHide: function() {
-        if(this._autohide==false){
+        if(this._autohideStatus==false){
 
             let delay=0; // immediately fadein background if hide is blocked by mouseover,
                          // oterwise start fadein when dock is already hidden.
-            this._autohide = true;
+            this._autohideStatus = true;
             this._removeAnimations();
 
             if(this.actor.hover==true)
                 this.actor.sync_hover();
 
-            if(!this.actor.hover && !DISABLE_AUTOHIDE) {
+            if( !this.actor.hover || !AUTOHIDE) {
                 this._animateOut(ANIMATION_TIME, 0);
                 delay = ANIMATION_TIME;
-            } else{
+            } else if (AUTOHIDE ) {
                 // I'm enabling autohide and the dash keeps being showed because of mouse hover
                 // so i start the loop usualy started by _show()
                 this._startDashShowLoop();
