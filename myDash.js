@@ -24,6 +24,8 @@ let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
 
 // SETTINGS 
 const MAX_ICON_SIZE = 48; // Set the maximum dash icon size
+const SHOW_FAVORITES = true; // Show Favorite apps in the dash
+const SHOW_RUNNING = true; // Show Running apps in the dash
 
 // This class is a fork of the upstream dash class (ui.dash.js)
 function myDash() {
@@ -334,14 +336,18 @@ myDash.prototype = {
         // Apps supposed to be in the dash
         let newApps = [];
 
-        for (let id in favorites)
-            newApps.push(favorites[id]);
+        if( SHOW_FAVORITES ) {
+            for (let id in favorites)
+                newApps.push(favorites[id]);
+        }
 
-        for (let i = 0; i < running.length; i++) {
-            let app = running[i];
-            if (app.get_id() in favorites)
-                continue;
-            newApps.push(app);
+        if( SHOW_RUNNING ) {
+            for (let i = 0; i < running.length; i++) {
+                let app = running[i];
+                if (SHOW_FAVORITES && (app.get_id() in favorites) )
+                    continue;
+                newApps.push(app);
+            }
         }
 
         // Figure out the actual changes to the list of items; we iterate
@@ -452,6 +458,26 @@ myDash.prototype = {
         // shownInitially prevent the freeze from occuring
         this._shownInitially = false;
 
+        this._redisplay();
+
+    },
+
+    // Reset the displayed apps icon to mantain the correct order when changing
+    // show favorites/show running settings
+    resetAppIcons : function() {
+
+        let children = this._box.get_children().filter(function(actor) {
+            return actor._delegate.child &&
+                   actor._delegate.child._delegate &&
+                   actor._delegate.child._delegate.app;
+        });
+        for (let i = 0; i < children.length; i++) {
+            let item = children[i]._delegate;
+            item.actor.destroy();
+        }
+
+        // to avoid ugly animations, just suppress them like when dash is first loaded.
+        this._shownInitially = false;
         this._redisplay();
 
     },
