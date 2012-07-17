@@ -16,6 +16,9 @@ const Main = imports.ui.main;
 const Overview = imports.ui.overview;
 const Tweener = imports.ui.tweener;
 
+const Me = imports.ui.extensionSystem.extensions["dash-to-dock@micxgx.gmail.com"];
+const Convenience = Me.convenience;
+
 let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
 let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
 
@@ -29,6 +32,8 @@ myDash.prototype = {
         this._maxHeight = -1;
         this.iconSize = 64;
         this._shownInitially = false;
+
+        this._signalHandler = new Convenience.globalSignalHandler();
 
         this._dragPlaceholder = null;
         this._dragPlaceholderPos = -1;
@@ -57,18 +62,43 @@ myDash.prototype = {
         AppFavorites.getAppFavorites().connect('changed', Lang.bind(this, this._queueRedisplay));
         this._appSystem.connect('app-state-changed', Lang.bind(this, this._queueRedisplay));
 
-        Main.overview.connect('item-drag-begin',
-                              Lang.bind(this, this._onDragBegin));
-        Main.overview.connect('item-drag-end',
-                              Lang.bind(this, this._onDragEnd));
-        Main.overview.connect('item-drag-cancelled',
-                              Lang.bind(this, this._onDragCancelled));
-        Main.overview.connect('window-drag-begin',
-                              Lang.bind(this, this._onDragBegin));
-        Main.overview.connect('window-drag-cancelled',
-                              Lang.bind(this, this._onDragCancelled));
-        Main.overview.connect('window-drag-end',
-                              Lang.bind(this, this._onDragEnd));
+        this._signalHandler.push(
+            [
+                Main.overview,
+                'item-drag-begin',
+                Lang.bind(this, this._onDragBegin)
+            ],
+            [
+                Main.overview,
+                'item-drag-end',
+                Lang.bind(this, this._onDragEnd)
+            ],
+            [
+                Main.overview,
+                'item-drag-cancelled',
+                Lang.bind(this, this._onDragCancelled)
+            ],
+            [
+                Main.overview,
+                'window-drag-begin',
+                Lang.bind(this, this._onDragBegin)
+            ],
+            [
+                Main.overview,
+                'window-drag-cancelled',
+                Lang.bind(this, this._onDragCancelled)
+            ],
+            [
+                Main.overview,
+                'window-drag-end',
+                Lang.bind(this, this._onDragEnd)
+            ]
+        );
+
+    },
+
+    destroy: function() {
+        this._signalHandler.disconnect();
     },
 
     _onDragBegin: function() {
