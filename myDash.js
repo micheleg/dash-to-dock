@@ -254,7 +254,7 @@ const myDash = new Lang.Class({
     },
 
     _createAppItem: function(app) {
-        let appIcon = new myAppIcon(app,
+        let appIcon = new myAppIcon(this, app,
                                              { setSizeManually: true,
                                                showLabel: false });
         appIcon._draggable.connect('drag-begin',
@@ -762,9 +762,24 @@ Signals.addSignalMethods(myDash.prototype);
 /**
  * Extend AppIcon
  *
+ * - emit "menu-closed" signal on popup menu close.
  */
 const myAppIcon = new Lang.Class({
     Name: 'dashToDock.AppIcon',
-    Extends: AppDisplay.AppIcon
+    Extends: AppDisplay.AppIcon,
+
+    // a good parent object is needed to emit the 'menu-closed' signal
+    _init: function(parentObject, app, iconParams, onActivateOverride) {
+
+        this.parent(app, iconParams, onActivateOverride);
+
+        // Emit a custom signal when a menu is closed
+        let _onMenuOpenStateOriginal = this._menuManager._onMenuOpenState;
+        this._menuManager._onMenuOpenState = function(menu, open){
+            if(!open)
+                parentObject.emit('menu-closed');
+            Lang.bind(this, _onMenuOpenStateOriginal)(menu, open);
+        }
+    }
 });
 
