@@ -657,3 +657,15 @@ myDash.prototype = {
 
 Signals.addSignalMethods(myDash.prototype);
 
+/**
+ * Extend AppWellIcon
+ *
+ */
+function myAppWellIcon() {
+    this._init();
+}
+
+myAppWellIcon.prototype = {
+
+    __proto__: AppDisplay.AppWellIcon.prototype
+}
