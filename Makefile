@@ -6,6 +6,9 @@ EXTRA_MODULES = dockedDash.js intellihide.js myDash.js convenience.js prefs.js
 
 all: extension
 
+clean:
+	rm -f ./schemas/gschemas.compiled
+
 extension: ./schemas/gschemas.compiled
 
 ./schemas/gschemas.compiled: ./schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml
