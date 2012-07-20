@@ -254,7 +254,7 @@ const myDash = new Lang.Class({
     },
 
     _createAppItem: function(app) {
-        let appIcon = new AppDisplay.AppIcon(app,
+        let appIcon = new myAppIcon(app,
                                              { setSizeManually: true,
                                                showLabel: false });
         appIcon._draggable.connect('drag-begin',
@@ -752,4 +752,14 @@ const myDash = new Lang.Class({
 });
 
 Signals.addSignalMethods(myDash.prototype);
+
+
+/**
+ * Extend AppIcon
+ *
+ */
+const myAppIcon = new Lang.Class({
+    Name: 'dashToDock.AppIcon',
+    Extends: AppDisplay.AppIcon
+});
 
