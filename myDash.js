@@ -204,7 +204,7 @@ myDash.prototype = {
     },
 
     _createAppItem: function(app) {
-        let display = new myAppWellIcon(app,
+        let display = new myAppWellIcon(this, app,
                                                  { setSizeManually: true,
                                                    showLabel: false });
         display._draggable.connect('drag-begin',
@@ -660,12 +660,28 @@ Signals.addSignalMethods(myDash.prototype);
 /**
  * Extend AppWellIcon
  *
+ * - emit "menu-closed" signal on popup menu close.
  */
-function myAppWellIcon() {
-    this._init();
+function myAppWellIcon(parentObject, app, iconParams, onActivateOverride) {
+    this._init(parentObject, app, iconParams, onActivateOverride);
 }
 
 myAppWellIcon.prototype = {
 
-    __proto__: AppDisplay.AppWellIcon.prototype
-}
+    __proto__: AppDisplay.AppWellIcon.prototype,
+
+    // a good parent object is needed to emit the 'menu-closed' signal
+    _init: function(parentObject, app, iconParams, onActivateOverride) {
+
+        AppDisplay.AppWellIcon.prototype._init.call(this, app, iconParams, onActivateOverride);
+
+        // Emit a custom signal when a menu is closed
+        let _onMenuOpenStateOriginal = this._menuManager._onMenuOpenState;
+        this._menuManager._onMenuOpenState = function(menu, open){
+            if(!open)
+                parentObject.emit('menu-closed');
+            Lang.bind(this, _onMenuOpenStateOriginal)(menu, open);
+        }
+    }
+};
+
