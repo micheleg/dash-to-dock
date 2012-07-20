@@ -698,3 +698,13 @@ const myDash = new Lang.Class({
 });
 
 Signals.addSignalMethods(myDash.prototype);
+
+
+/**
+ * Extend AppWellIcon
+ *
+ */
+const myAppWellIcon = new Lang.Class({
+    Name: 'dashToDock.AppWellIcon',
+    Extends: AppDisplay.AppWellIcon
+});
