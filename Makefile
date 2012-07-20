@@ -2,12 +2,22 @@
 
 UUID = dash-to-dock@micxgx.gmail.com
 BASE_MODULES = extension.js stylesheet.css metadata.json
+
 EXTRA_MODULES = dockedDash.js intellihide.js myDash.js convenience.js
+INSTALLBASE = ~/.local/share/gnome-shell/extensions
+INSTALLNAME = dash-to-dock@micxgx.gmail.com
 
 all: extension
 
 #nothing to do
 extension:
+
+install: install-local
+install-local:
+	rm -rf $(INSTALLBASE)/$(INSTALLNAME)
+	mkdir $(INSTALLBASE)/$(INSTALLNAME)
+	cp $(BASE_MODULES) $(EXTRA_MODULES) $(INSTALLBASE)/$(INSTALLNAME)/
+	echo done
 
 zip-file: all
 	-rm -fR ./_build 
