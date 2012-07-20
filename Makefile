@@ -3,13 +3,28 @@
 UUID = dash-to-dock@micxgx.gmail.com
 BASE_MODULES = extension.js stylesheet.css metadata.json
 EXTRA_MODULES = dockedDash.js intellihide.js myDash.js convenience.js prefs.js
+INSTALLBASE = ~/.local/share/gnome-shell/extensions
+INSTALLNAME = dash-to-dock@micxgx.gmail.com
 
 all: extension
+
+clean:
+	rm -f ./schemas/gschemas.compiled
 
 extension: ./schemas/gschemas.compiled
 
 ./schemas/gschemas.compiled: ./schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml
 	glib-compile-schemas ./schemas/
+
+install: install-local
+install-local:
+	rm -rf $(INSTALLBASE)/$(INSTALLNAME)
+	mkdir $(INSTALLBASE)/$(INSTALLNAME)
+	cp $(BASE_MODULES) $(EXTRA_MODULES) $(INSTALLBASE)/$(INSTALLNAME)/
+	mkdir $(INSTALLBASE)/$(INSTALLNAME)/schemas
+	cp schemas/*.xml $(INSTALLBASE)/$(INSTALLNAME)/schemas/
+	cp schemas/gschemas.compiled $(INSTALLBASE)/$(INSTALLNAME)/schemas/
+	echo done
 
 zip-file: all
 	-rm -fR ./_build 
