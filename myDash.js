@@ -204,7 +204,7 @@ myDash.prototype = {
     },
 
     _createAppItem: function(app) {
-        let display = new AppDisplay.AppWellIcon(app,
+        let display = new myAppWellIcon(app,
                                                  { setSizeManually: true,
                                                    showLabel: false });
         display._draggable.connect('drag-begin',
