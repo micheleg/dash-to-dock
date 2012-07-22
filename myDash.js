@@ -790,6 +790,7 @@ const myAppWellIcon = new Lang.Class({
                 // Keep default behaviour: launch new window
                 this.emit('launching');
                 this.app.open_new_window(-1);
+                this._animateLaunch();
 
             } else if (this._settings.get_boolean('minimize-shift') && modifiers & Clutter.ModifierType.SHIFT_MASK){
                 // On double click, minimize all windows in the current workspace
@@ -807,6 +808,7 @@ const myAppWellIcon = new Lang.Class({
                 else if(this._settings.get_int('click-action') == clickAction.LAUNCH){
                     this.emit('launching');
                     this.app.open_new_window(-1);
+                    this._animateLaunch();
                 }
 
             } else {
@@ -828,6 +830,7 @@ const myAppWellIcon = new Lang.Class({
         } else {
             // Just launch new app
             this.emit('launching');
+            this._animateLaunch();
             this.app.activate();
         }
 
@@ -847,6 +850,25 @@ const myAppWellIcon = new Lang.Class({
             else
                 this.actor.add_style_class_name(className);
         }
+    },
+
+    _animateLaunch: function() { log('animate');
+
+        let icon = this.actor.get_children()[0];
+
+        icon.x = icon.width*0.75;
+        Tweener.addTween(icon, {
+            x: 0,
+            time: 0.75,
+            transition: 'easeOutBounce',
+            onUpdate: function() {
+                // Actually x coordinate is ignored by the container when allocating...
+                // As a workaround set the anchort point.
+                this.set_anchor_point(-this.x, 0);
+            }
+        });
+
+
     }
 });
 
