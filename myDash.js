@@ -55,7 +55,7 @@ const myDash = new Lang.Class({
 
         this._box = new St.BoxLayout({ name: 'dash',
                                        vertical: true,
-                                       clip_to_allocation: true });
+                                       clip_to_allocation: false });
         this._box._delegate = this;
 
         this.actor = new St.Bin({ y_align: St.Align.START, child: this._box });
