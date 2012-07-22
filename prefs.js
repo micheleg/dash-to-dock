@@ -172,7 +172,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
                                         margin_left:10, margin_top:5, margin_bottom:10, margin_right:10});
     indentWidget(dockSettingsMain2);
 
-    let verticalCenter =  new Gtk.CheckButton({label: "Center vertically the dock"});
+    let verticalCenter =  new Gtk.CheckButton({label: "Center the dock vertically"});
         verticalCenter.set_active(this.settings.get_boolean('vertical-centered'));
         verticalCenter.connect('toggled', Lang.bind(this, function(check){
             this.settings.set_boolean('vertical-centered', check.get_active());
