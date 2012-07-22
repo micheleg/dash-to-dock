@@ -856,10 +856,23 @@ const myAppWellIcon = new Lang.Class({
 
         let icon = this.actor.get_children()[0];
 
-        icon.x = icon.width*0.75;
+
+        Tweener.addTween(icon, {
+            x:  icon.width*0.75,
+            time: 0.15,
+            transition: 'easeOutQuart',
+            onUpdate: function() {
+                // Actually x coordinate is ignored by the container when allocating...
+                // As a workaround set the anchort point.
+                this.set_anchor_point(-this.x, 0);
+            }
+        });
+
+
         Tweener.addTween(icon, {
             x: 0,
             time: 0.75,
+            delay: 0.15,
             transition: 'easeOutBounce',
             onUpdate: function() {
                 // Actually x coordinate is ignored by the container when allocating...
