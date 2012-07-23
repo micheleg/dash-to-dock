@@ -661,14 +661,39 @@ dockedDash.prototype = {
                     Lang.bind(this, onScrollEvent)
                 ]
             );
+
+            this._optionalScrollWorkspaceSwitchDeadTimeId=0;
         }
 
         function disable() {
             this._signalHandler.disconnectWithLabel(label);
+
+            if(this._optionalScrollWorkspaceSwitchDeadTimeId>0){
+                Mainloop.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
+                this._optionalScrollWorkspaceSwitchDeadTimeId=0;
+            }
         }
 
         // This comes from desktop-scroller@obsidien.github.com
         function onScrollEvent(actor, event) {
+
+            // Prevent scroll events from triggering too many workspace switches
+            // by adding a deadtime between each scroll event.
+            // Usefull on laptops when using a touchpad.
+            let ADD_DEADTIME = true;
+            let DEADTIME = 250;
+
+            if(ADD_DEADTIME){
+
+                // During the deadtime do nothing
+                if(this._optionalScrollWorkspaceSwitchDeadTimeId>0)
+                    return false;
+
+                this._optionalScrollWorkspaceSwitchDeadTimeId =  Mainloop.timeout_add(DEADTIME, Lang.bind(this, function() {
+                        this._optionalScrollWorkspaceSwitchDeadTimeId=0;
+                    }
+                ));
+            }
 
             // filter events occuring not near the screen border if required
             if(this._settings.get_boolean('scroll-switch-workspace-whole')==false) {
