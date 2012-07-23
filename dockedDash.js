@@ -47,7 +47,13 @@ const EXPAND_HEIGHT = true; // Use all vertical available space
 const VERTICAL_CENTERED = true; //Center the dock verticaly
 
 const PREFERRED_MONITOR = -1; //Set on which monitor to put the dock, use -1 for the primary one. If the monitor does not exist for instance beacuse it's disconnected the primary monitor is used
+
+let ADD_DEADTIME = true; // Prevent scroll events from triggering too many workspace switches
+                         // by adding a deadtime between each scroll event; usefull on laptops when using a touchpad.
+let DEADTIME = 250;
+
 // END OF SETTINGS
+
 
 function dockedDash() {
 
@@ -638,14 +644,33 @@ dockedDash.prototype = {
                     Lang.bind(this, onScrollEvent)
                 ]
             );
+
+            this._optionalScrollWorkspaceSwitchDeadTimeId=0;
         }
 
         function disable() {
             this._signalHandler.disconnectWithLabel(label);
+
+            if(this._optionalScrollWorkspaceSwitchDeadTimeId>0){
+                Mainloop.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
+                this._optionalScrollWorkspaceSwitchDeadTimeId=0;
+            }
         }
 
         // This comes from desktop-scroller@obsidien.github.com
         function onScrollEvent(actor, event) {
+
+            if(ADD_DEADTIME){
+
+                // During the deadtime do nothing
+                if(this._optionalScrollWorkspaceSwitchDeadTimeId>0)
+                    return false;
+
+                this._optionalScrollWorkspaceSwitchDeadTimeId =  Mainloop.timeout_add(DEADTIME, Lang.bind(this, function() {
+                        this._optionalScrollWorkspaceSwitchDeadTimeId=0;
+                    }
+                ));
+            }
 
             // filter events occuring not near the screen border if required
             if(SCROLL_SWITCH_WORKSPACE_WHOLE==false) {
