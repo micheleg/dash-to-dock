@@ -254,7 +254,7 @@ const myDash = new Lang.Class({
     },
 
     _createAppItem: function(app) {
-        let appIcon = new myAppIcon(this, app,
+        let appIcon = new myAppIcon(this, this._settings, app,
                                              { setSizeManually: true,
                                                showLabel: false });
         appIcon._draggable.connect('drag-begin',
@@ -761,13 +761,22 @@ Signals.addSignalMethods(myDash.prototype);
  * Extend AppIcon
  *
  * - emit "menu-closed" signal on popup menu close.
+ * - Pass settings to the constructor and bind settings changes
+ * - Apply a css class based on the number of windows of each application (#N);
+ *   a class of the form "running#N" is applied to the AppWellIcon actor.
+ *   like the original .running one.
+ *
  */
 const myAppIcon = new Lang.Class({
     Name: 'dashToDock.AppIcon',
     Extends: AppDisplay.AppIcon,
 
     // a good parent object is needed to emit the 'menu-closed' signal
-    _init: function(parentObject, app, iconParams, onActivateOverride) {
+    // settings are also required inside.
+    _init: function(settings, parentObject, app, iconParams, onActivateOverride) {
+
+        this._settings = settings;
+        this._maxN  =4;
 
         this.parent(app, iconParams, onActivateOverride);
 
@@ -777,6 +786,46 @@ const myAppIcon = new Lang.Class({
             if(!open)
                 parentObject.emit('menu-closed');
             Lang.bind(this, _onMenuOpenStateOriginal)(menu, open);
+        };
+
+        // Monitor windows-changes instead of app state.
+        // Keep using the same Id and function callback (that is extended)
+        if(this._stateChangedId>0){
+            this.app.disconnect(this._stateChangedId);
+            this._stateChangedId=0;
+        }
+
+        this._stateChangedId = this.app.connect('windows-changed',
+                                                Lang.bind(this,
+                                                          this._onStateChanged));
+
+    },
+
+    _onDestroy: function() {
+        this.parent();
+
+        // Disconect global signals
+        // stateChangedId is already handled by parent)
+    },
+
+    _onStateChanged: function() {
+
+        this.parent();
+        this._updateCounterClass();
+    },
+
+    _updateCounterClass: function() {
+
+        let n = this.app.get_n_windows();
+        if(n>this._maxN)
+             n = this._maxN;
+
+        for(let i = 1; i<=this._maxN; i++){
+            let className = 'running'+i;
+            if(i!=n)
+                this.actor.remove_style_class_name(className);
+            else
+                this.actor.add_style_class_name(className);
         }
     }
 });
