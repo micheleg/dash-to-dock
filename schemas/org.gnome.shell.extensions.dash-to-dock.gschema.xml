@@ -105,5 +105,15 @@
       <summary>Monitor on which putting the dock</summary>
       <description>Set on which monitor to put the dock, use -1 for the primary one</description>
     </key>
+    <key type="b" name="app-windows-counter">
+      <default>true</default>
+      <summary>Show the number of windows</summary>
+      <description>Show graphically the number of windows for each application</description>
+    </key>
+    <key type="b" name="app-windows-counter-remove-default">
+      <default>false</default>
+      <summary>Remove default running style</summary>
+      <description>Remove the default app running style, to use in case it conflicts with the windows counter indicators</description>
+    </key>
   </schema>
 </schemalist>

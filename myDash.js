@@ -202,7 +202,7 @@ const myDash = new Lang.Class({
     },
 
     _createAppItem: function(app) {
-        let display = new myAppWellIcon(this, app,
+        let display = new myAppWellIcon(this._settings, this, app,
                                                  { setSizeManually: true,
                                                    showLabel: false });
         display._draggable.connect('drag-begin',
@@ -697,13 +697,24 @@ Signals.addSignalMethods(myDash.prototype);
  * Extend AppWellIcon
  *
  * - emit "menu-closed" signal on popup menu close.
+ * - Pass settings to the constructor and bind settings changes
+ * - Apply a css class based on the number of windows of each application (#N);
+ *   a class of the form "running#N" is applied to the AppWellIcon actor.
+ *   like the original .running one.
+ * - Optionally remove the original .running class (depending on the theme it
+ *   could visually conflict with the custom ones).
+ *
  */
 const myAppWellIcon = new Lang.Class({
     Name: 'dashToDock.AppWellIcon',
     Extends: AppDisplay.AppWellIcon,
 
     // a good parent object is needed to emit the 'menu-closed' signal
-    _init: function(parentObject, app, iconParams, onActivateOverride) {
+    // settings are also required inside.
+    _init: function(settings, parentObject, app, iconParams, onActivateOverride) {
+
+        this._settings = settings;
+        this._maxN  =4;
 
         this.parent(app, iconParams, onActivateOverride);
 
@@ -713,6 +724,70 @@ const myAppWellIcon = new Lang.Class({
             if(!open)
                 parentObject.emit('menu-closed');
             Lang.bind(this, _onMenuOpenStateOriginal)(menu, open);
+        };
+
+        // Monitor windows-changes instead of app state.
+        // Keep using the same Id and function callback (that is extended)
+        if(this._stateChangedId>0){
+            this.app.disconnect(this._stateChangedId);
+            this._stateChangedId=0;
+        }
+
+        this._stateChangedId = this.app.connect('windows-changed',
+                                                Lang.bind(this,
+                                                          this._onStateChanged));
+
+        // Bind settings changes
+        this._settingsChangedId1 = this._settings.connect('changed::app-windows-counter',
+                Lang.bind(this, this._resetCounterClass));
+
+        this._settingsChangedId2 = this._settings.connect('changed::app-windows-counter-remove-default',
+                Lang.bind(this, this._resetCounterClass));
+
+    },
+
+    _onDestroy: function() {
+        this.parent();
+
+        // Disconnect settings signals
+        if(this._settingsChangedId1>0)
+            this._settings.disconnect(this._settingsChangedId1);
+        if(this._settingsChangedId2>0)
+            this._settings.disconnect(this._settingsChangedId2);
+    },
+
+    _onStateChanged: function() {
+
+        if (!this._settings.get_boolean('app-windows-counter-remove-default') ||
+            !this._settings.get_boolean('app-windows-counter'))
+            this.parent();
+
+        this._updateCounterClass();
+    },
+
+    _resetCounterClass: function(){
+
+        if(this._settings.get_boolean('app-windows-counter-remove-default'))
+            this.actor.remove_style_class_name('running');
+        this._onStateChanged();
+    },
+
+    _updateCounterClass: function() {
+
+        let n=-1;
+
+        if(this._settings.get_boolean('app-windows-counter')){
+            n = this.app.get_n_windows();
+            if(n>this._maxN)
+                 n = this._maxN;
+        }
+
+        for(let i = 1; i<=this._maxN; i++){
+            let className = 'running'+i;
+            if(i!=n)
+                this.actor.remove_style_class_name(className);
+            else
+                this.actor.add_style_class_name(className);
         }
     }
 });
