@@ -282,8 +282,14 @@ const WorkspaceSettingsWidget = new GObject.Class({
                 this.settings.set_boolean('scroll-switch-workspace', check.get_active());
             }));
 
-    let switchWorkspaceMain = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL, homogeneous:true,
+    let switchWorkspaceMain = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL, homogeneous:false,
                                        margin_left:20, margin_top:5, margin_bottom:10, margin_right:10});
+
+    let oneAtATime = new Gtk.CheckButton({label: "Switch one workspace at a time", margin_bottom: 5});
+        oneAtATime.set_active(this.settings.get_boolean('scroll-switch-workspace-one-at-a-time'));
+        oneAtATime.connect('toggled', Lang.bind(this, function(check){
+            this.settings.set_boolean('scroll-switch-workspace-one-at-a-time', check.get_active());
+        }));
 
     let only1px = new Gtk.RadioButton({label: "Only a 1px wide area close to the screen edge is active"});
         only1px.set_active(!this.settings.get_boolean('scroll-switch-workspace-whole'));
@@ -298,6 +304,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     this.settings.bind('scroll-switch-workspace', switchWorkspaceMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
+    switchWorkspaceMain.add(oneAtATime);
     switchWorkspaceMain.add(only1px);
     switchWorkspaceMain.add(wholeArea);
 

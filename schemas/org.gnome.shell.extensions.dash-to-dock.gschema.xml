@@ -68,6 +68,16 @@
       <summary>Whole dock is sensible to scroll events</summary>
       <description>Whether thw whole dock when scrolled above is sensible to scroll events or only an 1px wide area close to the screen border.</description>
     </key>
+    <key type="b" name="scroll-switch-workspace-one-at-a-time">
+      <default>false</default>
+      <summary>Switch worskpace one at a time</summary>
+      <description>Switch only one workspace on each scroll event</description>
+    </key>
+    <key type="i" name="scroll-switch-workspace-dead-time">
+      <default>250</default>
+      <summary>A deadtime in ms</summary>
+      <description>A deadtime between each worskapace switch triggere by mouse scroll</description>
+    </key>
     <key type="i" name="dash-max-icon-size">
       <default>64</default>
       <summary>Maximum dash icon size</summary>
