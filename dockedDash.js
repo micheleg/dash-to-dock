@@ -222,7 +222,7 @@ dockedDash.prototype = {
 
             if(this._settings.get_boolean('dock-fixed')) {
                 // show dash
-                this._autohideStatus = true; // It could be false but the dock could be hidden
+                //this._autohideStatus = true; // It could be false but the dock could be hidden
                 this.disableAutoHide();
             } else {
                 this.emit('box-changed');
@@ -567,7 +567,12 @@ dockedDash.prototype = {
         function accessibilityCheck(){
             if (!this._dashHasFocus() && ! this._dashMenuIsUp() ) {
                 this._signalHandler.disconnectWithLabel('accessibility');
-                this._box.sync_hover();this._hoverChanged();
+                if( this._settings.get_boolean('autohide') ){
+                    this._box.sync_hover();
+                    this._hoverChanged();
+                } else {
+                    this._hide();
+                }
             }
         };
     },
@@ -580,11 +585,15 @@ dockedDash.prototype = {
 
             global.stage.set_key_focus(null);
 
-            // Force hover update
-            // Set hover true, thus do nothing since the dash is already shown;
-            // then sync hover, if mouse is away hide the dash.
-            this._box.hover = true;
-            this._box.sync_hover();
+            if( this._settings.get_boolean('autohide') ){
+                // Force hover update
+                // Set hover true, thus do nothing since the dash is already shown;
+                // then sync hover, if mouse is away hide the dash.
+                this._box.hover = true;
+                this._box.sync_hover();
+            } else {
+                this._hide();
+            }
 
             // TODO: find a way to restore focus on old window if nothing changed?
 
