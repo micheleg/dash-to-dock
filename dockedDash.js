@@ -229,7 +229,6 @@ dockedDash.prototype = {
             }
         }));
         this._settings.connect('changed::autohide', Lang.bind(this, function(){
-            this._autohideStatus = this._settings.get_boolean('autohide');
             this.emit('box-changed');
         }));
         this._settings.connect('changed::vertical-centered', Lang.bind(this, this._updateYPosition));
