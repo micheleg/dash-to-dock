@@ -115,5 +115,10 @@
       <summary>Remove default running style</summary>
       <description>Remove the default app running style, to use in case it conflicts with the windows counter indicators</description>
     </key>
+    <key type="b" name="focused-app">
+      <default>true</default>
+      <summary>Apply style to the focused app</summary>
+      <description>Show a visual indication of the currently focused app</description>
+    </key>
   </schema>
 </schemalist>
