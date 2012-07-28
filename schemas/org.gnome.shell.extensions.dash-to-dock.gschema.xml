@@ -43,6 +43,11 @@
       <summary>Dock dodges windows</summary>
       <description>Enable or disable intellihide mode</description>
     </key>
+    <key type="b" name="intellihide-perapp">
+      <default>false</default>
+      <summary>Dock dodges only same app windows</summary>
+      <description></description>
+    </key>
     <key type="b" name="autohide">
       <default>true</default>
       <summary>Dock shown on mouse over</summary>

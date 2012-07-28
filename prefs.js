@@ -127,6 +127,19 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     this.settings.bind('dock-fixed', dockSettingsMain1, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
+    let intellihideSubSettings = new Gtk.Box({margin_left:20, margin_top:10, margin_bottom:10, margin_right:10});
+
+    let perappIntellihide =  new Gtk.CheckButton({label: "Application based intellihide"});
+        perappIntellihide.set_active(this.settings.get_boolean('intellihide-perapp'));
+        perappIntellihide.connect('toggled', Lang.bind(this, function(check){
+            this.settings.set_boolean('intellihide-perapp', check.get_active());
+        }));
+
+    intellihideSubSettings.add(perappIntellihide);
+
+    this.settings.bind('dock-fixed', intellihideSubSettings, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+    this.settings.bind('intellihide', intellihideSubSettings, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+
     /* POISITION AND SIZE */
 
     let dockMonitor = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
@@ -175,6 +188,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     dockSettings.add(dockSettingsControl1);
     dockSettings.add(dockSettingsMain1);
+    dockSettings.add(intellihideSubSettings);
     dockSettings.add(dockMonitor);
     dockSettings.add(dockSettingsMain2);
 
