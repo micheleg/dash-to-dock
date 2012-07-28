@@ -6,6 +6,7 @@ const Lang = imports.lang;
 const Meta = imports.gi.Meta;
 
 const Main = imports.ui.main;
+const Shell = imports.gi.Shell;
 
 const Me = imports.ui.extensionSystem.extensions["dash-to-dock@micxgx.gmail.com"];
 const Convenience = Me.convenience;
@@ -41,6 +42,7 @@ const IntellihideMode = {
 
 const OVERVIEW_MODE = IntellihideMode.SHOW;
 const INTELLIHIDE = true; //Enable or disable intellihide mode
+const INTELLIHIDE_PERAPP = false; // The Dock dodges only windows of the currently focused apps.
 const DOCK_FIXED = false; //Dock is always visible
                           // Also the same settings in intellihide.js has to be changed
 
@@ -65,6 +67,7 @@ intellihide.prototype = {
     _init: function(show, hide, target) {
 
         this._signalHandler = new Convenience.globalSignalHandler();
+        this._tracker = Shell.WindowTracker.get_default();
 
         // current intellihide status
         this.status;
@@ -273,12 +276,13 @@ intellihide.prototype = {
 
     // Filter interesting windows to be considered for intellihide.
     // Consider all windows visible on the current workspace.
+    // Optionally skip windows of other applications
     _intellihideFilterInteresting: function(wa, edge){
 
         var currentWorkspace = global.screen.get_active_workspace_index();
 
         var meta_win = wa.get_meta_window();
-        if (!meta_win) {    //TODO michele: why? What does it mean?
+        if (!meta_win) {
             return false;
         }
 
@@ -287,6 +291,18 @@ intellihide.prototype = {
 
         var wksp = meta_win.get_workspace();
         var wksp_index = wksp.index();
+
+        // Skip windows of other apps
+        if(INTELLIHIDE_PERAPP) {
+            let currentApp = this._tracker.get_window_app(meta_win);
+            let monitorNumber = meta_win.get_monitor();
+            let monitor = global.screen.get_monitor_geometry(monitorNumber);
+            // But consider half maximized windows
+            // Useful if one is using two apps side by side
+            if( this._tracker.focus_app != currentApp && 
+                !(meta_win.get_maximized() && monitor.width > 1.5*meta_win.get_outer_rect().width)) // this should match half maximized windows.
+                return false;
+        }
 
         if ( wksp_index == currentWorkspace && meta_win.showing_on_its_workspace() ) {
             return true;
