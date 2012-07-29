@@ -193,8 +193,6 @@ dockedDash.prototype = {
 
         // Set initial position
         this._resetPosition();
-        //put out of the screen so its initial show is animated
-        this.actor.x = this.staticBox.x1 - this.staticBox.x2+this.staticBox.x1+1;
 
         // Now that the dash is on the stage and custom themes should be loaded
         // retrieve its background color
@@ -482,7 +480,12 @@ dockedDash.prototype = {
     // 'Hard' reset dock positon: called on start and when monitor changes
     _resetPosition: function() {
         this._monitor = this._getMonitor();
-        this._animateIn(0,0);
+        if( this._animStatus.hidden() )
+            this._animateOut(0,0);
+        else if( this._animStatus.shown() ){
+            this._animateOut(0,0);
+            this._animateIn(ANIMATION_TIME,0);
+        }
         this._updateYPosition();
         this._updateClip();
     },
