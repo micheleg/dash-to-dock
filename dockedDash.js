@@ -134,9 +134,6 @@ dockedDash.prototype = {
         Main.layoutManager.addChrome(this.actor, { affectsInputRegion: false, affectsStruts: this._settings.get_boolean('dock-fixed')});
         Main.layoutManager.trackChrome(this._box, {affectsInputRegion:true});
 
-        // Now that the dash is on the stage retrieve its background color
-        this._getBackgroundColor();
-
         // and update position and clip when width changes, that is when icons size and thus dash size changes.
         this.dash.actor.connect('notify::width', Lang.bind(this, this._redisplay));
         this.dash._box.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
@@ -168,6 +165,10 @@ dockedDash.prototype = {
         this._resetPosition();
         //put out of the screen so its initial show is animated
         this.actor.x = this.staticBox.x1 - this.staticBox.x2+this.staticBox.x1+1;
+
+        // Now that the dash is on the stage and custom themes should be loaded
+        // retrieve its background color
+        this._getBackgroundColor();
 
         // Show 
         this.actor.set_opacity(255); //this.actor.show();
