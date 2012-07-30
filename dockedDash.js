@@ -72,6 +72,11 @@ dockedDash.prototype = {
         // initialize animation status object
         this._animStatus = new animationStatus(true);
 
+        // initialize colors with generic values
+        this._defaultBackground = {red: 0, green:0, blue: 0, alpha:0};
+        this._defaultBackgroundColor = {red: 0, green:0, blue: 0, alpha:0};
+        this._customizedBackground = {red: 0, green:0, blue: 0, alpha:0};
+
         // Hide usual Dash
         Main.overview._dash.actor.hide();
 
