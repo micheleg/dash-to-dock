@@ -480,6 +480,7 @@ dockedDash.prototype = {
     // 'Hard' reset dock positon: called on start and when monitor changes
     _resetPosition: function() {
         this._monitor = this._getMonitor();
+        this._updateStaticBox();
         if( this._animStatus.hidden() )
             this._animateOut(0,0);
         else if( this._animStatus.shown() ){
