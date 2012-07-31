@@ -247,6 +247,10 @@ myDash.prototype = {
         if (this._maxHeight == -1)
             return;
 
+        // Prevent shell crash if the actor is not on the stage.
+        // It happens enabling/disabling repeatedly the extension
+        if(!this._box.get_stage())
+            return;
 
         let themeNode = this.actor.get_theme_node();
         let maxAllocation = new Clutter.ActorBox({ x1: 0, y1: 0,

@@ -408,6 +408,11 @@ dockedDash.prototype = {
         let oldStyle = this.dash._box.get_style();
         this.dash._box.set_style(null);
 
+        // Prevent shell crash if the actor is not on the stage.
+        // It happens enabling/disabling repeatedly the extension
+        if(!this.dash._box.get_stage())
+            return;
+
         let themeNode = this.dash._box.get_theme_node();
         this.dash._box.set_style(oldStyle);
 
