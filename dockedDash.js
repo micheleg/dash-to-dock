@@ -91,6 +91,7 @@ dockedDash.prototype = {
             style_class: 'container', child: this._box});
 
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
+        this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
 
         // Create and apply height constraint to the dash. It's controlled by this.actor height
         this.actor.height = Main.overview._viewSelector._pageArea.height; // Guess initial reasonable height.
@@ -185,11 +186,15 @@ dockedDash.prototype = {
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
 
-        Mainloop.idle_add(Lang.bind(this, this._initialize));
-
     },
 
     _initialize: function(){
+
+        if(this._realizeId>0){
+            this.actor.disconnect(this._realizeId);
+            this._realizeId=0;
+        }
+
         /* This is a workaround I found to get correct size and positions of actor
          * inside the overview
         */
