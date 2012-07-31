@@ -282,6 +282,10 @@ const myDash = new Lang.Class({
         if (this._maxHeight == -1)
             return;
 
+        // Prevent shell crash if the actor is not on the stage.
+        // It happens enabling/disabling repeatedly the extension
+        if(!this._box.get_stage())
+            return;
 
         let themeNode = this._box.get_theme_node();
         let maxAllocation = new Clutter.ActorBox({ x1: 0, y1: 0,
