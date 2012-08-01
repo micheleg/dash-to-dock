@@ -1,5 +1,8 @@
-#dashtodockBox {
+#dashtodockBox:ltr {
 	padding-right:1px;
 }
 
+#dashtodockBox:rtl {
+	padding-left:1px;
+}
 
