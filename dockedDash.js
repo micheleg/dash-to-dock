@@ -496,9 +496,9 @@ dockedDash.prototype = {
     _resetPosition: function() {
         this._monitor = this._getMonitor();
         this._updateStaticBox();
-        if( this._animStatus.hidden() )
+        if( this._animStatus.hidden() || this._animStatus.hiding())
             this._animateOut(0,0);
-        else if( this._animStatus.shown() ){
+        else {
             this._animateOut(0,0);
             this._animateIn(ANIMATION_TIME,0);
         }
