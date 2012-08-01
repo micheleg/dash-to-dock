@@ -30,6 +30,8 @@ dockedDash.prototype = {
  
     _init: function(settings) {
 
+        this._rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
+
         // Load settings
         this._settings = settings;
         this._bindSettingsChanges();
@@ -59,6 +61,11 @@ dockedDash.prototype = {
             style_class: 'box'} );
         this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
             style_class: 'container', child: this._box});
+
+        // Mirror anchor point for rtl mode so that when dash icon size changes
+        // the dash stays at the right position
+        if(this._rtl)
+            this.actor.set_anchor_point_from_gravity(Clutter.Gravity.NORTH_EAST);
 
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
         this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
@@ -312,7 +319,11 @@ dockedDash.prototype = {
 
     _animateIn: function(time, delay) {
 
-        var final_position = this.staticBox.x1;
+        let final_position;
+        if(this._rtl)
+            final_position = this.staticBox.x2;
+        else
+            final_position = this.staticBox.x1;
 
         /* Animate functions are also used for 'hard' position reset with time==0
          * and delay==0 since they keep this._animStatus in sync. But I really
@@ -339,7 +350,12 @@ dockedDash.prototype = {
 
     _animateOut: function(time, delay){
 
-        var final_position = this.staticBox.x1-this.actor.width+1;
+        let final_position;
+
+        if(this._rtl)
+            final_position = this.staticBox.x2 + this.actor.width - 1;
+        else
+            final_position = this.staticBox.x1 - this.actor.width + 1;
 
         /* Animate functions are also used for 'hard' position reset with time==0
          * and delay==0 since they keep this._animStatus in sync. But I really
@@ -368,9 +384,8 @@ dockedDash.prototype = {
         }
     },
 
-    // clip dock to its original allocation along x and to the current monito along y
-    // the current monitor; inspired by dock@gnome-shell-extensions.gcampax.github.com
-
+    // clip the dock to the current monitor;
+    // inspired by dock@gnome-shell-extensions.gcampax.github.com
     _updateClip: function(){
 
         // Here we implicitly assume that the stage and actor's parent
@@ -383,8 +398,16 @@ dockedDash.prototype = {
         // Translate back into actor's coordinate space
         // While the actor moves, the clip has to move in the opposite direction 
         // to mantain its position in respect to the screen.
-        clip.x1 -= this.actor.x;
-        clip.x2 -= this.actor.x;
+
+        if(this._rtl){
+            // Due to the different anchor point clip has to be corrected further
+            clip.x1 -= this.actor.x - this.actor.width;
+            clip.x2 -= this.actor.x - this.actor.width;
+        } else{
+            clip.x1 -= this.actor.x;
+            clip.x2 -= this.actor.x;
+        }
+
         clip.y1 -= this.actor.y;
         clip.y2 -= this.actor.y;
 
@@ -511,7 +534,7 @@ dockedDash.prototype = {
     _updateStaticBox: function() {
 
         this.staticBox.init_rect(
-            this._monitor.x,
+            this._monitor.x + this._rtl?(this._monitor.width - this._box.width):0,
             this.actor.y + this._box.y,
             this._box.width,
             this._box.height
@@ -735,8 +758,12 @@ dockedDash.prototype = {
 
                 let [x,y] = event.get_coords();
 
-                if(x > this.staticBox.x1 + 1){
-                    return false
+                if (this._rtl) {
+                    if(x < this.staticBox.x2 - 1)
+                        return false;
+                } else {
+                    if(x > this.staticBox.x1 + 1)
+                        return false;
                 }
             }
 
