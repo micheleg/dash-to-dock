@@ -37,7 +37,8 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
 
     let dockSettingsMain1 = new Gtk.Box({spacing:30,orientation:Gtk.Orientation.HORIZONTAL, homogeneous:true,
-                                         margin_left:20, margin_top:10, margin_bottom:10, margin_right:10});
+                                         margin:10});
+    indentWidget(dockSettingsMain1);
 
     let dockSettingsControl1 = new Gtk.Box({spacing:30, margin_left:10, margin_top:10, margin_right:10});
 
@@ -172,45 +173,43 @@ const WorkspaceSettingsWidget = new GObject.Class({
     dockSettingsMain2.add(verticalCenter);
     dockSettingsMain2.add(expandHeight);
 
-    let allSizes  =[ 16, 24, 32, 48, 64 ];
-    let maximumIconSizeBox = new Gtk.Box({spacing:30});
-
-    let maximumIconSizeLabel = new Gtk.Label({label: "Set the maximum icon size", use_markup: true,
-                                              xalign: 0, valign: Gtk.Align.END, margin_bottom:5});
-
-    let maximumIconSize =  new Gtk.Scale({orientation: Gtk.Orientation.HORIZONTAL, valuePos: Gtk.PositionType.RIGHT,
-                                          valign: Gtk.Align.END, halign: Gtk.Align.FILL, hexpand:true, margin_top:10});
-        maximumIconSize.set_range(0, 4); // =[ 16, 24, 32, 48, 64 ]
-        maximumIconSize.set_value(allSizes.indexOf(this.settings.get_int('dash-max-icon-size')));
-        maximumIconSize.set_digits(0);
-        maximumIconSize.set_increments(1,1);
-        maximumIconSize.set_size_request(200, -1);
-
-        maximumIconSize.add_mark(0,Gtk.PositionType.TOP,"16");
-        maximumIconSize.add_mark(1,Gtk.PositionType.TOP,"24");
-        maximumIconSize.add_mark(2,Gtk.PositionType.TOP,"32");
-        maximumIconSize.add_mark(3,Gtk.PositionType.TOP,"48");
-        maximumIconSize.add_mark(4,Gtk.PositionType.TOP,"64");
-
-        maximumIconSize.connect('format-value', Lang.bind(this, function(button){
-            return allSizes[Math.floor(button.get_value())].toString();
-            
-        }));
-
-        maximumIconSize.connect('value-changed', Lang.bind(this, function(button){
-            let s = Math.floor(button.get_value());
-            this.settings.set_int('dash-max-icon-size', allSizes[s]);
-        }));
-
-    dockSettingsMain2.add(maximumIconSizeBox);
-
-    maximumIconSizeBox.add(maximumIconSizeLabel);
-    maximumIconSizeBox.add(maximumIconSize);;
     dockSettings.add(dockSettingsControl1);
     dockSettings.add(dockSettingsMain1);
-    //dockSettings.add(dockSettingsControl2);
     dockSettings.add(dockMonitor);
     dockSettings.add(dockSettingsMain2);
+
+    /*ICON SIZE*/
+
+    let iconSizeMain = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL, homogeneous:true,
+                                       margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
+
+    let allSizes  =[ 16, 24, 32, 48, 64 ];
+    let maximumIconSizeBox = new Gtk.Box({spacing:30,});
+
+    let maximumIconSizeLabel = new Gtk.Label({label: "Maximum icon size", use_markup: true,
+                                              xalign: 0, valign: Gtk.Align.END, margin_bottom:5,  hexpand:true});
+
+    let maximumIconSize =  new Gtk.ComboBoxText({halign:Gtk.Align.END});
+
+            maximumIconSize.append_text('16');
+            maximumIconSize.append_text('24');
+            maximumIconSize.append_text('32');
+            maximumIconSize.append_text('48');
+            maximumIconSize.append_text('64');
+
+            maximumIconSize.set_size_request(100, -1);
+
+            maximumIconSize.set_active(allSizes.indexOf(this.settings.get_int('dash-max-icon-size')));
+
+            maximumIconSize.connect('changed', Lang.bind (this, function(widget) {
+                this.settings.set_int('dash-max-icon-size', allSizes[widget.get_active()]);
+            }));
+
+    maximumIconSizeBox.add(maximumIconSizeLabel);
+    maximumIconSizeBox.add(maximumIconSize);
+
+    iconSizeMain.add(maximumIconSizeBox);
+    dockSettings.add(iconSizeMain);
 
     notebook.append_page(dockSettings, dockSettingsTitle);
 
@@ -236,7 +235,8 @@ const WorkspaceSettingsWidget = new GObject.Class({
     customization.add(opaqueLayerControl);
 
     let opaqueLayerMain = new Gtk.Box({spacing:30, orientation:Gtk.Orientation.HORIZONTAL, homogeneous:false,
-                                       margin_left:20, margin_top:10, margin_bottom:10, margin_right:10});
+                                       margin:10});
+    indentWidget(opaqueLayerMain);
 
     let opacityLayerTimeout=0; // Used to avoid to continuosly update the opacity
     let layerOpacityLabel = new Gtk.Label({label: "Opacity", use_markup: true, xalign: 0});
@@ -283,8 +283,8 @@ const WorkspaceSettingsWidget = new GObject.Class({
             }));
 
     let switchWorkspaceMain = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL, homogeneous:false,
-                                       margin_left:20, margin_top:5, margin_bottom:10, margin_right:10});
-
+                                       margin_left:10, margin_top:5, margin_bottom:10, margin_right:10});
+    indentWidget(switchWorkspaceMain);
     let oneAtATime = new Gtk.CheckButton({label: "Switch one workspace at a time", margin_bottom: 5});
         oneAtATime.set_active(this.settings.get_boolean('scroll-switch-workspace-one-at-a-time'));
         oneAtATime.connect('toggled', Lang.bind(this, function(check){
@@ -364,3 +364,19 @@ function buildPrefsWidget() {
     return widget;
 }
 
+
+/*
+ * Add a margin to the widget:
+ *  left margin in LTR
+ *  right margin in RTL
+ */
+function indentWidget(widget){
+
+    let indent = 20;
+
+    if(Gtk.Widget.get_default_direction()==Gtk.TextDirection.RTL){
+        widget.set_margin_right(indent);
+    } else {
+        widget.set_margin_left(indent);
+    }
+}
