@@ -617,7 +617,7 @@ dockedDash.prototype = {
         let symbol = event.get_key_symbol();
 
         // Exit accessibility focus
-        if (symbol == Clutter.Escape) {
+        if (symbol == Clutter.Escape || symbol == Clutter.Enter) {
 
             global.stage.set_key_focus(null);
 
