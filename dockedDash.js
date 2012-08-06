@@ -304,6 +304,14 @@ dockedDash.prototype = {
 
         var final_position = this.staticBox.x1;
 
+        /* Animate functions are also used for 'hard' position reset with time==0
+         * and delay==0 since they keep this._animStatus in sync. But I really
+         * want to remove all queued animation in this instance (Only running
+         * animation are removed adding a new Tween).
+         */
+        if (time==0 && delay==0)
+            this._removeAnimations();
+
         if(final_position !== this.actor.x){
             this._animStatus.queue(true);
             Tweener.addTween(this.actor,{
@@ -322,6 +330,14 @@ dockedDash.prototype = {
     _animateOut: function(time, delay){
 
         var final_position = this.staticBox.x1-this.actor.width+1;
+
+        /* Animate functions are also used for 'hard' position reset with time==0
+         * and delay==0 since they keep this._animStatus in sync. But I really
+         * want to remove all queued animation in this instance (Only running
+         * animation are removed adding a new Tween).
+         */
+        if (time==0 && delay==0)
+            this._removeAnimations();
 
         if(final_position !== this.actor.x){
             this._animStatus.queue(false);
