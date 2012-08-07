@@ -920,7 +920,7 @@ const targetPane = new Lang.Class({
 
         this._signalHandler = new Convenience.globalSignalHandler();
 
-        this.actor = new Clutter.Rectangle({ opacity: 255,
+        this.actor = new Clutter.Rectangle({ opacity: 50,
                                                   reactive: true, color:Clutter.Color.get_static(Clutter.StaticColor.RED) });
         this.actor._delegate = this;
         this.actor.set_position(0,0);
@@ -948,6 +948,8 @@ const targetPane = new Lang.Class({
 
         this.actor.hide();
         Main.layoutManager.addChrome(this.actor);
+        // Place the Pane below the top Panel
+        this.actor.lower(Main.layoutManager.panelBox)
     },
 
     destroy: function(){
