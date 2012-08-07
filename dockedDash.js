@@ -551,6 +551,11 @@ dockedDash.prototype = {
     // 'Hard' reset dock positon: called on start and when monitor changes
     _resetPosition: function() {
         this._monitor = this._getMonitor();
+
+        // Update tagertPane;
+        this._targetPane.setSize(this._monitor.width, this._monitor.height);
+        this._targetPane.setPosition(this._monitor.x, this._monitor.y);
+
         this._updateStaticBox();
         if( this._animStatus.hidden() || this._animStatus.hiding())
             this._animateOut(0,0);
@@ -963,6 +968,14 @@ const targetPane = new Lang.Class({
     _onDragEnd: function(){
         if(Main.overview.visible==false)
             this.actor.hide();
+    },
+
+    setSize: function(width, height){
+        this.actor.set_size(width, height);
+    },
+
+    setPosition: function(x, y){
+        this.actor.set_position(x, y);
     }
 
 
