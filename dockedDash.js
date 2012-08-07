@@ -51,16 +51,9 @@ dockedDash.prototype = {
 
         // Hide usual Dash
         Main.overview._dash.actor.hide();
+
+        //DND targetPane;
         this._targetPane = new targetPane();
-        this._coverPane = new Clutter.Rectangle({ opacity: 255,
-                                                  reactive: true, color:Clutter.Color.get_static(Clutter.StaticColor.RED) });
-        this._coverPane._delegate = this._targetPane;
-        this._coverPane.set_position(600,300);
-        this._coverPane.set_size(300,300);
-/*        this._coverPane.set_border_color({red:255, green:0, blue:0});
-        this._coverPane.set_border_width (1);*/
-        this._coverPane.hide();
-        Main.layoutManager.addChrome(this._coverPane);
 
         // Create a new dash object
         this.dash = new MyDash.myDash(this._settings); // this.dash = new MyDash.myDash();
@@ -210,6 +203,8 @@ dockedDash.prototype = {
         // If the actor is inside a container, the actor will be removed.
         // When you destroy a container, its children will be destroyed as well. 
         this.actor.destroy();
+
+        this._targetPane.destroy();
 
         // Reshow normal dash previously hidden
         Main.overview._dash.actor.show();
@@ -589,9 +584,6 @@ dockedDash.prototype = {
         this._oldAutohideStatus = this._autohideStatus;
         this._autohideStatus = false;
         global.stage_input_mode = Shell.StageInputMode.FULLSCREEN;
-
-        if(Main.overview.visible==false)
-            this._coverPane.show();
     },
 
     _onDragEnd: function(){
@@ -600,10 +592,7 @@ dockedDash.prototype = {
         }
         if(this._oldAutohideStatus)
             this._autohideStatus  = this._oldAutohideStatus;
-        this._box.sync_hover();
-
-        // Always hide the coverPane
-        this._coverPane.hide();
+        this.actor.sync_hover();
     },
 
     _onSwitchWorkspace: function(){
@@ -923,11 +912,58 @@ const targetPane = new Lang.Class({
     Name: 'dashToDock.targetPane',
 
     _init: function(){
+
+        this._signalHandler = new Convenience.globalSignalHandler();
+
+        this.actor = new Clutter.Rectangle({ opacity: 255,
+                                                  reactive: true, color:Clutter.Color.get_static(Clutter.StaticColor.RED) });
+        this.actor._delegate = this;
+        this.actor.set_position(0,0);
+        this.actor.set_size(300,300);
+
+        this._signalHandler.push(
+            // Allow app icons do be dragged out of the chrome actors when reordering or deleting theme while not on overview mode
+            // by changing global stage input mode
+            [
+                Main.overview,
+                'item-drag-begin',
+                Lang.bind(this, this._onDragStart)
+            ],
+            [
+                Main.overview,
+                'item-drag-end',
+                Lang.bind(this, this._onDragEnd)
+            ],
+            [
+                Main.overview,
+                'item-drag-cancelled',
+                Lang.bind(this, this._onDragEnd)
+            ]
+        );
+
+        this.actor.hide();
+        Main.layoutManager.addChrome(this.actor);
+    },
+
+    destroy: function(){
+        this._signalhandler.disconnect();
+        this.actor.destroy();
     },
 
     acceptDrop : function(source, actor, x, y, time) {
         //this._workspace.acceptDrop(source, actor, x, y, time);
         log('TARGET');
+    },
+
+    _onDragStart: function(){
+        if(Main.overview.visible==false)
+                    this.actor.show();
+    },
+
+    _onDragEnd: function(){
+        if(Main.overview.visible==false)
+            this.actor.hide();
     }
+
 
 });
