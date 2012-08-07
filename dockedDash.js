@@ -51,6 +51,16 @@ dockedDash.prototype = {
 
         // Hide usual Dash
         Main.overview._dash.actor.hide();
+        this._targetPane = new targetPane();
+        this._coverPane = new Clutter.Rectangle({ opacity: 255,
+                                                  reactive: true, color:Clutter.Color.get_static(Clutter.StaticColor.RED) });
+        this._coverPane._delegate = this._targetPane;
+        this._coverPane.set_position(600,300);
+        this._coverPane.set_size(300,300);
+/*        this._coverPane.set_border_color({red:255, green:0, blue:0});
+        this._coverPane.set_border_width (1);*/
+        this._coverPane.hide();
+        Main.layoutManager.addChrome(this._coverPane);
 
         // Create a new dash object
         this.dash = new MyDash.myDash(this._settings); // this.dash = new MyDash.myDash();
@@ -579,6 +589,9 @@ dockedDash.prototype = {
         this._oldAutohideStatus = this._autohideStatus;
         this._autohideStatus = false;
         global.stage_input_mode = Shell.StageInputMode.FULLSCREEN;
+
+        if(Main.overview.visible==false)
+            this._coverPane.show();
     },
 
     _onDragEnd: function(){
@@ -588,6 +601,9 @@ dockedDash.prototype = {
         if(this._oldAutohideStatus)
             this._autohideStatus  = this._oldAutohideStatus;
         this._box.sync_hover();
+
+        // Always hide the coverPane
+        this._coverPane.hide();
     },
 
     _onSwitchWorkspace: function(){
@@ -903,4 +919,15 @@ animationStatus.prototype = {
     }
 }
 
+const targetPane = new Lang.Class({
+    Name: 'dashToDock.targetPane',
 
+    _init: function(){
+    },
+
+    acceptDrop : function(source, actor, x, y, time) {
+        //this._workspace.acceptDrop(source, actor, x, y, time);
+        log('TARGET');
+    }
+
+});
