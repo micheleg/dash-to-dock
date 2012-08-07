@@ -953,7 +953,7 @@ const targetPane = new Lang.Class({
     },
 
     destroy: function(){
-        this._signalhandler.disconnect();
+        this._signalHandler.disconnect();
         this.actor.destroy();
     },
 
