@@ -958,11 +958,20 @@ const targetPane = new Lang.Class({
     acceptDrop : function(source, actor, x, y, time) {
         //this._workspace.acceptDrop(source, actor, x, y, time);
         log('TARGET');
+
+        if (source.shellWorkspaceLaunch) {
+            /*source.shellWorkspaceLaunch({ workspace: this.metaWorkspace ? this.metaWorkspace.index() : -1,
+                                          timestamp: time });*/
+            source.shellWorkspaceLaunch();
+            return true;
+        }
+
+        return false;
     },
 
     _onDragStart: function(){
         if(Main.overview.visible==false)
-                    this.actor.show();
+            this.actor.show();
     },
 
     _onDragEnd: function(){
