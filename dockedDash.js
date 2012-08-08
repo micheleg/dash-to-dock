@@ -62,11 +62,6 @@ dockedDash.prototype = {
         this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
             style_class: 'container', child: this._box});
 
-        // Mirror anchor point for rtl mode so that when dash icon size changes
-        // the dash stays at the right position
-        if(this._rtl)
-            this.actor.set_anchor_point_from_gravity(Clutter.Gravity.NORTH_EAST);
-
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
         this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
 
@@ -147,8 +142,6 @@ dockedDash.prototype = {
         Main.layoutManager.addChrome(this.actor, { affectsInputRegion: false, affectsStruts: this._settings.get_boolean('dock-fixed')});
         Main.layoutManager.trackChrome(this._box, {affectsInputRegion:true});
 
-        // and update position and clip when width changes, that is when icons size and thus dash size changes.
-        this.dash.actor.connect('notify::width', Lang.bind(this, this._redisplay));
         this.dash._box.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
 
         // sync hover after a popupmenu is closed
@@ -320,10 +313,16 @@ dockedDash.prototype = {
     _animateIn: function(time, delay) {
 
         let final_position;
-        if(this._rtl)
+
+        // Move anchor point so mode so that when dash icon size changes
+        // the dash stays at the right position
+        if(this._rtl){
+            this.actor.move_anchor_point_from_gravity(Clutter.Gravity.NORTH_EAST);
             final_position = this.staticBox.x2;
-        else
+        } else {
+            this.actor.move_anchor_point_from_gravity(Clutter.Gravity.NORTH_WEST);
             final_position = this.staticBox.x1;
+        }
 
         /* Animate functions are also used for 'hard' position reset with time==0
          * and delay==0 since they keep this._animStatus in sync. But I really
@@ -352,10 +351,15 @@ dockedDash.prototype = {
 
         let final_position;
 
-        if(this._rtl)
-            final_position = this.staticBox.x2 + this.actor.width - 1;
-        else
-            final_position = this.staticBox.x1 - this.actor.width + 1;
+        // Move anchor point so that when dash icon size changes
+        // the dash stays at the right position
+        if(this._rtl){
+            this.actor.move_anchor_point_from_gravity(Clutter.Gravity.NORTH_WEST);
+            final_position = this.staticBox.x2 - 1;
+        } else {
+            this.actor.move_anchor_point_from_gravity(Clutter.Gravity.NORTH_EAST);
+            final_position = this.staticBox.x1 + 1;
+        }
 
         /* Animate functions are also used for 'hard' position reset with time==0
          * and delay==0 since they keep this._animStatus in sync. But I really
@@ -396,20 +400,16 @@ dockedDash.prototype = {
                           y2: this._monitor.y + this._monitor.height});
 
         // Translate back into actor's coordinate space
-        // While the actor moves, the clip has to move in the opposite direction 
-        // to mantain its position in respect to the screen.
+        // While the actor moves, the clip has to move in the opposite direction
+        // to mantain its position in respect to the screen. Also take into account
+        // the actor anchor point.
 
-        if(this._rtl){
-            // Due to the different anchor point clip has to be corrected further
-            clip.x1 -= this.actor.x - this.actor.width;
-            clip.x2 -= this.actor.x - this.actor.width;
-        } else{
-            clip.x1 -= this.actor.x;
-            clip.x2 -= this.actor.x;
-        }
+        let [x_anchor, y_anchor] = this.actor.get_anchor_point();
 
-        clip.y1 -= this.actor.y;
-        clip.y2 -= this.actor.y;
+        clip.x1 -= this.actor.x - x_anchor;
+        clip.x2 -= this.actor.x - x_anchor;
+        clip.y1 -= this.actor.y - y_anchor;
+        clip.y2 -= this.actor.y - y_anchor;
 
         // Apply the clip
         this.actor.set_clip(clip.x1, clip.y1, clip.x2-clip.x1, clip.y2 - clip.y1);
