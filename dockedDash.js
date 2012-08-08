@@ -784,12 +784,19 @@ dockedDash.prototype = {
     // Disable autohide effect, thus show dash
     disableAutoHide: function() {
         if(this._autohideStatus==true){
+
+            /* Add a small delay to prevent the dock from being quickly shown and then
+             * immediately hidden. This happens for instance with application based intellihide
+             * In the small period of time between the time a window is closed and next window get focus.
+             */
+            const SMALL_DELAY = 0.05;
+
             this._autohideStatus = false;
 
             this._removeAnimations();
-            this._animateIn(this._settings.get_double('animation-time'), 0);
+            this._animateIn(this._settings.get_double('animation-time'), SMALL_DELAY);
             if(this._settings.get_boolean('opaque-background') && !this._settings.get_boolean('opaque-background-always'))
-                this._fadeOutBackground(this._settings.get_double('animation-time'), 0);
+                this._fadeOutBackground(this._settings.get_double('animation-time'), SMALL_DELAY);
         }
     },
 
