@@ -180,7 +180,6 @@ dockedDash.prototype = {
 
         // Show 
         this.actor.set_opacity(255); //this.actor.show();
-        this._redisplay();
 
     },
 
@@ -476,23 +475,6 @@ dockedDash.prototype = {
     _onThemeChanged: function() {
         this._getBackgroundColor();
         this._updateBackgroundOpacity();
-    },
-
-    _redisplay: function() {
-
-        // Update dash x position animating it
-        if( this._animStatus.hidden() ){
-            this._removeAnimations();
-            this._animateOut(0, 0);
-        } else if( this._animStatus.shown() ){
-            this._removeAnimations();
-            this._animateIn(this._settings.get_double('animation-time'), 0);
-        }
-
-        this._updateBackgroundOpacity();
-        this._updateStaticBox();
-        this._updateClip();
-
     },
 
     _updateYPosition: function() {
