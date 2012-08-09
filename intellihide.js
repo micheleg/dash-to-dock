@@ -160,6 +160,10 @@ intellihide.prototype = {
             this._updateDockVisibility();
         }));
 
+        this._settings.connect('changed::intellihide-perapp', Lang.bind(this, function(){
+            this._updateDockVisibility();
+        }));
+
         this._settings.connect('changed::dock-fixed', Lang.bind(this, function(){
             if(this._settings.get_boolean('dock-fixed')) {
                 this.status = true; // Since the dock is now shown
