@@ -56,6 +56,7 @@ intellihide.prototype = {
 
         this._signalHandler = new Convenience.globalSignalHandler();
         this._tracker = Shell.WindowTracker.get_default();
+        this._focusApp = null;
 
         // current intellihide status
         this.status;
@@ -264,23 +265,32 @@ intellihide.prototype = {
             if( this._settings.get_boolean('intellihide') ){
 
                 let overlaps = false;
+                let windows = global.get_window_actors();
 
-                let windows = global.get_window_actors().filter(this._intellihideFilterInteresting, this);
+                if (windows.length>0){
 
-                for(let i=0; i< windows.length; i++){
+                    // This is the window on top of all others in the current workspace
+                    let topWindow = windows[windows.length-1].get_meta_window();
+                    // If there isn't a focused app, use that of the window on top
+                    this._focusApp = this._tracker.focus_app || this._tracker.get_window_app(topWindow);
 
-                    let win = windows[i].get_meta_window();
-                    if(win){
-                        let rect = win.get_outer_rect();
+                    windows = windows.filter(this._intellihideFilterInteresting, this);
 
-                        let test = ( rect.x < this._target.staticBox.x2) &&
-                                   ( rect.x +rect.width > this._target.staticBox.x1 ) &&
-                                   ( rect.y < this._target.staticBox.y2 ) &&
-                                   ( rect.y +rect.height > this._target.staticBox.y1 );
+                    for(let i=0; i< windows.length; i++){
 
-                        if(test){
-                            overlaps = true;
-                            break;
+                        let win = windows[i].get_meta_window();
+                        if(win){
+                            let rect = win.get_outer_rect();
+
+                            let test = ( rect.x < this._target.staticBox.x2) &&
+                                       ( rect.x +rect.width > this._target.staticBox.x1 ) &&
+                                       ( rect.y < this._target.staticBox.y2 ) &&
+                                       ( rect.y +rect.height > this._target.staticBox.y1 );
+
+                            if(test){
+                                overlaps = true;
+                                break;
+                            }
                         }
                     }
                 }
@@ -299,7 +309,7 @@ intellihide.prototype = {
     // Filter interesting windows to be considered for intellihide.
     // Consider all windows visible on the current workspace.
     // Optionally skip windows of other applications
-    _intellihideFilterInteresting: function(wa, edge){
+    _intellihideFilterInteresting: function(wa){
 
         var currentWorkspace = global.screen.get_active_workspace_index();
 
@@ -315,13 +325,12 @@ intellihide.prototype = {
         var wksp_index = wksp.index();
 
         // Skip windows of other apps
-        if(this._settings.get_boolean('intellihide-perapp')) {
+        if(this._focusApp && this._settings.get_boolean('intellihide-perapp')) {
             let currentApp = this._tracker.get_window_app(meta_win);
-            let monitorNumber = meta_win.get_monitor();
-            let monitor = global.screen.get_monitor_geometry(monitorNumber);
+            let monitor = global.screen.get_monitor_geometry( meta_win.get_monitor() );
             // But consider half maximized windows
             // Useful if one is using two apps side by side
-            if( this._tracker.focus_app != currentApp && 
+            if( this._focusApp != currentApp &&
                 !(meta_win.get_maximized() && monitor.width > 1.5*meta_win.get_outer_rect().width)) // this should match half maximized windows.
                 return false;
         }
