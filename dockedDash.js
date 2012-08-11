@@ -522,6 +522,9 @@ dockedDash.prototype = {
             this._box.height
         );
 
+        // If allocation is changed, probably also the clipping has to be updated.
+        this._updateClip();
+
         this.emit('box-changed');
     },
 
