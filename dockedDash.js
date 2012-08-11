@@ -231,7 +231,6 @@ dockedDash.prototype = {
 
             if(this._settings.get_boolean('dock-fixed')) {
                 // show dash
-                //this._autohideStatus = true; // It could be false but the dock could be hidden
                 this.disableAutoHide();
             } else {
                 this.emit('box-changed');

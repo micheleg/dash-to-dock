@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="gnome-shell-extensions">
-  <enum id='org.gnome.shell.extensions.dash-to-dock.IntellihideMode'>
-    <value value='0' nick='hide'/>
-    <value value='1' nick='show'/>
-    <value value='2' nick='autohide'/>
-    <value value='3' nick='intellihide'/>
-  </enum>
-
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key type="d" name="animation-time">
       <default>0.25</default>
@@ -57,11 +50,6 @@
       <default>false</default>
       <summary>Dock always visible</summary>
       <description>Dock is always visible</description>
-    </key>
-    <key name="overview-mode" enum="org.gnome.shell.extensions.dash-to-dock.IntellihideMode">
-      <default>'show'</default>
-      <summary>Dash visibility in overview</summary>
-      <description>Sets the dash visibility when in overview mode.</description>
     </key>
     <key type="b" name="scroll-switch-workspace">
       <default>true</default>

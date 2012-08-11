@@ -22,15 +22,6 @@ const handledWindowTypes = [
   Meta.WindowType.SPLASHSCREEN
 ];
 
-const IntellihideMode = {
-    HIDE: 0,            // Dash is always invisible
-    SHOW: 1,            // Dash is always visible
-    AUTOHIDE:2,         // Basic autohide mode: visible on mouse hover
-    INTELLIHIDE: 3      // Basic intellihide mode: visible if no window overlap the dash
-};
-
-const OVERVIEW_MODE = IntellihideMode.SHOW;
-
 /*
  * A rough and ugly implementation of the intellihide behaviour.
  * Intallihide object: call show()/hide() function based on the overlap with the
@@ -67,8 +58,6 @@ intellihide.prototype = {
         this.hideFunction = hide;
         // Target object
         this._target = target;
-        // Keep track of the current overview mode (I mean if it is on/off)
-        this._inOverview = false;
 
         // Main id of the timeout controlling timeout for updateDockVisibility function 
         // when windows are dragged around (move and resize)
@@ -169,7 +158,7 @@ intellihide.prototype = {
             if(this._settings.get_boolean('dock-fixed')) {
                 this.status = true; // Since the dock is now shown
             } else {
-                // Wait that windows rearragne after struts change
+                // Wait that windows rearrange after struts change
                 Mainloop.idle_add(Lang.bind(this, function() {
                     this._updateDockVisibility();
                     return false;
@@ -193,23 +182,14 @@ intellihide.prototype = {
     },
 
     _overviewExit : function() {
-        this._inOverview = false;
+        this._disableIntellihide = false;
         this._updateDockVisibility();
 
     },
 
     _overviewEnter: function() {
-
-        this._inOverview = true;
-        if(OVERVIEW_MODE == IntellihideMode.SHOW){
-                this._show();
-        } else if (OVERVIEW_MODE == IntellihideMode.AUTOHIDE){
-                this._hide();
-        } else if (OVERVIEW_MODE == IntellihideMode.INTELLIHIDE){
-            this._show();
-        } else if (OVERVIEW_MODE == IntellihideMode.HIDE) {
-            /*TODO*/
-        }
+        this._disableIntellihide = true;
+        this._show();
     },
 
     _grabOpBegin: function() {
@@ -247,21 +227,8 @@ intellihide.prototype = {
 
     _updateDockVisibility: function() {
 
-        if (this._disableIntellihide)
-            return;
+        if( !(this._settings.get_boolean('dock-fixed') || this._disableIntellihide)) {
 
-        // If we are in overview mode and the dock is set to be visible prevent 
-        // it to be hidden by window events(window create, workspace change, 
-        // window close...)
-
-        if(this._inOverview){
-            if( OVERVIEW_MODE !== IntellihideMode.INTELLIHIDE ) {
-                return;
-            }
-        }
-
-        //else in normal mode:
-        else if( !this._settings.get_boolean('dock-fixed') ) {
             if( this._settings.get_boolean('intellihide') ){
 
                 let overlaps = false;
