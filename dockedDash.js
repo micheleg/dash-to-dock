@@ -510,6 +510,9 @@ dockedDash.prototype = {
         this.staticBox.x2 = this.staticBox.x1 + this._box.width;
         this.staticBox.y2 = this.staticBox.y1 + this._box.height;
 
+        // If allocation is changed, probably also the clipping has to be updated.
+        this._updateClip();
+
         this.emit('box-changed');
     },
 
