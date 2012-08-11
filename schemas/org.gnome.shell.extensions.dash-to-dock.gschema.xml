@@ -14,12 +14,12 @@
       <description>Sets the time duration of the autohide effect.</description>
     </key>
     <key type="d" name="show-delay">
-      <default>0.5</default>
+      <default>0.25</default>
       <summary>Show delay</summary>
       <description>Sets the delay after the mouse reaches the screen border before showing the dock.</description>
     </key>
     <key type="d" name="hide-delay">
-      <default>0.2</default>
+      <default>0.10</default>
       <summary>Show delay</summary>
       <description>Sets the delay after the mouse left the dock before hiding it.</description>
     </key>
@@ -34,7 +34,7 @@
       <description>Makes the background of the dash opaque improving readability even when not in autohide mode.</description>
     </key>
     <key type="d" name="background-opacity">
-      <default>0.9</default>
+      <default>0.8</default>
       <summary>Opacity of the dash background</summary>
       <description>Sets the opacity of the dash background  when in autohide mode.</description>
     </key>
@@ -64,7 +64,7 @@
       <description>Sets the dash visibility when in overview mode.</description>
     </key>
     <key type="b" name="scroll-switch-workspace">
-      <default>false</default>
+      <default>true</default>
       <summary>Switch workspace by scrolling over the dock</summary>
       <description>Add the possibility to switch workspace by mouse scrolling over the dock.</description>
     </key>
@@ -84,7 +84,7 @@
       <description>A deadtime between each worskapace switch triggere by mouse scroll</description>
     </key>
     <key type="i" name="dash-max-icon-size">
-      <default>64</default>
+      <default>48</default>
       <summary>Maximum dash icon size</summary>
       <description>Set the allowed maximum dash icon size. Allowed range: 16..64.</description>
     </key>
@@ -104,11 +104,11 @@
       <description>Make the extension work properly when bolt extensions is enabled</description>
     </key>
     <key type="b" name="vertical-centered">
-      <default>false</default>
+      <default>true</default>
       <summary>Center the dock verticaly</summary>
     </key>
     <key type="b" name="expand-height">
-      <default>false</default>
+      <default>true</default>
       <summary>expand dock height</summary>
       <description>Use all vertical available space</description>
     </key>
