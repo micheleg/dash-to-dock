@@ -301,15 +301,15 @@ dockedDash.prototype = {
 
     _animateIn: function(time, delay) {
 
-        let final_position;
+        let final_position, anchor_point;
 
         // Move anchor point so mode so that when dash icon size changes
         // the dash stays at the right position
         if(this._rtl){
-            this.actor.move_anchor_point_from_gravity(Clutter.Gravity.NORTH_EAST);
+            anchor_point = Clutter.Gravity.NORTH_EAST;
             final_position = this.staticBox.x2;
         } else {
-            this.actor.move_anchor_point_from_gravity(Clutter.Gravity.NORTH_WEST);
+            anchor_point = Clutter.Gravity.NORTH_WEST;
             final_position = this.staticBox.x1;
         }
 
@@ -329,7 +329,10 @@ dockedDash.prototype = {
                 delay: delay,
                 transition: 'easeOutQuad',
                 onUpdate: Lang.bind(this, this._updateClip),
-                onStart:  Lang.bind(this, function() {this._animStatus.start();}),
+                onStart:  Lang.bind(this, function() {
+                    this._animStatus.start();
+                    this.actor.move_anchor_point_from_gravity(anchor_point);
+                }),
                 onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
                 onComplete: Lang.bind(this, function() {this._animStatus.end();})
             });
@@ -338,15 +341,15 @@ dockedDash.prototype = {
 
     _animateOut: function(time, delay){
 
-        let final_position;
+        let final_position, anchor_point;
 
         // Move anchor point so that when dash icon size changes
         // the dash stays at the right position
         if(this._rtl){
-            this.actor.move_anchor_point_from_gravity(Clutter.Gravity.NORTH_WEST);
+            anchor_point = Clutter.Gravity.NORTH_WEST;
             final_position = this.staticBox.x2 - 1;
         } else {
-            this.actor.move_anchor_point_from_gravity(Clutter.Gravity.NORTH_EAST);
+            anchor_point = Clutter.Gravity.NORTH_EAST;
             final_position = this.staticBox.x1 + 1;
         }
 
@@ -366,7 +369,10 @@ dockedDash.prototype = {
                 delay: delay ,
                 transition: 'easeOutQuad',
                 onUpdate: Lang.bind(this, this._updateClip),
-                onStart:  Lang.bind(this, function() {this._animStatus.start();}),
+                onStart:  Lang.bind(this, function() {
+                    this._animStatus.start();
+                    this.actor.move_anchor_point_from_gravity(anchor_point);
+                }),
                 onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
                 onComplete: Lang.bind(this, function() {
                     this._animStatus.end();
