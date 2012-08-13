@@ -511,7 +511,7 @@ dockedDash.prototype = {
 
     _updateStaticBox: function() {
 
-        this.staticBox.x1 = + this._monitor.x + this._rtl?(this._monitor.width - this._box.width):0;
+        this.staticBox.x1 = this._monitor.x + (this._rtl?(this._monitor.width - this._box.width):0);
         this.staticBox.y1 = this.actor.y + this._box.y;
         this.staticBox.x2 = this.staticBox.x1 + this._box.width;
         this.staticBox.y2 = this.staticBox.y1 + this._box.height;
