@@ -177,6 +177,7 @@ dockedDash.prototype = {
         // Now that the dash is on the stage and custom themes should be loaded
         // retrieve its background color
         this._getBackgroundColor();
+        this._updateBackgroundOpacity();
 
         // Show 
         this.actor.set_opacity(255); //this.actor.show();
