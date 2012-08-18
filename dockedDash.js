@@ -295,7 +295,7 @@ dockedDash.prototype = {
                     //if a show already started, let it finish; queue hide without removing the show.
                     // to obtain this I increase the delay to avoid the overlap and interference 
                     // between the animations
-                    delay = this._settings.get_double('hide-delay') + 2*this._settings.get_double('animation-time') + this._settings.get_double('show-delay');
+                    delay = this._settings.get_double('hide-delay') + 1.2*this._settings.get_double('animation-time') + this._settings.get_double('show-delay');
 
                 } else {
                     this._removeAnimations();
