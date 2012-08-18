@@ -127,7 +127,8 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     this.settings.bind('dock-fixed', dockSettingsMain1, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
-    let intellihideSubSettings = new Gtk.Box({margin_left:20, margin_top:10, margin_bottom:10, margin_right:10});
+    let intellihideSubSettings = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
+    indentWidget(intellihideSubSettings);
 
     let perappIntellihide =  new Gtk.CheckButton({label: "Application based intellihide"});
         perappIntellihide.set_active(this.settings.get_boolean('intellihide-perapp'));
@@ -143,7 +144,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     /* POISITION AND SIZE */
 
-    let dockMonitor = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
+    let dockMonitor = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:0, margin_right:10});
         let dockMonitorLabel = new Gtk.Label({label: "Show the dock on following monitor (if attached)", hexpand:true, xalign:0});
         let dockMonitorCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
             dockMonitorCombo.append_text('Primary (default)');
@@ -168,8 +169,8 @@ const WorkspaceSettingsWidget = new GObject.Class({
     dockMonitor.add(dockMonitorCombo);
 
     let dockSettingsMain2 = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL, homogeneous:false,
-                                        margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
-
+                                        margin_left:10, margin_top:5, margin_bottom:10, margin_right:10});
+    indentWidget(dockSettingsMain2);
 
     let verticalCenter =  new Gtk.CheckButton({label: "Center vertically the dock"});
         verticalCenter.set_active(this.settings.get_boolean('vertical-centered'));
@@ -196,7 +197,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
     /*ICON SIZE*/
 
     let iconSizeMain = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL, homogeneous:true,
-                                       margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
+                                       margin_left:10, margin_top:10, margin_bottom:0, margin_right:10});
 
     let allSizes  =[ 16, 24, 32, 48, 64 ];
     let maximumIconSizeBox = new Gtk.Box({spacing:30,});
@@ -225,6 +226,28 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     iconSizeMain.add(maximumIconSizeBox);
     dockSettings.add(iconSizeMain);
+
+    /* SHOW FAVORITES/RUNNING */
+
+    let showIcons = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL,
+                                 margin_left:10, margin_top:5, margin_bottom:10, margin_right:10})
+    indentWidget(showIcons);
+
+    let showFavorites =  new Gtk.CheckButton({label: "Show favorite application icons"});
+        showFavorites.set_active(this.settings.get_boolean('show-favorites'));
+        showFavorites.connect('toggled', Lang.bind(this, function(check){
+            this.settings.set_boolean('show-favorites', check.get_active());
+        }));
+    let showRunning =  new Gtk.CheckButton({label: "Show running application icons"});
+        showRunning.set_active(this.settings.get_boolean('show-running'));
+        showRunning.connect('toggled', Lang.bind(this, function(check){
+            this.settings.set_boolean('show-running', check.get_active());
+        }));
+
+    showIcons.add(showFavorites);
+    showIcons.add(showRunning);
+
+    dockSettings.add(showIcons);
 
     notebook.append_page(dockSettings, dockSettingsTitle);
 
@@ -329,32 +352,8 @@ const WorkspaceSettingsWidget = new GObject.Class({
     customization.add(switchWorkspaceControl);
     customization.add(switchWorkspaceMain);
 
-    let showIcons = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL,
-                                 margin_left:10, margin_top:10, margin_bottom:10, margin_right:10})
-
-    let showFavorites =  new Gtk.CheckButton({label: "Show favorite application icons"});
-        showFavorites.set_active(this.settings.get_boolean('show-favorites'));
-        showFavorites.connect('toggled', Lang.bind(this, function(check){
-            this.settings.set_boolean('show-favorites', check.get_active());
-        }));
-    let showRunning =  new Gtk.CheckButton({label: "Show running application icons"});
-        showRunning.set_active(this.settings.get_boolean('show-running'));
-        showRunning.connect('toggled', Lang.bind(this, function(check){
-            this.settings.set_boolean('show-running', check.get_active());
-        }));
-
-    showIcons.add(showFavorites);
-    showIcons.add(showRunning);
-
-    customization.add(showIcons);
-
-    notebook.append_page(customization, customizationTitle);
-
-
     /* CUSTOMIZE CLICK BEHAVIOUR */
-    let clickManagerTitle = new Gtk.Label({label:"Click behaviour"});
-    let clickManager = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
-
+ 
     let clickControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
 
     let clickLabel = new Gtk.Label({label: "Customize actions on mouse click",
@@ -397,12 +396,14 @@ const WorkspaceSettingsWidget = new GObject.Class({
     clickMain.add(clickAction);
     clickMain.add(minimizeShift);
 
-    clickManager.add(clickControl);
-    clickManager.add(clickMain);
-
     this.settings.bind('customize-click', clickMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
-    notebook.append_page(clickManager, clickManagerTitle);
+    customization.add(clickControl);
+    customization.add(clickMain);
+
+
+    notebook.append_page(customization, customizationTitle);
+
 
 /*
     let OptionalFeaturesTitle = new Gtk.Label({label: "Optional Features"});
