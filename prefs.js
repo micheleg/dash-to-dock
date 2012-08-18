@@ -138,6 +138,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
     intellihideSubSettings.add(perappIntellihide);
 
     this.settings.bind('dock-fixed', intellihideSubSettings, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+    this.settings.bind('dock-fixed', perappIntellihide, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
     this.settings.bind('intellihide', intellihideSubSettings, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
     /* POISITION AND SIZE */
