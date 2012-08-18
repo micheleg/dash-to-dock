@@ -742,25 +742,10 @@ const myAppWellIcon = new Lang.Class({
                                                 Lang.bind(this,
                                                           this._onFocusAppChanged));
 
-        // Bind settings changes
-        this._settingsChangedId1 = this._settings.connect('changed::app-windows-counter',
-                Lang.bind(this, this._resetCustomClasses));
-
-        this._settingsChangedId3 = this._settings.connect('changed::focused-app',
-                Lang.bind(this, this._resetCustomClasses));
-
     },
 
     _onDestroy: function() {
         this.parent();
-
-        // Disconnect settings signals
-        if(this._settingsChangedId1>0)
-            this._settings.disconnect(this._settingsChangedId1);
-        if(this._settingsChangedId2>0)
-            this._settings.disconnect(this._settingsChangedId2);
-        if(this._settingsChangedId3>0)
-            this._settings.disconnect(this._settingsChangedId3);
 
         // Disconect global signals
         // stateChangedId is already handled by parent)
@@ -775,27 +760,18 @@ const myAppWellIcon = new Lang.Class({
     },
 
     _onFocusAppChanged: function() {
-        if(tracker.focus_app == this.app && this._settings.get_boolean('focused-app'))
+        if(tracker.focus_app == this.app)
             this.actor.add_style_class_name('focused');
         else
             this.actor.remove_style_class_name('focused');
     },
 
-    _resetCustomClasses: function(){
-
-        this._onFocusAppChanged();
-        this._onStateChanged();
-    },
 
     _updateCounterClass: function() {
 
-        let n=-1;
-
-        if(this._settings.get_boolean('app-windows-counter')){
-            n = this.app.get_n_windows();
-            if(n>this._maxN)
-                 n = this._maxN;
-        }
+        let n = this.app.get_n_windows();
+        if(n>this._maxN)
+             n = this._maxN;
 
         for(let i = 1; i<=this._maxN; i++){
             let className = 'running'+i;
