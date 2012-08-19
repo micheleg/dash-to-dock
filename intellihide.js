@@ -294,11 +294,9 @@ intellihide.prototype = {
         // Skip windows of other apps
         if(this._focusApp && this._settings.get_boolean('intellihide-perapp')) {
             let currentApp = this._tracker.get_window_app(meta_win);
-            let monitor = global.screen.get_monitor_geometry( meta_win.get_monitor() );
             // But consider half maximized windows
             // Useful if one is using two apps side by side
-            if( this._focusApp != currentApp &&
-                !(meta_win.get_maximized() && monitor.width > 1.5*meta_win.get_outer_rect().width)) // this should match half maximized windows.
+            if( this._focusApp != currentApp && !(meta_win.maximized_vertically && !meta_win.maximized_horizontally) )
                 return false;
         }
 
