@@ -479,6 +479,7 @@ dockedDash.prototype = {
     },
 
     _onThemeChanged: function() {
+        this.dash._queueRedisplay();
         this._getBackgroundColor();
         this._updateBackgroundOpacity();
     },
