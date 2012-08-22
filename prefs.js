@@ -414,8 +414,15 @@ const WorkspaceSettingsWidget = new GObject.Class({
             this.settings.set_boolean('minimize-shift', check.get_active());
         }));
 
+    let cycleOnScroll =  new Gtk.CheckButton({label: "Cycle through app windows on scroll (can disable switch workspace on scroll)"});
+        cycleOnScroll.set_active(this.settings.get_boolean('cycle-on-scroll'));
+        cycleOnScroll.connect('toggled', Lang.bind(this, function(check){
+            this.settings.set_boolean('cycle-on-scroll', check.get_active());
+        }));
+
     clickMain.add(clickAction);
     clickMain.add(minimizeShift);
+    clickMain.add(cycleOnScroll);
 
     this.settings.bind('customize-click', clickMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 

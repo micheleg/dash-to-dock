@@ -123,6 +123,10 @@
       <default>true</default>
       <summary>Activate only one window</summary>
     </key>
+    <key type="b" name="cycle-on-scroll">
+      <default>true</default>
+      <summary>Cycle through windows on scroll</summary>
+    </key>
     <key name="click-action" enum="org.gnome.shell.extensions.dash-to-dock.clickAction">
       <default>'cycle-windows'</default>
       <summary>Action when clicking on a running app</summary>

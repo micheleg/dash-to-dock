@@ -843,14 +843,20 @@ const myAppWellIcon = new Lang.Class({
 
     _onScrollEvent: function(actor, event){
 
+        if ( !this._settings.get_boolean('customize-click') || !this._settings.get_boolean('cycle-on-scroll') )
+            return false;
+
         switch ( event.get_scroll_direction() ) {
-        case Clutter.ScrollDirection.UP:
-            cycleThroughWindows(this.app, -1);
-            break;
-        case Clutter.ScrollDirection.DOWN:
-            cycleThroughWindows(this.app, +1);
-            break;
+            case Clutter.ScrollDirection.UP:
+                cycleThroughWindows(this.app, -1);
+                break;
+            case Clutter.ScrollDirection.DOWN:
+                cycleThroughWindows(this.app, +1);
+                break;
         }
+
+        // avoid to trigger also a workspace switch.
+        return true;
 
     },
 
