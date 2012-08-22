@@ -755,6 +755,8 @@ const myAppWellIcon = new Lang.Class({
                                                 Lang.bind(this,
                                                           this._onFocusAppChanged));
 
+        this.actor.connect('scroll-event', Lang.bind(this, this._onScrollEvent));
+
     },
 
     _onDestroy: function() {
@@ -839,6 +841,19 @@ const myAppWellIcon = new Lang.Class({
         Main.overview.hide();
     },
 
+    _onScrollEvent: function(actor, event){
+
+        switch ( event.get_scroll_direction() ) {
+        case Clutter.ScrollDirection.UP:
+            cycleThroughWindows(this.app, -1);
+            break;
+        case Clutter.ScrollDirection.DOWN:
+            cycleThroughWindows(this.app, +1);
+            break;
+        }
+
+    },
+
     _updateCounterClass: function() {
 
         let n = this.app.get_n_windows();
@@ -897,7 +912,17 @@ function activateAllWindows(app){
     }
 }
 
-function cycleThroughWindows(app) {
+function cycleThroughWindows(app, direction) {
+
+    // positive or negative direction
+    if(!direction)
+        direction = +1;
+
+    // Get a new array of all app windows
+    let windows = app.get_windows();
+    // Do nothing if there is no windows!
+    if(windows.length==0)
+        return;
 
     // Store for a little amount of time last clicked app and its windows
     // since the order changes upon window interaction
@@ -911,16 +936,18 @@ function cycleThroughWindows(app) {
     // or the stored list is outdated, use the current windows list.
     if( !recentlyClickedApp ||
         recentlyClickedApp.get_id() != app.get_id() ||
-        recentlyClickedAppWindows.length != app.get_windows().length
+        recentlyClickedAppWindows.length != windows.length
       ){
 
         recentlyClickedApp = app;
-        recentlyClickedAppWindows = app.get_windows();
+        recentlyClickedAppWindows = windows;
         recentlyClickedAppIndex = 0;
     }
 
-    recentlyClickedAppIndex++;
+    recentlyClickedAppIndex+=direction;
     let index = recentlyClickedAppIndex % recentlyClickedAppWindows.length;
+    if(index <0)
+        index = recentlyClickedAppWindows.length + index;
     let window = recentlyClickedAppWindows[index];
 
     Main.activateWindow(window);
