@@ -101,6 +101,10 @@
       <default>0.95</default>
       <summary>Dock max height (fraction of available space)</summary>
     </key>
+    <key type="b" name="extend-height">
+      <default>false</default>
+      <summary>Extend the dock container to all the available height</summary>
+    </key>
     <key type="i" name="preferred-monitor">
       <default>-1</default>
       <summary>Monitor on which putting the dock</summary>

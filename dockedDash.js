@@ -60,7 +60,7 @@ dockedDash.prototype = {
         this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true,
             style_class: 'box'} );
         this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
-            style_class: 'container', child: this._box});
+            style_class: 'container', y_align: St.Align.MIDDLE, child: this._box});
 
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
         this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
@@ -215,6 +215,7 @@ dockedDash.prototype = {
         this._settings.connect('changed::autohide', Lang.bind(this, function(){
             this.emit('box-changed');
         }));
+        this._settings.connect('changed::extend-height', Lang.bind(this, this._updateYPosition));
         this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
         this._settings.connect('changed::height-fraction', Lang.bind(this,this._updateYPosition));
 
@@ -474,12 +475,23 @@ dockedDash.prototype = {
         let availableHeight = this._monitor.height - unavailableTopSpace - unavailableBottomSpace;
 
         let fraction = this._settings.get_double('height-fraction');
-        if(fraction<0 || fraction >1)
+
+        if(this._settings.get_boolean('extend-height'))
+            fraction = 1;
+        else if(fraction<0 || fraction >1)
             fraction = 0.95;
 
         this.actor.height = Math.round( fraction * availableHeight);
         this.actor.y = this._monitor.y + unavailableTopSpace + Math.round( (1-fraction)/2 * availableHeight);
         this.actor.y_align = St.Align.MIDDLE;
+
+        if(this._settings.get_boolean('extend-height')){
+            this.dash._box.set_height(this.actor.height);
+            this.actor.add_style_class_name('extended');
+        } else {
+            this.dash._box.set_height(-1);
+            this.actor.remove_style_class_name('extended');
+        }
 
         this._updateStaticBox();
     },
