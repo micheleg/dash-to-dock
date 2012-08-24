@@ -80,22 +80,6 @@ dockedDash.prototype = {
 
         // Connect global signals
         this._signalHandler.push(
-            // Connect events for updating dash vertical position
-            [
-                Main.overview._viewSelector._pageArea,
-                'notify::y',
-                Lang.bind(this, this._updateYPosition)
-            ],
-            [
-                Main.overview._viewSelector,
-                'notify::y',
-                Lang.bind(this, this._updateYPosition)
-            ],
-            [
-                Main.overview._viewSelector._pageArea,
-                'notify::height',
-                Lang.bind(this, this._updateYPosition)
-            ],
             // Allow app icons do be dragged out of the chrome actors when reordering or deleting theme while not on overview mode
             // by changing global stage input mode
             [
@@ -165,12 +149,6 @@ dockedDash.prototype = {
             this._realizeId=0;
         }
 
-        /* This is a workaround I found to get correct size and positions of actor
-         * inside the overview
-        */
-        Main.overview._group.show();
-        Main.overview._group.hide();
-
         // Set initial position
         this._resetPosition();
 
@@ -239,8 +217,6 @@ dockedDash.prototype = {
         this._settings.connect('changed::autohide', Lang.bind(this, function(){
             this.emit('box-changed');
         }));
-        this._settings.connect('changed::vertical-centered', Lang.bind(this, this._updateYPosition));
-        this._settings.connect('changed::expand-height', Lang.bind(this, this._updateYPosition));
         this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
 
     },
@@ -497,25 +473,10 @@ dockedDash.prototype = {
         }
 
         let availableHeight = this._monitor.height - unavailableTopSpace - unavailableBottomSpace;
-        let defaultHeight = Main.overview._viewSelector._pageArea.height;
 
-        if(this._settings.get_boolean('expand-height') && this._settings.get_boolean('vertical-centered')){
-            this.actor.y = this._monitor.y + unavailableTopSpace;
-            this.actor.height = availableHeight;
-        } else{
-            this.actor.y = this._monitor.y + Main.overview._viewSelector.actor.y + Main.overview._viewSelector._pageArea.y;
-
-            // It can occur if the monitor where the dock is displayed is not the primary one
-            if((defaultHeight + this.actor.y) > (this._monitor.y + this._monitor.height))
-                defaultHeight = this._monitor.height - 2*(this.actor.y - this._monitor.y);
-
-            this.actor.height = defaultHeight;
-        }
-
-        if(this._settings.get_boolean('vertical-centered'))
-            this.actor.y_align = St.Align.MIDDLE;
-        else
-            this.actor.y_align = St.Align.START;
+        this.actor.y = this._monitor.y + unavailableTopSpace;
+        this.actor.height = availableHeight;
+        this.actor.y_align = St.Align.MIDDLE;
 
         this._updateStaticBox();
     },
