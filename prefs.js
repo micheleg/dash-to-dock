@@ -172,22 +172,6 @@ const WorkspaceSettingsWidget = new GObject.Class({
                                         margin_left:10, margin_top:5, margin_bottom:10, margin_right:10});
     indentWidget(dockSettingsMain2);
 
-    let verticalCenter =  new Gtk.CheckButton({label: "Center the dock vertically"});
-        verticalCenter.set_active(this.settings.get_boolean('vertical-centered'));
-        verticalCenter.connect('toggled', Lang.bind(this, function(check){
-            this.settings.set_boolean('vertical-centered', check.get_active());
-        }));
-    let expandHeight =  new Gtk.CheckButton({label: "Use all available vertical space"});
-        expandHeight.set_active(this.settings.get_boolean('expand-height'));
-        expandHeight.connect('toggled', Lang.bind(this, function(check){
-            this.settings.set_boolean('expand-height', check.get_active());
-        }));
-
-    this.settings.bind('vertical-centered', expandHeight, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
-
-    dockSettingsMain2.add(verticalCenter);
-    dockSettingsMain2.add(expandHeight);
-
     dockSettings.add(dockSettingsControl1);
     dockSettings.add(dockSettingsMain1);
     dockSettings.add(intellihideSubSettings);

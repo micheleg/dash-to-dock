@@ -97,15 +97,6 @@
       <summary>Basic compatibility with bolt extensions</summary>
       <description>Make the extension work properly when bolt extensions is enabled</description>
     </key>
-    <key type="b" name="vertical-centered">
-      <default>true</default>
-      <summary>Center the dock verticaly</summary>
-    </key>
-    <key type="b" name="expand-height">
-      <default>true</default>
-      <summary>expand dock height</summary>
-      <description>Use all vertical available space</description>
-    </key>
     <key type="i" name="preferred-monitor">
       <default>-1</default>
       <summary>Monitor on which putting the dock</summary>
