@@ -216,6 +216,7 @@ dockedDash.prototype = {
             this.emit('box-changed');
         }));
         this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
+        this._settings.connect('changed::height-fraction', Lang.bind(this,this._updateYPosition));
 
     },
 
@@ -472,8 +473,12 @@ dockedDash.prototype = {
 
         let availableHeight = this._monitor.height - unavailableTopSpace - unavailableBottomSpace;
 
-        this.actor.y = this._monitor.y + unavailableTopSpace;
-        this.actor.height = availableHeight;
+        let fraction = this._settings.get_double('height-fraction');
+        if(fraction<0 || fraction >1)
+            fraction = 0.95;
+
+        this.actor.height = Math.round( fraction * availableHeight);
+        this.actor.y = this._monitor.y + unavailableTopSpace + Math.round( (1-fraction)/2 * availableHeight);
         this.actor.y_align = St.Align.MIDDLE;
 
         this._updateStaticBox();

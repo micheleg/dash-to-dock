@@ -97,6 +97,10 @@
       <summary>Basic compatibility with bolt extensions</summary>
       <description>Make the extension work properly when bolt extensions is enabled</description>
     </key>
+    <key type="d" name="height-fraction">
+      <default>0.95</default>
+      <summary>Dock max height (fraction of available space)</summary>
+    </key>
     <key type="i" name="preferred-monitor">
       <default>-1</default>
       <summary>Monitor on which putting the dock</summary>
