@@ -123,8 +123,9 @@ dockedDash.prototype = {
 
         //Add dash container actor and the container to the Chrome.
         this._box.add_actor(this.dash.actor);
-        Main.layoutManager.addChrome(this.actor, { affectsInputRegion: false, affectsStruts: this._settings.get_boolean('dock-fixed')});
-        Main.layoutManager.trackChrome(this._box, {affectsInputRegion:true});
+        Main.layoutManager.addChrome(this.actor, {affectsInputRegion: false});
+        Main.layoutManager.trackChrome(this._box, {affectsInputRegion: true});
+        Main.layoutManager.trackChrome(this.dash._box, { affectsStruts: this._settings.get_boolean('dock-fixed')});
 
         this.dash._box.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
 
@@ -201,11 +202,8 @@ dockedDash.prototype = {
             this.dash.resetAppIcons();
         }));
         this._settings.connect('changed::dock-fixed', Lang.bind(this, function(){
-            Main.layoutManager.untrackChrome(this._box);
-            Main.layoutManager.removeChrome(this.actor);
-            Main.layoutManager.addChrome(this.actor,
-                                        { affectsInputRegion:false, affectsStruts: this._settings.get_boolean('dock-fixed') });
-            Main.layoutManager.trackChrome(this._box, {affectsInputRegion:true});
+            Main.layoutManager.untrackChrome(this.dash._box);
+            Main.layoutManager.trackChrome(this.dash._box, {affectsStruts: this._settings.get_boolean('dock-fixed')});
 
             if(this._settings.get_boolean('dock-fixed')) {
                 // show dash
