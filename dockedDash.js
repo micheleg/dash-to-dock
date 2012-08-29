@@ -218,6 +218,13 @@ dockedDash.prototype = {
         this._settings.connect('changed::extend-height', Lang.bind(this, this._updateYPosition));
         this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
         this._settings.connect('changed::height-fraction', Lang.bind(this,this._updateYPosition));
+        this._settings.connect('changed::show-notifications', Lang.bind(this, function(){
+            if (this._settings.get_boolean('show-notifications')) {
+                this.dash.updateNotificationCount();
+            } else {
+                this.dash.clearNotificationCount();
+            }
+        }));
 
     },
 
@@ -783,7 +790,12 @@ dockedDash.prototype = {
             if(this._settings.get_boolean('opaque-background') && !this._settings.get_boolean('opaque-background-always'))
                 this._fadeInBackground(this._settings.get_double('animation-time'), delay);
         }
-    } 
+    },
+
+    // Called on each new/destroyed notification.
+    updateNotificationCount: function() {
+        this.dash.updateNotificationCount();
+    }
 };
 
 Signals.addSignalMethods(dockedDash.prototype);

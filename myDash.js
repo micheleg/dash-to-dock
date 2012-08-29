@@ -13,6 +13,7 @@ const AppFavorites = imports.ui.appFavorites;
 const Dash = imports.ui.dash;
 const DND = imports.ui.dnd;
 const Main = imports.ui.main;
+const MessageTray = imports.ui.messageTray;
 const Overview = imports.ui.overview;
 const Tweener = imports.ui.tweener;
 
@@ -687,6 +688,52 @@ const myDash = new Lang.Class({
             }));
 
         return true;
+    },
+
+    // Remove all notification counters from displayed icons.
+    clearNotificationCount: function() {
+        let children = this._box.get_children().filter(function(actor) {
+            return actor._delegate.child &&
+                   actor._delegate.child._delegate &&
+                   actor._delegate.child._delegate.app;
+        });
+
+        for (let i = 0; i < children.length; i++) {
+            let display = children[i]._delegate.child._delegate;
+            display.setNotificationCount(0);
+        }
+    },
+
+    // Update all notification counters on displayed icons.
+    updateNotificationCount: function() {
+        if (!this._settings.get_boolean('show-notifications'))
+            return;
+
+        // Build map "app id" -> "number of notifications"
+        let notificationCount = {};
+        let items = Main.messageTray._summaryItems;
+        for (let i = 0; i < items.length; i++) {
+            let source = items[i].source;
+            if (source.app) {
+                appId = source.app.get_id();
+                notificationCount[appId] = source.notifications.length;
+            }
+        }
+
+        let children = this._box.get_children().filter(function(actor) {
+            return actor._delegate.child &&
+                   actor._delegate.child._delegate &&
+                   actor._delegate.child._delegate.app;
+        });
+
+        for (let i = 0; i < children.length; i++) {
+            let display = children[i]._delegate.child._delegate;
+            let appId = display.app.get_id();
+            if (appId in notificationCount)
+                display.setNotificationCount(notificationCount[appId]);
+            else
+                display.setNotificationCount(0);
+        }
     }
 });
 
@@ -703,7 +750,7 @@ Signals.addSignalMethods(myDash.prototype);
  *   like the original .running one.
  * - add a .focused style to the focused app
  * - Customize click actions.
- *
+ * - (Optionally) display notifications counter.
  */
 
 let tracker = Shell.WindowTracker.get_default();
@@ -755,6 +802,47 @@ const myAppWellIcon = new Lang.Class({
                                                 Lang.bind(this,
                                                           this._onFocusAppChanged));
 
+        // Add label for notifications counter
+        this._notificationCounterLabel = new St.Label();
+        this._notificationCounterBin = new St.Bin({ style_class: 'summary-source-counter',
+                                        child: this._notificationCounterLabel });
+        this._notificationCounterBin.hide();
+
+        // iconBox is a Shell.GenericContainer from IconGrid.BaseIcon
+        let iconBox = this.actor.get_child().get_child();
+        // We have to add allocation of counterBin.
+        iconBox.connect('allocate', Lang.bind(this, this._allocateIconBox));
+
+        iconBox.add_actor(this._notificationCounterBin);
+
+    },
+    
+    _allocateIconBox: function(actor, box, flags) {
+        // iconBin is IconGrid.BaseIcon._iconBin
+        let iconBin = actor.get_children()[0];
+        
+        // This part is copied straight from MessageTray.Source._allocate 
+        iconBin.allocate(box, flags);
+
+        let childBox = new Clutter.ActorBox();
+
+        let [minWidth, minHeight, naturalWidth, naturalHeight] = this._notificationCounterBin.get_preferred_size();
+        let direction = actor.get_text_direction();
+
+        if (direction == Clutter.TextDirection.LTR) {
+            // allocate on the right in LTR
+            childBox.x1 = box.x2 - naturalWidth;
+            childBox.x2 = box.x2;
+        } else {
+            // allocate on the left in RTL
+            childBox.x1 = 0;
+            childBox.x2 = naturalWidth;
+        }
+
+        childBox.y1 = box.y2 - naturalHeight;
+        childBox.y2 = box.y2;
+
+        this._notificationCounterBin.allocate(childBox, flags);
     },
 
     _onDestroy: function() {
@@ -851,6 +939,15 @@ const myAppWellIcon = new Lang.Class({
                 this.actor.remove_style_class_name(className);
             else
                 this.actor.add_style_class_name(className);
+        }
+    },
+
+    setNotificationCount: function(count) {
+        if (count > 0) {
+            this._notificationCounterLabel.set_text(count.toString());
+            this._notificationCounterBin.show();
+        } else {
+            this._notificationCounterBin.hide();
         }
     }
 });

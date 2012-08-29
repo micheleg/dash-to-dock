@@ -128,5 +128,10 @@
       <summary>Action when clicking on a running app</summary>
       <description>Set the action that is executed when clicking on the icon of a running application</description>
     </key>
+    <key type="b" name="show-notifications">
+      <default>false</default>
+      <summary>Show notifications for running applications</summary>
+      <description>Show the number of notifications next to the icon of corresponding application</description>
+    </key>
   </schema>
 </schemalist>
