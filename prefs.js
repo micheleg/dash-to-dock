@@ -275,10 +275,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
     let showNotifications = new Gtk.Box({orientation: Gtk.Orientation.VERTICAL,
                                  margin_left:10, margin_top:5, margin_bottom:10, margin_right:10})
     let showNotificationsCheck = new Gtk.CheckButton({label: "Show notifications for running applications"});
-        showNotificationsCheck.set_active(this.settings.get_boolean('show-notifications'));
-        showNotificationsCheck.connect('toggled', Lang.bind(this, function(check){
-            this.settings.set_boolean('show-notifications', check.get_active());
-        }));
+        this.settings.bind('show-notifications', showNotificationsCheck, 'active', Gio.SettingsBindFlags.DEFAULT);
 
     showNotifications.add(showNotificationsCheck);
     indentWidget(showNotifications);
