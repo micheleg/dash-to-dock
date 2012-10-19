@@ -1,5 +1,5 @@
 {
-"shell-version": ["3.4, 3.6"], 
+"shell-version": ["3.4", "3.6"], 
 "uuid": "dash-to-dock@micxgx.gmail.com",
 "name": "Dash to Dock", "description": "Transform the dash into an intellihide dock.",
 "original-author": "micxgx@gmail.com",
