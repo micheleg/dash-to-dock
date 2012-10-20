@@ -678,6 +678,9 @@ dockedDash.prototype = {
             // Sometimes Main.wm._workspaceSwitcherPopup is null when first loading the extension
             if (Main.wm._workspaceSwitcherPopup == null)
                 Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+                Main.wm._workspaceSwitcherPopup.connect('destroy', function() {
+                    Main.wm._workspaceSwitcherPopup = null;
+                });
 
             this._signalHandler.disconnectWithLabel(label);
 
