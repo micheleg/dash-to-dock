@@ -55,6 +55,11 @@ dockedDash.prototype = {
         // Create a new dash object
         this.dash = new MyDash.myDash(this._settings); // this.dash = new MyDash.myDash();
 
+        // connect app icon into the view selector
+        let viewSelector = Main.overview._viewSelector;
+        viewSelector._showAppsButton = this.dash.showAppsButton;
+        this.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
+
         // Create the main actor and the main container for centering, turn on track hover
 
         this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true,
@@ -786,7 +791,17 @@ dockedDash.prototype = {
             if(this._settings.get_boolean('opaque-background') && !this._settings.get_boolean('opaque-background-always'))
                 this._fadeInBackground(this._settings.get_double('animation-time'), delay);
         }
-    } 
+    },
+    
+    _onShowAppsButtonToggled: function() {
+        let selector = Main.overview._viewSelector;
+        // FIXME: force entering overview if needed
+        if (selector.active)
+            selector.reset();
+        else
+            selector._showPage(selector._showAppsButton.checked ? selector._appsPage
+                                                        : selector._workspacesPage);
+    }
 };
 
 Signals.addSignalMethods(dockedDash.prototype);
