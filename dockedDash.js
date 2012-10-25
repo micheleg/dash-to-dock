@@ -54,6 +54,7 @@ dockedDash.prototype = {
 
         // Create a new dash object
         this.dash = new MyDash.myDash(this._settings); // this.dash = new MyDash.myDash();
+        this.forcedOverview = false;
 
         // connect app icon into the view selector
         let viewSelector = Main.overview._viewSelector;
@@ -795,12 +796,24 @@ dockedDash.prototype = {
     
     _onShowAppsButtonToggled: function() {
         let selector = Main.overview._viewSelector;
-        // FIXME: force entering overview if needed
+        // force entering overview if needed
+        if (!Main.overview._shown && selector._showAppsButton.checked) {
+            Main.overview.show();
+            this.forcedOverview = true;
+            selector._showAppsButton.checked = true;
+            return;
+        }
         if (selector.active)
             selector.reset();
-        else
-            selector._showPage(selector._showAppsButton.checked ? selector._appsPage
-                                                        : selector._workspacesPage);
+        else if (selector._showAppsButton.checked) {
+            selector._showPage(selector._appsPage);
+        } else {
+            selector._showPage(selector._workspacesPage);
+            if (this.forcedOverview) {
+                Main.overview.hide();
+                this.forcedOverview = false;
+            }
+        }
     }
 };
 
