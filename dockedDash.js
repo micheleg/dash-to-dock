@@ -127,7 +127,7 @@ dockedDash.prototype = {
         Main.layoutManager.trackChrome(this._box, {affectsInputRegion: true});
         Main.layoutManager.trackChrome(this.dash._box, { affectsStruts: this._settings.get_boolean('dock-fixed')});
 
-        this.dash._box.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
+        this.dash._container.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
 
         // sync hover after a popupmenu is closed
         this.dash.connect('menu-closed', Lang.bind(this, function(){this._box.sync_hover();}));
@@ -400,7 +400,7 @@ dockedDash.prototype = {
     _fadeOutBackground:function (time, delay) {
 
         // CSS time is in ms!
-        this.dash._box.set_style('transition-duration: ' + time*1000 + ';' +
+        this.dash._container.set_style('transition-duration: ' + time*1000 + ';' +
             'transition-delay: '+ delay*1000 +'; ' +
             'background-color:'+ this._defaultBackground);
     }, 
@@ -408,7 +408,7 @@ dockedDash.prototype = {
     _fadeInBackground:function (time, delay) {
 
         // CSS time is in ms!
-        this.dash._box.set_style('transition-duration: ' + time*1000 + ';' +
+        this.dash._container.set_style('transition-duration: ' + time*1000 + ';' +
             'transition-delay: '+ delay*1000 +'; ' +
             'background-color:'+ this._customizedBackground);
     },
@@ -440,16 +440,16 @@ dockedDash.prototype = {
     _getBackgroundColor: function() {
 
         // Remove custom style
-        let oldStyle = this.dash._box.get_style();
-        this.dash._box.set_style(null);
+        let oldStyle = this.dash._container.get_style();
+        this.dash._container.set_style(null);
 
         // Prevent shell crash if the actor is not on the stage.
         // It happens enabling/disabling repeatedly the extension
-        if(!this.dash._box.get_stage())
+        if(!this.dash._container.get_stage())
             return;
 
-        let themeNode = this.dash._box.get_theme_node();
-        this.dash._box.set_style(oldStyle);
+        let themeNode = this.dash._container.get_theme_node();
+        this.dash._container.set_style(oldStyle);
 
         this._defaultBackgroundColor = themeNode.get_background_color();
     },
@@ -486,10 +486,10 @@ dockedDash.prototype = {
         this.actor.y_align = St.Align.MIDDLE;
 
         if(this._settings.get_boolean('extend-height')){
-            this.dash._box.set_height(this.actor.height);
+            this.dash._container.set_height(this.actor.height);
             this.actor.add_style_class_name('extended');
         } else {
-            this.dash._box.set_height(-1);
+            this.dash._container.set_height(-1);
             this.actor.remove_style_class_name('extended');
         }
 
