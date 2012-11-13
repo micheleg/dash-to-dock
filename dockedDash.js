@@ -57,8 +57,6 @@ dockedDash.prototype = {
         this.forcedOverview = false;
 
         // connect app icon into the view selector
-        let viewSelector = Main.overview._viewSelector;
-        viewSelector._showAppsButton = this.dash.showAppsButton;
         this.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
 
         // Create the main actor and the main container for centering, turn on track hover
@@ -120,6 +118,12 @@ dockedDash.prototype = {
                 St.ThemeContext.get_for_stage (global.stage),
                 'changed',
                 Lang.bind(this, this._onThemeChanged)
+            ],
+            // Ensure the ShowAppsButton status is kept in sync
+            [
+                Main.overview._viewSelector._showAppsButton,
+                'notify::checked',
+                Lang.bind(this, this._syncShowAppsButtonToggled)
             ]
         );
 
@@ -633,6 +637,48 @@ dockedDash.prototype = {
         }
     },
 
+    _onShowAppsButtonToggled: function() {
+
+        // Sync the status of the default appButtons. Only if the two statuses are
+        // different, that means the user interacted with the extension provided
+        // application button, cutomize the behaviour. Otherwise the shell has changed the
+        // status (due to the _syncShowAppsButtonToggled function below) and it
+        // has already performed the desired action.
+
+        let selector = Main.overview._viewSelector;
+
+        if(selector._showAppsButton.checked !== this.dash.showAppsButton.checked){
+
+            if(this.dash.showAppsButton.checked){
+                if (!Main.overview._shown) {
+                    // force entering overview if needed
+                    Main.overview.show();
+                    this.forcedOverview = true;
+                }
+                selector._showAppsButton.checked = true;
+            } else {
+                if (this.forcedOverview) {
+                    // force exiting overview if needed
+                    Main.overview.hide();
+                    this.forcedOverview = false;
+                }
+                selector._showAppsButton.checked = false;
+            }
+        }
+
+        // whenever the button is unactivated even if not by the user still reset the
+        // forcedOverview flag
+        if( this.dash.showAppsButton.checked==false)
+            this.forcedOverview = false;
+    },
+
+    // Keep ShowAppsButton status in sync with the overview status
+    _syncShowAppsButtonToggled: function() {
+        let status = Main.overview._viewSelector._showAppsButton.checked;
+        if(this.dash.showAppsButton.checked !== status)
+            this.dash.showAppsButton.checked = status;
+    },
+
     // Check if some app icon's menu is up
     _dashMenuIsUp: function() {
 
@@ -792,28 +838,6 @@ dockedDash.prototype = {
             if(this._settings.get_boolean('opaque-background') && !this._settings.get_boolean('opaque-background-always'))
                 this._fadeInBackground(this._settings.get_double('animation-time'), delay);
         }
-    },
-    
-    _onShowAppsButtonToggled: function() {
-        let selector = Main.overview._viewSelector;
-        // force entering overview if needed
-        if (!Main.overview._shown && selector._showAppsButton.checked) {
-            Main.overview.show();
-            this.forcedOverview = true;
-            selector._showAppsButton.checked = true;
-            return;
-        }
-        if (selector.active)
-            selector.reset();
-        else if (selector._showAppsButton.checked) {
-            selector._showPage(selector._appsPage);
-        } else {
-            selector._showPage(selector._workspacesPage);
-            if (this.forcedOverview) {
-                Main.overview.hide();
-                this.forcedOverview = false;
-            }
-        }
     }
 };
 
@@ -901,5 +925,3 @@ animationStatus.prototype = {
             return false;
     }
 }
-
-
