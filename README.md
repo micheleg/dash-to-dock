@@ -253,3 +253,14 @@ Version numbering follows the uploads to http://extensions.gnome.org
 Dash to Dock Gnome Shell extension is distributed under the terms of the GNU General Public License,
 version 2 or later. See the COPYING file for details.
 
+## Donations
+
+You can
+
+<a href="http://flattr.com/thing/1047592/" target="_blank">
+<img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>
+
+or 
+
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3S5HFFG2BWGPL" target="_blank">
+<img src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" alt="PayPal — The safer, easier way to pay online."/></a>
