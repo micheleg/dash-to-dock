@@ -1,7 +1,7 @@
 # Basic Makefile
 
 UUID = dash-to-dock@micxgx.gmail.com
-BASE_MODULES = extension.js stylesheet.css metadata.json
+BASE_MODULES = extension.js stylesheet.css metadata.json COPYING
 EXTRA_MODULES = dockedDash.js intellihide.js myDash.js convenience.js prefs.js
 INSTALLBASE = ~/.local/share/gnome-shell/extensions
 INSTALLNAME = dash-to-dock@micxgx.gmail.com
