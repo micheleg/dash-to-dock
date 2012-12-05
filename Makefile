@@ -3,6 +3,8 @@
 UUID = dash-to-dock@micxgx.gmail.com
 BASE_MODULES = extension.js stylesheet.css metadata.json COPYING README.md
 EXTRA_MODULES = dockedDash.js intellihide.js myDash.js convenience.js prefs.js
+TOLOCALIZE =  prefs.js
+MSGSRC = $(wildcard po/*.po)
 INSTALLBASE = ~/.local/share/gnome-shell/extensions
 INSTALLNAME = dash-to-dock@micxgx.gmail.com
 
@@ -11,10 +13,19 @@ all: extension
 clean:
 	rm -f ./schemas/gschemas.compiled
 
-extension: ./schemas/gschemas.compiled
+extension: ./schemas/gschemas.compiled $(MSGSRC:.po=.mo)
 
 ./schemas/gschemas.compiled: ./schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml
 	glib-compile-schemas ./schemas/
+
+potfile: ./po/dashtodock.pot
+
+./po/dashtodock.pot: $(TOLOCALIZE)
+	mkdir -p po
+	xgettext -k_ -kN_ -o po/dashtodock.pot $(TOLOCALIZE)
+
+./po/%.mo: ./po/%.po
+	msgfmt -c $< -o $@
 
 install: install-local
 
