@@ -165,12 +165,14 @@ Before reporting a bug:
 
 ## Change log
 
-Version numbering follows the uploads to http://extensions.gnome.org
+Version numbering follows the uploads to the extension website.
 
-**Version 17 (13-11-2012)**
+**Version 18 (13-11-2012)**
+  * Rebase the dash code adding the application button
+
+**Version 17 (23-10-2012)**
  * First Gnome Shell 3.6 only release
- * Update to 3.6 API
- * Rebase the dash code adding the application button
+ * Update to 3.6 API fixing a couple of bugs
 
 **Version 16 (19-10-2012)**
  * Correct syntax error in the previous version
