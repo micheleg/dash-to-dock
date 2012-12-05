@@ -17,27 +17,27 @@ extension: ./schemas/gschemas.compiled
 	glib-compile-schemas ./schemas/
 
 install: install-local
-install-local:
+
+install-local: _build
 	rm -rf $(INSTALLBASE)/$(INSTALLNAME)
 	mkdir $(INSTALLBASE)/$(INSTALLNAME)
-	cp $(BASE_MODULES) $(EXTRA_MODULES) $(INSTALLBASE)/$(INSTALLNAME)/
-	mkdir $(INSTALLBASE)/$(INSTALLNAME)/schemas
-	cp schemas/*.xml $(INSTALLBASE)/$(INSTALLNAME)/schemas/
-	cp schemas/gschemas.compiled $(INSTALLBASE)/$(INSTALLNAME)/schemas/
+	cp -r ./_build/* $(INSTALLBASE)/$(INSTALLNAME)/
+	-rm -fR _build
 	echo done
 
-zip-file: all
+zip-file: _build
+	cd _build ; \
+	zip -qr "$(UUID).zip" .
+	mv _build/$(UUID).zip ./
+	-rm -fR _build
+
+_build: all
 	-rm -fR ./_build 
 	mkdir -p _build 
 	cp $(BASE_MODULES) $(EXTRA_MODULES) _build
 	mkdir -p _build/schemas
 	cp schemas/*.xml _build/schemas/
 	cp schemas/gschemas.compiled _build/schemas/
-	cd _build ; \
-	zip -qr "$(UUID).zip" .
-	mv _build/$(UUID).zip ./ 
-	-rm -fR _build 
-
 
 #What does the first "-" mean at the beginning of the line in a Makefile ? 
 #It means that make itself will ignore any error code from rm. 
