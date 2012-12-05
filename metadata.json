@@ -4,5 +4,6 @@
 "name": "Dash to Dock", "description": "Transform the dash into an intellihide dock.",
 "original-author": "micxgx@gmail.com",
 "url": "https://github.com/micheleg/dash-to-dock",
+"gettext-domain": "dashtodock",
 "version": 0
 }
