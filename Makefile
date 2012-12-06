@@ -20,6 +20,11 @@ extension: ./schemas/gschemas.compiled $(MSGSRC:.po=.mo)
 
 potfile: ./po/dashtodock.pot
 
+mergepo: potfile
+	for l in $(MSGSRC); do \
+		msgmerge -U $$l ./po/dashtodock.pot; \
+	done;
+
 ./po/dashtodock.pot: $(TOLOCALIZE)
 	mkdir -p po
 	xgettext -k_ -kN_ -o po/dashtodock.pot $(TOLOCALIZE)
