@@ -49,6 +49,14 @@ _build: all
 	mkdir -p _build/schemas
 	cp schemas/*.xml _build/schemas/
 	cp schemas/gschemas.compiled _build/schemas/
+	mkdir -p _build/locale
+	for l in $(MSGSRC:.po=.mo) ; do \
+		lf=_build/locale/`basename $$l .mo`; \
+		mkdir -p $$lf; \
+		mkdir -p $$lf/LC_MESSAGES; \
+		cp $$l $$lf/LC_MESSAGES/dashtodock.mo; \
+	done;
+
 
 #What does the first "-" mean at the beginning of the line in a Makefile ? 
 #It means that make itself will ignore any error code from rm. 
