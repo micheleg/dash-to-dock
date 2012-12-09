@@ -11,9 +11,10 @@ The dock supports **intellihide/dodge** and **autohide** modes. In addition the 
 2. Customization of the vertical position and alignment.
 3. Option to show only favourites or running applications.
 4. Possibility to **switch workspace by scrolling** over the dock.
-5. Optional **custom actions when clicking** on a running application icon: **minimize window**, **cycle through application windows**, or **launch new window**. Optional **minimize windows on Shift+click* (Shift+double click to close all the windows of the applicatio.
+5. Optional **custom actions when clicking** on a running application icon: **minimize window**, **cycle through application windows**, or **launch new window**. Optional **minimize windows on Shift+click* (Shift+double click to close all the windows of the application.
+6. Support for showing indicators of the number of windows for each application. This function has to be supported by the theme used. In the screenshot above an extended Adwaita theme is uses (see section below).
 
-Many options can be tweaked and tuned (see section below). The extension supports **multi-monitor** configurations, **rtl languages**, **accessibility** via Ctrl-Alt-Tab shortcut and it is **theme-friendly**. 
+Other options can be tweaked and tuned. The extension supports **multi-monitor** configurations, **rtl languages**, **accessibility** via Ctrl-Alt-Tab shortcut and it is **theme-friendly**. 
 
 ## Installation
 ### Gnome Shell 3.4 and above
