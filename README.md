@@ -60,8 +60,9 @@ The extension support multi-monitor configurations. By default the dock is shown
 The extension aims to be as **theme-friendly** as possible. The dock appearence is inherited from the default dash so basic theme support is always granted. However, some features has to be direclty supported by the theme. 
 
 The following themes are known to support Dash to Dock extension:
- * An *extended Adwaita*, the default theme, can be found in the download section (https://github.com/downloads/micheleg/dash-to-dock/adwaita-dashtodock.zip). The theme appearence is shown in the above screenshot. 
- * *LittleBigMod 2nd*, http://gnome-look.org/content/show.php/?content=152088
+ * An **extended Adwaita**, the default theme, can be found in the download section (https://github.com/downloads/micheleg/dash-to-dock/adwaita-dashtodock.zip). The theme appearence is shown in the above screenshot. 
+ * **LittleBigMod 2nd**, http://gnome-look.org/content/show.php/?content=152088
+ * **Energreen_Suiteby**  by Astral-1, http://astral-1.deviantart.com/art/Energreen-Suite-321855454
  
 Adding support for the Dash to Dock extension to a theme is easy: the dash is put inside a container actor named <code>#dashtodockContainer</code> so the extended dash can be targeted without conflicting with the default dash. There is some additional css classes that theme writers can exploit in order to support the extension better:
 
