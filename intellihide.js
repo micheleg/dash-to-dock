@@ -285,7 +285,7 @@ intellihide.prototype = {
             return false;
         }
 
-        if ( !this._handledWindowType(meta_win) ) 
+        if ( !this._handledWindow(meta_win) )
             return false;
 
         var wksp = meta_win.get_workspace();
@@ -293,7 +293,13 @@ intellihide.prototype = {
 
         // Skip windows of other apps
         if(this._focusApp && this._settings.get_boolean('intellihide-perapp')) {
+            // The DropDownTerminal extension is not an application per se
+            // so we match its window by wm class instead
+            if (meta_win.get_wm_class() == 'DropDownTerminalWindow')
+                return true;
+
             let currentApp = this._tracker.get_window_app(meta_win);
+
             // But consider half maximized windows
             // Useful if one is using two apps side by side
             if( this._focusApp != currentApp && !(meta_win.maximized_vertically && !meta_win.maximized_horizontally) )
@@ -310,7 +316,12 @@ intellihide.prototype = {
 
     // Filter windows by type
     // inspired by Opacify@gnome-shell.localdomain.pl
-    _handledWindowType: function(metaWindow) { 
+    _handledWindow: function(metaWindow) {
+        // The DropDownTerminal extension uses the POPUP_MENU window type hint
+        // so we match its window by wm class instead
+        if (metaWindow.get_wm_class() == 'DropDownTerminalWindow')
+            return true;
+
         var wtype = metaWindow.get_window_type();
         for (var i = 0; i < handledWindowTypes.length; i++) {
             var hwtype = handledWindowTypes[i];
