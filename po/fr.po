@@ -1,0 +1,175 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: Dash to Dock\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-12-20 20:45+1100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Jean-Baptiste Le Cz <jb.lecoz@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: French\n"
+"X-Poedit-Country: France\n"
+
+#: prefs.js:34
+msgid "Main Settings"
+msgstr "Réglages Principaux"
+
+#: prefs.js:43
+msgid "Dock is fixed and always visible"
+msgstr "Le dock est fixe et toujours visible"
+
+#: prefs.js:59
+msgid "Animation time [ms]"
+msgstr "Temps de l'animation [ms]"
+
+#: prefs.js:70
+msgid "Show delay [ms]"
+msgstr "Delai d'apparition [ms]"
+
+#: prefs.js:81
+msgid "Hide delay [ms]"
+msgstr "Delai de masquage [ms]"
+
+#: prefs.js:96
+msgid "Autohide"
+msgstr "Masquage automatique"
+
+#: prefs.js:103
+msgid "intellihide"
+msgstr "Masquage intelligent"
+
+#: prefs.js:131
+msgid "Application based intellihide"
+msgstr "Masquage intelligent par application"
+
+#: prefs.js:146
+msgid "Show the dock on following monitor (if attached)"
+msgstr "Montrer le dock sur l'écran suivant (si présent)"
+
+#: prefs.js:148
+msgid "Primary (default)"
+msgstr "Primaire (par défaut)"
+
+#: prefs.js:149
+msgid "1"
+msgstr "1"
+
+#: prefs.js:150
+msgid "2"
+msgstr "2"
+
+#: prefs.js:151
+msgid "3"
+msgstr "3"
+
+#: prefs.js:152
+msgid "4"
+msgstr "4"
+
+#: prefs.js:177
+msgid "Max height"
+msgstr "Hauteur maximale"
+
+#: prefs.js:195
+msgid "Expand (experimental and buggy)"
+msgstr "Étendre (buggé et expérimental)"
+
+#: prefs.js:224
+msgid "Maximum icon size"
+msgstr "Taille maximale des icônes"
+
+#: prefs.js:229
+msgid "16"
+msgstr "16"
+
+#: prefs.js:230
+msgid "24"
+msgstr "24"
+
+#: prefs.js:231
+msgid "32"
+msgstr "32"
+
+#: prefs.js:232
+msgid "48"
+msgstr "48"
+
+#: prefs.js:233
+msgid "64"
+msgstr "64"
+
+#: prefs.js:255
+msgid "Show favorite application icons"
+msgstr "Montrer les applications favorites"
+
+#: prefs.js:260
+msgid "Show running application icons"
+msgstr "Montrer les applications en cours"
+
+#: prefs.js:276
+msgid "Optional features"
+msgstr "Réglages secondaires"
+
+#: prefs.js:282
+msgid "Customize the dock background opacity"
+msgstr "Régler l'opacité du dock"
+
+#: prefs.js:299
+msgid "Opacity"
+msgstr "Opacité"
+
+#: prefs.js:315
+msgid "Only when in autohide"
+msgstr "Seulement en mode masquage intelligent"
+
+#: prefs.js:334
+msgid "Switch workspace when scrolling over the dock"
+msgstr "Changer de bureau par défilement sur le dock"
+
+#: prefs.js:345
+msgid "Switch one workspace at a time"
+msgstr "Changer un seul bureau à la fois"
+
+#: prefs.js:351
+msgid "Only a 1px wide area close to the screen edge is active"
+msgstr "Seulement une zone de 1 px au bord de l'écran est active"
+
+#: prefs.js:356
+msgid "All the area of the dock is active"
+msgstr "Tout le dock est actif"
+
+#: prefs.js:378
+msgid "Customize actions on mouse click"
+msgstr "Réglage de l'action provoquée par un clic de la souris"
+
+#: prefs.js:393
+msgid "Action on clicking on running app"
+msgstr "Action provoquée par un clic de la souris sur une application en cours"
+
+#: prefs.js:395
+msgid "Do nothing (default)"
+msgstr "Ne rien faire (par défaut)"
+
+#: prefs.js:396
+msgid "Minimize"
+msgstr "Minimiser la fenètre"
+
+#: prefs.js:397
+msgid "Launch new window"
+msgstr "Nouvelle fenètre"
+
+#: prefs.js:398
+msgid "Cycle through application windows"
+msgstr "Faire défiler les fenètres de l'application"
+
+#: prefs.js:409
+msgid "Minimize window on shift+click (double click for all app windows)"
+msgstr "Minimiser la fenètre avec shift+click (double cliquer pour toutes les fenètres de l'application)"
