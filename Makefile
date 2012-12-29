@@ -27,7 +27,7 @@ mergepo: potfile
 
 ./po/dashtodock.pot: $(TOLOCALIZE)
 	mkdir -p po
-	xgettext -k_ -kN_ -o po/dashtodock.pot $(TOLOCALIZE)
+	xgettext -k_ -kN_ -o po/dashtodock.pot --package-name "Dash to Dock" $(TOLOCALIZE)
 
 ./po/%.mo: ./po/%.po
 	msgfmt -c $< -o $@
