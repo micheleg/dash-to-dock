@@ -4,6 +4,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Intellihide = Me.imports.intellihide;
 const DockedDash = Me.imports.dockedDash;
+const Main = imports.ui.main;
 
 let settings;
 let intellihide;
@@ -29,6 +30,7 @@ function enable() {
     dock = new DockedDash.dockedDash(settings);
     intellihide = new Intellihide.intellihide(show, hide, dock, settings);
 
+    Main.dock = dock;
 }
 
 function disable() {

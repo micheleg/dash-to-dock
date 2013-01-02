@@ -1,4 +1,5 @@
 #dashtodockBox:ltr {
+	border: 1px blue;
 	padding-right:1px;
 }
 
@@ -6,3 +7,6 @@
 	padding-left:1px;
 }
 
+#dashtodockContainer{
+	border:1px red;
+}

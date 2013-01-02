@@ -21,6 +21,150 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const MyDash = Me.imports.myDash;
 
+/*
+// Set up stage hierarchy to group all UI actors under one container.
+const uiGroup = new Shell.GenericContainer({ name: 'uiGroupM' });
+    uiGroup.connect('allocate',
+                    function (actor, box, flags) {
+                        let children = uiGroup.get_children();
+                        for (let i = 0; i < children.length; i++)
+                            children[i].allocate_preferred_size(flags);
+                    });
+    uiGroup.connect('get-preferred-width',
+                    function(actor, forHeight, alloc) {
+                        let width = global.stage.width;
+                        [alloc.min_size, alloc.natural_size] = [width, width];
+                    });
+    uiGroup.connect('get-preferred-height',
+                    function(actor, forWidth, alloc) {
+                        let height = global.stage.height;
+                        [alloc.min_size, alloc.natural_size] = [height, height];
+                    });
+*/
+
+
+/* A container for the dash main actor:
+ * like St.Bin but with the width taking into account the child horizontal position
+ *
+ */
+const DashToDockContainer = new Lang.Class({
+    Name: 'DashToDockContainer',
+
+    _init: function() {
+        this.actor = new Shell.GenericContainer(/*{ style_class: 'dash-item-container' }*/);
+        this.actor.connect('get-preferred-width',
+                           Lang.bind(this, this._getPreferredWidth));
+        this.actor.connect('get-preferred-height',
+                           Lang.bind(this, this._getPreferredHeight));
+        this.actor.connect('allocate',
+                           Lang.bind(this, this._allocate));
+        this.actor._delegate = this;
+
+        this.child = null;
+    },
+
+    _allocate: function(actor, box, flags) {
+        if (this.child == null)
+            return;
+
+        log('BOX '+ box.x1 + ' ' + box.x2);
+
+        let availWidth = box.x2 - box.x1;
+        let availHeight = box.y2 - box.y1;
+        let [minChildWidth, minChildHeight, natChildWidth, natChildHeight] =
+            this.child.get_preferred_size();
+
+        let [childScaleX, childScaleY] = this.child.get_scale();
+
+        let childWidth = Math.min(natChildWidth, availWidth);
+        let childHeight = Math.min(natChildHeight, availHeight);
+
+        let childBox = new Clutter.ActorBox();
+        childBox.x1 = Math.floor((availWidth - childWidth) / 2);
+        childBox.y1 = Math.floor((availHeight - childHeight) / 2);
+        childBox.x2 = Math.floor(childBox.x1 + childWidth);
+        childBox.y2 = Math.floor(childBox.y1 + childHeight);
+
+/*
+        let childBox = new Clutter.ActorBox();
+        childBox.x1 = 0;
+        childBox.y1 = 0;
+        childBox.x2 = availWidth;
+        childBox.y2 = availHeight;
+*/
+/*
+        let childBox = new Clutter.ActorBox();
+        childBox.x1 = 0;
+        childBox.y1 = 0;
+        childBox.x2 = 100;
+        childBox.y2 = 300;
+*/
+
+        this.child.allocate(childBox, flags);
+    },
+
+    _getPreferredHeight: function(actor, forWidth, alloc) {
+
+        alloc.min_size = 0;
+        alloc.natural_size = 0;
+
+        
+        if (this.child == null)
+            return;
+
+
+        /*let [minHeight, natHeight] = this.child.get_preferred_height(forWidth);
+        alloc.min_size += minHeight * this.child.scale_y;
+        alloc.natural_size += natHeight * this.child.scale_y;*/
+
+        [alloc.min_size, alloc.natural_size]= this.child.get_preferred_height(forWidth);
+    },
+
+    _getPreferredWidth: function(actor, forHeight, alloc) {
+        alloc.min_size = 0;
+        alloc.natural_size = 0;
+
+        if (this.child == null)
+            return;
+
+        [alloc.min_size, alloc.natural_size] = this.child.get_preferred_width(forHeight);
+
+        /*let [minWidth, natWidth] = this.child.get_preferred_width(forHeight);
+        alloc.min_size = minWidth * this.child.scale_y;
+        alloc.natural_size = natWidth * this.child.scale_y;*/
+    },
+
+    setChild: function(actor) {
+        if (this.child == actor)
+            return;
+
+        this.actor.destroy_all_children();
+
+        this.child = actor;
+        this.actor.add_actor(this.child);
+    }/*,
+
+    set childScale(scale) {
+        this._childScale = scale;
+
+        if (this.child == null)
+            return;
+
+        this.child.set_scale_with_gravity(scale, scale,
+                                          Clutter.Gravity.CENTER);
+        this.actor.queue_relayout();
+    },
+
+    get childScale() {
+        return this._childScale;
+    }*/
+
+});
+
+
+
+
+
 function dockedDash(settings) {
 
     this._init(settings);
@@ -59,8 +203,28 @@ dockedDash.prototype = {
 
         this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true,
             style_class: 'box'} );
-        this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
+/*        this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
             style_class: 'container', y_align: St.Align.MIDDLE, child: this._box});
+*/
+
+
+        this.actorOb = new DashToDockContainer(/*{ name: 'dashtodockContainer',reactive: false,
+            style_class: 'container', y_align: St.Align.MIDDLE, child: this._box}*/);
+
+        this.actorOb.setChild(this._box);
+        this.actor = this.actorOb.actor;
+        this.actor.set_name('dashtodockContainer');
+        this.actor.add_style_class_name('container');
+
+
+        /*ClColor= new Clutter.Color();
+        ClColor.red = 255;
+        ClColor.alpha = 255;*/
+        //ClColor={red: 0, green:0, blue: 0, alpha:0};
+        //this.actor.set_background_color(ClColor);
+
+        /*this._box.width = 100;
+        this._box.x = 50;*/
 
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
         this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
@@ -393,7 +557,7 @@ dockedDash.prototype = {
         clip.y2 -= this.actor.y - y_anchor;
 
         // Apply the clip
-        this.actor.set_clip(clip.x1, clip.y1, clip.x2-clip.x1, clip.y2 - clip.y1);
+        //this.actor.set_clip(clip.x1, clip.y1, clip.x2-clip.x1, clip.y2 - clip.y1);
 
     },
 
