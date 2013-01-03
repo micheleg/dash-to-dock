@@ -67,7 +67,7 @@ const DashToDockContainer = new Lang.Class({
         if (this.child == null)
             return;
 
-        log('BOX '+ box.x1 + ' ' + box.x2);
+        //log('BOX '+ box.x1 + ' ' + box.x2);
 
         let availWidth = box.x2 - box.x1;
         let availHeight = box.y2 - box.y1;
@@ -85,20 +85,10 @@ const DashToDockContainer = new Lang.Class({
         childBox.x2 = Math.floor(childBox.x1 + childWidth);
         childBox.y2 = Math.floor(childBox.y1 + childHeight);
 
-/*
-        let childBox = new Clutter.ActorBox();
-        childBox.x1 = 0;
-        childBox.y1 = 0;
-        childBox.x2 = availWidth;
-        childBox.y2 = availHeight;
-*/
-/*
-        let childBox = new Clutter.ActorBox();
-        childBox.x1 = 0;
-        childBox.y1 = 0;
-        childBox.x2 = 100;
-        childBox.y2 = 300;
-*/
+        childBox.x1 = this.child.x;
+        childBox.y1 = Math.floor((availHeight - childHeight) / 2);
+        childBox.x2 = childBox.x1 + childWidth;
+        childBox.y2 = Math.floor(childBox.y1 + childHeight);
 
         this.child.allocate(childBox, flags);
     },
@@ -217,14 +207,6 @@ dockedDash.prototype = {
         this.actor.add_style_class_name('container');
 
 
-        /*ClColor= new Clutter.Color();
-        ClColor.red = 255;
-        ClColor.alpha = 255;*/
-        //ClColor={red: 0, green:0, blue: 0, alpha:0};
-        //this.actor.set_background_color(ClColor);
-
-        /*this._box.width = 100;
-        this._box.x = 50;*/
 
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
         this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
@@ -453,6 +435,8 @@ dockedDash.prototype = {
 
         let final_position, anchor_point;
 
+        let target = this._box;
+
         // Move anchor point so mode so that when dash icon size changes
         // the dash stays at the right position
         if(this._rtl){
@@ -471,9 +455,9 @@ dockedDash.prototype = {
         if (time==0 && delay==0)
             this._removeAnimations();
 
-        if(final_position !== this.actor.x){
+        if(final_position !== target.x){
             this._animStatus.queue(true);
-            Tweener.addTween(this.actor,{
+            Tweener.addTween(target,{
                 x: final_position,
                 time: time,
                 delay: delay,
@@ -481,7 +465,7 @@ dockedDash.prototype = {
                 onUpdate: Lang.bind(this, this._updateClip),
                 onStart:  Lang.bind(this, function() {
                     this._animStatus.start();
-                    this.actor.move_anchor_point_from_gravity(anchor_point);
+                    target.move_anchor_point_from_gravity(anchor_point);
                 }),
                 onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
                 onComplete: Lang.bind(this, function() {this._animStatus.end();})
@@ -492,6 +476,8 @@ dockedDash.prototype = {
     _animateOut: function(time, delay){
 
         let final_position, anchor_point;
+
+        let target = this._box;
 
         // Move anchor point so that when dash icon size changes
         // the dash stays at the right position
@@ -511,9 +497,9 @@ dockedDash.prototype = {
         if (time==0 && delay==0)
             this._removeAnimations();
 
-        if(final_position !== this.actor.x){
+        if(final_position !== target.x){
             this._animStatus.queue(false);
-            Tweener.addTween(this.actor,{
+            Tweener.addTween(target,{
                 x: final_position,
                 time: time,
                 delay: delay ,
@@ -521,7 +507,7 @@ dockedDash.prototype = {
                 onUpdate: Lang.bind(this, this._updateClip),
                 onStart:  Lang.bind(this, function() {
                     this._animStatus.start();
-                    this.actor.move_anchor_point_from_gravity(anchor_point);
+                    target.move_anchor_point_from_gravity(anchor_point);
                 }),
                 onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
                 onComplete: Lang.bind(this, function() {
@@ -558,6 +544,7 @@ dockedDash.prototype = {
 
         // Apply the clip
         //this.actor.set_clip(clip.x1, clip.y1, clip.x2-clip.x1, clip.y2 - clip.y1);
+        this.actor.set_clip_to_allocation(true);
 
     },
 
@@ -679,6 +666,9 @@ dockedDash.prototype = {
     _resetPosition: function() {
         this._monitor = this._getMonitor();
         this._updateStaticBox();
+
+        this.actor.x = 100;
+
         if( this._animStatus.hidden() || this._animStatus.hiding())
             this._animateOut(0,0);
         else {
@@ -703,7 +693,7 @@ dockedDash.prototype = {
     },
 
     _removeAnimations: function() {
-        Tweener.removeTweens(this.actor);
+        Tweener.removeTweens(this._box);
         this._animStatus.clearAll();
     },
 
