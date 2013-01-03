@@ -22,13 +22,10 @@ const Convenience = Me.imports.convenience;
 const MyDash = Me.imports.myDash;
 
 
-/* A container for the dash actor:
+/* A container for the dash actor used to track the input region. A St.BoxLayout 
+ * would not shrink it's width when its child's position changes.
  * - one child with absolute position. 
  * - the container width is set according to the child position
- *
- * The container i used to track the input region. A St.BoxLayout would not shrink 
- * it's width when moving it's the child actor.
- *
  */
 const DashToDockInputRegionContainer = new Lang.Class({
     Name: 'DashToDockInputRegionContainer',
