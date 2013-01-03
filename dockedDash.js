@@ -76,19 +76,27 @@ const DashToDockContainer = new Lang.Class({
 
         let [childScaleX, childScaleY] = this.child.get_scale();
 
+/*
         let childWidth = Math.min(natChildWidth, availWidth);
         let childHeight = Math.min(natChildHeight, availHeight);
+*/
+
+        let childWidth = natChildWidth;
+        let childHeight = natChildHeight;
 
         let childBox = new Clutter.ActorBox();
+/*
         childBox.x1 = Math.floor((availWidth - childWidth) / 2);
         childBox.y1 = Math.floor((availHeight - childHeight) / 2);
         childBox.x2 = Math.floor(childBox.x1 + childWidth);
         childBox.y2 = Math.floor(childBox.y1 + childHeight);
-
-        childBox.x1 = this.child.x;
+*/
+        childBox.x1 = this.child.x ;
         childBox.y1 = Math.floor((availHeight - childHeight) / 2);
         childBox.x2 = childBox.x1 + childWidth;
         childBox.y2 = Math.floor(childBox.y1 + childHeight);
+
+        log("ALL: " + this.child.x + " " +  box.x2);
 
         this.child.allocate(childBox, flags);
     },
@@ -118,6 +126,11 @@ const DashToDockContainer = new Lang.Class({
             return;
 
         [alloc.min_size, alloc.natural_size] = this.child.get_preferred_width(forHeight);
+
+        let [x_anchor, y_anchor] = this.child.get_anchor_point();
+
+        alloc.min_size += this.child.x - x_anchor;
+        alloc.natural_size += this.child.x - x_anchor;
 
         /*let [minWidth, natWidth] = this.child.get_preferred_width(forHeight);
         alloc.min_size = minWidth * this.child.scale_y;
@@ -190,23 +203,20 @@ dockedDash.prototype = {
         this.dash = new MyDash.myDash(this._settings); // this.dash = new MyDash.myDash();
 
         // Create the main actor and the main container for centering, turn on track hover
+        // TODO: description of different containers...
 
         this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true,
             style_class: 'box'} );
-/*        this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
-            style_class: 'container', y_align: St.Align.MIDDLE, child: this._box});
-*/
-
 
         this.actorOb = new DashToDockContainer(/*{ name: 'dashtodockContainer',reactive: false,
             style_class: 'container', y_align: St.Align.MIDDLE, child: this._box}*/);
 
         this.actorOb.setChild(this._box);
-        this.actor = this.actorOb.actor;
-        this.actor.set_name('dashtodockContainer');
-        this.actor.add_style_class_name('container');
+        this.actor2 = this.actorOb.actor;
+        //this.actor2.set_style("background:red");
 
-
+        this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
+            style_class: 'container', y_align: St.Align.MIDDLE, x_align: St.Align.START, child: this.actor2});
 
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
         this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
@@ -270,8 +280,8 @@ dockedDash.prototype = {
         //Add dash container actor and the container to the Chrome.
         this._box.add_actor(this.dash.actor);
         Main.layoutManager.addChrome(this.actor, {affectsInputRegion: false});
-        Main.layoutManager.trackChrome(this._box, {affectsInputRegion: true});
-        Main.layoutManager.trackChrome(this.dash._box, { affectsStruts: this._settings.get_boolean('dock-fixed')});
+        Main.layoutManager.trackChrome(this.actor2, {affectsInputRegion: true});
+        Main.layoutManager.trackChrome(this.dash._box, { affectsInputRegion: false, affectsStruts: this._settings.get_boolean('dock-fixed')});
 
         this.dash._box.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
 
