@@ -21,37 +21,20 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const MyDash = Me.imports.myDash;
 
-/*
-// Set up stage hierarchy to group all UI actors under one container.
-const uiGroup = new Shell.GenericContainer({ name: 'uiGroupM' });
-    uiGroup.connect('allocate',
-                    function (actor, box, flags) {
-                        let children = uiGroup.get_children();
-                        for (let i = 0; i < children.length; i++)
-                            children[i].allocate_preferred_size(flags);
-                    });
-    uiGroup.connect('get-preferred-width',
-                    function(actor, forHeight, alloc) {
-                        let width = global.stage.width;
-                        [alloc.min_size, alloc.natural_size] = [width, width];
-                    });
-    uiGroup.connect('get-preferred-height',
-                    function(actor, forWidth, alloc) {
-                        let height = global.stage.height;
-                        [alloc.min_size, alloc.natural_size] = [height, height];
-                    });
-*/
 
-
-/* A container for the dash main actor:
- * like St.Bin but with the width taking into account the child horizontal position
+/* A container for the dash actor:
+ * - one child with absolute position. 
+ * - the container width is set according to the child position
+ *
+ * The container i used to track the input region. A St.BoxLayout would not shrink 
+ * it's width when moving it's the child actor.
  *
  */
-const DashToDockContainer = new Lang.Class({
-    Name: 'DashToDockContainer',
+const DashToDockInputRegionContainer = new Lang.Class({
+    Name: 'DashToDockInputRegionContainer',
 
     _init: function() {
-        this.actor = new Shell.GenericContainer(/*{ style_class: 'dash-item-container' }*/);
+        this.actor = new Shell.GenericContainer();
         this.actor.connect('get-preferred-width',
                            Lang.bind(this, this._getPreferredWidth));
         this.actor.connect('get-preferred-height',
@@ -67,36 +50,17 @@ const DashToDockContainer = new Lang.Class({
         if (this.child == null)
             return;
 
-        //log('BOX '+ box.x1 + ' ' + box.x2);
-
-        let availWidth = box.x2 - box.x1;
-        let availHeight = box.y2 - box.y1;
         let [minChildWidth, minChildHeight, natChildWidth, natChildHeight] =
             this.child.get_preferred_size();
-
-        let [childScaleX, childScaleY] = this.child.get_scale();
-
-/*
-        let childWidth = Math.min(natChildWidth, availWidth);
-        let childHeight = Math.min(natChildHeight, availHeight);
-*/
 
         let childWidth = natChildWidth;
         let childHeight = natChildHeight;
 
         let childBox = new Clutter.ActorBox();
-/*
-        childBox.x1 = Math.floor((availWidth - childWidth) / 2);
-        childBox.y1 = Math.floor((availHeight - childHeight) / 2);
-        childBox.x2 = Math.floor(childBox.x1 + childWidth);
-        childBox.y2 = Math.floor(childBox.y1 + childHeight);
-*/
-        childBox.x1 = this.child.x ;
-        childBox.y1 = Math.floor((availHeight - childHeight) / 2);
+        childBox.x1 = this.child.x;
+        childBox.y1 = this.child.y;
         childBox.x2 = childBox.x1 + childWidth;
-        childBox.y2 = Math.floor(childBox.y1 + childHeight);
-
-        log("ALL: " + this.child.x + " " +  box.x2);
+        childBox.y2 = childBox.y1 + childHeight;
 
         this.child.allocate(childBox, flags);
     },
@@ -110,12 +74,7 @@ const DashToDockContainer = new Lang.Class({
         if (this.child == null)
             return;
 
-
-        /*let [minHeight, natHeight] = this.child.get_preferred_height(forWidth);
-        alloc.min_size += minHeight * this.child.scale_y;
-        alloc.natural_size += natHeight * this.child.scale_y;*/
-
-        [alloc.min_size, alloc.natural_size]= this.child.get_preferred_height(forWidth);
+        [alloc.min_size, alloc.natural_size] = this.child.get_preferred_height(forWidth);
     },
 
     _getPreferredWidth: function(actor, forHeight, alloc) {
@@ -132,9 +91,6 @@ const DashToDockContainer = new Lang.Class({
         alloc.min_size += this.child.x - x_anchor;
         alloc.natural_size += this.child.x - x_anchor;
 
-        /*let [minWidth, natWidth] = this.child.get_preferred_width(forHeight);
-        alloc.min_size = minWidth * this.child.scale_y;
-        alloc.natural_size = natWidth * this.child.scale_y;*/
     },
 
     setChild: function(actor) {
@@ -145,28 +101,9 @@ const DashToDockContainer = new Lang.Class({
 
         this.child = actor;
         this.actor.add_actor(this.child);
-    }/*,
-
-    set childScale(scale) {
-        this._childScale = scale;
-
-        if (this.child == null)
-            return;
-
-        this.child.set_scale_with_gravity(scale, scale,
-                                          Clutter.Gravity.CENTER);
-        this.actor.queue_relayout();
-    },
-
-    get childScale() {
-        return this._childScale;
-    }*/
+    }
 
 });
-
-
-
-
 
 function dockedDash(settings) {
 
@@ -208,15 +145,13 @@ dockedDash.prototype = {
         this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true,
             style_class: 'box'} );
 
-        this.actorOb = new DashToDockContainer(/*{ name: 'dashtodockContainer',reactive: false,
-            style_class: 'container', y_align: St.Align.MIDDLE, child: this._box}*/);
-
-        this.actorOb.setChild(this._box);
-        this.actor2 = this.actorOb.actor;
-        //this.actor2.set_style("background:red");
+        let inputRegionContainer = new DashToDockInputRegionContainer();
+        inputRegionContainer.setChild(this._box);
+        this._inputRegion = inputRegionContainer.actor;
+        this._inputRegion.set_clip_to_allocation(true);
 
         this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
-            style_class: 'container', y_align: St.Align.MIDDLE, x_align: St.Align.START, child: this.actor2});
+            style_class: 'container', y_align: St.Align.MIDDLE, x_align: St.Align.START, child: this._inputRegion});
 
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
         this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
@@ -280,7 +215,7 @@ dockedDash.prototype = {
         //Add dash container actor and the container to the Chrome.
         this._box.add_actor(this.dash.actor);
         Main.layoutManager.addChrome(this.actor, {affectsInputRegion: false});
-        Main.layoutManager.trackChrome(this.actor2, {affectsInputRegion: true});
+        Main.layoutManager.trackChrome(this._inputRegion, {affectsInputRegion: true});
         Main.layoutManager.trackChrome(this.dash._box, { affectsInputRegion: false, affectsStruts: this._settings.get_boolean('dock-fixed')});
 
         this.dash._box.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
