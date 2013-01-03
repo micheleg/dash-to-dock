@@ -70,7 +70,6 @@ const DashToDockInputRegionContainer = new Lang.Class({
         alloc.min_size = 0;
         alloc.natural_size = 0;
 
-        
         if (this.child == null)
             return;
 
@@ -146,7 +145,6 @@ dockedDash.prototype = {
             style_class: 'box'} );
 
         let inputRegionContainer = new DashToDockInputRegionContainer();
-        inputRegionContainer.setChild(this._box);
         this._inputRegion = inputRegionContainer.actor;
         this._inputRegion.set_clip_to_allocation(true);
 
@@ -212,8 +210,10 @@ dockedDash.prototype = {
         //this.actor.hide(); but I need to access its width, so I use opacity
         this.actor.set_opacity(0);
 
-        //Add dash container actor and the container to the Chrome.
+        //Add dash container actor and the container to the Chrome.// TODO description
+        inputRegionContainer.setChild(this._box);
         this._box.add_actor(this.dash.actor);
+
         Main.layoutManager.addChrome(this.actor, {affectsInputRegion: false});
         Main.layoutManager.trackChrome(this._inputRegion, {affectsInputRegion: true});
         Main.layoutManager.trackChrome(this.dash._box, { affectsInputRegion: false, affectsStruts: this._settings.get_boolean('dock-fixed')});
