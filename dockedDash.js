@@ -22,10 +22,18 @@ const Convenience = Me.imports.convenience;
 const MyDash = Me.imports.myDash;
 
 
-/* A container for the dash actor used to track the input region. A St.BoxLayout 
- * would not shrink it's width when its child's position changes.
- * - one child with absolute position. 
- * - the container width is set according to the child position
+/* 
+ * A container for the dash actor used to track the input region. I cannot track
+ * the dash actor because it whole surface is tracked even if not shown due to
+ * clipping.This is a problem in multimonitor configuration where the hidden part
+ * of the dash enters the next monitor. An St.BoxLayout would not shrink its width
+ * (at the left or the right) when its child's position changes overflowing the container.
+ *
+ * This container:
+ * - handle one child with absolute vertical position.
+ * - the container width and child position toghether in order to achieve 
+ *   the desired behaviour: when child.x is <0, shrink the container width; when 
+ *   child.x >0, keep the child position fixed and just shrink the container width.
  */
 const DashToDockInputRegionContainer = new Lang.Class({
     Name: 'DashToDockInputRegionContainer',
@@ -53,15 +61,28 @@ const DashToDockInputRegionContainer = new Lang.Class({
         let childWidth = natChildWidth;
         let childHeight = natChildHeight;
 
+        let [x_anchor, y_anchor] = this.child.get_anchor_point();
+
         let childBox = new Clutter.ActorBox();
-        childBox.x1 = this.child.x;
+
+        // If the child actor overflows on the right, do not move it. 
+        // The allocate function will reduce the container width instead.
+        // TODO reconsider using or not the anchor point
+        if(this.child.x - x_anchor > 0 )
+            childBox.x1 = x_anchor;
+        else
+            childBox.x1 = this.child.x;
+
         childBox.y1 = this.child.y;
+
         childBox.x2 = childBox.x1 + childWidth;
         childBox.y2 = childBox.y1 + childHeight;
 
         this.child.allocate(childBox, flags);
+
     },
 
+    // Just return the child preferred height
     _getPreferredHeight: function(actor, forWidth, alloc) {
 
         alloc.min_size = 0;
@@ -73,6 +94,7 @@ const DashToDockInputRegionContainer = new Lang.Class({
         [alloc.min_size, alloc.natural_size] = this.child.get_preferred_height(forWidth);
     },
 
+    // Return the child preferred width but subtract the length of the overflowing part
     _getPreferredWidth: function(actor, forHeight, alloc) {
         alloc.min_size = 0;
         alloc.natural_size = 0;
@@ -83,9 +105,11 @@ const DashToDockInputRegionContainer = new Lang.Class({
         [alloc.min_size, alloc.natural_size] = this.child.get_preferred_width(forHeight);
 
         let [x_anchor, y_anchor] = this.child.get_anchor_point();
+log("ALL: " + " " + alloc.natural_size+ " " +x_anchor+ " " +this.child.x);
 
-        alloc.min_size += this.child.x - x_anchor;
-        alloc.natural_size += this.child.x - x_anchor;
+
+        alloc.min_size -= Math.abs(this.child.x - x_anchor);
+        alloc.natural_size -= Math.abs(this.child.x - x_anchor);
 
     },
 
@@ -112,6 +136,7 @@ dockedDash.prototype = {
 
         this._rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
 
+        this._rtl = false;
         // Load settings
         this._settings = settings;
         this._bindSettingsChanges();
@@ -383,10 +408,10 @@ dockedDash.prototype = {
         // the dash stays at the right position
         if(this._rtl){
             anchor_point = Clutter.Gravity.NORTH_EAST;
-            final_position = this.staticBox.x2;
+            final_position = this._box.width;
         } else {
             anchor_point = Clutter.Gravity.NORTH_WEST;
-            final_position = this.staticBox.x1;
+            final_position = 0;
         }
 
         /* Animate functions are also used for 'hard' position reset with time==0
@@ -425,10 +450,10 @@ dockedDash.prototype = {
         // the dash stays at the right position
         if(this._rtl){
             anchor_point = Clutter.Gravity.NORTH_WEST;
-            final_position = this.staticBox.x2 - 1;
+            final_position = this._box.width - 1;
         } else {
             anchor_point = Clutter.Gravity.NORTH_EAST;
-            final_position = this.staticBox.x1 + 1;
+            final_position = 1;
         }
 
         /* Animate functions are also used for 'hard' position reset with time==0
@@ -609,7 +634,14 @@ dockedDash.prototype = {
         this._monitor = this._getMonitor();
         this._updateStaticBox();
 
-        this.actor.x = 100;
+        if(this._rtl) {
+            this.actor.move_anchor_point_from_gravity(Clutter.Gravity.NORTH_EAST);
+            this.actor.x = this.staticBox.x2;
+        }
+        else{
+            this.actor.move_anchor_point_from_gravity(Clutter.Gravity.NORTH_WEST);
+            this.actor.x = this.staticBox.x1;
+        }
 
         if( this._animStatus.hidden() || this._animStatus.hiding())
             this._animateOut(0,0);
