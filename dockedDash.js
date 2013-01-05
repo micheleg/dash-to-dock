@@ -66,12 +66,14 @@ const DashToDockInputRegionContainer = new Lang.Class({
         let childBox = new Clutter.ActorBox();
 
         // If the child actor overflows on the right, do not move it. 
-        // The allocate function will reduce the container width instead.
+        // The allocate function will reduce the container width instead (and
+        // the container anchor point will make the actor move).
         // TODO reconsider using or not the anchor point
-        if(this.child.x - x_anchor > 0 )
+
+        if(this.child.x > 0 )
             childBox.x1 = x_anchor;
         else
-            childBox.x1 = this.child.x;
+            childBox.x1 = this.child.x - x_anchor;
 
         childBox.y1 = this.child.y;
 
@@ -79,7 +81,7 @@ const DashToDockInputRegionContainer = new Lang.Class({
         childBox.y2 = childBox.y1 + childHeight;
 
         this.child.allocate(childBox, flags);
-
+        log("ALL: " + " " + childBox.x1+ " " +x_anchor+ " " +this.child.x + " " + this.child.allocation.x1);
     },
 
     // Just return the child preferred height
@@ -105,11 +107,11 @@ const DashToDockInputRegionContainer = new Lang.Class({
         [alloc.min_size, alloc.natural_size] = this.child.get_preferred_width(forHeight);
 
         let [x_anchor, y_anchor] = this.child.get_anchor_point();
-log("ALL: " + " " + alloc.natural_size+ " " +x_anchor+ " " +this.child.x);
+log("PW: " + " " + alloc.natural_size+ " " +x_anchor+ " " +this.child.x);
 
 
-        alloc.min_size -= Math.abs(this.child.x - x_anchor);
-        alloc.natural_size -= Math.abs(this.child.x - x_anchor);
+        alloc.min_size -= Math.abs(this.child.x);
+        alloc.natural_size -= Math.abs(this.child.x);
 
     },
 
@@ -136,7 +138,7 @@ dockedDash.prototype = {
 
         this._rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
 
-        this._rtl = false;
+        this._rtl = true;
         // Load settings
         this._settings = settings;
         this._bindSettingsChanges();
@@ -407,8 +409,10 @@ dockedDash.prototype = {
         // Move anchor point so mode so that when dash icon size changes
         // the dash stays at the right position
         if(this._rtl){
-            anchor_point = Clutter.Gravity.NORTH_EAST;
-            final_position = this._box.width;
+            //anchor_point = Clutter.Gravity.NORTH_EAST;
+            //final_position = this._box.width;
+            anchor_point = Clutter.Gravity.NORTH_WEST;
+            final_position = 0;
         } else {
             anchor_point = Clutter.Gravity.NORTH_WEST;
             final_position = 0;
@@ -422,7 +426,7 @@ dockedDash.prototype = {
         if (time==0 && delay==0)
             this._removeAnimations();
 
-        if(final_position !== target.x){
+        if(final_position !== target.x || 1){
             this._animStatus.queue(true);
             Tweener.addTween(target,{
                 x: final_position,
@@ -451,6 +455,8 @@ dockedDash.prototype = {
         if(this._rtl){
             anchor_point = Clutter.Gravity.NORTH_WEST;
             final_position = this._box.width - 1;
+            //anchor_point = Clutter.Gravity.NORTH_EAST;
+            //final_position = this._box.width - 1;
         } else {
             anchor_point = Clutter.Gravity.NORTH_EAST;
             final_position = 1;
@@ -464,7 +470,7 @@ dockedDash.prototype = {
         if (time==0 && delay==0)
             this._removeAnimations();
 
-        if(final_position !== target.x){
+        if(final_position !== target.x || 1){
             this._animStatus.queue(false);
             Tweener.addTween(target,{
                 x: final_position,
