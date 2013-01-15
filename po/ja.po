@@ -1,0 +1,173 @@
+# Japanese translation of dash-to-dock
+# Copyright (C) 2013 Jiro Matsuzawa
+# This file is distributed under the same license as the dash-to-dock package.
+# Jiro Matsuzawa <jmatsuzawa@gnome.org>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Dash to Dock\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-01-13 13:11+0000\n"
+"PO-Revision-Date: 2013-01-15 23:33+0900\n"
+"Last-Translator: Jiro Matsuzawa <jmatsuzawa@gnome.org>\n"
+"Language-Team: Jiro Matsuzawa <jmatsuzawa@gnome.org>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: prefs.js:34
+msgid "Main Settings"
+msgstr "メイン設定"
+
+#: prefs.js:43
+msgid "Dock is fixed and always visible"
+msgstr "Dock を固定して常に表示する"
+
+#: prefs.js:59
+msgid "Animation time [ms]"
+msgstr "アニメーション時間 (ミリ秒)"
+
+#: prefs.js:70
+msgid "Show delay [ms]"
+msgstr "表示するまでの間隔 (ミリ秒)"
+
+#: prefs.js:81
+msgid "Hide delay [ms]"
+msgstr "非表示までの間隔 (ミリ秒)"
+
+#: prefs.js:96
+msgid "Autohide"
+msgstr "自動非表示"
+
+#: prefs.js:103
+msgid "intellihide"
+msgstr "インテリジェント非表示"
+
+#: prefs.js:131
+msgid "Application based intellihide"
+msgstr "アクティブなアプリケーションに対してだけインテリジェント非表示を有効にする"
+
+#: prefs.js:146
+msgid "Show the dock on following monitor (if attached)"
+msgstr "Dock を表示するモニター (もしあれば)"
+
+#: prefs.js:148
+msgid "Primary (default)"
+msgstr "プライマリ (既定)"
+
+#: prefs.js:149
+msgid "1"
+msgstr "1"
+
+#: prefs.js:150
+msgid "2"
+msgstr "2"
+
+#: prefs.js:151
+msgid "3"
+msgstr "3"
+
+#: prefs.js:152
+msgid "4"
+msgstr "4"
+
+#: prefs.js:177
+msgid "Max height"
+msgstr "最大の高さ"
+
+#: prefs.js:195
+msgid "Expand (experimental and buggy)"
+msgstr "拡張する (実験的で不具合あり)"
+
+#: prefs.js:224
+msgid "Maximum icon size"
+msgstr "アイコンの最大サイズ"
+
+#: prefs.js:229
+msgid "16"
+msgstr "16"
+
+#: prefs.js:230
+msgid "24"
+msgstr "24"
+
+#: prefs.js:231
+msgid "32"
+msgstr "32"
+
+#: prefs.js:232
+msgid "48"
+msgstr "48"
+
+#: prefs.js:233
+msgid "64"
+msgstr "64"
+
+#: prefs.js:255
+msgid "Show favorite application icons"
+msgstr "お気に入りのアプリケーションアイコンを表示する"
+
+#: prefs.js:260
+msgid "Show running application icons"
+msgstr "実行中のアプリケーションアイコンを表示する"
+
+#: prefs.js:276
+msgid "Optional features"
+msgstr "オプション機能"
+
+#: prefs.js:282
+msgid "Customize the dock background opacity"
+msgstr "Dock の背景の不透明度をカスタマイズする"
+
+#: prefs.js:299
+msgid "Opacity"
+msgstr "不透明度"
+
+#: prefs.js:315
+msgid "Only when in autohide"
+msgstr "自動非表示のときだけ"
+
+#: prefs.js:334
+msgid "Switch workspace when scrolling over the dock"
+msgstr "Dock 上でスクロールするとワークスペースを切り替える"
+
+#: prefs.js:345
+msgid "Switch one workspace at a time"
+msgstr "一度に切り替えるワークスペースをひとつだけにする"
+
+#: prefs.js:351
+msgid "Only a 1px wide area close to the screen edge is active"
+msgstr "画面端に接する 1px の領域だけスクロールに反応させる"
+
+#: prefs.js:356
+msgid "All the area of the dock is active"
+msgstr "Dock 上のすべての領域をスクロールに反応させる"
+
+#: prefs.js:378
+msgid "Customize actions on mouse click"
+msgstr "クリック時の挙動をカスタマイズする"
+
+#: prefs.js:393
+msgid "Action on clicking on running app"
+msgstr "起動中アプリケーションのクリック時の挙動"
+
+#: prefs.js:395
+msgid "Do nothing (default)"
+msgstr "なにもしない (既定)"
+
+#: prefs.js:396
+msgid "Minimize"
+msgstr "最小化する"
+
+#: prefs.js:397
+msgid "Launch new window"
+msgstr "新しいウィンドウで開く"
+
+#: prefs.js:398
+msgid "Cycle through application windows"
+msgstr "アプリケーションのウィンドウを切り替える"
+
+#: prefs.js:409
+msgid "Minimize window on shift+click (double click for all app windows)"
+msgstr "Shift+クリックでウィンドウを最小化 (ダブルクリックはアプリケーションの全ウィンドウが対象)"
