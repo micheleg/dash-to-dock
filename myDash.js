@@ -771,7 +771,7 @@ const myAppWellIcon = new Lang.Class({
                 this.emit('launching');
                 this.app.open_new_window(-1);
 
-            } else if (this._settings.get_boolean('minimize-shift') && modifiers & Clutter.ModifierType.SHIFT_MASK){
+            } else if (this._settings.get_boolean('minimize-shift') && this.app == focusedApp && !Main.overview._shown && this.app.get_windows().length == 1 ){
                 // On double click, minimize all windows in the current workspace
                 minimizeWindow(this.app, event.get_click_count() > 1);
 
