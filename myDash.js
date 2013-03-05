@@ -771,15 +771,21 @@ const myAppWellIcon = new Lang.Class({
                 this.emit('launching');
                 this.app.open_new_window(-1);
 
-            } else if (this._settings.get_boolean('minimize-shift') && this.app == focusedApp && !Main.overview._shown && this.app.get_windows().length == 1 ){
+            } else if (this._settings.get_boolean('minimize-shift') && modifiers & Clutter.ModifierType.SHIFT_MASK ){
                 // On double click, minimize all windows in the current workspace
                 minimizeWindow(this.app, event.get_click_count() > 1);
 
             } else if(this.app == focusedApp && !Main.overview._shown){
 
                 if(this._settings.get_enum('click-action') == clickAction.CYCLE_WINDOWS){
-                    this.emit('launching');
-                    cycleThroughWindows(this.app);
+                        if(this.app.get_windows().length == 1) {
+                                // if only single window is open for the current app and is focused minimize it.
+                                minimizeWindow(this.app,event.get_click_count() > 1);
+                        }
+                        else {
+                                this.emit('launching');
+                                cycleThroughWindows(this.app);
+                        }
 
                 } else if(this._settings.get_enum('click-action') == clickAction.MINIMIZE)
                     minimizeWindow(this.app, true);
