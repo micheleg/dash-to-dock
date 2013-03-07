@@ -780,7 +780,7 @@ const myAppWellIcon = new Lang.Class({
                 if(this._settings.get_enum('click-action') == clickAction.CYCLE_WINDOWS){
                         if(this.app.get_windows().length == 1) {
                                 // if only single window is open for the current app and is focused minimize it.
-                                minimizeWindow(this.app,event.get_click_count() > 1);
+                                minimizeWindow(this.app,true);
                         }
                         else {
                                 this.emit('launching');
