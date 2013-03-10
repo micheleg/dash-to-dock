@@ -515,13 +515,13 @@ const myDash = new Lang.Class({
     resetAppIcons : function() {
 
         let children = this._box.get_children().filter(function(actor) {
-            return actor._delegate.child &&
-                   actor._delegate.child._delegate &&
-                   actor._delegate.child._delegate.app;
+            return actor.child &&
+                actor.child._delegate &&
+                actor.child._delegate.icon;
         });
         for (let i = 0; i < children.length; i++) {
-            let item = children[i]._delegate;
-            item.actor.destroy();
+            let item = children[i];
+            item.destroy();
         }
 
         // to avoid ugly animations, just suppress them like when dash is first loaded.
