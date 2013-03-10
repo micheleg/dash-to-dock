@@ -256,7 +256,7 @@ const myDash = new Lang.Class({
     },
 
     _createAppItem: function(app) {
-        let appIcon = new myAppIcon(this, this._settings, app,
+        let appIcon = new myAppIcon(this._settings, app,
                                              { setSizeManually: true,
                                                showLabel: false });
         if (appIcon._draggable) {
@@ -299,6 +299,11 @@ const myDash = new Lang.Class({
             }
 
             item.hideLabel();
+        } else {
+            // I want to listen from outside when a menu is closed. I used to
+            // add a custom signal to the appIcon, since gnome 3.8 the signal
+            // calling this callback was added upstream.
+            this.emit('menu-closed');
         }
     },
 
@@ -773,7 +778,6 @@ Signals.addSignalMethods(myDash.prototype);
 /**
  * Extend AppIcon
  *
- * - emit "menu-closed" signal on popup menu close.
  * - Pass settings to the constructor and bind settings changes
  * - Apply a css class based on the number of windows of each application (#N);
  *   a class of the form "running#N" is applied to the AppWellIcon actor.
@@ -801,22 +805,13 @@ const myAppIcon = new Lang.Class({
     Name: 'dashToDock.AppIcon',
     Extends: AppDisplay.AppIcon,
 
-    // a good parent object is needed to emit the 'menu-closed' signal
-    // settings are also required inside.
-    _init: function(settings, parentObject, app, iconParams, onActivateOverride) {
+    // settings are required inside.
+    _init: function(settings, app, iconParams, onActivateOverride) {
 
         this._settings = settings;
         this._maxN =4;
 
         this.parent(app, iconParams, onActivateOverride);
-
-        // Emit a custom signal when a menu is closed
-        let _onMenuOpenStateOriginal = this._menuManager._onMenuOpenState;
-        this._menuManager._onMenuOpenState = function(menu, open){
-            if(!open)
-                parentObject.emit('menu-closed');
-            Lang.bind(this, _onMenuOpenStateOriginal)(menu, open);
-        };
 
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
