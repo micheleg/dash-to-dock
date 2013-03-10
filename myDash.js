@@ -168,10 +168,6 @@ const myDash = new Lang.Class({
 
     },
 
-    // Translators: this is the name of the dock/favorites area on
-    // the left of the overview
-    Main.ctrlAltTabManager.addGroup(this.actor, _("Dash"), 'user-bookmarks-symbolic');
-
     destroy: function() {
         this._signalHandler.disconnect();
     },
