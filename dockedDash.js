@@ -163,6 +163,11 @@ dockedDash.prototype = {
         // Set initial position
         this._resetPosition();
 
+        // Since Gnome 3.8 dragging an app without having opened the overview before cause the attemp to
+        //animate a null target since some variables are not initialized when the _viewSElector is created
+        if(Main.overview._viewSelector._activePage == null)
+                Main.overview._viewSelector._activePage = Main.overview._viewSelector._workspacesPage;
+
         // Now that the dash is on the stage and custom themes should be loaded
         // retrieve its background color
         this._getBackgroundColor();
