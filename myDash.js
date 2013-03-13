@@ -684,8 +684,12 @@ Signals.addSignalMethods(myDash.prototype);
  * - Apply a css class based on the number of windows of each application (#N);
  *   a class of the form "running#N" is applied to the AppWellIcon actor.
  *   like the original .running one.
+ * - add a .focused style to the focused app
  *
  */
+
+let tracker = Shell.WindowTracker.get_default();
+
 const myAppIcon = new Lang.Class({
     Name: 'dashToDock.AppIcon',
     Extends: AppDisplay.AppIcon,
@@ -695,7 +699,7 @@ const myAppIcon = new Lang.Class({
     _init: function(settings, parentObject, app, iconParams, onActivateOverride) {
 
         this._settings = settings;
-        this._maxN  =4;
+        this._maxN =4;
 
         this.parent(app, iconParams, onActivateOverride);
 
@@ -717,6 +721,9 @@ const myAppIcon = new Lang.Class({
         this._stateChangedId = this.app.connect('windows-changed',
                                                 Lang.bind(this,
                                                           this._onStateChanged));
+        this._focuseAppChangeId = tracker.connect('notify::focus-app',
+                                                Lang.bind(this,
+                                                          this._onFocusAppChanged));
 
     },
 
@@ -725,12 +732,21 @@ const myAppIcon = new Lang.Class({
 
         // Disconect global signals
         // stateChangedId is already handled by parent)
+        if(this._focusAppId>0)
+            tracker.disconnect(this._focusAppId);
     },
 
     _onStateChanged: function() {
 
         this.parent();
         this._updateCounterClass();
+    },
+
+    _onFocusAppChanged: function() {
+        if(tracker.focus_app == this.app)
+            this.actor.add_style_class_name('focused');
+        else
+            this.actor.remove_style_class_name('focused');
     },
 
     _updateCounterClass: function() {
