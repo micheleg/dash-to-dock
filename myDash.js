@@ -768,10 +768,23 @@ Signals.addSignalMethods(myDash.prototype);
  *   a class of the form "running#N" is applied to the AppWellIcon actor.
  *   like the original .running one.
  * - add a .focused style to the focused app
+ * - Customize click actions.
  *
  */
 
 let tracker = Shell.WindowTracker.get_default();
+
+const clickAction = {
+    SKIP: 0,
+    MINIMIZE: 1,
+    LAUNCH: 2,
+    CYCLE_WINDOWS: 3
+};
+
+let recentlyClickedAppLoopId = 0;
+let recentlyClickedApp = null;
+let recentlyClickedAppWindows = null;
+let recentlyClickedAppIndex = 0;
 
 const myAppIcon = new Lang.Class({
     Name: 'dashToDock.AppIcon',
@@ -832,6 +845,74 @@ const myAppIcon = new Lang.Class({
             this.actor.remove_style_class_name('focused');
     },
 
+    activate: function(button) {
+
+        if ( !this._settings.get_boolean('customize-click') ){
+            this.parent(button);
+            return;
+        }
+
+        let event = Clutter.get_current_event();
+        let modifiers = event ? event.get_state() : 0;
+        let openNewWindow = modifiers & Clutter.ModifierType.CONTROL_MASK &&
+                            this.app.state == Shell.AppState.RUNNING ||
+                            button && button == 2;
+        let focusedApp = tracker.focus_app;
+
+        if(button && button == 1 && this.app.state == Shell.AppState.RUNNING) {
+
+            if(modifiers & Clutter.ModifierType.CONTROL_MASK){
+                // Keep default behaviour: launch new window
+                // By calling the parent method I make it compatible
+                // with other extensions tweaking ctrl + click
+                this.parent(button);
+                return;
+
+            } else if (this._settings.get_boolean('minimize-shift') && modifiers & Clutter.ModifierType.SHIFT_MASK){
+                // On double click, minimize all windows in the current workspace
+                minimizeWindow(this.app, event.get_click_count() > 1);
+
+            } else if(this.app == focusedApp && !Main.overview._shown){
+
+                if(this._settings.get_enum('click-action') == clickAction.CYCLE_WINDOWS){
+                    this.emit('launching');
+                    cycleThroughWindows(this.app);
+
+                } else if(this._settings.get_enum('click-action') == clickAction.MINIMIZE)
+                    minimizeWindow(this.app, true);
+
+                else if(this._settings.get_enum('click-action') == clickAction.LAUNCH){
+                    this.emit('launching');
+                    this.app.open_new_window(-1);
+                }
+
+            } else {
+                // Activate all window of the app or only le last used
+                this.emit('launching');
+                if (this._settings.get_enum('click-action') == clickAction.CYCLE_WINDOWS && !Main.overview._shown){
+                    // If click cycles through windows I can activate one windows at a time
+                    let windows = this.app.get_windows();
+                    let w = windows[0];
+                    Main.activateWindow(w);
+                } else if(this._settings.get_enum('click-action') == clickAction.LAUNCH)
+                    this.app.open_new_window(-1);
+                else if(this._settings.get_enum('click-action') == clickAction.MINIMIZE){
+                    // If click minimizes all, then one expects all windows to be reshown
+                    activateAllWindows(this.app);
+                } else
+                    this.app.activate();
+            }
+        } else {
+         // Default behaviour
+         if (openNewWindow)
+            this.app.open_new_window(-1);
+         else
+            this.app.activate();
+        }
+
+        Main.overview.hide();
+    },
+
     _updateCounterClass: function() {
 
         let n = this.app.get_n_windows();
@@ -848,3 +929,85 @@ const myAppIcon = new Lang.Class({
     }
 });
 
+function minimizeWindow(app, param){
+    // Param true make all app windows minimize
+    let windows = app.get_windows();
+    let current_workspace = global.screen.get_active_workspace();
+    for (let i = 0; i < windows.length; i++) {
+        let w = windows[i];
+        if (w.get_workspace() == current_workspace && w.showing_on_its_workspace()){
+            w.minimize();
+            // Just minimize one window. By specification it should be the
+            // focused window on the current workspace.
+            if(!param)
+                break;
+        }
+    }
+}
+
+/*
+ * By default only non minimized windows are activated.
+ * This activates all windows in the current workspace.
+ */
+function activateAllWindows(app){
+
+    // First activate first window so workspace is switched if needed.
+    app.activate();
+
+    // then activate all other app windows in the current workspace
+    let windows = app.get_windows();
+    let activeWorkspace = global.screen.get_active_workspace_index();
+
+    if( windows.length<=0)
+        return;
+
+    let activatedWindows = 0;
+
+    for (let i=windows.length-1; i>=0; i--){
+        if(windows[i].get_workspace().index() == activeWorkspace){
+            Main.activateWindow(windows[i]);
+            activatedWindows++;
+        }
+    }
+}
+
+function cycleThroughWindows(app) {
+
+    // Store for a little amount of time last clicked app and its windows
+    // since the order changes upon window interaction
+    let MEMORY_TIME=3000;
+
+    if(recentlyClickedAppLoopId>0)
+        Mainloop.source_remove(recentlyClickedAppLoopId);
+    recentlyClickedAppLoopId = Mainloop.timeout_add(MEMORY_TIME, resetRecentlyClickedApp);
+
+    // If there isn't already a list of windows for the current app,
+    // or the stored list is outdated, use the current windows list.
+    if( !recentlyClickedApp ||
+        recentlyClickedApp.get_id() != app.get_id() ||
+        recentlyClickedAppWindows.length != app.get_windows().length
+      ){
+
+        recentlyClickedApp = app;
+        recentlyClickedAppWindows = app.get_windows();
+        recentlyClickedAppIndex = 0;
+    }
+
+    recentlyClickedAppIndex++;
+    let index = recentlyClickedAppIndex % recentlyClickedAppWindows.length;
+    let window = recentlyClickedAppWindows[index];
+
+    Main.activateWindow(window);
+}
+
+function resetRecentlyClickedApp() {
+
+    if(recentlyClickedAppLoopId>0)
+        Mainloop.source_remove(recentlyClickedAppLoopId);
+    recentlyClickedAppLoopId=0;
+    recentlyClickedApp =null;
+    recentlyClickedAppWindows = null;
+    recentlyClickedAppIndex = 0;
+
+    return false;
+}
