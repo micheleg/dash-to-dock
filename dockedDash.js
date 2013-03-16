@@ -589,6 +589,11 @@ dockedDash.prototype = {
 
     // Show dock and give key focus to it
     _onAccessibilityFocus: function(){
+
+        if (global.stage_input_mode == Shell.StageInputMode.NONREACTIVE ||
+        global.stage_input_mode == Shell.StageInputMode.NORMAL)
+            global.set_stage_input_mode(Shell.StageInputMode.FOCUSED);
+
         this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
         this._animateIn(this._settings.get_double('animation-time'), 0);
 
