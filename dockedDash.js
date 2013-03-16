@@ -50,7 +50,12 @@ dockedDash.prototype = {
         this._customizedBackground = {red: 0, green:0, blue: 0, alpha:0};
 
         // Hide usual Dash
-        Main.overview._dash.actor.hide();
+        // For some reason if I hide the actor object as I used to do before reshowing it when disabling
+        // the extension leads to the dash being placed in the center of the overview.
+        // Hiding the parent container seems to work properly instead
+        // I don't know if it's linked with this bug: https://bugzilla.gnome.org/show_bug.cgi?id=692744.
+        // However tha same workaround doesn't work.
+        Main.overview._controls.dashActor.hide();
 
         // Create a new dash object
         this.dash = new MyDash.myDash(this._settings); // this.dash = new MyDash.myDash();
@@ -189,7 +194,7 @@ dockedDash.prototype = {
         this.actor.destroy();
 
         // Reshow normal dash previously hidden
-        Main.overview._dash.actor.show();
+        Main.overview._controls.dashActor.show();
 
     },
 
