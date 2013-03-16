@@ -151,7 +151,6 @@ dockedDash.prototype = {
         Main.ctrlAltTabManager.addGroup(
             this.dash.actor, _("Dash"),'user-bookmarks',
                 {focusCallback: Lang.bind(this, this._onAccessibilityFocus)});
-        this.actor.connect('key-press-event', Lang.bind(this, this._onKeyPress));
 
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
@@ -382,8 +381,6 @@ dockedDash.prototype = {
                 onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
                 onComplete: Lang.bind(this, function() {
                     this._animStatus.end();
-                    // Disconnect unnecessary signals used for accessibility
-                    this._signalHandler.disconnectWithLabel('accessibility');
                     })
             });
         }
@@ -595,61 +592,8 @@ dockedDash.prototype = {
             global.set_stage_input_mode(Shell.StageInputMode.FOCUSED);
 
         this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
+
         this._animateIn(this._settings.get_double('animation-time'), 0);
-
-        this._signalHandler.disconnectWithLabel('accessibility');
-        this._signalHandler.pushWithLabel('accessibility',
-            [
-                global.stage,
-                'notify::key-focus',
-                Lang.bind(this, accessibilityCheck)
-            ],
-            // This is needed because when launching a new app focus is still the dash
-            // for some reasons and the new window is still not focused when 
-            // notify::key-focus signal triggers.
-            // global.display 's 'window-created' doesn't work
-            [
-                global.screen,
-                'restacked',
-                Lang.bind(this, accessibilityCheck)
-            ]
-
-        );
-
-        function accessibilityCheck(){
-            if (!this._dashHasFocus() && ! this._dashMenuIsUp() ) {
-                this._signalHandler.disconnectWithLabel('accessibility');
-                if( this._settings.get_boolean('autohide') ){
-                    this._box.sync_hover();
-                    this._hoverChanged();
-                } else {
-                    this._hide();
-                }
-            }
-        };
-    },
-
-   _onKeyPress: function(entry, event) {
-        let symbol = event.get_key_symbol();
-
-        // Exit accessibility focus
-        if (symbol == Clutter.Escape || symbol == Clutter.Enter) {
-
-            global.stage.set_key_focus(null);
-
-            if( this._settings.get_boolean('autohide') ){
-                // Force hover update
-                // Set hover true, thus do nothing since the dash is already shown;
-                // then sync hover, if mouse is away hide the dash.
-                this._box.hover = true;
-                this._box.sync_hover();
-            } else {
-                this._hide();
-            }
-
-            // TODO: find a way to restore focus on old window if nothing changed?
-
-        }
     },
 
     _onShowAppsButtonToggled: function() {
@@ -692,35 +636,6 @@ dockedDash.prototype = {
         let status = Main.overview._viewSelector._showAppsButton.checked;
         if(this.dash.showAppsButton.checked !== status)
             this.dash.showAppsButton.checked = status;
-    },
-
-    // Check if some app icon's menu is up
-    _dashMenuIsUp: function() {
-
-        let iconChildren = this.dash._box.get_children();
-
-        let isMenuUp=false;
-        for( let i = 0; i<iconChildren.length; i++) {
-            try {
-                isMenuUp = isMenuUp || iconChildren[i]._delegate.child._delegate.isMenuUp;
-            } catch(err) {}
-        }
-
-        return isMenuUp;
-    },
-
-    // Check if some app icon's menu has key focus
-    _dashHasFocus: function() {
-
-        let focusedActor = global.stage.get_key_focus();
-        let hasFocus = this.actor.contains(focusedActor) ;
-
-        // For some reason the app icon keep focus even when the focus is on a window
-        // after pressing enter or spacebar.
-        // In this way it seems to work correctly
-        hasFocus = hasFocus && (global.display.get_focus_window() == null);
-
-        return hasFocus;
     },
 
     // Optional features enable/disable
