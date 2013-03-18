@@ -5,6 +5,8 @@ const Meta = imports.gi.Meta;
 const Mainloop = imports.mainloop;
 
 const Main = imports.ui.main;
+const ViewSelector = imports.ui.viewSelector;
+
 const Shell = imports.gi.Shell;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -115,7 +117,13 @@ intellihide.prototype = {
             [
                 Main.overview,
                 'hiding',
-                Lang.bind(this,this._overviewExit)
+                Lang.bind(this, this._overviewExit)
+            ],
+            // Follow 3.8 behaviour: hide on appview
+            [
+                Main.overview._viewSelector,
+                'page-changed',
+                Lang.bind(this, this._pageChanged)
             ],
             // update wne monitor changes, for instance in multimonitor when monitor are attached
             [
@@ -190,6 +198,21 @@ intellihide.prototype = {
     _overviewEnter: function() {
         this._disableIntellihide = true;
         this._show();
+    },
+
+    _pageChanged: function() {
+
+        let activePage = Main.overview._viewSelector.getActivePage();
+        let dashVisible = (activePage == ViewSelector.ViewPage.WINDOWS ||
+                           activePage == ViewSelector.ViewPage.APPS);
+
+        if(dashVisible){
+            this._disableIntellihide = false;
+            this._show();
+        } else {
+            this._disableIntellihide = true;
+            this._hide();
+        }
     },
 
     _grabOpBegin: function() {
