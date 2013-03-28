@@ -65,15 +65,14 @@ const DashToDockInputRegionContainer = new Lang.Class({
 
         let childBox = new Clutter.ActorBox();
 
-        // If the child actor overflows on the right, do not move it. 
-        // The allocate function will reduce the container width instead (and
-        // the container anchor point will make the actor move).
-        // TODO reconsider using or not the anchor point
+        log("BOX " + box.x1  + box.x2);
 
-        if(this.child.x > 0 )
-            childBox.x1 = x_anchor;
-        else
-            childBox.x1 = this.child.x - x_anchor;
+        if(this.child.get_anchor_point_gravity() == Clutter.Gravity.NORTH_EAST){
+            childBox.x1 = (box.x2 - box.x1)
+        }
+        else {
+            childBox.x1 = 0;
+        }
 
         childBox.y1 = this.child.y;
 
@@ -81,7 +80,7 @@ const DashToDockInputRegionContainer = new Lang.Class({
         childBox.y2 = childBox.y1 + childHeight;
 
         this.child.allocate(childBox, flags);
-        log("ALL: " + " " + childBox.x1+ " " +x_anchor+ " " +this.child.x + " " + this.child.allocation.x1);
+//        log("ALL: " + " " + childBox.x1+ " " +x_anchor+ " " +this.child.x + " " + this.child.allocation.x1);
     },
 
     // Just return the child preferred height
@@ -94,6 +93,7 @@ const DashToDockInputRegionContainer = new Lang.Class({
             return;
 
         [alloc.min_size, alloc.natural_size] = this.child.get_preferred_height(forWidth);
+
     },
 
     // Return the child preferred width but subtract the length of the overflowing part
@@ -104,14 +104,14 @@ const DashToDockInputRegionContainer = new Lang.Class({
         if (this.child == null)
             return;
 
-        [alloc.min_size, alloc.natural_size] = this.child.get_preferred_width(forHeight);
+        //[alloc.min_size, alloc.natural_size] = this.child.get_preferred_width(forHeight);
 
         let [x_anchor, y_anchor] = this.child.get_anchor_point();
-log("PW: " + " " + alloc.natural_size+ " " +x_anchor+ " " +this.child.x);
+//log("PW: " + " " + alloc.natural_size+ " " +x_anchor+ " " +this.child.x);
 
-
-        alloc.min_size -= Math.abs(this.child.x);
-        alloc.natural_size -= Math.abs(this.child.x);
+        [alloc.min_size, alloc.natural_size] = this.child.get_preferred_width(forHeight);
+        //alloc.min_size = 100//this.actor.width;
+        //alloc.natural_size = 100;// this.actor.width
 
     },
 
@@ -409,9 +409,9 @@ dockedDash.prototype = {
         // Move anchor point so mode so that when dash icon size changes
         // the dash stays at the right position
         if(this._rtl){
-            //anchor_point = Clutter.Gravity.NORTH_EAST;
+            anchor_point = Clutter.Gravity.NORTH_EAST;
             //final_position = this._box.width;
-            anchor_point = Clutter.Gravity.NORTH_WEST;
+            //anchor_point = Clutter.Gravity.NORTH_WEST;
             final_position = 0;
         } else {
             anchor_point = Clutter.Gravity.NORTH_WEST;
@@ -429,7 +429,7 @@ dockedDash.prototype = {
         if(final_position !== target.x || 1){
             this._animStatus.queue(true);
             Tweener.addTween(target,{
-                x: final_position,
+                width: this.dash._box.width,
                 time: time,
                 delay: delay,
                 transition: 'easeOutQuad',
@@ -473,7 +473,7 @@ dockedDash.prototype = {
         if(final_position !== target.x || 1){
             this._animStatus.queue(false);
             Tweener.addTween(target,{
-                x: final_position,
+                width: 1,
                 time: time,
                 delay: delay ,
                 transition: 'easeOutQuad',
