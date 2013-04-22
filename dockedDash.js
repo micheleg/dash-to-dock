@@ -55,7 +55,7 @@ dockedDash.prototype = {
         // Hiding the parent container seems to work properly instead
         // I don't know if it's linked with this bug: https://bugzilla.gnome.org/show_bug.cgi?id=692744.
         // However tha same workaround doesn't work.
-        Main.overview._controls.dashActor.hide();
+        Main.overview._controls._dashSlider.actor.hide();
 
         // Create a new dash object
         this.dash = new MyDash.myDash(this._settings); // this.dash = new MyDash.myDash();
@@ -193,7 +193,7 @@ dockedDash.prototype = {
         this.actor.destroy();
 
         // Reshow normal dash previously hidden
-        Main.overview._controls.dashActor.show();
+        Main.overview._controls._dashSlider.actor.show();
 
     },
 
