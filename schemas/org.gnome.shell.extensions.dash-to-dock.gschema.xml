@@ -92,6 +92,11 @@
       <summary>Show favorites apps</summary>
       <description>Show or hide favorite appplications icons in the dash</description>
     </key>
+    <key type="b" name="show-apps-at-top">
+      <default>false</default>
+      <summary>Show application button at top</summary>
+      <description>Show appplication button at top of the dash</description>
+    </key>
     <key type="b" name="bolt-support">
       <default>true</default>
       <summary>Basic compatibility with bolt extensions</summary>

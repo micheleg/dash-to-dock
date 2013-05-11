@@ -262,10 +262,16 @@ const WorkspaceSettingsWidget = new GObject.Class({
         showRunning.connect('toggled', Lang.bind(this, function(check){
             this.settings.set_boolean('show-running', check.get_active());
         }));
+    let showAppsAtTop =  new Gtk.CheckButton({label: _("Show applications button at the top")});
+        showAppsAtTop.set_active(this.settings.get_boolean('show-apps-at-top'));
+        showAppsAtTop.connect('toggled', Lang.bind(this, function(check){
+            this.settings.set_boolean('show-apps-at-top', check.get_active());
+        }));
 
     showIcons.add(showFavorites);
     showIcons.add(showRunning);
-
+    showIcons.add(showAppsAtTop);
+    
     dockSettings.add(showIcons);
 
     notebook.append_page(dockSettings, dockSettingsTitle);
