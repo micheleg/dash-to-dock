@@ -220,6 +220,11 @@ dockedDash.prototype = {
         this._settings.connect('changed::show-running', Lang.bind(this, function(){
             this.dash.resetAppIcons();
         }));
+
+        this._settings.connect('changed::show-apps-at-top', Lang.bind(this, function(){
+            this.dash.resetAppIcons();
+        }));
+
         this._settings.connect('changed::dock-fixed', Lang.bind(this, function(){
             Main.layoutManager.untrackChrome(this.dash._box);
             Main.layoutManager.trackChrome(this.dash._box, {affectsStruts: this._settings.get_boolean('dock-fixed')});
