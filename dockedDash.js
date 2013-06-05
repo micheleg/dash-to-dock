@@ -154,7 +154,6 @@ dockedDash.prototype = {
 
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
-
     },
 
     _initialize: function(){
@@ -195,6 +194,7 @@ dockedDash.prototype = {
         // Reshow normal dash previously hidden
         Main.overview._controls._dashSlider.actor.show();
 
+        this._setMainPanelX(0);
     },
 
     _bindSettingsChanges: function() {
@@ -235,6 +235,8 @@ dockedDash.prototype = {
             } else {
                 this.emit('box-changed');
             }
+
+            this._updateYPosition();
         }));
         this._settings.connect('changed::autohide', Lang.bind(this, function(){
             this.emit('box-changed');
@@ -487,18 +489,22 @@ dockedDash.prototype = {
         let unavailableTopSpace = 0;
         let unavailableBottomSpace = 0;
 
+        let extendHeight = this._settings.get_boolean('extend-height');
+        let dockFixed = this._settings.get_boolean('dock-fixed');
+
         // check if the dock is on the primary monitor
         if ( this._monitor.x == Main.layoutManager.primaryMonitor.x &&
              this._monitor.y == Main.layoutManager.primaryMonitor.y ){
-
-            unavailableTopSpace = Main.panel.actor.height;
+            if (!extendHeight || !dockFixed) {
+                unavailableTopSpace = Main.panel.actor.height;
+            }
         }
 
         let availableHeight = this._monitor.height - unavailableTopSpace - unavailableBottomSpace;
 
         let fraction = this._settings.get_double('height-fraction');
 
-        if(this._settings.get_boolean('extend-height'))
+        if(extendHeight)
             fraction = 1;
         else if(fraction<0 || fraction >1)
             fraction = 0.95;
@@ -507,7 +513,7 @@ dockedDash.prototype = {
         this.actor.y = this._monitor.y + unavailableTopSpace + Math.round( (1-fraction)/2 * availableHeight);
         this.actor.y_align = St.Align.MIDDLE;
 
-        if(this._settings.get_boolean('extend-height')){
+        if(extendHeight){
             this.dash._container.set_height(this.actor.height);
             this.actor.add_style_class_name('extended');
         } else {
@@ -516,6 +522,18 @@ dockedDash.prototype = {
         }
 
         this._updateStaticBox();
+
+        if (extendHeight && dockFixed)
+            this._setMainPanelX(this.actor.width - 1);
+        else
+            this._setMainPanelX(0);
+    },
+
+    _setMainPanelX: function(x) {
+        Main.panel.actor.x = this._rtl ? 0 : x;
+        Main.panel.actor.width = this._monitor.width - x;
+        Main.layoutManager.removeChrome(Main.panel.actor);
+        Main.layoutManager.addChrome(Main.panel.actor, { affectsStruts: true });
     },
 
     _updateStaticBox: function() {
