@@ -527,6 +527,8 @@ dockedDash.prototype = {
     _setMainPanelX: function(x) {
         let panelActor = Main.panel.actor;
 
+        panelActor.set_width(this._monitor.width - x);
+
         if (this._rtl)
             panelActor.set_margin_right(x);
         else
