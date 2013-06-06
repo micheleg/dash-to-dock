@@ -530,10 +530,12 @@ dockedDash.prototype = {
     },
 
     _setMainPanelX: function(x) {
-        Main.panel.actor.x = this._rtl ? 0 : x;
-        Main.panel.actor.width = this._monitor.width - x;
-        Main.layoutManager.removeChrome(Main.panel.actor);
-        Main.layoutManager.addChrome(Main.panel.actor, { affectsStruts: true });
+        let panelActor = Main.panel.actor;
+
+        if (this._rtl)
+            panelActor.set_margin_right(x);
+        else
+            panelActor.set_margin_left(x);
     },
 
     _updateStaticBox: function() {
