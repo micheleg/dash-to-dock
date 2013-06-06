@@ -211,7 +211,6 @@ dockedDash.prototype = {
 
         this._settings.connect('changed::dash-max-icon-size', Lang.bind(this, function(){
             this.dash.setMaxIconSize(this._settings.get_int('dash-max-icon-size'));
-            this._updateYPosition();
         }));
 
         this._settings.connect('changed::show-favorites', Lang.bind(this, function(){
@@ -523,11 +522,6 @@ dockedDash.prototype = {
         }
 
         this._updateStaticBox();
-
-        if (extendHeight && dockFixed)
-            this._setMainPanelX(this.actor.width - 1);
-        else
-            this._setMainPanelX(0);
     },
 
     _setMainPanelX: function(x) {
@@ -537,6 +531,16 @@ dockedDash.prototype = {
             panelActor.set_margin_right(x);
         else
             panelActor.set_margin_left(x);
+    },
+
+    _updateMainPanel: function() {
+        let extendHeight = this._settings.get_boolean('extend-height');
+        let dockFixed = this._settings.get_boolean('dock-fixed');
+
+        if (extendHeight && dockFixed)
+            this._setMainPanelX(this.staticBox.x2 - 1);
+        else
+            this._setMainPanelX(0);
     },
 
     _updateStaticBox: function() {
@@ -550,6 +554,8 @@ dockedDash.prototype = {
 
         // If allocation is changed, probably also the clipping has to be updated.
         this._updateClip();
+
+        this._updateMainPanel();
 
         this.emit('box-changed');
     },
