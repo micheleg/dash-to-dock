@@ -211,6 +211,7 @@ dockedDash.prototype = {
 
         this._settings.connect('changed::dash-max-icon-size', Lang.bind(this, function(){
             this.dash.setMaxIconSize(this._settings.get_int('dash-max-icon-size'));
+            this._updateYPosition();
         }));
 
         this._settings.connect('changed::show-favorites', Lang.bind(this, function(){
