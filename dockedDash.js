@@ -194,7 +194,7 @@ dockedDash.prototype = {
         // Reshow normal dash previously hidden
         Main.overview._controls._dashSlider.actor.show();
 
-        this._setMainPanelX(0);
+        this._revertMainPanel();
     },
 
     _bindSettingsChanges: function() {
@@ -524,25 +524,29 @@ dockedDash.prototype = {
         this._updateStaticBox();
     },
 
-    _setMainPanelX: function(x) {
+    _revertMainPanel: function() {
         let panelActor = Main.panel.actor;
-
-        panelActor.set_width(this._monitor.width - x);
-
-        if (this._rtl)
-            panelActor.set_margin_right(x);
-        else
-            panelActor.set_margin_left(x);
+        panelActor.set_width(this._monitor.width);
+        panelActor.set_margin_right(0);
+        panelActor.set_margin_left(0);
     },
 
     _updateMainPanel: function() {
         let extendHeight = this._settings.get_boolean('extend-height');
         let dockFixed = this._settings.get_boolean('dock-fixed');
+        let panelActor = Main.panel.actor;
 
-        if (extendHeight && dockFixed)
-            this._setMainPanelX(this.staticBox.x2 - 1);
-        else
-            this._setMainPanelX(0);
+        if (extendHeight && dockFixed) {
+            if (this._rtl) {
+                panelActor.set_width(this.staticBox.x1);
+                panelActor.set_margin_right(this.staticBox.x2);
+            } else {
+                panelActor.set_width(this._monitor.width - this.staticBox.x2);
+                panelActor.set_margin_left(this.staticBox.x2 - 1);
+            }
+        } else {
+            this._revertMainPanel();
+        }
     },
 
     _updateStaticBox: function() {
