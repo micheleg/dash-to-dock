@@ -297,10 +297,11 @@ const WorkspaceSettingsWidget = new GObject.Class({
     opaqueLayerControl.add(opaqueLayer);
     customization.add(opaqueLayerControl);
 
-    let opaqueLayerMain = new Gtk.Box({spacing:30, orientation:Gtk.Orientation.HORIZONTAL, homogeneous:false,
-                                       margin:10});
+    let opaqueLayerMain = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL, homogeneous:false,
+                                       margin_left:10, margin_top:5, margin_bottom:10, margin_right:10});
     indentWidget(opaqueLayerMain);
 
+    let opaqueLayerOpacity = new Gtk.Box({spacing:30, homogeneous:false});
     let opacityLayerTimeout=0; // Used to avoid to continuosly update the opacity
     let layerOpacityLabel = new Gtk.Label({label: _("Opacity"), use_markup: true, xalign: 0});
     let layerOpacity =  new Gtk.Scale({orientation: Gtk.Orientation.HORIZONTAL, valuePos: Gtk.PositionType.RIGHT});
@@ -308,7 +309,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
         layerOpacity.set_value(this.settings.get_double('background-opacity')*100);
         layerOpacity.set_digits(0);
         layerOpacity.set_increments(5,5);
-        layerOpacity.set_size_request(200, -1);
+        //layerOpacity.set_size_request(-1, -1);
         layerOpacity.connect('value-changed', Lang.bind(this, function(button){
             let s = button.get_value()/100;
             if(opacityLayerTimeout>0)
@@ -318,18 +319,27 @@ const WorkspaceSettingsWidget = new GObject.Class({
                 return false;
             }));
         }));
-     let opaqueLayeralwaysVisible =  new Gtk.CheckButton({label: _("Only when in autohide")});
+    opaqueLayerOpacity.add(layerOpacityLabel);
+    opaqueLayerOpacity.pack_end(layerOpacity, true, true, 0);
+
+    let opaqueLayeralwaysVisible =  new Gtk.CheckButton({label: _("Only when in autohide")});
         opaqueLayeralwaysVisible.set_active(!this.settings.get_boolean('opaque-background-always'));
         opaqueLayeralwaysVisible.connect('toggled', Lang.bind(this, function(check){
             this.settings.set_boolean('opaque-background-always', !check.get_active());
         }));
 
+    let opaqueLayerDisableMax =  new Gtk.CheckButton({label: _("Disable when maximized window")});
+        opaqueLayerDisableMax.set_active(this.settings.get_boolean('opaque-background-disable-max'));
+        opaqueLayerDisableMax.connect('toggled', Lang.bind(this, function(check){
+            this.settings.set_boolean('opaque-background-disable-max', check.get_active());
+        }));
+
     this.settings.bind('opaque-background', opaqueLayerMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
 
-    opaqueLayerMain.add(layerOpacityLabel);
-    opaqueLayerMain.add(layerOpacity);
+    opaqueLayerMain.add(opaqueLayerOpacity);
     opaqueLayerMain.add(opaqueLayeralwaysVisible);
+    opaqueLayerMain.add(opaqueLayerDisableMax);
 
     customization.add(opaqueLayerMain);
 
