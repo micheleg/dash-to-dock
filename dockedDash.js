@@ -484,6 +484,11 @@ dockedDash.prototype = {
         this._updateBackgroundOpacity();
     },
 
+    _isPrimaryMonitor: function() {
+        return (this._monitor.x == Main.layoutManager.primaryMonitor.x &&
+             this._monitor.y == Main.layoutManager.primaryMonitor.y);
+    },
+
     _updateYPosition: function() {
 
         let unavailableTopSpace = 0;
@@ -493,8 +498,7 @@ dockedDash.prototype = {
         let dockFixed = this._settings.get_boolean('dock-fixed');
 
         // check if the dock is on the primary monitor
-        if ( this._monitor.x == Main.layoutManager.primaryMonitor.x &&
-             this._monitor.y == Main.layoutManager.primaryMonitor.y ){
+        if (this._isPrimaryMonitor()){
             if (!extendHeight || !dockFixed) {
                 unavailableTopSpace = Main.panel.actor.height;
             }
@@ -536,7 +540,7 @@ dockedDash.prototype = {
         let dockFixed = this._settings.get_boolean('dock-fixed');
         let panelActor = Main.panel.actor;
 
-        if (extendHeight && dockFixed) {
+        if (this._isPrimaryMonitor() && extendHeight && dockFixed) {
             if (this._rtl) {
                 panelActor.set_width(this.staticBox.x1);
                 panelActor.set_margin_right(this.staticBox.x2);
