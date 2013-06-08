@@ -328,10 +328,10 @@ const WorkspaceSettingsWidget = new GObject.Class({
             this.settings.set_boolean('opaque-background-always', !check.get_active());
         }));
 
-    let opaqueLayerDisableMax =  new Gtk.CheckButton({label: _("Disable when maximized window")});
-        opaqueLayerDisableMax.set_active(this.settings.get_boolean('opaque-background-disable-max'));
+    let opaqueLayerDisableMax =  new Gtk.CheckButton({label: _("Only when no maximized window")});
+        opaqueLayerDisableMax.set_active(this.settings.get_boolean('opaque-background-no-max'));
         opaqueLayerDisableMax.connect('toggled', Lang.bind(this, function(check){
-            this.settings.set_boolean('opaque-background-disable-max', check.get_active());
+            this.settings.set_boolean('opaque-background-no-max', check.get_active());
         }));
 
     this.settings.bind('opaque-background', opaqueLayerMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);

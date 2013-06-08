@@ -32,7 +32,7 @@
       <summary>Dash background always opaque</summary>
       <description>Makes the background of the dash opaque improving readability even when not in autohide mode.</description>
     </key>
-    <key type="b" name="opaque-background-disable-max">
+    <key type="b" name="opaque-background-no-max">
       <default>false</default>
       <summary>Dash background opaque with not maximized windows</summary>
       <description>Makes the background of the dash opaque only when all windows on current desktop are not maximized.</description>

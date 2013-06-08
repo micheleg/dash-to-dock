@@ -146,6 +146,11 @@ dockedDash.prototype = {
 
         // sync hover after a popupmenu is closed
         this.dash.connect('menu-closed', Lang.bind(this, function(){this._box.sync_hover();}));
+        
+        global.display.connect('window-created', Lang.bind(this, function() {
+            this._updateOnMaximizeListeners();
+            this._updateBackgroundOpacity();
+        }));
 
         // Restore dash accessibility
         Main.ctrlAltTabManager.addGroup(
@@ -175,11 +180,23 @@ dockedDash.prototype = {
         // Now that the dash is on the stage and custom themes should be loaded
         // retrieve its background color
         this._getBackgroundColor();
+        this._updateOnMaximizeListeners();
         this._updateBackgroundOpacity();
 
         // Show 
         this.actor.set_opacity(255); //this.actor.show();
 
+    },
+
+    _updateOnMaximizeListeners: function() {
+        let windows = global.get_window_actors();
+        for (let i = 0; i < windows.length; i++) {
+            let window = windows[i];
+            if (!window.onSizeChangedRegistered) {
+                window.onSizeChangedRegistered = true;
+                window.connect('size-changed', Lang.bind(this, this._updateBackgroundOpacity));
+            }
+        }
     },
 
     destroy: function(){
@@ -204,6 +221,8 @@ dockedDash.prototype = {
         this._settings.connect('changed::background-opacity', Lang.bind(this,this._updateBackgroundOpacity));
 
         this._settings.connect('changed::opaque-background-always', Lang.bind(this,this._updateBackgroundOpacity));
+
+        this._settings.connect('changed::opaque-background-no-max', Lang.bind(this,this._updateBackgroundOpacity));
 
         this._settings.connect('changed::scroll-switch-workspace', Lang.bind(this, function(){
             this._optionalScrollWorkspaceSwitch(this._settings.get_boolean('scroll-switch-workspace'));
@@ -436,8 +455,8 @@ dockedDash.prototype = {
     },
 
     _updateBackgroundOpacity: function() {
-
         let newAlpha = this._settings.get_double('background-opacity');
+        let animationTime = this._settings.get_double('animation-time');
 
         this._defaultBackground = 'rgba('+
             this._defaultBackgroundColor.red + ','+
@@ -451,11 +470,15 @@ dockedDash.prototype = {
             this._defaultBackgroundColor.blue + ','+
             newAlpha + ')';
 
-        if(this._settings.get_boolean('opaque-background') && (this._autohideStatus || this._settings.get_boolean('opaque-background-always'))){
-            this._fadeInBackground(this._settings.get_double('animation-time'), 0);
-        }
-        else if(!this._settings.get_boolean('opaque-background') || (!this._autohideStatus && !this._settings.get_boolean('opaque-background-always'))) {
-            this._fadeOutBackground(this._settings.get_double('animation-time'), 0);
+        if (this._settings.get_boolean('opaque-background-no-max') && this._isAnyMaximizedWindow()) {
+            this._fadeOutBackground(animationTime, 0);
+        } else {
+            if(this._settings.get_boolean('opaque-background') && (this._autohideStatus || this._settings.get_boolean('opaque-background-always'))){
+                this._fadeInBackground(animationTime, 0);
+            }
+            else if(!this._settings.get_boolean('opaque-background') || (!this._autohideStatus && !this._settings.get_boolean('opaque-background-always'))) {
+                this._fadeOutBackground(animationTime, 0);
+            }
         }
     },
 
@@ -481,6 +504,19 @@ dockedDash.prototype = {
         this._getBackgroundColor();
         this._updateBackgroundOpacity();
     },
+
+    _isAnyMaximizedWindow: function() {
+        let windows = global.get_window_actors();
+        for (let i = 0; i < windows.length; i++) {
+            let metaWindow = windows[i].metaWindow;
+            // window is maximized both horizontaly and verticaly
+            if (metaWindow.get_maximized() == 3 && !metaWindow.is_hidden()) {
+                return true;
+            }
+        }
+        return false;
+    },
+
 
     _updateYPosition: function() {
 
