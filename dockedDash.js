@@ -152,6 +152,8 @@ dockedDash.prototype = {
             this._updateBackgroundOpacity();
         }));
         global.screen.connect('workspace-switched', Lang.bind(this, this._updateBackgroundOpacity));
+        Main.overview.connect('showing', Lang.bind(this, this._updateBackgroundOpacity));
+        Main.overview.connect('hidden', Lang.bind(this, this._updateBackgroundOpacity));
 
         // Restore dash accessibility
         Main.ctrlAltTabManager.addGroup(
@@ -512,6 +514,10 @@ dockedDash.prototype = {
     },
 
     _isAnyMaximizedWindow: function() {
+        if (Main.overview.visible) {
+            return false;
+        }
+
         let windows = global.get_screen().get_active_workspace().list_windows();
         for (let i = 0; i < windows.length; i++) {
             let metaWindow = windows[i];
