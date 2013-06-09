@@ -148,9 +148,10 @@ dockedDash.prototype = {
         this.dash.connect('menu-closed', Lang.bind(this, function(){this._box.sync_hover();}));
         
         global.display.connect('window-created', Lang.bind(this, function() {
-            this._updateOnMaximizeListeners();
+            this._updateWindowListeners();
             this._updateBackgroundOpacity();
         }));
+        global.screen.connect('workspace-switched', Lang.bind(this, this._updateBackgroundOpacity));
 
         // Restore dash accessibility
         Main.ctrlAltTabManager.addGroup(
@@ -180,7 +181,7 @@ dockedDash.prototype = {
         // Now that the dash is on the stage and custom themes should be loaded
         // retrieve its background color
         this._getBackgroundColor();
-        this._updateOnMaximizeListeners();
+        this._updateWindowListeners();
         this._updateBackgroundOpacity();
 
         // Show 
@@ -188,13 +189,18 @@ dockedDash.prototype = {
 
     },
 
-    _updateOnMaximizeListeners: function() {
-        let windows = global.get_window_actors();
-        for (let i = 0; i < windows.length; i++) {
-            let window = windows[i];
-            if (!window.onSizeChangedRegistered) {
-                window.onSizeChangedRegistered = true;
-                window.connect('size-changed', Lang.bind(this, this._updateBackgroundOpacity));
+    _updateWindowListeners: function() {
+        let windowActors = global.get_window_actors();
+        let updateCallback = Lang.bind(this, this._updateBackgroundOpacity);
+        for (let i = 0; i < windowActors.length; i++) {
+            let windowActor = windowActors[i];
+            if (!windowActor.listenersRegistered) {
+                windowActor.listenersRegistered = true;
+                windowActor.connect('size-changed', updateCallback);
+                let metaWindow = windowActor.get_meta_window();
+                metaWindow.connect('unmanaged', updateCallback);
+                metaWindow.connect('workspace-changed', updateCallback);
+                metaWindow.connect('focus', updateCallback);
             }
         }
     },
@@ -506,9 +512,9 @@ dockedDash.prototype = {
     },
 
     _isAnyMaximizedWindow: function() {
-        let windows = global.get_window_actors();
+        let windows = global.get_screen().get_active_workspace().list_windows();
         for (let i = 0; i < windows.length; i++) {
-            let metaWindow = windows[i].metaWindow;
+            let metaWindow = windows[i];
             // window is maximized both horizontaly and verticaly
             if (metaWindow.get_maximized() == 3 && !metaWindow.is_hidden()) {
                 return true;
