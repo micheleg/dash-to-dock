@@ -515,14 +515,23 @@ dockedDash.prototype = {
         let windows = global.get_screen().get_active_workspace().list_windows();
         for (let i = 0; i < windows.length; i++) {
             let metaWindow = windows[i];
-            // window is maximized both horizontaly and verticaly
-            if (metaWindow.get_maximized() == 3 && !metaWindow.is_hidden()) {
+            let monitorIndex = metaWindow.get_monitor();
+
+            // window is on monitor with dash
+            if (this._isSameMonitor(this._monitor, global.get_screen().get_monitor_geometry(monitorIndex)) &&
+                // window is maximized both horizontaly and verticaly
+                metaWindow.get_maximized() == 3 &&
+                !metaWindow.is_hidden()) {
                 return true;
             }
         }
         return false;
     },
 
+    // comparing monitor geometry
+    _isSameMonitor: function(m1, m2) {
+        return m1.x == m2.x && m1.y == m2.y;
+    },
 
     _updateYPosition: function() {
 
@@ -530,9 +539,7 @@ dockedDash.prototype = {
         let unavailableBottomSpace = 0;
 
         // check if the dock is on the primary monitor
-        if ( this._monitor.x == Main.layoutManager.primaryMonitor.x &&
-             this._monitor.y == Main.layoutManager.primaryMonitor.y ){
-
+        if (this._isSameMonitor(this._monitor, Main.layoutManager.primaryMonitor)) {
             unavailableTopSpace = Main.panel.actor.height;
         }
 
