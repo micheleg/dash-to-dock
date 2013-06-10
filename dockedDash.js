@@ -545,7 +545,7 @@ dockedDash.prototype = {
                 panelActor.set_width(this.staticBox.x1);
                 panelActor.set_margin_right(this.staticBox.x2);
             } else {
-                panelActor.set_width(this._monitor.width - this.staticBox.x2);
+                panelActor.set_width(this._monitor.width - this.staticBox.x2 + 1);
                 panelActor.set_margin_left(this.staticBox.x2 - 1);
             }
         } else {
