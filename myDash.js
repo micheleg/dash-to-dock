@@ -627,7 +627,10 @@ const myDash = new Lang.Class({
 
         let children = this._box.get_children();
         let numChildren = children.length;
-        let boxHeight = this._box.height;
+        let boxHeight = 0;
+        for (let i = 0; i < numChildren; i++) {
+            boxHeight += children[i].height;
+        }
 
         // Keep the placeholder out of the index calculation; assuming that
         // the remove target has the same size as "normal" items, we don't
@@ -638,6 +641,9 @@ const myDash = new Lang.Class({
         }
 
         let pos = Math.floor(y * numChildren / boxHeight);
+        if (pos >  numChildren) {
+            pos = numChildren;
+        }
 
         if (pos != this._dragPlaceholderPos && pos <= numFavorites && this._animatingPlaceholdersCount == 0) {
             this._dragPlaceholderPos = pos;
