@@ -151,7 +151,7 @@ dockedDash.prototype = {
             this._updateWindowListeners();
             this._updateBackgroundOpacity();
         }));
-        global.screen.connect('workspace-switched', Lang.bind(this, this._updateBackgroundOpacity));
+        global.screen.connect('restacked', Lang.bind(this, this._updateBackgroundOpacity));
         Main.overview.connect('showing', Lang.bind(this, this._updateBackgroundOpacity));
         Main.overview.connect('hidden', Lang.bind(this, this._updateBackgroundOpacity));
 
@@ -193,15 +193,11 @@ dockedDash.prototype = {
 
     _updateWindowListeners: function() {
         let windowActors = global.get_window_actors();
-        let updateCallback = Lang.bind(this, this._updateBackgroundOpacity);
         for (let i = 0; i < windowActors.length; i++) {
             let windowActor = windowActors[i];
             if (!windowActor.listenersRegistered) {
                 windowActor.listenersRegistered = true;
-                windowActor.connect('size-changed', updateCallback);
-                windowActor.connect('position-changed', updateCallback);
-                let metaWindow = windowActor.get_meta_window();
-                metaWindow.connect('unmanaged', updateCallback);
+                windowActor.connect('size-changed', Lang.bind(this, this._updateBackgroundOpacity));
             }
         }
     },
