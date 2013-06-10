@@ -199,6 +199,7 @@ dockedDash.prototype = {
             if (!windowActor.listenersRegistered) {
                 windowActor.listenersRegistered = true;
                 windowActor.connect('size-changed', updateCallback);
+                windowActor.connect('position-changed', updateCallback);
                 let metaWindow = windowActor.get_meta_window();
                 metaWindow.connect('unmanaged', updateCallback);
                 metaWindow.connect('workspace-changed', updateCallback);
