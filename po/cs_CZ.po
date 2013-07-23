@@ -18,11 +18,11 @@ msgstr ""
 
 #: prefs.js:34
 msgid "Main Settings"
-msgstr "Hlavní nastavní"
+msgstr "Hlavní nastavení"
 
 #: prefs.js:43
 msgid "Dock is fixed and always visible"
-msgstr "Dock je zafixovaný aa je vždy vidět"
+msgstr "Dock je zafixovaný a je vždy vidět"
 
 #: prefs.js:59
 msgid "Animation time [ms]"
