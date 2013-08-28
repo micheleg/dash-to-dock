@@ -21,6 +21,8 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const MyDash = Me.imports.myDash;
 
+var already_switched = false; // only used if 'scroll-switch-workspace-one-at-a-time' is set.
+
 function dockedDash(settings) {
 
     this._init(settings);
@@ -699,16 +701,19 @@ dockedDash.prototype = {
             // Usefull on laptops when using a touchpad.
 
             if(this._settings.get_boolean('scroll-switch-workspace-one-at-a-time')){
-
-                // During the deadtime do nothing
-                if(this._optionalScrollWorkspaceSwitchDeadTimeId>0)
-                    return false;
-
-                this._optionalScrollWorkspaceSwitchDeadTimeId =  Mainloop.timeout_add(this._settings.get_int('scroll-switch-workspace-dead-time'),
-                    Lang.bind(this, function() {
-                        this._optionalScrollWorkspaceSwitchDeadTimeId=0;
-                    }
-                ));
+                if (already_switched) {
+                    // During the deadtime do nothing
+                    if(this._optionalScrollWorkspaceSwitchDeadTimeId>0)
+                        return false;
+    
+                    this._optionalScrollWorkspaceSwitchDeadTimeId = Mainloop.timeout_add((this._settings.get_double('scroll-switch-workspace-dead-time') * 1000),
+                                                                                          Lang.bind(this,                                                                                   
+                                                                                          function() {     
+                                                                                                         already_switched=0;
+                                                                                                         this._optionalScrollWorkspaceSwitchDeadTimeId=0;
+                                                                                                     }
+                                                                                        ));
+                }
             }
 
             // filter events occuring not near the screen border if required
@@ -733,6 +738,8 @@ dockedDash.prototype = {
                 Main.wm.actionMoveWorkspace(Meta.MotionDirection.DOWN);
                 break;
             }
+
+            already_switched = true; // used only if 'scroll-switch-workspace-one-at-a-time' is set
 
             return true;
         };
