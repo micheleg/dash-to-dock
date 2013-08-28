@@ -354,7 +354,22 @@ const WorkspaceSettingsWidget = new GObject.Class({
             this.settings.set_boolean('scroll-switch-workspace-one-at-a-time', check.get_active());
         }));
 
+    let dockSettingsGrid3= new Gtk.Grid({row_homogeneous:true,column_homogeneous:false});
+    let deadTimeLabel = new Gtk.Label({label: _("Dead time to wait between each workspace switching [ms]"), use_markup: true, xalign: 0,hexpand:true});
+    let deadTime = new Gtk.SpinButton({halign:Gtk.Align.END});
+            deadTime.set_sensitive(true);
+            deadTime.set_range(0, 1000);
+            deadTime.set_value(this.settings.get_int('scroll-switch-workspace-dead-time'));
+            deadTime.set_increments(25, 50);
+            deadTime.connect('value-changed', Lang.bind(this, function(button){
+                let s = button.get_value_as_int();
+                this.settings.set_int('scroll-switch-workspace-dead-time', s);
+            }));
+    dockSettingsGrid3.attach(deadTimeLabel, 0,0,1,1);
+    dockSettingsGrid3.attach(deadTime, 1,0,1,1);
+
     let only1px = new Gtk.RadioButton({label: _("Only a 1px wide area close to the screen edge is active")});
+
         only1px.set_active(!this.settings.get_boolean('scroll-switch-workspace-whole'));
         only1px.connect('toggled', Lang.bind(this, function(check){
             if(check.get_active()) this.settings.set_boolean('scroll-switch-workspace-whole', false);
@@ -368,6 +383,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
     this.settings.bind('scroll-switch-workspace', switchWorkspaceMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
     switchWorkspaceMain.add(oneAtATime);
+    switchWorkspaceMain.add(dockSettingsGrid3);
     switchWorkspaceMain.add(only1px);
     switchWorkspaceMain.add(wholeArea);
 
