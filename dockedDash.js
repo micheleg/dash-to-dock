@@ -154,7 +154,6 @@ dockedDash.prototype = {
 
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
-
     },
 
     _initialize: function(){
@@ -195,6 +194,7 @@ dockedDash.prototype = {
         // Reshow normal dash previously hidden
         Main.overview._controls._dashSlider.actor.show();
 
+        this._revertMainPanel();
     },
 
     _bindSettingsChanges: function() {
@@ -235,6 +235,8 @@ dockedDash.prototype = {
             } else {
                 this.emit('box-changed');
             }
+
+            this._updateYPosition();
         }));
         this._settings.connect('changed::autohide', Lang.bind(this, function(){
             this.emit('box-changed');
@@ -482,23 +484,31 @@ dockedDash.prototype = {
         this._updateBackgroundOpacity();
     },
 
+    _isPrimaryMonitor: function() {
+        return (this._monitor.x == Main.layoutManager.primaryMonitor.x &&
+             this._monitor.y == Main.layoutManager.primaryMonitor.y);
+    },
+
     _updateYPosition: function() {
 
         let unavailableTopSpace = 0;
         let unavailableBottomSpace = 0;
 
-        // check if the dock is on the primary monitor
-        if ( this._monitor.x == Main.layoutManager.primaryMonitor.x &&
-             this._monitor.y == Main.layoutManager.primaryMonitor.y ){
+        let extendHeight = this._settings.get_boolean('extend-height');
+        let dockFixed = this._settings.get_boolean('dock-fixed');
 
-            unavailableTopSpace = Main.panel.actor.height;
+        // check if the dock is on the primary monitor
+        if (this._isPrimaryMonitor()){
+            if (!extendHeight || !dockFixed) {
+                unavailableTopSpace = Main.panel.actor.height;
+            }
         }
 
         let availableHeight = this._monitor.height - unavailableTopSpace - unavailableBottomSpace;
 
         let fraction = this._settings.get_double('height-fraction');
 
-        if(this._settings.get_boolean('extend-height'))
+        if(extendHeight)
             fraction = 1;
         else if(fraction<0 || fraction >1)
             fraction = 0.95;
@@ -507,7 +517,7 @@ dockedDash.prototype = {
         this.actor.y = this._monitor.y + unavailableTopSpace + Math.round( (1-fraction)/2 * availableHeight);
         this.actor.y_align = St.Align.MIDDLE;
 
-        if(this._settings.get_boolean('extend-height')){
+        if(extendHeight){
             this.dash._container.set_height(this.actor.height);
             this.actor.add_style_class_name('extended');
         } else {
@@ -516,6 +526,31 @@ dockedDash.prototype = {
         }
 
         this._updateStaticBox();
+    },
+
+    _revertMainPanel: function() {
+        let panelActor = Main.panel.actor;
+        panelActor.set_width(this._monitor.width);
+        panelActor.set_margin_right(0);
+        panelActor.set_margin_left(0);
+    },
+
+    _updateMainPanel: function() {
+        let extendHeight = this._settings.get_boolean('extend-height');
+        let dockFixed = this._settings.get_boolean('dock-fixed');
+        let panelActor = Main.panel.actor;
+
+        if (this._isPrimaryMonitor() && extendHeight && dockFixed) {
+            if (this._rtl) {
+                panelActor.set_width(this.staticBox.x1);
+                panelActor.set_margin_right(this.staticBox.x2);
+            } else {
+                panelActor.set_width(this._monitor.width - this.staticBox.x2 + 1);
+                panelActor.set_margin_left(this.staticBox.x2 - 1);
+            }
+        } else {
+            this._revertMainPanel();
+        }
     },
 
     _updateStaticBox: function() {
@@ -529,6 +564,8 @@ dockedDash.prototype = {
 
         // If allocation is changed, probably also the clipping has to be updated.
         this._updateClip();
+
+        this._updateMainPanel();
 
         this.emit('box-changed');
     },
