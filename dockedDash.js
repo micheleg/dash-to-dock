@@ -728,25 +728,10 @@ dockedDash.prototype = {
             }
         }
 
-        // This comes from desktop-scroller@obsidien.github.com
+        // This was inspired to desktop-scroller@obsidien.github.com
         function onScrollEvent(actor, event) {
 
-            // Prevent scroll events from triggering too many workspace switches
-            // by adding a deadtime between each scroll event.
-            // Usefull on laptops when using a touchpad.
-
-            if(this._settings.get_boolean('scroll-switch-workspace-one-at-a-time')){
-
-                // During the deadtime do nothing
-                if(this._optionalScrollWorkspaceSwitchDeadTimeId>0)
-                    return false;
-
-                this._optionalScrollWorkspaceSwitchDeadTimeId =  Mainloop.timeout_add(this._settings.get_int('scroll-switch-workspace-dead-time'),
-                    Lang.bind(this, function() {
-                        this._optionalScrollWorkspaceSwitchDeadTimeId=0;
-                    }
-                ));
-            }
+            let direction = 0; // 0: do nothing; +1: up; -1:down.
 
             // filter events occuring not near the screen border if required
             if(this._settings.get_boolean('scroll-switch-workspace-whole')==false) {
@@ -764,15 +749,51 @@ dockedDash.prototype = {
 
             switch ( event.get_scroll_direction() ) {
             case Clutter.ScrollDirection.UP:
-                Main.wm.actionMoveWorkspace(Meta.MotionDirection.UP);
+                direction = 1;
                 break;
             case Clutter.ScrollDirection.DOWN:
-                Main.wm.actionMoveWorkspace(Meta.MotionDirection.DOWN);
+                direction = -1;
+                break;
+            case Clutter.ScrollDirection.SMOOTH:
+                let [dx, dy] = event.get_scroll_delta();
+                if(dy < 0){
+                    direction = 1;
+                } else if(dy > 0) {
+                    direction = -1;
+                }
                 break;
             }
 
-            return true;
-        };
+            if(direction !==0 ){
+
+                // Prevent scroll events from triggering too many workspace switches
+                // by adding a deadtime between each scroll event.
+                // Usefull on laptops when using a touchpad.
+                if(this._settings.get_boolean('scroll-switch-workspace-one-at-a-time')){
+                    // During the deadtime do nothing
+                    if(this._optionalScrollWorkspaceSwitchDeadTimeId>0)
+                        return false;
+                    else {
+                        this._optionalScrollWorkspaceSwitchDeadTimeId =
+                                Mainloop.timeout_add(this._settings.get_int('scroll-switch-workspace-dead-time'),
+                                    Lang.bind(this, function() {
+                                        this._optionalScrollWorkspaceSwitchDeadTimeId=0;
+                                    }
+                        ));
+                    }
+                }
+
+                if (direction>0)
+                    Main.wm.actionMoveWorkspace(Meta.MotionDirection.UP);
+                else
+                    Main.wm.actionMoveWorkspace(Meta.MotionDirection.DOWN);
+
+                return true;
+
+            } else {
+                return false;
+            }
+        }
 
     },
 
