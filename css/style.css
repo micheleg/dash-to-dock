@@ -1,0 +1,299 @@
+---
+#YAML comment
+
+LightBlue: '#4378c8'
+PurplishRed: '#ff0066'
+LightBlack: '#434343'
+---
+
+{% include normalize.css %}
+{% include cantarell_fontface.css %}
+
+
+body {
+    font-family: 'Open sans', sans-serif;
+    font-size: 16px;
+    border-top: 3px solid {{ page.LightBlue }} ;
+}
+
+h1, h2, h3 {
+    font-family: 'cantarell', serif;
+}
+h1 {
+    font-size:200%;
+}
+
+h2 {
+    font-size:150%;
+}
+
+h3 {
+    font-size:120%;
+}
+
+header {
+    padding:30px 15px 15px 15px;
+    max-width:930px;
+    margin:auto;
+
+}
+
+header h1 {
+    display:inline;
+    font-size:1.6em;
+    padding:10px 30px 10px 0px;
+    font-weight:normal;
+    margin:0;
+
+}
+
+header h2 {
+    display:inline;
+    font-size:1.1em;
+    color:#4d4d4d;
+    font-weight:normal;
+    margin:0;
+}
+
+
+p {
+
+}
+
+a, a:visited {
+    text-decoration:none;
+    font-weight:bold;
+    color: {{ page.PurplishRed }};
+}
+
+a:hover{
+    text-decoration:underline;
+}
+
+#menu ul{
+    color:black;
+    text-align:right;
+    margin:0;
+}
+
+#menu li{
+    display:inline;
+}
+
+#menu a, #menu a:visited {
+    color:black;
+    font-weight:bold;
+    text-decoration:none;
+    padding: 5px 20px;
+}
+
+
+#menu a:hover {
+    border-bottom:2px solid {{ page.LightBlue }};
+}
+
+#homepanel {
+    padding:50px 15px 0px 15px;
+    background: #ececec;
+    border-radius: 5px;
+    /*margin:auto;
+    max-width:90%;*/
+    box-shadow: 0px 0px 5px 0px #d3d7cf inset;
+}
+
+#homepanel img {
+    display:block;
+    margin:auto;
+}
+
+#hometitle {
+    font-family: "cantarell", sans-serif;
+    font-size:2.5em;
+    color: #4378c8;
+    text-align:center;
+    margin:0;
+    padding:20px 0;
+}
+
+#title {
+
+    text-align:center;
+    background:{{ page.LightBlue }};
+    color:white;
+    margin-top:0;
+    padding:15px;
+}
+
+.container {
+    margin:auto;
+    max-width:930px;
+    padding:0 15px;
+}
+
+#content {
+    color: #434343;
+
+}
+
+#maincontent {
+    max-width:585px;
+}
+
+#maincontent p{
+    text-align:justify;
+}
+
+#maincontent h2 {
+
+    font-size:230%;
+    color: {{ page.LightBlue }};
+    font-weight:normal;
+    margin: 1.2em auto 0.67em auto;
+}
+
+#maincontent h3 {
+
+    font-size:1.5em;
+    color: {{ page.LightBlack }};
+    font-weight:bold;
+    margin: 1.2em auto 0.67em auto;
+}
+
+#sidecontent {
+    float:right;
+    width:330px;
+}
+
+
+#button {
+    margin:0;
+    padding:15px 0 0 30px;
+}
+
+#button li {
+    background:#ececec;
+    display:block;
+    margin-bottom:12px;
+    border-radius:10px;
+    overflow:hidden;
+    color:black;
+    font-size:0.875em;
+}
+
+
+#button li  p:first-child a {
+    display:block;
+    color:white;
+    background-color: #f62651;
+    font-weight:normal;
+    padding:15px 0px  12px 75px;
+    background-position: 15px 15px;
+    background-repeat: no-repeat;
+    transition: background-color 0.5s ease-in;
+}
+
+#button li  p:first-child a:hover{
+        background-position: 15px -45px;
+        background-color:  {{ page.PurplishRed }} ;
+
+}
+
+
+#button p{
+    margin:0;
+    padding:0 15px;
+    text-align:left;
+}
+
+#button li  p:first-child {
+    padding:0;
+    font-size:2em;
+    margin-bottom:15px;
+    border-bottom:1px solid #c53553;
+}
+
+#button li p:last-child {
+    padding-bottom:15px;
+}
+
+.download {
+    background-image: url('../media/download.png');
+}
+
+.star {
+    background-image: url('../media/star.png');
+
+}
+
+footer {
+    line-height:100%;
+    margin:auto;
+    padding: 30px ;
+    font-size:0.875em;
+    word-spacing:0.1em;
+    text-align:left;
+    color:#333333;
+    background: #4378c8;
+    background: #274c85 linear-gradient(to bottom , #305b9c  0% , #4378c8 40%) repeat-x;
+    margin-top:50px;
+}
+
+footer p {
+    margin:0;
+}
+
+footer .vcard {
+
+    margin:10px auto 0px auto;
+    padding:13px 0px 0px 55px;
+    font-family: 'Open Sans', sans;
+
+    line-height:1.1;
+    background: transparent url('../media/envelope.png') no-repeat 0px 15px;
+}
+
+
+footer .fn{
+    text-transform:uppercase;
+}
+
+footer a{
+    text-decoration:none;
+    font-weight:normal;
+    color:white;
+}
+
+footer a:hover{
+    text-decoration:underline;
+    color: white;
+}
+
+code, pre{
+    background: #eeeeec;
+    border-radius:4px;
+    border:1px solid #d3d7cf;
+
+}
+
+code {
+    font-family:monospace;
+    font-size:90%;
+    padding:3px 5px;
+    white-space: nowrap;
+
+}
+
+
+pre code {
+    white-space: pre;
+    border:none;
+}
+
+pre {
+padding:10px;
+
+}
+
+img {
+max-width:100%;
+}
