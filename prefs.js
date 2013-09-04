@@ -358,12 +358,12 @@ const WorkspaceSettingsWidget = new GObject.Class({
     let deadTimeLabel = new Gtk.Label({label: _("Dead time to wait between each workspace switching [ms]"), use_markup: true, xalign: 0,hexpand:true});
     let deadTime = new Gtk.SpinButton({halign:Gtk.Align.END});
             deadTime.set_sensitive(true);
-            deadTime.set_range(0, 500);
-            deadTime.set_value(this.settings.get_double('scroll-switch-workspace-dead-time')*1000);
+            deadTime.set_range(0, 1000);
+            deadTime.set_value(this.settings.get_int('scroll-switch-workspace-dead-time'));
             deadTime.set_increments(25, 50);
             deadTime.connect('value-changed', Lang.bind(this, function(button){
-                let s = button.get_value_as_int()/1000;
-                this.settings.set_double('scroll-switch-workspace-dead-time', s);
+                let s = button.get_value_as_int();
+                this.settings.set_int('scroll-switch-workspace-dead-time', s);
             }));
     dockSettingsGrid3.attach(deadTimeLabel, 0,0,1,1);
     dockSettingsGrid3.attach(deadTime, 1,0,1,1);
