@@ -72,8 +72,8 @@
       <summary>Switch worskpace one at a time</summary>
       <description>Switch only one workspace on each scroll event</description>
     </key>
-    <key type="i" name="scroll-switch-workspace-dead-time">
-      <default>250</default>
+    <key type="d" name="scroll-switch-workspace-dead-time">
+      <default>0.25</default>
       <summary>A deadtime in ms</summary>
       <description>A deadtime between each worskapace switch triggere by mouse scroll</description>
     </key>
