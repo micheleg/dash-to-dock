@@ -47,6 +47,16 @@
       <summary>Dock shown on mouse over</summary>
       <description>Enable or disable autohide mode</description>
     </key>
+    <key type="b" name="require-pressure-to-show">
+      <default>true</default>
+      <summary>Require pressure to show dash</summary>
+      <description>Enable or disable requiring pressure to show the dash</description>
+    </key>
+    <key type="d" name="pressure-threshold">
+      <default>50</default>
+      <summary>Pressure threshold</summary>
+      <description>Sets how much pressure is needed to show the dash.</description>
+    </key>
     <key type="b" name="dock-fixed">
       <default>false</default>
       <summary>Dock always visible</summary>
