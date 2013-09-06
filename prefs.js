@@ -125,7 +125,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     this.settings.bind('dock-fixed', dockSettingsMain1, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
-    let intellihideSubSettings = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
+    let intellihideSubSettings = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:0, margin_right:10});
     indentWidget(intellihideSubSettings);
 
     let perappIntellihide =  new Gtk.CheckButton({label: _("Application based intellihide")});
@@ -136,9 +136,61 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     intellihideSubSettings.add(perappIntellihide);
 
+
+    /* PRESSURE SETTINGS */
+
+    let requirePressureControl = new Gtk.Box({margin_left:10, margin_top:0, margin_bottom:0, margin_right:10});
+    let requirePressureContainer = new Gtk.Box({margin_left:10, margin_top:0, margin_bottom:10, margin_right:10});
+    indentWidget(requirePressureControl);
+    indentWidget(requirePressureContainer);
+
+
+    let requirePressureButton = new Gtk.CheckButton({
+        label: _("Require pressure to show the dock (GS3.8+)"),
+        margin_left: 0,
+        margin_top: 0
+    });
+    requirePressureButton.set_active(this.settings.get_boolean('require-pressure-to-show'));
+    requirePressureButton.connect('toggled', Lang.bind(this, function(check) {
+        this.settings.set_boolean('require-pressure-to-show', check.get_active());
+    }));
+
+    let pressureThresholdLabel = new Gtk.Label({
+        label: _("Pressure threshold [px] (GS3.8+)"),
+        use_markup: true,
+        xalign: 0,
+        margin_top: 0,
+        hexpand: true
+    });
+
+    let pressureThresholdSpinner = new Gtk.SpinButton({
+        halign: Gtk.Align.END,
+        margin_top: 0
+    });
+    pressureThresholdSpinner.set_sensitive(true);
+    pressureThresholdSpinner.set_range(10, 500);
+    pressureThresholdSpinner.set_value(this.settings.get_double("pressure-threshold") * 1);
+    pressureThresholdSpinner.set_increments(10, 20);
+    pressureThresholdSpinner.connect("value-changed", Lang.bind(this, function(button) {
+        let s = button.get_value_as_int() / 1;
+        this.settings.set_double("pressure-threshold", s);
+    }));
+
+    requirePressureControl.add(requirePressureButton);
+    requirePressureContainer.add(pressureThresholdLabel);
+    requirePressureContainer.add(pressureThresholdSpinner);
+
+    this.settings.bind('require-pressure-to-show', pressureThresholdLabel, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+    this.settings.bind('require-pressure-to-show', pressureThresholdSpinner, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+
+
+
     this.settings.bind('dock-fixed', intellihideSubSettings, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
     this.settings.bind('dock-fixed', perappIntellihide, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
     this.settings.bind('intellihide', intellihideSubSettings, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+    this.settings.bind('autohide', requirePressureControl, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+    this.settings.bind('autohide', requirePressureContainer, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+
 
     /* POISITION AND SIZE */
 
@@ -210,6 +262,9 @@ const WorkspaceSettingsWidget = new GObject.Class({
     dockSettings.add(dockSettingsControl1);
     dockSettings.add(dockSettingsMain1);
     dockSettings.add(intellihideSubSettings);
+    dockSettings.add(requirePressureControl);
+    dockSettings.add(requirePressureContainer);
+
     dockSettings.add(dockMonitor);
     dockSettings.add(dockSettingsMain2);
 
