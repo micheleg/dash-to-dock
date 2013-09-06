@@ -536,11 +536,11 @@ dockedDash.prototype = {
 
         if (this._isPrimaryMonitor() && extendHeight && dockFixed) {
             if (this._rtl) {
-                panelActor.set_width(this.staticBox.x1);
-                panelActor.set_margin_right(this.staticBox.x2);
+                panelActor.set_width(this._monitor.width - this._box.width);
+                panelActor.set_margin_right(this._box.width - 1);
             } else {
-                panelActor.set_width(this._monitor.width - this.staticBox.x2 + 1);
-                panelActor.set_margin_left(this.staticBox.x2 - 1);
+                panelActor.set_width(this._monitor.width - this._box.width);
+                panelActor.set_margin_left(this._box.width - 1);
             }
         } else {
             this._revertMainPanel();
