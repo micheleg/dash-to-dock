@@ -138,8 +138,8 @@ dockedDash.prototype = {
 
         //Add dash container actor and the container to the Chrome.
         this._box.add_actor(this.dash.actor);
-        Main.layoutManager.addChrome(this.actor, {affectsInputRegion: false, trackFullscreen: true});
-        Main.layoutManager.trackChrome(this._box, {affectsInputRegion: true});
+        Main.layoutManager.addChrome(this.actor, {trackFullscreen: true});
+        Main.layoutManager.trackChrome(this._box, {});
         Main.layoutManager.trackChrome(this.dash._box, { affectsStruts: this._settings.get_boolean('dock-fixed')});
 
         this.dash._container.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
