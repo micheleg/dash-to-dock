@@ -1,0 +1,6 @@
+# Disable searche engines cache
+User-agent: *
+Noarchive: /
+#Disable internet archive
+User-agent: ia_archiver
+Disallow: /
