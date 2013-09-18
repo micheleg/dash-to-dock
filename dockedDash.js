@@ -138,9 +138,13 @@ dockedDash.prototype = {
 
         //Add dash container actor and the container to the Chrome.
         this._box.add_actor(this.dash.actor);
-        Main.layoutManager.addChrome(this.actor, {affectsInputRegion: false, trackFullscreen: true});
-        Main.layoutManager.trackChrome(this._box, {affectsInputRegion: true});
-        Main.layoutManager.trackChrome(this.dash._box, { affectsStruts: this._settings.get_boolean('dock-fixed')});
+
+        // Add aligning container without tracking it for input region (old affectsinputRegion: false that was removed).
+        // The public method trackChrome requires the actor to be child of a tracked actor. Since I don't want the parent
+        // to be tracked I use the private internal _trackActor instead.
+        Main.uiGroup.add_child(this.actor);
+        Main.layoutManager._trackActor(this._box, {trackFullscreen: true});
+        Main.layoutManager._trackActor(this.dash._box, { affectsStruts: this._settings.get_boolean('dock-fixed')});
 
         this.dash._container.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
 
@@ -226,8 +230,8 @@ dockedDash.prototype = {
         }));
 
         this._settings.connect('changed::dock-fixed', Lang.bind(this, function(){
-            Main.layoutManager.untrackChrome(this.dash._box);
-            Main.layoutManager.trackChrome(this.dash._box, {affectsStruts: this._settings.get_boolean('dock-fixed')});
+            Main.layoutManager._untrackActor(this.dash._box);
+            Main.layoutManager._trackActor(this.dash._box, {affectsStruts: this._settings.get_boolean('dock-fixed')});
 
             if(this._settings.get_boolean('dock-fixed')) {
                 // show dash
