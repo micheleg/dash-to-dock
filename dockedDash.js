@@ -735,6 +735,7 @@ dockedDash.prototype = {
         // This was inspired to desktop-scroller@obsidien.github.com
         function onScrollEvent(actor, event) {
 
+            let activeWs = global.screen.get_active_workspace();
             let direction = 0; // 0: do nothing; +1: up; -1:down.
 
             // filter events occuring not near the screen border if required
@@ -787,10 +788,15 @@ dockedDash.prototype = {
                     }
                 }
 
+
+                let ws;
+
                 if (direction>0)
-                    Main.wm.actionMoveWorkspace(Meta.MotionDirection.UP);
+                    ws = activeWs.get_neighbor(Meta.MotionDirection.UP)
                 else
-                    Main.wm.actionMoveWorkspace(Meta.MotionDirection.DOWN);
+                    ws = activeWs.get_neighbor(Meta.MotionDirection.DOWN);
+
+                Main.wm.actionMoveWorkspace(ws);
 
                 return true;
 
