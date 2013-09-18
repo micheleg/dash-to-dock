@@ -10,328 +10,23 @@ const Mainloop = imports.mainloop;
 
 const AppDisplay = imports.ui.appDisplay;
 const AppFavorites = imports.ui.appFavorites;
+const Dash = imports.ui.dash;
 const DND = imports.ui.dnd;
 const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
 const Tweener = imports.ui.tweener;
 const Workspace = imports.ui.workspace;
 
-const DASH_ANIMATION_TIME = 0.2;
-const DASH_ITEM_LABEL_SHOW_TIME = 0.15;
-const DASH_ITEM_LABEL_HIDE_TIME = 0.1;
-const DASH_ITEM_HOVER_TIMEOUT = 300;
-
-function getAppFromSource(source) {
-    if (source instanceof AppDisplay.AppIcon) {
-        return source.app;
-    } else {
-        return null;
-    }
-}
-
-// A container like StBin, but taking the child's scale into account
-// when requesting a size
-const DashItemContainer = new Lang.Class({
-    Name: 'DashItemContainer',
-    Extends: St.Widget,
-
-    _init: function() {
-        this.parent({ style_class: 'dash-item-container' });
-
-        this._labelText = "";
-        this.label = new St.Label({ style_class: 'dash-label'});
-        this.label.hide();
-        Main.layoutManager.addChrome(this.label);
-        this.label_actor = this.label;
-
-        this.child = null;
-        this._childScale = 0;
-        this._childOpacity = 0;
-        this.animatingOut = false;
-    },
-
-    vfunc_allocate: function(box, flags) {
-        this.set_allocation(box, flags);
-
-        if (this.child == null)
-            return;
-
-        let availWidth = box.x2 - box.x1;
-        let availHeight = box.y2 - box.y1;
-        let [minChildWidth, minChildHeight, natChildWidth, natChildHeight] =
-            this.child.get_preferred_size();
-        let [childScaleX, childScaleY] = this.child.get_scale();
-
-        let childWidth = Math.min(natChildWidth * childScaleX, availWidth);
-        let childHeight = Math.min(natChildHeight * childScaleY, availHeight);
-
-        let childBox = new Clutter.ActorBox();
-        childBox.x1 = (availWidth - childWidth) / 2;
-        childBox.y1 = (availHeight - childHeight) / 2;
-        childBox.x2 = childBox.x1 + childWidth;
-        childBox.y2 = childBox.y1 + childHeight;
-
-        this.child.allocate(childBox, flags);
-    },
-
-    vfunc_get_preferred_height: function(forWidth) {
-        let themeNode = this.get_theme_node();
-
-        if (this.child == null)
-            return [0, 0];
-
-        forWidth = themeNode.adjust_for_width(forWidth);
-        let [minHeight, natHeight] = this.child.get_preferred_height(forWidth);
-        return themeNode.adjust_preferred_height(minHeight * this.child.scale_y,
-                                                 natHeight * this.child.scale_y);
-    },
-
-    vfunc_get_preferred_width: function(forHeight) {
-        let themeNode = this.get_theme_node();
-
-        if (this.child == null)
-            return [0, 0];
-
-        forHeight = themeNode.adjust_for_height(forHeight);
-        let [minWidth, natWidth] = this.child.get_preferred_width(forHeight);
-        return themeNode.adjust_preferred_width(minWidth * this.child.scale_y,
-                                                natWidth * this.child.scale_y);
-    },
-
-    showLabel: function() {
-        if (!this._labelText)
-            return;
-
-        this.label.set_text(this._labelText);
-        this.label.opacity = 0;
-        this.label.show();
-
-        let [stageX, stageY] = this.get_transformed_position();
-
-        let itemHeight = this.allocation.y2 - this.allocation.y1;
-
-        let labelHeight = this.label.get_height();
-        let yOffset = Math.floor((itemHeight - labelHeight) / 2)
-
-        let y = stageY + yOffset;
-
-        let node = this.label.get_theme_node();
-        let xOffset = node.get_length('-x-offset');
-
-        let x;
-        if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL)
-            x = stageX - this.label.get_width() - xOffset;
-        else
-            x = stageX + this.get_width() + xOffset;
-
-        this.label.set_position(x, y);
-        Tweener.addTween(this.label,
-                         { opacity: 255,
-                           time: DASH_ITEM_LABEL_SHOW_TIME,
-                           transition: 'easeOutQuad',
-                         });
-    },
-
-    setLabelText: function(text) {
-        this._labelText = text;
-        this.child.accessible_name = text;
-    },
-
-    hideLabel: function () {
-        Tweener.addTween(this.label,
-                         { opacity: 0,
-                           time: DASH_ITEM_LABEL_HIDE_TIME,
-                           transition: 'easeOutQuad',
-                           onComplete: Lang.bind(this, function() {
-                               this.label.hide();
-                           })
-                         });
-    },
-
-    setChild: function(actor) {
-        if (this.child == actor)
-            return;
-
-        this.destroy_all_children();
-
-        this.child = actor;
-        this.add_actor(this.child);
-
-        this.child.set_scale_with_gravity(this._childScale, this._childScale,
-                                          Clutter.Gravity.CENTER);
-        this.child.set_opacity(this._childOpacity);
-    },
-
-    show: function(animate) {
-        if (this.child == null)
-            return;
-
-        let time = animate ? DASH_ANIMATION_TIME : 0;
-        Tweener.addTween(this,
-                         { childScale: 1.0,
-                           childOpacity: 255,
-                           time: time,
-                           transition: 'easeOutQuad'
-                         });
-    },
-
-    destroy: function() {
-        if (this.label)
-            this.label.destroy();
-
-        this.parent();
-    },
-
-    animateOutAndDestroy: function() {
-        if (this.label)
-            this.label.destroy();
-
-        if (this.child == null) {
-            this.destroy();
-            return;
-        }
-
-        this.animatingOut = true;
-        Tweener.addTween(this,
-                         { childScale: 0.0,
-                           childOpacity: 0,
-                           time: DASH_ANIMATION_TIME,
-                           transition: 'easeOutQuad',
-                           onComplete: Lang.bind(this, function() {
-                               this.destroy();
-                           })
-                         });
-    },
-
-    set childScale(scale) {
-        this._childScale = scale;
-
-        if (this.child == null)
-            return;
-
-        this.child.set_scale_with_gravity(scale, scale,
-                                          Clutter.Gravity.CENTER);
-        this.queue_relayout();
-    },
-
-    get childScale() {
-        return this._childScale;
-    },
-
-    set childOpacity(opacity) {
-        this._childOpacity = opacity;
-
-        if (this.child == null)
-            return;
-
-        this.child.set_opacity(opacity);
-        this.queue_redraw();
-    },
-
-    get childOpacity() {
-        return this._childOpacity;
-    }
-});
-
-const ShowAppsIcon = new Lang.Class({
-    Name: 'ShowAppsIcon',
-    Extends: DashItemContainer,
-
-    _init: function() {
-        this.parent();
-
-        this.toggleButton = new St.Button({ style_class: 'show-apps',
-                                            track_hover: true,
-                                            can_focus: true,
-                                            toggle_mode: true });
-        this._iconActor = null;
-        this.icon = new IconGrid.BaseIcon(_("Show Applications"),
-                                           { setSizeManually: true,
-                                             showLabel: false,
-                                             createIcon: Lang.bind(this, this._createIcon) });
-        this.toggleButton.add_actor(this.icon.actor);
-        this.toggleButton._delegate = this;
-
-        this.setChild(this.toggleButton);
-        this.setDragApp(null);
-    },
-
-    _createIcon: function(size) {
-        this._iconActor = new St.Icon({ icon_name: 'view-grid-symbolic',
-                                        icon_size: size,
-                                        style_class: 'show-apps-icon',
-                                        track_hover: true });
-        return this._iconActor;
-    },
-
-    _canRemoveApp: function(app) {
-        if (app == null)
-            return false;
-
-        let id = app.get_id();
-        let isFavorite = AppFavorites.getAppFavorites().isFavorite(id);
-        return isFavorite;
-    },
-
-    setDragApp: function(app) {
-        let canRemove = this._canRemoveApp(app);
-
-        this.toggleButton.set_hover(canRemove);
-        if (this._iconActor)
-            this._iconActor.set_hover(canRemove);
-
-        if (canRemove)
-            this.setLabelText(_("Remove from Favorites"));
-        else
-            this.setLabelText(_("Show Applications"));
-    },
-
-    handleDragOver: function(source, actor, x, y, time) {
-        if (!this._canRemoveApp(getAppFromSource(source)))
-            return DND.DragMotionResult.NO_DROP;
-
-        return DND.DragMotionResult.MOVE_DROP;
-    },
-
-    acceptDrop: function(source, actor, x, y, time) {
-        let app = getAppFromSource(source);
-        if (!this._canRemoveApp(app))
-            return false;
-
-        let id = app.get_id();
-
-        Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this,
-            function () {
-                AppFavorites.getAppFavorites().removeFavorite(id);
-                return false;
-            }));
-
-        return true;
-    }
-});
-
-const DragPlaceholderItem = new Lang.Class({
-    Name: 'DragPlaceholderItem',
-    Extends: DashItemContainer,
-
-    _init: function() {
-        this.parent();
-        this.setChild(new St.Bin({ style_class: 'placeholder' }));
-    }
-});
-
-const EmptyDropTargetItem = new Lang.Class({
-    Name: 'EmptyDropTargetItem',
-    Extends: DashItemContainer,
-
-    _init: function() {
-        this.parent();
-        this.setChild(new St.Bin({ style_class: 'empty-dash-drop-target' }));
-    }
-});
-
-const DashActor = new Lang.Class({
-    Name: 'DashActor',
+let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
+let DASH_ITEM_LABEL_SHOW_TIME = Dash.DASH_ITEM_LABEL_SHOW_TIME;
+let DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME;
+let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
+
+
+/* This class is a fork of the upstream DashActor class (ui.dash.js)
+ */
+const myDashActor = new Lang.Class({
+    Name: 'DashToDockmyDashActor',
     Extends: St.Widget,
 
     _init: function() {
@@ -380,8 +75,10 @@ const DashActor = new Lang.Class({
     }
 });
 
-const Dash = new Lang.Class({
-    Name: 'Dash',
+/* This class is a fork of the upstream dash class (ui.dash.js)
+ */
+const myDash = new Lang.Class({
+    Name: 'dashToDock.myDash',
 
     _init : function() {
         this._maxHeight = -1;
@@ -395,13 +92,13 @@ const Dash = new Lang.Class({
         this._resetHoverTimeoutId = 0;
         this._labelShowing = false;
 
-        this._container = new DashActor();
+        this._container = new myDashActor();
         this._box = new St.BoxLayout({ vertical: true,
                                        clip_to_allocation: true });
         this._box._delegate = this;
         this._container.add_actor(this._box);
 
-        this._showAppsIcon = new ShowAppsIcon();
+        this._showAppsIcon = new Dash.ShowAppsIcon();
         this._showAppsIcon.childScale = 1;
         this._showAppsIcon.childOpacity = 255;
         this._showAppsIcon.icon.setIconSize(this.iconSize);
@@ -476,7 +173,7 @@ const Dash = new Lang.Class({
     },
 
     _onDragMotion: function(dragEvent) {
-        let app = getAppFromSource(dragEvent.source);
+        let app = Dash.getAppFromSource(dragEvent.source);
         if (app == null)
             return DND.DragMotionResult.CONTINUE;
 
@@ -539,7 +236,7 @@ const Dash = new Lang.Class({
                             this._itemMenuStateChanged(item, opened);
                         }));
 
-        let item = new DashItemContainer();
+        let item = new Dash.DashItemContainer();
         item.setChild(appIcon.actor);
 
         // Override default AppIcon label_actor, now the
@@ -838,7 +535,7 @@ const Dash = new Lang.Class({
     },
 
     handleDragOver : function(source, actor, x, y, time) {
-        let app = getAppFromSource(source);
+        let app = Dash.getAppFromSource(source);
 
         // Don't allow favoriting of transient apps
         if (app == null || app.is_window_backed())
@@ -887,7 +584,7 @@ const Dash = new Lang.Class({
                 fadeIn = true;
             }
 
-            this._dragPlaceholder = new DragPlaceholderItem();
+            this._dragPlaceholder = new Dash.DragPlaceholderItem();
             this._dragPlaceholder.child.set_width (this.iconSize);
             this._dragPlaceholder.child.set_height (this.iconSize / 2);
             this._box.insert_child_at_index(this._dragPlaceholder,
@@ -913,7 +610,7 @@ const Dash = new Lang.Class({
 
     // Draggable target interface
     acceptDrop : function(source, actor, x, y, time) {
-        let app = getAppFromSource(source);
+        let app = Dash.getAppFromSource(source);
 
         // Don't allow favoriting of transient apps
         if (app == null || app.is_window_backed()) {
@@ -959,5 +656,5 @@ const Dash = new Lang.Class({
     }
 });
 
-Signals.addSignalMethods(Dash.prototype);
+Signals.addSignalMethods(myDash.prototype);
 
