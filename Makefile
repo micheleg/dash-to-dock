@@ -36,7 +36,7 @@ install: install-local
 
 install-local: _build
 	rm -rf $(INSTALLBASE)/$(INSTALLNAME)
-	mkdir $(INSTALLBASE)/$(INSTALLNAME)
+	mkdir -p $(INSTALLBASE)/$(INSTALLNAME)
 	cp -r ./_build/* $(INSTALLBASE)/$(INSTALLNAME)/
 	-rm -fR _build
 	echo done
