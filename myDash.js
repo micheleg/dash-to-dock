@@ -28,12 +28,18 @@ let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
 
 
 /* This class is a fork of the upstream DashActor class (ui.dash.js)
+ *
+ * Summary of changes:
+ * - passed settings to class as parameter
+ * - modified chldBox calculations for when 'show-apps-at-top' option is checked
+ *
  */
 const myDashActor = new Lang.Class({
     Name: 'DashToDockmyDashActor',
     Extends: St.Widget,
 
-    _init: function() {
+    _init: function(settings) {
+        this._settings = settings;
         let layout = new Clutter.BoxLayout({ orientation: Clutter.Orientation.VERTICAL });
         this.parent({ name: 'dash',
                       layout_manager: layout,
@@ -50,15 +56,27 @@ const myDashActor = new Lang.Class({
         let [showAppsMinHeight, showAppsNatHeight] = showAppsButton.get_preferred_height(availWidth);
 
         let childBox = new Clutter.ActorBox();
-        childBox.x1 = contentBox.x1;
-        childBox.y1 = contentBox.y1;
-        childBox.x2 = contentBox.x2;
-        childBox.y2 = contentBox.y2 - showAppsNatHeight;
-        appIcons.allocate(childBox, flags);
+        if( this._settings.get_boolean('show-apps-at-top') ) {
+            childBox.x1 = contentBox.x1;
+            childBox.y1 = contentBox.y1 + showAppsNatHeight;
+            childBox.x2 = contentBox.x2;
+            childBox.y2 = contentBox.y2;
+            appIcons.allocate(childBox, flags);
 
-        childBox.y1 = contentBox.y2 - showAppsNatHeight;
-        childBox.y2 = contentBox.y2;
-        showAppsButton.allocate(childBox, flags);
+            childBox.y1 = contentBox.y1;
+            childBox.y2 = contentBox.y1 + showAppsNatHeight;
+            showAppsButton.allocate(childBox, flags);
+        } else {
+            childBox.x1 = contentBox.x1;
+            childBox.y1 = contentBox.y1;
+            childBox.x2 = contentBox.x2;
+            childBox.y2 = contentBox.y2 - showAppsNatHeight;
+            appIcons.allocate(childBox, flags);
+
+            childBox.y1 = contentBox.y2 - showAppsNatHeight;
+            childBox.y2 = contentBox.y2;
+            showAppsButton.allocate(childBox, flags);
+        }
     },
 
     vfunc_get_preferred_height: function(forWidth) {
@@ -108,7 +126,7 @@ const myDash = new Lang.Class({
         this._resetHoverTimeoutId = 0;
         this._labelShowing = false;
 
-        this._container = new myDashActor();
+        this._container = new myDashActor(settings);
         this._box = new St.BoxLayout({ vertical: true,
                                        clip_to_allocation: true });
         this._box._delegate = this;
