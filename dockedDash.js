@@ -75,7 +75,7 @@ dockedDash.prototype = {
         this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
 
         // Create and apply height constraint to the dash. It's controlled by this.actor height
-        this.actor.height = Main.overview._viewSelector.actor.height; // Guess initial reasonable height.
+        this.actor.height = Main.overview.viewSelector.actor.height; // Guess initial reasonable height.
         this.constrainHeight = new Clutter.BindConstraint({ source: this.actor,
                                                             coordinate: Clutter.BindCoordinate.HEIGHT });
         this.dash.actor.add_constraint(this.constrainHeight);
@@ -126,7 +126,7 @@ dockedDash.prototype = {
             ],
             // Ensure the ShowAppsButton status is kept in sync
             [
-                Main.overview._viewSelector._showAppsButton,
+                Main.overview.viewSelector._showAppsButton,
                 'notify::checked',
                 Lang.bind(this, this._syncShowAppsButtonToggled)
             ]
@@ -168,9 +168,9 @@ dockedDash.prototype = {
         this._resetPosition();
 
         // Since Gnome 3.8 dragging an app without having opened the overview before cause the attemp to
-        //animate a null target since some variables are not initialized when the _viewSElector is created
-        if(Main.overview._viewSelector._activePage == null)
-                Main.overview._viewSelector._activePage = Main.overview._viewSelector._workspacesPage;
+        //animate a null target since some variables are not initialized when the viewSelector is created
+        if(Main.overview.viewSelector._activePage == null)
+                Main.overview.viewSelector._activePage = Main.overview.viewSelector._workspacesPage;
 
         // Now that the dash is on the stage and custom themes should be loaded
         // retrieve its background color
@@ -646,7 +646,7 @@ dockedDash.prototype = {
         // status (due to the _syncShowAppsButtonToggled function below) and it
         // has already performed the desired action.
 
-        let selector = Main.overview._viewSelector;
+        let selector = Main.overview.viewSelector;
 
         if(selector._showAppsButton.checked !== this.dash.showAppsButton.checked){
 
@@ -675,7 +675,7 @@ dockedDash.prototype = {
 
     // Keep ShowAppsButton status in sync with the overview status
     _syncShowAppsButtonToggled: function() {
-        let status = Main.overview._viewSelector._showAppsButton.checked;
+        let status = Main.overview.viewSelector._showAppsButton.checked;
         if(this.dash.showAppsButton.checked !== status)
             this.dash.showAppsButton.checked = status;
     },

@@ -121,7 +121,7 @@ intellihide.prototype = {
             ],
             // Follow 3.8 behaviour: hide on appview
             [
-                Main.overview._viewSelector,
+                Main.overview.viewSelector,
                 'page-changed',
                 Lang.bind(this, this._pageChanged)
             ],
@@ -202,7 +202,7 @@ intellihide.prototype = {
 
     _pageChanged: function() {
 
-        let activePage = Main.overview._viewSelector.getActivePage();
+        let activePage = Main.overview.viewSelector.getActivePage();
         let dashVisible = (activePage == ViewSelector.ViewPage.WINDOWS ||
                            activePage == ViewSelector.ViewPage.APPS);
 
