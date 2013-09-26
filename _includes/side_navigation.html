@@ -1,0 +1,26 @@
+{% assign items = include.items | split: ' ' %}
+<ul id="sidemenu">
+{% for order in (1..10) %}
+  {% for item in site.pages %}
+    {% if item.order == order %}
+      {% if item.section and item.section == page.section %}
+        {% if item.url == page.url %} {% assign current = 'true' %} {% else %} {% assign current = 'false' %} {% endif %}
+        {% if current == 'true' %}
+          <li><a class="current" href=".{{ item.url }}">{{ item.title }}</a></li>
+        {% else %}
+          <li><a href=".{{ item.url }}">{{ item.title }}</a></li>
+        {% endif %}
+        {% if item.subsections %}
+          {% assign subitems = item.subsections  %}
+          {% assign subitemsShort = item.subsectionsShort %}
+          <ul>
+          {% for i in (0..subitems.size) %}
+          <li><a href=".{{ item.url }}#{{ subitemsShort[i] }}">{{ subitems[i] }}</a></li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+</ul>

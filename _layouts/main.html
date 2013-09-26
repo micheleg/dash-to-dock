@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>{% if page.title != '' %}{{page.title}}- {% endif %}Dash to dock Gnome Shell Extension</title>
+  <title>{% if page.title != '' %}{{page.title}} - {% endif %}Dash to dock Gnome Shell Extension</title>
   <meta name="description" content="A dock for the Gnome Shell.This extension
   moves the dash out of the overview transforming it in a dock for an easier
   launching of applications and a faster switching between windows and desktops.">
@@ -21,8 +21,9 @@
 
     <nav id="menu">
       <ul>
-        <li><a href="index.html"> Home</a></li>
-        <li><a href="https://github.com/micheleg/dash-to-dock#dash-to-dock">Readme</a></li>
+        <li><a {% if page.isHome %}class="active"{% endif %} href="index.html"> Overview</a></li>
+        <li><a {% if page.section == 'download' %}class="active"{% endif %} href="./download.html">Download</a></li>
+        <li><a {% if page.section == 'development' %}class="active"{% endif %} href="./development.html">Development</a></li>
     </ul>
     </nav>
   </div>
@@ -34,9 +35,9 @@
     <p id="hometitle">A dock for the Gnome Shell.</p>
 </div>
 {% else %}
-<h2 id="title">
+<!--<h2 id="title" class="container">
   {{ page.title }}
-</h2>
+</h2>-->
 {% endif %}
 
 <div id="content" class="container" >
@@ -45,15 +46,13 @@
   <ul id="button">
     <li>
       <p><a class="download" href="http://extensions.gnome.org/extension/307/dash-to-dock/">Try it out</a></p>
-      <p><a href="http://extensions.gnome.org/extension/307/dash-to-dock/">Install</a> Dash to Dock through the extension website</a>. <a href="https://github.com/micheleg/dash-to-dock#installation">Alternative installation methods</a> are available.</p>
-    </li>
-    <li>
-      <p><a class="star" href="http://github.com/micheleg/dash-to-dock">Development</a></p>
-      <p>Follow the development on GitHub:  browse the code, <a href="https://github.com/micheleg/dash-to-dock/issues">report a bug</a>, contribute!</p>
+      <p><a href="http://extensions.gnome.org/extension/307/dash-to-dock/">Install</a> Dash to Dock through the extension website</a>. <a href="./download.html">Alternative installation methods</a> are available.</p>
     </li>
   </ul>
   {% else %}
+  {% include side_navigation.html items="a b c d" %}
   {% endif %}
+
 </div>
 
 <div id="maincontent">

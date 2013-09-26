@@ -62,7 +62,6 @@ p {
 
 a, a:visited {
     text-decoration:none;
-    font-weight:bold;
     color: {{ page.PurplishRed }};
 }
 
@@ -74,6 +73,7 @@ a:hover{
     color:black;
     text-align:right;
     margin:0;
+    padding: 30px 0px 15px 0px;
 }
 
 #menu li{
@@ -84,20 +84,29 @@ a:hover{
     color:black;
     font-weight:bold;
     text-decoration:none;
-    padding: 5px 20px;
+    padding: 8px 20px 5px 20px;
 }
 
 
-#menu a:hover {
-    border-bottom:2px solid {{ page.LightBlue }};
+#menu a:hover, #menu a.active {
+    border-bottom:3px solid {{ page.LightBlue }};
+}
+
+#menu a.active {
+    background: {{ page.LightBlue }};
+    color:white;
+    border-radius: 3px;
+}
+
+#menu a:active{
+    position: relative;
+    top: 1px;
 }
 
 #homepanel {
     padding:50px 15px 0px 15px;
     background: #ececec;
     border-radius: 5px;
-    /*margin:auto;
-    max-width:90%;*/
     box-shadow: 0px 0px 5px 0px #d3d7cf inset;
 }
 
@@ -117,11 +126,15 @@ a:hover{
 
 #title {
 
+    padding:20px 15px 20px 15px;
+    background: #ececec;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px 0px #d3d7cf inset;
+    font-family: "cantarell", sans-serif;
+    font-size:2.5em;
+    color: #4378c8;
     text-align:center;
-    background:{{ page.LightBlue }};
-    color:white;
-    margin-top:0;
-    padding:15px;
+    font-weight:normal;
 }
 
 .container {
@@ -131,6 +144,7 @@ a:hover{
 }
 
 #content {
+    margin-top:30px;
     color: #434343;
 
 }
@@ -140,7 +154,13 @@ a:hover{
 }
 
 #maincontent p{
-    text-align:justify;
+    text-align:left;
+
+}
+
+#content img.right {
+    float:right;
+    padding:7px 0px 7px 10px;
 }
 
 #maincontent h2 {
@@ -149,6 +169,7 @@ a:hover{
     color: {{ page.LightBlue }};
     font-weight:normal;
     margin: 1.2em auto 0.67em auto;
+
 }
 
 #maincontent h3 {
@@ -157,17 +178,44 @@ a:hover{
     color: {{ page.LightBlack }};
     font-weight:bold;
     margin: 1.2em auto 0.67em auto;
+
 }
 
 #sidecontent {
     float:right;
-    width:330px;
+    width:300px;
+    padding-left:30px;
+}
+
+
+#sidemenu {
+    border-left: 1px solid {{ page.LightBlue }};
+    margin:0;
+    list-style:none;
+    padding:10px 0px 10px 0px;
+}
+
+#sidemenu ul {
+    margin:0;
+    list-style:none;
+    padding: 0px 0px 0px 15px;
+}
+
+#sidemenu a {
+    display:block;
+    padding:5px 5px 5px 10px;
+}
+
+#sidemenu a.current {
+    border-right:4px solid {{ page.LightBlue }};
+
 }
 
 
 #button {
-    margin:0;
-    padding:15px 0 0 30px;
+    max-width:300px;
+    margin:auto;
+    padding:15px 0 15px 0px;
 }
 
 #button li {
@@ -285,6 +333,7 @@ code {
 
 
 pre code {
+    padding:0;
     white-space: pre;
     border:none;
 }
