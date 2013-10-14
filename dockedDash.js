@@ -16,10 +16,13 @@ const Dash = imports.ui.dash;
 const Overview = imports.ui.overview;
 const Tweener = imports.ui.tweener;
 const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
+const Layout = imports.ui.layout;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const MyDash = Me.imports.myDash;
+
+const PRESSURE_TIMEOUT = 1000;
 
 function dockedDash(settings) {
 
@@ -48,6 +51,12 @@ dockedDash.prototype = {
         this._defaultBackground = {red: 0, green:0, blue: 0, alpha:0};
         this._defaultBackgroundColor = {red: 0, green:0, blue: 0, alpha:0};
         this._customizedBackground = {red: 0, green:0, blue: 0, alpha:0};
+
+        // Initialize pressure barrier variables
+        this._canUsePressure = false;
+        this._pressureSensed = false;
+        this._pressureBarrier = null;
+        this._barrier = null;
 
         // Hide usual Dash
         // For some reason if I hide the actor object as I used to do before reshowing it when disabling
@@ -184,12 +193,19 @@ dockedDash.prototype = {
         // Show 
         this.actor.set_opacity(255); //this.actor.show();
 
+        // Setup pressure barrier (GS38+ only)
+        this._updatePressureBarrier();
+        this._updateBarrier();
     },
 
     destroy: function(){
 
         // Disconnect global signals
         this._signalHandler.disconnect();
+
+        // Remove existing barrier
+        this._removeBarrier();
+
         // Destroy main clutter actor: this should be sufficient
         // From clutter documentation:
         // If the actor is inside a container, the actor will be removed.
@@ -241,17 +257,55 @@ dockedDash.prototype = {
             }
 
             this._updateYPosition();
+
+            // Add or remove barrier depending on if dock-fixed
+            this._updateBarrier();
         }));
         this._settings.connect('changed::autohide', Lang.bind(this, function(){
             this.emit('box-changed');
+            this._updateBarrier();
         }));
         this._settings.connect('changed::extend-height', Lang.bind(this, this._updateYPosition));
         this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
         this._settings.connect('changed::height-fraction', Lang.bind(this,this._updateYPosition));
 
+        this._settings.connect('changed::require-pressure-to-show', Lang.bind(this, this._updateBarrier));
+        this._settings.connect('changed::pressure-threshold', Lang.bind(this, function() {
+            this._updatePressureBarrier();
+            this._updateBarrier();
+        }));
+
+    },
+
+    _updatePressureBarrier: function() {
+        let self = this;
+        this._canUsePressure = global.display.supports_extended_barriers();
+        let pressureThreshold = this._settings.get_double('pressure-threshold');
+
+        // Remove existing pressure barrier
+        if (this._pressureBarrier) {
+            this._pressureBarrier.destroy();
+            this._pressureBarrier = null;
+        }
+
+        // Create new pressure barrier based on pressure threshold setting
+        if (this._canUsePressure) {
+            this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, PRESSURE_TIMEOUT,
+                                Shell.KeyBindingMode.NORMAL | Shell.KeyBindingMode.OVERVIEW);
+            this._pressureBarrier.connect('trigger', function(barrier){
+                self._onPressureSensed();
+            });
+        }
     },
 
     _hoverChanged: function() {
+        // Ignore hover if pressure barrier being used but pressureSensed not triggered
+        if (this._canUsePressure && this._settings.get_boolean('require-pressure-to-show') && this._barrier) {
+            if (this._pressureSensed == false) {
+                return;
+            }
+        }
+
         // Skip if dock is not in autohide mode for instance because it is shown by intellihide
         if(this._settings.get_boolean('autohide') && this._autohideStatus){
             if( this._box.hover ) {
@@ -350,7 +404,16 @@ dockedDash.prototype = {
                     this.actor.move_anchor_point_from_gravity(anchor_point);
                 }),
                 onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
-                onComplete: Lang.bind(this, function() {this._animStatus.end();})
+                onComplete: Lang.bind(this, function() {
+                    this._animStatus.end();
+                    // Remove barrier so that mouse pointer is released and can access monitors on other side of dock
+                    // NOTE: Delay needed to keep mouse from moving past dock and re-hiding dock immediately. This
+                    // gives users an opportunity to hover over the dock
+                    if (this._removeBarrierTimeoutId > 0) {
+                        Mainloop.source_remove(this._removeBarrierTimeoutId);
+                    }
+                    this._removeBarrierTimeoutId = Mainloop.timeout_add(100, Lang.bind(this, this._removeBarrier));
+                })
             });
         }
     },
@@ -392,9 +455,66 @@ dockedDash.prototype = {
                 onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
                 onComplete: Lang.bind(this, function() {
                     this._animStatus.end();
-                    })
+                    this._updateBarrier();
+                })
             });
         }
+    },
+
+    // handler for mouse pressure sensed (GS38+ only)
+    _onPressureSensed: function() {
+        this._pressureSensed = true;
+        // NOTE: We could have called this._hoverChanged() instead but hover processing not required.
+        if(this._settings.get_boolean('autohide') && this._autohideStatus){
+            this._show();
+        }
+    },
+
+    // Remove pressure barrier (GS38+ only)
+    _removeBarrier: function() {
+        if (this._barrier) {
+            if (this._pressureBarrier) {
+                this._pressureBarrier.removeBarrier(this._barrier);
+            }
+            this._barrier.destroy();
+            this._barrier = null;
+        }
+    },
+
+    // Update pressure barrier size (GS38+ only)
+    _updateBarrier: function() {
+        // Remove existing barrier
+        this._removeBarrier();
+
+        // Manually reset pressure barrier
+        // This is necessary because we remove the pressure barrier when it is triggered to show the dock
+        if (this._pressureBarrier) {
+            this._pressureBarrier._reset();
+            this._pressureBarrier._isTriggered = false;
+        }
+
+        // Create new barrier
+        // Note: dock in fixed position doesn't use pressure barrier
+        if (this._canUsePressure && this._settings.get_boolean('autohide') && this._settings.get_boolean('require-pressure-to-show') && !this._settings.get_boolean('dock-fixed')) {
+            let x, direction;
+            if (this._rtl) {
+                x = this._monitor.x + this._monitor.width;
+                direction = Meta.BarrierDirection.NEGATIVE_X;
+            } else {
+                x = this._monitor.x;
+                direction = Meta.BarrierDirection.POSITIVE_X;
+            }
+            this._barrier = new Meta.Barrier({display: global.display,
+                                x1: x, x2: x,
+                                y1: (this.staticBox.y1), y2: (this.staticBox.y2),
+                                directions: direction});
+            if (this._pressureBarrier) {
+                this._pressureBarrier.addBarrier(this._barrier);
+            }
+        }
+
+        // Reset pressureSensed flag
+        this._pressureSensed = false;
     },
 
     // clip the dock to the current monitor;

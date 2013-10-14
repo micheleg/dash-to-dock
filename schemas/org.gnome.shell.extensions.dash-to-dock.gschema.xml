@@ -52,6 +52,16 @@
       <summary>Dock shown on mouse over</summary>
       <description>Enable or disable autohide mode</description>
     </key>
+    <key type="b" name="require-pressure-to-show">
+      <default>false</default>
+      <summary>Require pressure to show dock (GS38+ only)</summary>
+      <description>Enable or disable requiring pressure to show the dock (GS38+ only)</description>
+    </key>
+    <key type="d" name="pressure-threshold">
+      <default>20</default>
+      <summary>Pressure threshold</summary>
+      <description>Sets how much pressure is needed to show the dock.</description>
+    </key>
     <key type="b" name="dock-fixed">
       <default>false</default>
       <summary>Dock always visible</summary>
