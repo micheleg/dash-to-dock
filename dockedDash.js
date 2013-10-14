@@ -146,6 +146,12 @@ dockedDash.prototype = {
         Main.layoutManager._trackActor(this._box, {trackFullscreen: true});
         Main.layoutManager._trackActor(this.dash._box, { affectsStruts: this._settings.get_boolean('dock-fixed')});
 
+        // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
+        // the allocation change of the parent container (slide in and slideout) doesn't trigger
+        // anymore an update of the input regions. Force the update manually.
+        this.actor.connect('notify::allocation',
+                                              Lang.bind(Main.layoutManager, Main.layoutManager._queueUpdateRegions));
+
         this.dash._container.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
 
         // sync hover after a popupmenu is closed
