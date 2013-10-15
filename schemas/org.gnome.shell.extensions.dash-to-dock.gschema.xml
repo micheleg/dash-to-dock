@@ -68,7 +68,7 @@
       <description>Whether thw whole dock when scrolled above is sensible to scroll events or only an 1px wide area close to the screen border.</description>
     </key>
     <key type="b" name="scroll-switch-workspace-one-at-a-time">
-      <default>false</default>
+      <default>true</default>
       <summary>Switch worskpace one at a time</summary>
       <description>Switch only one workspace on each scroll event</description>
     </key>
@@ -116,7 +116,7 @@
       <description>Set on which monitor to put the dock, use -1 for the primary one</description>
     </key>
     <key type="b" name="customize-click">
-      <default>false</default>
+      <default>true</default>
       <summary>Customize click behaviour</summary>
       <description>Custmize action on various mouse events</description>
     </key>
