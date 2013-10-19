@@ -20,12 +20,9 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const MyDash = Me.imports.myDash;
 
-function dockedDash(settings) {
 
-    this._init(settings);
-}
-
-dockedDash.prototype = {
+const dockedDash = new Lang.Class({
+    Name: 'dockedDash',
  
     _init: function(settings) {
 
@@ -852,7 +849,7 @@ dockedDash.prototype = {
                 this._fadeInBackground(this._settings.get_double('animation-time'), delay);
         }
     }
-};
+});
 
 Signals.addSignalMethods(dockedDash.prototype);
 
@@ -860,11 +857,8 @@ Signals.addSignalMethods(dockedDash.prototype);
  * Store animation status in a perhaps overcomplicated way.
  * status is true for visible, false for hidden
  */
-function animationStatus(initialStatus){
-    this._init(initialStatus);
-}
-
-animationStatus.prototype = {
+const animationStatus = new Lang.Class({
+    Name: 'AnimationStatus',
 
     _init: function(initialStatus){
         this.status  = initialStatus;
@@ -937,4 +931,4 @@ animationStatus.prototype = {
         else
             return false;
     }
-}
+});
