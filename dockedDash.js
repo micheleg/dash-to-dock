@@ -20,6 +20,110 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const MyDash = Me.imports.myDash;
 
+const SlideDirection = {
+    LEFT: 0,
+    RIGHT: 1
+};
+
+
+/*
+ * A simple Actor with one child whose allocation takes into account the
+ * slide out of its child via the _slidex parameter ([0:1]).
+ *
+ * Required since I want to track the input region of this container which is
+ * based on its allocation even if the child overlows the parent actor. By doing
+ * this the region of the dash that is slideout is not steling anymore the input
+ * regions making the extesion usable when the primary monitor is the right one.
+ *
+ * The slidex parameter can be used to directly animate the sliding. The parent
+ * must have a WEST anchor_point to achieve the sliding in the RIGHT direction.
+*/
+
+const DashSlideContainer = new Lang.Class({
+    Name: 'DashSlideContainer',
+    Extends: Clutter.Actor,
+
+    _init: function(params) {
+        this.parent(params);
+
+        this._child = null;
+
+        // slide parameter: 1 = visible, 0 = hidden.
+        this._slidex = 1;
+        this._direction = SlideDirection.LEFT;
+    },
+
+
+    vfunc_allocate: function(box, flags) {
+
+        this.set_allocation(box, flags);
+
+        if (this._child == null)
+            return;
+
+        let availWidth = box.x2 - box.x1;
+        let availHeight = box.y2 - box.y1;
+        let [minChildWidth, minChildHeight, natChildWidth, natChildHeight] =
+            this._child.get_preferred_size();
+
+
+        let childWidth = natChildWidth;
+        let childHeight = natChildHeight;
+
+        let childBox = new Clutter.ActorBox();
+
+        if (this._direction == SlideDirection.LEFT) {
+            childBox.x1 = (this._slidex -1)*childWidth;
+            childBox.x2 = this._slidex*childWidth;
+        } else if (this._direction == SlideDirection.RIGHT) {
+            childBox.x1 = 0;
+            childBox.x2 = childWidth;
+        }
+
+        childBox.y1 = 0;
+        childBox.y2 = childBox.y1 + childHeight;
+        this._child.allocate(childBox, flags);
+        this._child.set_clip(-childBox.x1, 0, -childBox.x1+availWidth, availHeight);
+    },
+
+    /* Just the child width but taking into account the slided out part */
+    vfunc_get_preferred_width: function(forHeight) {
+        let [minWidth, natWidth ] = this._child.get_preferred_width(forHeight);
+        minWidth = minWidth*this._slidex;
+        natWidth = natWidth*this._slidex;
+        return [minWidth, natWidth];
+    },
+
+    /* Just the child min height, no border, no positioning etc. */
+    vfunc_get_preferred_height: function(forWidth) {
+        let [minHeight, natHeight] = this._child.get_preferred_height(forWidth);
+        return [minHeight, natHeight];
+    },
+
+    /* I was expecting it to be a virtual function... stil I don't understand
+       how things work.
+    */
+    add_child: function(actor) {
+
+        /* I'm supposed to have only on child */
+        if(this._child !== null) {
+            this.remove_child(actor);
+        }
+
+        this._child = actor;
+        this.parent(actor);
+    },
+
+    set slidex(value) {
+        this._slidex = value;
+        this._child.queue_relayout();
+    },
+
+    get slidex() {
+        return this._slidex;
+    }
+
+});
 
 const dockedDash = new Lang.Class({
     Name: 'dockedDash',
