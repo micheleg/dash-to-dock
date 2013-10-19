@@ -615,13 +615,9 @@ dockedDash.prototype = {
     _onDragStart: function(){
         this._oldAutohideStatus = this._autohideStatus;
         this._autohideStatus = false;
-        global.stage_input_mode = Shell.StageInputMode.FULLSCREEN;
     },
 
     _onDragEnd: function(){
-        if(Main.overview.visible==false){ 
-            global.stage_input_mode = Shell.StageInputMode.NORMAL;
-        }
         if(this._oldAutohideStatus)
             this._autohideStatus  = this._oldAutohideStatus;
         this._box.sync_hover();
@@ -638,11 +634,6 @@ dockedDash.prototype = {
 
     // Show dock and give key focus to it
     _onAccessibilityFocus: function(){
-
-        if (global.stage_input_mode == Shell.StageInputMode.NONREACTIVE ||
-        global.stage_input_mode == Shell.StageInputMode.NORMAL)
-            global.set_stage_input_mode(Shell.StageInputMode.FOCUSED);
-
         this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
 
         this._animateIn(this._settings.get_double('animation-time'), 0);
