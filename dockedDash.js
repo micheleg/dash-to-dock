@@ -51,6 +51,7 @@ const DashSlideContainer = new Lang.Class({
         // slide parameter: 1 = visible, 0 = hidden.
         this._slidex = 1;
         this._direction = SlideDirection.LEFT;
+        this._slideoutWidth = 1; // minimum width when slided out
     },
 
 
@@ -66,15 +67,16 @@ const DashSlideContainer = new Lang.Class({
         let [minChildWidth, minChildHeight, natChildWidth, natChildHeight] =
             this._child.get_preferred_size();
 
-
         let childWidth = natChildWidth;
         let childHeight = natChildHeight;
 
         let childBox = new Clutter.ActorBox();
 
+        let slideoutWidth = this._slideoutWidth;
+
         if (this._direction == SlideDirection.LEFT) {
-            childBox.x1 = (this._slidex -1)*childWidth;
-            childBox.x2 = this._slidex*childWidth;
+            childBox.x1 = (this._slidex -1)*(childWidth - slideoutWidth);
+            childBox.x2 = slideoutWidth + this._slidex*(childWidth - slideoutWidth);
         } else if (this._direction == SlideDirection.RIGHT) {
             childBox.x1 = 0;
             childBox.x2 = childWidth;
@@ -89,8 +91,8 @@ const DashSlideContainer = new Lang.Class({
     /* Just the child width but taking into account the slided out part */
     vfunc_get_preferred_width: function(forHeight) {
         let [minWidth, natWidth ] = this._child.get_preferred_width(forHeight);
-        minWidth = minWidth*this._slidex;
-        natWidth = natWidth*this._slidex;
+        minWidth = (minWidth - this._slideoutWidth)*this._slidex + this._slideoutWidth;
+        natWidth = (natWidth - this._slideoutWidth)*this._slidex + this._slideoutWidth;
         return [minWidth, natWidth];
     },
 
