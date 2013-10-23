@@ -264,6 +264,25 @@ a:hover{
     padding-bottom:15px;
 }
 
+
+#donations {
+    margin:15px 0 0 0;
+    padding:0;
+    list-style:none;
+}
+
+#donations li:first-child {
+    float:left;
+    width:50%;
+    text-align:center;
+}
+
+#donations li:last-child {
+    padding-left:50%;
+    text-align:center;
+}
+
+
 .download {
     background-image: url('../media/download.png');
 }
