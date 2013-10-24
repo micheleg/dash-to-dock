@@ -343,22 +343,20 @@ dockedDash.prototype = {
         if (time==0 && delay==0)
             this._removeAnimations();
 
-        if(final_position !== this.actor.x){
-            this._animStatus.queue(true);
-            Tweener.addTween(this.actor,{
-                x: final_position,
-                time: time,
-                delay: delay,
-                transition: 'easeOutQuad',
-                onUpdate: Lang.bind(this, this._updateClip),
-                onStart:  Lang.bind(this, function() {
-                    this._animStatus.start();
-                    this.actor.move_anchor_point_from_gravity(anchor_point);
-                }),
-                onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
-                onComplete: Lang.bind(this, function() {this._animStatus.end();})
-            });
-        }
+        this._animStatus.queue(true);
+        Tweener.addTween(this.actor,{
+            x: final_position,
+            time: time,
+            delay: delay,
+            transition: 'easeOutQuad',
+            onUpdate: Lang.bind(this, this._updateClip),
+            onStart:  Lang.bind(this, function() {
+                this._animStatus.start();
+                this.actor.move_anchor_point_from_gravity(anchor_point);
+            }),
+            onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
+            onComplete: Lang.bind(this, function() {this._animStatus.end();})
+        });
     },
 
     _animateOut: function(time, delay){
@@ -383,24 +381,22 @@ dockedDash.prototype = {
         if (time==0 && delay==0)
             this._removeAnimations();
 
-        if(final_position !== this.actor.x){
-            this._animStatus.queue(false);
-            Tweener.addTween(this.actor,{
-                x: final_position,
-                time: time,
-                delay: delay ,
-                transition: 'easeOutQuad',
-                onUpdate: Lang.bind(this, this._updateClip),
-                onStart:  Lang.bind(this, function() {
-                    this._animStatus.start();
-                    this.actor.move_anchor_point_from_gravity(anchor_point);
-                }),
-                onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
-                onComplete: Lang.bind(this, function() {
-                    this._animStatus.end();
-                    })
-            });
-        }
+        this._animStatus.queue(false);
+        Tweener.addTween(this.actor,{
+            x: final_position,
+            time: time,
+            delay: delay ,
+            transition: 'easeOutQuad',
+            onUpdate: Lang.bind(this, this._updateClip),
+            onStart:  Lang.bind(this, function() {
+                this._animStatus.start();
+                this.actor.move_anchor_point_from_gravity(anchor_point);
+            }),
+            onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
+            onComplete: Lang.bind(this, function() {
+                this._animStatus.end();
+                })
+        });
     },
 
     // clip the dock to the current monitor;
