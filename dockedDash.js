@@ -8,6 +8,7 @@ const Shell = imports.gi.Shell;
 const Signals = imports.signals;
 const St = imports.gi.St;
 const Mainloop = imports.mainloop;
+const Params = imports.misc.params;
 
 const Main = imports.ui.main;
 const Dash = imports.ui.dash;
@@ -44,13 +45,32 @@ const DashSlideContainer = new Lang.Class({
     Extends: Clutter.Actor,
 
     _init: function(params) {
+
+        
+        /* Default local params */
+        let localDefaults = {
+            direction: SlideDirection.LEFT
+        }
+
+        let localParams = Params.parse(params, localDefaults, true);
+
+        if (params){
+            /* Remove local params before passing the params to the parent
+               constructor to avoid errors. */
+            let prop;
+            for (prop in localDefaults) {
+                if ((prop in params))
+                    delete params[prop];
+            }
+        }
+
         this.parent(params);
 
         this._child = null;
 
         // slide parameter: 1 = visible, 0 = hidden.
         this._slidex = 1;
-        this._direction = SlideDirection.LEFT;
+        this._direction = localParams.direction;
         this._slideoutWidth = 1; // minimum width when slided out
     },
 
