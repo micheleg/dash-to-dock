@@ -158,43 +158,50 @@ const dockedDash = new Lang.Class({
         this._settings = settings;
         this._bindSettingsChanges();
 
-        this._signalHandler = new Convenience.globalSignalHandler();
-
         // authohide current status. Not to be confused with autohide enable/disagle global (g)settings
         this._autohideStatus = this._settings.get_boolean('autohide') && !this._settings.get_boolean('dock-fixed');
 
         // initialize animation status object
         this._animStatus = new animationStatus(true);
 
+        /* status variable: true when the overview is shown through the dash
+         * applications button.
+         */
+        this.forcedOverview = false;
+
+        // Put dock on the primary monitor
+        this._monitor = Main.layoutManager.primaryMonitor;
+
+        // this store size and the position where the dash is shown;
+        // used by intellihide module to check window overlap.
+        this.staticBox = new Clutter.ActorBox();
+
         // initialize colors with generic values
         this._defaultBackground = {red: 0, green:0, blue: 0, alpha:0};
         this._defaultBackgroundColor = {red: 0, green:0, blue: 0, alpha:0};
         this._customizedBackground = {red: 0, green:0, blue: 0, alpha:0};
 
-        // Hide usual Dash
-        // For some reason if I hide the actor object as I used to do before reshowing it when disabling
-        // the extension leads to the dash being placed in the center of the overview.
-        // Hiding the parent container seems to work properly instead
-        // I don't know if it's linked with this bug: https://bugzilla.gnome.org/show_bug.cgi?id=692744.
-        // However tha same workaround doesn't work.
-        Main.overview._controls._dashSlider.actor.hide();
-
         // Create a new dash object
-        this.dash = new MyDash.myDash(this._settings); // this.dash = new MyDash.myDash();
-        this.forcedOverview = false;
+        this.dash = new MyDash.myDash(this._settings);
 
         // connect app icon into the view selector
         this.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
 
-        // Create the main actor and the main container for centering, turn on track hover
+        // Create the main actor and the containers for sliding in and out and
+        // centering, turn on track hover
 
-        this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true,
-            style_class: 'box'} );
+        // This is the vertical centering actor
         this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
-            y_align: St.Align.MIDDLE, child: this._box});
+            y_align: St.Align.MIDDLE});
+        this.actor._delegate = this;
 
+        // This is the sliding actor whose allocation is to be tracked for input regions
+        this._slider = new DashSlideContainer( {
+            direction:this._rtl?SlideDirection.RIGHT:SlideDirection.LEFT}
+        );
+        // This is the actor whose hover status us tracked for autohide
+        this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true } );
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
-        this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
 
         // Create and apply height constraint to the dash. It's controlled by this.actor height
         this.actor.height = Main.overview.viewSelector.actor.height; // Guess initial reasonable height.
@@ -202,17 +209,9 @@ const dockedDash = new Lang.Class({
                                                             coordinate: Clutter.BindCoordinate.HEIGHT });
         this.dash.actor.add_constraint(this.constrainHeight);
 
-        // Put dock on the primary monitor
-        this._monitor = Main.layoutManager.primaryMonitor;
-
-        // this store size and the position where the dash is shown;
-        // used by intellihide module to check window overlap.
-        this.staticBox = new Clutter.ActorBox({x1:0, y1:0, x2:100, y2:500});
-
         // Connect global signals
+        this._signalHandler = new Convenience.globalSignalHandler();
         this._signalHandler.push(
-            // Allow app icons do be dragged out of the chrome actors when reordering or deleting theme while not on overview mode
-            // by changing global stage input mode
             [
                 Main.overview,
                 'item-drag-begin',
@@ -263,22 +262,8 @@ const dockedDash = new Lang.Class({
         //this.actor.hide(); but I need to access its width, so I use opacity
         this.actor.set_opacity(0);
 
-        //Add dash container actor and the container to the Chrome.
-        this._box.add_actor(this.dash.actor);
-
         // Apply custome css class according to the settings
         this._updateCustomTheme();
-
-        // Add aligning container without tracking it for input region (old affectsinputRegion: false that was removed).
-        // The public method trackChrome requires the actor to be child of a tracked actor. Since I don't want the parent
-        // to be tracked I use the private internal _trackActor instead.
-        Main.uiGroup.add_child(this.actor);
-        Main.layoutManager._trackActor(this._box, {trackFullscreen: true});
-        Main.layoutManager._trackActor(this.dash._box, { affectsStruts: this._settings.get_boolean('dock-fixed')});
-
-        // pretend this._box is isToplevel child so that fullscreen is actually tracked
-        let index = Main.layoutManager._findActor(this._box);
-        Main.layoutManager._trackedActors[index].isToplevel = true ;
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
@@ -298,6 +283,35 @@ const dockedDash = new Lang.Class({
 
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
+
+         // Delay operations that require the shell to be fully loaded and with
+         // user theme applied.
+
+        this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
+
+        // Hide usual Dash
+        // For some reason if I hide the actor object as I used to do before reshowing it when disabling
+        // the extension leads to the dash being placed in the center of the overview.
+        // Hiding the parent container seems to work properly instead
+        // I don't know if it's linked with this bug: https://bugzilla.gnome.org/show_bug.cgi?id=692744.
+        // However tha same workaround doesn't work.
+        Main.overview._controls._dashSlider.actor.hide();
+
+        // Add dash container actor and the container to the Chrome.
+        this.actor.set_child(this._slider);
+        this._slider.add_child(this._box);
+        this._box.add_actor(this.dash.actor);
+
+        // Add aligning container without tracking it for input region (old affectsinputRegion: false that was removed).
+        // The public method trackChrome requires the actor to be child of a tracked actor. Since I don't want the parent
+        // to be tracked I use the private internal _trackActor instead.
+        Main.uiGroup.add_child(this.actor);
+        Main.layoutManager._trackActor(this._box, {trackFullscreen: true});
+        Main.layoutManager._trackActor(this.dash._box, { affectsStruts: this._settings.get_boolean('dock-fixed')});
+
+        // pretend this._box is isToplevel child so that fullscreen is actually tracked
+        let index = Main.layoutManager._findActor(this._box);
+        Main.layoutManager._trackedActors[index].isToplevel = true ;
 
     },
 
@@ -332,10 +346,8 @@ const dockedDash = new Lang.Class({
         this._signalHandler.disconnect();
         // The dash has global signals as well internally
         this.dash.destroy();
-        // Destroy main clutter actor: this should be sufficient
-        // From clutter documentation:
-        // If the actor is inside a container, the actor will be removed.
-        // When you destroy a container, its children will be destroyed as well. 
+        // Destroy main clutter actor: this should be sufficient removing it and
+        // destroying  all its children
         this.actor.destroy();
 
         // Reshow normal dash previously hidden, restore panel position if changed.
@@ -469,36 +481,14 @@ const dockedDash = new Lang.Class({
 
     _animateIn: function(time, delay) {
 
-        let final_position, anchor_point;
-
-        // Move anchor point so mode so that when dash icon size changes
-        // the dash stays at the right position
-        if(this._rtl){
-            anchor_point = Clutter.Gravity.NORTH_EAST;
-            final_position = this.staticBox.x2;
-        } else {
-            anchor_point = Clutter.Gravity.NORTH_WEST;
-            final_position = this.staticBox.x1;
-        }
-
-        /* Animate functions are also used for 'hard' position reset with time==0
-         * and delay==0 since they keep this._animStatus in sync. But I really
-         * want to remove all queued animation in this instance (Only running
-         * animation are removed adding a new Tween).
-         */
-        if (time==0 && delay==0)
-            this._removeAnimations();
-
         this._animStatus.queue(true);
-        Tweener.addTween(this.actor,{
-            x: final_position,
+        Tweener.addTween(this._slider,{
+            slidex: 1,
             time: time,
             delay: delay,
             transition: 'easeOutQuad',
-            onUpdate: Lang.bind(this, this._updateClip),
             onStart:  Lang.bind(this, function() {
                 this._animStatus.start();
-                this.actor.move_anchor_point_from_gravity(anchor_point);
             }),
             onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
             onComplete: Lang.bind(this, function() {this._animStatus.end();})
@@ -507,69 +497,20 @@ const dockedDash = new Lang.Class({
 
     _animateOut: function(time, delay){
 
-        let final_position, anchor_point;
-
-        // Move anchor point so that when dash icon size changes
-        // the dash stays at the right position
-        if(this._rtl){
-            anchor_point = Clutter.Gravity.NORTH_WEST;
-            final_position = this.staticBox.x2 - 1;
-        } else {
-            anchor_point = Clutter.Gravity.NORTH_EAST;
-            final_position = this.staticBox.x1 + 1;
-        }
-
-        /* Animate functions are also used for 'hard' position reset with time==0
-         * and delay==0 since they keep this._animStatus in sync. But I really
-         * want to remove all queued animation in this instance (Only running
-         * animation are removed adding a new Tween).
-         */
-        if (time==0 && delay==0)
-            this._removeAnimations();
-
         this._animStatus.queue(false);
-        Tweener.addTween(this.actor,{
-            x: final_position,
+        Tweener.addTween(this._slider,{
+            slidex: 0,
             time: time,
             delay: delay ,
             transition: 'easeOutQuad',
-            onUpdate: Lang.bind(this, this._updateClip),
             onStart:  Lang.bind(this, function() {
                 this._animStatus.start();
-                this.actor.move_anchor_point_from_gravity(anchor_point);
             }),
             onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
             onComplete: Lang.bind(this, function() {
                 this._animStatus.end();
                 })
         });
-    },
-
-    // clip the dock to the current monitor;
-    // inspired by dock@gnome-shell-extensions.gcampax.github.com
-    _updateClip: function(){
-
-        // Here we implicitly assume that the stage and actor's parent
-        // share the same coordinate space
-        let clip = new Clutter.ActorBox({ x1: this._monitor.x,
-                          y1: this._monitor.y,
-                          x2: this._monitor.x + this._monitor.width,
-                          y2: this._monitor.y + this._monitor.height});
-
-        // Translate back into actor's coordinate space
-        // While the actor moves, the clip has to move in the opposite direction
-        // to mantain its position in respect to the screen. Also take into account
-        // the actor anchor point.
-
-        let [x_anchor, y_anchor] = this.actor.get_anchor_point();
-
-        clip.x1 -= this.actor.x - x_anchor;
-        clip.x2 -= this.actor.x - x_anchor;
-        clip.y1 -= this.actor.y - y_anchor;
-        clip.y2 -= this.actor.y - y_anchor;
-
-        // Apply the clip
-        this.actor.set_clip(clip.x1, clip.y1, clip.x2-clip.x1, clip.y2 - clip.y1);
 
     },
 
@@ -665,7 +606,6 @@ const dockedDash = new Lang.Class({
 
         this.actor.height = Math.round( fraction * availableHeight);
         this.actor.y = this._monitor.y + unavailableTopSpace + Math.round( (1-fraction)/2 * availableHeight);
-        this.actor.y_align = St.Align.MIDDLE;
 
         if(extendHeight){
             this.dash._container.set_height(this.actor.height);
@@ -712,9 +652,6 @@ const dockedDash = new Lang.Class({
             this._box.height
         );
 
-        // If allocation is changed, probably also the clipping has to be updated.
-        this._updateClip();
-
         // This prevents an allocation cycle warning. Somehow changing the topbar
         // allocation causes an allocation of the dock actor and thus the cycle I
         // think. This happens only if _updateStaticBox is called upon the
@@ -733,14 +670,22 @@ const dockedDash = new Lang.Class({
     _resetPosition: function() {
         this._monitor = this._getMonitor();
         this._updateStaticBox();
-        if( this._animStatus.hidden() || this._animStatus.hiding())
-            this._animateOut(0,0);
-        else {
-            this._animateOut(0,0);
-            this._animateIn(this._settings.get_double('animation-time'),0);
+
+        let position, anchor_point;
+
+        if(this._rtl){
+            anchor_point = Clutter.Gravity.NORTH_EAST;
+            position = this.staticBox.x2;
+        } else {
+            anchor_point = Clutter.Gravity.NORTH_WEST;
+            position = this.staticBox.x1;
         }
+
+        this.actor.move_anchor_point_from_gravity(anchor_point);
+        this.actor.x = position;
+
+
         this._updateYPosition();
-        this._updateClip();
     },
 
     _getMonitor: function(){
@@ -757,7 +702,7 @@ const dockedDash = new Lang.Class({
     },
 
     _removeAnimations: function() {
-        Tweener.removeTweens(this.actor);
+        Tweener.removeTweens(this._slider);
         this._animStatus.clearAll();
     },
 
@@ -790,8 +735,7 @@ const dockedDash = new Lang.Class({
 
     // Show dock and give key focus to it
     _onAccessibilityFocus: function(){
-        this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
-
+        this._box.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
         this._animateIn(this._settings.get_double('animation-time'), 0);
     },
 
