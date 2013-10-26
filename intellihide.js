@@ -124,9 +124,6 @@ const intellihide = new Lang.Class({
         // initialize: call show forcing to initialize status variable
         this._show(true);
 
-        // Load optional features
-        this._optionalBoltSupport();
-
         // update visibility
         this._updateDockVisibility();
     },
@@ -332,50 +329,6 @@ const intellihide = new Lang.Class({
         }
         return false;
 
-    },
-
-    // Optional features enable/disable
-
-    // Basic bolt extension support
-    _optionalBoltSupport: function() {
-
-        let label = 'optionalBoltSupport';
-
-        this._settings.connect('changed::bolt-support',Lang.bind(this, function(){
-            if(this._settings.get_boolean('bolt-support'))
-                Lang.bind(this, enable)();
-            else
-                Lang.bind(this, disable)();
-        }));
-
-        if(this._settings.get_boolean('bolt-support'))
-            Lang.bind(this, enable)();
-
-        function enable() {
-            this._signalHandler.disconnectWithLabel(label);
-            this._signalHandler.pushWithLabel(label,
-                [
-                    Main.overview,
-                    'bolt-showing',
-                    Lang.bind(this, function(){
-                        this._disableIntellihide = true;
-                        this._hide();
-                    })
-                ],
-                [
-                    Main.overview,
-                    'bolt-hiding',
-                    Lang.bind(this, function(){
-                        this._disableIntellihide = false;
-                        this._updateDockVisibility();
-                    })
-                ]
-            );
-        }
-
-        function disable() {
-            this._signalHandler.disconnectWithLabel(label);
-        }
     }
 
 });
