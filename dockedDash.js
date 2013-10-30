@@ -15,6 +15,7 @@ const Main = imports.ui.main;
 const Dash = imports.ui.dash;
 const Overview = imports.ui.overview;
 const Tweener = imports.ui.tweener;
+const ViewSelector = imports.ui.viewSelector;
 const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -123,6 +124,17 @@ dockedDash.prototype = {
                 St.ThemeContext.get_for_stage (global.stage),
                 'changed',
                 Lang.bind(this, this._onThemeChanged)
+            ],
+            [
+                Main.overview,
+                'showing',
+                Lang.bind(this, this.disableAutoHide)
+            ],
+            // Follow 3.8 behaviour: hide on appview
+            [
+                Main.overview.viewSelector,
+                'page-changed',
+                Lang.bind(this, this._pageChanged)
             ],
             // Ensure the ShowAppsButton status is kept in sync
             [
@@ -611,12 +623,28 @@ dockedDash.prototype = {
     _onDragStart: function(){
         this._oldAutohideStatus = this._autohideStatus;
         this._autohideStatus = false;
+        this._animateIn(this._settings.get_double('animation-time'), 0);
     },
 
     _onDragEnd: function(){
         if(this._oldAutohideStatus)
             this._autohideStatus  = this._oldAutohideStatus;
         this._box.sync_hover();
+        if(Main.overview._shown)
+            this._pageChanged();
+    },
+
+    _pageChanged: function() {
+
+        let activePage = Main.overview.viewSelector.getActivePage();
+        let dashVisible = (activePage == ViewSelector.ViewPage.WINDOWS ||
+                           activePage == ViewSelector.ViewPage.APPS);
+
+        if(dashVisible){
+            this._animateIn(this._settings.get_double('animation-time'), 0);
+        } else {
+            this._animateOut(this._settings.get_double('animation-time'), 0);
+        }
     },
 
     _onSwitchWorkspace: function(){

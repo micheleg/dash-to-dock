@@ -5,7 +5,6 @@ const Meta = imports.gi.Meta;
 const Mainloop = imports.mainloop;
 
 const Main = imports.ui.main;
-const ViewSelector = imports.ui.viewSelector;
 
 const Shell = imports.gi.Shell;
 
@@ -119,12 +118,6 @@ intellihide.prototype = {
                 'hiding',
                 Lang.bind(this, this._overviewExit)
             ],
-            // Follow 3.8 behaviour: hide on appview
-            [
-                Main.overview.viewSelector,
-                'page-changed',
-                Lang.bind(this, this._pageChanged)
-            ],
             // update wne monitor changes, for instance in multimonitor when monitor are attached
             [
                 global.screen,
@@ -176,20 +169,22 @@ intellihide.prototype = {
     },
 
     _show: function(force) {
-        if (this.status==false || force){
+        if (this.status!==true || force){
             this.status = true;
             this.showFunction();
         }
     },
 
     _hide: function(force) {
-        if (this.status==true || force){
+        if (this.status!==false || force){
             this.status = false;
             this.hideFunction();
         }
     },
 
     _overviewExit : function() {
+        // Inside the overview the dash could have been hidden
+        this.status = undefined;
         this._disableIntellihide = false;
         this._updateDockVisibility();
 
@@ -197,22 +192,6 @@ intellihide.prototype = {
 
     _overviewEnter: function() {
         this._disableIntellihide = true;
-        this._show();
-    },
-
-    _pageChanged: function() {
-
-        let activePage = Main.overview.viewSelector.getActivePage();
-        let dashVisible = (activePage == ViewSelector.ViewPage.WINDOWS ||
-                           activePage == ViewSelector.ViewPage.APPS);
-
-        if(dashVisible){
-            this._disableIntellihide = false;
-            this._show();
-        } else {
-            this._disableIntellihide = true;
-            this._hide();
-        }
     },
 
     _grabOpBegin: function() {
