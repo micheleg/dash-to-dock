@@ -439,17 +439,15 @@ dockedDash.prototype = {
 
     _fadeOutBackground:function (time, delay) {
 
-        // CSS time is in ms!
-        this.dash._container.set_style('transition-duration: ' + time*1000 + ';' +
-            'transition-delay: '+ delay*1000 +'; ' +
+        this.dash._container.set_style('transition-duration: ' + time + 's;' +
+            'transition-delay: '+ delay +'s; ' +
             'background-color:'+ this._defaultBackground);
     }, 
 
     _fadeInBackground:function (time, delay) {
 
-        // CSS time is in ms!
-        this.dash._container.set_style('transition-duration: ' + time*1000 + ';' +
-            'transition-delay: '+ delay*1000 +'; ' +
+        this.dash._container.set_style('transition-duration: ' + time + 's;' +
+            'transition-delay: '+ delay +'s; ' +
             'background-color:'+ this._customizedBackground);
     },
 
