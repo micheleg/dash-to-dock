@@ -1,12 +1,11 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 const Lang = imports.lang;
-const Meta = imports.gi.Meta;
 const Mainloop = imports.mainloop;
+const Meta = imports.gi.Meta;
+const Shell = imports.gi.Shell;
 
 const Main = imports.ui.main;
-
-const Shell = imports.gi.Shell;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
