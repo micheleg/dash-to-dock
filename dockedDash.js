@@ -111,12 +111,6 @@ dockedDash.prototype = {
                 'monitors-changed',
                 Lang.bind(this, this._resetPosition )
             ],
-            // keep the dock above Main.wm._workspaceSwitcherPopup.actor
-            [
-                global.window_manager,
-                'switch-workspace',
-                Lang.bind(this, this._onSwitchWorkspace)
-            ],
             // When theme changes re-obtain default background color
             [
                 St.ThemeContext.get_for_stage (global.stage),
@@ -272,8 +266,18 @@ dockedDash.prototype = {
     },
 
     _hoverChanged: function() {
-        // Skip if dock is not in autohide mode for instance because it is shown by intellihide
-        if(this._settings.get_boolean('autohide') && this._autohideStatus){
+
+        // Skip if dock is not in autohide mode for instance because it is shown
+        // by intellihide. Delay the hover changes check while switching
+        // workspace: the workspaceSwitcherPopup steals the hover status and it
+        // is not restored until the mouse move again (sync_hover has no effect).
+        if(Main.wm._workspaceSwitcherPopup) {
+            Mainloop.timeout_add(500, Lang.bind(this, function() {
+                    this._box.sync_hover();
+                    this._hoverChanged();
+                    return false;
+                }));
+        } else if(this._settings.get_boolean('autohide') && this._autohideStatus) {
             if( this._box.hover ) {
                 this._show();
             } else {
@@ -644,15 +648,6 @@ dockedDash.prototype = {
             this._animateIn(this._settings.get_double('animation-time'), 0);
         } else {
             this._animateOut(this._settings.get_double('animation-time'), 0);
-        }
-    },
-
-    _onSwitchWorkspace: function(){
-        // workspace switcher group actor is stealing my focus when 
-        // switching workspaces! Sometimes my actor is placed below it; 
-        // try to keep it above.
-        if(Main.wm._workspaceSwitcherPopup) {
-            this.actor.raise(Main.wm._workspaceSwitcherPopup.actor);
         }
     },
 
