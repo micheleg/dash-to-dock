@@ -49,7 +49,8 @@ const DashSlideContainer = new Lang.Class({
         
         /* Default local params */
         let localDefaults = {
-            direction: SlideDirection.LEFT
+            direction: SlideDirection.LEFT,
+            initialSlideValue: 1
         }
 
         let localParams = Params.parse(params, localDefaults, true);
@@ -69,7 +70,7 @@ const DashSlideContainer = new Lang.Class({
         this._child = null;
 
         // slide parameter: 1 = visible, 0 = hidden.
-        this._slidex = 1;
+        this._slidex = localParams.initialSlideValue;
         this._direction = localParams.direction;
         this._slideoutWidth = 1; // minimum width when slided out
     },
