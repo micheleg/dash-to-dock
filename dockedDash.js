@@ -156,6 +156,10 @@ dockedDash.prototype = {
         Main.layoutManager._trackActor(this._box, {trackFullscreen: true});
         Main.layoutManager._trackActor(this.dash._box, { affectsStruts: this._settings.get_boolean('dock-fixed')});
 
+        // pretend this._box is isToplevel child so that fullscreen is actually tracked
+        let index = Main.layoutManager._findActor(this._box);
+        Main.layoutManager._trackedActors[index].isToplevel = true ;
+
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
         // anymore an update of the input regions. Force the update manually.
