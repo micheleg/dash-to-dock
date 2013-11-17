@@ -23,6 +23,8 @@ const MyDash = Me.imports.myDash;
 
 const dockedDash = new Lang.Class({
     Name: 'dockedDash',
+
+    _numHotkeys: 10,
  
     _init: function(settings) {
 
@@ -169,11 +171,11 @@ const dockedDash = new Lang.Class({
 
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
-
+        this._hotKeysEnabled = false;
+        this._optionalHotKeys();
     },
 
     _initialize: function(){
-
         if(this._realizeId>0){
             this.actor.disconnect(this._realizeId);
             this._realizeId=0;
@@ -210,6 +212,8 @@ const dockedDash = new Lang.Class({
         // Reshow normal dash previously hidden, restore panel position if changed.
         Main.overview._controls._dashSlider.actor.show();
         this._revertMainPanel();
+        
+        this._disableHotKeys();
     },
 
     _bindSettingsChanges: function() {
@@ -222,6 +226,10 @@ const dockedDash = new Lang.Class({
 
         this._settings.connect('changed::scroll-switch-workspace', Lang.bind(this, function(){
             this._optionalScrollWorkspaceSwitch(this._settings.get_boolean('scroll-switch-workspace'));
+        }));
+        
+        this._settings.connect('changed::hot-keys', Lang.bind(this, function() {
+            this._optionalHotKeys(this._settings.get_boolean('hot-keys'));
         }));
 
         this._settings.connect('changed::dash-max-icon-size', Lang.bind(this, function(){
@@ -280,6 +288,23 @@ const dockedDash = new Lang.Class({
             } else {
                 this._hide();
             }
+        }
+    },
+    
+    _activateApp: function(appIndex, modifier) {
+        let children = this.dash._box.get_children().filter(function(actor) {
+                return actor.child &&
+                       actor.child._delegate &&
+                       actor.child._delegate.app;
+            });
+        
+        // Apps currently in the dash
+        let apps = children.map(function(actor) {
+                return actor.child._delegate;
+            });
+        
+        if (appIndex < apps.length) {
+            apps[appIndex]._onActivate({ get_state: function() { return modifier; }, get_click_count: function() { return 1; }, simulated_hotkey_events: true });
         }
     },
 
@@ -827,6 +852,53 @@ const dockedDash = new Lang.Class({
             }
         }
 
+    },
+    
+    _optionalHotKeys: function() {
+        if(this._settings.get_boolean('hot-keys'))
+            this._enableHotKeys();
+        else
+            this._disableHotKeys();
+    },
+    
+    _enableHotKeys: function() {
+        if (this._hotKeysEnabled) {
+            return;
+        }
+        
+        // Setup keyboard bindings for dash elements
+        
+        for (let i = 0; i < this._numHotkeys; i++) {
+            let appNum = i;
+            Main.wm.addKeybinding('app-hotkey-' + (i + 1), this._settings, Meta.KeyBindingFlags.NONE, Shell.KeyBindingMode.NORMAL | Shell.KeyBindingMode.MESSAGE_TRAY, Lang.bind(this, function() {
+                this._activateApp(appNum, 0);
+            }));
+            
+            Main.wm.addKeybinding('app-shift-hotkey-' + (i + 1), this._settings, Meta.KeyBindingFlags.NONE, Shell.KeyBindingMode.NORMAL | Shell.KeyBindingMode.MESSAGE_TRAY, Lang.bind(this, function() {
+                this._activateApp(appNum, Clutter.ModifierType.SHIFT_MASK);
+            }));
+            
+            Main.wm.addKeybinding('app-ctrl-hotkey-' + (i + 1), this._settings, Meta.KeyBindingFlags.NONE, Shell.KeyBindingMode.NORMAL | Shell.KeyBindingMode.MESSAGE_TRAY, Lang.bind(this, function() {
+                this._activateApp(appNum, Clutter.ModifierType.CONTROL_MASK);
+            }));
+        }
+        
+        this._hotKeysEnabled = true;
+    },
+    
+    _disableHotKeys: function() {
+        if (!this._hotKeysEnabled) {
+            return;
+        }
+        
+        // Remove keyboard bindings for dash elements
+        for (let i = 0; i < this._numHotkeys; i++) {
+            Main.wm.removeKeybinding('app-hotkey-' + (i + 1));
+            Main.wm.removeKeybinding('app-shift-hotkey-' + (i + 1));
+            Main.wm.removeKeybinding('app-ctrl-hotkey-' + (i + 1));
+        }
+        
+        this._hotKeysEnabled = false;
     },
 
     // Disable autohide effect, thus show dash
