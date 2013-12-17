@@ -110,6 +110,10 @@
       <default>false</default>
       <summary>Extend the dock container to all the available height</summary>
     </key>
+    <key type="b" name="shift-panel">
+      <default>false</default>
+      <summary>Sets if the extended dock should move the main panel</summary>
+    </key>
     <key type="i" name="preferred-monitor">
       <default>-1</default>
       <summary>Monitor on which putting the dock</summary>

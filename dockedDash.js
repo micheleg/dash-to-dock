@@ -265,6 +265,7 @@ dockedDash.prototype = {
         this._settings.connect('changed::autohide', Lang.bind(this, function(){
             this.emit('box-changed');
         }));
+        this._settings.connect('changed::shift-panel', Lang.bind(this, this._updateYPosition));
         this._settings.connect('changed::extend-height', Lang.bind(this, this._updateYPosition));
         this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
         this._settings.connect('changed::height-fraction', Lang.bind(this,this._updateYPosition));
@@ -512,12 +513,14 @@ dockedDash.prototype = {
         let unavailableTopSpace = 0;
         let unavailableBottomSpace = 0;
 
+        let shiftPanel = this._settings.get_boolean('shift-panel');
         let extendHeight = this._settings.get_boolean('extend-height');
         let dockFixed = this._settings.get_boolean('dock-fixed');
 
         // check if the dock is on the primary monitor
         if (this._isPrimaryMonitor()){
-            if (!extendHeight || !dockFixed) {
+            // removed dockfixed, makes no sense in my eyes
+            if(!shiftPanel && extendHeight){
                 unavailableTopSpace = Main.panel.actor.height;
             }
         }
@@ -548,19 +551,35 @@ dockedDash.prototype = {
 
     // Shift panel position to extend the dash to the full monitor height
     _updateMainPanel: function() {
+        let shiftPanel = this._settings.get_boolean('shift-panel');
         let extendHeight = this._settings.get_boolean('extend-height');
         let dockFixed = this._settings.get_boolean('dock-fixed');
+        
         let panelActor = Main.panel.actor;
+        let trayActor = Main.messageTray.actor;
 
-        if (this._isPrimaryMonitor() && extendHeight && dockFixed) {
-            panelActor.set_width(this._monitor.width - this._box.width);
+        if (this._isPrimaryMonitor() && extendHeight) {
+            if (shiftPanel) {
+                panelActor.set_width(this._monitor.width - this._box.width);
+                if (this._rtl) {
+                    panelActor.set_margin_right(this._box.width - 1);
+                } else {
+                    panelActor.set_margin_left(this._box.width - 1);
+                }
+            }else{
+                this._revertMainPanel();
+            }
+
+            // changes the width of the message tray, to prevent an overlay
+            trayActor.set_width(this._monitor.width - this._box.width);
             if (this._rtl) {
-                panelActor.set_margin_right(this._box.width - 1);
+                trayActor.set_margin_right(this._box.width - 1);
             } else {
-                panelActor.set_margin_left(this._box.width - 1);
+                trayActor.set_margin_left(this._box.width - 1);
             }
         } else {
             this._revertMainPanel();
+            this._revertMessageTray();
         }
     },
 
@@ -569,6 +588,13 @@ dockedDash.prototype = {
         panelActor.set_width(this._monitor.width);
         panelActor.set_margin_right(0);
         panelActor.set_margin_left(0);
+    },
+
+    _revertMessageTray: function() {
+        let trayActor = Main.messageTray.actor;
+        trayActor.set_width(this._monitor.width);
+        trayActor.set_margin_right(0);
+        trayActor.set_margin_left(0);
     },
 
     _updateStaticBox: function() {
