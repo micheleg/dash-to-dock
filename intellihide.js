@@ -142,6 +142,7 @@ intellihide.prototype = {
 
         if(this._windowChangedTimeout>0)
             Mainloop.source_remove(this._windowChangedTimeout); // Just to be sure
+        this._windowChangedTimeout=0;
     },
 
     _bindSettingsChanges: function() {
@@ -216,6 +217,7 @@ intellihide.prototype = {
             if(this._windowChangedTimeout>0)
                 Mainloop.source_remove(this._windowChangedTimeout);
 
+            this._windowChangedTimeout=0;
             this._updateDockVisibility();
         }
     },
