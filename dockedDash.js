@@ -584,7 +584,16 @@ const dockedDash = new Lang.Class({
         // If allocation is changed, probably also the clipping has to be updated.
         this._updateClip();
 
-        this._updateMainPanel();
+        // This prevents an allocation cycle warning. Somehow changing the topbar
+        // allocation causes an allocation of the dock actor and thus the cycle I
+        // think. This happens only if _updateStaticBox is called upon the
+        // allocation event (why?). This seems to prevent the warning and I checked
+        // that the function is called once to be sure.
+        Mainloop.timeout_add(10,
+                Lang.bind(this, function(){
+                  this._updateMainPanel();
+                  return false;
+                }));
 
         this.emit('box-changed');
     },
