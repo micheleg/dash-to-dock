@@ -268,9 +268,16 @@ const WorkspaceSettingsWidget = new GObject.Class({
             this.settings.set_boolean('show-apps-at-top', check.get_active());
         }));
 
+    let allowHotKeys = new Gtk.CheckButton({label: _("Use Super+(0-9) to switch applications")});
+        allowHotKeys.set_active(this.settings.get_boolean('hot-keys'));
+        allowHotKeys.connect('toggled', Lang.bind(this, function(check){
+            this.settings.set_boolean('hot-keys', check.get_active());
+        }));
+
     showIcons.add(showFavorites);
     showIcons.add(showRunning);
     showIcons.add(showAppsAtTop);
+    showIcons.add(allowHotKeys);
     
     dockSettings.add(showIcons);
 

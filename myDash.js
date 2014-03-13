@@ -857,7 +857,7 @@ const myAppIcon = new Lang.Class({
 
     _onActivate: function(event) {
 
-        if ( !this._settings.get_boolean('customize-click') ){
+        if ( !this._settings.get_boolean('customize-click') && !event.simulated_hotkey_events ){
             this.parent(event);
             return;
         }
