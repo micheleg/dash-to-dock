@@ -307,11 +307,13 @@ const dockedDash = new Lang.Class({
         // The public method trackChrome requires the actor to be child of a tracked actor. Since I don't want the parent
         // to be tracked I use the private internal _trackActor instead.
         Main.uiGroup.add_child(this.actor);
-        Main.layoutManager._trackActor(this._box, {trackFullscreen: true});
-        Main.layoutManager._trackActor(this.dash._box, { affectsStruts: this._settings.get_boolean('dock-fixed')});
+        Main.layoutManager._trackActor(this._slider, {trackFullscreen: true});
 
-        // pretend this._box is isToplevel child so that fullscreen is actually tracked
-        let index = Main.layoutManager._findActor(this._box);
+        if ( this._settings.get_boolean('dock-fixed') )
+          Main.layoutManager._trackActor(this.dash._box, {affectsStruts: true});
+
+        // pretend this._slider is isToplevel child so that fullscreen is actually tracked
+        let index = Main.layoutManager._findActor(this._slider);
         Main.layoutManager._trackedActors[index].isToplevel = true ;
 
     },
@@ -383,13 +385,13 @@ const dockedDash = new Lang.Class({
         }));
 
         this._settings.connect('changed::dock-fixed', Lang.bind(this, function(){
-            Main.layoutManager._untrackActor(this.dash._box);
-            Main.layoutManager._trackActor(this.dash._box, {affectsStruts: this._settings.get_boolean('dock-fixed')});
 
             if(this._settings.get_boolean('dock-fixed')) {
+                Main.layoutManager._trackActor(this.dash._box, {affectsStruts: true});
                 // show dash
                 this.disableAutoHide();
             } else {
+                Main.layoutManager._untrackActor(this.dash._box);
                 this.emit('box-changed');
             }
 
