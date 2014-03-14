@@ -196,7 +196,7 @@ const myDash = new Lang.Class({
         DND.addDragMonitor(this._dragMonitor);
 
         if (this._box.get_n_children() == 0) {
-            this._emptyDropTarget = new EmptyDropTargetItem();
+            this._emptyDropTarget = new Dash.EmptyDropTargetItem();
             this._box.insert_child_at_index(this._emptyDropTarget, 0);
             this._emptyDropTarget.show(true);
         }
