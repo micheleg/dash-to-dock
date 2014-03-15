@@ -6,3 +6,80 @@
 	padding-left:1px;
 }
 
+/* Shrink the dash by reducing padding and border radius */
+#dashtodockContainer.dashtodock #dash {
+    padding: 1px 0px;
+    border-radius: 0px 6px 6px 0px;
+}
+
+#dashtodockContainer.dashtodock #dash:rtl {
+    border-radius: 6px 0px 0px 6px;
+}
+
+#dashtodockContainer.dashtodock .dash-item-container > StButton {
+    transition-duration: 250;
+    background-size: contain;
+}
+
+#dashtodockContainer.dashtodock .dash-item-container > StButton {
+   padding: 1px 2px;
+}
+
+/* Dash height extended to the whole available vertical space */
+#dashtodockContainer.dashtodock.extended #dash {
+    background: rgba(0,0,0,1);
+    border:0;
+    border-radius: 0;
+}
+
+/* Running and focused application style */
+
+#dashtodockContainer.dashtodock .app-well-app.running > .overview-icon {
+	background-image:none;
+}
+
+#dashtodockContainer.dashtodock .app-well-app.focused > .overview-icon {
+    transition-duration: 250;
+    background-gradient-start: rgba(255, 255, 255, .05);
+    background-gradient-end: rgba(255, 255, 255, .15);
+    background-gradient-direction: vertical;
+    border-radius: 4px;
+    box-shadow: inset 0px 1px 2px 0px rgba(0, 0, 0, 1);
+}
+
+#dashtodockContainer.dashtodock:ltr .running1 {
+    background-image: url('./media/one.svg');
+}
+
+#dashtodockContainer.dashtodock:rtl .running1 {
+    background-image: url('./media/one_rtl.svg');
+}
+
+#dashtodockContainer.dashtodock:ltr .running2 {
+    background-image: url('./media/two.svg');
+}
+
+#dashtodockContainer.dashtodock:rtl .running2 {
+    background-image: url('./media/two_rtl.svg');
+}
+
+#dashtodockContainer.dashtodock:ltr .running3 {
+   background-image: url('./media/three.svg');
+}
+
+#dashtodockContainer.dashtodock:rtl .running3 {
+    background-image: url('./media/three_rtl.svg');
+}
+
+#dashtodockContainer.dashtodock:ltr .running4 {
+    background-image: url('./media/four.svg');
+}
+
+#dashtodockContainer.dashtodock:rtl .running4 {
+    background-image: url('./media/four_rtl.svg');
+}
+
+#dashtodockContainer.dashtodock #dash {
+    background: rgba(0,0,0,0.9);
+}
+
