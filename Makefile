@@ -3,6 +3,7 @@
 UUID = dash-to-dock@micxgx.gmail.com
 BASE_MODULES = extension.js stylesheet.css metadata.json COPYING README.md
 EXTRA_MODULES = dockedDash.js intellihide.js myDash.js convenience.js prefs.js
+EXTRA_MEDIA = one.svg two.svg three.svg four.svg one_rtl.svg two_rtl.svg three_rtl.svg four_rtl.svg
 TOLOCALIZE =  prefs.js
 MSGSRC = $(wildcard po/*.po)
 INSTALLBASE = ~/.local/share/gnome-shell/extensions
@@ -59,6 +60,8 @@ _build: all
 	-rm -fR ./_build 
 	mkdir -p _build 
 	cp $(BASE_MODULES) $(EXTRA_MODULES) _build
+	mkdir -p _build/media
+	cd media ; cp $(EXTRA_MEDIA) ../_build/media/ 
 	mkdir -p _build/schemas
 	cp schemas/*.xml _build/schemas/
 	cp schemas/gschemas.compiled _build/schemas/

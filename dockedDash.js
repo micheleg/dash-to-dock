@@ -65,7 +65,7 @@ const dockedDash = new Lang.Class({
         this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true,
             style_class: 'box'} );
         this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
-            style_class: 'container', y_align: St.Align.MIDDLE, child: this._box});
+            style_class: 'dashtodock', y_align: St.Align.MIDDLE, child: this._box});
 
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
         this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
