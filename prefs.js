@@ -281,6 +281,21 @@ const WorkspaceSettingsWidget = new GObject.Class({
     let customization = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
     let customizationTitle = new Gtk.Label({label: _("Optional features")});
 
+    /* CUSTOM THEME */
+    let customThemeControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
+
+    let customThemeLabel = new Gtk.Label({label: _("Apply custom theme (meant to match the default Adwaita theme)"),
+                                              xalign: 0, hexpand:true});
+    let customTheme = new Gtk.Switch({halign:Gtk.Align.END});
+            customTheme.set_active(this.settings.get_boolean('apply-custom-theme'));
+            customTheme.connect('notify::active', Lang.bind(this, function(check){
+                this.settings.set_boolean('apply-custom-theme', check.get_active());
+            }));
+
+    customThemeControl.add(customThemeLabel)
+    customThemeControl.add(customTheme)
+    customization.add(customThemeControl);
+
     /* OPAQUE LAYER */
 
     let opaqueLayerControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});

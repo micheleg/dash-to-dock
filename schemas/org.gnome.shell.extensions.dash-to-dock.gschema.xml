@@ -82,6 +82,11 @@
       <summary>Maximum dash icon size</summary>
       <description>Set the allowed maximum dash icon size. Allowed range: 16..64.</description>
     </key>
+    <key type="b" name="apply-custom-theme">
+      <default>false</default>
+      <summary>Apply custom theme</summary>
+      <description>Apply customization to the dash appearence</description>
+    </key>
     <key type="b" name="show-running">
       <default>true</default>
       <summary>Show running apps</summary>

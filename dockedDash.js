@@ -65,7 +65,7 @@ const dockedDash = new Lang.Class({
         this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true,
             style_class: 'box'} );
         this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
-            style_class: 'dashtodock', y_align: St.Align.MIDDLE, child: this._box});
+            y_align: St.Align.MIDDLE, child: this._box});
 
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
         this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
@@ -139,6 +139,9 @@ const dockedDash = new Lang.Class({
 
         //Add dash container actor and the container to the Chrome.
         this._box.add_actor(this.dash.actor);
+
+        // Apply custome css class according to the settings
+        this._updateCustomTheme();
 
         // Add aligning container without tracking it for input region (old affectsinputRegion: false that was removed).
         // The public method trackChrome requires the actor to be child of a tracked actor. Since I don't want the parent
@@ -261,6 +264,8 @@ const dockedDash = new Lang.Class({
         this._settings.connect('changed::extend-height', Lang.bind(this, this._updateYPosition));
         this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
         this._settings.connect('changed::height-fraction', Lang.bind(this,this._updateYPosition));
+
+        this._settings.connect('changed::apply-custom-theme', Lang.bind(this, this._updateCustomTheme));
 
     },
 
@@ -829,6 +834,15 @@ const dockedDash = new Lang.Class({
             }
         }
 
+    },
+
+    _updateCustomTheme: function() {
+        if(this._settings.get_boolean('apply-custom-theme'))
+            this.actor.add_style_class_name('dashtodock');
+        else
+           this.actor.remove_style_class_name('dashtodock');
+
+        this._onThemeChanged();
     },
 
     // Disable autohide effect, thus show dash
