@@ -597,6 +597,8 @@ const dockedDash = new Lang.Class({
             this._barrier.destroy();
             this._barrier = null;
         }
+        this._removeBarrierTimeoutId = 0;
+        return false;
     },
 
     // Update pressure barrier size
