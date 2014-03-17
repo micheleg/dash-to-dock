@@ -223,8 +223,6 @@ const dockedDash = new Lang.Class({
 
         this._settings.connect('changed::background-opacity', Lang.bind(this,this._updateBackgroundOpacity));
 
-        this._settings.connect('changed::opaque-background-always', Lang.bind(this,this._updateBackgroundOpacity));
-
         this._settings.connect('changed::scroll-switch-workspace', Lang.bind(this, function(){
             this._optionalScrollWorkspaceSwitch(this._settings.get_boolean('scroll-switch-workspace'));
         }));
@@ -479,10 +477,10 @@ const dockedDash = new Lang.Class({
             this._defaultBackgroundColor.blue + ','+
             newAlpha + ')';
 
-        if(this._settings.get_boolean('opaque-background') && (this._autohideStatus || this._settings.get_boolean('opaque-background-always'))){
+        if(this._settings.get_boolean('opaque-background') ){
             this._fadeInBackground(this._settings.get_double('animation-time'), 0);
         }
-        else if(!this._settings.get_boolean('opaque-background') || (!this._autohideStatus && !this._settings.get_boolean('opaque-background-always'))) {
+        else {
             this._fadeOutBackground(this._settings.get_double('animation-time'), 0);
         }
     },
@@ -852,8 +850,6 @@ const dockedDash = new Lang.Class({
 
             this._removeAnimations();
             this._animateIn(this._settings.get_double('animation-time'), 0);
-            if(this._settings.get_boolean('opaque-background') && !this._settings.get_boolean('opaque-background-always'))
-                this._fadeOutBackground(this._settings.get_double('animation-time'), 0);
         }
     },
 
@@ -875,9 +871,6 @@ const dockedDash = new Lang.Class({
             } else {
                 delay = 0;
             }
-            
-            if(this._settings.get_boolean('opaque-background') && !this._settings.get_boolean('opaque-background-always'))
-                this._fadeInBackground(this._settings.get_double('animation-time'), delay);
         }
     }
 });

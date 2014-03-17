@@ -333,18 +333,11 @@ const WorkspaceSettingsWidget = new GObject.Class({
                 return false;
             }));
         }));
-     let opaqueLayeralwaysVisible =  new Gtk.CheckButton({label: _("Only when in autohide")});
-        opaqueLayeralwaysVisible.set_active(!this.settings.get_boolean('opaque-background-always'));
-        opaqueLayeralwaysVisible.connect('toggled', Lang.bind(this, function(check){
-            this.settings.set_boolean('opaque-background-always', !check.get_active());
-        }));
-
     this.settings.bind('opaque-background', opaqueLayerMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
 
     opaqueLayerMain.add(layerOpacityLabel);
     opaqueLayerMain.add(layerOpacity);
-    opaqueLayerMain.add(opaqueLayeralwaysVisible);
 
     customization.add(opaqueLayerMain);
 
