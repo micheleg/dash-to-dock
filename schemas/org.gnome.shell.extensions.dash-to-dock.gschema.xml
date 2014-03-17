@@ -27,11 +27,6 @@
       <summary>Dash background is opaque</summary>
       <description>Makes the background of the dash opaque improving readability when in autohide mode.</description>
     </key>
-    <key type="b" name="opaque-background-always">
-      <default>false</default>
-      <summary>Dash background always opaque</summary>
-      <description>Makes the background of the dash opaque improving readability even when not in autohide mode.</description>
-    </key>
     <key type="d" name="background-opacity">
       <default>0.8</default>
       <summary>Opacity of the dash background</summary>
