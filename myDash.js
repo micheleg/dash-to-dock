@@ -157,14 +157,25 @@ const myDash = new Lang.Class({
 
         this._appSystem = Shell.AppSystem.get_default();
 
-        this._appSystem.connect('installed-changed', Lang.bind(this, function() {
-            AppFavorites.getAppFavorites().reload();
-            this._queueRedisplay();
-        }));
-        AppFavorites.getAppFavorites().connect('changed', Lang.bind(this, this._queueRedisplay));
-        this._appSystem.connect('app-state-changed', Lang.bind(this, this._queueRedisplay));
-
         this._signalHandler.push(
+            [
+                this._appSystem,
+                'installed-changed',
+                Lang.bind(this, function() {
+                    AppFavorites.getAppFavorites().reload();
+                    this._queueRedisplay();
+                })
+            ],
+            [
+                AppFavorites.getAppFavorites(),
+                'changed',
+                Lang.bind(this, this._queueRedisplay)
+            ],
+            [
+                this._appSystem,
+                'app-state-changed',
+                Lang.bind(this, this._queueRedisplay)
+            ],
             [
                 Main.overview,
                 'item-drag-begin',
