@@ -201,6 +201,8 @@ const dockedDash = new Lang.Class({
 
         // Disconnect global signals
         this._signalHandler.disconnect();
+        // The dash has global signals as well internally
+        this.dash.destroy();
         // Destroy main clutter actor: this should be sufficient
         // From clutter documentation:
         // If the actor is inside a container, the actor will be removed.
