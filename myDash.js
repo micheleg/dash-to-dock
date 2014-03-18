@@ -931,7 +931,7 @@ const myAppIcon = new Lang.Class({
                 this.emit('launching');
                 if (this._settings.get_enum('click-action') == clickAction.CYCLE_WINDOWS && !Main.overview._shown){
                     // If click cycles through windows I can activate one windows at a time
-                    let windows = this.app.get_windows();
+                    let windows = getAppInterestingWindows(this.app);
                     let w = windows[0];
                     Main.activateWindow(w);
                 } else if(this._settings.get_enum('click-action') == clickAction.LAUNCH)
@@ -955,7 +955,8 @@ const myAppIcon = new Lang.Class({
 
     _updateCounterClass: function() {
 
-        let n = this.app.get_n_windows();
+        let n = getAppInterestingWindows(this.app).length;
+
         if(n>this._maxN)
              n = this._maxN;
 
@@ -971,7 +972,7 @@ const myAppIcon = new Lang.Class({
 
 function minimizeWindow(app, param){
     // Param true make all app windows minimize
-    let windows = app.get_windows();
+    let windows = getAppInterestingWindows(app);
     let current_workspace = global.screen.get_active_workspace();
     for (let i = 0; i < windows.length; i++) {
         let w = windows[i];
@@ -995,7 +996,7 @@ function activateAllWindows(app){
     app.activate();
 
     // then activate all other app windows in the current workspace
-    let windows = app.get_windows();
+    let windows = getAppInterestingWindows(app);
     let activeWorkspace = global.screen.get_active_workspace_index();
 
     if( windows.length<=0)
@@ -1017,6 +1018,8 @@ function cycleThroughWindows(app) {
     // since the order changes upon window interaction
     let MEMORY_TIME=3000;
 
+    let app_windows = getAppInterestingWindows(app);
+
     if(recentlyClickedAppLoopId>0)
         Mainloop.source_remove(recentlyClickedAppLoopId);
     recentlyClickedAppLoopId = Mainloop.timeout_add(MEMORY_TIME, resetRecentlyClickedApp);
@@ -1025,11 +1028,11 @@ function cycleThroughWindows(app) {
     // or the stored list is outdated, use the current windows list.
     if( !recentlyClickedApp ||
         recentlyClickedApp.get_id() != app.get_id() ||
-        recentlyClickedAppWindows.length != app.get_windows().length
+        recentlyClickedAppWindows.length != app_windows.length
       ){
 
         recentlyClickedApp = app;
-        recentlyClickedAppWindows = app.get_windows();
+        recentlyClickedAppWindows = app_windows;
         recentlyClickedAppIndex = 0;
     }
 
@@ -1050,4 +1053,14 @@ function resetRecentlyClickedApp() {
     recentlyClickedAppIndex = 0;
 
     return false;
+}
+
+function getAppInterestingWindows(app) {
+    // Filter out unnecessary windows, for instance
+    // nautilus desktop window.
+    let windows = app.get_windows().filter(function(w) {
+        return !w.skip_taskbar;
+    });
+
+    return windows;
 }
