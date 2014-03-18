@@ -928,7 +928,11 @@ const myAppIcon = new Lang.Class({
 
     _updateCounterClass: function() {
 
-        let n = this.app.get_n_windows();
+        let n = this.app.get_windows().filter(function(w) {
+            // Filter out nautilus desktop window
+            return (w.get_window_type() != Meta.WindowType.DESKTOP);
+        }).length;
+
         if(n>this._maxN)
              n = this._maxN;
 
@@ -990,6 +994,11 @@ function cycleThroughWindows(app) {
     // since the order changes upon window interaction
     let MEMORY_TIME=3000;
 
+    let app_windows = app.get_windows().filter(function(w) {
+            // Filter out nautilus desktop window
+            return (w.get_window_type() != Meta.WindowType.DESKTOP);
+        });
+
     if(recentlyClickedAppLoopId>0)
         Mainloop.source_remove(recentlyClickedAppLoopId);
     recentlyClickedAppLoopId = Mainloop.timeout_add(MEMORY_TIME, resetRecentlyClickedApp);
@@ -998,11 +1007,11 @@ function cycleThroughWindows(app) {
     // or the stored list is outdated, use the current windows list.
     if( !recentlyClickedApp ||
         recentlyClickedApp.get_id() != app.get_id() ||
-        recentlyClickedAppWindows.length != app.get_windows().length
+        recentlyClickedAppWindows.length != app_windows.length
       ){
 
         recentlyClickedApp = app;
-        recentlyClickedAppWindows = app.get_windows();
+        recentlyClickedAppWindows = app_windows;
         recentlyClickedAppIndex = 0;
     }
 
