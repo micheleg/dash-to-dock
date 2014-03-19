@@ -133,5 +133,12 @@
       <summary>Action when clicking on a running app</summary>
       <description>Set the action that is executed when clicking on the icon of a running application</description>
     </key>
+    <key name="toggle-dash" type="as">
+      <default>["&lt;Super&gt;d"]</default>
+      <summary>Keybinding to show/focus the dash</summary>
+      <description>
+        Keybinding to show or focus the Dash.
+      </description>
+    </key>
   </schema>
 </schemalist>

@@ -167,6 +167,15 @@ const dockedDash = new Lang.Class({
             this.dash.actor, _("Dash"),'user-bookmarks',
                 {focusCallback: Lang.bind(this, this._onAccessibilityFocus)});
 
+        // Keybinding show dash
+        Main.wm.addKeybinding('toggle-dash',
+                              //new Gio.Settings({ schema: SHELL_KEYBINDINGS_SCHEMA }),
+                              this._settings,
+                              Meta.KeyBindingFlags.NONE,
+                              Shell.KeyBindingMode.NORMAL |
+                              Shell.KeyBindingMode.OVERVIEW,
+                              Lang.bind(this, this._onAccessibilityFocus));
+
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
 
