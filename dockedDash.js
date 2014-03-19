@@ -164,7 +164,7 @@ const dockedDash = new Lang.Class({
 
         // Restore dash accessibility
         Main.ctrlAltTabManager.addGroup(
-            this.dash.actor, _("Dash"),'user-bookmarks',
+            this.dash.actor, _("Dash"),'user-bookmarks-symbolic',
                 {focusCallback: Lang.bind(this, this._onAccessibilityFocus)});
 
         // Keybinding show dash
