@@ -8,6 +8,14 @@ MSGSRC = $(wildcard po/*.po)
 INSTALLBASE = ~/.local/share/gnome-shell/extensions
 INSTALLNAME = dash-to-dock@micxgx.gmail.com
 
+# Use command line passed variable
+ifdef VERSION
+	VSTRING = _v$(VERSION)
+else
+	VERSION = $(shell git rev-parse HEAD)
+	VSTRING =
+endif
+
 all: extension
 
 clean:
@@ -43,8 +51,8 @@ install-local: _build
 
 zip-file: _build
 	cd _build ; \
-	zip -qr "$(UUID).zip" .
-	mv _build/$(UUID).zip ./
+	zip -qr "$(UUID)$(VSTRING).zip" .
+	mv _build/$(UUID)$(VSTRING).zip ./
 	-rm -fR _build
 
 _build: all
@@ -61,6 +69,7 @@ _build: all
 		mkdir -p $$lf/LC_MESSAGES; \
 		cp $$l $$lf/LC_MESSAGES/dashtodock.mo; \
 	done;
+	sed -i 's/"version": 0/"version": "$(VERSION)"/'  _build/metadata.json;
 
 
 #What does the first "-" mean at the beginning of the line in a Makefile ? 
