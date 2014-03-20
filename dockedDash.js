@@ -11,6 +11,7 @@ const Mainloop = imports.mainloop;
 
 const Main = imports.ui.main;
 const Dash = imports.ui.dash;
+const GrabHelper = imports.ui.grabHelper;
 const Overview = imports.ui.overview;
 const Tweener = imports.ui.tweener;
 const ViewSelector = imports.ui.viewSelector;
@@ -167,18 +168,47 @@ const dockedDash = new Lang.Class({
             this.dash.actor, _("Dash"),'user-bookmarks-symbolic',
                 {focusCallback: Lang.bind(this, this._onAccessibilityFocus)});
 
-        // Keybinding show dash
+        // Keybinding to show dash
+        this._grabHelper = new GrabHelper.GrabHelper(this.actor,
+                                                     { keybindingMode: Shell.KeyBindingMode.NORMAL });
+
         Main.wm.addKeybinding('toggle-dash',
                               //new Gio.Settings({ schema: SHELL_KEYBINDINGS_SCHEMA }),
                               this._settings,
                               Meta.KeyBindingFlags.NONE,
                               Shell.KeyBindingMode.NORMAL |
                               Shell.KeyBindingMode.OVERVIEW,
-                              Lang.bind(this, this._onAccessibilityFocus));
+                              Lang.bind(this, this._toggle));
 
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
 
+    },
+
+    _toggle: function(){
+        log('TOGGLE');
+        if (this._grabHelper.grabbed)
+            this._grabHelper.ungrab({ actor: this.dash.actor});
+        else
+            this._grab();
+    },
+
+    _grab: function(){
+        this._grabHelper.grab({ actor: this.dash.actor,
+                                     onUngrab: Lang.bind(this, this._ungrab)});
+        this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
+
+        //this._animateIn(this._settings.get_double('animation-time'), 0);
+        //this._show();
+        //this.disableAutoHide();
+        this._onDragStart();
+    },
+
+    _ungrab: function(){
+        //this.enableAutoHide();
+        log('UNGRAB');
+        this._onDragEnd();
+        this._hoverChanged();
     },
 
     _initialize: function(){
@@ -210,6 +240,8 @@ const dockedDash = new Lang.Class({
 
         // Disconnect global signals
         this._signalHandler.disconnect();
+        // Remove keybindings
+        Main.wm.removeKeybinding('toggle-dash');
         // The dash has global signals as well internally
         this.dash.destroy();
         // Destroy main clutter actor: this should be sufficient
