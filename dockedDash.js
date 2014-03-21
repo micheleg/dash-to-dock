@@ -770,7 +770,7 @@ const dockedDash = new Lang.Class({
 
         this.staticBox.init_rect(
             this._monitor.x + (this._rtl?(this._monitor.width - this._box.width):0),
-            this.actor.y + this._box.y,
+            this.actor.y + this._slider.y + this._box.y,
             this._box.width,
             this._box.height
         );
