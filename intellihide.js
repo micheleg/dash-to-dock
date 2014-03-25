@@ -6,12 +6,19 @@ const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 
 const Main = imports.ui.main;
+const Signals = imports.signals;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
 // A good compromise between reactivity and efficiency; to be tuned.
 const INTELLIHIDE_CHECK_INTERVAL = 100;
+
+const overlapStatus = {
+    UNDEFINED: -1,
+    FALSE: 0,
+    TRUE: 1
+};
 
 // List of windows type taken into account. Order is important (keep the original
 // enum order).
@@ -27,91 +34,33 @@ const handledWindowTypes = [
 
 /*
  * A rough and ugly implementation of the intellihide behaviour.
- * Intallihide object: call show()/hide() function based on the overlap with the
- * the target actor object;
- * 
- * Target object has to contain a Clutter.ActorBox object named staticBox and 
- * emit a 'box-changed' signal when this changes.
+ * Intallihide object: emit 'status-changed' signal when the overlap of windows
+ * with the provided targetBoxClutter.ActorBox changes;
  * 
 */
 
 const intellihide = new Lang.Class({
     Name: 'Intellihide',
 
-    _init: function(show, hide, target, settings) {
+    _init: function(settings) {
 
         // Load settings
         this._settings = settings;
-        this._bindSettingsChanges();
 
         this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._tracker = Shell.WindowTracker.get_default();
         this._focusApp = null;
 
-        // Set base functions
-        this._show = show;
-        this._hide = hide;
-
-        // Target object
-        this._target = target;
+        this._isEnabled = false;
+        this._status = overlapStatus.UNDEFINED;
+        this._targetBox = null;
 
         // Main id of the timeout controlling timeout for updateDockVisibility function 
         // when windows are dragged around (move and resize)
         this._windowChangedTimeout = 0;
 
-        this._isEnabled =  this._settings.get_boolean('intellihide') &&
-                          !this._settings.get_boolean('dock-fixed');
-
-        if(this._isEnabled)
-            this._enable();
-
-    },
-
-    destroy: function() {
-
-        // Disconnect global signals
-        this._signalsHandler.destroy();
-
-        if(this._windowChangedTimeout>0)
-            Mainloop.source_remove(this._windowChangedTimeout); // Just to be sure
-        this._windowChangedTimeout=0;
-    },
-
-    _bindSettingsChanges: function() {
-
-        function settingsChange(){
-           this._isEnabled =  this._settings.get_boolean('intellihide') &&
-                              !this._settings.get_boolean('dock-fixed');
-
-            if (this._isEnabled)
-                this._enable();
-            else
-                this._disable();
-        }
-
-        this._settings.connect('changed::intellihide', Lang.bind(this, settingsChange));
-        this._settings.connect('changed::dock-fixed',  Lang.bind(this, settingsChange));
-
-        this._settings.connect('changed::intellihide-perapp', Lang.bind(this, function(){
-            this._updateDockVisibility();
-        }));
-
-
-    },
-
-    _enable: function() {
-
-      // Avoid to duplicate the global signals.
-      this._signalsHandler.destroy();
-
-      // Connect global signals
-        this._signalsHandler.add(
-            // call updateVisibility when target actor changes
-            [
-                this._target,
-                'box-changed',
-                Lang.bind(this, this._updateDockVisibility)
-            ],
+        // Connect global signals
+        this._signalsHandler.add (
             // Add timeout when window grab-operation begins and remove it when it ends.
             [
                 global.display,
@@ -127,72 +76,72 @@ const intellihide = new Lang.Class({
             [
                 global.window_manager,
                 'maximize', 
-                Lang.bind(this, this._updateDockVisibility )
+                Lang.bind(this, this._checkOverlap )
             ],
             [
                 global.window_manager,
                 'unmaximize',
-                Lang.bind(this, this._updateDockVisibility )
+                Lang.bind(this, this._checkOverlap )
             ],
-            // trigggered for instance when a window list order changes,
+            // triggered for instance when the window list order changes,
             // included when the workspace is switched
             [
                 global.screen,
                 'restacked',
-                Lang.bind(this, this._updateDockVisibility)
+                Lang.bind(this, this._checkOverlap)
             ],
-            // Disable intellihide when in overview
-            [
-                Main.overview,
-                'hiding',
-                Lang.bind(this, this._overviewExit)
-            ],
-            // Re-enable intellihide when exiting the overview
-            [
-                Main.overview,
-                'showing',
-                Lang.bind(this, this._overviewEnter)
-            ],
-
             // update wne monitor changes, for instance in multimonitor when monitor are attached
+            // TODO: move to the parent using object
             [
                 global.screen,
                 'monitors-changed',
-                Lang.bind(this, this._updateDockVisibility )
+                Lang.bind(this, this._checkOverlap )
             ]
         );
 
-        this._updateDockVisibility();
     },
 
-    // Disconnect signals tracking windows changes
-    // disabling intellihide control of the dash visibility
-    _disable: function() {
-        this._signalsHandler.destroy()
-        this._show();
+    destroy: function() {
+
+        // Disconnect global signals
+        this._signalsHandler.destroy();
+
+        if(this._windowChangedTimeout>0)
+            Mainloop.source_remove(this._windowChangedTimeout); // Just to be sure
+        this._windowChangedTimeout=0;
     },
 
-    _overviewExit : function() {
-        this._isEnabled =  this._settings.get_boolean('intellihide') &&
-                          !this._settings.get_boolean('dock-fixed');
+    enable: function() {
 
-        this._updateDockVisibility();
+      this._isEnabled = true;
+      this._status = overlapStatus.UNDEFINED;
+      this._checkOverlap();
     },
 
-    _overviewEnter: function() {
-        // Temporary disable intellihide
+    disable: function() {
         this._isEnabled = false;
+        if(this._windowChangedTimeout>0)
+            Mainloop.source_remove(this._windowChangedTimeout);
+    },
+
+    updateTargetBox: function(box) {
+        this._targetBox = box;
+        this._checkOverlap();
+    },
+
+    forceUpdate: function() {
+        this._overlapStatus.UNDEFINED;
+        this._checkOverlap();
     },
 
     _grabOpBegin: function() {
-
         if(this._isEnabled){
             if(this._windowChangedTimeout>0)
                 Mainloop.source_remove(this._windowChangedTimeout); // Just to be sure
 
             this._windowChangedTimeout = Mainloop.timeout_add(INTELLIHIDE_CHECK_INTERVAL,
                 Lang.bind(this, function(){
-                    this._updateDockVisibility();
+                    this._checkOverlap();
                     return true; // to make the loop continue
                 })
             );
@@ -205,15 +154,15 @@ const intellihide = new Lang.Class({
                 Mainloop.source_remove(this._windowChangedTimeout);
 
             this._windowChangedTimeout=0;
-            this._updateDockVisibility();
+            this._checkOverlap();
     },
 
-    _updateDockVisibility: function() {
+    _checkOverlap: function() {
 
-        if( !this._isEnabled)
+        if( !this._isEnabled || this._targetBox == null)
             return;
 
-        let overlaps = false;
+        let overlaps = overlapStatus.FALSE;
         let windows = global.get_window_actors();
 
         if (windows.length>0){
@@ -231,23 +180,24 @@ const intellihide = new Lang.Class({
                 if(win){
                     let rect = win.get_outer_rect();
 
-                    let test = ( rect.x < this._target.staticBox.x2) &&
-                               ( rect.x +rect.width > this._target.staticBox.x1 ) &&
-                               ( rect.y < this._target.staticBox.y2 ) &&
-                               ( rect.y +rect.height > this._target.staticBox.y1 );
+                    let test = ( rect.x < this._targetBox.x2) &&
+                               ( rect.x +rect.width > this._targetBox.x1 ) &&
+                               ( rect.y < this._targetBox.y2 ) &&
+                               ( rect.y +rect.height > this._targetBox.y1 );
 
                     if(test){
-                        overlaps = true;
+                        overlaps = overlapStatus.TRUE;
                         break;
                     }
                 }
             }
         }
 
-        if(overlaps)
-            this._hide();
-        else
-            this._show();
+        //??? USE GET SET ::NOTIFY?
+        if ( this._status !== overlaps ) {
+            this._status = overlaps;
+            this.emit('status-changed', this._status);
+        }
     },
 
     // Filter interesting windows to be considered for intellihide.
@@ -313,3 +263,5 @@ const intellihide = new Lang.Class({
     }
 
 });
+
+Signals.addSignalMethods(intellihide.prototype);

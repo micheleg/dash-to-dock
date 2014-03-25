@@ -5,7 +5,6 @@ const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
-const Signals = imports.signals;
 const St = imports.gi.St;
 const Mainloop = imports.mainloop;
 const Params = imports.misc.params;
@@ -17,6 +16,7 @@ const MessageTray = imports.ui.messageTray;
 const Overview = imports.ui.overview;
 const OverviewControls = imports.ui.overviewControls;
 const Tweener = imports.ui.tweener;
+const Signals = imports.signals;
 const ViewSelector = imports.ui.viewSelector;
 const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
 const Layout = imports.ui.layout;
@@ -24,6 +24,7 @@ const LayoutManager = imports.ui.main.layoutManager;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
+const Intellihide = Me.imports.intellihide;
 const MyDash = Me.imports.myDash;
 
 const PRESSURE_TIMEOUT = 1000;
@@ -197,6 +198,9 @@ const dockedDash = new Lang.Class({
         // authohide current status. Not to be confused with autohide enable/disagle global (g)settings
         this._autohideStatus = this._settings.get_boolean('autohide') && !this._settings.get_boolean('dock-fixed');
 
+        // Create intellihide object to monitor windows overlapping
+        this._intellihide = new Intellihide.intellihide(this._settings);
+
         // initialize animation status object
         this._animStatus = new animationStatus(true);
 
@@ -273,7 +277,7 @@ const dockedDash = new Lang.Class({
                 'showing',
                 Lang.bind(this, this.disableAutoHide)
             ],
-            // Follow 3.8 behaviour: hide on appview
+            // Hide on appview
             [
                 Main.overview.viewSelector,
                 'page-changed',
@@ -304,6 +308,12 @@ const dockedDash = new Lang.Class({
                 global.screen,
                 'in-fullscreen-changed',
                 Lang.bind(this, this._onFullscreenChanged)
+            ],
+            // Monitor windows overlapping
+            [
+                this._intellihide,
+                'status-changed',
+                Lang.bind(this, this._onIntellihideStatusChanged)
             ]
         );
 
@@ -395,6 +405,7 @@ const dockedDash = new Lang.Class({
         let index = Main.layoutManager._findActor(this._slider);
         Main.layoutManager._trackedActors[index].isToplevel = true ;
 
+        this._updateDashVisibility();
     },
 
     _initialize: function(){
@@ -430,8 +441,9 @@ const dockedDash = new Lang.Class({
 
         // Disconnect global signals
         this._signalsHandler.destroy();
-        // The dash has global signals as well internally
+        // The dash and intellihide have global signals as well internally
         this.dash.destroy();
+        this._intellihide.destroy();
 
         this._injectionsHandler.destroy();
 
@@ -481,20 +493,25 @@ const dockedDash = new Lang.Class({
 
             if(this._settings.get_boolean('dock-fixed')) {
                 Main.layoutManager._trackActor(this.dash.actor, {affectsStruts: true});
-                // show dash
-                this.disableAutoHide();
             } else {
                 Main.layoutManager._untrackActor(this.dash.actor);
-                this.emit('box-changed');
             }
 
             this._resetPosition();
 
             // Add or remove barrier depending on if dock-fixed
             this._updateBarrier();
+
+            this._updateDashVisibility();
         }));
+
+        this._settings.connect('changed::intellihide', Lang.bind(this, this._updateDashVisibility));
+
+        this._settings.connect('changed::intellihide-perapp', Lang.bind(this, function(){
+            this._intellihide.forceUpdate();
+        }));
+
         this._settings.connect('changed::autohide', Lang.bind(this, function(){
-            this.emit('box-changed');
             this._updateBarrier();
         }));
         this._settings.connect('changed::extend-height', Lang.bind(this,this._resetPosition));
@@ -507,6 +524,20 @@ const dockedDash = new Lang.Class({
             this._updateBarrier();
         }));
 
+    },
+
+    _updateDashVisibility: function() {
+
+        if(this._settings.get_boolean('dock-fixed')){
+            this._intellihide.disable();
+            this._disableAutohide();
+        } else {
+            this._enableAutohide();
+            if (this._settings.get_boolean('intellihide'))
+                this._intellihide.enable();
+            else
+                this._intellihide.disable();
+        }
     },
 
     _hoverChanged: function() {
@@ -908,7 +939,7 @@ const dockedDash = new Lang.Class({
                   return false;
                 }));
 
-        this.emit('box-changed');
+        this._intellihide.updateTargetBox(this.staticBox);
     },
 
     _getMonitor: function(){
@@ -1218,7 +1249,7 @@ const dockedDash = new Lang.Class({
     },
 
     // Disable autohide effect, thus show dash
-    disableAutoHide: function() {
+    _disableAutohide: function() {
         if(this._autohideStatus==true){
             this._autohideStatus = false;
 
@@ -1228,7 +1259,8 @@ const dockedDash = new Lang.Class({
     },
 
     // Enable autohide effect, hide dash
-    enableAutoHide: function() {
+    _enableAutohide: function() {
+
         if(this._autohideStatus==false){
 
             this._autohideStatus = true;
@@ -1271,9 +1303,16 @@ const dockedDash = new Lang.Class({
                 this._injectionsHandler.removeWithLabel('insensitive-message-tray')
             }
         }
+    },
+
+    _onIntellihideStatusChanged: function(obj, status) {
+        if(status) {
+            this._enableAutohide();
+        } else {
+            this._disableAutohide();
+        }
     }
 });
-
 Signals.addSignalMethods(dockedDash.prototype);
 
 /*
@@ -1355,6 +1394,7 @@ const animationStatus = new Lang.Class({
             return false;
     }
 });
+
 
 /* 
  * Manage theme customization and custom theme support
