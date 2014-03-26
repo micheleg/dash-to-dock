@@ -479,6 +479,7 @@ const dockedDash = new Lang.Class({
                 delay = 0;
             }
 
+            this.emit("showing");
             this._animateIn(this._settings.get_double('animation-time'), delay);
         }
     },
@@ -510,6 +511,7 @@ const dockedDash = new Lang.Class({
                 delay = this._settings.get_double('hide-delay');
             }
 
+            this.emit("hiding");
             this._animateOut(this._settings.get_double('animation-time'), delay);
 
         }
