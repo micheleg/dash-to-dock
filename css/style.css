@@ -8,7 +8,7 @@ LightBlack: '#434343'
 
 {% include normalize.css %}
 {% include cantarell_fontface.css %}
-
+{% include opensans_fontface.css %}
 
 body {
     font-family: 'Open sans', sans-serif;
