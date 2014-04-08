@@ -2,8 +2,8 @@
 layout: main
 title: Development
 section: development
-subsections: [Roadmap, Known Issues, Bug reporting, Changelog, License, Donations]
-subsectionsShort: [roadmap,  issues,  bugreporting, changelog, license, donations]
+subsections: [Roadmap, Bug reporting, Changelog, License, Donations]
+subsectionsShort: [roadmap, bugreporting, changelog, license, donations]
 order: 1
 ---
 
@@ -22,20 +22,16 @@ The code of the extension is hosted on [Github] (https://github.com/micheleg/das
 ### Roadmap
 
 1. Keep the extension updated with new upstream versions.
-2. Improve integration with the shell, avoiding inconsistencies and taking advantage of new features (like pressure sensitivity) or design.
-3. In the long term, rewrite and simplify the code.
+2. Improve integration with the shell, avoiding inconsistencies and taking advantage of new features or design.
+3. Add keyboard shortcuts
+4. In the long term, rewrite and simplify the code.
 
 There aren't mayor features planned, but many bugs that I would like to see fixed (see below).
 
 Things I'm not going to do:
 
- * put the dash at the bottom of the screen (unless it proves to be feasible and compatible with the upstream Gnome Shell design)
+ * putting the dash at the bottom of the screen (unless it proves to be feasible and compatible with the upstream Gnome Shell design)
  * adding random features unrelated to the dash
-
-<a name="issues"></a>
-### Known Issues
- * Missing padding for dekstop icons with Nautilus show desktop enabled. See [Issue 17] (https://github.com/micheleg/dash-to-dock/issues/17).
- * In multimonitor configuration when the dock is hidden it slides in the adjacent monitor if any is present. Although the dock is not visible it still steals mouse clicks from other windows. See [Issue 28] (https://github.com/micheleg/dash-to-dock/issues/28).
 
 <a name="bugreporting"></a>
 ### Bug Reporting
