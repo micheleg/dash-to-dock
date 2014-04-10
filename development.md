@@ -63,7 +63,7 @@ Version numbering follows the uploads to the extension website.
   * Rework dahs sliding: introduce custom container solving bugs:
     * Bug fixing: the dasj doesn't steal anymore input events on the secondary monitor when slided out
   * Add pressure sensitivity to show the dash
-  * Emit custom signals when showing/hidinf for better extension interoperability
+  * Emit custom signals when showing/hiding for better extension interoperability
 
 **Version 28 (27-03-2014)**
 
