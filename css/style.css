@@ -292,6 +292,11 @@ a:hover{
 
 }
 
+#sideads {
+    margin-top:40px;
+    text-align:center;
+}
+
 footer {
     line-height:100%;
     margin:auto;
