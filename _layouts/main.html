@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>{% if page.title != '' %}{{page.title}} - {% endif %}Dash to dock Gnome Shell Extension</title>
-  <meta name="description" content="A dock for the Gnome Shell.This extension
+  <title>{% if page.title != '' %}{{page.title}} - {% endif %}Dash to dock GNOME Shell Extension</title>
+  <meta name="description" content="A dock for the GNOME Shell.This extension
   moves the dash out of the overview transforming it in a dock for an easier
   launching of applications and a faster switching between windows and desktops.">
   <meta name="viewport" content="width=device-width">
@@ -18,7 +18,7 @@
 <header>
   <div class="container">
     <h1> Dash to Dock</h1>
-    <h2>(Gnome Shell  Extension)</h2>
+    <h2>(GNOME Shell  Extension)</h2>
 
     <nav id="menu">
       <ul>
@@ -33,7 +33,37 @@
 {% if page.isHome %}
 <div id="homepanel" class="container">
     <img src="./media/screenshot.jpg" width="560px"/>
-    <p id="hometitle">A dock for the Gnome Shell.</p>
+    <p id="hometitle">A dock for the GNOME Shell.</p>
+</div>
+
+<div class="container">
+    <div id="homesidecontent">
+        <div id="sideads">
+          {% include side_ads.html %}
+        </div>
+    </div>
+    <div id="homecontent" >
+        <h2>Simple, fully integrated into GNOME Shell</h2>
+
+        <p><em>Dash to dock</em> extension is an <strong>enhanced dash</strong> for GNOME Shell. It moves the default dash out of the overview and <strong>transforms it in a dock</strong> for an <strong>easier launching</strong> of applications and a <strong>faster switching</strong> between windows and workspaces without leaving the desktop view.
+    </div>
+
+    <div id="lovebar">
+    <ul id="donations">
+      <li>
+        {%include flattr.html%}
+      </li>
+      <li>
+          {%include donate_paypal.html%}
+      </li>
+      <li>
+          {%include gplus.html%}
+      </li>
+      <li>
+          {%include facebook.html%}
+      </li>
+    </ul>
+    </div>
 </div>
 {% else %}
 <!--<h2 id="title" class="container">
@@ -51,21 +81,12 @@
     </li>
   </ul>
 
-<ul id="donations">
-  <li>
-    {%include flattr.html%}
-  </li>
-  <li>
-      {%include donate_paypal.html%}
-  </li>
-</ul>
-
   {% else %}
   {% include side_navigation.html items="a b c d" %}
+  <div id="sideads">
+    {% include side_ads.html %}
+  </div>
   {% endif %}
-<div id="sideads">
-  {% include side_ads.html %}
-</div>
 </div>
 
 <div id="maincontent">

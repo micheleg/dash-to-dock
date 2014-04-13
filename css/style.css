@@ -149,7 +149,7 @@ a:hover{
 
 }
 
-#maincontent {
+#maincontent, #homecontent {
     max-width:585px;
 }
 
@@ -163,7 +163,7 @@ a:hover{
     padding:7px 0px 7px 10px;
 }
 
-#maincontent h2 {
+#maincontent h2, #homecontent h2 {
 
     font-size:230%;
     color: {{ page.LightBlue }};
@@ -181,7 +181,7 @@ a:hover{
 
 }
 
-#sidecontent {
+#sidecontent, #homesidecontent {
     float:right;
     width:300px;
     padding-left:30px;
@@ -210,7 +210,6 @@ a:hover{
     border-right:4px solid {{ page.LightBlue }};
 
 }
-
 
 #button {
     max-width:300px;
@@ -266,22 +265,26 @@ a:hover{
 
 
 #donations {
-    margin:15px 0 0 0;
+    margin:0;
     padding:0;
     list-style:none;
+    overflow:hidden;
 }
 
-#donations li:first-child {
-    float:left;
-    width:50%;
-    text-align:center;
+#donations li {
+    display:inline-block;
+    vertical-align:middle;
+    text-align:top;
+    padding: 0px 15px;
 }
 
-#donations li:last-child {
-    padding-left:50%;
-    text-align:center;
-}
 
+#lovebar {
+    clear:both;
+    background: url('../media/hearthgray.png') 15px center no-repeat,  #ececec linear-gradient(to right , white  0% , #ececec 30%, #ececec 70%, white  100%) no-repeat;
+    margin-top:25px;
+    padding: 15px 75px 15px 75px;
+}
 
 .download {
     background-image: url('../media/download.png');
@@ -293,7 +296,7 @@ a:hover{
 }
 
 #sideads {
-    margin-top:40px;
+    margin:20px 0px 20px 0px;
     text-align:center;
 }
 
