@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}{% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -8,8 +9,8 @@
   moves the dash out of the overview transforming it in a dock for an easier
   launching of applications and a faster switching between windows and desktops.">
   <meta name="viewport" content="width=device-width">
-  <link rel="stylesheet" type="text/css" href="css/syntax.css" />
-  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <link rel="stylesheet" type="text/css" href="{{ relative }}css/syntax.css" />
+  <link rel="stylesheet" type="text/css" href="{{ relative }}css/style.css" />
   {% include analytics.html %}
 </head>
 
@@ -22,9 +23,9 @@
 
     <nav id="menu">
       <ul>
-        <li><a {% if page.isHome %}class="active"{% endif %} href="index.html"> Overview</a></li>
-        <li><a {% if page.section == 'download' %}class="active"{% endif %} href="./download.html">Download</a></li>
-        <li><a {% if page.section == 'development' %}class="active"{% endif %} href="./development.html">Development</a></li>
+        <li><a {% if page.isHome %}class="active"{% endif %} href="{{ relative }}index.html"> Overview</a></li>
+        <li><a {% if page.section == 'download' %}class="active"{% endif %} href="{{ relative }}download.html">Download</a></li>
+        <li><a {% if page.section == 'development' %}class="active"{% endif %} href="{{ relative }}development.html">Development</a></li>
     </ul>
     </nav>
   </div>
@@ -32,7 +33,7 @@
 
 {% if page.isHome %}
 <div id="homepanel" class="container">
-    <img src="./media/screenshot.jpg" width="560px"/>
+    <img src="{{ relative }}media/screenshot.jpg" width="560px"/>
     <p id="hometitle">A dock for the GNOME Shell.</p>
 </div>
 
@@ -76,8 +77,8 @@
   {% if page.isHome %}
   <ul id="button">
     <li>
-      <p><a class="download" href="./download.html">Get it</a></p>
-      <p>Obtain the latest version of Dash to Dock extension. <a href="./download.html">Various installation methods</a> are available.</p>
+      <p><a class="download" href="{{ relative }}download.html">Get it</a></p>
+      <p>Obtain the latest version of Dash to Dock extension. <a href="{{ relative }}download.html">Various installation methods</a> are available.</p>
     </li>
   </ul>
 
@@ -109,8 +110,8 @@
 
 {% include statcounter.html %}
 
-<script src="js/jquery-2.0.3.min.js"></script>
-<script src="js/main.js"></script>
+<script src="{{ relative }}js/jquery-2.0.3.min.js"></script>
+<script src="{{ relative }}js/main.js"></script>
 
 </body>
 </html>
