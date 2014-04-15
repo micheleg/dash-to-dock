@@ -1,5 +1,5 @@
 ---
-layout: main
+layout: home
 title: ''
 isHome: true
 ---

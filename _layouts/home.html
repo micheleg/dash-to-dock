@@ -1,0 +1,53 @@
+{% include default_header.html %}
+<div id="homepanel" class="container">
+    <img src="{{ relative }}media/screenshot.jpg" width="560px"/>
+    <p id="hometitle">A dock for the GNOME Shell.</p>
+</div>
+
+<div class="container">
+    <div id="homesidecontent">
+        <div id="sideads">
+          {% include side_ads.html %}
+        </div>
+    </div>
+
+    <div id="homecontent" >
+        <h2>Simple, fully integrated into GNOME Shell</h2>
+
+        <p><em>Dash to dock</em> extension is an <strong>enhanced dash</strong> for GNOME Shell. It moves the default dash out of the overview and <strong>transforms it in a dock</strong> for an <strong>easier launching</strong> of applications and a <strong>faster switching</strong> between windows and workspaces without leaving the desktop view.
+    </div>
+
+    <div id="lovebar">
+    <ul id="donations">
+      <li>
+        {%include flattr.html%}
+      </li>
+      <li>
+          {%include donate_paypal.html%}
+      </li>
+      <li>
+          {%include gplus.html%}
+      </li>
+      <li>
+          {%include facebook.html%}
+      </li>
+    </ul>
+    </div>
+</div>
+
+<div id="content" class="container" >
+    <div id="sidecontent">
+        <ul id="button">
+          <li>
+            <p><a class="download" href="{{ relative }}download.html">Get it</a></p>
+            <p>Obtain the latest version of Dash to Dock extension. <a href="{{ relative }}download.html">Various installation methods</a> are available.</p>
+          </li>
+    </ul>
+</div>
+
+<div id="maincontent">
+  {{ content }}
+</div>
+
+</div>
+{% include default_footer.html %}
