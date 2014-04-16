@@ -1,3 +1,6 @@
 safe:       true
 markdown:   redcarpet
 pygments:   true
+paginate: 5
+paginate_path: "news/page:num"
+excerpt_separator: <!--more-->

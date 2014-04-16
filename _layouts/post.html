@@ -1,0 +1,23 @@
+---
+section: news
+---
+
+{% include default_header.html %}
+<div id="content" class="container" >
+  <div id="sidecontent">
+  <div id="sideads">
+    {% include side_ads.html %}
+  </div>
+</div>
+<div id="maincontent">
+<p class="post-date"><span class="day">{{ page.date | date: "%d " }}</span><span class="month">{{ page.date | date: "%B " }}</span><span class="year">{{ page.date | date: "%Y " }}</span></p>
+<p class="post-category">{{ page.category }}</p>
+<h2 class="post-title"><a href="{{ relative }}{{ page.url }}">{{ page.title }}</a></h2>
+<div class="post-content">
+{% capture hrefrel %}{{ 'href="' | append:relative | append:'/' }}{% endcapture %}
+{{ content | replace:'href="/',hrefrel }}
+</div>
+</div>
+
+</div>
+{% include default_footer.html %}

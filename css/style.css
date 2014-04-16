@@ -315,6 +315,54 @@ a:hover{
     text-align:center;
 }
 
+p.post-date {
+    float:left;
+    margin:0px 15px 0px 0px;
+    padding:3px 8px 8px 8px;
+    background: {{ page.LightBlue }};
+    color:white;
+    font-family: opensans, sans-serif;
+    min-width:3em;
+}
+.day, .month, .year {
+    display:block;
+}
+.day {
+    font-size:200%;
+}
+
+#maincontent p.post-author {
+    margin:0;
+    padding:0;
+}
+
+#maincontent p.post-category {
+    margin:0;
+    padding:0;
+    font-weight:bold;
+}
+
+#maincontent p.post-more {
+    text-align:right;
+}
+
+#maincontent .post-content {
+    clear:left;
+    padding-top:0.5em;
+    padding-bottom:2em;
+}
+
+#maincontent h2.post-title {
+    margin:0;
+    padding:0;
+
+}
+
+#maincontent h2.post-title a{
+    color: {{ page.LightBlue }};
+}
+
+
 footer {
     clear:both;
     height: 90px;

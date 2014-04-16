@@ -1,0 +1,27 @@
+---
+layout: all_posts
+title: ''
+section: 'news'
+---
+{% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}{% capture relative %}{% if lvl < '3' %}.{% else %}{% for i in (3..lvl) %}{% capture ii %}{{ i }}{% endcapture %}..{% if ii < lvl %}/{% endif %}{% endfor %}{% endif  %}{% endcapture %}
+<!-- This loops through the paginated posts -->
+{% for post in paginator.posts %}
+<div class="post">
+{% include post_content.html %}
+</div>
+{% endfor %}
+
+<!-- Pagination links -->
+<div class="pagination">
+  {% if paginator.previous_page %}
+    <a href="/page{{ paginator.previous_page }}" class="previous">Previous</a>
+  {% else %}
+    <span class="previous">Previous</span>
+  {% endif %}
+  <span class="page_number ">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
+  {% if paginator.next_page %}
+    <a href="/page{{ paginator.next_page }}" class="next">Next</a>
+  {% else %}
+    <span class="next ">Next</span>
+  {% endif %}
+</div>
