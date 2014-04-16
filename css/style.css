@@ -10,10 +10,24 @@ LightBlack: '#434343'
 {% include cantarell_fontface.css %}
 {% include opensans_fontface.css %}
 
+/*
+* height chain to move the footer at th bottom of the page.  Only the last
+* element should have min-height 100% instead of height, since the parent stated
+* height and not the computed one is taken into account by standard complaint
+* browsers.
+*/
+html, body { 
+    height:100%;
+}
+
 body {
     font-family: 'Open sans', sans-serif;
     font-size: 16px;
-    border-top: 3px solid {{ page.LightBlue }} ;
+}
+
+#main {
+     min-height:100%;
+     margin-bottom: -150px; /* footer total height */
 }
 
 h1, h2, h3 {
@@ -32,10 +46,8 @@ h3 {
 }
 
 header {
-    padding:30px 15px 15px 15px;
-    max-width:930px;
-    margin:auto;
-
+   padding:30px 0px 15px 0px;
+   border-top: 3px solid {{ page.LightBlue }} ;
 }
 
 header h1 {
@@ -149,13 +161,16 @@ a:hover{
 
 }
 
+#maincontent {
+    padding-bottom: 200px; /* footer totoal height + real padding */
+}
+
 #maincontent, #homecontent {
     max-width:585px;
 }
 
 #maincontent p{
     text-align:left;
-
 }
 
 #content img.right {
@@ -301,6 +316,8 @@ a:hover{
 }
 
 footer {
+    clear:both;
+    height: 90px;
     line-height:100%;
     margin:auto;
     padding: 30px ;
@@ -310,7 +327,6 @@ footer {
     color:#333333;
     background: #4378c8;
     background: #274c85 linear-gradient(to bottom , #305b9c  0% , #4378c8 40%) repeat-x;
-    margin-top:50px;
 }
 
 footer p {
