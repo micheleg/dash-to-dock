@@ -2,7 +2,7 @@
 layout: main
 title: 'Themes'
 section: 'download'
-order: 2
+order: 3
 ---
 
 
