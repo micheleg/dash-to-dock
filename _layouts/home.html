@@ -12,9 +12,9 @@
     </div>
 
     <div id="homecontent" >
-        <h2>Simple, fully integrated into GNOME Shell</h2>
+        <h2>Simple, customizable, fully integrated into GNOME Shell</h2>
 
-        <p><em>Dash to dock</em> extension is an <strong>enhanced dash</strong> for GNOME Shell. It moves the default dash out of the overview and <strong>transforms it in a dock</strong> for an <strong>easier launching</strong> of applications and a <strong>faster switching</strong> between windows and workspaces without leaving the desktop view.
+        <p><em>Dash to dock</em> extension is an <strong>enhanced dash</strong> for GNOME Shell. It moves the default dash out of the overview and <strong>transforms it in a dock</strong> for an <strong>easier launching</strong> of applications and a <strong>faster switching</strong> between windows and workspaces without leaving the desktop view. It supports <strong>autohide</strong> and <strong>intellihide</strong> modes as well as a fixed mode. Optional features are available in the  extension <a href="./settings.html">settings</a>.  The extension is <a href="./themes.html">themes</a> friendly.
     </div>
 
     <div id="lovebar">
@@ -46,7 +46,9 @@
 </div>
 
 <div id="maincontent">
-  {{ content }}
+{% for post in site.posts limit 2 %}
+{% include post_excerpt.html %}
+{% endfor %}
 </div>
 
 </div>
