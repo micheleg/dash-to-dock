@@ -17,6 +17,20 @@ section: news
 {% capture hrefrel %}{{ 'href="' | append:relative | append:'/' }}{% endcapture %}
 {{ content | replace:'href="/',hrefrel }}
 </div>
+
+<!-- Pagination links -->
+<div class="pagination">
+  {% if page.previous %}
+    <a href="{{ relative }}{{ page.previous.url }}" class="previous">Previous</a>
+  {% else %}
+    <span class="previous">Previous</span>
+  {% endif %}
+  {% if page.next %}
+    <a href="{{ relative }}{{ page.next.url }}" class="next">Next</a>
+  {% else %}
+    <span class="next ">Next</span>
+  {% endif %}
+</div>
 </div>
 
 </div>
