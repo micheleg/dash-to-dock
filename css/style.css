@@ -3,6 +3,7 @@
 
 LightBlue: '#4378c8'
 PurplishRed: '#ff0066'
+LightPurplishRed: '#f62651'
 LightBlack: '#434343'
 ---
 
@@ -246,7 +247,7 @@ a:hover{
 #button li  p:first-child a {
     display:block;
     color:white;
-    background-color: #f62651;
+    background-color:{{ page.LightPurplishRed }};
     font-weight:normal;
     padding:15px 0px  12px 75px;
     background-position: 15px 15px;
@@ -278,6 +279,21 @@ a:hover{
     padding-bottom:15px;
 }
 
+a.small-button-link {
+    display:block;
+    width:6em;
+    margin:auto;
+    text-align:center;
+    padding:10px;
+    border-radius:10px;
+    background:{{ page.LightPurplishRed }};
+    color:white;
+    transition: background-color 0.5s ease-in;
+}
+
+a.small-button-link:hover {
+    background:{{ page.PurplishRed }}
+}
 
 #donations {
     margin:0;

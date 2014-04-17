@@ -46,9 +46,11 @@
 </div>
 
 <div id="maincontent">
-{% for post in site.posts limit 2 %}
+{% for post in site.posts limit:3 %}
 {% include post_excerpt.html %}
 {% endfor %}
+
+<a class="small-button-link" href="{{ relative }}/news/index.html">All news</a>
 </div>
 
 </div>
