@@ -2,7 +2,6 @@
 <p class="post-category">{{ post.category }}</p>
 <h2 class="post-title"><a href="{{ relative }}{{ post.url }}">{{ post.title }}</a></h2>
 <div class="post-content">
-{% capture hrefrel %}{{ 'href="' | append:relative | append:'/' }}{% endcapture %}
-{{ post.excerpt | replace: 'href="/',hrefrel }}
-<p class="post-more"><a href="{{ relative }}{{ post.url }}">more...</a></p>
+<p>{{ post.excerpt | strip_html }}</p>
+<p class="post-more"><a href="{{ relative }}{{ post.url }}">Read more...</a></p>
 </div>
