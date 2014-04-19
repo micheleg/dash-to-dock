@@ -1,6 +1,7 @@
 ---
 layout: main
 title: 'Settings'
+description: 'Dash to Dock GNOME Shell extension is highly customizable via the settings panel.'
 section: 'download'
 order: 2
 ---

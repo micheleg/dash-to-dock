@@ -1,6 +1,7 @@
 ---
 layout: main
 title: Development
+description: 'Get involved in the development of Dash to Dock, report a bug, contribute!'
 section: development
 subsections: [Roadmap, Bug reporting, Changelog, License, Donations]
 subsectionsShort: [roadmap, bugreporting, changelog, license, donations]
@@ -9,14 +10,20 @@ order: 1
 
 ## Development
 
-The code of the extension is hosted on [Github] (https://github.com/micheleg/dash-to-dock/): get involved in the development, report a bug, contribute!
+The code of the extension is hosted on [Github] ({{ site.extension_page_url }}): get involved in the development, report a bug, contribute!
 
 <ul id="button">
 <li>
-  <p><a class="star" href="http://github.com/micheleg/dash-to-dock">Get involved </a></p>
-  <p>Browse the <a href="http://github.com/micheleg/dash-to-dock">GitHub development page</a> and get involved in the development.</p>
+  <p><a class="star" href="{{ site.github_project_url }}">Get involved </a></p>
+  <p>Browse the <a href="{{ site.github_project_url }}">GitHub development page</a> and get involved in the development.</p>
 </li>
 </ul>
+
+The source code can be obtained from Github
+
+     git clone https://github.com/micheleg/dash-to-dock.git
+
+Here are the [Installation instructions](./download.html#installfromsource).
 
 <a name="roadmap"></a>
 ### Roadmap
@@ -35,9 +42,10 @@ Things I'm not going to do:
 
 <a name="bugreporting"></a>
 ### Bug Reporting
-If you experienced a bug please report it by opening an [isssue on github](https://github.com/micheleg/dash-to-dock/issues). You can also send a bug report message in the [extension website](https://extensions.gnome.org/extension/307/dash-to-dock/). Your help is very appreciated.
+If you experienced a bug please report it by opening an [isssue on github]({{ site.github_project_url }}/issues). You can also send a bug report message in the [extension website]({{ site.extension_page_url }}). Your help is very appreciated.
 
 Please provide as many details as possible and all the steps to reproduce the bug. Include the following information:
+
  * Extension version
  * Gnome Shell version
  * Linux distribution and version

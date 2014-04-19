@@ -4,10 +4,8 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>{% if page.title != '' %}{{page.title}} - {% endif %}Dash to dock GNOME Shell Extension</title>
-  <meta name="description" content="A dock for the GNOME Shell.This extension
-  moves the dash out of the overview transforming it in a dock for an easier
-  launching of applications and a faster switching between windows and desktops.">
+  <title>{% if page.title != nil %}{{page.title}} - {% endif %}Dash to dock GNOME Shell extension</title>
+  <meta name="description" content="{% if page.description != nil %}{{page.description}}{% else %}A dock for the Gnome Shell. This extension moves the dash out of the overview transforming it in a dock for an easier launching of applications and a faster switching between windows and workspaces.{% endif %}">
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" type="text/css" href="{{ relative }}/css/syntax.css" />
   <link rel="stylesheet" type="text/css" href="{{ relative }}/css/style.css" />

@@ -1,6 +1,7 @@
 ---
 layout: main
 title: 'Themes'
+description: 'A list of themes for Dash to Dock, a GNOME Shell extenion.'
 section: 'download'
 order: 3
 ---
@@ -17,10 +18,12 @@ An **extended Adwaita**, the default theme, is available. Compared with the defa
  * reduce the padding to save space.
  * and adds dots indicating running application.
 
-The theme can be downloaded from the [theme development page] (https://github.com/micheleg/adwaita-dashtodock).
+Prior to version 29 a dedicated theme - Adwaita-dashtodock - was developed. Since version 29 this is built in the extension and can be enabled from the [extension setttings](./settings.html). For previous versions, the theme can be downloaded from the [theme development page] (https://github.com/micheleg/adwaita-dashtodock).
+
+{{ relative }}
 
 ### Other themes supporting the extension
-The following themes are known to support Dash to Dock extension:
+This is an uncomplete list of themes that are known to support Dash to Dock extension:
 
  * **LittleBigMod 2nd**, [(http://gnome-look.org/content/show.php/?content=152088)](http://gnome-look.org/content/show.php/?content=152088)
  * **Energreen_Suiteby**  by Astral-1, [http://astral-1.deviantart.com/art/Energreen-Suite-321855454](http://astral-1.deviantart.com/art/Energreen-Suite-321855454)

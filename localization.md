@@ -1,6 +1,7 @@
 ---
 layout: main
 title: 'Localization'
+description: 'Dash to Dock is localized in quite a few languages.'
 section: 'development'
 order: 3
 ---

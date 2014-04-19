@@ -1,6 +1,7 @@
 ---
 layout: all_posts
-title: ''
+title: 'News'
+description: 'News about the development of Dash to Dock, a GNOME Shell extension.'
 section: 'news'
 ---
 {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}{% capture relative %}{% if lvl < '3' %}.{% else %}{% for i in (3..lvl) %}{% capture ii %}{{ i }}{% endcapture %}..{% if ii < lvl %}/{% endif %}{% endfor %}{% endif  %}{% endcapture %}

@@ -1,19 +1,22 @@
 ---
 layout: main
-title: 'Theming'
+title: 'Themes development'
+description: 'Information about developing a GNOME Shell theme that supports Dash to Dock extension.'
 section: 'development'
 order: 2
 ---
 
 
 ## Theming
-The extension aims to be as **theme-friendly** as possible. The dock appearence is inherited from the default dash so basic theme support is always granted. However, some features has to be direclty supported by the theme. There are some [themes supporting the extension](./themes.html), the Adwaita-dashtodock in particular.
+The extension aims to be as **theme-friendly** as possible. The dock appearence is inherited from the default dash so basic theme support is always granted. However, some features has to be direclty supported by the theme. There are some [themes supporting the extension](./themes.html).
 
 Adding support to a theme for the Dash to Dock extension is easy: the dash is put inside a container actor named <code>#dashtodockContainer</code> so the extended dash can be targeted without conflicting with the default dash. There are some additional css classes that theme writers can exploit in order to support the extension better:
 
  * `.running1`, <code>.running2</code>, <code>.running3</code>, <code>.running4</code>: like the default .running style but based on the number of windows of the application. The <code>.running4</code> class targets 4 and more windows. All classes are applied to the *app-well-app* actors.
  * `.focused`: applied to the <code>.app-well-app</code> actor of the currently focused application.
  * `.extended`: applied to the <code>#dashtodockContainer</code> actor when the dock height is extended to the whole vertical space.
+
+Since version 29, a custom theme previously released as a separate theme is built in the extension and optionally applied through the <code>.dashtodock</code> class of the <code>#dashtodockContainer</code>.
 
 Below is a css code snippet showing how the dock can be customized
 
