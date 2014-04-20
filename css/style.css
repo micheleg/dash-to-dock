@@ -5,6 +5,10 @@ LightBlue: '#4378c8'
 PurplishRed: '#ff0066'
 LightPurplishRed: '#f62651'
 LightBlack: '#434343'
+
+sitemap:
+  exclude: 'yes'
+
 ---
 
 {% include normalize.css %}
