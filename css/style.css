@@ -64,6 +64,10 @@ header h1 {
 
 }
 
+header  h1 a, header h1 a:visited {
+    color: black;
+}
+
 header h2 {
     display:inline;
     font-size:1.1em;
