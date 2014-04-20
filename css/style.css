@@ -187,6 +187,11 @@ a:hover{
     padding:7px 0px 7px 10px;
 }
 
+#content img.center {
+    display:block;
+    margin:auto;
+}
+
 #maincontent h2, #homecontent h2 {
 
     font-size:230%;

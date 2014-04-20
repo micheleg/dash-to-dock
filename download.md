@@ -6,15 +6,20 @@ section: 'download'
 order: 1
 ---
 
-
 ## Installation
+
+### Compatibility
+*Dash to Dock* extension is compatible with all systems capable of running **GNOME 3**, including **GNU/Linux** and *BSDs. It is compatible with all GNOME Shell version since GNOME 3.2, although more features and improvement have been added only to the most recent Shell version.
+
 ### Extension website
 The easiest and suggested way to install and keep the extension updated is through the official [Gnome Shell Extensions site]({{ site.extension_page_url }}).
 
-<ul id="button">
+<ul id="button" style="max-width:100%;">
 <li>
-  <p><a class="download" href="({{ site.extension_page_url }})">Try it out</a></p>
-  <p>Install the extension through the <a href="({{ site.extension_page_url }})">extensions website</a>. The installation process is as simple as sliding a button.</p>
+  <p><a class="download" href="{{ site.extension_page_url }}">Try it out</a></p>
+<a href="{{ site.extension_page_url }}"><img alt="Screenshot of the extension page." src="./media/extension_page_screenshot.jpg" class="center" /></a>
+  <p style="margin-top:20px">Install the extension through the <a href="({{ site.extension_page_url }})">extensions website</a>. The installation process is as simple as sliding a button.</p>
+
 </li>
 </ul>
 
