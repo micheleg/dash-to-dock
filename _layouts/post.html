@@ -18,6 +18,8 @@ section: news
 {{ content | replace:'href="/',hrefrel }}
 </div>
 
+{% include link_unit_ads.html %}
+
 <!-- Pagination links -->
 <div class="pagination">
   {% if page.previous %}
@@ -32,6 +34,5 @@ section: news
   {% endif %}
 </div>
 </div>
-
 </div>
 {% include default_footer.html %}
