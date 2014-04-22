@@ -16,9 +16,9 @@
 <div id="main">
 <header>
   <div class="container">
+{% include leaderboard_ads.html %}
     <h1> <a href="{{ relative }}/index.html">Dash to Dock</a></h1>
-    <h2>(GNOME Shell  Extension)</h2>
-
+    <h2>GNOME Shell  Extension</h2>
     <nav id="menu">
       <ul>
         <li><a {% if page.isHome %}class="active"{% endif %} href="{{ relative }}/index.html">Overview</a></li>
@@ -27,7 +27,6 @@
         <li><a {% if page.section == 'development' %}class="active"{% endif %} href="{{ relative }}/development.html">Development</a></li>
     </ul>
     </nav>
-{% include leaderboard_ads.html %}
   </div>
 </header>
 
