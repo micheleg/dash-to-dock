@@ -26,7 +26,7 @@ The easiest and suggested way to install and keep the extension updated is throu
 The installation process is as simple as sliding a button. The extension can then be enabled and disabled through the same site or with *gnome-tweak-tool*.
 
 ### Manual installation
-You can alos obtain the extension in the form of a *zip archive* from the [release page](https://github.com/micheleg/dash-to-dock/releases). Look for the latest version supporting your shell version. The extension can be installed by means of *gnome-tweak-tool* or alternatively by direclty extreacting the archive in the a directory named <code>dashtodock@micxgx.gmail.com</code> inside <code>~/.local/share/gnome-shell/extensions/</code>
+You can also obtain the extension in the form of a *zip archive* from the [release page](https://github.com/micheleg/dash-to-dock/releases). Look for the latest version supporting your shell version. The extension can be installed by means of *gnome-tweak-tool* or alternatively by directly extracting the archive in the a directory named <code>dashtodock@micxgx.gmail.com</code> inside <code>~/.local/share/gnome-shell/extensions/</code>
 
      unzip dash-to-dock@micxgx.gmail.com.zip \ 
     -d ~/.local/share/gnome-shell/extensions/dashtodock@micxgx.gmail.com/
@@ -39,7 +39,7 @@ The extension can be installed directly from source, either for the convenience 
 
      git clone https://github.com/micheleg/dash-to-dock.git
 
-or download the branch from github. The *master* branch usually target the latest GNOME Shell version. There are *gnome-3.x* branch with the latest code for older versions. In case you are running a develpment version ( that is an even version), although the extension is not guaranteed to work, you should look for a development branch and manually add your version in the metadata.json. Sometimes the previous stable version works with minor bugs also in the development GNOME Shell.
+or download the branch from github. The *master* branch usually target the latest GNOME Shell version. There are *gnome-3.x* branch with the latest code for older versions. In case you are running a development version ( that is an even version), although the extension is not guaranteed to work, you should look for a development branch and manually add your version in the metadata.json. Sometimes the previous stable version works with minor bugs also in the development GNOME Shell.
 
 A simple Makefile is included. Run
 

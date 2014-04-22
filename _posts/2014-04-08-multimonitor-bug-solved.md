@@ -12,6 +12,6 @@ A longstanding bug affecting multimonitor configurarions ([issue 28]( {{ site.gi
 
 This, combined with the optional [pressure sensitivity]({%post_url 2014-04-08-pressure-sensitivity-implemented%}), should allow to use the extension both with intellihide and autohide in all multimonitor configurations.
 
-A new version including this fix targeting GNOME Shell 3.12 is going to be released soon. In the meantime you can try the master branch on [Github]({{ site.github_project_url }}). This feature is going to be backorted to GNOME Shell 3.10 too.
+A new version including this fix targeting GNOME Shell 3.12 is going to be released soon. In the meantime you can try the master branch on [Github]({{ site.github_project_url }}). This feature is going to be backported to GNOME Shell 3.10 too.
 
 
