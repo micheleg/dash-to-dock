@@ -292,10 +292,14 @@ a:hover{
     padding-bottom:15px;
 }
 
-a.small-button-link {
-    display:block;
-    width:6em;
-    margin:auto;
+.pagination {
+    text-align: center; 
+}
+
+a.small-button-link, span.small-button-link  {
+    display:inline-block;
+    min-width:6em;
+    margin:0px 10px;
     text-align:center;
     padding:10px;
     border-radius:10px;
@@ -304,8 +308,18 @@ a.small-button-link {
     transition: background-color 0.5s ease-in;
 }
 
+/* The ones in a span are unactive buttons */
+span.small-button-link{
+    opacity:0.5;
+}
+
 a.small-button-link:hover {
     background:{{ page.PurplishRed }}
+}
+
+a.small-button-link:hover:active{
+    position: relative;
+    top: 1px;
 }
 
 #donations {

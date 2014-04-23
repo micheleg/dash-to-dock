@@ -23,16 +23,17 @@ section: news
 <!-- Pagination links -->
 <div class="pagination">
   {% if page.previous %}
-    <a href="{{ relative }}{{ page.previous.url }}" class="previous">Previous</a>
+    <a href="{{ relative }}{{ page.previous.url }}" class="small-button-link previous">Previous</a>
   {% else %}
-    <span class="previous">Previous</span>
+    <span class="small-button-link previous">Previous</span>
   {% endif %}
   {% if page.next %}
-    <a href="{{ relative }}{{ page.next.url }}" class="next">Next</a>
+    <a href="{{ relative }}{{ page.next.url }}" class="small-button-link next">Next</a>
   {% else %}
-    <span class="next ">Next</span>
+    <span class="small-button-link next">Next</span>
   {% endif %}
 </div>
+
 </div>
 </div>
 {% include default_footer.html %}
