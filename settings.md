@@ -11,4 +11,6 @@ The extension can be configured extensively by means of *gnome-shell-extension-p
 
     gnome-shell-extension-prefs dash-to-dock@micxgx.gmail.com
 
+<img src="./media/settings1.png"/>
 
+<img src="./media/settings2.png"/>
