@@ -6,18 +6,17 @@ section: development
 subsections: [Roadmap, Bug reporting, Changelog, License, Donations]
 subsectionsShort: [roadmap, bugreporting, changelog, license, donations]
 order: 1
+side: '<ul id="button">
+<li>
+  <p><a class="star" href="{{ site.github_project_url }}">Get involved </a></p>
+  <p>Browse the <a href="{{ site.github_project_url }}">GitHub development page</a> and get involved in the development.</p>
+</li>
+</ul>'
 ---
 
 ## Development
 
 The code of the extension is hosted on [Github] ({{ site.extension_page_url }}): get involved in the development, report a bug, contribute!
-
-<ul id="button">
-<li>
-  <p><a class="star" href="{{ site.github_project_url }}">Get involved </a></p>
-  <p>Browse the <a href="{{ site.github_project_url }}">GitHub development page</a> and get involved in the development.</p>
-</li>
-</ul>
 
 The source code can be obtained from Github
 
