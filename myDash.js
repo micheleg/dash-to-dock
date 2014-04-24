@@ -885,8 +885,10 @@ const myAppIcon = new Lang.Class({
 
             if(modifiers & Clutter.ModifierType.CONTROL_MASK){
                 // Keep default behaviour: launch new window
-                this.emit('launching');
-                this.app.open_new_window(-1);
+                // By calling the parent method I make it compatible
+                // with other extensions tweaking ctrl + click
+                this.parent(event);
+                return;
 
             } else if (this._settings.get_boolean('minimize-shift') && modifiers & Clutter.ModifierType.SHIFT_MASK){
                 // On double click, minimize all windows in the current workspace
