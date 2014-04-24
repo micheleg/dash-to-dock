@@ -36,7 +36,7 @@ There aren't mayor features planned, but many bugs that I would like to see fixe
 
 Things I'm not going to do:
 
- * putting the dash at the bottom of the screen (unless it proves to be feasible and compatible with the upstream Gnome Shell design)
+ * putting the dash at the bottom of the screen unless it proves to be feasible and compatible with the upstream Gnome Shell design) **UPDATE: I might reconsider a bottom dock**
  * adding random features unrelated to the dash
 
 <a name="bugreporting"></a>
