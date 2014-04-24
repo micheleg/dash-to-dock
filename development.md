@@ -64,6 +64,10 @@ Before reporting a bug:
 
 Version numbering follows the uploads to the extension website.
 
+**Version 30 (23-04-2014)**
+
+  * This is a port of all features introduced by version 29 for GNOME Shell 3.10.
+
 **Version 29 (08-04-2014)**
 
   * Include optional custom theme for the dash replacing the Adwaita-dashtodock theme
