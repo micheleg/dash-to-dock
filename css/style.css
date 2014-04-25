@@ -91,6 +91,7 @@ a:hover{
 }
 
 #menu ul{
+    clear:both;
     color:black;
     text-align:right;
     margin:0;
@@ -99,6 +100,7 @@ a:hover{
 
 #menu li{
     display:inline;
+    line-height:2em;
 }
 
 #menu a, #menu a:visited {
