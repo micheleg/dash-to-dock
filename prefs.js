@@ -339,7 +339,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
     /* CUSTOM THEME */
     let customThemeControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
 
-    let customThemeLabel = new Gtk.Label({label: _("Apply custom theme (meant to match the default Adwaita theme)"),
+    let customThemeLabel = new Gtk.Label({label: _("Apply custom theme (work only with the default Adwaita theme)"),
                                               xalign: 0, hexpand:true});
     let customTheme = new Gtk.Switch({halign:Gtk.Align.END});
             customTheme.set_active(this.settings.get_boolean('apply-custom-theme'));
