@@ -53,6 +53,7 @@ h3 {
 header {
    padding:30px 0px 15px 0px;
    border-top: 3px solid {{ page.LightBlue }} ;
+   background: linear-gradient(to top , white  0% ,  #ececec  100%) no-repeat;
 }
 
 header h1 {
