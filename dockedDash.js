@@ -247,7 +247,7 @@ const dockedDash = new Lang.Class({
             [
                 St.ThemeContext.get_for_stage (global.stage),
                 'changed',
-                Lang.bind(this, this._onThemeChanged)
+                Lang.bind(this, this._updateCustomTheme)
             ],
             [
                 Main.overview,
@@ -1024,7 +1024,8 @@ const dockedDash = new Lang.Class({
     },
 
     _updateCustomTheme: function() {
-        if(this._settings.get_boolean('apply-custom-theme'))
+        // Apply customization to the theme but only if the default theme is used
+        if(Main.getThemeStylesheet() == null && this._settings.get_boolean('apply-custom-theme'))
             this.actor.add_style_class_name('dashtodock');
         else
            this.actor.remove_style_class_name('dashtodock');
