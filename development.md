@@ -3,8 +3,8 @@ layout: main
 title: Development
 description: 'Get involved in the development of Dash to Dock, report a bug, contribute!'
 section: development
-subsections: [Roadmap, Bug reporting, Changelog, License, Donations]
-subsectionsShort: [roadmap, bugreporting, changelog, license, donations]
+subsections: [Roadmap, Bug reporting, License]
+subsectionsShort: [roadmap, bugreporting, license]
 order: 1
 side: '<ul id="button">
 <li>
@@ -59,32 +59,8 @@ Before reporting a bug:
  * Try to reset the extension settings to their default values with the command <code>dconf reset /org/gnome/shell/extensions/dash-to-dock/</code>
 
 
-<a name="changelog"></a>
-### Change log
-
-Version numbering follows the uploads to the extension website.
-
-{% for release in site.data.releases %}
-<p><strong>Version {{ release.version }} ({{ release.date }})</strong></p>
-<p>Compatible with GNOME Shell: {{ release.shell_version | join: ', ' }} </p>
-<ul>
-{% for rn in release.notes %}
-<li>{{ rn }}</li>
-{% endfor %}
-</ul>
-{% endfor %}
-
 <a name="license"></a>
 ### License
 Dash to Dock Gnome Shell extension is distributed under the terms of the GNU General Public License,
 version 2 or later. See the COPYING file for details.
 
-<a name="donations"></a>
-### Donations
-
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<p>You can <a href="http://flattr.com/thing/1047592/" target="_blank"> <img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" style="vertical-align:middle" /></a> or 
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="T62ZE74K6ST38">
-<input type="image" src="https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online." style="vertical-align:middle">
-<img alt="" border="0" src="https://www.paypalobjects.com/it_IT/i/scr/pixel.gif" width="1" height="1">.</p></form>

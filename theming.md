@@ -3,7 +3,7 @@ layout: main
 title: 'Themes development'
 description: 'Information about developing a GNOME Shell theme that supports Dash to Dock extension.'
 section: 'development'
-order: 2
+order: 3
 ---
 
 
