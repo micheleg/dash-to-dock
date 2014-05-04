@@ -1,10 +1,12 @@
 - version: 30
   date: 23-04-2014
+  shell_version: ["3.10"]
   notes:
     - This is a port of all features introduced by version 29 for GNOME Shell 3.10.
 
 - version: 29
   date: 08-04-2014
+  shell_version: [3.12]
   notes:
     - Include optional custom theme for the dash replacing the Adwaita-dashtodock theme.
     - "Rework dash sliding: introduce custom container solving bugs."
@@ -14,39 +16,46 @@
 
 - version: 28
   date: 27-03-2014
+  shell_version: [3.12]
   notes:
     - Port to Gnome Shell 3.12.
 
 - version: 27
   date: 18-03-2014
+  shell_version: ["3.10"]
   notes:
     - "Bug fixing: disconnect global signals and clean timeouts id."
     - "Bug fixing: ignore nautilus desktop windows."
 
 - version: 26
   date: 18-03-2014
+  shell_version: ["3.10"]
   notes:
     - Show dash in overview search when dragging an app icon restoring upstream behaviour.
     - "Bug fixing: handle dash visibility with fullscreen windows"
 
 - version: 25
   date: 27-10-2013
+  shell_version: ["3.10"]
   notes: 
     - "Bug fixing: dsh get stuck with frequent hover on/off."
 
 - version: 24
   date: 27-10-2013
+  shell_version: ["3.10"]
   notes:
     - "Bug fixing: track input region correctly again (introduced by previous version)"
     - Update defualt settings
 
 - version: 23
   date: 24-09-2013
+  shell_version: ["3.10"]
   notes:
     - Port to Gnome Shell 3.10
 
 - version: 22
   date: 18-09-2013
+  shell_version: ["3.8"]
   notes:
     - Improve extended mode.
     - "Bug fixing: drag icons correctly."
@@ -56,16 +65,19 @@
 
 - version: 21
   date: 24-04-2013
+  shell_version: ["3.8"]
   notes:
     - Port to Gnome Shell 3.8.1
 
 - version: 20
   date: 26-03-2013
+  shell_version: ["3.8"]
   notes:
     - Port to Gnome Shell 3.8
 
 - version: 19
   date: 27-01-2013
+  shell_version: ["3.6"]
   notes:
     - Compatibility with the Drop Down Terninal extension.
     - Make preferences panel translatable.
@@ -73,27 +85,32 @@
 
 - version: 18
   date: 13-11-2012
+  shell_version: ["3.6"]
   notes:
     - Rebase the dash code adding the application button.
 
 - version: 17
   date: 23-10-2012
+  shell_version: ["3.6"]
   notes:
     - First Gnome Shell 3.6 only release.
     - Update to 3.6 API fixing a couple of bugs.
 
 - version: 16
   date: 19-10-2012
+  shell_version: ["3.4", "3.6"]
   notes:
     - Correct syntax error in the previous version.
 
 - version: 15
   date: 19-10-2012
+  shell_version: ["3.4", "3.6"]
   notes:
     - "Initial Gnome Shell 3.6 support: just make the extension load."
 
 - version: 14
   date: 04-09-2012
+  shell_version: ["3.4"]
   notes:
     - Extend app icons with running and focused indicators (require supporting theme).
     - Add customization of click action.
@@ -102,11 +119,13 @@
 
 - version: 13
   date: 14-08-2012
+  shell_version: ["3.4"]
   notes:
     - bug fixing for multimonitor support.
 
 - version: 12
   date: 12-08-2012
+  shell_version: ["3.4"]
   notes:
     - RTL languages support.
     - Add Application based intellihide.
@@ -115,6 +134,7 @@
 
 - version: 11
   date: 22-07-2012
+  shell_version: ["3.4"]
   notes:
     - Allow to choose the monitor where the dock is shown.
     - Enable dash accessibility via ctrlAltTab.
@@ -122,6 +142,7 @@
 
 - version: 10
   date: 09-07-2012
+  shell_version: ["3.4"]
   notes:
     - Option to center the dock vertically.
     - Option to increase the maximum dock height.
@@ -129,12 +150,14 @@
 
 - version: 9
   date: 24-06-2012
+  shell_version: ["3.4"]
   notes:
     - Basic Bolt extensions support.
     - Bug fixing.
 
 - version: 8
   date: 23-06-2012
+  shell_version: ["3.4"]
   notes:
     - Gnome Shell 3.4 only release.
     - Greatly improve multimonitor support.
@@ -148,6 +171,7 @@
 
 - version: 7
   date: 12-06-2012
+  shell_version: ["3.4"]
   notes:
    - Gnome Shell 3.2 only release, last version supporting 3.2.
    - Greatly improve multimonitor support.
@@ -155,11 +179,13 @@
 
 - version: 6
   date: 03-06-2012
+  shell_version: ["3.2", "3.4"]
   notes:
    - Bug fixing.
 
 - version: 5
   date: 02-06-2012
+  shell_version: ["3.2", "3.4"]
   notes:
     - Move settings to a gschema for Gnome Shell 3.4.
     - Add settings GUI form Gnome Shell 3.4.
@@ -167,12 +193,14 @@
 
 - version: 4
   date: 29-05-2012
+  shell_version: ["3.2", "3.4"]
   notes:
     - Minor improvements.
     - Bug fixing.
 
 - version: 3
   date: 23-05-2012
+  shell_version: ["3.2", "3.4"]
   notes: 
     - Basic theme indipendece.
     - Intellihide/autohide settings.
@@ -181,13 +209,14 @@
 
 - version: 2
   date: 20-05-2012
+  shell_version: ["3.2", "3.4"]
   notes:
     - Inline timing settings.
     - Bug fixing.
 
 - version: 1
   date: 12-05-2012
-  shell_version: [3.2, 3.4]
+  shell_version: ["3.2", "3.4"]
   notes:
     - Initial release.
     - Basic intellihide functionality.
