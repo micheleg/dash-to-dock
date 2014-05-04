@@ -66,6 +66,7 @@ Version numbering follows the uploads to the extension website.
 
 {% for release in site.data.releases %}
 <p><strong>Version {{ release.version }} ({{ release.date }})</strong></p>
+<p>Compatible with GNOME Shell: {{ release.shell_version | join: ', ' }} </p>
 <ul>
 {% for rn in release.notes %}
 <li>{{ rn }}</li>

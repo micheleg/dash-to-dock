@@ -6,7 +6,7 @@
 
 - version: 29
   date: 08-04-2014
-  shell_version: [3.12]
+  shell_version: ["3.12"]
   notes:
     - Include optional custom theme for the dash replacing the Adwaita-dashtodock theme.
     - "Rework dash sliding: introduce custom container solving bugs."
@@ -16,7 +16,7 @@
 
 - version: 28
   date: 27-03-2014
-  shell_version: [3.12]
+  shell_version: ["3.12"]
   notes:
     - Port to Gnome Shell 3.12.
 
