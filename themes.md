@@ -3,7 +3,7 @@ layout: main
 title: 'Themes'
 description: 'A list of themes for Dash to Dock, a GNOME Shell extenion.'
 section: 'download'
-order: 3
+order: 4
 ---
 
 

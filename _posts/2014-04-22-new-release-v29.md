@@ -8,7 +8,7 @@ category: Release
 
 A new extension version (v29) supporting GNOME Shell 3.12 has been released and 
 can be found as usual from the [extension website]({{ site.extension_page_url }}) 
-or downloaded manually from the [release page]({{ site.github_project_url }}/releases).
+or downloaded manually from the [release page]({{ site.release_page_url }}).
 See also the [alternative installation methods](/download.html)
 
 <!--more-->

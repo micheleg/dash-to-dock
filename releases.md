@@ -2,8 +2,8 @@
 layout: main
 title: 'Releases'
 description: 'Download all released versions of Dash to Dock, a GNOME Shell extension.'
-section: development
-order: 3
+section: download
+order: 2
 shell_versions: ["3.12", "3.10", "3.8", "3.6", "3.4", "3.2"]
 ---
 

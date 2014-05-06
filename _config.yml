@@ -9,3 +9,4 @@ paginate_path: "news/page:num"
 excerpt_separator: <!--more-->
 extension_page_url: "https://extensions.gnome.org/extension/307/dash-to-dock"
 github_project_url: "https://github.com/micheleg/dash-to-dock"
+release_page_url: "/releases.html"
