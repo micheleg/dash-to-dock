@@ -12,6 +12,7 @@ order: 2
 Version numbering follows the uploads to the extension website.
 
 {% for release in site.data.releases %}
+<a name="v{{ release.version }}"></a>
 <p><strong>Version {{ release.version }} ({{ release.date }})</strong></p>
 <p>Compatible with GNOME Shell: {{ release.shell_version | join: ', ' }} </p>
 <ul>

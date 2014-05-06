@@ -25,6 +25,7 @@ The easiest and suggested way to install and keep the extension updated is throu
 
 The installation process is as simple as sliding a button. The extension can then be enabled and disabled through the same site or with *gnome-tweak-tool*.
 
+<a name="manualinstallation"></a>
 ### Manual installation
 You can also obtain the extension in the form of a *zip archive* from the [release page](https://github.com/micheleg/dash-to-dock/releases). Look for the latest version supporting your shell version. The extension can be installed by means of *gnome-tweak-tool* or alternatively by directly extracting the archive in the a directory named <code>dashtodock@micxgx.gmail.com</code> inside <code>~/.local/share/gnome-shell/extensions/</code>
 

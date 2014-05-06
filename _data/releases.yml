@@ -3,6 +3,7 @@
   shell_version: ["3.10"]
   notes:
     - This is a port of all features introduced by version 29 for GNOME Shell 3.10.
+  zip_url: https://extensions.gnome.org/review/download/3840.shell-extension.zip
 
 - version: 29
   date: 08-04-2014
@@ -13,12 +14,14 @@
     - "Bug fixing: the dash doesn't steal anymore input events on the secondary monitor when slided out."
     - Add pressure sensitivity to show the dash.
     - Emit custom signals when showing/hiding for better extension interoperability.
+  zip_url: https://extensions.gnome.org/review/download/3797.shell-extension.zip
 
 - version: 28
   date: 27-03-2014
   shell_version: ["3.12"]
   notes:
     - Port to Gnome Shell 3.12.
+  zip_url: https://extensions.gnome.org/review/download/3731.shell-extension.zip
 
 - version: 27
   date: 18-03-2014
@@ -26,6 +29,7 @@
   notes:
     - "Bug fixing: disconnect global signals and clean timeouts id."
     - "Bug fixing: ignore nautilus desktop windows."
+  zip_url: https://extensions.gnome.org/review/download/3723.shell-extension.zip
 
 - version: 26
   date: 18-03-2014
@@ -33,12 +37,14 @@
   notes:
     - Show dash in overview search when dragging an app icon restoring upstream behaviour.
     - "Bug fixing: handle dash visibility with fullscreen windows"
+  zip_url: https://extensions.gnome.org/review/download/3707.shell-extension.zip
 
 - version: 25
   date: 27-10-2013
   shell_version: ["3.10"]
   notes: 
     - "Bug fixing: dsh get stuck with frequent hover on/off."
+  zip_url: https://extensions.gnome.org/review/download/3401.shell-extension.zip
 
 - version: 24
   date: 27-10-2013
@@ -46,12 +52,14 @@
   notes:
     - "Bug fixing: track input region correctly again (introduced by previous version)"
     - Update defualt settings
+  zip_url: https://extensions.gnome.org/review/download/3344.shell-extension.zip
 
 - version: 23
   date: 24-09-2013
   shell_version: ["3.10"]
   notes:
     - Port to Gnome Shell 3.10
+  zip_url: https://extensions.gnome.org/review/download/3243.shell-extension.zip
 
 - version: 22
   date: 18-09-2013
@@ -62,18 +70,21 @@
     - "Bug fixing: Compute full height correctly in multi-monitor configurations."
     - "Bug fixing: handle smooth scrolling when  switching workspace."
     - "Add Chinese translation."
+  zip_url: https://extensions.gnome.org/review/download/3236.shell-extension.zip
 
 - version: 21
   date: 24-04-2013
   shell_version: ["3.8"]
   notes:
     - Port to Gnome Shell 3.8.1
+  zip_url: https://extensions.gnome.org/review/download/2809.shell-extension.zip
 
 - version: 20
   date: 26-03-2013
   shell_version: ["3.8"]
   notes:
     - Port to Gnome Shell 3.8
+  zip_url: https://extensions.gnome.org/review/download/2688.shell-extension.zip
 
 - version: 19
   date: 27-01-2013
@@ -82,12 +93,14 @@
     - Compatibility with the Drop Down Terninal extension.
     - Make preferences panel translatable.
     - Add German, French, Portuguese, Hungarian, Czech and Polish translations.
+  zip_url: https://extensions.gnome.org/review/download/2404.shell-extension.zip
 
 - version: 18
   date: 13-11-2012
   shell_version: ["3.6"]
   notes:
     - Rebase the dash code adding the application button.
+  zip_url: https://extensions.gnome.org/review/download/2229.shell-extension.zip
 
 - version: 17
   date: 23-10-2012
@@ -95,18 +108,21 @@
   notes:
     - First Gnome Shell 3.6 only release.
     - Update to 3.6 API fixing a couple of bugs.
+  zip_url: https://extensions.gnome.org/review/download/2067.shell-extension.zip
 
 - version: 16
   date: 19-10-2012
   shell_version: ["3.4", "3.6"]
   notes:
     - Correct syntax error in the previous version.
+  zip_url: https://extensions.gnome.org/review/download/2051.shell-extension.zip
 
 - version: 15
   date: 19-10-2012
   shell_version: ["3.4", "3.6"]
   notes:
     - "Initial Gnome Shell 3.6 support: just make the extension load."
+  zip_url: https://extensions.gnome.org/review/download/2050.shell-extension.zip
 
 - version: 14
   date: 04-09-2012
@@ -116,12 +132,14 @@
     - Add customization of click action.
     - "Rework vertical positioning: drop uncentered alignment and add an experimental extended mode."
     - Bug fixing.
+  zip_url: https://extensions.gnome.org/review/download/1799.shell-extension.zip
 
 - version: 13
   date: 14-08-2012
   shell_version: ["3.4"]
   notes:
     - bug fixing for multimonitor support.
+  zip_url: https://extensions.gnome.org/review/download/1722.shell-extension.zip
 
 - version: 12
   date: 12-08-2012
@@ -131,6 +149,7 @@
     - Add Application based intellihide.
     - Minor improvements to the switch workspace on scroll feature.
     - Bug fixing.
+  zip_url: https://extensions.gnome.org/review/download/1716.shell-extension.zip
 
 - version: 11
   date: 22-07-2012
@@ -139,6 +158,7 @@
     - Allow to choose the monitor where the dock is shown.
     - Enable dash accessibility via ctrlAltTab.
     - Directly customize the dash background opacity.
+  zip_url: https://extensions.gnome.org/review/download/1628.shell-extension.zip
 
 - version: 10
   date: 09-07-2012
@@ -147,6 +167,7 @@
     - Option to center the dock vertically.
     - Option to increase the maximum dock height.
     - Settings GUI overhaul.
+  zip_url: https://extensions.gnome.org/review/download/1596.shell-extension.zip
 
 - version: 9
   date: 24-06-2012
@@ -154,6 +175,7 @@
   notes:
     - Basic Bolt extensions support.
     - Bug fixing.
+  zip_url: https://extensions.gnome.org/review/download/1542.shell-extension.zip
 
 - version: 8
   date: 23-06-2012
@@ -168,6 +190,7 @@
     - Option to control the maximum icon size.
     - Option to show favorites and/or running application icons.
     - Bug fixing.
+  zip_url: https://extensions.gnome.org/review/download/1535.shell-extension.zip
 
 - version: 7
   date: 12-06-2012
@@ -176,12 +199,14 @@
    - Gnome Shell 3.2 only release, last version supporting 3.2.
    - Greatly improve multimonitor support.
    - Bug fixing.
+  zip_url: https://extensions.gnome.org/review/download/1494.shell-extension.zip
 
 - version: 6
   date: 03-06-2012
   shell_version: ["3.2", "3.4"]
   notes:
    - Bug fixing.
+  zip_url: https://extensions.gnome.org/review/download/1427.shell-extension.zip
 
 - version: 5
   date: 02-06-2012
@@ -190,6 +215,7 @@
     - Move settings to a gschema for Gnome Shell 3.4.
     - Add settings GUI form Gnome Shell 3.4.
     - Minor improvements.
+  zip_url: https://extensions.gnome.org/review/download/1417.shell-extension.zip
 
 - version: 4
   date: 29-05-2012
@@ -197,6 +223,7 @@
   notes:
     - Minor improvements.
     - Bug fixing.
+  zip_url: https://extensions.gnome.org/review/download/1389.shell-extension.zip
 
 - version: 3
   date: 23-05-2012
@@ -205,7 +232,8 @@
     - Basic theme indipendece.
     - Intellihide/autohide settings.
     - Minor improvements.
-    - Bug fixing .
+    - Bug fixing.
+  zip_url: https://extensions.gnome.org/review/download/1359.shell-extension.zip
 
 - version: 2
   date: 20-05-2012
@@ -213,6 +241,7 @@
   notes:
     - Inline timing settings.
     - Bug fixing.
+  zip_url: https://extensions.gnome.org/review/download/1331.shell-extension.zip
 
 - version: 1
   date: 12-05-2012
@@ -220,4 +249,5 @@
   notes:
     - Initial release.
     - Basic intellihide functionality.
+  zip_url: https://extensions.gnome.org/review/download/1296.shell-extension.zip
 
