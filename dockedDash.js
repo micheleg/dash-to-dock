@@ -190,6 +190,7 @@ const dockedDash = new Lang.Class({
         this._pressureSensed = false;
         this._pressureBarrier = null;
         this._barrier = null;
+        this._messageTrayShowing = false;
 
         // Create a new dash object
         this.dash = new MyDash.myDash(this._settings);
@@ -265,6 +266,16 @@ const dockedDash = new Lang.Class({
                 Main.overview._viewSelector._showAppsButton,
                 'notify::checked',
                 Lang.bind(this, this._syncShowAppsButtonToggled)
+            ],
+            [
+                Main.messageTray,
+                'showing',
+                Lang.bind(this, this._onMessageTrayShowing)
+            ],
+            [
+                Main.messageTray,
+                'hiding',
+                Lang.bind(this, this._onMessageTrayHiding)
             ],
             [
                 global.screen,
@@ -593,6 +604,16 @@ const dockedDash = new Lang.Class({
         this._hoverChanged();
     },
 
+    _onMessageTrayShowing: function() {
+        this._messageTrayShowing = true;
+        this._updateBarrier();
+    },
+
+    _onMessageTrayHiding: function() {
+        this._messageTrayShowing = false;
+        this._updateBarrier();
+    },
+
     // Remove pressure barrier
     _removeBarrier: function() {
         if (this._barrier) {
@@ -620,7 +641,7 @@ const dockedDash = new Lang.Class({
 
         // Create new barrier
         // Note: dash in fixed position doesn't use pressure barrier
-        if (this._slider.visible && this._canUsePressure && this._settings.get_boolean('autohide') && this._settings.get_boolean('require-pressure-to-show') && !this._settings.get_boolean('dock-fixed')) {
+        if (this._slider.visible && this._canUsePressure && this._settings.get_boolean('autohide') && this._settings.get_boolean('require-pressure-to-show') && !this._settings.get_boolean('dock-fixed') && !this._messageTrayShowing) {
             let x, direction;
             if (this._rtl) {
                 x = this._monitor.x + this._monitor.width;
