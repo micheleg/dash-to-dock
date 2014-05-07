@@ -584,10 +584,8 @@ const dockedDash = new Lang.Class({
     // handler for mouse pressure sensed
     _onPressureSensed: function() {
         this._pressureSensed = true;
-        // NOTE: We could have called this._hoverChanged() instead but hover processing not required.
-        if(this._settings.get_boolean('autohide') && this._autohideStatus){
-            this._show();
-        }
+        // Prevent dock from being shown accidentally by testing for mouse hover
+        this._hoverChanged();
     },
 
     // Remove pressure barrier
