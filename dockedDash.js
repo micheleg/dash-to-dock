@@ -191,6 +191,7 @@ const dockedDash = new Lang.Class({
         this._pressureBarrier = null;
         this._barrier = null;
         this._messageTrayShowing = false;
+        this._removeBarrierTimeoutId = 0;
 
         // Create a new dash object
         this.dash = new MyDash.myDash(this._settings);
@@ -381,6 +382,10 @@ const dockedDash = new Lang.Class({
         // Destroy main clutter actor: this should be sufficient removing it and
         // destroying  all its children
         this.actor.destroy();
+
+        // Remove barrier timeout
+        if (this._removeBarrierTimeoutId > 0)
+            Mainloop.source_remove(this._removeBarrierTimeoutId);
 
         // Remove existing barrier
         this._removeBarrier();
