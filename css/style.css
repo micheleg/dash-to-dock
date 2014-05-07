@@ -346,6 +346,11 @@ a.small-button-link:hover:active{
     padding: 15px 75px 15px 75px;
 }
 
+#lovebar li {
+    padding:0;
+    padding-right:10px;
+}
+
 .download {
     background-image: url('../media/download.png');
 }
