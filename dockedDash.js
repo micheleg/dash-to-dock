@@ -190,6 +190,8 @@ const dockedDash = new Lang.Class({
         this._pressureSensed = false;
         this._pressureBarrier = null;
         this._barrier = null;
+        this._messageTrayShowing = false;
+        this._removeBarrierTimeoutId = 0;
 
         // Create a new dash object
         this.dash = new MyDash.myDash(this._settings);
@@ -265,6 +267,21 @@ const dockedDash = new Lang.Class({
                 Main.overview.viewSelector._showAppsButton,
                 'notify::checked',
                 Lang.bind(this, this._syncShowAppsButtonToggled)
+            ],
+            [
+                Main.messageTray,
+                'showing',
+                Lang.bind(this, this._onMessageTrayShowing)
+            ],
+            [
+                Main.messageTray,
+                'hiding',
+                Lang.bind(this, this._onMessageTrayHiding)
+            ],
+            [
+                global.screen,
+                'in-fullscreen-changed',
+                Lang.bind(this, this._onFullscreenChanged)
             ]
         );
 
@@ -365,6 +382,10 @@ const dockedDash = new Lang.Class({
         // Destroy main clutter actor: this should be sufficient removing it and
         // destroying  all its children
         this.actor.destroy();
+
+        // Remove barrier timeout
+        if (this._removeBarrierTimeoutId > 0)
+            Mainloop.source_remove(this._removeBarrierTimeoutId);
 
         // Remove existing barrier
         this._removeBarrier();
@@ -584,10 +605,23 @@ const dockedDash = new Lang.Class({
     // handler for mouse pressure sensed
     _onPressureSensed: function() {
         this._pressureSensed = true;
-        // NOTE: We could have called this._hoverChanged() instead but hover processing not required.
-        if(this._settings.get_boolean('autohide') && this._autohideStatus){
-            this._show();
-        }
+        // Prevent dock from being shown accidentally by testing for mouse hover
+        this._hoverChanged();
+    },
+
+    _onMessageTrayShowing: function() {
+        this._messageTrayShowing = true;
+        this._updateBarrier();
+    },
+
+    _onMessageTrayHiding: function() {
+        this._messageTrayShowing = false;
+        this._updateBarrier();
+    },
+
+    _onFullscreenChanged: function() {
+        if (!this._slider.visible)
+            this._updateBarrier();
     },
 
     // Remove pressure barrier
@@ -617,7 +651,7 @@ const dockedDash = new Lang.Class({
 
         // Create new barrier
         // Note: dash in fixed position doesn't use pressure barrier
-        if (this._canUsePressure && this._settings.get_boolean('autohide') && this._settings.get_boolean('require-pressure-to-show') && !this._settings.get_boolean('dock-fixed')) {
+        if (this._slider.visible && this._canUsePressure && this._settings.get_boolean('autohide') && this._settings.get_boolean('require-pressure-to-show') && !this._settings.get_boolean('dock-fixed') && !this._messageTrayShowing) {
             let x, direction;
             if (this._rtl) {
                 x = this._monitor.x + this._monitor.width;
