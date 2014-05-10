@@ -281,7 +281,7 @@ const dockedDash = new Lang.Class({
             [
                 global.screen,
                 'in-fullscreen-changed',
-                Lang.bind(this, this._updateBarrier)
+                Lang.bind(this, this._onFullscreenChanged)
             ]
         );
 
@@ -617,6 +617,11 @@ const dockedDash = new Lang.Class({
     _onMessageTrayHiding: function() {
         this._messageTrayShowing = false;
         this._updateBarrier();
+    },
+
+    _onFullscreenChanged: function() {
+        if (!this._slider.visible)
+            this._updateBarrier();
     },
 
     // Remove pressure barrier
