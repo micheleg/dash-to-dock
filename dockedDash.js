@@ -464,17 +464,7 @@ const dockedDash = new Lang.Class({
             }
         }
 
-        // Skip if dock is not in autohide mode for instance because it is shown
-        // by intellihide. Delay the hover changes check while switching
-        // workspace: the workspaceSwitcherPopup steals the hover status and it
-        // is not restored until the mouse move again (sync_hover has no effect).
-        if(Main.wm._workspaceSwitcherPopup) {
-            Mainloop.timeout_add(500, Lang.bind(this, function() {
-                    this._box.sync_hover();
-                    this._hoverChanged();
-                    return false;
-                }));
-        } else if(this._settings.get_boolean('autohide') && this._autohideStatus) {
+        if(this._settings.get_boolean('autohide') && this._autohideStatus) {
             if( this._box.hover ) {
                 this._show();
             } else {
@@ -958,14 +948,6 @@ const dockedDash = new Lang.Class({
             Lang.bind(this, enable)();
 
         function enable(){
-
-            // Sometimes Main.wm._workspaceSwitcherPopup is null when first loading the extension
-            if (Main.wm._workspaceSwitcherPopup == null)
-                Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
-                Main.wm._workspaceSwitcherPopup.connect('destroy', function() {
-                    Main.wm._workspaceSwitcherPopup = null;
-                });
-
             this._signalHandler.disconnectWithLabel(label);
 
             this._signalHandler.pushWithLabel(label,
@@ -1054,6 +1036,19 @@ const dockedDash = new Lang.Class({
 
                 Main.wm.actionMoveWorkspace(ws);
 
+                if (this._settings.get_boolean('display-workspace-switcher') && !Main.overview.visible) {
+                    if (Main.wm._workspaceSwitcherPopup == null) {
+                        Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+                        Main.wm._workspaceSwitcherPopup.connect('destroy', Lang.bind(this, function() {
+                            Main.wm._workspaceSwitcherPopup = null;
+                        }));
+                    }
+                    Main.uiGroup.set_child_above_sibling(this.actor, Main.wm._workspaceSwitcherPopup.actor);
+                    Main.wm._workspaceSwitcherPopup.display(
+                        direction > 0 ? Meta.MotionDirection.UP : Meta.MotionDirection.DOWN,
+                        ws.index()
+                    );
+                }
                 return true;
 
             } else {

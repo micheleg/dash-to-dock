@@ -143,5 +143,9 @@
       <summary>Action when clicking on a running app</summary>
       <description>Set the action that is executed when clicking on the icon of a running application</description>
     </key>
+    <key type="b" name="display-workspace-switcher">
+      <default>false</default>
+      <summary>Display workspace switcher arrow when scrolling workspaces</summary>
+    </key>
   </schema>
 </schemalist>
