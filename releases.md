@@ -16,7 +16,7 @@ This page contains zip archives for all released versions of Dash to Dock. The p
 ### GNOME Shell {{ sv }}
 {% for release in site.data.releases %}
 {% if release.shell_version contains sv %}
-<p><strong>Version {{ release.version }}: </strong><a href="{{ release.zip_url }}" onClick="ga('send', 'Release', 'Download', 'v{{release.version}}');">download</a>,
+<p><strong>Version {{ release.version }}: </strong><a href="{{ release.zip_url }}" onClick="ga('send', 'event', 'Release', 'Download', 'v{{release.version}}');">download</a>,
 <a href="./changelog.html#v{{ release.version }}">release notes</a>.
 </p>
 <!--<ul>
