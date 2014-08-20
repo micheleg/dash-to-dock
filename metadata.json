@@ -1,5 +1,5 @@
 {
-"shell-version": ["3.12"],
+"shell-version": ["3.12", "3.14"],
 "uuid": "dash-to-dock@micxgx.gmail.com",
 "name": "Dash to Dock",
 "description": "A dock for the Gnome Shell. This extension moves the dash out of the overview transforming it in a dock for an easier launching of applications and a faster switching between windows and desktops.",
