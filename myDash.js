@@ -575,7 +575,7 @@ const myDash = new Lang.Class({
         // Skip animations on first run when adding the initial set
         // of items, to avoid all items zooming in at once
 
-        let animate = this._shownInitially && Main.overview.visible &&
+        let animate = this._shownInitially &&
             !Main.overview.animationInProgress;
 
         if (!this._shownInitially)
