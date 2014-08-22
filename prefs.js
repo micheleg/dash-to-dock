@@ -351,6 +351,21 @@ const WorkspaceSettingsWidget = new GObject.Class({
     customThemeControl.add(customTheme)
     customization.add(customThemeControl);
 
+    /* WORKSPACE SWITCHER ARROW */
+    let workspaceSwitcherControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
+
+    let workspaceSwitcherLabel = new Gtk.Label({label: _("Display workspace switcher arrow when scrolling workspaces"),
+                                              xalign: 0, hexpand:true});
+    let workspaceSwitcher = new Gtk.Switch({halign:Gtk.Align.END});
+            workspaceSwitcher.set_active(this.settings.get_boolean('display-workspace-switcher'));
+            workspaceSwitcher.connect('notify::active', Lang.bind(this, function(check){
+                this.settings.set_boolean('display-workspace-switcher', check.get_active());
+            }));
+
+    workspaceSwitcherControl.add(workspaceSwitcherLabel)
+    workspaceSwitcherControl.add(workspaceSwitcher)
+    customization.add(workspaceSwitcherControl);
+
     /* OPAQUE LAYER */
 
     let opaqueLayerControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
