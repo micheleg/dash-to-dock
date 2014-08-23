@@ -979,13 +979,6 @@ const dockedDash = new Lang.Class({
 
         function enable(){
 
-            // Sometimes Main.wm._workspaceSwitcherPopup is null when first loading the extension
-            if (Main.wm._workspaceSwitcherPopup == null)
-                Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
-                Main.wm._workspaceSwitcherPopup.connect('destroy', function() {
-                    Main.wm._workspaceSwitcherPopup = null;
-                });
-
             this._signalHandler.disconnectWithLabel(label);
 
             this._signalHandler.pushWithLabel(label,
@@ -1011,7 +1004,9 @@ const dockedDash = new Lang.Class({
         // This was inspired to desktop-scroller@obsidien.github.com
         function onScrollEvent(actor, event) {
 
-            let direction = 0; // 0: do nothing; +1: up; -1:down.
+            let activeWs = global.screen.get_active_workspace();
+            let direction = null;
+
 
             // filter events occuring not near the screen border if required
             if(this._settings.get_boolean('scroll-switch-workspace-whole')==false) {
@@ -1029,22 +1024,22 @@ const dockedDash = new Lang.Class({
 
             switch ( event.get_scroll_direction() ) {
             case Clutter.ScrollDirection.UP:
-                direction = 1;
+                direction = Meta.MotionDirection.UP;
                 break;
             case Clutter.ScrollDirection.DOWN:
-                direction = -1;
+                direction = Meta.MotionDirection.DOWN;
                 break;
             case Clutter.ScrollDirection.SMOOTH:
                 let [dx, dy] = event.get_scroll_delta();
                 if(dy < 0){
-                    direction = 1;
+                    direction = Meta.MotionDirection.UP;
                 } else if(dy > 0) {
-                    direction = -1;
+                    direction = Meta.MotionDirection.DOWN;
                 }
                 break;
             }
 
-            if(direction !==0 ){
+            if(direction !==null ){
 
                 // Prevent scroll events from triggering too many workspace switches
                 // by adding a deadtime between each scroll event.
@@ -1063,10 +1058,18 @@ const dockedDash = new Lang.Class({
                     }
                 }
 
-                if (direction>0)
-                    Main.wm.actionMoveWorkspace(Meta.MotionDirection.UP);
-                else
-                    Main.wm.actionMoveWorkspace(Meta.MotionDirection.DOWN);
+                let ws;
+
+                ws = activeWs.get_neighbor(direction)
+
+                if (Main.wm._workspaceSwitcherPopup == null)
+                    Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+                    Main.wm._workspaceSwitcherPopup.connect('destroy', function() {
+                        Main.wm._workspaceSwitcherPopup = null;
+                    });
+
+                Main.wm._workspaceSwitcherPopup.display(direction, ws.index());
+                Main.wm.actionMoveWorkspace(direction);
 
                 return true;
 
