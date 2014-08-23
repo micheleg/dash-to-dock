@@ -334,6 +334,7 @@ const dockedDash = new Lang.Class({
         // The public method trackChrome requires the actor to be child of a tracked actor. Since I don't want the parent
         // to be tracked I use the private internal _trackActor instead.
         Main.uiGroup.add_child(this.actor);
+        this.actor.lower(Main.layoutManager.panelBox);
         Main.layoutManager._trackActor(this._slider, {trackFullscreen: true});
 
         if ( this._settings.get_boolean('dock-fixed') )
