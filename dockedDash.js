@@ -12,6 +12,7 @@ const Params = imports.misc.params;
 
 const Main = imports.ui.main;
 const Dash = imports.ui.dash;
+const MessageTray = imports.ui.messageTray;
 const Overview = imports.ui.overview;
 const Tweener = imports.ui.tweener;
 const ViewSelector = imports.ui.viewSelector;
@@ -610,11 +611,28 @@ const dockedDash = new Lang.Class({
     },
 
     _onMessageTrayShowing: function() {
+
+        // Remove other tweens that could mess with the state machine
+        Tweener.removeTweens(this.actor);
+        Tweener.addTween(this.actor, {
+              y: this._y0 - Main.messageTray.actor.height,
+              time: MessageTray.ANIMATION_TIME,
+              transition: 'easeOutQuad'
+            });
         this._messageTrayShowing = true;
         this._updateBarrier();
     },
 
     _onMessageTrayHiding: function() {
+
+        // Remove other tweens that could mess with the state machine
+        Tweener.removeTweens(this.actor);
+        Tweener.addTween(this.actor, {
+              y: this._y0,
+              time: MessageTray.ANIMATION_TIME,
+              transition: 'easeOutQuad'
+            });
+
         this._messageTrayShowing = false;
         this._updateBarrier();
     },
@@ -764,7 +782,8 @@ const dockedDash = new Lang.Class({
             fraction = 0.95;
 
         this.actor.height = Math.round( fraction * availableHeight);
-        this.actor.y = this._monitor.y + unavailableTopSpace + Math.round( (1-fraction)/2 * availableHeight);
+        this._y0 = this._monitor.y + unavailableTopSpace + Math.round( (1-fraction)/2 * availableHeight);
+        this.actor.y = this._y0;
 
         if(extendHeight){
             this.dash._container.set_height(this.actor.height);
