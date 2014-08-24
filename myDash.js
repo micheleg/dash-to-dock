@@ -30,7 +30,7 @@ let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
  * Summary of changes:
  * - passed settings to class as parameter
  * - modified chldBox calculations for when 'show-apps-at-top' option is checked
- *
+ * - handle horizontal dash
  */
 const myDashActor = new Lang.Class({
     Name: 'DashToDockmyDashActor',
@@ -38,7 +38,11 @@ const myDashActor = new Lang.Class({
 
     _init: function(settings) {
         this._settings = settings;
-        let layout = new Clutter.BoxLayout({ orientation: Clutter.Orientation.VERTICAL });
+        this._position = this._settings.get_enum('dock-position');
+        this._isHorizontal = ( this._position == St.Side.TOP
+                           || this._position == St.Side.BOTTOM);
+        let layout = new Clutter.BoxLayout({ orientation:
+          this._isHorizontal?Clutter.Orientation.HORIZONTAL:Clutter.Orientation.VERTICAL });
         this.parent({ name: 'dash',
                       layout_manager: layout,
                       clip_to_allocation: true });
@@ -47,32 +51,41 @@ const myDashActor = new Lang.Class({
     vfunc_allocate: function(box, flags) {
         let contentBox = this.get_theme_node().get_content_box(box);
         let availWidth = contentBox.x2 - contentBox.x1;
+        let availHeight = contentBox.y2 - contentBox.y1;
 
         this.set_allocation(box, flags);
 
         let [appIcons, showAppsButton] = this.get_children();
         let [showAppsMinHeight, showAppsNatHeight] = showAppsButton.get_preferred_height(availWidth);
+        let [showAppsMinWidth, showAppsNatWidth] = showAppsButton.get_preferred_width(availHeight);
+
+        let offset_x = this._isHorizontal?showAppsNatWidth:0;
+        let offset_y = this._isHorizontal?0:showAppsNatHeight;
 
         let childBox = new Clutter.ActorBox();
         if( this._settings.get_boolean('show-apps-at-top') ) {
-            childBox.x1 = contentBox.x1;
-            childBox.y1 = contentBox.y1 + showAppsNatHeight;
+            childBox.x1 = contentBox.x1 + offset_x;
+            childBox.y1 = contentBox.y1 + offset_y;
             childBox.x2 = contentBox.x2;
             childBox.y2 = contentBox.y2;
             appIcons.allocate(childBox, flags);
 
             childBox.y1 = contentBox.y1;
+            childBox.x1 = contentBox.x1;
+            childBox.x2 = contentBox.x1 + showAppsNatWidth;
             childBox.y2 = contentBox.y1 + showAppsNatHeight;
             showAppsButton.allocate(childBox, flags);
         } else {
             childBox.x1 = contentBox.x1;
             childBox.y1 = contentBox.y1;
-            childBox.x2 = contentBox.x2;
-            childBox.y2 = contentBox.y2 - showAppsNatHeight;
+            childBox.x2 = contentBox.x2 - offset_x;
+            childBox.y2 = contentBox.y2 - offset_y;
             appIcons.allocate(childBox, flags);
 
-            childBox.y1 = contentBox.y2 - showAppsNatHeight;
+            childBox.x2 = contentBox.x2;
             childBox.y2 = contentBox.y2;
+            childBox.x1 = contentBox.x2 - showAppsNatWidth;
+            childBox.y1 = contentBox.y2 - showAppsNatHeight;
             showAppsButton.allocate(childBox, flags);
         }
     },
