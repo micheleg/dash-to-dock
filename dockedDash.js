@@ -175,6 +175,10 @@ const dockedDash = new Lang.Class({
         this._settings = settings;
         this._bindSettingsChanges();
 
+        this._position = this._settings.get_enum('dock-position');
+        this._isHorizontal = ( this._position== St.Side.TOP ||
+                               this._position == St.Side.BOTTOM );
+
         // authohide current status. Not to be confused with autohide enable/disagle global (g)settings
         this._autohideStatus = this._settings.get_boolean('autohide') && !this._settings.get_boolean('dock-fixed');
 
@@ -215,24 +219,23 @@ const dockedDash = new Lang.Class({
         // Create the main actor and the containers for sliding in and out and
         // centering, turn on track hover
 
-        // This is the vertical centering actor
+        // This is the centering actor
         this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
-            y_align: St.Align.MIDDLE});
+            x_align: this._isHorizontal?St.Align.MIDDLE:St.Align.START,
+            y_align: this._isHorizontal?St.Align.START:St.Align.MIDDLE});
         this.actor._delegate = this;
 
         // This is the sliding actor whose allocation is to be tracked for input regions
-        this._slider = new DashSlideContainer( {
-            side:this._rtl?St.Side.RIGHT:St.Side.LEFT}
-        );
+        this._slider = new DashSlideContainer({side: this._position});
+
         // This is the actor whose hover status us tracked for autohide
         this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true } );
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
 
         // Create and apply height constraint to the dash. It's controlled by this.actor height
-        this.actor.height = Main.overview.viewSelector.actor.height; // Guess initial reasonable height.
-        this.constrainHeight = new Clutter.BindConstraint({ source: this.actor,
-                                                            coordinate: Clutter.BindCoordinate.HEIGHT });
-        this.dash.actor.add_constraint(this.constrainHeight);
+        this.constrainSize = new Clutter.BindConstraint({ source: this.actor,
+          coordinate: this._isHorizontal?Clutter.BindCoordinate.WIDTH:Clutter.BindCoordinate.HEIGHT });
+        this.dash.actor.add_constraint(this.constrainSize);
 
         // Connect global signals
         this._signalHandler = new Convenience.globalSignalHandler();
@@ -451,7 +454,7 @@ const dockedDash = new Lang.Class({
                 this.emit('box-changed');
             }
 
-            this._updateYPosition();
+            this._resetPosition();
 
             // Add or remove barrier depending on if dock-fixed
             this._updateBarrier();
@@ -460,9 +463,9 @@ const dockedDash = new Lang.Class({
             this.emit('box-changed');
             this._updateBarrier();
         }));
-        this._settings.connect('changed::extend-height', Lang.bind(this, this._updateYPosition));
+        this._settings.connect('changed::extend-height', Lang.bind(this, this._resetPosition));
         this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
-        this._settings.connect('changed::height-fraction', Lang.bind(this,this._updateYPosition));
+        this._settings.connect('changed::height-fraction', Lang.bind(this,this._resetPosition));
 
         this._settings.connect('changed::apply-custom-theme', Lang.bind(this, this._updateCustomTheme));
 
@@ -774,7 +777,9 @@ const dockedDash = new Lang.Class({
              this._monitor.y == Main.layoutManager.primaryMonitor.y);
     },
 
-    _updateYPosition: function() {
+    _resetPosition: function() {
+
+        this._monitor = this._getMonitor();
 
         let unavailableTopSpace = 0;
         let unavailableBottomSpace = 0;
@@ -789,8 +794,6 @@ const dockedDash = new Lang.Class({
             }
         }
 
-        let availableHeight = this._monitor.height - unavailableTopSpace - unavailableBottomSpace;
-
         let fraction = this._settings.get_double('height-fraction');
 
         if(extendHeight)
@@ -798,17 +801,62 @@ const dockedDash = new Lang.Class({
         else if(fraction<0 || fraction >1)
             fraction = 0.95;
 
-        this.actor.height = Math.round( fraction * availableHeight);
-        this._y0 = this._monitor.y + unavailableTopSpace + Math.round( (1-fraction)/2 * availableHeight);
-        this.actor.y = this._y0;
+        let anchor_point;
 
-        if(extendHeight){
-            this.dash._container.set_height(this.actor.height);
-            this.actor.add_style_class_name('extended');
+        if(this._isHorizontal){
+
+            let availableWidth = this._monitor.width;
+            this.actor.width = Math.round( fraction * availableWidth);
+
+            let pos_y;
+            if( this._position == St.Side.BOTTOM) {
+                pos_y =  this._monitor.y + this._monitor.height;
+                anchor_point = Clutter.Gravity.SOUTH_WEST;
+            } else {
+                pos_y =  this._monitor.y;
+                anchor_point = Clutter.Gravity.NORTH_WEST;
+            }
+
+            this.actor.move_anchor_point_from_gravity(anchor_point);
+            this.actor.x = this._monitor.x + Math.round( (1-fraction)/2 * availableWidth);
+            this.actor.y = pos_y;
+
+            if(extendHeight){
+                this.dash._container.set_width(this.actor.width);
+                this.actor.add_style_class_name('extended');
+            } else {
+                this.dash._container.set_width(-1);
+                this.actor.remove_style_class_name('extended');
+            }
+
         } else {
-            this.dash._container.set_height(-1);
-            this.actor.remove_style_class_name('extended');
+
+            let availableHeight = this._monitor.height - unavailableTopSpace - unavailableBottomSpace;
+            this.actor.height = Math.round( fraction * availableHeight);
+
+            let pos_x;
+            if( this._position == St.Side.RIGHT) {
+                pos_x =  this._monitor.x + this._monitor.width;
+                anchor_point = Clutter.Gravity.NORTH_EAST;
+            } else {
+                pos_x =  this._monitor.x;
+                anchor_point = Clutter.Gravity.NORTH_WEST;
+            }
+
+            this.actor.move_anchor_point_from_gravity(anchor_point);
+            this.actor.x = pos_x;
+            this.actor.y = this._monitor.y + unavailableTopSpace + Math.round( (1-fraction)/2 * availableHeight);
+
+            if(extendHeight){
+                this.dash._container.set_height(this.actor.height);
+                this.actor.add_style_class_name('extended');
+            } else {
+                this.dash._container.set_height(-1);
+                this.actor.remove_style_class_name('extended');
+            }
         }
+
+        this._y0 = this.actor.y;
 
         this._updateStaticBox();
     },
@@ -841,8 +889,8 @@ const dockedDash = new Lang.Class({
     _updateStaticBox: function() {
 
         this.staticBox.init_rect(
-            this._monitor.x + (this._rtl?(this._monitor.width - this._box.width):0),
-            this.actor.y + this._slider.y + this._box.y,
+            this.actor.x + this._slider.x - (this._position==St.Side.RIGHT?this._box.width:0),
+            this.actor.y + this._slider.y - (this._position==St.Side.BOTTOM?this._box.height:0),
             this._box.width,
             this._box.height
         );
@@ -859,28 +907,6 @@ const dockedDash = new Lang.Class({
                 }));
 
         this.emit('box-changed');
-    },
-
-    // 'Hard' reset dock positon: called on start and when monitor changes
-    _resetPosition: function() {
-        this._monitor = this._getMonitor();
-        this._updateStaticBox();
-
-        let position, anchor_point;
-
-        if(this._rtl){
-            anchor_point = Clutter.Gravity.NORTH_EAST;
-            position = this.staticBox.x2;
-        } else {
-            anchor_point = Clutter.Gravity.NORTH_WEST;
-            position = this.staticBox.x1;
-        }
-
-        this.actor.move_anchor_point_from_gravity(anchor_point);
-        this.actor.x = position;
-
-
-        this._updateYPosition();
     },
 
     _getMonitor: function(){
