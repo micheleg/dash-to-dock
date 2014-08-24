@@ -38,6 +38,7 @@ function enable() {
      */
     oldDash  = Main.overview._dash;
     Main.overview._dash = dock.dash;
+    bindSettingsChanges();
 }
 
 function disable() {
@@ -52,3 +53,15 @@ function disable() {
     oldDash=null;
 }
 
+
+function bindSettingsChanges() {
+    // This settings change require a full reload.
+
+    /* It's easier to just reload the extension when the dock position changes
+     * rather than working out all changes to the differen containers.
+     */
+    settings.connect('changed::dock-position', function(){
+        disable();
+        enable();
+    });
+}
