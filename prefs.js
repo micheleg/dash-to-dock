@@ -33,6 +33,31 @@ const WorkspaceSettingsWidget = new GObject.Class({
     let dockSettings = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
     let dockSettingsTitle = new Gtk.Label({label: _("Main Settings")});
 
+    /* DOCK POSITION */
+
+    let placementMain = new Gtk.Box({spacing:30,orientation:Gtk.Orientation.HORIZONTAL, homogeneous:true,
+                                         margin:10});
+    indentWidget(placementMain);
+
+    let placementPosition =  new Gtk.Box({spacing:30, margin_left:10, margin_top:10, margin_right:10});
+        let placementPositionLabel = new Gtk.Label({label: _("Dock Position"), use_markup: true,
+                                            xalign: 0, hexpand:true});
+        let placementPositionCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+            placementPositionCombo.append_text(_("Left"));
+            placementPositionCombo.append_text(_("Right"));
+            placementPositionCombo.append_text(_("Top"));
+            placementPositionCombo.append_text(_("Bottom"));
+
+            placementPositionCombo.set_active(this.settings.get_enum('dock-position'));
+
+            placementPositionCombo.connect('changed', Lang.bind (this, function(widget) {
+                    this.settings.set_enum('dock-position', widget.get_active());
+            }));
+
+    placementPosition.add(placementPositionLabel)
+    placementPosition.add(placementPositionCombo);
+
+    /* FIXED DOCK */
 
     let dockSettingsMain1 = new Gtk.Box({spacing:30,orientation:Gtk.Orientation.HORIZONTAL, homogeneous:true,
                                          margin:10});
@@ -259,6 +284,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     dockSettingsMain2.add(dockHeightMain);
 
+    dockSettings.add(placementPosition);
     dockSettings.add(dockSettingsControl1);
     dockSettings.add(dockSettingsMain1);
     dockSettings.add(intellihideSubSettings);
