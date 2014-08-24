@@ -25,12 +25,6 @@ const MyDash = Me.imports.myDash;
 
 const PRESSURE_TIMEOUT = 1000;
 
-const SlideDirection = {
-    LEFT: 0,
-    RIGHT: 1
-};
-
-
 /*
  * A simple Actor with one child whose allocation takes into account the
  * slide out of its child via the _slidex parameter ([0:1]).
@@ -41,7 +35,8 @@ const SlideDirection = {
  * regions making the extesion usable when the primary monitor is the right one.
  *
  * The slidex parameter can be used to directly animate the sliding. The parent
- * must have a WEST anchor_point to achieve the sliding in the RIGHT direction.
+ * must have a WEST (SOUTH) anchor_point to achieve the sliding to the RIGHT (BOTTOM)
+ * side.
 */
 
 const DashSlideContainer = new Lang.Class({
@@ -53,7 +48,7 @@ const DashSlideContainer = new Lang.Class({
         
         /* Default local params */
         let localDefaults = {
-            direction: SlideDirection.LEFT,
+            side: St.Side.LEFT,
             initialSlideValue: 1
         }
 
@@ -75,8 +70,8 @@ const DashSlideContainer = new Lang.Class({
 
         // slide parameter: 1 = visible, 0 = hidden.
         this._slidex = localParams.initialSlideValue;
-        this._direction = localParams.direction;
-        this._slideoutWidth = 1; // minimum width when slided out
+        this._side = localParams.side;
+        this._slideoutSize = 1; // minimum size when slided out
     },
 
 
@@ -97,33 +92,50 @@ const DashSlideContainer = new Lang.Class({
 
         let childBox = new Clutter.ActorBox();
 
-        let slideoutWidth = this._slideoutWidth;
+        let slideoutSize = this._slideoutSize;
 
-        if (this._direction == SlideDirection.LEFT) {
-            childBox.x1 = (this._slidex -1)*(childWidth - slideoutWidth);
-            childBox.x2 = slideoutWidth + this._slidex*(childWidth - slideoutWidth);
-        } else if (this._direction == SlideDirection.RIGHT) {
+        if (this._side == St.Side.LEFT) {
+            childBox.x1 = (this._slidex -1)*(childWidth - slideoutSize);
+            childBox.x2 = slideoutSize + this._slidex*(childWidth - slideoutSize);
+            childBox.y1 = 0;
+            childBox.y2 = childBox.y1 + childHeight;
+        } else if (this._side ==  St.Side.RIGHT
+                 || this._side ==  St.Side.BOTTOM) {
             childBox.x1 = 0;
             childBox.x2 = childWidth;
+            childBox.y1 = 0;
+            childBox.y2 = childBox.y1 + childHeight;
+        } else if (this._side ==  St.Side.TOP) {
+            childBox.x1 = 0;
+            childBox.x2 = childWidth;
+            childBox.y1 = (this._slidex -1)*(childHeight - slideoutSize);
+            childBox.y2 = slideoutSize + this._slidex*(childHeight - slideoutSize);
         }
 
-        childBox.y1 = 0;
-        childBox.y2 = childBox.y1 + childHeight;
         this._child.allocate(childBox, flags);
-        this._child.set_clip(-childBox.x1, 0, -childBox.x1+availWidth, availHeight);
+        this._child.set_clip(-childBox.x1, -childBox.y1,
+                             -childBox.x1+availWidth,-childBox.y1 + availHeight);
     },
 
     /* Just the child width but taking into account the slided out part */
     vfunc_get_preferred_width: function(forHeight) {
         let [minWidth, natWidth ] = this._child.get_preferred_width(forHeight);
-        minWidth = (minWidth - this._slideoutWidth)*this._slidex + this._slideoutWidth;
-        natWidth = (natWidth - this._slideoutWidth)*this._slidex + this._slideoutWidth;
+        if (this._side ==  St.Side.LEFT
+          || this._side == St.Side.RIGHT) {
+            minWidth = (minWidth - this._slideoutSize)*this._slidex + this._slideoutSize;
+            natWidth = (natWidth - this._slideoutSize)*this._slidex + this._slideoutSize;
+        }
         return [minWidth, natWidth];
     },
 
-    /* Just the child min height, no border, no positioning etc. */
+    /* Just the child height but taking into account the slided out part */
     vfunc_get_preferred_height: function(forWidth) {
         let [minHeight, natHeight] = this._child.get_preferred_height(forWidth);
+        if (this._side ==  St.Side.TOP
+          || this._side ==  St.Side.BOTTOM) {
+            minHeight = (minHeight - this._slideoutSize)*this._slidex + this._slideoutSize;
+            natHeight = (natHeight - this._slideoutSize)*this._slidex + this._slideoutSize;
+        }
         return [minHeight, natHeight];
     },
 
@@ -210,7 +222,7 @@ const dockedDash = new Lang.Class({
 
         // This is the sliding actor whose allocation is to be tracked for input regions
         this._slider = new DashSlideContainer( {
-            direction:this._rtl?SlideDirection.RIGHT:SlideDirection.LEFT}
+            side:this._rtl?St.Side.RIGHT:St.Side.LEFT}
         );
         // This is the actor whose hover status us tracked for autohide
         this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true } );
