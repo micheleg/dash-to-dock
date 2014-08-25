@@ -729,17 +729,37 @@ const dockedDash = new Lang.Class({
         // Create new barrier
         // Note: dash in fixed position doesn't use pressure barrier
         if (this._slider.visible && this._canUsePressure && this._settings.get_boolean('autohide') && this._settings.get_boolean('require-pressure-to-show') && !this._settings.get_boolean('dock-fixed') && !this._messageTrayShowing) {
-            let x, direction;
-            if (this._rtl) {
-                x = this._monitor.x + this._monitor.width;
-                direction = Meta.BarrierDirection.NEGATIVE_X;
-            } else {
-                x = this._monitor.x;
+            let x1, x2, y1, y2, direction;
+
+            if(this._position==St.Side.LEFT){
+                x1 = this.staticBox.x1;
+                x2 = this.staticBox.x1;
+                y1 = this.staticBox.y1;
+                y2 = this.staticBox.y2;
                 direction = Meta.BarrierDirection.POSITIVE_X;
+            } else if(this._position==St.Side.RIGHT) {
+                x1 = this.staticBox.x2;
+                x2 = this.staticBox.x2;
+                y1 = this.staticBox.y1;
+                y2 = this.staticBox.y2;
+                direction = Meta.BarrierDirection.NEGATIVE_X;
+            } else if(this._position==St.Side.TOP) {
+                x1 = this.staticBox.x1;
+                x2 = this.staticBox.x2;
+                y1 = this.staticBox.y1;
+                y2 = this.staticBox.y1;
+                direction = Meta.BarrierDirection.POSITIVE_Y;
+            } else if (this._position==St.Side.BOTTOM) {
+                x1 = this.staticBox.x1;
+                x2 = this.staticBox.x2;
+                y1 = this.staticBox.y2;
+                y2 = this.staticBox.y2;
+                direction = Meta.BarrierDirection.NEGATIVE_Y;
             }
+
             this._barrier = new Meta.Barrier({display: global.display,
-                                x1: x, x2: x,
-                                y1: (this.staticBox.y1), y2: (this.staticBox.y2),
+                                x1: x1, x2: x2,
+                                y1: y1, y2: y2,
                                 directions: direction});
             if (this._pressureBarrier) {
                 this._pressureBarrier.addBarrier(this._barrier);
