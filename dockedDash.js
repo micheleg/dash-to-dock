@@ -232,8 +232,10 @@ const dockedDash = new Lang.Class({
         // Create the main actor and the containers for sliding in and out and
         // centering, turn on track hover
 
+        let positionStyleClass = ['top', 'right', 'bottom', 'left'];
         // This is the centering actor
         this.actor = new St.Bin({ name: 'dashtodockContainer',reactive: false,
+            style_class:positionStyleClass[this._position],
             x_align: this._isHorizontal?St.Align.MIDDLE:St.Align.START,
             y_align: this._isHorizontal?St.Align.START:St.Align.MIDDLE});
         this.actor._delegate = this;
