@@ -1,19 +1,48 @@
-#dashtodockBox:ltr {
-	padding-right:1px;
+/* 1px padding to trigger the dash showing */
+.left #dashtodockBox {
+    padding-right:1px;
 }
 
-#dashtodockBox:rtl {
-	padding-left:1px;
+.right #dashtodockBox {
+    padding-left:1px;
 }
+
+.bottom #dashtodockBox {
+    padding-top:1px;
+}
+
+.top #dashtodockBox {
+    padding-bottom:1px;
+}
+
 
 /* Shrink the dash by reducing padding and border radius */
 #dashtodockContainer.dashtodock #dash {
+    border:1px;
+}
+
+#dashtodockContainer.dashtodock.left #dash {
     padding: 1px 0px;
+    border-left: 0px;
     border-radius: 0px 6px 6px 0px;
 }
 
-#dashtodockContainer.dashtodock #dash:rtl {
+#dashtodockContainer.dashtodock.right #dash {
+    padding: 1px 0px;
+    border-right: 0px;
     border-radius: 6px 0px 0px 6px;
+}
+
+#dashtodockContainer.dashtodock.top #dash {
+    padding: 0px 1px;
+    border-top: 0px;
+    border-radius: 0px 0px 6px 6px;
+}
+
+#dashtodockContainer.dashtodock.bottom #dash {
+    padding: 0px 1px;
+    border-bottom: 0px;
+    border-radius: 6px 6px 0px 0px;
 }
 
 #dashtodockContainer.dashtodock .dash-item-container > StButton {
@@ -47,35 +76,35 @@
     box-shadow: inset 0px 1px 2px 0px rgba(0, 0, 0, 1);
 }
 
-#dashtodockContainer.dashtodock:ltr .running1 {
+#dashtodockContainer.dashtodock.left .running1 {
     background-image: url('./media/one.svg');
 }
 
-#dashtodockContainer.dashtodock:rtl .running1 {
+#dashtodockContainer.dashtodock.right .running1 {
     background-image: url('./media/one_rtl.svg');
 }
 
-#dashtodockContainer.dashtodock:ltr .running2 {
+#dashtodockContainer.dashtodock.left .running2 {
     background-image: url('./media/two.svg');
 }
 
-#dashtodockContainer.dashtodock:rtl .running2 {
+#dashtodockContainer.dashtodock.right .running2 {
     background-image: url('./media/two_rtl.svg');
 }
 
-#dashtodockContainer.dashtodock:ltr .running3 {
+#dashtodockContainer.dashtodock.left .running3 {
    background-image: url('./media/three.svg');
 }
 
-#dashtodockContainer.dashtodock:rtl .running3 {
+#dashtodockContainer.dashtodock.right .running3 {
     background-image: url('./media/three_rtl.svg');
 }
 
-#dashtodockContainer.dashtodock:ltr .running4 {
+#dashtodockContainer.dashtodock.left .running4 {
     background-image: url('./media/four.svg');
 }
 
-#dashtodockContainer.dashtodock:rtl .running4 {
+#dashtodockContainer.dashtodock.right .running4 {
     background-image: url('./media/four_rtl.svg');
 }
 
