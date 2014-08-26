@@ -716,20 +716,20 @@ const myDash = new Lang.Class({
         let numChildren = children.length;
         let boxHeight = 0;
         for (let i = 0; i < numChildren; i++) {
-            boxHeight += children[i].height;
+            boxHeight += this._isHorizontal?children[i].width:children[i].height;
         }
 
         // Keep the placeholder out of the index calculation; assuming that
         // the remove target has the same size as "normal" items, we don't
         // need to do the same adjustment there.
         if (this._dragPlaceholder) {
-            boxHeight -= this._dragPlaceholder.height;
+            boxHeight -= this._isHorizontal?this._dragPlaceholder.width:this._dragPlaceholder.height;
             numChildren--;
         }
 
         let pos;
         if (!this._emptyDropTarget){
-            pos = Math.floor(y * numChildren / boxHeight);
+            pos = Math.floor((this._isHorizontal?x:y) * numChildren / boxHeight);
             if (pos >  numChildren)
                 pos = numChildren;
         } else
