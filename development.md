@@ -6,12 +6,7 @@ section: development
 subsections: [Roadmap, Bug reporting, License]
 subsectionsShort: [roadmap, bugreporting, license]
 order: 1
-side: '<ul id="button">
-<li>
-  <p><a class="star" href="{{ site.github_project_url }}">Get involved </a></p>
-  <p>Browse the <a href="{{ site.github_project_url }}">GitHub development page</a> and get involved in the development.</p>
-</li>
-</ul>'
+side: 'get_involved_button.html'
 ---
 
 ## Development

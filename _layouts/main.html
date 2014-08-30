@@ -5,7 +5,7 @@
   <div id="sideads">
     {% include side_ads.html %}
   </div>
-  {% if page.side %}{{ page.side }}{% endif %}
+  {% if page.side %}{% include {{ page.side }} %}{% endif %}
 </div>
 
 <div id="maincontent">

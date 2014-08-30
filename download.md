@@ -18,7 +18,7 @@ The easiest and suggested way to install and keep the extension updated is throu
 <li>
   <p><a class="download" href="{{ site.extension_page_url }}">Try it out</a></p>
 <a href="{{ site.extension_page_url }}"><img alt="Screenshot of the extension page." src="./media/extension_page_screenshot.jpg" class="center" /></a>
-  <p style="margin-top:20px">Install the extension through the <a href="({{ site.extension_page_url }})">extensions website</a>. The installation process is as simple as sliding a button.</p>
+  <p style="margin-top:20px">Install the extension through the <a href="{{ site.extension_page_url }}">extensions website</a>. The installation process is as simple as sliding a button.</p>
 
 </li>
 </ul>
