@@ -336,6 +336,12 @@ const dockedDash = new Lang.Class({
         Main.uiGroup.add_child(this.actor);
         Main.layoutManager._trackActor(this._slider, {trackFullscreen: true});
 
+        // The dash need to be above the top_window_group, otherwise it doesn't
+        // accept dnd of app icons when not in overiew mode, although the default
+        // behavior is to keep newly added chrome elements below the the
+        // top_window_group.
+        this.actor.raise(global.top_window_group);
+
         if ( this._settings.get_boolean('dock-fixed') )
           Main.layoutManager._trackActor(this.dash._box, {affectsStruts: true});
 
@@ -612,6 +618,9 @@ const dockedDash = new Lang.Class({
 
     _onMessageTrayShowing: function() {
 
+        // Temporary move the dash below the top panel so that it slide below it.
+        this.actor.lower(Main.layoutManager.panelBox);
+
         // Remove other tweens that could mess with the state machine
         Tweener.removeTweens(this.actor);
         Tweener.addTween(this.actor, {
@@ -624,6 +633,9 @@ const dockedDash = new Lang.Class({
     },
 
     _onMessageTrayHiding: function() {
+
+        // Reset desired dash stack order (on top to accept dnd of app icons)
+        this.actor.raise(global.top_window_group);
 
         // Remove other tweens that could mess with the state machine
         Tweener.removeTweens(this.actor);
