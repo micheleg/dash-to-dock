@@ -25,14 +25,10 @@ Here are the [Installation instructions](./download.html#installfromsource).
 1. Keep the extension updated with new upstream versions.
 2. Improve integration with the shell, avoiding inconsistencies and taking advantage of new features or design.
 3. Add keyboard shortcuts
-4. In the long term, rewrite and simplify the code.
+4. Bottom positioned dock
+5. In the long term, rewrite and simplify the code.
 
 There aren't mayor features planned, but many bugs that I would like to see fixed (see below).
-
-Things I'm not going to do:
-
- * putting the dash at the bottom of the screen unless it proves to be feasible and compatible with the upstream Gnome Shell design) **UPDATE: I might reconsider a bottom dock**
- * adding random features unrelated to the dash
 
 <a name="bugreporting"></a>
 ### Bug Reporting
