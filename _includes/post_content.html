@@ -3,5 +3,6 @@
 <h2 class="post-title"><a href="{{ relative }}{{ post.url }}">{{ post.title }}</a></h2>
 <div class="post-content">
 {% capture hrefrel %}{{ 'href="' | append:relative | append:'/' }}{% endcapture %}
-{{ post.content | replace:'href="/',hrefrel }}
+{% capture srcrel %}{{ 'src="' | append:relative | append:'/' }}{% endcapture %}
+{{ post.content | replace:'href="/',hrefrel | | replace:'src="/',srcrel }}
 </div>

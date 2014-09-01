@@ -15,7 +15,8 @@ section: news
 <h2 class="post-title"><a href="{{ relative }}{{ page.url }}">{{ page.title }}</a></h2>
 <div class="post-content">
 {% capture hrefrel %}{{ 'href="' | append:relative | append:'/' }}{% endcapture %}
-{{ content | replace:'href="/',hrefrel }}
+{% capture srcrel %}{{ 'src="' | append:relative | append:'/' }}{% endcapture %}
+{{ content | replace:'href="/',hrefrel | | replace:'src="/',srcrel }}
 </div>
 
 {% include link_unit_ads.html %}
