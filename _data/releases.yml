@@ -1,3 +1,15 @@
+- version: 31
+  date: 01-09-2014
+  shell_version: ["3.12"]
+  notes:
+    - Slide up the dash when the messageTray is snown.
+    - Show workspaceSwitcherPopup when scrolling over the dash to switch workspace.
+    - Make the extension compatible with others tweaking of ctrl + click.
+    - "Bug Fixes: tweak pressureBarriers behaviour with fullscreen apps."
+    - "Bug Fixes: Apply custom theme only if the default Adwaita is used."
+    - "Bug Fixes: Correct visual glitch due to animation not run outside the overview."
+  zip_url: https://extensions.gnome.org/review/download/4219.shell-extension.zip
+
 - version: 30
   date: 23-04-2014
   shell_version: ["3.10"]
