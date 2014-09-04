@@ -634,15 +634,16 @@ const dockedDash = new Lang.Class({
 
     _onMessageTrayHiding: function() {
 
-        // Reset desired dash stack order (on top to accept dnd of app icons)
-        this.actor.raise(global.top_window_group);
-
         // Remove other tweens that could mess with the state machine
         Tweener.removeTweens(this.actor);
         Tweener.addTween(this.actor, {
               y: this._y0,
               time: MessageTray.ANIMATION_TIME,
-              transition: 'easeOutQuad'
+              transition: 'easeOutQuad',
+              onComplete: Lang.bind(this, function(){
+                  // Reset desired dash stack order (on top to accept dnd of app icons)
+                  this.actor.raise(global.top_window_group);
+                })
             });
 
         this._messageTrayShowing = false;
