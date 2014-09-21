@@ -373,9 +373,11 @@ p.post-date {
     color:white;
     font-family: opensans, sans-serif;
     min-width:3em;
+    border-radius: 3px;
 }
 .day, .month, .year {
     display:block;
+    text-align:center;
 }
 .day {
     font-size:200%;

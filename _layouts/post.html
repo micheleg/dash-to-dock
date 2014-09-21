@@ -10,7 +10,7 @@ section: news
   </div>
 </div>
 <div id="maincontent">
-<p class="post-date"><span class="day">{{ page.date | date: "%d " }}</span><span class="month">{{ page.date | date: "%B " }}</span><span class="year">{{ page.date | date: "%Y " }}</span></p>
+<p class="post-date"><span class="month">{{ page.date | date: "%h " }}</span><span class="day">{{ page.date | date: "%d " }}</span><span class="year">{{ page.date | date: "%Y " }}</span></p>
 <p class="post-category">{{ page.category }}</p>
 <h2 class="post-title"><a href="{{ relative }}{{ page.url }}">{{ page.title }}</a></h2>
 <div class="post-content">
