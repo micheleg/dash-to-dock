@@ -1016,6 +1016,10 @@ const dockedDash = new Lang.Class({
         // This was inspired to desktop-scroller@obsidien.github.com
         function onScrollEvent(actor, event) {
 
+            // When in overview change workscape only in windows view
+            if (Main.overview.visible && Main.overview.viewSelector.getActivePage() !== ViewSelector.ViewPage.WINDOWS)
+                return
+
             let activeWs = global.screen.get_active_workspace();
             let direction = null;
 
