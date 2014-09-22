@@ -1,3 +1,11 @@
+- version: 34
+  date: 23-09-2014
+  shell_version: ["3.14"]
+  notes:
+    - Port to GNOME Shell 3.14
+    - "Bug fixes: In overview, only change workspace in WINDOWS view."
+  zip_url: https://extensions.gnome.org/review/download/4268.shell-extension.zip
+
 - version: 33
   date: 21-09-2014
   shell_version: ["3.12"]
@@ -5,6 +13,7 @@
     - "Bug Fixes: Restore dash stack order after messageTray animation is finished."
     - "This is also version 32, as it was uploaded twice on the extension website by mistake."
   zip_url: https://extensions.gnome.org/review/download/4257.shell-extension.zip
+
 - version: 31
   date: 01-09-2014
   shell_version: ["3.12"]
