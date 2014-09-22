@@ -38,6 +38,34 @@ function getPosition(settings) {
     return position;
 }
 
+/**
+ * Extend AppIconMenu
+ *
+ * - Pass settings to the constructor
+ * - set popup arrow side based on dash orientation
+ *
+ */
+
+const myAppIconMenu = new Lang.Class({
+    Name: 'myAppIconMenu',
+    Extends: AppDisplay.AppIconMenu,
+
+    _init: function(source, settings) {
+
+        let side = getPosition(settings);
+
+        // Damm it, there has to be a proper way of doing this...
+        // As I can't call the parent parent constructor (?) passing the side
+        // parameter, I overwite what I need later
+        this.parent(source);
+
+        // Change the initialized side where required.
+        this._arrowSide = side;
+        this._boxPointer._arrowSide = side;
+        this._boxPointer._userArrowSide = side;
+    }
+});
+
 /* This class is a fork of the upstream DashActor class (ui.dash.js)
  *
  * Summary of changes:
@@ -931,6 +959,35 @@ const myAppIcon = new Lang.Class({
           AppDisplay.AppIcon.prototype._onStateChanged();
 
         this._updateCounterClass();
+    },
+
+    popupMenu: function() {
+        this._removeMenuTimeout();
+        this.actor.fake_release();
+        this._draggable.fakeRelease();
+
+        if (!this._menu) {
+            this._menu = new myAppIconMenu(this, this._settings);
+            this._menu.connect('activate-window', Lang.bind(this, function (menu, window) {
+                this.activateWindow(window);
+            }));
+            this._menu.connect('open-state-changed', Lang.bind(this, function (menu, isPoppedUp) {
+                if (!isPoppedUp)
+                    this._onMenuPoppedDown();
+            }));
+            Main.overview.connect('hiding', Lang.bind(this, function () { this._menu.close(); }));
+
+            this._menuManager.addMenu(this._menu);
+        }
+
+        this.emit('menu-state-changed', true);
+
+        this.actor.set_hover(true);
+        this._menu.popup();
+        this._menuManager.ignoreRelease();
+        this.emit('sync-tooltip');
+
+        return false;
     },
 
     _onFocusAppChanged: function() {
