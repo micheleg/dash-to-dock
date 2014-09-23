@@ -3,7 +3,7 @@
 UUID = dash-to-dock@micxgx.gmail.com
 BASE_MODULES = extension.js stylesheet.css metadata.json COPYING README.md
 EXTRA_MODULES = dockedDash.js intellihide.js myDash.js convenience.js prefs.js
-EXTRA_MEDIA = one.svg two.svg three.svg four.svg one_rtl.svg two_rtl.svg three_rtl.svg four_rtl.svg
+EXTRA_MEDIA = one.svg two.svg three.svg four.svg one_rtl.svg two_rtl.svg three_rtl.svg four_rtl.svg one_bottom.svg two_bottom.svg three_bottom.svg four_bottom.svg
 TOLOCALIZE =  prefs.js
 MSGSRC = $(wildcard po/*.po)
 INSTALLBASE = ~/.local/share/gnome-shell/extensions

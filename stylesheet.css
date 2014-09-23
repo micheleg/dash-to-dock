@@ -84,12 +84,22 @@
     background-image: url('./media/one_rtl.svg');
 }
 
+#dashtodockContainer.dashtodock.bottom .running1,
+#dashtodockContainer.dashtodock.top .running1 {
+    background-image: url('./media/one_bottom.svg');
+}
+
 #dashtodockContainer.dashtodock.left .running2 {
     background-image: url('./media/two.svg');
 }
 
 #dashtodockContainer.dashtodock.right .running2 {
     background-image: url('./media/two_rtl.svg');
+}
+
+#dashtodockContainer.dashtodock.bottom .running2,
+#dashtodockContainer.dashtodock.top .running2 {
+    background-image: url('./media/two_bottom.svg');
 }
 
 #dashtodockContainer.dashtodock.left .running3 {
@@ -100,12 +110,22 @@
     background-image: url('./media/three_rtl.svg');
 }
 
+#dashtodockContainer.dashtodock.bottom .running3,
+#dashtodockContainer.dashtodock.top .running3 {
+   background-image: url('./media/three_bottom.svg');
+}
+
 #dashtodockContainer.dashtodock.left .running4 {
     background-image: url('./media/four.svg');
 }
 
 #dashtodockContainer.dashtodock.right .running4 {
     background-image: url('./media/four_rtl.svg');
+}
+
+#dashtodockContainer.dashtodock.bottom .running4,
+#dashtodockContainer.dashtodock.top .running4 {
+    background-image: url('./media/four_bottom.svg');
 }
 
 #dashtodockContainer.dashtodock #dash {

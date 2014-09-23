@@ -9,11 +9,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="107"
+   width="96"
    height="96"
    id="svg11252"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
+   inkscape:version="0.48.5 r10040"
    sodipodi:docname="one.svg">
   <metadata
      id="metadata19">
@@ -36,8 +36,8 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="919"
-     inkscape:window-height="585"
+     inkscape:window-width="1158"
+     inkscape:window-height="835"
      id="namedview17"
      showgrid="true"
      fit-margin-top="0"
@@ -46,14 +46,21 @@
      fit-margin-bottom="0"
      showborder="true"
      inkscape:showpageshadow="false"
-     inkscape:zoom="11.313708"
-     inkscape:cx="28.589829"
-     inkscape:cy="43.839281"
-     inkscape:window-x="477"
-     inkscape:window-y="174"
+     inkscape:zoom="15.999999"
+     inkscape:cx="-1.6691426"
+     inkscape:cy="42.445189"
+     inkscape:window-x="548"
+     inkscape:window-y="27"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg11252"
-     inkscape:snap-global="false" />
+     inkscape:snap-global="true"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-bbox="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-midpoints="true" />
   <defs
      id="defs11254">
     <filter
@@ -84,7 +91,8 @@
     </filter>
   </defs>
   <g
-     id="g3874-6">
+     id="g3874-6"
+     transform="translate(0.93200622,0)">
     <path
        transform="matrix(1.0074627,0,0,0.90674613,20.246232,2.4077827)"
        d="m -10.16466,50.281128 c 0,2.672651 -1.889602,4.839262 -4.220543,4.839262 -2.330942,0 -4.220544,-2.166611 -4.220544,-4.839262 0,-2.672651 1.889602,-4.839262 4.220544,-4.839262 2.330941,0 4.220543,2.166611 4.220543,4.839262 z"
@@ -96,8 +104,8 @@
        style="opacity:0.66814162;fill:#80b3ff;fill-opacity:1;stroke:none;filter:url(#filter3848-1-2)"
        sodipodi:type="arc" />
     <path
-       transform="matrix(0.34081527,0,0,0.30934809,8.9706902,32.44563)"
-       d="m -10.16466,50.281128 c 0,2.672651 -1.889602,4.839262 -4.220543,4.839262 -2.330942,0 -4.220544,-2.166611 -4.220544,-4.839262 0,-2.672651 1.889602,-4.839262 4.220544,-4.839262 2.330941,0 4.220543,2.166611 4.220543,4.839262 z"
+       transform="matrix(0.45328331,0,0,0.41143205,10.588566,27.312733)"
+       d="m -10.16466,50.281128 a 4.2205434,4.839262 0 1 1 -8.441087,0 4.2205434,4.839262 0 1 1 8.441087,0 z"
        sodipodi:ry="4.839262"
        sodipodi:rx="4.2205434"
        sodipodi:cy="50.281128"
