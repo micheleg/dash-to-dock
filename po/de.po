@@ -1,15 +1,17 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+# Translation for de
+# Copyright (C) 2014 Michele
+# This file is distributed under the same license as the dash-to-dock package.
+# Morris Jobke <hey@morrisjobke.de>, 2014.
+# Jonatan Zeidler <jonatan_zeidler@hotmail.de>, 2012
+# jonius <jonatan_zeidler@gmx.de>, 2012
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-09-25 14:32+0200\n"
-"PO-Revision-Date: 2012-12-06 00:01+0100\n"
-"Last-Translator: Jonatan Zeidler <jonatan_zeidler@hotmail.de>\n"
+"PO-Revision-Date: 2014-09-25 14:57+0200\n"
+"Last-Translator: Morris Jobke <hey@morrisjobke.de>\n"
 "Language-Team: jonius <jonatan_zeidler@gmx.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -24,39 +26,39 @@ msgstr "Grundeinstellungen"
 
 #: prefs.js:43
 msgid "Dock is fixed and always visible"
-msgstr "Die Dock hat eine feste Position und ist immer sichtbar"
+msgstr "Das Dock hat eine feste Position und ist immer sichtbar"
 
 #: prefs.js:59
 msgid "Animation time [ms]"
-msgstr "Animationsdauer [ms] "
+msgstr "Animationsdauer [ms]"
 
 #: prefs.js:70
 msgid "Show delay [ms]"
-msgstr "Einblendeverzögerung [ms] "
+msgstr "Einblendeverzögerung [ms]"
 
 #: prefs.js:81
 msgid "Hide delay [ms]"
-msgstr "Ausblendeverzögerung [ms] "
+msgstr "Ausblendeverzögerung [ms]"
 
 #: prefs.js:96
 msgid "Autohide"
-msgstr "Autoverstecken "
+msgstr "Autoverstecken"
 
 #: prefs.js:103
 msgid "intellihide"
-msgstr "Intelligentes Verstecken "
+msgstr "Intelligentes Verstecken"
 
 #: prefs.js:131
 msgid "Application based intellihide"
-msgstr "Anwendungsbasiertes intelligentes Verstecken "
+msgstr "Anwendungsbasiertes intelligentes Verstecken"
 
 #: prefs.js:149
 msgid "Require pressure to show the dock"
-msgstr ""
+msgstr "Druck benötigt, um das Dock anzuzeigen"
 
 #: prefs.js:159
 msgid "Pressure threshold (px)"
-msgstr ""
+msgstr "Druckschwellwert (px)"
 
 #: prefs.js:198
 msgid "Show the dock on following monitor (if attached)"
@@ -64,7 +66,7 @@ msgstr "Zeige Dock auf folgendem Monitor (falls angeschlossen)"
 
 #: prefs.js:200
 msgid "Primary (default)"
-msgstr ""
+msgstr "Primäranzeige (Standard)"
 
 #: prefs.js:201
 #, fuzzy
@@ -132,7 +134,7 @@ msgstr "Laufende Anwendungen zeigen"
 
 #: prefs.js:320
 msgid "Show applications button at the top"
-msgstr ""
+msgstr "Zeige Anwendungsbutton oben"
 
 #: prefs.js:337
 msgid "Optional features"
@@ -140,7 +142,7 @@ msgstr "Optionale Funktionen"
 
 #: prefs.js:342
 msgid "Apply custom theme (work only with the default Adwaita theme)"
-msgstr ""
+msgstr "Benutzerdefiniertes Theme verwenden (funktioniert nur mit dem Standard-Adwaita-Theme)"
 
 #: prefs.js:358
 msgid "Customize the dock background opacity"
@@ -152,7 +154,7 @@ msgstr "Transparenz"
 
 #: prefs.js:403
 msgid "Switch workspace when scrolling over the dock"
-msgstr " Arbeitsflächen wechseln mit Scrollen über der Dock"
+msgstr "Über das Dock scrollen, um Arbeitsflächen zu wechseln"
 
 #: prefs.js:414
 msgid "Switch one workspace at a time"
@@ -160,7 +162,7 @@ msgstr "Nur eine Arbeitsfläche pro Scrollen weiterschalten"
 
 #: prefs.js:423
 msgid "Deadtime between each workspace switching [ms]"
-msgstr ""
+msgstr "Stillstandszeit zwischen Arbeitsflächenwechsel [ms]"
 
 #: prefs.js:434
 msgid "Only a 1px wide area close to the screen edge is active"
@@ -168,7 +170,7 @@ msgstr "Nur einen 1 Pixel-breiten Bereich am Rand nutzen"
 
 #: prefs.js:440
 msgid "All the area of the dock is active"
-msgstr "Den gesamten Bereich der Dock nutzen"
+msgstr "Den gesamten Bereich des Docks nutzen"
 
 #: prefs.js:469
 msgid "Customize actions on mouse click"
@@ -199,6 +201,3 @@ msgid "Minimize window on shift+click (double click for all app windows)"
 msgstr ""
 "Fenster mit Shift+Klick minimieren (Doppelklick für alle Fenster der "
 "Anwendung)"
-
-#~ msgid "Only when in autohide"
-#~ msgstr "Nur im Autoverstecken-Modus"
