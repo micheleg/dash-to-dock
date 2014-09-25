@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-29 11:40+0100\n"
+"POT-Creation-Date: 2014-09-25 14:32+0200\n"
 "PO-Revision-Date: 2012-12-29 11:40+0100\n"
 "Last-Translator: Petr Marek <contact@petrmarek.eu>\n"
 "Language-Team: Czech <LL@li.org>\n"
@@ -48,126 +48,146 @@ msgstr "Inteligentní schování"
 msgid "Application based intellihide"
 msgstr "Inteligentní schování dle aplikací"
 
-#: prefs.js:146
+#: prefs.js:149
+msgid "Require pressure to show the dock"
+msgstr ""
+
+#: prefs.js:159
+msgid "Pressure threshold (px)"
+msgstr ""
+
+#: prefs.js:198
 msgid "Show the dock on following monitor (if attached)"
 msgstr "Ukazovat dock na následující obrazovce (pokud je připojena)"
 
-#: prefs.js:148
+#: prefs.js:200
 msgid "Primary (default)"
 msgstr "Primární (výchozí)"
 
-#: prefs.js:149
+#: prefs.js:201
 msgid "1"
 msgstr "1"
 
-#: prefs.js:150
+#: prefs.js:202
 msgid "2"
 msgstr "2"
 
-#: prefs.js:151
+#: prefs.js:203
 msgid "3"
 msgstr "3"
 
-#: prefs.js:152
+#: prefs.js:204
 msgid "4"
 msgstr "4"
 
-#: prefs.js:177
+#: prefs.js:229
 msgid "Max height"
 msgstr "Maximální výška"
 
-#: prefs.js:195
+#: prefs.js:247
 msgid "Expand (experimental and buggy)"
 msgstr "Roztáhnout (experimentální a zabugované)"
 
-#: prefs.js:224
+#: prefs.js:279
 msgid "Maximum icon size"
 msgstr "Maximální velikost ikon"
 
-#: prefs.js:229
+#: prefs.js:284
 msgid "16"
 msgstr "16"
 
-#: prefs.js:230
+#: prefs.js:285
 msgid "24"
 msgstr "24"
 
-#: prefs.js:231
+#: prefs.js:286
 msgid "32"
 msgstr "32"
 
-#: prefs.js:232
+#: prefs.js:287
 msgid "48"
 msgstr "48"
 
-#: prefs.js:233
+#: prefs.js:288
 msgid "64"
 msgstr "64"
 
-#: prefs.js:255
+#: prefs.js:310
 msgid "Show favorite application icons"
 msgstr "Ukazovat ikony oblíbených aplikací"
 
-#: prefs.js:260
+#: prefs.js:315
 msgid "Show running application icons"
 msgstr "Ukazovat ikony spuštěných aplikací"
 
-#: prefs.js:276
+#: prefs.js:320
+msgid "Show applications button at the top"
+msgstr ""
+
+#: prefs.js:337
 msgid "Optional features"
 msgstr "Nepovinné funkce"
 
-#: prefs.js:282
+#: prefs.js:342
+msgid "Apply custom theme (work only with the default Adwaita theme)"
+msgstr ""
+
+#: prefs.js:358
 msgid "Customize the dock background opacity"
 msgstr "Nastavit průhlednost pozadí docku"
 
-#: prefs.js:299
+#: prefs.js:375
 msgid "Opacity"
 msgstr "Průhlednost"
 
-#: prefs.js:315
-msgid "Only when in autohide"
-msgstr "Jen při automatickém schovávání"
-
-#: prefs.js:334
+#: prefs.js:403
 msgid "Switch workspace when scrolling over the dock"
 msgstr "Měnit workspace při scrollování na docku"
 
-#: prefs.js:345
+#: prefs.js:414
 msgid "Switch one workspace at a time"
 msgstr "Měnit jen jeden workspace najednou"
 
-#: prefs.js:351
+#: prefs.js:423
+msgid "Deadtime between each workspace switching [ms]"
+msgstr ""
+
+#: prefs.js:434
 msgid "Only a 1px wide area close to the screen edge is active"
 msgstr "Aktivní je jen oblast jednoho pixelu u hranice obrazovky"
 
-#: prefs.js:356
+#: prefs.js:440
 msgid "All the area of the dock is active"
 msgstr "Celá oblast docku je aktivní"
 
-#: prefs.js:378
+#: prefs.js:469
 msgid "Customize actions on mouse click"
 msgstr "Nastavit akce při kliknutí myši"
 
-#: prefs.js:393
+#: prefs.js:484
 msgid "Action on clicking on running app"
 msgstr "Akce spuštěná při kliknutí na běžící aplikaci"
 
-#: prefs.js:395
+#: prefs.js:486
 msgid "Do nothing (default)"
 msgstr "Nedělat nic (výchozí)"
 
-#: prefs.js:396
+#: prefs.js:487
 msgid "Minimize"
 msgstr "Minimalizovat"
 
-#: prefs.js:397
+#: prefs.js:488
 msgid "Launch new window"
 msgstr "Spustit nové okno"
 
-#: prefs.js:398
+#: prefs.js:489
 msgid "Cycle through application windows"
 msgstr "Střídat skrze běžící okna aplikace"
 
-#: prefs.js:409
+#: prefs.js:500
 msgid "Minimize window on shift+click (double click for all app windows)"
-msgstr "Minimalizovat okno při shift+kliknutí (dvojklik pro všechny okna aplikací)"
+msgstr ""
+"Minimalizovat okno při shift+kliknutí (dvojklik pro všechny okna aplikací)"
+
+#~ msgid "Only when in autohide"
+#~ msgstr "Jen při automatickém schovávání"
