@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-06 00:03+0000\n"
+"POT-Creation-Date: 2014-09-25 14:32+0200\n"
 "PO-Revision-Date: 2012-12-06 00:01+0100\n"
 "Last-Translator: Jonatan Zeidler <jonatan_zeidler@hotmail.de>\n"
 "Language-Team: jonius <jonatan_zeidler@gmx.de>\n"
@@ -50,134 +50,155 @@ msgstr "Intelligentes Verstecken "
 msgid "Application based intellihide"
 msgstr "Anwendungsbasiertes intelligentes Verstecken "
 
-#: prefs.js:146
+#: prefs.js:149
+msgid "Require pressure to show the dock"
+msgstr ""
+
+#: prefs.js:159
+msgid "Pressure threshold (px)"
+msgstr ""
+
+#: prefs.js:198
 msgid "Show the dock on following monitor (if attached)"
 msgstr "Zeige Dock auf folgendem Monitor (falls angeschlossen)"
 
-#: prefs.js:148
+#: prefs.js:200
 msgid "Primary (default)"
 msgstr ""
 
-#: prefs.js:149
+#: prefs.js:201
 #, fuzzy
 msgid "1"
 msgstr "1"
 
-#: prefs.js:150
+#: prefs.js:202
 #, fuzzy
 msgid "2"
 msgstr "2"
 
-#: prefs.js:151
+#: prefs.js:203
 #, fuzzy
 msgid "3"
 msgstr "3"
 
-#: prefs.js:152
+#: prefs.js:204
 #, fuzzy
 msgid "4"
 msgstr "4"
 
-#: prefs.js:177
+#: prefs.js:229
 msgid "Max height"
 msgstr "Maximale Höhe"
 
-#: prefs.js:195
+#: prefs.js:247
 msgid "Expand (experimental and buggy)"
 msgstr "Komplette Höhe (experimentell und fehlerbehaftet)"
 
-#: prefs.js:224
+#: prefs.js:279
 msgid "Maximum icon size"
 msgstr "Maximale Symbolgröße"
 
-#: prefs.js:229
+#: prefs.js:284
 #, fuzzy
 msgid "16"
 msgstr "16"
 
-#: prefs.js:230
+#: prefs.js:285
 msgid "24"
 msgstr "24"
 
-#: prefs.js:231
+#: prefs.js:286
 #, fuzzy
 msgid "32"
 msgstr "32"
 
-#: prefs.js:232
+#: prefs.js:287
 #, fuzzy
 msgid "48"
 msgstr "48"
 
-#: prefs.js:233
+#: prefs.js:288
 #, fuzzy
 msgid "64"
 msgstr "64"
 
-#: prefs.js:255
+#: prefs.js:310
 msgid "Show favorite application icons"
 msgstr "Favoriten anzeigen"
 
-#: prefs.js:260
+#: prefs.js:315
 msgid "Show running application icons"
 msgstr "Laufende Anwendungen zeigen"
 
-#: prefs.js:276
+#: prefs.js:320
+msgid "Show applications button at the top"
+msgstr ""
+
+#: prefs.js:337
 msgid "Optional features"
 msgstr "Optionale Funktionen"
 
-#: prefs.js:282
+#: prefs.js:342
+msgid "Apply custom theme (work only with the default Adwaita theme)"
+msgstr ""
+
+#: prefs.js:358
 msgid "Customize the dock background opacity"
 msgstr "Dock-Hintergrundtransparenz anpassen"
 
-#: prefs.js:299
+#: prefs.js:375
 msgid "Opacity"
 msgstr "Transparenz"
 
-#: prefs.js:315
-msgid "Only when in autohide"
-msgstr "Nur im Autoverstecken-Modus"
-
-#: prefs.js:334
+#: prefs.js:403
 msgid "Switch workspace when scrolling over the dock"
 msgstr " Arbeitsflächen wechseln mit Scrollen über der Dock"
 
-#: prefs.js:345
+#: prefs.js:414
 msgid "Switch one workspace at a time"
 msgstr "Nur eine Arbeitsfläche pro Scrollen weiterschalten"
 
-#: prefs.js:351
+#: prefs.js:423
+msgid "Deadtime between each workspace switching [ms]"
+msgstr ""
+
+#: prefs.js:434
 msgid "Only a 1px wide area close to the screen edge is active"
 msgstr "Nur einen 1 Pixel-breiten Bereich am Rand nutzen"
 
-#: prefs.js:356
+#: prefs.js:440
 msgid "All the area of the dock is active"
 msgstr "Den gesamten Bereich der Dock nutzen"
 
-#: prefs.js:378
+#: prefs.js:469
 msgid "Customize actions on mouse click"
 msgstr "Aktion bei Mausklick anpassen"
 
-#: prefs.js:393
+#: prefs.js:484
 msgid "Action on clicking on running app"
 msgstr "Aktion beim Klicken auf eine laufende Anwendung"
 
-#: prefs.js:395
+#: prefs.js:486
 msgid "Do nothing (default)"
 msgstr "Nichts tun (Standard)"
 
-#: prefs.js:396
+#: prefs.js:487
 msgid "Minimize"
 msgstr "Minimieren"
 
-#: prefs.js:397
+#: prefs.js:488
 msgid "Launch new window"
 msgstr "Neues Fenster"
 
-#: prefs.js:398
+#: prefs.js:489
 msgid "Cycle through application windows"
 msgstr "Zwischen den Fenstern der Anwendung umschalten"
 
-#: prefs.js:409
+#: prefs.js:500
 msgid "Minimize window on shift+click (double click for all app windows)"
-msgstr "Fenster mit Shift+Klick minimieren (Doppelklick für alle Fenster der Anwendung)"
+msgstr ""
+"Fenster mit Shift+Klick minimieren (Doppelklick für alle Fenster der "
+"Anwendung)"
+
+#~ msgid "Only when in autohide"
+#~ msgstr "Nur im Autoverstecken-Modus"
