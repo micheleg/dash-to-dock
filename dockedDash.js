@@ -1084,7 +1084,9 @@ const dockedDash = new Lang.Class({
                         Main.wm._workspaceSwitcherPopup = null;
                     });
 
-                Main.wm._workspaceSwitcherPopup.display(direction, ws.index());
+                // Do not show wokspaceSwithcer in overview
+                if(!Main.overview.visible)
+                    Main.wm._workspaceSwitcherPopup.display(direction, ws.index());
                 Main.wm.actionMoveWorkspace(direction);
 
                 return true;
