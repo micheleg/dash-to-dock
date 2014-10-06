@@ -25,7 +25,7 @@
         <li><a {% if page.section == 'news' %}class="active"{% endif %} href="{{ relative }}/news/index.html">News</a></li>
         <li><a {% if page.section == 'download' %}class="active"{% endif %} href="{{ relative }}/download.html">Download</a></li>
         <li><a {% if page.section == 'development' %}class="active"{% endif %} href="{{ relative }}/development.html">Development</a></li>
-        <li><a style="border:none" href="{{ relative }}/feed/atom.xml" onClick="ga('send', 'event', 'Engagement', 'ATOM feed', '');"><img src="media/rssicon.png" alt="ATOM Feed"/></a></li>
+        <li><a style="border:none" href="{{ relative }}/feed/atom.xml" onClick="ga('send', 'event', 'Engagement', 'ATOM feed', '');"><img src="{{ relative }}/media/rssicon.png" alt="ATOM Feed"/></a></li>
     </ul>
     </nav>
   </div>
