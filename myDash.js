@@ -885,6 +885,9 @@ const myAppIcon = new Lang.Class({
                             button && button == 2;
         let focusedApp = tracker.focus_app;
 
+        if (this.app.state == Shell.AppState.STOPPED || openNewWindow)
+            this.animateLaunch();
+
         if(button && button == 1 && this.app.state == Shell.AppState.RUNNING) {
 
             if(modifiers & Clutter.ModifierType.CONTROL_MASK){
