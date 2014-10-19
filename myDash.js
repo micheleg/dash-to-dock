@@ -903,21 +903,15 @@ const myAppIcon = new Lang.Class({
 
             } else if(this.app == focusedApp && !Main.overview._shown){
 
-                if(this._settings.get_enum('click-action') == clickAction.CYCLE_WINDOWS){
-                    this.emit('launching');
+                if(this._settings.get_enum('click-action') == clickAction.CYCLE_WINDOWS)
                     cycleThroughWindows(this.app);
-
-                } else if(this._settings.get_enum('click-action') == clickAction.MINIMIZE)
+                else if(this._settings.get_enum('click-action') == clickAction.MINIMIZE)
                     minimizeWindow(this.app, true);
-
-                else if(this._settings.get_enum('click-action') == clickAction.LAUNCH){
-                    this.emit('launching');
+                else if(this._settings.get_enum('click-action') == clickAction.LAUNCH)
                     this.app.open_new_window(-1);
-                }
 
             } else {
                 // Activate all window of the app or only le last used
-                this.emit('launching');
                 if (this._settings.get_enum('click-action') == clickAction.CYCLE_WINDOWS && !Main.overview._shown){
                     // If click cycles through windows I can activate one windows at a time
                     let windows = getAppInterestingWindows(this.app);
