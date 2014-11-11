@@ -875,8 +875,13 @@ const dockedDash = new Lang.Class({
         this.actor.move_anchor_point_from_gravity(anchor_point);
         this.actor.x = position;
 
-
-        this._updateYPosition();
+        // Normally updating position caused small gap between top panel and
+        // the dock, this small delay fixes the problem.
+        Mainloop.timeout_add(1,
+                Lang.bind(this, function(){
+                  this._updateYPosition();
+                  return false;
+                }));
     },
 
     _getMonitor: function(){
