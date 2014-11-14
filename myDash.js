@@ -856,7 +856,7 @@ const myAppIcon = new Lang.Class({
 
         this._stateChangedId = this.app.connect('windows-changed',
                                                 Lang.bind(this,
-                                                          this._onStateChanged));
+                                                          this._updateRunningStyle));
         this._focuseAppChangeId = tracker.connect('notify::focus-app',
                                                 Lang.bind(this,
                                                           this._onFocusAppChanged));
@@ -872,7 +872,7 @@ const myAppIcon = new Lang.Class({
             tracker.disconnect(this._focusAppId);
     },
 
-    _onStateChanged: function() {
+    _updateRunningStyle: function() {
 
         this.parent();
         this._updateCounterClass();
