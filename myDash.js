@@ -846,7 +846,14 @@ const myAppIcon = new Lang.Class({
         this._focuseAppChangeId = tracker.connect('notify::focus-app',
                                                 Lang.bind(this,
                                                           this._onFocusAppChanged));
-
+        /* To keep compatibility with 3.14.0 and 3.14.1
+         * after upstream commit 24c0a1a1d458c8d1ba1b9d3e728a27d347f7833f
+         * (https://bugzilla.gnome.org/show_bug.cgi?id=739497),
+         * temporary call _updateRunningStyle(). This ensure windows counter updates
+         * on 3.14 and 3.14.1 where the parent not-extended method, which have
+         * a different name, is called instead.
+         */
+         this._updateRunningStyle();
     },
 
     _onDestroy: function() {
@@ -860,7 +867,16 @@ const myAppIcon = new Lang.Class({
 
     _updateRunningStyle: function() {
 
-        this.parent();
+        /* To keep compatibility with 3.14.0 and 3.14.1
+         * after upstream commit 24c0a1a1d458c8d1ba1b9d3e728a27d347f7833f
+         * (https://bugzilla.gnome.org/show_bug.cgi?id=739497),
+         * temporary copy the parent method body here
+         */
+        if (this.app.state != Shell.AppState.STOPPED)
+            this.actor.add_style_class_name('running');
+        else
+            this.actor.remove_style_class_name('running');
+
         this._updateCounterClass();
     },
 
