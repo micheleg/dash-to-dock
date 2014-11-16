@@ -1,3 +1,17 @@
+- version: 35
+  date: 16-11-2014
+  shell_version: ["3.14"]
+  notes:
+    - Compatibility with GNOME Shell 3.14.2 (Appicon status changes was broken)
+    - "Bug fixes: Make workspaceSwitcherPopup not reactive. In this way it
+      doesn't prevent the click events from reaching the dash. Thisallows the
+      switch of multiple workspaces at the same time."
+    - "Bug fixes: Do not show workspaceSwitcherPopup in the overview."
+    - "Bug fixes: Use dash symbolic icon in the accessibility panel."
+    - "Bug fixes: animate appicon on launching as 3.14 default."
+    - Update German translation
+  zip_url: https://extensions.gnome.org/review/download/4498.shell-extension.zip
+
 - version: 34
   date: 23-09-2014
   shell_version: ["3.14"]
