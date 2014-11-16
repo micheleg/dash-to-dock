@@ -79,7 +79,7 @@
   notes:
     - Show dash in overview search when dragging an app icon restoring upstream behaviour.
     - "Bug fixing: handle dash visibility with fullscreen windows"
-  zip_url: https://extensions.gnome.org/review/download/3707.shell-extension.zip
+  zip_url: https://extensions.gnome.org/review/download/3706.shell-extension.zip
 
 - version: 25
   date: 27-10-2013
