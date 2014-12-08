@@ -472,16 +472,8 @@ const dockedDash = new Lang.Class({
         }
 
         // Skip if dock is not in autohide mode for instance because it is shown
-        // by intellihide. Delay the hover changes check while switching
-        // workspace: the workspaceSwitcherPopup steals the hover status and it
-        // is not restored until the mouse move again (sync_hover has no effect).
-        if(Main.wm._workspaceSwitcherPopup) {
-            Mainloop.timeout_add(500, Lang.bind(this, function() {
-                    this._box.sync_hover();
-                    this._hoverChanged();
-                    return false;
-                }));
-        } else if(this._settings.get_boolean('autohide') && this._autohideStatus) {
+        // by intellihide.
+        if(this._settings.get_boolean('autohide') && this._autohideStatus) {
             if( this._box.hover ) {
                 this._show();
             } else {
