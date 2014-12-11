@@ -1118,19 +1118,15 @@ const dockedDash = new Lang.Class({
     enableAutoHide: function() {
         if(this._autohideStatus==false){
 
-            let delay=0; // immediately fadein background if hide is blocked by mouseover,
-                         // oterwise start fadein when dock is already hidden.
             this._autohideStatus = true;
-            this._removeAnimations();
+
 
             if(this._box.hover==true)
                 this._box.sync_hover();
 
             if( !this._box.hover || !this._settings.get_boolean('autohide')) {
+                this._removeAnimations();
                 this._animateOut(this._settings.get_double('animation-time'), 0);
-                delay = this._settings.get_double('animation-time');
-            } else {
-                delay = 0;
             }
         }
     }
