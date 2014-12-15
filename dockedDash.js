@@ -343,7 +343,7 @@ const dockedDash = new Lang.Class({
         this.actor.raise(global.top_window_group);
 
         if ( this._settings.get_boolean('dock-fixed') )
-          Main.layoutManager._trackActor(this.dash._box, {affectsStruts: true});
+          Main.layoutManager._trackActor(this.actor, {affectsStruts: true});
 
         // pretend this._slider is isToplevel child so that fullscreen is actually tracked
         let index = Main.layoutManager._findActor(this._slider);
@@ -431,11 +431,11 @@ const dockedDash = new Lang.Class({
         this._settings.connect('changed::dock-fixed', Lang.bind(this, function(){
 
             if(this._settings.get_boolean('dock-fixed')) {
-                Main.layoutManager._trackActor(this.dash._box, {affectsStruts: true});
+                Main.layoutManager._trackActor(this.actor, {affectsStruts: true});
                 // show dash
                 this.disableAutoHide();
             } else {
-                Main.layoutManager._untrackActor(this.dash._box);
+                Main.layoutManager._untrackActor(this.actor);
                 this.emit('box-changed');
             }
 
