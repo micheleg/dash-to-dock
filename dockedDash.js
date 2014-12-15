@@ -14,6 +14,7 @@ const Main = imports.ui.main;
 const Dash = imports.ui.dash;
 const MessageTray = imports.ui.messageTray;
 const Overview = imports.ui.overview;
+const OverviewControls = imports.ui.overviewControls;
 const Tweener = imports.ui.tweener;
 const ViewSelector = imports.ui.viewSelector;
 const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
@@ -352,6 +353,22 @@ const dockedDash = new Lang.Class({
         // However tha same workaround doesn't work.
         Main.overview._controls._dashSlider.actor.hide();
 
+        // Manage the DashSpacer which is used to reserve space in the overview for the dock
+        // Replace the current dashSpacer with a new one pointing at the dashtodock dash
+        // and positioned according to the dash positioning. It gets restored on extension unload.
+        Main.overview._controls._dashSpacer.destroy();
+        this._dashSpacer = new OverviewControls.DashSpacer();
+        this._dashSpacer.setDashActor(this._box);
+
+        if (this._position ==  St.Side.LEFT)
+          Main.overview._controls._group.insert_child_at_index(this._dashSpacer, this._rtl?-1:0); // insert on first
+        else if (this._position ==  St.Side.RIGHT)
+            Main.overview._controls._group.insert_child_at_index(this._dashSpacer, this._rtl?0:-1); // insert on last
+        else if (this._position ==  St.Side.TOP)
+            Main.overview._overview.insert_child_at_index(this._dashSpacer, 0);
+        else if (this._position ==  St.Side.BOTTOM)
+          Main.overview._overview.insert_child_at_index(this._dashSpacer, -1);
+
         // Add dash container actor and the container to the Chrome.
         this.actor.set_child(this._slider);
         this._slider.add_child(this._box);
@@ -424,8 +441,15 @@ const dockedDash = new Lang.Class({
         // Remove existing barrier
         this._removeBarrier();
 
+        // Restore the default dashSpacer and link it to the standard dash
+        this._dashSpacer.destroy();
+        Main.overview._controls._dashSpacer = new OverviewControls.DashSpacer();
+        Main.overview._controls._group.insert_child_at_index(Main.overview._controls._dashSpacer, 0);
+        Main.overview._controls._dashSpacer.setDashActor(Main.overview._controls._dashSlider.actor);
+
         // Reshow normal dash previously hidden, restore panel position if changed.
         Main.overview._controls._dashSlider.actor.show();
+        Main.overview._controls.dash.actor.set_width(-1); //reset default dash size
         this._revertMainPanel();
     },
 
