@@ -847,6 +847,15 @@ const myAppIcon = new Lang.Class({
                                                 Lang.bind(this,
                                                           this._onFocusAppChanged));
 
+         /* To keep compatibility with 3.14.0 and 3.14.1
+         * after upstream commit 24c0a1a1d458c8d1ba1b9d3e728a27d347f7833f
+         * (https://bugzilla.gnome.org/show_bug.cgi?id=739497),
+         * temporary call _updateRunningStyle(). This ensure windows counter updates
+         * on 3.14 and 3.14.1 where the parent not-extended method, which have
+         * a different name, is called instead.
+         */
+         this._updateRunningStyle();
+
     },
 
     _onDestroy: function() {
@@ -860,7 +869,16 @@ const myAppIcon = new Lang.Class({
 
     _updateRunningStyle: function() {
 
-        this.parent();
+        /* To keep compatibility with 3.14.0 and 3.14.1
+         * after upstream commit 24c0a1a1d458c8d1ba1b9d3e728a27d347f7833f
+         * (https://bugzilla.gnome.org/show_bug.cgi?id=739497),
+         * check for which method is defined
+         */
+        if(AppDisplay.AppIcon.prototype._updateRunningStyle)
+          this.parent();
+        else
+          AppDisplay.AppIcon.prototype._onStateChanged();
+
         this._updateCounterClass();
     },
 
