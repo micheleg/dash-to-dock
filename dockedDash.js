@@ -825,9 +825,14 @@ const dockedDash = new Lang.Class({
 
         // check if the dock is on the primary monitor
         if (this._isPrimaryMonitor()){
-            if (!extendHeight || !dockFixed) {
-                unavailableTopSpace = Main.panel.actor.height;
-            }
+          if (!extendHeight || !dockFixed) {
+              unavailableTopSpace = Main.panel.actor.height;
+          }
+          // Reserve space for the dash on the overview
+          this._dashSpacer.show();
+        } else {
+          // No space is required in the overview of the dash
+          this._dashSpacer.hide();
         }
 
         let fraction = this._settings.get_double('height-fraction');
