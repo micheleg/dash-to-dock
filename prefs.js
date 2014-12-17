@@ -43,10 +43,21 @@ const WorkspaceSettingsWidget = new GObject.Class({
         let placementPositionLabel = new Gtk.Label({label: _("Dock Position"), use_markup: true,
                                             xalign: 0, hexpand:true});
         let placementPositionCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
-            placementPositionCombo.append_text(_("Left"));
-            placementPositionCombo.append_text(_("Right"));
+
             placementPositionCombo.append_text(_("Top"));
+
+            // Left and right are reversed in RTL languages
+            if( Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL )
+              placementPositionCombo.append_text(_("Left"));
+            else
+              placementPositionCombo.append_text(_("Right"));
+
             placementPositionCombo.append_text(_("Bottom"));
+
+            if( Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL )
+              placementPositionCombo.append_text(_("Right"));
+            else
+              placementPositionCombo.append_text(_("Left"));
 
             placementPositionCombo.set_active(this.settings.get_enum('dock-position'));
 
