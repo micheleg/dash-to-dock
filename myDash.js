@@ -144,6 +144,25 @@ const myDashItemContainer = new Lang.Class({
       }
 });
 
+/**
+ * Extend ShowAppsIcon
+ *
+ * - Pass settings to the constructor
+ * - set label position based on dash orientation
+ *
+ */
+const myShowAppsIcon = new Lang.Class({
+    Name: 'dashToDockShowAppsIcon',
+    Extends: Dash.ShowAppsIcon,
+
+    _init: function(settings) {
+      this._settings = settings;
+      this.parent();
+    },
+
+    showLabel: myDashItemContainer.prototype.showLabel
+});
+
 /* This class is a fork of the upstream DashActor class (ui.dash.js)
  *
  * Summary of changes:
@@ -267,7 +286,7 @@ const myDash = new Lang.Class({
         this._box._delegate = this;
         this._container.add_actor(this._box);
 
-        this._showAppsIcon = new Dash.ShowAppsIcon();
+        this._showAppsIcon = new myShowAppsIcon(this._settings);
         this._showAppsIcon.childScale = 1;
         this._showAppsIcon.childOpacity = 255;
         this._showAppsIcon.icon.setIconSize(this.iconSize);
