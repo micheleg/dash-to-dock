@@ -25,6 +25,18 @@ const MyDash = Me.imports.myDash;
 
 const PRESSURE_TIMEOUT = 1000;
 
+/* Return the actual position reverseing left and right in rtl */
+function getPosition(settings) {
+    let position = settings.get_enum('dock-position');
+    if(Clutter.get_default_text_direction() == Clutter.TextDirection.RTL) {
+        if (position == St.Side.LEFT)
+            position = St.Side.RIGHT;
+        else if (position == St.Side.RIGHT)
+            position = St.Side.LEFT;
+    }
+    return position;
+}
+
 /*
  * A simple Actor with one child whose allocation takes into account the
  * slide out of its child via the _slidex parameter ([0:1]).
@@ -175,8 +187,8 @@ const dockedDash = new Lang.Class({
         this._settings = settings;
         this._bindSettingsChanges();
 
-        this._position = this._settings.get_enum('dock-position');
-        this._isHorizontal = ( this._position== St.Side.TOP ||
+        this._position = getPosition(settings);
+        this._isHorizontal = ( this._position == St.Side.TOP ||
                                this._position == St.Side.BOTTOM );
 
         // authohide current status. Not to be confused with autohide enable/disagle global (g)settings
