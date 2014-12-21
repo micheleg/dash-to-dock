@@ -27,6 +27,18 @@ let DASH_ITEM_LABEL_SHOW_TIME = Dash.DASH_ITEM_LABEL_SHOW_TIME;
 let DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME;
 let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
 
+/* Return the actual position reverseing left and right in rtl */
+function getPosition(settings) {
+    let position = settings.get_enum('dock-position');
+    if(Clutter.get_default_text_direction() == Clutter.TextDirection.RTL) {
+        if (position == St.Side.LEFT)
+            position = St.Side.RIGHT;
+        else if (position == St.Side.RIGHT)
+            position = St.Side.LEFT;
+    }
+    return position;
+}
+
 /* This class is a fork of the upstream DashActor class (ui.dash.js)
  *
  * Summary of changes:
@@ -40,9 +52,11 @@ const myDashActor = new Lang.Class({
 
     _init: function(settings) {
         this._settings = settings;
-        this._position = this._settings.get_enum('dock-position');
-        this._isHorizontal = ( this._position == St.Side.TOP
-                           || this._position == St.Side.BOTTOM);
+
+        this._position = getPosition(settings);
+        this._isHorizontal = ( this._position == St.Side.TOP ||
+                               this._position == St.Side.BOTTOM );;
+
         let layout = new Clutter.BoxLayout({ orientation:
           this._isHorizontal?Clutter.Orientation.HORIZONTAL:Clutter.Orientation.VERTICAL });
         this.parent({ name: 'dash',
@@ -130,7 +144,7 @@ const myDash = new Lang.Class({
         this._shownInitially = false;
 
         this._settings = settings;
-        this._position = this._settings.get_enum('dock-position');
+        this._position = getPosition(settings);
         this._isHorizontal = ( this._position == St.Side.TOP ||
                                this._position == St.Side.BOTTOM );
         this._signalHandler = new Convenience.globalSignalHandler();
