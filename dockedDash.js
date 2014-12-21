@@ -353,6 +353,9 @@ const dockedDash = new Lang.Class({
         // However tha same workaround doesn't work.
         Main.overview._controls._dashSlider.actor.hide();
 
+        // Also set dash width to 0, so it's not taken into account by code calculaing the reserved space in the overview
+        Main.overview._controls.dash.actor.set_width(0);
+
         // Manage the DashSpacer which is used to reserve space in the overview for the dock
         // Replace the current dashSpacer with a new one pointing at the dashtodock dash
         // and positioned according to the dash positioning. It gets restored on extension unload.
