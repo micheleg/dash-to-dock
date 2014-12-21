@@ -700,10 +700,16 @@ const myDash = new Lang.Class({
             numChildren--;
         }
 
-        let pos = Math.floor(this._isHorizontal?x:y) * numChildren / boxHeight);
+        let pos = Math.floor((this._isHorizontal?x:y) * numChildren / boxHeight);
         if (pos >  numChildren) {
             pos = numChildren;
         }
+
+        /* Take into account childredn position in rtl*/
+        if (this._isHorizontal &&
+          Clutter.get_default_text_direction() == Clutter.TextDirection.RTL
+          )
+            pos = numChildren - pos;
 
         if (pos != this._dragPlaceholderPos && pos <= numFavorites && this._animatingPlaceholdersCount == 0) {
             this._dragPlaceholderPos = pos;
