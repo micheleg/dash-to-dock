@@ -1010,7 +1010,7 @@ const dockedDash = new Lang.Class({
 
             // When in overview change workscape only in windows view
             if (Main.overview.visible && Main.overview.viewSelector.getActivePage() !== ViewSelector.ViewPage.WINDOWS)
-                return
+                return false;
 
             let activeWs = global.screen.get_active_workspace();
             let direction = null;
