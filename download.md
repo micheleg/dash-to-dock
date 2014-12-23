@@ -27,12 +27,12 @@ The installation process is as simple as sliding a button. The extension can the
 
 <a name="manualinstallation"></a>
 ### Manual installation
-You can also obtain the extension in the form of a *zip archive* from the [release page](.{{ site.release_page_url }}). Look for the latest version supporting your shell version. The extension can be installed by means of *gnome-tweak-tool* or alternatively by directly extracting the archive in the a directory named <code>dashtodock@micxgx.gmail.com</code> inside <code>~/.local/share/gnome-shell/extensions/</code>
+You can also obtain the extension in the form of a *zip archive* from the [release page](.{{ site.release_page_url }}). Look for the latest version supporting your shell version. The extension can be installed by means of *gnome-tweak-tool* or alternatively by directly extracting the archive in the a directory named <code>dash-to-dock@micxgx.gmail.com</code> inside <code>~/.local/share/gnome-shell/extensions/</code>
 
      unzip dash-to-dock@micxgx.gmail.com.zip \ 
-    -d ~/.local/share/gnome-shell/extensions/dashtodock@micxgx.gmail.com/
+    -d ~/.local/share/gnome-shell/extensions/dash-to-dock@micxgx.gmail.com/
 
-Shell reload is required <code>Alt+F2 r Enter</code>. The extension can be enabled with *gnome-tweak-tool* or with *dconf* by adding 'dashtodock@micxgx.gmail.com' to the <code>/org/gnome/shell/enabled-extensions</code> key.
+Shell reload is required <code>Alt+F2 r Enter</code>. The extension can be enabled with *gnome-tweak-tool* or with *dconf* by adding 'dash-to-dock@micxgx.gmail.com' to the <code>/org/gnome/shell/enabled-extensions</code> key.
 
 <a name="installfromsource"></a>
 ### Installation from source
