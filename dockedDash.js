@@ -875,7 +875,7 @@ const dockedDash = new Lang.Class({
                 pos_y =  this._monitor.y + this._monitor.height;
                 anchor_point = Clutter.Gravity.SOUTH_WEST;
             } else {
-                pos_y =  this._monitor.y;
+                pos_y =  this._monitor.y + unavailableTopSpace;
                 anchor_point = Clutter.Gravity.NORTH_WEST;
             }
 
