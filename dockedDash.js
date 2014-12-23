@@ -935,7 +935,7 @@ const dockedDash = new Lang.Class({
         let dockFixed = this._settings.get_boolean('dock-fixed');
         let panelActor = Main.panel.actor;
 
-        if (this._isPrimaryMonitor() && extendHeight && dockFixed) {
+        if (!this._isHorizontal && this._isPrimaryMonitor() && extendHeight && dockFixed) {
             panelActor.set_width(this._monitor.width - this._box.width);
             if (this._rtl) {
                 panelActor.set_margin_right(this._box.width - 1);
