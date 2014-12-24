@@ -244,16 +244,27 @@ const WorkspaceSettingsWidget = new GObject.Class({
         }));
 
         dockMaxHeight.connect('format-value', function(scale, value) {return value + '%'});
-    let extendHeight =  new Gtk.CheckButton({label: _("Expand (experimental and buggy)")});
+
+    let extendHeight =  new Gtk.CheckButton({label: _("Expand\n(experimental and buggy)")});
         extendHeight.set_active(this.settings.get_boolean('extend-height'));
         extendHeight.connect('toggled', Lang.bind(this, function(check){
             this.settings.set_boolean('extend-height', check.get_active());
         }));
 
+    // setting for shifting the main panel (true means the panel is shifted)
+    let shiftPanel = new Gtk.CheckButton({label: _("Shift Panel")});
+        shiftPanel.set_active(this.settings.get_boolean('shift-panel'));
+        shiftPanel.connect('toggled', Lang.bind(this, function(check){
+            this.settings.set_boolean('shift-panel', check.get_active());
+        }));
+
     dockHeightMain.add(dockMaxHeightLabel);
     dockHeightMain.add(dockMaxHeight);
     dockHeightMain.add(extendHeight);
+    dockHeightMain.add(shiftPanel);
 
+    // extend-height must be activated
+    this.settings.bind('extend-height', shiftPanel, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
     this.settings.bind('extend-height', dockMaxHeightLabel, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
     this.settings.bind('extend-height', dockMaxHeight, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
