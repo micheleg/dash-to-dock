@@ -210,11 +210,6 @@ const dockedDash = new Lang.Class({
         // used by intellihide module to check window overlap.
         this.staticBox = new Clutter.ActorBox();
 
-        // initialize colors with generic values
-        this._defaultBackground = {red: 0, green:0, blue: 0, alpha:0};
-        this._defaultBackgroundColor = {red: 0, green:0, blue: 0, alpha:0};
-        this._customizedBackground = {red: 0, green:0, blue: 0, alpha:0};
-
         // Initialize pressure barrier variables
         this._canUsePressure = false;
         this._pressureSensed = false;
@@ -271,12 +266,6 @@ const dockedDash = new Lang.Class({
                 'monitors-changed',
                 Lang.bind(this, this._resetPosition )
             ],
-            // When theme changes re-obtain default background color
-            [
-                St.ThemeContext.get_for_stage (global.stage),
-                'changed',
-                Lang.bind(this, this._updateCustomTheme)
-            ],
             [
                 Main.overview,
                 'showing',
@@ -315,8 +304,7 @@ const dockedDash = new Lang.Class({
         //this.actor.hide(); but I need to access its width, so I use opacity
         this.actor.set_opacity(0);
 
-        // Apply custome css class according to the settings
-        this._updateCustomTheme();
+        this._themeManager = new themeManager(this._settings, this.actor, this.dash);
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
@@ -406,15 +394,13 @@ const dockedDash = new Lang.Class({
         // Set initial position
         this._resetPosition();
 
+        // Apply custome css class according to the settings
+        this._themeManager.updateCustomTheme();
+
         // Since Gnome 3.8 dragging an app without having opened the overview before cause the attemp to
         //animate a null target since some variables are not initialized when the viewSelector is created
         if(Main.overview.viewSelector._activePage == null)
                 Main.overview.viewSelector._activePage = Main.overview.viewSelector._workspacesPage;
-
-        // Now that the dash is on the stage and custom themes should be loaded
-        // retrieve its background color
-        this._getBackgroundColor();
-        this._updateBackgroundOpacity();
 
         // Show 
         this.actor.set_opacity(255); //this.actor.show();
@@ -455,10 +441,6 @@ const dockedDash = new Lang.Class({
     },
 
     _bindSettingsChanges: function() {
-
-        this._settings.connect('changed::opaque-background', Lang.bind(this,this._updateBackgroundOpacity));
-
-        this._settings.connect('changed::background-opacity', Lang.bind(this,this._updateBackgroundOpacity));
 
         this._settings.connect('changed::scroll-switch-workspace', Lang.bind(this, function(){
             this._optionalScrollWorkspaceSwitch(this._settings.get_boolean('scroll-switch-workspace'));
@@ -503,8 +485,6 @@ const dockedDash = new Lang.Class({
         this._settings.connect('changed::extend-height', Lang.bind(this, this._resetPosition));
         this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
         this._settings.connect('changed::height-fraction', Lang.bind(this,this._resetPosition));
-
-        this._settings.connect('changed::apply-custom-theme', Lang.bind(this, this._updateCustomTheme));
 
         this._settings.connect('changed::require-pressure-to-show', Lang.bind(this, this._updateBarrier));
         this._settings.connect('changed::pressure-threshold', Lang.bind(this, function() {
@@ -766,67 +746,6 @@ const dockedDash = new Lang.Class({
 
         // Reset pressureSensed flag
         this._pressureSensed = false;
-    },
-
-    _fadeOutBackground:function (time, delay) {
-
-        this.dash._container.set_style('transition-duration: ' + time + 's;' +
-            'transition-delay: '+ delay +'s; ' +
-            'background-color:'+ this._defaultBackground);
-    }, 
-
-    _fadeInBackground:function (time, delay) {
-
-        this.dash._container.set_style('transition-duration: ' + time + 's;' +
-            'transition-delay: '+ delay +'s; ' +
-            'background-color:'+ this._customizedBackground);
-    },
-
-    _updateBackgroundOpacity: function() {
-
-        let newAlpha = this._settings.get_double('background-opacity');
-
-        this._defaultBackground = 'rgba('+
-            this._defaultBackgroundColor.red + ','+
-            this._defaultBackgroundColor.green + ','+
-            this._defaultBackgroundColor.blue + ','+
-            Math.round(this._defaultBackgroundColor.alpha/2.55)/100 + ')';
-
-        this._customizedBackground = 'rgba('+
-            this._defaultBackgroundColor.red + ','+
-            this._defaultBackgroundColor.green + ','+
-            this._defaultBackgroundColor.blue + ','+
-            newAlpha + ')';
-
-        if(this._settings.get_boolean('opaque-background') ){
-            this._fadeInBackground(this._settings.get_double('animation-time'), 0);
-        }
-        else {
-            this._fadeOutBackground(this._settings.get_double('animation-time'), 0);
-        }
-    },
-
-    _getBackgroundColor: function() {
-
-        // Remove custom style
-        let oldStyle = this.dash._container.get_style();
-        this.dash._container.set_style(null);
-
-        // Prevent shell crash if the actor is not on the stage.
-        // It happens enabling/disabling repeatedly the extension
-        if(!this.dash._container.get_stage())
-            return;
-
-        let themeNode = this.dash._container.get_theme_node();
-        this.dash._container.set_style(oldStyle);
-
-        this._defaultBackgroundColor = themeNode.get_background_color();
-    },
-
-    _onThemeChanged: function() {
-        this.dash._queueRedisplay();
-        this._getBackgroundColor();
-        this._updateBackgroundOpacity();
     },
 
     _isPrimaryMonitor: function() {
@@ -1200,16 +1119,6 @@ const dockedDash = new Lang.Class({
 
     },
 
-    _updateCustomTheme: function() {
-        // Apply customization to the theme but only if the default theme is used
-        if(Main.getThemeStylesheet() == null && this._settings.get_boolean('apply-custom-theme'))
-            this.actor.add_style_class_name('dashtodock');
-        else
-           this.actor.remove_style_class_name('dashtodock');
-
-        this._onThemeChanged();
-    },
-
     // Disable autohide effect, thus show dash
     disableAutoHide: function() {
         if(this._autohideStatus==true){
@@ -1317,5 +1226,180 @@ const animationStatus = new Lang.Class({
             return true;
         else
             return false;
+    }
+});
+
+/* 
+ * Manage theme customization and custom theme support
+*/
+const themeManager = new Lang.Class({
+    Name: 'ThemeManager',
+
+    _init: function(settings, actor, dash) {
+
+    this._settings = settings;
+    this._bindSettingsChanges();
+    this._actor = actor;
+    this._dash = dash;
+
+    // initialize colors with generic values
+    this._defaultBackground = {red: 0, green:0, blue: 0, alpha:0};
+    this._defaultBackgroundColor = {red: 0, green:0, blue: 0, alpha:0};
+    this._customizedBackground = {red: 0, green:0, blue: 0, alpha:0};
+
+    this._signalHandler = new Convenience.globalSignalHandler();
+    this._signalHandler.push(
+        // When theme changes re-obtain default background color
+        [
+          St.ThemeContext.get_for_stage (global.stage),
+          'changed',
+          Lang.bind(this, this.updateCustomTheme)
+        ]
+    );
+
+    // Now that the dash is on the stage and custom themes should be loaded
+    // retrieve its background color
+    this._getBackgroundColor();
+    this._updateBackgroundOpacity();
+
+    },
+
+    destroy: function() {
+        this._signalHandler.disconnect();
+    },
+
+    _updateBackgroundOpacity: function() {
+
+    let newAlpha = this._settings.get_double('background-opacity');
+
+    this._defaultBackground = 'rgba('+
+        this._defaultBackgroundColor.red + ','+
+        this._defaultBackgroundColor.green + ','+
+        this._defaultBackgroundColor.blue + ','+
+        Math.round(this._defaultBackgroundColor.alpha/2.55)/100 + ')';
+
+    this._customizedBackground = 'rgba('+
+        this._defaultBackgroundColor.red + ','+
+        this._defaultBackgroundColor.green + ','+
+        this._defaultBackgroundColor.blue + ','+
+        newAlpha + ')';
+  },
+
+    _getBackgroundColor: function() {
+
+        // Remove custom style
+        let oldStyle = this._dash._container.get_style();
+        this._dash._container.set_style(null);
+
+        // Prevent shell crash if the actor is not on the stage.
+        // It happens enabling/disabling repeatedly the extension
+        if(!this._dash._container.get_stage())
+            return;
+
+        let themeNode = this._dash._container.get_theme_node();
+        this._dash._container.set_style(oldStyle);
+
+        this._defaultBackgroundColor = themeNode.get_background_color();
+  },
+
+    updateCustomTheme: function() {
+
+        if(this._settings.get_boolean('apply-custom-theme'))
+            this._actor.add_style_class_name('dashtodock');
+        else {
+            this._actor.remove_style_class_name('dashtodock');
+        }
+
+        this._dash._queueRedisplay();
+        this._getBackgroundColor();
+        this._updateBackgroundOpacity();
+        this._adjustTheme();
+  },
+
+    /* Reimported back and adapted from atomdock */
+    _adjustTheme: function() {
+        // Prevent shell crash if the actor is not on the stage.
+        // It happens enabling/disabling repeatedly the extension
+        if (!this._dash._container.get_stage()) {
+            return;
+        }
+
+        let position = getPosition(this._settings);
+
+        // Remove prior style edits
+        this._dash._container.set_style(null);
+
+        // obtainer theme border settings
+        let themeNode = this._dash._container.get_theme_node();
+        let borderColor = themeNode.get_border_color(St.Side.TOP);
+        let borderWidth = themeNode.get_border_width(St.Side.TOP);
+        let borderRadius = themeNode.get_border_radius(St.Corner.TOPRIGHT);
+
+        /* We're copying border and corner styles to left border and top-left
+        * corner, also removing bottom border and bottom-right corner styles
+        */
+        let borderInner;
+        let borderRadiusValue;
+        let borderMissingStyle;
+        switch(position) {
+            case St.Side.LEFT:
+                borderInner = 'border-left';
+                borderRadiusValue = '0 ' + borderRadius + 'px ' + borderRadius + 'px 0;';
+                borderMissingStyle = '';
+                break;
+            case St.Side.RIGHT:
+                borderInner = 'border-right';
+                borderRadiusValue = borderRadius + 'px 0 0 ' + borderRadius + 'px;';
+                borderMissingStyle = 'border-right: ' + borderWidth + 'px solid ' +
+                                   borderColor.to_string() + ';';
+                break;
+            case St.Side.TOP:
+                borderInner = 'border-top';
+                borderRadiusValue = '0 0 ' + borderRadius + 'px ' + borderRadius + 'px;';
+                borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
+                                   borderColor.to_string() + ';';
+                break;
+            case St.Side.BOTTOM:
+                borderInner = 'border-bottom';
+                borderRadiusValue = borderRadius + 'px ' + borderRadius + 'px 0 0;';
+                borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
+                                      borderColor.to_string() + ';';
+                break;
+        }
+
+        let newStyle = borderInner + ': none;' +
+        'border-radius: ' + borderRadiusValue +
+        borderMissingStyle;
+
+        /* I do call set_style twice so that only yhe background get the transition.
+        *  The transition-property css rules seems to be unsupported
+        */
+        this._dash._container.set_style(newStyle);
+
+        newStyle = newStyle + 'transition-delay: 0s; transition-duration: 0.250s;';
+
+        /* Customize background opacity */
+        if ( this._settings.get_boolean('opaque-background') )
+            newStyle = newStyle + 'background-color:'+ this._customizedBackground;
+        else
+            newStyle = newStyle + 'background-color:'+ this._defaultBackground;
+
+        this._dash._container.set_style(newStyle);
+
+  },
+
+    _bindSettingsChanges: function() {
+
+      this._settings.connect('changed::opaque-background', Lang.bind(this,
+                             this.updateCustomTheme)
+      );
+
+      this._settings.connect('changed::background-opacity', Lang.bind(this,
+                             this.updateCustomTheme)
+      );
+
+      this._settings.connect('changed::apply-custom-theme', Lang.bind(this,
+                             this.updateCustomTheme)
+      );
     }
 });
