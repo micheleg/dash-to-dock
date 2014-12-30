@@ -119,7 +119,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
             hideDelay.set_sensitive(true);
             hideDelay.set_range(0, 5000);
             hideDelay.set_value(this.settings.get_double('hide-delay')*1000);
-            hideDelay.set_increments(50, 100); 
+            hideDelay.set_increments(50, 100);
             hideDelay.connect('value-changed', Lang.bind(this, function(button){
                 let s = button.get_value_as_int()/1000;
                 this.settings.set_double('hide-delay', s);
@@ -363,7 +363,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
     showIcons.add(showFavorites);
     showIcons.add(showRunning);
     showIcons.add(showAppsAtTop);
-    
+
     dockSettings.add(showIcons);
 
     notebook.append_page(dockSettings, dockSettingsTitle);
@@ -492,15 +492,23 @@ const WorkspaceSettingsWidget = new GObject.Class({
     notebook.append_page(customization, customizationTitle);
 
 
-    /* CUSTOMIZATION PAGE */
+    /* APPEARENCE AND THEME PAGE */
 
     let appearence = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
     let appearenceTitle = new Gtk.Label({label: _("Appearence and Themes")});
 
+    let infoLabel1 = new Gtk.Label({label: _("A customized theme is built in the extension. " +
+        "This is meant to work with the default Adwaita theme: the dash is shrunk to save " +
+        "space, its background transparency reduced, and custom indicators for the number " +
+        "of windows of each application are added."),
+                                              margin: 10, xalign: 0, hexpand:false, max_width_chars: 80});
+    infoLabel1.set_line_wrap(true);
+    appearence.add(infoLabel1);
+
     /* CUSTOM THEME */
     let customThemeControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
 
-    let customThemeLabel = new Gtk.Label({label: _("Apply custom theme (meant to work with the default Adwaita theme)"),
+    let customThemeLabel = new Gtk.Label({label: _("Apply built in custom theme"),
                                               xalign: 0, hexpand:true});
     let customTheme = new Gtk.Switch({halign:Gtk.Align.END});
             customTheme.set_active(this.settings.get_boolean('apply-custom-theme'));
@@ -511,6 +519,46 @@ const WorkspaceSettingsWidget = new GObject.Class({
     customThemeControl.add(customThemeLabel)
     customThemeControl.add(customTheme)
     appearence.add(customThemeControl);
+
+
+    let infoLabel2 = new Gtk.Label({label: _("Alternatively, for a better integration with custom themes, each " +
+        "customization can be applied indipendently"),
+                                              margin: 10, xalign: 0, hexpand:false, max_width_chars: 80});
+    infoLabel2.set_line_wrap(true);
+    appearence.add(infoLabel2);
+
+
+    let customThemeShrinkControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
+
+    let customThemeShrinkLabel = new Gtk.Label({label: _("Shrink the dash size by reducing padding"),
+                                              xalign: 0, hexpand:true});
+    let customThemeShrink = new Gtk.Switch({halign:Gtk.Align.END});
+            customThemeShrink.set_active(this.settings.get_boolean('custom-theme-shrink'));
+            customThemeShrink.connect('notify::active', Lang.bind(this, function(check){
+                this.settings.set_boolean('custom-theme-shrink', check.get_active());
+            }));
+
+    customThemeShrinkControl.add(customThemeShrinkLabel)
+    customThemeShrinkControl.add(customThemeShrink)
+    appearence.add(customThemeShrinkControl);
+
+    this.settings.bind('apply-custom-theme', customThemeShrinkControl, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+
+    let customThemeRunningDotsControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
+
+    let customThemeRunningDotsLabel = new Gtk.Label({label: _("Show indicators for the number of windows of each application"),
+                                              xalign: 0, hexpand:true});
+    let customThemeRunningDots = new Gtk.Switch({halign:Gtk.Align.END});
+            customThemeRunningDots.set_active(this.settings.get_boolean('custom-theme-running-dots'));
+            customThemeRunningDots.connect('notify::active', Lang.bind(this, function(check){
+                this.settings.set_boolean('custom-theme-running-dots', check.get_active());
+            }));
+
+    customThemeRunningDotsControl.add(customThemeRunningDotsLabel)
+    customThemeRunningDotsControl.add(customThemeRunningDots)
+    appearence.add(customThemeRunningDotsControl);
+
+    this.settings.bind('apply-custom-theme', customThemeRunningDotsControl, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
     /* OPAQUE LAYER */
 
@@ -526,7 +574,6 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     opaqueLayerControl.add(opaqueLayerLabel);
     opaqueLayerControl.add(opaqueLayer);
-    appearence.add(opaqueLayerControl);
 
     let opaqueLayerMain = new Gtk.Box({spacing:30, orientation:Gtk.Orientation.HORIZONTAL, homogeneous:false,
                                        margin:10});
@@ -549,13 +596,19 @@ const WorkspaceSettingsWidget = new GObject.Class({
                 return false;
             }));
         }));
-    this.settings.bind('opaque-background', opaqueLayerMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
-
 
     opaqueLayerMain.add(layerOpacityLabel);
     opaqueLayerMain.add(layerOpacity);
 
-    appearence.add(opaqueLayerMain);
+    let opaqueLayerContainer = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
+
+    opaqueLayerContainer.add(opaqueLayerControl);
+    opaqueLayerContainer.add(opaqueLayerMain);
+
+    this.settings.bind('opaque-background', opaqueLayerMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+    this.settings.bind('apply-custom-theme', opaqueLayerContainer, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+
+    appearence.add(opaqueLayerContainer);
 
 
     notebook.append_page(appearence, appearenceTitle);

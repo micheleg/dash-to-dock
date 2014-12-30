@@ -1304,10 +1304,22 @@ const themeManager = new Lang.Class({
 
     updateCustomTheme: function() {
 
-        if(this._settings.get_boolean('apply-custom-theme'))
+        if (this._settings.get_boolean('apply-custom-theme'))
             this._actor.add_style_class_name('dashtodock');
         else {
             this._actor.remove_style_class_name('dashtodock');
+        }
+
+        if (this._settings.get_boolean('custom-theme-shrink'))
+            this._actor.add_style_class_name('shrink');
+        else {
+            this._actor.remove_style_class_name('shrink');
+        }
+
+        if (this._settings.get_boolean('custom-theme-running-dots'))
+            this._actor.add_style_class_name('running-dots');
+        else {
+            this._actor.remove_style_class_name('running-dots');
         }
 
         this._dash._queueRedisplay();
@@ -1390,16 +1402,17 @@ const themeManager = new Lang.Class({
 
     _bindSettingsChanges: function() {
 
-      this._settings.connect('changed::opaque-background', Lang.bind(this,
-                             this.updateCustomTheme)
-      );
+     let keys = ['opaque-background',
+                 'background-opacity',
+                 'apply-custom-theme',
+                 'custom-theme-shrink',
+                 'custom-theme-running-dots'];
 
-      this._settings.connect('changed::background-opacity', Lang.bind(this,
-                             this.updateCustomTheme)
-      );
+     keys.forEach(function(key){ 
+        this._settings.connect('changed::'+key,
+                               Lang.bind(this, this.updateCustomTheme)
+        );
+      }, this );
 
-      this._settings.connect('changed::apply-custom-theme', Lang.bind(this,
-                             this.updateCustomTheme)
-      );
     }
 });
