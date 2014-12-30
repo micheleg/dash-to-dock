@@ -373,66 +373,6 @@ const WorkspaceSettingsWidget = new GObject.Class({
     let customization = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
     let customizationTitle = new Gtk.Label({label: _("Optional features")});
 
-    /* CUSTOM THEME */
-    let customThemeControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
-
-    let customThemeLabel = new Gtk.Label({label: _("Apply custom theme (work only with the default Adwaita theme)"),
-                                              xalign: 0, hexpand:true});
-    let customTheme = new Gtk.Switch({halign:Gtk.Align.END});
-            customTheme.set_active(this.settings.get_boolean('apply-custom-theme'));
-            customTheme.connect('notify::active', Lang.bind(this, function(check){
-                this.settings.set_boolean('apply-custom-theme', check.get_active());
-            }));
-
-    customThemeControl.add(customThemeLabel)
-    customThemeControl.add(customTheme)
-    customization.add(customThemeControl);
-
-    /* OPAQUE LAYER */
-
-    let opaqueLayerControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
-
-    let opaqueLayerLabel = new Gtk.Label({label: _("Customize the dock background opacity"), xalign: 0, hexpand:true});
-    let opaqueLayer = new Gtk.Switch({halign:Gtk.Align.END});
-            opaqueLayer.set_active(this.settings.get_boolean('opaque-background'));
-            opaqueLayer.connect('notify::active', Lang.bind(this, function(check){
-                this.settings.set_boolean('opaque-background', check.get_active());
-            }));
-
-
-    opaqueLayerControl.add(opaqueLayerLabel);
-    opaqueLayerControl.add(opaqueLayer);
-    customization.add(opaqueLayerControl);
-
-    let opaqueLayerMain = new Gtk.Box({spacing:30, orientation:Gtk.Orientation.HORIZONTAL, homogeneous:false,
-                                       margin:10});
-    indentWidget(opaqueLayerMain);
-
-    let opacityLayerTimeout=0; // Used to avoid to continuosly update the opacity
-    let layerOpacityLabel = new Gtk.Label({label: _("Opacity"), use_markup: true, xalign: 0});
-    let layerOpacity =  new Gtk.Scale({orientation: Gtk.Orientation.HORIZONTAL, valuePos: Gtk.PositionType.RIGHT});
-        layerOpacity.set_range(0, 100);
-        layerOpacity.set_value(this.settings.get_double('background-opacity')*100);
-        layerOpacity.set_digits(0);
-        layerOpacity.set_increments(5,5);
-        layerOpacity.set_size_request(200, -1);
-        layerOpacity.connect('value-changed', Lang.bind(this, function(button){
-            let s = button.get_value()/100;
-            if(opacityLayerTimeout>0)
-                Mainloop.source_remove(opacityLayerTimeout);
-            opacityLayerTimeout = Mainloop.timeout_add(250, Lang.bind(this, function(){
-                this.settings.set_double('background-opacity', s);
-                return false;
-            }));
-        }));
-    this.settings.bind('opaque-background', opaqueLayerMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
-
-
-    opaqueLayerMain.add(layerOpacityLabel);
-    opaqueLayerMain.add(layerOpacity);
-
-    customization.add(opaqueLayerMain);
-
     /* SWITCH WORKSPACE */
 
     let switchWorkspaceControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
@@ -552,6 +492,73 @@ const WorkspaceSettingsWidget = new GObject.Class({
     notebook.append_page(customization, customizationTitle);
 
 
+    /* CUSTOMIZATION PAGE */
+
+    let appearence = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
+    let appearenceTitle = new Gtk.Label({label: _("Appearence and Themes")});
+
+    /* CUSTOM THEME */
+    let customThemeControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
+
+    let customThemeLabel = new Gtk.Label({label: _("Apply custom theme (meant to work with the default Adwaita theme)"),
+                                              xalign: 0, hexpand:true});
+    let customTheme = new Gtk.Switch({halign:Gtk.Align.END});
+            customTheme.set_active(this.settings.get_boolean('apply-custom-theme'));
+            customTheme.connect('notify::active', Lang.bind(this, function(check){
+                this.settings.set_boolean('apply-custom-theme', check.get_active());
+            }));
+
+    customThemeControl.add(customThemeLabel)
+    customThemeControl.add(customTheme)
+    appearence.add(customThemeControl);
+
+    /* OPAQUE LAYER */
+
+    let opaqueLayerControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
+
+    let opaqueLayerLabel = new Gtk.Label({label: _("Customize the dock background opacity"), xalign: 0, hexpand:true});
+    let opaqueLayer = new Gtk.Switch({halign:Gtk.Align.END});
+            opaqueLayer.set_active(this.settings.get_boolean('opaque-background'));
+            opaqueLayer.connect('notify::active', Lang.bind(this, function(check){
+                this.settings.set_boolean('opaque-background', check.get_active());
+            }));
+
+
+    opaqueLayerControl.add(opaqueLayerLabel);
+    opaqueLayerControl.add(opaqueLayer);
+    appearence.add(opaqueLayerControl);
+
+    let opaqueLayerMain = new Gtk.Box({spacing:30, orientation:Gtk.Orientation.HORIZONTAL, homogeneous:false,
+                                       margin:10});
+    indentWidget(opaqueLayerMain);
+
+    let opacityLayerTimeout=0; // Used to avoid to continuosly update the opacity
+    let layerOpacityLabel = new Gtk.Label({label: _("Opacity"), use_markup: true, xalign: 0});
+    let layerOpacity =  new Gtk.Scale({orientation: Gtk.Orientation.HORIZONTAL, valuePos: Gtk.PositionType.RIGHT});
+        layerOpacity.set_range(0, 100);
+        layerOpacity.set_value(this.settings.get_double('background-opacity')*100);
+        layerOpacity.set_digits(0);
+        layerOpacity.set_increments(5,5);
+        layerOpacity.set_size_request(200, -1);
+        layerOpacity.connect('value-changed', Lang.bind(this, function(button){
+            let s = button.get_value()/100;
+            if(opacityLayerTimeout>0)
+                Mainloop.source_remove(opacityLayerTimeout);
+            opacityLayerTimeout = Mainloop.timeout_add(250, Lang.bind(this, function(){
+                this.settings.set_double('background-opacity', s);
+                return false;
+            }));
+        }));
+    this.settings.bind('opaque-background', opaqueLayerMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+
+
+    opaqueLayerMain.add(layerOpacityLabel);
+    opaqueLayerMain.add(layerOpacity);
+
+    appearence.add(opaqueLayerMain);
+
+
+    notebook.append_page(appearence, appearenceTitle);
 /*
     let OptionalFeaturesTitle = new Gtk.Label({label: _("Optional Features")});
     let OptionalFeatures = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
