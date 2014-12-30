@@ -105,6 +105,16 @@
       <summary>Apply custom theme</summary>
       <description>Apply customization to the dash appearence</description>
     </key>
+    <key type="b" name="custom-theme-shrink">
+      <default>false</default>
+      <summary>TODO</summary>
+      <description>TODO</description>
+    </key>
+    <key type="b" name="custom-theme-running-dots">
+      <default>false</default>
+      <summary>TODO</summary>
+      <description>TODO</description>
+    </key>
     <key type="b" name="show-running">
       <default>true</default>
       <summary>Show running apps</summary>
