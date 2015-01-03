@@ -16,7 +16,9 @@ const Dash = imports.ui.dash;
 const DND = imports.ui.dnd;
 const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
+const PopupMenu = imports.ui.popupMenu;
 const Tweener = imports.ui.tweener;
+const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -98,7 +100,7 @@ const myDashItemContainer = new Lang.Class({
       let itemWidth  = this.allocation.x2 - this.allocation.x1;
       let itemHeight = this.allocation.y2 - this.allocation.y1;
 
-      
+
       let labelWidth = this.label.get_width();
       let labelHeight = this.label.get_height();
 
@@ -116,7 +118,7 @@ const myDashItemContainer = new Lang.Class({
             xOffset = labelOffset;
             x = stageX + this.get_width() + xOffset;
             break;
-          break;  
+          break;
         case St.Side.RIGHT:
             yOffset = Math.floor((itemHeight - labelHeight) / 2)
             y = stageY + yOffset;
@@ -145,12 +147,32 @@ const myDashItemContainer = new Lang.Class({
       }
 });
 
+/*
+ * A menu for the showAppsIcon
+*/
+const myShowAppsIconMenu = new Lang.Class({
+
+    Name: 'dashToDockShowAppsIconMenu',
+    Extends: myAppIconMenu,
+
+    _redisplay: function() {
+        this.removeAll();
+
+        let item = this._appendMenuItem(_("Dash to Dock Settings"));
+
+        item.connect('activate', function () {
+            Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
+        });
+    }
+
+});
+
 /**
  * Extend ShowAppsIcon
  *
  * - Pass settings to the constructor
  * - set label position based on dash orientation
- *
+ * - implement a popupMenu based on the AppIcon code
  */
 const myShowAppsIcon = new Lang.Class({
     Name: 'dashToDockShowAppsIcon',
@@ -159,10 +181,65 @@ const myShowAppsIcon = new Lang.Class({
     _init: function(settings) {
       this._settings = settings;
       this.parent();
+
+      /* the variable equivalent to toggleButton has a different name in the appIcon class
+       (actor): duplicate reference to easily reuse appIcon methods */
+      this.actor = this.toggleButton;
+
+      this.actor.connect('leave-event', Lang.bind(this, this._onLeaveEvent));
+      this.actor.connect('button-press-event', Lang.bind(this, this._onButtonPress));
+      this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
+      this.actor.connect('clicked', Lang.bind(this, this._onClicked));
+      this.actor.connect('popup-menu', Lang.bind(this, this._onKeyboardPopupMenu));
+
+      this._menu = null;
+      this._menuManager = new PopupMenu.PopupMenuManager(this);
+      this._menuTimeoutId = 0;
+
     },
 
-    showLabel: myDashItemContainer.prototype.showLabel
+    showLabel: myDashItemContainer.prototype.showLabel,
+
+    // Re-use appIcon methods
+    _removeMenuTimeout: AppDisplay.AppIcon.prototype._removeMenuTimeout,
+    _setPopupTimeout: AppDisplay.AppIcon.prototype._setPopupTimeout,
+    _onButtonPress: AppDisplay.AppIcon.prototype._onButtonPress,
+    _onKeyboardPopupMenu: AppDisplay.AppIcon.prototype._onKeyboardPopupMenu,
+    _onLeaveEvent: AppDisplay.AppIcon.prototype._onLeaveEvent,
+    _onTouchEvent: AppDisplay.AppIcon.prototype._onTouchEvent,
+    _onMenuPoppedDown: AppDisplay.AppIcon.prototype._onMenuPoppedDown,
+
+    // No action on clicked (showing of the appsview is controlled elsewhere)
+    _onClicked: function(actor, button) {
+        this._removeMenuTimeout();
+    },
+
+    popupMenu: function() {
+
+        this._removeMenuTimeout();
+        this.actor.fake_release();
+
+        if (!this._menu) {
+            this._menu = new myShowAppsIconMenu(this, this._settings);
+            this._menu.connect('open-state-changed', Lang.bind(this, function (menu, isPoppedUp) {
+            if (!isPoppedUp)
+                this._onMenuPoppedDown();
+            }));
+            Main.overview.connect('hiding', Lang.bind(this, function () { this._menu.close(); }));
+            this._menuManager.addMenu(this._menu);
+        }
+
+        this.emit('menu-state-changed', true);
+
+        this.actor.set_hover(true);
+        this._menu.popup();
+        this._menuManager.ignoreRelease();
+        this.emit('sync-tooltip');
+
+        return false;
+    }
 });
+Signals.addSignalMethods(myShowAppsIcon.prototype);
 
 /* This class is a fork of the upstream DashActor class (ui.dash.js)
  *
