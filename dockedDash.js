@@ -1344,61 +1344,66 @@ const themeManager = new Lang.Class({
             return;
         }
 
-        let position = getPosition(this._settings);
+        let position = getPosition(this._settings)
+
+        let newStyle = '';
 
         // Remove prior style edits
         this._dash._container.set_style(null);
 
-        // obtain theme border settings
-        let themeNode = this._dash._container.get_theme_node();
-        let borderColor = themeNode.get_border_color(St.Side.TOP);
-        let borderWidth = themeNode.get_border_width(St.Side.TOP);
-        let borderRadius = themeNode.get_border_radius(St.Corner.TOPRIGHT);
+        if ( ! this._settings.get_boolean('apply-custom-theme') ) {
 
-        /* We're copying border and corner styles to left border and top-left
-        * corner, also removing bottom border and bottom-right corner styles
-        */
-        let borderInner = '';
-        let borderRadiusValue = '';
-        let borderMissingStyle = '';
+            // obtain theme border settings
+            let themeNode = this._dash._container.get_theme_node();
+            let borderColor = themeNode.get_border_color(St.Side.TOP);
+            let borderWidth = themeNode.get_border_width(St.Side.TOP);
+            let borderRadius = themeNode.get_border_radius(St.Corner.TOPRIGHT);
 
-        if (this._rtl && position != St.Side.RIGHT) {
-            borderMissingStyle = 'border-right: ' + borderWidth + 'px solid ' +
-                   borderColor.to_string() + ';';
-        } else if (!this._rtl && position != St.Side.LEFT){
-            borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
-                   borderColor.to_string() + ';';
+            /* We're copying border and corner styles to left border and top-left
+            * corner, also removing bottom border and bottom-right corner styles
+            */
+            let borderInner = '';
+            let borderRadiusValue = '';
+            let borderMissingStyle = '';
+
+            if (this._rtl && position != St.Side.RIGHT) {
+                borderMissingStyle = 'border-right: ' + borderWidth + 'px solid ' +
+                       borderColor.to_string() + ';';
+            } else if (!this._rtl && position != St.Side.LEFT){
+                borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
+                       borderColor.to_string() + ';';
+            }
+
+            switch(position) {
+                case St.Side.LEFT:
+                    borderInner = 'border-left';
+                    borderRadiusValue = '0 ' + borderRadius + 'px ' + borderRadius + 'px 0;';
+                    break;
+                case St.Side.RIGHT:
+                    borderInner = 'border-right';
+                    borderRadiusValue = borderRadius + 'px 0 0 ' + borderRadius + 'px;';
+                    break;
+                case St.Side.TOP:
+                    borderInner = 'border-top';
+                    borderRadiusValue = '0 0 ' + borderRadius + 'px ' + borderRadius + 'px;';
+                    break;
+                case St.Side.BOTTOM:
+                    borderInner = 'border-bottom';
+                    borderRadiusValue = borderRadius + 'px ' + borderRadius + 'px 0 0;';
+                    break;
+            }
+
+            newStyle = borderInner + ': none;' +
+            'border-radius: ' + borderRadiusValue +
+            borderMissingStyle;
+
+            /* I do call set_style twice so that only yhe background get the transition.
+            *  The transition-property css rules seems to be unsupported
+            */
+            this._dash._container.set_style(newStyle);
+
+            newStyle = newStyle + 'transition-delay: 0s; transition-duration: 0.250s;';
         }
-
-        switch(position) {
-            case St.Side.LEFT:
-                borderInner = 'border-left';
-                borderRadiusValue = '0 ' + borderRadius + 'px ' + borderRadius + 'px 0;';
-                break;
-            case St.Side.RIGHT:
-                borderInner = 'border-right';
-                borderRadiusValue = borderRadius + 'px 0 0 ' + borderRadius + 'px;';
-                break;
-            case St.Side.TOP:
-                borderInner = 'border-top';
-                borderRadiusValue = '0 0 ' + borderRadius + 'px ' + borderRadius + 'px;';
-                break;
-            case St.Side.BOTTOM:
-                borderInner = 'border-bottom';
-                borderRadiusValue = borderRadius + 'px ' + borderRadius + 'px 0 0;';
-                break;
-        }
-
-        let newStyle = borderInner + ': none;' +
-        'border-radius: ' + borderRadiusValue +
-        borderMissingStyle;
-
-        /* I do call set_style twice so that only yhe background get the transition.
-        *  The transition-property css rules seems to be unsupported
-        */
-        this._dash._container.set_style(newStyle);
-
-        newStyle = newStyle + 'transition-delay: 0s; transition-duration: 0.250s;';
 
         /* Customize background opacity */
         if ( this._settings.get_boolean('opaque-background') )
@@ -1416,7 +1421,8 @@ const themeManager = new Lang.Class({
                  'background-opacity',
                  'apply-custom-theme',
                  'custom-theme-shrink',
-                 'custom-theme-running-dots'];
+                 'custom-theme-running-dots',
+                 'extend-height'];
 
      keys.forEach(function(key){ 
         this._settings.connect('changed::'+key,
