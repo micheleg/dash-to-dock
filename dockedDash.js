@@ -1045,12 +1045,20 @@ const dockedDash = new Lang.Class({
 
                 let [x,y] = event.get_coords();
 
-                if (this._rtl) {
-                    if(x < this.staticBox.x2 - 1)
-                        return false;
-                } else {
-                    if(x > this.staticBox.x1 + 1)
-                        return false;
+                if ( ( this._position == St.Side.RIGHT &&
+                       x < this.staticBox.x2 - 1
+                     ) ||
+                     ( this._position == St.Side.LEFT &&
+                       x > this.staticBox.x1 + 1
+                     ) ||
+                     ( this._position == St.Side.BOTTOM &&
+                       y < this.staticBox.y2 - 1
+                     ) ||
+                     ( this._position == St.Side.TOP &&
+                       y > this.staticBox.y1 + 1
+                     )
+                   ) {
+                    return false;
                 }
             }
 
