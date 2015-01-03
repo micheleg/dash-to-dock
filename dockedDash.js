@@ -1341,7 +1341,7 @@ const themeManager = new Lang.Class({
         // Remove prior style edits
         this._dash._container.set_style(null);
 
-        // obtainer theme border settings
+        // obtain theme border settings
         let themeNode = this._dash._container.get_theme_node();
         let borderColor = themeNode.get_border_color(St.Side.TOP);
         let borderWidth = themeNode.get_border_width(St.Side.TOP);
@@ -1350,32 +1350,34 @@ const themeManager = new Lang.Class({
         /* We're copying border and corner styles to left border and top-left
         * corner, also removing bottom border and bottom-right corner styles
         */
-        let borderInner;
-        let borderRadiusValue;
-        let borderMissingStyle;
+        let borderInner = '';
+        let borderRadiusValue = '';
+        let borderMissingStyle = '';
+
+        if (this._rtl && position != St.Side.RIGHT) {
+            borderMissingStyle = 'border-right: ' + borderWidth + 'px solid ' +
+                   borderColor.to_string() + ';';
+        } else if (!this._rtl && position != St.Side.LEFT){
+            borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
+                   borderColor.to_string() + ';';
+        }
+
         switch(position) {
             case St.Side.LEFT:
                 borderInner = 'border-left';
                 borderRadiusValue = '0 ' + borderRadius + 'px ' + borderRadius + 'px 0;';
-                borderMissingStyle = '';
                 break;
             case St.Side.RIGHT:
                 borderInner = 'border-right';
                 borderRadiusValue = borderRadius + 'px 0 0 ' + borderRadius + 'px;';
-                borderMissingStyle = 'border-right: ' + borderWidth + 'px solid ' +
-                                   borderColor.to_string() + ';';
                 break;
             case St.Side.TOP:
                 borderInner = 'border-top';
                 borderRadiusValue = '0 0 ' + borderRadius + 'px ' + borderRadius + 'px;';
-                borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
-                                   borderColor.to_string() + ';';
                 break;
             case St.Side.BOTTOM:
                 borderInner = 'border-bottom';
                 borderRadiusValue = borderRadius + 'px ' + borderRadius + 'px 0 0;';
-                borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
-                                      borderColor.to_string() + ';';
                 break;
         }
 
