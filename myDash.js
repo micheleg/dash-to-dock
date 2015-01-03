@@ -333,6 +333,7 @@ const myDashActor = new Lang.Class({
  * - show running and/or favorite applications
  * - emit a custom signal when an app icon is added
  * - add a functon to set the dash max size, instead of using an external bindconstrain
+ * - hide showApps label when the custom menu is shown.
  */
 const myDash = new Lang.Class({
     Name: 'dashToDock.myDash',
@@ -368,6 +369,12 @@ const myDash = new Lang.Class({
         this._showAppsIcon.childOpacity = 255;
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._hookUpLabel(this._showAppsIcon);
+
+        let appsIcon = this._showAppsIcon;
+        appsIcon.connect('menu-state-changed',
+            Lang.bind(this, function(appsIcon, opened) {
+                this._itemMenuStateChanged(appsIcon, opened);
+            }));
 
         this.showAppsButton = this._showAppsIcon.toggleButton;
 
