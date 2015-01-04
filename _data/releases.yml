@@ -1,3 +1,17 @@
+- version: 36
+  date: 05-12-2014
+  shell_version: ["3.14"]
+  notes:
+    - "New feature: bottom positioning of the dock. Top and right are available too."
+    - "New feature: add popupMenu with extension settings to the showAppsIcon."
+    - "Improvement: rework workaround for compatibility with 3.14 and 3.14.1 to improve
+      interoperability with other extensions."
+    - "Improvement: reserve space for the dock in the overview."
+    - "Bug fixes: solves bug caused by wrong hover status reported on the dash actor."
+    - "Bug fixes: scrolling workspace break show/hide animation #109"
+    - "Bug fixes: remove 1px margin between fixed dock and windows (track structs of the outer dash.actor instead of the inner dash._box)."
+  zip_url: https://extensions.gnome.org/review/download/4614.shell-extension.zip
+
 - version: 35
   date: 16-11-2014
   shell_version: ["3.14"]
