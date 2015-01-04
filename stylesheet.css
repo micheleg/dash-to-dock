@@ -62,7 +62,10 @@
 }
 
 /* Dash height extended to the whole available vertical space */
-#dashtodockContainer.extended #dash {
+#dashtodockContainer.extended.top #dash,
+#dashtodockContainer.extended.right #dash,
+#dashtodockContainer.extended.bottom #dash,
+#dashtodockContainer.extended.left #dash {
     border:0;
     border-radius: 0;
 }
