@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-25 14:32+0200\n"
+"POT-Creation-Date: 2015-01-05 17:11+0000\n"
 "PO-Revision-Date: 2012-12-29 11:40+0100\n"
 "Last-Translator: Petr Marek <contact@petrmarek.eu>\n"
 "Language-Team: Czech <LL@li.org>\n"
@@ -21,173 +21,219 @@ msgid "Main Settings"
 msgstr "Hlavní nastavení"
 
 #: prefs.js:43
+msgid "Dock Position"
+msgstr ""
+
+#: prefs.js:47
+msgid "Top"
+msgstr ""
+
+#: prefs.js:51 prefs.js:60
+msgid "Left"
+msgstr ""
+
+#: prefs.js:53 prefs.js:58
+msgid "Right"
+msgstr ""
+
+#: prefs.js:55
+msgid "Bottom"
+msgstr ""
+
+#: prefs.js:79
 msgid "Dock is fixed and always visible"
 msgstr "Dock je zafixovaný a je vždy vidět"
 
-#: prefs.js:59
+#: prefs.js:95
 msgid "Animation time [ms]"
 msgstr "Délka animace [ms]"
 
-#: prefs.js:70
+#: prefs.js:106
 msgid "Show delay [ms]"
 msgstr "Délka prodlení před zobrazením [ms]"
 
-#: prefs.js:81
+#: prefs.js:117
 msgid "Hide delay [ms]"
 msgstr "Délka prodlení před schováním [ms]"
 
-#: prefs.js:96
+#: prefs.js:132
 msgid "Autohide"
 msgstr "Automatické schování"
 
-#: prefs.js:103
+#: prefs.js:139
 msgid "intellihide"
 msgstr "Inteligentní schování"
 
-#: prefs.js:131
+#: prefs.js:167
 msgid "Application based intellihide"
 msgstr "Inteligentní schování dle aplikací"
 
-#: prefs.js:149
+#: prefs.js:185
 msgid "Require pressure to show the dock"
 msgstr ""
 
-#: prefs.js:159
+#: prefs.js:195
 msgid "Pressure threshold (px)"
 msgstr ""
 
-#: prefs.js:198
+#: prefs.js:234
 msgid "Show the dock on following monitor (if attached)"
 msgstr "Ukazovat dock na následující obrazovce (pokud je připojena)"
 
-#: prefs.js:200
+#: prefs.js:236
 msgid "Primary (default)"
 msgstr "Primární (výchozí)"
 
-#: prefs.js:201
+#: prefs.js:237
 msgid "1"
 msgstr "1"
 
-#: prefs.js:202
+#: prefs.js:238
 msgid "2"
 msgstr "2"
 
-#: prefs.js:203
+#: prefs.js:239
 msgid "3"
 msgstr "3"
 
-#: prefs.js:204
+#: prefs.js:240
 msgid "4"
 msgstr "4"
 
-#: prefs.js:229
+#: prefs.js:265
 msgid "Max height"
 msgstr "Maximální výška"
 
-#: prefs.js:247
+#: prefs.js:283
 msgid "Expand (experimental and buggy)"
 msgstr "Roztáhnout (experimentální a zabugované)"
 
-#: prefs.js:279
+#: prefs.js:316
 msgid "Maximum icon size"
 msgstr "Maximální velikost ikon"
 
-#: prefs.js:284
+#: prefs.js:321
 msgid "16"
 msgstr "16"
 
-#: prefs.js:285
+#: prefs.js:322
 msgid "24"
 msgstr "24"
 
-#: prefs.js:286
+#: prefs.js:323
 msgid "32"
 msgstr "32"
 
-#: prefs.js:287
+#: prefs.js:324
 msgid "48"
 msgstr "48"
 
-#: prefs.js:288
+#: prefs.js:325
 msgid "64"
 msgstr "64"
 
-#: prefs.js:310
+#: prefs.js:347
 msgid "Show favorite application icons"
 msgstr "Ukazovat ikony oblíbených aplikací"
 
-#: prefs.js:315
+#: prefs.js:352
 msgid "Show running application icons"
 msgstr "Ukazovat ikony spuštěných aplikací"
 
-#: prefs.js:320
+#: prefs.js:357
 msgid "Show applications button at the top"
 msgstr ""
 
-#: prefs.js:337
+#: prefs.js:374
 msgid "Optional features"
 msgstr "Nepovinné funkce"
 
-#: prefs.js:342
-msgid "Apply custom theme (work only with the default Adwaita theme)"
-msgstr ""
-
-#: prefs.js:358
-msgid "Customize the dock background opacity"
-msgstr "Nastavit průhlednost pozadí docku"
-
-#: prefs.js:375
-msgid "Opacity"
-msgstr "Průhlednost"
-
-#: prefs.js:403
+#: prefs.js:380
 msgid "Switch workspace when scrolling over the dock"
 msgstr "Měnit workspace při scrollování na docku"
 
-#: prefs.js:414
+#: prefs.js:391
 msgid "Switch one workspace at a time"
 msgstr "Měnit jen jeden workspace najednou"
 
-#: prefs.js:423
+#: prefs.js:400
 msgid "Deadtime between each workspace switching [ms]"
 msgstr ""
 
-#: prefs.js:434
+#: prefs.js:411
 msgid "Only a 1px wide area close to the screen edge is active"
 msgstr "Aktivní je jen oblast jednoho pixelu u hranice obrazovky"
 
-#: prefs.js:440
+#: prefs.js:417
 msgid "All the area of the dock is active"
 msgstr "Celá oblast docku je aktivní"
 
-#: prefs.js:469
+#: prefs.js:446
 msgid "Customize actions on mouse click"
 msgstr "Nastavit akce při kliknutí myši"
 
-#: prefs.js:484
+#: prefs.js:461
 msgid "Action on clicking on running app"
 msgstr "Akce spuštěná při kliknutí na běžící aplikaci"
 
-#: prefs.js:486
+#: prefs.js:463
 msgid "Do nothing (default)"
 msgstr "Nedělat nic (výchozí)"
 
-#: prefs.js:487
+#: prefs.js:464
 msgid "Minimize"
 msgstr "Minimalizovat"
 
-#: prefs.js:488
+#: prefs.js:465
 msgid "Launch new window"
 msgstr "Spustit nové okno"
 
-#: prefs.js:489
+#: prefs.js:466
 msgid "Cycle through application windows"
 msgstr "Střídat skrze běžící okna aplikace"
 
-#: prefs.js:500
+#: prefs.js:477
 msgid "Minimize window on shift+click (double click for all app windows)"
 msgstr ""
 "Minimalizovat okno při shift+kliknutí (dvojklik pro všechny okna aplikací)"
+
+#: prefs.js:498
+msgid "Appearence and Themes"
+msgstr ""
+
+#: prefs.js:500
+msgid ""
+"A customized theme is built in the extension. This is meant to work with the "
+"default Adwaita theme: the dash is shrunk to save space, its background "
+"transparency reduced, and custom indicators for the number of windows of "
+"each application are added."
+msgstr ""
+
+#: prefs.js:511
+msgid "Apply built in custom theme"
+msgstr ""
+
+#: prefs.js:524
+msgid ""
+"Alternatively, for a better integration with custom themes, each "
+"customization can be applied indipendently"
+msgstr ""
+
+#: prefs.js:533
+msgid "Shrink the dash size by reducing padding"
+msgstr ""
+
+#: prefs.js:549
+msgid "Show indicators for the number of windows of each application"
+msgstr ""
+
+#: prefs.js:567
+msgid "Customize the dock background opacity"
+msgstr "Nastavit průhlednost pozadí docku"
+
+#: prefs.js:583
+msgid "Opacity"
+msgstr "Průhlednost"
 
 #~ msgid "Only when in autohide"
 #~ msgstr "Jen při automatickém schovávání"
