@@ -25,10 +25,10 @@ Here are the [Installation instructions](./download.html#installfromsource).
 1. Keep the extension updated with new upstream versions.
 2. Improve integration with the shell, avoiding inconsistencies and taking advantage of new features or design.
 3. Add keyboard shortcuts
-4. Bottom positioned dock
+4. ensure touch gestures compatibility
 5. In the long term, rewrite and simplify the code.
 
-There aren't mayor features planned, but many bugs that I would like to see fixed (see below).
+There aren't mayor features planned altough consider new ideas and suggestions.
 
 <a name="bugreporting"></a>
 ### Bug Reporting
