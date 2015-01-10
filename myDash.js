@@ -1130,7 +1130,7 @@ const myAppIcon = new Lang.Class({
         if(AppDisplay.AppIcon.prototype._updateRunningStyle)
           this.parent();
         else
-          AppDisplay.AppIcon.prototype._onStateChanged();
+          AppDisplay.AppIcon.prototype._onStateChanged.call(this);
 
         this._updateCounterClass();
     },
