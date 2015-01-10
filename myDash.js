@@ -112,14 +112,14 @@ const myDashItemContainer = new Lang.Class({
 
       switch(position) {
         case St.Side.LEFT:
-            yOffset = Math.floor((itemHeight - labelHeight) / 2)
+            yOffset = Math.floor((itemHeight - labelHeight) / 2);
             y = stageY + yOffset;
             xOffset = labelOffset;
             x = stageX + this.get_width() + xOffset;
             break;
           break;
         case St.Side.RIGHT:
-            yOffset = Math.floor((itemHeight - labelHeight) / 2)
+            yOffset = Math.floor((itemHeight - labelHeight) / 2);
             y = stageY + yOffset;
             xOffset = labelOffset;
             x = Math.round(stageX) - labelWidth - xOffset;
@@ -254,7 +254,7 @@ const myDashActor = new Lang.Class({
 
         this._position = getPosition(settings);
         this._isHorizontal = ( this._position == St.Side.TOP ||
-                               this._position == St.Side.BOTTOM );;
+                               this._position == St.Side.BOTTOM );
 
         let layout = new Clutter.BoxLayout({ orientation:
           this._isHorizontal?Clutter.Orientation.HORIZONTAL:Clutter.Orientation.VERTICAL });
