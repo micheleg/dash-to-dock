@@ -185,9 +185,7 @@ const myShowAppsIcon = new Lang.Class({
        (actor): duplicate reference to easily reuse appIcon methods */
       this.actor = this.toggleButton;
 
-      this.actor.connect('leave-event', Lang.bind(this, this._onLeaveEvent));
       this.actor.connect('button-press-event', Lang.bind(this, this._onButtonPress));
-      this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
       this.actor.connect('clicked', Lang.bind(this, this._onClicked));
       this.actor.connect('popup-menu', Lang.bind(this, this._onKeyboardPopupMenu));
 
