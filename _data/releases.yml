@@ -1,3 +1,10 @@
+- version: 37
+  date: 10-01-2015
+  shell_version: ["3.14"]
+  notes:
+    - "Bug fixes: bug fix for GNOME Shell 3.14/3.14.1 (MyDash: call correctly the parent method in Gnome Shell 3.14.1.)."
+  zip_url: https://extensions.gnome.org/review/download/4625.shell-extension.zip
+
 - version: 36
   date: 05-01-2015
   shell_version: ["3.14"]
