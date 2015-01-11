@@ -10,6 +10,10 @@ A new extension version (v37) supporting GNOME Shell 3.14 is now available. This
 
 <!--more-->
 
+As usual the new version can be installed from the [extension website](https://extensions.gnome.org/extension/307/dash-to-dock/)
+upon approval, or downloaded manually from the [release page]({{ site.release_page_url }}).
+See also the [alternative installation methods]({{ relative }}/download.html) for instructions.
+
 **Release notes**
 
 * Bug fixes: bug fix for GNOME Shell 3.14/3.14.1 (MyDash: call correctly the parent method in Gnome Shell 3.14.1.).
