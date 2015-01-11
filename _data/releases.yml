@@ -1,3 +1,10 @@
+- version: 38
+  date: 11-01-2015
+  shell_version: ["3.12"]
+  notes:
+    - This is a port of version 36/37 to GNOME Shell 3.12
+  zip_url: https://extensions.gnome.org/review/download/4628.shell-extension.zip
+
 - version: 37
   date: 10-01-2015
   shell_version: ["3.14"]
