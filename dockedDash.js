@@ -1334,7 +1334,7 @@ const themeManager = new Lang.Class({
         this._getBackgroundColor();
         this._updateBackgroundOpacity();
         this._adjustTheme();
-  },
+    },
 
     /* Reimported back and adapted from atomdock */
     _adjustTheme: function() {
@@ -1344,14 +1344,17 @@ const themeManager = new Lang.Class({
             return;
         }
 
-        let position = getPosition(this._settings)
-
-        let newStyle = '';
-
         // Remove prior style edits
         this._dash._container.set_style(null);
 
-        if ( ! this._settings.get_boolean('apply-custom-theme') ) {
+        /* If built-in theme is enabled do nothing else */
+        if( this._settings.get_boolean('apply-custom-theme') )
+            return;
+
+        let newStyle = '';
+        let position = getPosition(this._settings);
+
+        if ( ! this._settings.get_boolean('custom-theme-shrink') ) {
 
             // obtain theme border settings
             let themeNode = this._dash._container.get_theme_node();
@@ -1395,25 +1398,21 @@ const themeManager = new Lang.Class({
 
             newStyle = borderInner + ': none;' +
             'border-radius: ' + borderRadiusValue +
-            borderMissingStyle;
+            borderMissingStyle ;
 
-            /* I do call set_style twice so that only yhe background get the transition.
+            /* I do call set_style possibly twice so that only the background gets the transition.
             *  The transition-property css rules seems to be unsupported
             */
             this._dash._container.set_style(newStyle);
-
-            newStyle = newStyle + 'transition-delay: 0s; transition-duration: 0.250s;';
         }
 
-        /* Customize background opacity */
-        if ( this._settings.get_boolean('opaque-background') )
-            newStyle = newStyle + 'background-color:'+ this._customizedBackground;
-        else
-            newStyle = newStyle + 'background-color:'+ this._defaultBackground;
-
-        this._dash._container.set_style(newStyle);
-
-  },
+        /* Customize background */
+        if ( this._settings.get_boolean('opaque-background')  ) {
+            newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
+                       'transition-delay: 0s; transition-duration: 0.250s;';
+            this._dash._container.set_style(newStyle);
+        }
+    },
 
     _bindSettingsChanges: function() {
 
