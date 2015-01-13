@@ -19,12 +19,15 @@ const Tweener = imports.ui.tweener;
 const ViewSelector = imports.ui.viewSelector;
 const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
 const Layout = imports.ui.layout;
+const LayoutManager = imports.ui.main.layoutManager;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const MyDash = Me.imports.myDash;
 
 const PRESSURE_TIMEOUT = 1000;
+
+let _myDwell = 0;
 
 /* Return the actual position reverseing left and right in rtl */
 function getPosition(settings) {
@@ -413,6 +416,9 @@ const dockedDash = new Lang.Class({
         // Setup pressure barrier (GS38+ only)
         this._updatePressureBarrier();
         this._updateBarrier();
+
+        // Insensitive Message Tray
+        this._updateInsensitiveTray();
     },
 
     destroy: function(){
@@ -487,12 +493,12 @@ const dockedDash = new Lang.Class({
             this.emit('box-changed');
             this._updateBarrier();
         }));
-        this._settings.connect('changed::extend-height', Lang.bind(this, this._resetPosition));
+        this._settings.connect('changed::extend-height', Lang.bind(this,this._resetPosition));
         this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
         this._settings.connect('changed::height-fraction', Lang.bind(this,this._resetPosition));
-
-        this._settings.connect('changed::require-pressure-to-show', Lang.bind(this, this._updateBarrier));
-        this._settings.connect('changed::pressure-threshold', Lang.bind(this, function() {
+        this._settings.connect('changed::insensitive-message-tray', Lang.bind(this,this._updateInsensitiveTray));
+        this._settings.connect('changed::require-pressure-to-show', Lang.bind(this,this._updateBarrier));
+        this._settings.connect('changed::pressure-threshold', Lang.bind(this,function() {
             this._updatePressureBarrier();
             this._updateBarrier();
         }));
@@ -1177,6 +1183,29 @@ const dockedDash = new Lang.Class({
                 this._removeAnimations();
                 this._animateOut(this._settings.get_double('animation-time'), 0);
             }
+        }
+    },
+
+    // Makes the message not show. SOURCE: insensitive-tray extension.
+    _updateInsensitiveTray: function() {
+        if (this._settings.get_boolean('insensitive-message-tray')) {
+            if("_trayPressure" in LayoutManager) {
+                LayoutManager._trayPressure._keybindingMode = null;
+                //Shell.KeyBindingMode.OVERVIEW;
+            }
+				
+            _myDwell = MessageTray._trayDwellTimeout;
+            MessageTray._trayDwellTimeout = function() { return false; };			
+        } else {
+            if("_trayPressure" in LayoutManager) {
+                LayoutManager._trayPressure._keybindingMode = 
+                Shell.KeyBindingMode.NORMAL | Shell.KeyBindingMode.OVERVIEW;
+            }
+    
+            if(_myDwell) {
+                MessageTray._trayDwellTimeout = _myDwell;
+                _myDwell = 0;
+            }			
         }
     }
 });
