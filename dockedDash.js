@@ -1263,7 +1263,7 @@ const themeManager = new Lang.Class({
               'changed',
               Lang.bind(this, this.updateCustomTheme)
             ],
-            // updatePseudoClasses
+            // update :overview pseudoclass
             [
                 Main.overview,
                 'showing',
@@ -1276,9 +1276,6 @@ const themeManager = new Lang.Class({
             ]
         );
 
-        // Set default pseudo class
-        this._dash._container.add_style_pseudo_class('desktop');
-
         this._updateCustomStyleClasses();
 
     },
@@ -1288,11 +1285,11 @@ const themeManager = new Lang.Class({
     },
 
     _onOverviewShowing: function() {
-        this._dash._container.remove_style_pseudo_class('desktop');
+        this._actor.add_style_pseudo_class('overview');
     },
 
     _onOverviewHiding: function() {
-        this._dash._container.add_style_pseudo_class('desktop');
+        this._actor.remove_style_pseudo_class('overview');
     },
 
     _updateBackgroundOpacity: function() {
