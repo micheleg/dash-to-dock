@@ -1265,10 +1265,7 @@ const themeManager = new Lang.Class({
         ]
     );
 
-    // Now that the dash is on the stage and custom themes should be loaded
-    // retrieve its background color
-    this._getBackgroundColor();
-    this._updateBackgroundOpacity();
+    this._updateCustomStyleClasses();
 
     },
 
@@ -1295,14 +1292,14 @@ const themeManager = new Lang.Class({
 
     _getBackgroundColor: function() {
 
-        // Remove custom style
-        let oldStyle = this._dash._container.get_style();
-        this._dash._container.set_style(null);
-
         // Prevent shell crash if the actor is not on the stage.
         // It happens enabling/disabling repeatedly the extension
         if(!this._dash._container.get_stage())
             return;
+
+        // Remove custom style
+        let oldStyle = this._dash._container.get_style();
+        this._dash._container.set_style(null);
 
         let themeNode = this._dash._container.get_theme_node();
         this._dash._container.set_style(oldStyle);
@@ -1310,7 +1307,7 @@ const themeManager = new Lang.Class({
         this._defaultBackgroundColor = themeNode.get_background_color();
   },
 
-    updateCustomTheme: function() {
+    _updateCustomStyleClasses: function(){
 
         if (this._settings.get_boolean('apply-custom-theme'))
             this._actor.add_style_class_name('dashtodock');
@@ -1330,7 +1327,10 @@ const themeManager = new Lang.Class({
             this._actor.remove_style_class_name('running-dots');
         }
 
-        this._dash._queueRedisplay();
+    },
+
+    updateCustomTheme: function() {
+        this._updateCustomStyleClasses();
         this._getBackgroundColor();
         this._updateBackgroundOpacity();
         this._adjustTheme();
