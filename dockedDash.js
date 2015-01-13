@@ -1245,27 +1245,27 @@ const themeManager = new Lang.Class({
 
     _init: function(settings, actor, dash) {
 
-    this._settings = settings;
-    this._bindSettingsChanges();
-    this._actor = actor;
-    this._dash = dash;
+        this._settings = settings;
+        this._bindSettingsChanges();
+        this._actor = actor;
+        this._dash = dash;
 
-    // initialize colors with generic values
-    this._defaultBackground = {red: 0, green:0, blue: 0, alpha:0};
-    this._defaultBackgroundColor = {red: 0, green:0, blue: 0, alpha:0};
-    this._customizedBackground = {red: 0, green:0, blue: 0, alpha:0};
+        // initialize colors with generic values
+        this._defaultBackground = {red: 0, green:0, blue: 0, alpha:0};
+        this._defaultBackgroundColor = {red: 0, green:0, blue: 0, alpha:0};
+        this._customizedBackground = {red: 0, green:0, blue: 0, alpha:0};
 
-    this._signalHandler = new Convenience.globalSignalHandler();
-    this._signalHandler.push(
-        // When theme changes re-obtain default background color
-        [
-          St.ThemeContext.get_for_stage (global.stage),
-          'changed',
-          Lang.bind(this, this.updateCustomTheme)
-        ]
-    );
+        this._signalHandler = new Convenience.globalSignalHandler();
+        this._signalHandler.push(
+            // When theme changes re-obtain default background color
+            [
+              St.ThemeContext.get_for_stage (global.stage),
+              'changed',
+              Lang.bind(this, this.updateCustomTheme)
+            ]
+        );
 
-    this._updateCustomStyleClasses();
+        this._updateCustomStyleClasses();
 
     },
 
@@ -1275,20 +1275,20 @@ const themeManager = new Lang.Class({
 
     _updateBackgroundOpacity: function() {
 
-    let newAlpha = this._settings.get_double('background-opacity');
+        let newAlpha = this._settings.get_double('background-opacity');
 
-    this._defaultBackground = 'rgba('+
-        this._defaultBackgroundColor.red + ','+
-        this._defaultBackgroundColor.green + ','+
-        this._defaultBackgroundColor.blue + ','+
-        Math.round(this._defaultBackgroundColor.alpha/2.55)/100 + ')';
+        this._defaultBackground = 'rgba('+
+            this._defaultBackgroundColor.red + ','+
+            this._defaultBackgroundColor.green + ','+
+            this._defaultBackgroundColor.blue + ','+
+            Math.round(this._defaultBackgroundColor.alpha/2.55)/100 + ')';
 
-    this._customizedBackground = 'rgba('+
-        this._defaultBackgroundColor.red + ','+
-        this._defaultBackgroundColor.green + ','+
-        this._defaultBackgroundColor.blue + ','+
-        newAlpha + ')';
-  },
+        this._customizedBackground = 'rgba('+
+            this._defaultBackgroundColor.red + ','+
+            this._defaultBackgroundColor.green + ','+
+            this._defaultBackgroundColor.blue + ','+
+            newAlpha + ')';
+    },
 
     _getBackgroundColor: function() {
 
@@ -1305,7 +1305,7 @@ const themeManager = new Lang.Class({
         this._dash._container.set_style(oldStyle);
 
         this._defaultBackgroundColor = themeNode.get_background_color();
-  },
+    },
 
     _updateCustomStyleClasses: function(){
 
@@ -1416,18 +1416,18 @@ const themeManager = new Lang.Class({
 
     _bindSettingsChanges: function() {
 
-     let keys = ['opaque-background',
-                 'background-opacity',
-                 'apply-custom-theme',
-                 'custom-theme-shrink',
-                 'custom-theme-running-dots',
-                 'extend-height'];
+         let keys = ['opaque-background',
+                     'background-opacity',
+                     'apply-custom-theme',
+                     'custom-theme-shrink',
+                     'custom-theme-running-dots',
+                     'extend-height'];
 
-     keys.forEach(function(key){ 
-        this._settings.connect('changed::'+key,
-                               Lang.bind(this, this.updateCustomTheme)
-        );
-      }, this );
+         keys.forEach(function(key){
+            this._settings.connect('changed::'+key,
+                                   Lang.bind(this, this.updateCustomTheme)
+            );
+          }, this );
 
     }
 });
