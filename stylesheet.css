@@ -155,7 +155,10 @@
     background-image: url('./media/four_bottom.svg');
 }
 
-#dashtodockContainer.dashtodock #dash:desktop {
+#dashtodockContainer.dashtodock #dash {
     background: rgba(0,0,0,0.9);
 }
 
+#dashtodockContainer.dashtodock:overview #dash {
+    background: rgba(0,0,0,0.5);
+}
