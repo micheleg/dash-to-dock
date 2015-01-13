@@ -1262,8 +1262,22 @@ const themeManager = new Lang.Class({
               St.ThemeContext.get_for_stage (global.stage),
               'changed',
               Lang.bind(this, this.updateCustomTheme)
+            ],
+            // updatePseudoClasses
+            [
+                Main.overview,
+                'showing',
+                Lang.bind(this, this._onOverviewShowing)
+            ],
+            [
+                Main.overview,
+                'hiding',
+                Lang.bind(this, this._onOverviewHiding)
             ]
         );
+
+        // Set default pseudo class
+        this._dash._container.add_style_pseudo_class('desktop');
 
         this._updateCustomStyleClasses();
 
@@ -1271,6 +1285,14 @@ const themeManager = new Lang.Class({
 
     destroy: function() {
         this._signalHandler.disconnect();
+    },
+
+    _onOverviewShowing: function() {
+        this._dash._container.remove_style_pseudo_class('desktop');
+    },
+
+    _onOverviewHiding: function() {
+        this._dash._container.add_style_pseudo_class('desktop');
     },
 
     _updateBackgroundOpacity: function() {
