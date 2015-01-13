@@ -36,7 +36,7 @@
       <description>Sets the delay after the mouse left the dock before hiding it.</description>
     </key>
     <key type="b" name="opaque-background">
-      <default>true</default>
+      <default>false</default>
       <summary>Dash background is opaque</summary>
       <description>Makes the background of the dash opaque improving readability when in autohide mode.</description>
     </key>
