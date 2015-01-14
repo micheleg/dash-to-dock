@@ -98,10 +98,13 @@
 }
 
 #dashtodockContainer.running-dots.bottom .running1,
-#dashtodockContainer.running-dots.top .running1,
-#dashtodockContainer.dashtodock.bottom .running1,
-#dashtodockContainer.dashtodock.top .running1 {
+#dashtodockContainer.dashtodock.bottom .running1 {
     background-image: url('./media/one_bottom.svg');
+}
+
+#dashtodockContainer.running-dots.top .running1,
+#dashtodockContainer.dashtodock.top .running1 {
+    background-image: url('./media/one_top.svg');
 }
 
 #dashtodockContainer.running-dots.left .running2,
@@ -115,10 +118,13 @@
 }
 
 #dashtodockContainer.running-dots.bottom .running2,
-#dashtodockContainer.running-dots.top .running2,
-#dashtodockContainer.dashtodock.bottom .running2,
-#dashtodockContainer.dashtodock.top .running2 {
+#dashtodockContainer.dashtodock.bottom .running2 {
     background-image: url('./media/two_bottom.svg');
+}
+
+#dashtodockContainer.running-dots.top .running2,
+#dashtodockContainer.dashtodock.top .running2 {
+    background-image: url('./media/two_top.svg');
 }
 
 #dashtodockContainer.running-dots.left .running3,
@@ -132,10 +138,13 @@
 }
 
 #dashtodockContainer.running-dots.bottom .running3,
-#dashtodockContainer.running-dots.top .running3,
-#dashtodockContainer.dashtodock.bottom .running3,
-#dashtodockContainer.dashtodock.top .running3 {
+#dashtodockContainer.dashtodock.bottom .running3 {
    background-image: url('./media/three_bottom.svg');
+}
+
+#dashtodockContainer.running-dots.top .running3,
+#dashtodockContainer.dashtodock.top .running3 {
+   background-image: url('./media/three_top.svg');
 }
 
 #dashtodockContainer.running-dots.left .running4,
@@ -149,10 +158,13 @@
 }
 
 #dashtodockContainer.running-dots.bottom .running4,
-#dashtodockContainer.running-dots.top .running4,
-#dashtodockContainer.dashtodock.bottom .running4,
-#dashtodockContainer.dashtodock.top .running4 {
+#dashtodockContainer.dashtodock.bottom .running4{
     background-image: url('./media/four_bottom.svg');
+}
+
+#dashtodockContainer.running-dots.top .running4,
+#dashtodockContainer.dashtodock.top .running4 {
+    background-image: url('./media/four_top.svg');
 }
 
 #dashtodockContainer.dashtodock #dash {
