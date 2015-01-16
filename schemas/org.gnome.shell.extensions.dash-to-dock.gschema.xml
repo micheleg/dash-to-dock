@@ -6,7 +6,20 @@
     <value value='2' nick='launch'/>
     <value value='3' nick='cycle-windows'/>
   </enum>
+  <!-- this is mean to Match StSide. LEFT and RIGHT actual position in reversed in
+       rtl languages -->
+  <enum id='org.gnome.shell.extensions.dash-to-dock.position'>
+    <value value='0' nick='TOP'/>
+    <value value='1' nick='RIGHT'/>
+    <value value='2' nick='BOTTOM'/>
+    <value value='3' nick='LEFT'/>
+  </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
+    <key name="dock-position" enum="org.gnome.shell.extensions.dash-to-dock.position">
+      <default>'LEFT'</default>
+      <summary>Dock position</summary>
+      <description>Dock is shown on the Left, Right, Top or Bottom side of the screen.</description>
+    </key>
     <key type="d" name="animation-time">
       <default>0.25</default>
       <summary>Animation time</summary>
@@ -23,14 +36,9 @@
       <description>Sets the delay after the mouse left the dock before hiding it.</description>
     </key>
     <key type="b" name="opaque-background">
-      <default>true</default>
+      <default>false</default>
       <summary>Dash background is opaque</summary>
       <description>Makes the background of the dash opaque improving readability when in autohide mode.</description>
-    </key>
-    <key type="b" name="opaque-background-always">
-      <default>false</default>
-      <summary>Dash background always opaque</summary>
-      <description>Makes the background of the dash opaque improving readability even when not in autohide mode.</description>
     </key>
     <key type="d" name="background-opacity">
       <default>0.8</default>
@@ -51,6 +59,16 @@
       <default>true</default>
       <summary>Dock shown on mouse over</summary>
       <description>Enable or disable autohide mode</description>
+    </key>
+    <key type="b" name="require-pressure-to-show">
+      <default>true</default>
+      <summary>Require pressure to show dash</summary>
+      <description>Enable or disable requiring pressure to show the dash</description>
+    </key>
+    <key type="d" name="pressure-threshold">
+      <default>50</default>
+      <summary>Pressure threshold</summary>
+      <description>Sets how much pressure is needed to show the dash.</description>
     </key>
     <key type="b" name="dock-fixed">
       <default>false</default>
@@ -81,6 +99,21 @@
       <default>48</default>
       <summary>Maximum dash icon size</summary>
       <description>Set the allowed maximum dash icon size. Allowed range: 16..64.</description>
+    </key>
+    <key type="b" name="apply-custom-theme">
+      <default>false</default>
+      <summary>Apply custom theme</summary>
+      <description>Apply customization to the dash appearence</description>
+    </key>
+    <key type="b" name="custom-theme-shrink">
+      <default>false</default>
+      <summary>TODO</summary>
+      <description>TODO</description>
+    </key>
+    <key type="b" name="custom-theme-running-dots">
+      <default>false</default>
+      <summary>TODO</summary>
+      <description>TODO</description>
     </key>
     <key type="b" name="show-running">
       <default>true</default>

@@ -2,16 +2,16 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-20 20:45+1100\n"
+"POT-Creation-Date: 2015-01-05 17:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Jean-Baptiste Le Cz <jb.lecoz@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -23,153 +23,220 @@ msgid "Main Settings"
 msgstr "Réglages Principaux"
 
 #: prefs.js:43
+msgid "Dock Position"
+msgstr ""
+
+#: prefs.js:47
+msgid "Top"
+msgstr ""
+
+#: prefs.js:51 prefs.js:60
+msgid "Left"
+msgstr ""
+
+#: prefs.js:53 prefs.js:58
+msgid "Right"
+msgstr ""
+
+#: prefs.js:55
+msgid "Bottom"
+msgstr ""
+
+#: prefs.js:79
 msgid "Dock is fixed and always visible"
 msgstr "Le dock est fixe et toujours visible"
 
-#: prefs.js:59
+#: prefs.js:95
 msgid "Animation time [ms]"
 msgstr "Temps de l'animation [ms]"
 
-#: prefs.js:70
+#: prefs.js:106
 msgid "Show delay [ms]"
 msgstr "Delai d'apparition [ms]"
 
-#: prefs.js:81
+#: prefs.js:117
 msgid "Hide delay [ms]"
 msgstr "Delai de masquage [ms]"
 
-#: prefs.js:96
+#: prefs.js:132
 msgid "Autohide"
 msgstr "Masquage automatique"
 
-#: prefs.js:103
+#: prefs.js:139
 msgid "intellihide"
 msgstr "Masquage intelligent"
 
-#: prefs.js:131
+#: prefs.js:167
 msgid "Application based intellihide"
 msgstr "Masquage intelligent par application"
 
-#: prefs.js:146
+#: prefs.js:185
+msgid "Require pressure to show the dock"
+msgstr ""
+
+#: prefs.js:195
+msgid "Pressure threshold (px)"
+msgstr ""
+
+#: prefs.js:234
 msgid "Show the dock on following monitor (if attached)"
 msgstr "Montrer le dock sur l'écran suivant (si présent)"
 
-#: prefs.js:148
+#: prefs.js:236
 msgid "Primary (default)"
 msgstr "Primaire (par défaut)"
 
-#: prefs.js:149
+#: prefs.js:237
 msgid "1"
 msgstr "1"
 
-#: prefs.js:150
+#: prefs.js:238
 msgid "2"
 msgstr "2"
 
-#: prefs.js:151
+#: prefs.js:239
 msgid "3"
 msgstr "3"
 
-#: prefs.js:152
+#: prefs.js:240
 msgid "4"
 msgstr "4"
 
-#: prefs.js:177
+#: prefs.js:265
 msgid "Max height"
 msgstr "Hauteur maximale"
 
-#: prefs.js:195
+#: prefs.js:283
 msgid "Expand (experimental and buggy)"
 msgstr "Étendre (buggé et expérimental)"
 
-#: prefs.js:224
+#: prefs.js:316
 msgid "Maximum icon size"
 msgstr "Taille maximale des icônes"
 
-#: prefs.js:229
+#: prefs.js:321
 msgid "16"
 msgstr "16"
 
-#: prefs.js:230
+#: prefs.js:322
 msgid "24"
 msgstr "24"
 
-#: prefs.js:231
+#: prefs.js:323
 msgid "32"
 msgstr "32"
 
-#: prefs.js:232
+#: prefs.js:324
 msgid "48"
 msgstr "48"
 
-#: prefs.js:233
+#: prefs.js:325
 msgid "64"
 msgstr "64"
 
-#: prefs.js:255
+#: prefs.js:347
 msgid "Show favorite application icons"
 msgstr "Montrer les applications favorites"
 
-#: prefs.js:260
+#: prefs.js:352
 msgid "Show running application icons"
 msgstr "Montrer les applications en cours"
 
-#: prefs.js:276
+#: prefs.js:357
+msgid "Show applications button at the top"
+msgstr ""
+
+#: prefs.js:374
 msgid "Optional features"
 msgstr "Réglages secondaires"
 
-#: prefs.js:282
-msgid "Customize the dock background opacity"
-msgstr "Régler l'opacité du dock"
-
-#: prefs.js:299
-msgid "Opacity"
-msgstr "Opacité"
-
-#: prefs.js:315
-msgid "Only when in autohide"
-msgstr "Seulement en mode masquage intelligent"
-
-#: prefs.js:334
+#: prefs.js:380
 msgid "Switch workspace when scrolling over the dock"
 msgstr "Changer de bureau par défilement sur le dock"
 
-#: prefs.js:345
+#: prefs.js:391
 msgid "Switch one workspace at a time"
 msgstr "Changer un seul bureau à la fois"
 
-#: prefs.js:351
+#: prefs.js:400
+msgid "Deadtime between each workspace switching [ms]"
+msgstr ""
+
+#: prefs.js:411
 msgid "Only a 1px wide area close to the screen edge is active"
 msgstr "Seulement une zone de 1 px au bord de l'écran est active"
 
-#: prefs.js:356
+#: prefs.js:417
 msgid "All the area of the dock is active"
 msgstr "Tout le dock est actif"
 
-#: prefs.js:378
+#: prefs.js:446
 msgid "Customize actions on mouse click"
 msgstr "Réglage de l'action provoquée par un clic de la souris"
 
-#: prefs.js:393
+#: prefs.js:461
 msgid "Action on clicking on running app"
 msgstr "Action provoquée par un clic de la souris sur une application en cours"
 
-#: prefs.js:395
+#: prefs.js:463
 msgid "Do nothing (default)"
 msgstr "Ne rien faire (par défaut)"
 
-#: prefs.js:396
+#: prefs.js:464
 msgid "Minimize"
 msgstr "Minimiser la fenètre"
 
-#: prefs.js:397
+#: prefs.js:465
 msgid "Launch new window"
 msgstr "Nouvelle fenètre"
 
-#: prefs.js:398
+#: prefs.js:466
 msgid "Cycle through application windows"
 msgstr "Faire défiler les fenètres de l'application"
 
-#: prefs.js:409
+#: prefs.js:477
 msgid "Minimize window on shift+click (double click for all app windows)"
-msgstr "Minimiser la fenètre avec shift+click (double cliquer pour toutes les fenètres de l'application)"
+msgstr ""
+"Minimiser la fenètre avec shift+click (double cliquer pour toutes les "
+"fenètres de l'application)"
+
+#: prefs.js:498
+msgid "Appearence and Themes"
+msgstr ""
+
+#: prefs.js:500
+msgid ""
+"A customized theme is built in the extension. This is meant to work with the "
+"default Adwaita theme: the dash is shrunk to save space, its background "
+"transparency reduced, and custom indicators for the number of windows of "
+"each application are added."
+msgstr ""
+
+#: prefs.js:511
+msgid "Apply built in custom theme"
+msgstr ""
+
+#: prefs.js:524
+msgid ""
+"Alternatively, for a better integration with custom themes, each "
+"customization can be applied indipendently"
+msgstr ""
+
+#: prefs.js:533
+msgid "Shrink the dash size by reducing padding"
+msgstr ""
+
+#: prefs.js:549
+msgid "Show indicators for the number of windows of each application"
+msgstr ""
+
+#: prefs.js:567
+msgid "Customize the dock background opacity"
+msgstr "Régler l'opacité du dock"
+
+#: prefs.js:583
+msgid "Opacity"
+msgstr "Opacité"
+
+#~ msgid "Only when in autohide"
+#~ msgstr "Seulement en mode masquage intelligent"

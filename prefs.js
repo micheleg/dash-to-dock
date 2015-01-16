@@ -33,6 +33,42 @@ const WorkspaceSettingsWidget = new GObject.Class({
     let dockSettings = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
     let dockSettingsTitle = new Gtk.Label({label: _("Main Settings")});
 
+    /* DOCK POSITION */
+
+    let placementMain = new Gtk.Box({spacing:30,orientation:Gtk.Orientation.HORIZONTAL, homogeneous:true,
+                                         margin:10});
+    indentWidget(placementMain);
+
+    let placementPosition =  new Gtk.Box({spacing:30, margin_left:10, margin_top:10, margin_right:10});
+        let placementPositionLabel = new Gtk.Label({label: _("Dock Position"), use_markup: true,
+                                            xalign: 0, hexpand:true});
+        let placementPositionCombo = new Gtk.ComboBoxText({halign:Gtk.Align.END});
+
+            placementPositionCombo.append_text(_("Top"));
+
+            // Left and right are reversed in RTL languages
+            if( Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL )
+              placementPositionCombo.append_text(_("Left"));
+            else
+              placementPositionCombo.append_text(_("Right"));
+
+            placementPositionCombo.append_text(_("Bottom"));
+
+            if( Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL )
+              placementPositionCombo.append_text(_("Right"));
+            else
+              placementPositionCombo.append_text(_("Left"));
+
+            placementPositionCombo.set_active(this.settings.get_enum('dock-position'));
+
+            placementPositionCombo.connect('changed', Lang.bind (this, function(widget) {
+                    this.settings.set_enum('dock-position', widget.get_active());
+            }));
+
+    placementPosition.add(placementPositionLabel)
+    placementPosition.add(placementPositionCombo);
+
+    /* FIXED DOCK */
 
     let dockSettingsMain1 = new Gtk.Box({spacing:30,orientation:Gtk.Orientation.HORIZONTAL, homogeneous:true,
                                          margin:10});
@@ -83,7 +119,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
             hideDelay.set_sensitive(true);
             hideDelay.set_range(0, 5000);
             hideDelay.set_value(this.settings.get_double('hide-delay')*1000);
-            hideDelay.set_increments(50, 100); 
+            hideDelay.set_increments(50, 100);
             hideDelay.connect('value-changed', Lang.bind(this, function(button){
                 let s = button.get_value_as_int()/1000;
                 this.settings.set_double('hide-delay', s);
@@ -125,7 +161,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     this.settings.bind('dock-fixed', dockSettingsMain1, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
-    let intellihideSubSettings = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
+    let intellihideSubSettings = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:0, margin_right:10});
     indentWidget(intellihideSubSettings);
 
     let perappIntellihide =  new Gtk.CheckButton({label: _("Application based intellihide")});
@@ -136,9 +172,61 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     intellihideSubSettings.add(perappIntellihide);
 
+
+    /* PRESSURE SETTINGS */
+
+    let requirePressureControl = new Gtk.Box({margin_left:10, margin_top:0, margin_bottom:0, margin_right:10});
+    let requirePressureContainer = new Gtk.Box({margin_left:10, margin_top:0, margin_bottom:10, margin_right:10});
+    indentWidget(requirePressureControl);
+    indentWidget(requirePressureContainer);
+
+
+    let requirePressureButton = new Gtk.CheckButton({
+        label: _("Require pressure to show the dock"),
+        margin_left: 0,
+        margin_top: 0
+    });
+    requirePressureButton.set_active(this.settings.get_boolean('require-pressure-to-show'));
+    requirePressureButton.connect('toggled', Lang.bind(this, function(check) {
+        this.settings.set_boolean('require-pressure-to-show', check.get_active());
+    }));
+
+    let pressureThresholdLabel = new Gtk.Label({
+        label: _("Pressure threshold (px)"),
+        use_markup: true,
+        xalign: 0,
+        margin_top: 0,
+        hexpand: true
+    });
+
+    let pressureThresholdSpinner = new Gtk.SpinButton({
+        halign: Gtk.Align.END,
+        margin_top: 0
+    });
+    pressureThresholdSpinner.set_sensitive(true);
+    pressureThresholdSpinner.set_range(10, 500);
+    pressureThresholdSpinner.set_value(this.settings.get_double("pressure-threshold") * 1);
+    pressureThresholdSpinner.set_increments(10, 20);
+    pressureThresholdSpinner.connect("value-changed", Lang.bind(this, function(button) {
+        let s = button.get_value_as_int() / 1;
+        this.settings.set_double("pressure-threshold", s);
+    }));
+
+    requirePressureControl.add(requirePressureButton);
+    requirePressureContainer.add(pressureThresholdLabel);
+    requirePressureContainer.add(pressureThresholdSpinner);
+
+    this.settings.bind('require-pressure-to-show', pressureThresholdLabel, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+    this.settings.bind('require-pressure-to-show', pressureThresholdSpinner, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+
+
+
     this.settings.bind('dock-fixed', intellihideSubSettings, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
     this.settings.bind('dock-fixed', perappIntellihide, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
     this.settings.bind('intellihide', intellihideSubSettings, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+    this.settings.bind('autohide', requirePressureControl, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+    this.settings.bind('autohide', requirePressureContainer, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+
 
     /* POISITION AND SIZE */
 
@@ -207,9 +295,13 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     dockSettingsMain2.add(dockHeightMain);
 
+    dockSettings.add(placementPosition);
     dockSettings.add(dockSettingsControl1);
     dockSettings.add(dockSettingsMain1);
     dockSettings.add(intellihideSubSettings);
+    dockSettings.add(requirePressureControl);
+    dockSettings.add(requirePressureContainer);
+
     dockSettings.add(dockMonitor);
     dockSettings.add(dockSettingsMain2);
 
@@ -271,7 +363,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
     showIcons.add(showFavorites);
     showIcons.add(showRunning);
     showIcons.add(showAppsAtTop);
-    
+
     dockSettings.add(showIcons);
 
     notebook.append_page(dockSettings, dockSettingsTitle);
@@ -280,58 +372,6 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
     let customization = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
     let customizationTitle = new Gtk.Label({label: _("Optional features")});
-
-    /* OPAQUE LAYER */
-
-    let opaqueLayerControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
-
-    let opaqueLayerLabel = new Gtk.Label({label: _("Customize the dock background opacity"), xalign: 0, hexpand:true});
-    let opaqueLayer = new Gtk.Switch({halign:Gtk.Align.END});
-            opaqueLayer.set_active(this.settings.get_boolean('opaque-background'));
-            opaqueLayer.connect('notify::active', Lang.bind(this, function(check){
-                this.settings.set_boolean('opaque-background', check.get_active());
-            }));
-
-
-    opaqueLayerControl.add(opaqueLayerLabel);
-    opaqueLayerControl.add(opaqueLayer);
-    customization.add(opaqueLayerControl);
-
-    let opaqueLayerMain = new Gtk.Box({spacing:30, orientation:Gtk.Orientation.HORIZONTAL, homogeneous:false,
-                                       margin:10});
-    indentWidget(opaqueLayerMain);
-
-    let opacityLayerTimeout=0; // Used to avoid to continuosly update the opacity
-    let layerOpacityLabel = new Gtk.Label({label: _("Opacity"), use_markup: true, xalign: 0});
-    let layerOpacity =  new Gtk.Scale({orientation: Gtk.Orientation.HORIZONTAL, valuePos: Gtk.PositionType.RIGHT});
-        layerOpacity.set_range(0, 100);
-        layerOpacity.set_value(this.settings.get_double('background-opacity')*100);
-        layerOpacity.set_digits(0);
-        layerOpacity.set_increments(5,5);
-        layerOpacity.set_size_request(200, -1);
-        layerOpacity.connect('value-changed', Lang.bind(this, function(button){
-            let s = button.get_value()/100;
-            if(opacityLayerTimeout>0)
-                Mainloop.source_remove(opacityLayerTimeout);
-            opacityLayerTimeout = Mainloop.timeout_add(250, Lang.bind(this, function(){
-                this.settings.set_double('background-opacity', s);
-                return false;
-            }));
-        }));
-     let opaqueLayeralwaysVisible =  new Gtk.CheckButton({label: _("Only when in autohide")});
-        opaqueLayeralwaysVisible.set_active(!this.settings.get_boolean('opaque-background-always'));
-        opaqueLayeralwaysVisible.connect('toggled', Lang.bind(this, function(check){
-            this.settings.set_boolean('opaque-background-always', !check.get_active());
-        }));
-
-    this.settings.bind('opaque-background', opaqueLayerMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
-
-
-    opaqueLayerMain.add(layerOpacityLabel);
-    opaqueLayerMain.add(layerOpacity);
-    opaqueLayerMain.add(opaqueLayeralwaysVisible);
-
-    customization.add(opaqueLayerMain);
 
     /* SWITCH WORKSPACE */
 
@@ -452,6 +492,126 @@ const WorkspaceSettingsWidget = new GObject.Class({
     notebook.append_page(customization, customizationTitle);
 
 
+    /* APPEARENCE AND THEME PAGE */
+
+    let appearence = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
+    let appearenceTitle = new Gtk.Label({label: _("Appearence and Themes")});
+
+    let infoLabel1 = new Gtk.Label({label: _("A customized theme is built in the extension. " +
+        "This is meant to work with the default Adwaita theme: the dash is shrunk to save " +
+        "space, its background transparency reduced, and custom indicators for the number " +
+        "of windows of each application are added."),
+                                              margin: 10, xalign: 0, hexpand:false, max_width_chars: 80});
+    infoLabel1.set_line_wrap(true);
+    appearence.add(infoLabel1);
+
+    /* CUSTOM THEME */
+    let customThemeControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
+
+    let customThemeLabel = new Gtk.Label({label: _("Apply built in custom theme"),
+                                              xalign: 0, hexpand:true});
+    let customTheme = new Gtk.Switch({halign:Gtk.Align.END});
+            customTheme.set_active(this.settings.get_boolean('apply-custom-theme'));
+            customTheme.connect('notify::active', Lang.bind(this, function(check){
+                this.settings.set_boolean('apply-custom-theme', check.get_active());
+            }));
+
+    customThemeControl.add(customThemeLabel)
+    customThemeControl.add(customTheme)
+    appearence.add(customThemeControl);
+
+
+    let infoLabel2 = new Gtk.Label({label: _("Alternatively, for a better integration with custom themes, each " +
+        "customization can be applied indipendently"),
+                                              margin: 10, xalign: 0, hexpand:false, max_width_chars: 80});
+    infoLabel2.set_line_wrap(true);
+    appearence.add(infoLabel2);
+
+
+    let customThemeShrinkControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
+
+    let customThemeShrinkLabel = new Gtk.Label({label: _("Shrink the dash size by reducing padding"),
+                                              xalign: 0, hexpand:true});
+    let customThemeShrink = new Gtk.Switch({halign:Gtk.Align.END});
+            customThemeShrink.set_active(this.settings.get_boolean('custom-theme-shrink'));
+            customThemeShrink.connect('notify::active', Lang.bind(this, function(check){
+                this.settings.set_boolean('custom-theme-shrink', check.get_active());
+            }));
+
+    customThemeShrinkControl.add(customThemeShrinkLabel)
+    customThemeShrinkControl.add(customThemeShrink)
+    appearence.add(customThemeShrinkControl);
+
+    this.settings.bind('apply-custom-theme', customThemeShrinkControl, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+
+    let customThemeRunningDotsControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
+
+    let customThemeRunningDotsLabel = new Gtk.Label({label: _("Show indicators for the number of windows of each application"),
+                                              xalign: 0, hexpand:true});
+    let customThemeRunningDots = new Gtk.Switch({halign:Gtk.Align.END});
+            customThemeRunningDots.set_active(this.settings.get_boolean('custom-theme-running-dots'));
+            customThemeRunningDots.connect('notify::active', Lang.bind(this, function(check){
+                this.settings.set_boolean('custom-theme-running-dots', check.get_active());
+            }));
+
+    customThemeRunningDotsControl.add(customThemeRunningDotsLabel)
+    customThemeRunningDotsControl.add(customThemeRunningDots)
+    appearence.add(customThemeRunningDotsControl);
+
+    this.settings.bind('apply-custom-theme', customThemeRunningDotsControl, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+
+    /* OPAQUE LAYER */
+
+    let opaqueLayerControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:10, margin_right:10});
+
+    let opaqueLayerLabel = new Gtk.Label({label: _("Customize the dock background opacity"), xalign: 0, hexpand:true});
+    let opaqueLayer = new Gtk.Switch({halign:Gtk.Align.END});
+            opaqueLayer.set_active(this.settings.get_boolean('opaque-background'));
+            opaqueLayer.connect('notify::active', Lang.bind(this, function(check){
+                this.settings.set_boolean('opaque-background', check.get_active());
+            }));
+
+
+    opaqueLayerControl.add(opaqueLayerLabel);
+    opaqueLayerControl.add(opaqueLayer);
+
+    let opaqueLayerMain = new Gtk.Box({spacing:30, orientation:Gtk.Orientation.HORIZONTAL, homogeneous:false,
+                                       margin:10});
+    indentWidget(opaqueLayerMain);
+
+    let opacityLayerTimeout=0; // Used to avoid to continuosly update the opacity
+    let layerOpacityLabel = new Gtk.Label({label: _("Opacity"), use_markup: true, xalign: 0});
+    let layerOpacity =  new Gtk.Scale({orientation: Gtk.Orientation.HORIZONTAL, valuePos: Gtk.PositionType.RIGHT});
+        layerOpacity.set_range(0, 100);
+        layerOpacity.set_value(this.settings.get_double('background-opacity')*100);
+        layerOpacity.set_digits(0);
+        layerOpacity.set_increments(5,5);
+        layerOpacity.set_size_request(200, -1);
+        layerOpacity.connect('value-changed', Lang.bind(this, function(button){
+            let s = button.get_value()/100;
+            if(opacityLayerTimeout>0)
+                Mainloop.source_remove(opacityLayerTimeout);
+            opacityLayerTimeout = Mainloop.timeout_add(250, Lang.bind(this, function(){
+                this.settings.set_double('background-opacity', s);
+                return false;
+            }));
+        }));
+
+    opaqueLayerMain.add(layerOpacityLabel);
+    opaqueLayerMain.add(layerOpacity);
+
+    let opaqueLayerContainer = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
+
+    opaqueLayerContainer.add(opaqueLayerControl);
+    opaqueLayerContainer.add(opaqueLayerMain);
+
+    this.settings.bind('opaque-background', opaqueLayerMain, 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+    this.settings.bind('apply-custom-theme', opaqueLayerContainer, 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+
+    appearence.add(opaqueLayerContainer);
+
+
+    notebook.append_page(appearence, appearenceTitle);
 /*
     let OptionalFeaturesTitle = new Gtk.Label({label: _("Optional Features")});
     let OptionalFeatures = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
