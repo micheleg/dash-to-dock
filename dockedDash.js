@@ -277,6 +277,11 @@ const dockedDash = new Lang.Class({
                 'page-changed',
                 Lang.bind(this, this._pageChanged)
             ],
+            [
+                Main.overview.viewSelector,
+                'page-empty',
+                Lang.bind(this, this._onPageEmpty)
+            ],
             // Ensure the ShowAppsButton status is kept in sync
             [
                 Main.overview.viewSelector._showAppsButton,
@@ -939,6 +944,26 @@ const dockedDash = new Lang.Class({
         } else {
             this._animateOut(this._settings.get_double('animation-time'), 0);
         }
+    },
+
+    _onPageEmpty: function() {
+        /* The dash spacer is required only in the WINDOWS view.
+         * The 'page-empty' signal is emitted in between a change of view,
+         * signalling the spacer can be added and removed without visible effect,
+         * as it's done for the upstream dashSpacer.
+         *
+         * Moreover, hiding the spacer ensure the appGrid allocaton is triggered.
+         * This matter as the appview spring animation is triggered by to first reallocaton of the appGrid,
+         * (See appDisplay.js, line 202 on GNOME Shell 3.14:
+         *                             this._grid.actor.connect('notify::allocation', ...)
+         * which in turn seems to be triggered by changes in the other actors in the overview.
+         * Normally, as far as I could understand, either the dashSpacer being hidden or the workspacesThumbnails
+         * sliding out would trigger the allocation. However, with no stock dash
+         * and no thumbnails, which happen if the user configured only 1 and static workspace,
+         * the animation out of icons is not played.
+         */
+        let activePage = Main.overview.viewSelector.getActivePage();
+        this._dashSpacer.visible = (activePage == ViewSelector.ViewPage.WINDOWS);
     },
 
     // Show dock and give key focus to it
