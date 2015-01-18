@@ -947,7 +947,7 @@ const dockedDash = new Lang.Class({
     },
 
     _onPageEmpty: function() {
-        /* The dash spacer is required only in the WINDOWS view.
+        /* The dash spacer is required only in the WINDOWS view if in the default position.
          * The 'page-empty' signal is emitted in between a change of view,
          * signalling the spacer can be added and removed without visible effect,
          * as it's done for the upstream dashSpacer.
@@ -962,8 +962,9 @@ const dockedDash = new Lang.Class({
          * and no thumbnails, which happen if the user configured only 1 and static workspace,
          * the animation out of icons is not played.
          */
+
         let activePage = Main.overview.viewSelector.getActivePage();
-        this._dashSpacer.visible = (activePage == ViewSelector.ViewPage.WINDOWS);
+        this._dashSpacer.visible = (this._isHorizontal || activePage == ViewSelector.ViewPage.WINDOWS);
     },
 
     // Show dock and give key focus to it
