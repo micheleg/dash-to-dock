@@ -173,4 +173,5 @@
 
 #dashtodockContainer.dashtodock:overview #dash {
     background: rgba(0,0,0,0.5);
+    transition-duration: 250ms;
 }
