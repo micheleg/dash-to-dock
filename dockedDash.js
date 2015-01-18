@@ -994,12 +994,29 @@ const dockedDash = new Lang.Class({
                 }
                 selector._showAppsButton.checked = true;
             } else {
+                selector._showAppsButton.checked = false;
                 if (this.forcedOverview) {
                     // force exiting overview if needed
-                    Main.overview.hide();
-                    this.forcedOverview = false;
+
+                    let visibleView;
+                    Main.overview.viewSelector.appDisplay._views.every(function(v, index) {
+                        if (v.view.actor.visible) {
+                            visibleView = index;
+                            return false;
+                        } else {
+                          return true;
+                        }
+                    });
+
+                    let grid = Main.overview.viewSelector.appDisplay._views[visibleView].view._grid;
+                    let animationDoneId  =  grid.connect('animation-done',
+                        Lang.bind(this, function() {
+                            grid.disconnect(animationDoneId);
+                            Main.overview.hide();
+                            this.forcedOverview = false;
+                        }))
                 }
-                selector._showAppsButton.checked = false;
+
             }
         }
 
