@@ -344,13 +344,17 @@ const dockedDash = new Lang.Class({
         // However tha same workaround doesn't work.
         Main.overview._controls._dashSlider.actor.hide();
 
-        // Also set dash width to 0, so it's not taken into account by code calculaing the reserved space in the overview
-        Main.overview._controls.dash.actor.set_width(0);
+        // Also set dash width to 1, so it's almost not taken into account by code
+        // calculaing the reserved space in the overview. The reason to keep it at 1 is
+        // to allow its visibility change to trigger an allocaion of the appGrid which
+        // in turn is triggergin the appsIcon spring animation, required when no other
+        // actors has this effect, i.e in horizontal mode and without the workspaceThumnails
+        // 1 static workspace only)
+        Main.overview._controls.dash.actor.set_width(1);
 
-        // Manage the DashSpacer which is used to reserve space in the overview for the dock
-        // Replace the current dashSpacer with a new one pointing at the dashtodock dash
-        // and positioned according to the dash positioning. It gets restored on extension unload.
-        Main.overview._controls._dashSpacer.destroy();
+        // Manage the  which is used to reserve space in the overview for the dock
+        // Add and additional dashSpacer positioned according to the dash positioning.
+        // It gets restored on extension unload.
         this._dashSpacer = new OverviewControls.DashSpacer();
         this._dashSpacer.setDashActor(this._box);
 
@@ -433,11 +437,8 @@ const dockedDash = new Lang.Class({
         // Remove existing barrier
         this._removeBarrier();
 
-        // Restore the default dashSpacer and link it to the standard dash
+        // Remove the dashSpacer
         this._dashSpacer.destroy();
-        Main.overview._controls._dashSpacer = new OverviewControls.DashSpacer();
-        Main.overview._controls._group.insert_child_at_index(Main.overview._controls._dashSpacer, 0);
-        Main.overview._controls._dashSpacer.setDashActor(Main.overview._controls._dashSlider.actor);
 
         // Reshow normal dash previously hidden, restore panel position if changed.
         Main.overview._controls._dashSlider.actor.show();
