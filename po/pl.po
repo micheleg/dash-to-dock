@@ -1,14 +1,15 @@
 # Polish translation for dash-to-dock GNOME Shell extension
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Piotr Sokół <psokol@jabster.pl>, 2012, 2013.
 # 
+# Piotr Sokół <psokol@jabster.pl>, 2012, 2013, 2015.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-01-05 17:11+0000\n"
-"PO-Revision-Date: 2013-01-01 14:53+0100\n"
+"PO-Revision-Date: 2015-01-18 20:03+0100\n"
 "Last-Translator: Piotr Sokół <psokol@jabster.pl>\n"
 "Language-Team: polski <>\n"
 "Language: pl\n"
@@ -17,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bits\n"
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : ((n%10>=2 && n%10<=4 && (n"
 "%100<10 || n%100>=20)) ? 1 : 2));\n"
-"X-Generator: Gtranslator 2.91.5\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
 #: prefs.js:34
 msgid "Main Settings"
@@ -25,27 +26,27 @@ msgstr "Ogólne"
 
 #: prefs.js:43
 msgid "Dock Position"
-msgstr ""
+msgstr "Położenie paska"
 
 #: prefs.js:47
 msgid "Top"
-msgstr ""
+msgstr "Góra"
 
 #: prefs.js:51 prefs.js:60
 msgid "Left"
-msgstr ""
+msgstr "Lewo"
 
 #: prefs.js:53 prefs.js:58
 msgid "Right"
-msgstr ""
+msgstr "Prawo"
 
 #: prefs.js:55
 msgid "Bottom"
-msgstr ""
+msgstr "Dół"
 
 #: prefs.js:79
 msgid "Dock is fixed and always visible"
-msgstr "Zawsze widoczny dok"
+msgstr "Zawsze widoczny pasek"
 
 #: prefs.js:95
 msgid "Animation time [ms]"
@@ -73,15 +74,15 @@ msgstr "Ukrywanie tylko przed uaktywnionymi oknami"
 
 #: prefs.js:185
 msgid "Require pressure to show the dock"
-msgstr ""
+msgstr "Wymagany nacisk do wyświetlenia paska"
 
 #: prefs.js:195
 msgid "Pressure threshold (px)"
-msgstr ""
+msgstr "Próg nacisku (px)"
 
 #: prefs.js:234
 msgid "Show the dock on following monitor (if attached)"
-msgstr "Wyświetlanie doku na podłączonym ekranie"
+msgstr "Wyświetlanie paska na podłączonym ekranie"
 
 #: prefs.js:236
 msgid "Primary (default)"
@@ -137,15 +138,15 @@ msgstr "64"
 
 #: prefs.js:347
 msgid "Show favorite application icons"
-msgstr "Wyświetlanie ikon ulubionych programów"
+msgstr "Ikony ulubionych programów"
 
 #: prefs.js:352
 msgid "Show running application icons"
-msgstr "Wyświetlanie ikon uruchomionych programów"
+msgstr "Ikony uruchomionych programów"
 
 #: prefs.js:357
 msgid "Show applications button at the top"
-msgstr ""
+msgstr "Przycisk programów z drugiej strony"
 
 #: prefs.js:374
 msgid "Optional features"
@@ -161,7 +162,7 @@ msgstr "Ograniczenie do jednego obszaru na raz"
 
 #: prefs.js:400
 msgid "Deadtime between each workspace switching [ms]"
-msgstr ""
+msgstr "Opóźnienie przełączenia pomiędzy obszarami roboczymi [ms]"
 
 #: prefs.js:411
 msgid "Only a 1px wide area close to the screen edge is active"
@@ -170,11 +171,11 @@ msgstr ""
 
 #: prefs.js:417
 msgid "All the area of the dock is active"
-msgstr "Aktywny cały obszar doku"
+msgstr "Aktywny cały obszar paska"
 
 #: prefs.js:446
 msgid "Customize actions on mouse click"
-msgstr "Dostosowanie działania  kliknięcia myszą"
+msgstr "Dostosowanie kliknięcia przyciskiem myszy"
 
 #: prefs.js:461
 msgid "Action on clicking on running app"
@@ -190,7 +191,7 @@ msgstr "Zminimalizowanie okna"
 
 #: prefs.js:465
 msgid "Launch new window"
-msgstr "Otworzenie nowego okna"
+msgstr "Otwarcie nowego okna"
 
 #: prefs.js:466
 msgid "Cycle through application windows"
@@ -199,12 +200,12 @@ msgstr "Przełączenie pomiędzy oknami"
 #: prefs.js:477
 msgid "Minimize window on shift+click (double click for all app windows)"
 msgstr ""
-"Minimalizowanie okien po kliknięciu icony z przytrzymanym klawiszem shift\n"
+"Minimalizowanie okien kliknięciem z przytrzymanym klawiszem shift\n"
 "(dwukrotne kliknięcie minimalizuje wszystkie okna programu)"
 
 #: prefs.js:498
 msgid "Appearence and Themes"
-msgstr ""
+msgstr "Wygląd"
 
 #: prefs.js:500
 msgid ""
@@ -213,28 +214,33 @@ msgid ""
 "transparency reduced, and custom indicators for the number of windows of "
 "each application are added."
 msgstr ""
+"Wraz z rozszerzeniem udostępniony jest zmodyfikowany styl paska, "
+"zaprojektowany do działania z domyślnym stylem Adwaita: pasek został "
+"zmniejszony, zredukowano jego przezroczystość i dodano wskaźniki ilości "
+"okien programów."
 
 #: prefs.js:511
 msgid "Apply built in custom theme"
-msgstr ""
+msgstr "Użycie zintegrowanego stylu"
 
 #: prefs.js:524
 msgid ""
 "Alternatively, for a better integration with custom themes, each "
 "customization can be applied indipendently"
 msgstr ""
+"Dla lepszego dopasowania do stylu, każdą z cech można dostosować niezależnie."
 
 #: prefs.js:533
 msgid "Shrink the dash size by reducing padding"
-msgstr ""
+msgstr "Zmniejszenie odległości krawędzi"
 
 #: prefs.js:549
 msgid "Show indicators for the number of windows of each application"
-msgstr ""
+msgstr "Wskaźniki ilości okien"
 
 #: prefs.js:567
 msgid "Customize the dock background opacity"
-msgstr "Dostosowanie przezroczystości tła doku"
+msgstr "Dostosowanie przezroczystości tła"
 
 #: prefs.js:583
 msgid "Opacity"
