@@ -350,7 +350,7 @@ const myDash = new Lang.Class({
         this._position = getPosition(settings);
         this._isHorizontal = ( this._position == St.Side.TOP ||
                                this._position == St.Side.BOTTOM );
-        this._signalHandler = new Convenience.globalSignalHandler();
+        this._signalsHandler = new Convenience.GlobalSignalsHandler();
 
         this._dragPlaceholder = null;
         this._dragPlaceholderPos = -1;
@@ -390,7 +390,7 @@ const myDash = new Lang.Class({
 
         this._appSystem = Shell.AppSystem.get_default();
 
-        this._signalHandler.push(
+        this._signalsHandler.add(
             [
                 this._appSystem,
                 'installed-changed',
@@ -431,7 +431,7 @@ const myDash = new Lang.Class({
     },
 
     destroy: function() {
-        this._signalHandler.disconnect();
+        this._signalsHandler.destroy();
     },
 
     _onDragBegin: function() {
