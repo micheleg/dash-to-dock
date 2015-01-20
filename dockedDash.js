@@ -27,8 +27,6 @@ const MyDash = Me.imports.myDash;
 
 const PRESSURE_TIMEOUT = 1000;
 
-let _myDwell = 0;
-
 /* Return the actual position reverseing left and right in rtl */
 function getPosition(settings) {
     let position = settings.get_enum('dock-position');
@@ -308,6 +306,8 @@ const dockedDash = new Lang.Class({
             ]
         );
 
+        this._injectionsHandler = new Convenience.InjectionsHandler();
+
         //Hide the dock whilst setting positions
         //this.actor.hide(); but I need to access its width, so I use opacity
         this.actor.set_opacity(0);
@@ -431,6 +431,8 @@ const dockedDash = new Lang.Class({
         this._signalsHandler.destroy();
         // The dash has global signals as well internally
         this.dash.destroy();
+
+        this._injectionsHandler.destroy();
 
         // Destroy main clutter actor: this should be sufficient removing it and
         // destroying  all its children
@@ -1204,26 +1206,32 @@ const dockedDash = new Lang.Class({
         }
     },
 
-    // Makes the message not show. SOURCE: insensitive-tray extension.
+    // Makes the message not being triggered by mouse. SOURCE: insensitive-tray extension.
     _updateInsensitiveTray: function() {
-        if (this._settings.get_boolean('insensitive-message-tray')) {
-            if("_trayPressure" in LayoutManager) {
+
+        let insensitive = this._settings.get_boolean('insensitive-message-tray');
+
+        if("_trayPressure" in LayoutManager) {
+            // Systems supporting pressure
+            if (insensitive) {
                 LayoutManager._trayPressure._keybindingMode = null;
-                //Shell.KeyBindingMode.OVERVIEW;
+            } else {
+                LayoutManager._trayPressure._keybindingMode =  Shell.KeyBindingMode.NORMAL 
+                                                              | Shell.KeyBindingMode.OVERVIEW;
             }
-				
-            _myDwell = MessageTray._trayDwellTimeout;
-            MessageTray._trayDwellTimeout = function() { return false; };			
         } else {
-            if("_trayPressure" in LayoutManager) {
-                LayoutManager._trayPressure._keybindingMode = 
-                Shell.KeyBindingMode.NORMAL | Shell.KeyBindingMode.OVERVIEW;
+            //systems using the old dwell mechanism
+            if (insensitive) {
+                this._injectionsHandler.addWithLabel('insensitive-message-tray',
+                    [
+                        Main.messageTray,
+                        '_trayDwellTimeout',
+                        function() { return false; }
+                    ]
+                );
+            } else {
+                this._injectionsHandler.removeWithLabel('insensitive-message-tray')
             }
-    
-            if(_myDwell) {
-                MessageTray._trayDwellTimeout = _myDwell;
-                _myDwell = 0;
-            }			
         }
     }
 });
