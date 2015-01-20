@@ -75,56 +75,79 @@ function getSettings(schema) {
     return new Gio.Settings({ settings_schema: schemaObj });
 }
 
-// try to simplify global signals handling
-const globalSignalHandler = new Lang.Class({
-    Name: 'dashToDock.globalSignalHandler',
+// simplify global signals and function injections handling
+// abstract class
+const BasicHandler = new Lang.Class({
+    Name: 'dashToDock.BasicHandler',
 
     _init: function(){
-        this._signals = new Object();
+        this._storage = new Object();
     },
 
-    push: function(/*unlimited 3-long array arguments*/){
-        this._addSignals('generic', arguments);
+    add: function(/*unlimited 3-long array arguments*/){
+
+        // convert arguments object to array, concatenate with generic
+        let args = Array.concat('generic', Array.slice(arguments));
+        // call addWithLabel with ags as if they were passed arguments
+        this.addWithLabel.apply(this, args);
     },
 
-    disconnect: function() {
-        for( let label in this._signals )
-            this.disconnectWithLabel(label);
+    destroy: function() {
+        for( let label in this._storage )
+            this.removeWithLabel(label);
     },
 
-    pushWithLabel: function( label /* plus unlimited 3-long array arguments*/) {
+    addWithLabel: function( label /* plus unlimited 3-long array arguments*/) {
 
-        // skip first element of thearguments array;
-        let elements = new Array;
-        for(let i = 1 ; i< arguments.length; i++)
-            elements.push(arguments[i]);
+        if(this._storage[label] == undefined)
+            this._storage[label] = new Array();
 
-        this._addSignals(label, elements);
-    },
-
-    _addSignals: function(label, elements) {
-        if(this._signals[label] == undefined)
-            this._signals[label] = new Array();
-
-        for( let i = 0; i < elements.length; i++ ) { 
-            let object = elements[i][0];
-            let event = elements[i][1];
-
-            let id = object.connect(event, elements[i][2]);
-            this._signals[label].push( [ object , id ] );
+        // skip first element of the arguments
+        for( let i = 1; i < arguments.length; i++ ) {
+            this._storage[label].push( this._create(arguments[i]) );
         }
+
     },
 
-    disconnectWithLabel: function(label) {
+    removeWithLabel: function(label){
 
-        if(this._signals[label]) {
-            for( let i = 0; i < this._signals[label].length; i++ ) {
-                this._signals[label][i][0].disconnect(this._signals[label][i][1]);
+        if(this._storage[label]) {
+            for( let i = 0; i < this._storage[label].length; i++ ) {
+                this._remove(this._storage[label][i]);
             }
 
-            delete this._signals[label];
+            delete this._storage[label];
         }
+    },
+
+    /* Virtual methods to be implemented by subclass */
+    // create single element to be stored in the storage structure
+    _create: function(item){
+      throw new Error('no implementation of _create in ' + this);
+    },
+
+    // correctly delete single element
+    _remove: function(item){
+      throw new Error('no implementation of _remove in ' + this);
     }
+});
 
+// Manage global signals
+const GlobalSignalsHandler = new Lang.Class({
+    Name: 'DashToDock.GlobalSignalHandler',
+    Extends: BasicHandler,
 
+    _create: function(item) {
+
+      let object = item[0];
+      let event = item[1];
+      let callback = item[2]
+      let id = object.connect(event, callback);
+
+      return [object, id];
+    },
+
+    _remove: function(item){
+       item[0].disconnect(item[1]);
+    }
 });

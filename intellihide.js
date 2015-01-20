@@ -41,7 +41,7 @@ const intellihide = new Lang.Class({
         this._settings = settings;
         this._bindSettingsChanges();
 
-        this._signalHandler = new Convenience.globalSignalHandler();
+        this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._tracker = Shell.WindowTracker.get_default();
         this._focusApp = null;
 
@@ -60,7 +60,7 @@ const intellihide = new Lang.Class({
         this._windowChangedTimeout = 0;
 
         // Connect global signals
-        this._signalHandler.push(
+        this._signalsHandler.add(
             // call updateVisibility when target actor changes
             [
                 this._target,
@@ -131,7 +131,7 @@ const intellihide = new Lang.Class({
     destroy: function() {
 
         // Disconnect global signals
-        this._signalHandler.disconnect();
+        this._signalsHandler.destroy();
 
         if(this._windowChangedTimeout>0)
             Mainloop.source_remove(this._windowChangedTimeout); // Just to be sure
