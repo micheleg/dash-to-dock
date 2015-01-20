@@ -246,8 +246,8 @@ const dockedDash = new Lang.Class({
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
 
         // Connect global signals
-        this._signalHandler = new Convenience.globalSignalHandler();
-        this._signalHandler.push(
+        this._signalsHandler = new Convenience.GlobalSignalsHandler();
+        this._signalsHandler.add(
             [
                 Main.overview,
                 'item-drag-begin',
@@ -424,7 +424,7 @@ const dockedDash = new Lang.Class({
     destroy: function(){
 
         // Disconnect global signals
-        this._signalHandler.disconnect();
+        this._signalsHandler.destroy();
         // The dash has global signals as well internally
         this.dash.destroy();
 
@@ -1040,9 +1040,9 @@ const dockedDash = new Lang.Class({
 
         function enable(){
 
-            this._signalHandler.disconnectWithLabel(label);
+            this._signalsHandler.removeWithLabel(label);
 
-            this._signalHandler.pushWithLabel(label,
+            this._signalsHandler.addWithLabel(label,
                 [
                     this._box,
                     'scroll-event',
@@ -1054,7 +1054,7 @@ const dockedDash = new Lang.Class({
         }
 
         function disable() {
-            this._signalHandler.disconnectWithLabel(label);
+            this._signalsHandler.removeWithLabel(label);
 
             if(this._optionalScrollWorkspaceSwitchDeadTimeId>0){
                 Mainloop.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
@@ -1310,8 +1310,8 @@ const themeManager = new Lang.Class({
         this._defaultBackgroundColor = {red: 0, green:0, blue: 0, alpha:0};
         this._customizedBackground = {red: 0, green:0, blue: 0, alpha:0};
 
-        this._signalHandler = new Convenience.globalSignalHandler();
-        this._signalHandler.push(
+        this._signalsHandler = new Convenience.GlobalSignalsHandler();
+        this._signalsHandler.add(
             // When theme changes re-obtain default background color
             [
               St.ThemeContext.get_for_stage (global.stage),
@@ -1336,7 +1336,7 @@ const themeManager = new Lang.Class({
     },
 
     destroy: function() {
-        this._signalHandler.disconnect();
+        this._signalsHandler.destroy();
     },
 
     _onOverviewShowing: function() {
