@@ -411,6 +411,7 @@ const myDashActor = new Lang.Class({
  * - Add scrollview
  *   Ensure actor is visible on keyfocus inseid the scrollview
  * - add 128px icon size, might be usefull for hidpi display
+ * - Sync minimization application target position.
  */
 
 const baseIconSizes = [ 16, 22, 24, 32, 48, 64, 96, 128 ];
@@ -493,6 +494,15 @@ const myDash = new Lang.Class({
                     this._maxHeight = this.actor.height;
                 }));
         }
+
+        // Update minimization animation target position on allocation of the
+        // container, which includes change in position of a children
+        this._container.connect('notify::allocation', Lang.bind(this, function() {
+            let appIcons = this._getAppIcons();
+            appIcons.forEach(function(icon){
+                icon.updateIconGeometry();
+            });
+        }));
 
         this._workId = Main.initializeDeferredWork(this._box, Lang.bind(this, this._redisplay));
 
@@ -690,10 +700,12 @@ const myDash = new Lang.Class({
                         }));
 
         let item = new Dash.DashItemContainer();
+
         extendDashItemContainer(item, this._dtdSettings);
         item.setChild(appIcon.actor);
 
 
+        item.setChild(appIcon.actor);
         appIcon.actor.connect('notify::hover', Lang.bind(this, function() {
             if (appIcon.actor.hover){
                 this._ensureAppIconVisibilityTimeoutId = Mainloop.timeout_add(100, Lang.bind(this, function(){
@@ -1271,6 +1283,7 @@ Signals.addSignalMethods(myDash.prototype);
  *   like the original .running one.
  * - add a .focused style to the focused app
  * - Customize click actions.
+ * - Update minimization animation target
  *
  */
 
@@ -1309,7 +1322,7 @@ const myAppIcon = new Lang.Class({
 
         this._stateChangedId = this.app.connect('windows-changed',
                                                 Lang.bind(this,
-                                                          this._updateRunningStyle));
+                                                          this.onWindowsChanged));
         this._focuseAppChangeId = tracker.connect('notify::focus-app',
                                                 Lang.bind(this,
                                                           this._onFocusAppChanged));
@@ -1323,6 +1336,28 @@ const myAppIcon = new Lang.Class({
         // stateChangedId is already handled by parent)
         if(this._focusAppId>0)
             tracker.disconnect(this._focusAppId);
+    },
+
+    onWindowsChanged: function() {
+
+      this._updateRunningStyle();
+      this.updateIconGeometry();
+
+    },
+
+    // Update taraget for minimization animation
+    updateIconGeometry: function() {
+
+        let rect = new Meta.Rectangle();
+
+        [rect.x, rect.y] = this.actor.get_transformed_position();
+        [rect.width, rect.height] = this.actor.get_transformed_size();
+
+        let windows = this.app.get_windows();
+        windows.forEach(function(w) {
+            w.set_icon_geometry(rect);
+        });
+
     },
 
     _updateRunningStyle: function() {
