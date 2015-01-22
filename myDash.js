@@ -423,8 +423,6 @@ const myDash = new Lang.Class({
             ]
         );
 
-        this.setMaxIconSize(this._settings.get_int('dash-max-icon-size'));
-
     },
 
     destroy: function() {
