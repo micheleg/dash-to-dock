@@ -14,7 +14,7 @@ const Convenience = Me.imports.convenience;
 // A good compromise between reactivity and efficiency; to be tuned.
 const INTELLIHIDE_CHECK_INTERVAL = 100;
 
-const overlapStatus = {
+const OverlapStatus = {
     UNDEFINED: -1,
     FALSE: 0,
     TRUE: 1
@@ -52,7 +52,7 @@ const intellihide = new Lang.Class({
         this._focusApp = null;
 
         this._isEnabled = false;
-        this._status = overlapStatus.UNDEFINED;
+        this.status = OverlapStatus.UNDEFINED;
         this._targetBox = null;
 
         // Main id of the timeout controlling timeout for updateDockVisibility function 
@@ -91,7 +91,6 @@ const intellihide = new Lang.Class({
                 Lang.bind(this, this._checkOverlap)
             ],
             // update wne monitor changes, for instance in multimonitor when monitor are attached
-            // TODO: move to the parent using object
             [
                 global.screen,
                 'monitors-changed',
@@ -114,7 +113,7 @@ const intellihide = new Lang.Class({
     enable: function() {
 
       this._isEnabled = true;
-      this._status = overlapStatus.UNDEFINED;
+      this._status = OverlapStatus.UNDEFINED;
       this._checkOverlap();
     },
 
@@ -122,6 +121,7 @@ const intellihide = new Lang.Class({
         this._isEnabled = false;
         if(this._windowChangedTimeout>0)
             Mainloop.source_remove(this._windowChangedTimeout);
+        this._windowChangedTimeout = 0;
     },
 
     updateTargetBox: function(box) {
@@ -130,8 +130,15 @@ const intellihide = new Lang.Class({
     },
 
     forceUpdate: function() {
-        this._overlapStatus.UNDEFINED;
+        this._status = OverlapStatus.UNDEFINED;
         this._checkOverlap();
+    },
+
+    getOverlapStatus: function(){
+        if(this._status == OverlapStatus.TRUE)
+            return true;
+        else
+            return false;
     },
 
     _grabOpBegin: function() {
@@ -162,7 +169,7 @@ const intellihide = new Lang.Class({
         if( !this._isEnabled || this._targetBox == null)
             return;
 
-        let overlaps = overlapStatus.FALSE;
+        let overlaps = OverlapStatus.FALSE;
         let windows = global.get_window_actors();
 
         if (windows.length>0){
@@ -186,18 +193,18 @@ const intellihide = new Lang.Class({
                                ( rect.y +rect.height > this._targetBox.y1 );
 
                     if(test){
-                        overlaps = overlapStatus.TRUE;
+                        overlaps = OverlapStatus.TRUE;
                         break;
                     }
                 }
             }
         }
 
-        //??? USE GET SET ::NOTIFY?
         if ( this._status !== overlaps ) {
             this._status = overlaps;
             this.emit('status-changed', this._status);
         }
+
     },
 
     // Filter interesting windows to be considered for intellihide.

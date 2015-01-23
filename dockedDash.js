@@ -195,8 +195,12 @@ const dockedDash = new Lang.Class({
         this._isHorizontal = ( this._position == St.Side.TOP ||
                                this._position == St.Side.BOTTOM );
 
-        // authohide current status. Not to be confused with autohide enable/disagle global (g)settings
-        this._autohideStatus = this._settings.get_boolean('autohide') && !this._settings.get_boolean('dock-fixed');
+        // Temporary ignore hover events linked to autohide for whatever reason
+        this._ignoreHover = false;
+        // This variables are linked to the settings regardles of autohide or intellihide
+        // being temporary disable. Get set by _updateVisibilityMode;
+        this._autohideIsEnabled = null;
+        this._intellihideIsEnabled = null;
 
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.intellihide(this._settings);
@@ -275,7 +279,12 @@ const dockedDash = new Lang.Class({
             [
                 Main.overview,
                 'showing',
-                Lang.bind(this, this.disableAutoHide)
+                Lang.bind(this, this._onOverviewShowing)
+            ],
+            [
+                Main.overview,
+                'hiding',
+                Lang.bind(this, this._onOverviewHiding)
             ],
             // Hide on appview
             [
@@ -313,7 +322,7 @@ const dockedDash = new Lang.Class({
             [
                 this._intellihide,
                 'status-changed',
-                Lang.bind(this, this._onIntellihideStatusChanged)
+                Lang.bind(this, this._updateDashVisibility)
             ]
         );
 
@@ -405,7 +414,6 @@ const dockedDash = new Lang.Class({
         let index = Main.layoutManager._findActor(this._slider);
         Main.layoutManager._trackedActors[index].isToplevel = true ;
 
-        this._updateDashVisibility();
     },
 
     _initialize: function(){
@@ -425,6 +433,8 @@ const dockedDash = new Lang.Class({
         //animate a null target since some variables are not initialized when the viewSelector is created
         if(Main.overview.viewSelector._activePage == null)
                 Main.overview.viewSelector._activePage = Main.overview.viewSelector._workspacesPage;
+
+        this._updateVisibilityMode();
 
         // Show 
         this.actor.set_opacity(255); //this.actor.show();
@@ -502,16 +512,17 @@ const dockedDash = new Lang.Class({
             // Add or remove barrier depending on if dock-fixed
             this._updateBarrier();
 
-            this._updateDashVisibility();
+            this._updateVisibilityMode();
         }));
 
-        this._settings.connect('changed::intellihide', Lang.bind(this, this._updateDashVisibility));
+        this._settings.connect('changed::intellihide', Lang.bind(this, this._updateVisibilityMode));
 
         this._settings.connect('changed::intellihide-perapp', Lang.bind(this, function(){
             this._intellihide.forceUpdate();
         }));
 
         this._settings.connect('changed::autohide', Lang.bind(this, function(){
+            this._updateVisibilityMode();
             this._updateBarrier();
         }));
         this._settings.connect('changed::extend-height', Lang.bind(this,this._resetPosition));
@@ -526,45 +537,108 @@ const dockedDash = new Lang.Class({
 
     },
 
+    // This is call when visibility settings change
+    _updateVisibilityMode: function() {
+
+        if (this._settings.get_boolean('dock-fixed')) {
+            this._fixedIsEnabled = true;
+            this._autohideIsEnabled = false;
+            this._intellihideIsEnabled = false;
+        } else {
+            this._fixedIsEnabled = false;
+            this._autohideIsEnabled = this._settings.get_boolean('autohide')
+            this._intellihideIsEnabled = this._settings.get_boolean('intellihide')
+        }
+
+        if (this._intellihideIsEnabled)
+            this._intellihide.enable();
+        else
+            this._intellihide.disable();
+
+        this._updateDashVisibility();
+    },
+
+    /* Show/hide dash based on, in order of priority:
+     * overview visibility
+     * fixed mode
+     * intellihide
+     * autohide
+     * overview visibility
+     */
     _updateDashVisibility: function() {
 
-        if(this._settings.get_boolean('dock-fixed')){
-            this._intellihide.disable();
-            this._disableAutohide();
+        if (Main.overview.visibleTarget)
+            return;
+
+        if ( this._fixedIsEnabled ) {
+            this._removeAnimations();
+            this._animateIn(this._settings.get_double('animation-time'), 0);
+        } else if (this._intellihideIsEnabled) {
+            if ( this._intellihide.getOverlapStatus() ) {
+                this._ignoreHover = false;
+                // Do not hide if autohide is enabled and mouse is hover
+                if (!this._box.hover || !this._autohideIsEnabled) {
+                    this._removeAnimations();
+                    this._animateOut(this._settings.get_double('animation-time'), 0);
+                }
+            } else {
+                this._ignoreHover = true;
+                this._removeAnimations();
+                this._animateIn(this._settings.get_double('animation-time'), 0);
+            }
         } else {
-            this._enableAutohide();
-            if (this._settings.get_boolean('intellihide'))
-                this._intellihide.enable();
-            else
-                this._intellihide.disable();
+            if (this._autohideIsEnabled) {
+                this._ignoreHover = false;
+                global.sync_pointer();
+                this._hoverChanged();
+            } else {
+                this._removeAnimations();
+                this._animateOut(this._settings.get_double('animation-time'), 0);
+            }
         }
+    },
+
+    _onOverviewShowing: function() {
+        this._ignoreHover = true;
+        this._intellihide.disable();
+        this._removeAnimations();
+        this._animateIn(this._settings.get_double('animation-time'), 0);
+    },
+
+    _onOverviewHiding: function() {
+        this._ignoreHover = false;
+        this._intellihide.enable();
+        this._updateDashVisibility();
     },
 
     _hoverChanged: function() {
 
-        // Ignore hover if pressure barrier being used but pressureSensed not triggered
-        if (this._canUsePressure && this._settings.get_boolean('require-pressure-to-show') && this._barrier) {
-            if (this._pressureSensed == false) {
-                return;
-            }
-        }
+        if (!this._ignoreHover) {
 
-        // Skip if dock is not in autohide mode for instance because it is shown
-        // by intellihide.
-        if(this._settings.get_boolean('autohide') && this._autohideStatus) {
-            if( this._box.hover ) {
-                this._show();
-            } else {
-                this._hide();
+            // Ignore hover if pressure barrier being used but pressureSensed not triggered
+            if (this._canUsePressure && this._settings.get_boolean('require-pressure-to-show') && this._barrier) {
+                if (this._pressureSensed == false) {
+                    return;
+                }
+            }
+
+            // Skip if dock is not in autohide mode for instance because it is shown
+            // by intellihide.
+            if(this._autohideIsEnabled) {
+                if( this._box.hover ) {
+                    this._show();
+                } else {
+                    this._hide();
+                }
             }
         }
     },
 
-    _show: function() {  
+    _show: function() {
 
         var anim = this._animStatus;
 
-        if( this._autohideStatus && ( anim.hidden() || anim.hiding() ) ){
+        if(  anim.hidden() || anim.hiding()  ){
 
             let delay;
             // If the dock is hidden, wait this._settings.get_double('show-delay') before showing it; 
@@ -587,7 +661,7 @@ const dockedDash = new Lang.Class({
         var anim = this._animStatus;
 
         // If no hiding animation is running or queued
-        if( this._autohideStatus && (anim.showing() || anim.shown()) ){
+        if( anim.showing() || anim.shown() ){
 
             let delay;
 
@@ -752,7 +826,7 @@ const dockedDash = new Lang.Class({
 
         // Create new barrier
         // Note: dash in fixed position doesn't use pressure barrier
-        if (this._slider.visible && this._canUsePressure && this._settings.get_boolean('autohide') && this._settings.get_boolean('require-pressure-to-show') && !this._settings.get_boolean('dock-fixed') && !this._messageTrayShowing) {
+        if (this._slider.visible && this._canUsePressure && this._autohideIsEnabled && this._settings.get_boolean('require-pressure-to-show') && !this._messageTrayShowing) {
             let x1, x2, y1, y2, direction;
 
             if(this._position==St.Side.LEFT){
@@ -807,11 +881,10 @@ const dockedDash = new Lang.Class({
         let unavailableBottomSpace = 0;
 
         let extendHeight = this._settings.get_boolean('extend-height');
-        let dockFixed = this._settings.get_boolean('dock-fixed');
 
         // check if the dock is on the primary monitor
         if (this._isPrimaryMonitor()){
-          if (!extendHeight || !dockFixed) {
+          if (!extendHeight || this._fixedIsEnabled) {
               unavailableTopSpace = Main.panel.actor.height;
           }
           // Reserve space for the dash on the overview
@@ -897,10 +970,9 @@ const dockedDash = new Lang.Class({
     // Shift panel position to extend the dash to the full monitor height
     _updateMainPanel: function() {
         let extendHeight = this._settings.get_boolean('extend-height');
-        let dockFixed = this._settings.get_boolean('dock-fixed');
         let panelActor = Main.panel.actor;
 
-        if (!this._isHorizontal && this._isPrimaryMonitor() && extendHeight && dockFixed) {
+        if (!this._isHorizontal && this._isPrimaryMonitor() && extendHeight && this._fixedIsEnabled) {
             panelActor.set_width(this._monitor.width - this._box.width);
             if (this._rtl) {
                 panelActor.set_margin_right(this._box.width - 1);
@@ -961,14 +1033,14 @@ const dockedDash = new Lang.Class({
     },
 
     _onDragStart: function(){
-        this._oldAutohideStatus = this._autohideStatus;
-        this._autohideStatus = false;
+        this._oldignoreHover = this._ignoreHover;
+        this._ignoreHover = true;
         this._animateIn(this._settings.get_double('animation-time'), 0);
     },
 
     _onDragEnd: function(){
-        if(this._oldAutohideStatus)
-            this._autohideStatus  = this._oldAutohideStatus;
+        if(this._oldignoreHover)
+          this._ignoreHover  = this._oldignoreHover;
         this._box.sync_hover();
         if(Main.overview._shown)
             this._pageChanged();
@@ -1248,34 +1320,6 @@ const dockedDash = new Lang.Class({
 
     },
 
-    // Disable autohide effect, thus show dash
-    _disableAutohide: function() {
-        if(this._autohideStatus==true){
-            this._autohideStatus = false;
-
-            this._removeAnimations();
-            this._animateIn(this._settings.get_double('animation-time'), 0);
-        }
-    },
-
-    // Enable autohide effect, hide dash
-    _enableAutohide: function() {
-
-        if(this._autohideStatus==false){
-
-            this._autohideStatus = true;
-
-
-            if(this._box.hover==true)
-                this._box.sync_hover();
-
-            if( !this._box.hover || !this._settings.get_boolean('autohide')) {
-                this._removeAnimations();
-                this._animateOut(this._settings.get_double('animation-time'), 0);
-            }
-        }
-    },
-
     // Makes the message not being triggered by mouse. SOURCE: insensitive-tray extension.
     _updateInsensitiveTray: function() {
 
@@ -1302,14 +1346,6 @@ const dockedDash = new Lang.Class({
             } else {
                 this._injectionsHandler.removeWithLabel('insensitive-message-tray')
             }
-        }
-    },
-
-    _onIntellihideStatusChanged: function(obj, status) {
-        if(status) {
-            this._enableAutohide();
-        } else {
-            this._disableAutohide();
         }
     }
 });
