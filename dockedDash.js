@@ -207,7 +207,7 @@ const dockedDash = new Lang.Class({
         this._intellihide = new Intellihide.intellihide(this._settings);
 
         // initialize animation status object
-        this._animStatus = new animationStatus(true);
+        this._animStatus = new animationStatus(false);
 
         /* status variable: true when the overview is shown through the dash
          * applications button.
@@ -247,7 +247,7 @@ const dockedDash = new Lang.Class({
         this.actor._delegate = this;
 
         // This is the sliding actor whose allocation is to be tracked for input regions
-        this._slider = new DashSlideContainer({side: this._position});
+        this._slider = new DashSlideContainer({side: this._position, initialSlideValue: 0});
 
         // This is the actor whose hover status us tracked for autohide
         this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true } );
@@ -328,11 +328,6 @@ const dockedDash = new Lang.Class({
         );
 
         this._injectionsHandler = new Convenience.InjectionsHandler();
-
-        //Hide the dock whilst setting positions
-        //this.actor.hide(); but I need to access its width, so I use opacity
-        this.actor.set_opacity(0);
-
         this._themeManager = new themeManager(this._settings, this.actor, this.dash);
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
@@ -430,15 +425,14 @@ const dockedDash = new Lang.Class({
         // Apply custome css class according to the settings
         this._themeManager.updateCustomTheme();
 
+        this.dash.setMaxIconSize(this._settings.get_int('dash-max-icon-size'));
+
         // Since Gnome 3.8 dragging an app without having opened the overview before cause the attemp to
         //animate a null target since some variables are not initialized when the viewSelector is created
         if(Main.overview.viewSelector._activePage == null)
                 Main.overview.viewSelector._activePage = Main.overview.viewSelector._workspacesPage;
 
         this._updateVisibilityMode();
-
-        // Show 
-        this.actor.set_opacity(255); //this.actor.show();
 
         // Setup pressure barrier (GS38+ only)
         this._updatePressureBarrier();
