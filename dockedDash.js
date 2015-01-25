@@ -995,17 +995,30 @@ const dockedDash = new Lang.Class({
         if(selector._showAppsButton.checked !== this.dash.showAppsButton.checked){
 
             if(this.dash.showAppsButton.checked){
+                // force entering overview if needed
                 if (!Main.overview._shown) {
-                    // force entering overview if needed
+
+                    // Go to the appView before entering the overview, skipping the workspaces
+                    // view
+                    selector._showAppsButton.checked = true;
+
+                    // Animate in the the appview
+                    let view = Main.overview.viewSelector.appDisplay._views[1].view;
+                    let grid = view._grid;
+                    grid.actor.opacity = 255;
+                    grid.animateSpring(0, this.dash.showAppsButton);
+
+                    // Finally show the overview
                     Main.overview.show();
                     this.forcedOverview = true;
+                } else {
+                    selector._showAppsButton.checked = true;
                 }
-                selector._showAppsButton.checked = true;
             } else {
-                selector._showAppsButton.checked = false;
                 if (this.forcedOverview) {
                     // force exiting overview if needed
 
+                    // find visible view
                     let visibleView;
                     Main.overview.viewSelector.appDisplay._views.every(function(v, index) {
                         if (v.view.actor.visible) {
@@ -1016,13 +1029,27 @@ const dockedDash = new Lang.Class({
                         }
                     });
 
-                    let grid = Main.overview.viewSelector.appDisplay._views[visibleView].view._grid;
+                    /* Manually trigger springout animation without activating the
+                       workspaceView to avoid the zoomout animation. Set opacity
+                       to zero to the grid onComplete to avoid ugly flashing of original icons.
+                    */
+                    let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
+                    let grid = view._grid;
+                    view.animate(1, function(){
+                                        grid.actor.opacity = 0;
+                                });
+
+                    // wait for the animation to finish, thus hide the overview
                     let animationDoneId  =  grid.connect('animation-done',
                         Lang.bind(this, function() {
                             grid.disconnect(animationDoneId);
                             Main.overview.hide();
+                            selector._showAppsButton.checked = false;
                             this.forcedOverview = false;
                         }))
+
+                } else {
+                    selector._showAppsButton.checked = false;
                 }
 
             }
