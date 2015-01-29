@@ -232,6 +232,9 @@ const dockedDash = new Lang.Class({
         // Create a new dash object
         this.dash = new MyDash.myDash(this._settings);
 
+        // set stored icon size  to the new dash
+        Main.overview.dashIconSize = this.dash.iconSize;
+
         // connect app icon into the view selector
         this.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
 
@@ -324,6 +327,26 @@ const dockedDash = new Lang.Class({
                 this._intellihide,
                 'status-changed',
                 Lang.bind(this, this._updateDashVisibility)
+            ],
+            // Keep dragged icon consistent in size with this dash
+            [
+                this.dash,
+                'icon-size-changed',
+                Lang.bind(this, function() {
+                    Main.overview.dashIconSize = this.dash.iconSize;
+                })
+            ],
+            // This duplicate the similar signal which is in owerview.js.
+            // Being connected and thus executed later this effectively
+            // overwrite any attempt to use the size of the default dash
+            //which given the customization is usually much smaller.
+            // I can't easily disconnect the original signal
+            [
+                Main.overview._controls.dash,
+                'icon-size-changed',
+                Lang.bind(this, function() {
+                    Main.overview.dashIconSize = this.dash.iconSize;
+                })
             ]
         );
 
@@ -361,7 +384,7 @@ const dockedDash = new Lang.Class({
         // Hiding the parent container seems to work properly instead
         // I don't know if it's linked with this bug: https://bugzilla.gnome.org/show_bug.cgi?id=692744.
         // However tha same workaround doesn't work.
-        Main.overview._controls._dashSlider.actor.hide();
+        Main.overview._dash.actor.hide();
 
         // Also set dash width to 1, so it's almost not taken into account by code
         // calculaing the reserved space in the overview. The reason to keep it at 1 is
@@ -467,8 +490,11 @@ const dockedDash = new Lang.Class({
         this._dashSpacer.destroy();
 
         // Reshow normal dash previously hidden, restore panel position if changed.
-        Main.overview._controls._dashSlider.actor.show();
+        Main.overview._dash.actor.show();
         Main.overview._controls.dash.actor.set_width(-1); //reset default dash size
+
+        // reset stored icon size  to the default dash
+        Main.overview.dashIconSize = Main.overview._controls.dash.iconSize;
         this._revertMainPanel();
     },
 
