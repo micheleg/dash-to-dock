@@ -901,7 +901,7 @@ const dockedDash = new Lang.Class({
 
         // check if the dock is on the primary monitor
         if (this._isPrimaryMonitor()){
-          if (!extendHeight || this._fixedIsEnabled) {
+          if (!extendHeight || !this._fixedIsEnabled) {
               unavailableTopSpace = Main.panel.actor.height;
           }
           // Reserve space for the dash on the overview
