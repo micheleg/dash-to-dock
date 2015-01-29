@@ -378,12 +378,7 @@ const dockedDash = new Lang.Class({
         this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
 
         // Hide usual Dash
-        // For some reason if I hide the actor object as I used to do before reshowing it when disabling
-        // the extension leads to the dash being placed in the center of the overview.
-        // Hiding the parent container seems to work properly instead
-        // I don't know if it's linked with this bug: https://bugzilla.gnome.org/show_bug.cgi?id=692744.
-        // However tha same workaround doesn't work.
-        Main.overview._dash.actor.hide();
+        Main.overview._controls.dash.actor.hide();
 
         // Also set dash width to 0, so it's not taken into account by code calculaing the reserved space in the overview
         Main.overview._controls.dash.actor.set_width(0);
@@ -488,7 +483,7 @@ const dockedDash = new Lang.Class({
         Main.overview._controls._dashSpacer.setDashActor(Main.overview._controls._dashSlider.actor);
 
         // Reshow normal dash previously hidden, restore panel position if changed.
-        Main.overview._dash.actor.show();
+        Main.overview._controls.dash.actor.show();
         Main.overview._controls.dash.actor.set_width(-1); //reset default dash size
 
         // reset stored icon size  to the default dash
