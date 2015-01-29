@@ -200,6 +200,7 @@ const dockedDash = new Lang.Class({
         // being temporary disable. Get set by _updateVisibilityMode;
         this._autohideIsEnabled = null;
         this._intellihideIsEnabled = null;
+        this._fixedIsEnabled = null;
 
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.intellihide(this._settings);
@@ -872,6 +873,9 @@ const dockedDash = new Lang.Class({
     },
 
     _resetPosition: function() {
+
+        // Ensure variables linked to settings are updated.
+        this._updateVisibilityMode();
 
         this._monitor = this._getMonitor();
 
