@@ -55,7 +55,7 @@ function getPosition(settings) {
 */
 
 const DashSlideContainer = new Lang.Class({
-    Name: 'DashSlideContainer',
+    Name: 'DashSlideContainer_v'+Me.metadata.version,
     Extends: Clutter.Actor,
 
     _init: function(params) {
