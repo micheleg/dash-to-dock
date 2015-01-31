@@ -76,7 +76,7 @@ const myAppIconMenu = new Lang.Class({
  *
  */
 const myDashItemContainer = new Lang.Class({
-    Name: 'dashToDockDashItemContainer',
+    Name: 'dashToDockDashItemContainer_v'+Me.metadata.version,
     Extends: Dash.DashItemContainer,
 
     _init: function(settings) {
@@ -248,7 +248,7 @@ Signals.addSignalMethods(myShowAppsIcon.prototype);
  * - handle horizontal dash
  */
 const myDashActor = new Lang.Class({
-    Name: 'DashToDockmyDashActor',
+    Name: 'DashToDockmyDashActor_v'+Me.metadata.version,
     Extends: St.Widget,
 
     _init: function(settings) {
