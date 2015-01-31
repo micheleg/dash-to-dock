@@ -995,11 +995,22 @@ const dockedDash = new Lang.Class({
 
         if(selector._showAppsButton.checked !== this.dash.showAppsButton.checked){
 
+            // find visible view
+            let visibleView;
+            Main.overview.viewSelector.appDisplay._views.every(function(v, index) {
+                if (v.view.actor.visible) {
+                    visibleView = index;
+                    return false;
+                } else {
+                  return true;
+                }
+            });
+
             if(this.dash.showAppsButton.checked){
                 // force entering overview if needed
                 if (!Main.overview._shown) {
 
-                    let view = Main.overview.viewSelector.appDisplay._views[1].view;
+                    let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
                     let grid = view._grid;
 
                     // Animate in the the appview, hide the appGrid to avoiud flashing
@@ -1035,17 +1046,6 @@ const dockedDash = new Lang.Class({
             } else {
                 if (this.forcedOverview) {
                     // force exiting overview if needed
-
-                    // find visible view
-                    let visibleView;
-                    Main.overview.viewSelector.appDisplay._views.every(function(v, index) {
-                        if (v.view.actor.visible) {
-                            visibleView = index;
-                            return false;
-                        } else {
-                          return true;
-                        }
-                    });
 
                     // Manually trigger springout animation without activating the
                     // workspaceView to avoid the zoomout animation. Hide the appPage
