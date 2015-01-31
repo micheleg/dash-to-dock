@@ -414,7 +414,7 @@ const dockedDash = new Lang.Class({
         // accept dnd of app icons when not in overiew mode, although the default
         // behavior is to keep newly added chrome elements below the the
         // top_window_group.
-        this.actor.raise(global.top_window_group);
+        Main.layoutManager.uiGroup.set_child_below_sibling(this.actor,Main.layoutManager.modalDialogGroup);
 
         if ( this._settings.get_boolean('dock-fixed') )
           Main.layoutManager._trackActor(this.dash.actor, {affectsStruts: true});
@@ -777,7 +777,7 @@ const dockedDash = new Lang.Class({
     _onMessageTrayShowing: function() {
 
         // Temporary move the dash below the top panel so that it slide below it.
-        this.actor.lower(Main.layoutManager.panelBox);
+        Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.panelBox);
 
         // Remove other tweens that could mess with the state machine
         Tweener.removeTweens(this.actor);
@@ -800,7 +800,7 @@ const dockedDash = new Lang.Class({
               transition: 'easeOutQuad',
               onComplete: Lang.bind(this, function(){
                   // Reset desired dash stack order (on top to accept dnd of app icons)
-                  this.actor.raise(global.top_window_group);
+                  Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
                 })
             });
 
