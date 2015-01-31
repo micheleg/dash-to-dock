@@ -174,7 +174,7 @@ const myShowAppsIconMenu = new Lang.Class({
  * - implement a popupMenu based on the AppIcon code
  */
 const myShowAppsIcon = new Lang.Class({
-    Name: 'dashToDockShowAppsIcon',
+    Name: 'dashToDockShowAppsIcon_v'+Me.metadata.version,
     Extends: Dash.ShowAppsIcon,
 
     _init: function(settings) {
