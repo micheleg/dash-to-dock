@@ -343,7 +343,7 @@ const myDash = new Lang.Class({
     _init : function(settings) {
         this._maxHeight = -1;
         this.iconSize = 64;
-        this._avaiableIconSize = Dash.baseIconSizes;
+        this._availableIconSizes = Dash.baseIconSizes;
         this._shownInitially = false;
 
         this._settings = settings;
@@ -639,7 +639,7 @@ const myDash = new Lang.Class({
         [minWidth, natWidth] = firstButton.get_preferred_height(-1);
 
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let iconSizes = Dash.baseIconSizes.map(function(s) {
+        let iconSizes = this._availableIconSizes.map(function(s) {
             return s * scaleFactor;
         });
 
@@ -654,12 +654,11 @@ const myDash = new Lang.Class({
 
         let availSize = availHeight / iconChildren.length;
 
-        let iconSizes = this._avaiableIconSize;
 
-        let newIconSize = this._avaiableIconSize[0];
+        let newIconSize = this._availableIconSizes[0];
         for (let i = 0; i < iconSizes.length; i++) {
             if (iconSizes[i] < availSize)
-                newIconSize = Dash.baseIconSizes[i];
+                newIconSize = this._availableIconSizes[i];
         }
 
         if (newIconSize == this.iconSize)
@@ -841,14 +840,14 @@ const myDash = new Lang.Class({
 
         if( size>=Dash.baseIconSizes[0] ){
 
-            this._avaiableIconSize = Dash.baseIconSizes.filter(
+            this._availableIconSizes = Dash.baseIconSizes.filter(
                 function(val){
                     return (val<=size);
                 }
             );
 
         } else {
-            this._availableIconSize = [ Dash.baseIconSizes[0] ];
+            this._availableIconSizes = [ Dash.baseIconSizes[0] ];
         }
 
         // Changing too rapidly icon size settings cause the whole Shell to freeze
