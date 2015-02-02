@@ -379,8 +379,10 @@ const myDash = new Lang.Class({
 
         this._container.add_actor(this._showAppsIcon);
 
+        let rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
         this.actor = new St.Bin({ child: this._container,
-            y_align: St.Align.START, x_align: St.Align.START });
+            y_align: St.Align.START, x_align:rtl?St.Align.END:St.Align.START
+        });
 
         if(this._isHorizontal) {
             this.actor.connect('notify::width', Lang.bind(this,
