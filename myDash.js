@@ -331,7 +331,6 @@ const myDashActor = new Lang.Class({
  * - set a maximum icon size
  * - show running and/or favorite applications
  * - emit a custom signal when an app icon is added
- * - add a functon to set the dash max size, instead of using an external bindconstrain
  * - hide showApps label when the custom menu is shown.
  */
 const myDash = new Lang.Class({
@@ -380,6 +379,22 @@ const myDash = new Lang.Class({
 
         this.actor = new St.Bin({ child: this._container,
             y_align: St.Align.START, x_align: St.Align.START });
+
+        if(this._isHorizontal) {
+            this.actor.connect('notify::width', Lang.bind(this,
+                function() {
+                    if (this._maxHeight != this.actor.width)
+                        this._queueRedisplay();
+                    this._maxHeight = this.actor.width;
+                }));
+        } else {
+            this.actor.connect('notify::height', Lang.bind(this,
+                function() {
+                    if (this._maxHeight != this.actor.height)
+                        this._queueRedisplay();
+                    this._maxHeight = this.actor.height;
+                }));
+        }
 
         this._workId = Main.initializeDeferredWork(this._box, Lang.bind(this, this._redisplay));
 
@@ -844,15 +859,6 @@ const myDash = new Lang.Class({
 
         this._redisplay();
 
-    },
-
-    // Set max height from outside instead ob putting a BindConstrain on the the
-    // dash actor. I'm not sure what was the original idea, but it's giving me
-    // me problem with the rtl positioning in horizontal mode. This seems simpler.
-    setMaxSize: function(size) {
-      // size is max height or max width depending on the dash orientation
-      this._maxHeight = size;
-      this._queueRedisplay();
     },
 
     // Reset the displayed apps icon to mantain the correct order when changing
