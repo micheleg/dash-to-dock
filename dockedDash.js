@@ -255,6 +255,11 @@ const dockedDash = new Lang.Class({
         this._box = new St.BoxLayout({ name: 'dashtodockBox', reactive: true, track_hover:true } );
         this._box.connect("notify::hover", Lang.bind(this, this._hoverChanged));
 
+        // Create and apply height constraint to the dash. It's controlled by this.actor height
+        this.constrainSize = new Clutter.BindConstraint({ source: this.actor,
+          coordinate: this._isHorizontal?Clutter.BindCoordinate.WIDTH:Clutter.BindCoordinate.HEIGHT });
+        this.dash.actor.add_constraint(this.constrainSize);
+
         // Connect global signals
         this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._signalsHandler.add(
@@ -974,12 +979,6 @@ const dockedDash = new Lang.Class({
         }
 
         this._y0 = this.actor.y;
-
-        // Set dash max height/width depending on the orientation
-        if(this._isHorizontal)
-          this.dash.setMaxSize(this.actor.width);
-        else
-          this.dash.setMaxSize(this.actor.height);
 
         this._updateStaticBox();
     },
