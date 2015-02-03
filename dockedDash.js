@@ -380,7 +380,7 @@ const dockedDash = new Lang.Class({
          // Delay operations that require the shell to be fully loaded and with
          // user theme applied.
 
-        this._realizeId = this.actor.connect("realize", Lang.bind(this, this._initialize));
+        this._paintId = this.actor.connect("paint", Lang.bind(this, this._initialize));
 
         // Hide usual Dash
         Main.overview._controls.dash.actor.hide();
@@ -432,9 +432,9 @@ const dockedDash = new Lang.Class({
 
     _initialize: function(){
 
-        if(this._realizeId>0){
-            this.actor.disconnect(this._realizeId);
-            this._realizeId=0;
+        if(this._paintId>0){
+            this.actor.disconnect(this._paintId);
+            this._paintId=0;
         }
 
         // Set initial position
