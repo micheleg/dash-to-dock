@@ -234,10 +234,14 @@ const intellihide = new Lang.Class({
 
             let currentApp = this._tracker.get_window_app(meta_win);
 
-            // But consider half maximized windows
-            // Useful if one is using two apps side by side
-            if( this._focusApp != currentApp && !(meta_win.maximized_vertically && !meta_win.maximized_horizontally) )
+            // But consider half maximized windows ( Useful if one is using
+            // two apps side by side and windows which are alwayson top
+            if( this._focusApp != currentApp
+                && !(meta_win.maximized_vertically && !meta_win.maximized_horizontally)
+                && !meta_win.is_above()
+              ) {
                 return false;
+            }
         }
 
         if ( wksp_index == currentWorkspace && meta_win.showing_on_its_workspace() ) {
