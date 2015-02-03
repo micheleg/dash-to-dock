@@ -428,6 +428,9 @@ const dockedDash = new Lang.Class({
         let index = Main.layoutManager._findActor(this._slider);
         Main.layoutManager._trackedActors[index].isToplevel = true ;
 
+        // Set initial position
+        this._resetPosition();
+
     },
 
     _initialize: function(){
@@ -437,8 +440,6 @@ const dockedDash = new Lang.Class({
             this._paintId=0;
         }
 
-        // Set initial position
-        this._resetPosition();
 
         // Apply custome css class according to the settings
         this._themeManager.updateCustomTheme();
