@@ -1,0 +1,242 @@
+# Russian translation for dash-to-dock GNOME Shell extension
+#
+# vantu5z <vantu5z@mail.ru>, 2015.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: dash-to-dock\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2015-02-09 13:13+0300\n"
+"Last-Translator: vantu5z <vantu5z@mail.ru>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"X-Generator: Gtranslator 2.91.6\n"
+
+#: prefs.js:34
+msgid "Main Settings"
+msgstr "Основные настройки"
+
+#: prefs.js:43
+msgid "Dock Position"
+msgstr "Расположение Дока"
+
+#: prefs.js:47
+msgid "Top"
+msgstr "Сверху"
+
+#: prefs.js:51 prefs.js:60
+msgid "Left"
+msgstr "Слева"
+
+#: prefs.js:53 prefs.js:58
+msgid "Right"
+msgstr "Справа"
+
+#: prefs.js:55
+msgid "Bottom"
+msgstr "Снизу"
+
+#: prefs.js:79
+msgid "Dock is fixed and always visible"
+msgstr "Док зафиксирован и всегда виден"
+
+#: prefs.js:95
+msgid "Animation time [ms]"
+msgstr "Время анимации [мс]"
+
+#: prefs.js:106
+msgid "Show delay [ms]"
+msgstr "Задержка перед появлением [мс]"
+
+#: prefs.js:117
+msgid "Hide delay [ms]"
+msgstr "Задержка перед скрытием [мс]"
+
+#: prefs.js:132
+msgid "Autohide"
+msgstr "Автоскрытие"
+
+#: prefs.js:139
+msgid "intellihide"
+msgstr "Интеллектуальное скрытие"
+
+#: prefs.js:167
+msgid "Application based intellihide"
+msgstr "Интеллектуальное скрытие действует только для активных окон"
+
+#: prefs.js:185
+msgid "Require pressure to show the dock"
+msgstr "Требуется давление для появления Дока"
+
+#: prefs.js:195
+msgid "Pressure threshold (px)"
+msgstr "Порог давления (пикселей)"
+
+#: prefs.js:234
+msgid "Show the dock on following monitor (if attached)"
+msgstr "Показывать Док на следующем мониторе (если подключен)"
+
+#: prefs.js:236
+msgid "Primary (default)"
+msgstr "Главный (по умолчанию)"
+
+#: prefs.js:237
+msgid "1"
+msgstr "1"
+
+#: prefs.js:238
+msgid "2"
+msgstr "2"
+
+#: prefs.js:239
+msgid "3"
+msgstr "3"
+
+#: prefs.js:240
+msgid "4"
+msgstr "4"
+
+#: prefs.js:265
+msgid "Max height"
+msgstr "Максимальная высота"
+
+#: prefs.js:283
+msgid "Expand (experimental and buggy)"
+msgstr "Расширяемый (экспериментально и неустойчиво)"
+
+#: prefs.js:316
+msgid "Maximum icon size"
+msgstr "Максимальный размер иконки"
+
+#: prefs.js:321
+msgid "16"
+msgstr "16"
+
+#: prefs.js:322
+msgid "24"
+msgstr "24"
+
+#: prefs.js:323
+msgid "32"
+msgstr "32"
+
+#: prefs.js:324
+msgid "48"
+msgstr "48"
+
+#: prefs.js:325
+msgid "64"
+msgstr "64"
+
+#: prefs.js:347
+msgid "Show favorite application icons"
+msgstr "Показывать иконки избранных приложений"
+
+#: prefs.js:352
+msgid "Show running application icons"
+msgstr "Показывать иконки запущенных приложений"
+
+#: prefs.js:357
+msgid "Show applications button at the top"
+msgstr "Показывать кнопку \"Приложения\" сверху Дока"
+
+#: prefs.js:374
+msgid "Optional features"
+msgstr "Дополнительные функции"
+
+#: prefs.js:380
+msgid "Switch workspace when scrolling over the dock"
+msgstr "Переключать рабочие столы при \"скролинге\" по Доку"
+
+#: prefs.js:391
+msgid "Switch one workspace at a time"
+msgstr "Переключать один рабочий стол за раз"
+
+#: prefs.js:400
+msgid "Deadtime between each workspace switching [ms]"
+msgstr "Задержка между каждым переключением [мс]"
+
+#: prefs.js:411
+msgid "Only a 1px wide area close to the screen edge is active"
+msgstr "Активная область - 1 пиксель от края экрана"
+
+#: prefs.js:417
+msgid "All the area of the dock is active"
+msgstr "Активен весь Док"
+
+#: prefs.js:446
+msgid "Customize actions on mouse click"
+msgstr "Настройка действий по нажатию мыши"
+
+#: prefs.js:461
+msgid "Action on clicking on running app"
+msgstr "Действие по нажатию на запущенном приложении"
+
+#: prefs.js:463
+msgid "Do nothing (default)"
+msgstr "Ничего не делать (по умолчанию)"
+
+#: prefs.js:464
+msgid "Minimize"
+msgstr "Минимизировать"
+
+#: prefs.js:465
+msgid "Launch new window"
+msgstr "Открыть новое окно"
+
+#: prefs.js:466
+msgid "Cycle through application windows"
+msgstr "Переключение между окнами приложения"
+
+#: prefs.js:477
+msgid "Minimize window on shift+click (double click for all app windows)"
+msgstr ""
+"Минимизировать окно при shift+click (двойное нажатие скрывает все окна "
+"приложений)"
+
+#: prefs.js:498
+msgid "Appearence and Themes"
+msgstr "Отображение и Темы"
+
+#: prefs.js:500
+msgid ""
+"A customized theme is built in the extension. This is meant to work with the "
+"default Adwaita theme: the dash is shrunk to save space, its background "
+"transparency reduced, and custom indicators for the number of windows of "
+"each application are added."
+msgstr ""
+"Тема встроена в расширение. Она оптимизирована для темы Adwaita по "
+"умолчанию: Док сокращен, чтобы уменьшить промежутки; прозрачность фона "
+"снижена; включены индикаторы количества окон приложений."
+
+#: prefs.js:511
+msgid "Apply built in custom theme"
+msgstr "Применить встроенную тему"
+
+#: prefs.js:524
+msgid ""
+"Alternatively, for a better integration with custom themes, each "
+"customization can be applied indipendently"
+msgstr ""
+"В альтернативу, для большей интеграции с пользовательской темой, каждый "
+"параметр можно настроить независимо"
+
+#: prefs.js:533
+msgid "Shrink the dash size by reducing padding"
+msgstr "Уменьшить Док за счёт промежутков"
+
+#: prefs.js:549
+msgid "Show indicators for the number of windows of each application"
+msgstr "Показывать индикаторы количества окон для каждого приложения"
+
+#: prefs.js:567
+msgid "Customize the dock background opacity"
+msgstr "Настройка прозрачности Дока"
+
+#: prefs.js:583
+msgid "Opacity"
+msgstr "Непрозрачность"
