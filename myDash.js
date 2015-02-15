@@ -45,7 +45,8 @@ function getPosition(settings) {
  *
  * - Pass settings to the constructor
  * - set popup arrow side based on dash orientation
- *
+ * - Add close windows option based on quitfromdash extension
+ *   (https://github.com/deuill/shell-extension-quitfromdash)
  */
 
 const myAppIconMenu = new Lang.Class({
@@ -65,6 +66,37 @@ const myAppIconMenu = new Lang.Class({
         this._arrowSide = side;
         this._boxPointer._arrowSide = side;
         this._boxPointer._userArrowSide = side;
+    },
+
+    // helper function for the quit windows abilities
+    _closeWindowInstance: function(metaWindow) {
+        metaWindow.delete(global.get_current_time());
+    },
+
+    _redisplay: function() {
+
+        this.parent();
+
+        // quit menu
+        let app = this._source.app;
+        let count = app.get_n_windows();
+        if ( count > 0) {
+            this._appendSeparator();
+            let quitFromDashMenuText = "";
+            if (count == 1)
+                quitFromDashMenuText = _("Quit");
+            else
+                quitFromDashMenuText = _("Quit " + count + " Windows");
+
+            this._quitfromDashMenuItem = this._appendMenuItem(quitFromDashMenuText);
+            this._quitfromDashMenuItem.connect('activate', Lang.bind(this, function() {
+                let app = this._source.app;
+                let windows = app.get_windows();
+                for (let i = 0; i < windows.length; i++) {
+                    this._closeWindowInstance(windows[i])
+                }
+            }));
+        }
     }
 });
 
