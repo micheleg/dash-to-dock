@@ -794,7 +794,7 @@ const dockedDash = new Lang.Class({
         // Create new pressure barrier based on pressure threshold setting
         if (this._canUsePressure) {
             this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, PRESSURE_TIMEOUT,
-                                Shell.KeyBindingMode.NORMAL | Shell.KeyBindingMode.OVERVIEW);
+                                Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
             this._pressureBarrier.connect('trigger', Lang.bind(this, function(barrier){
                 this._onPressureSensed();
             }));
@@ -1379,10 +1379,10 @@ const dockedDash = new Lang.Class({
         if("_trayPressure" in LayoutManager) {
             // Systems supporting pressure
             if (insensitive) {
-                LayoutManager._trayPressure._keybindingMode = null;
+                LayoutManager._trayPressure._actionMode = null;
             } else {
-                LayoutManager._trayPressure._keybindingMode =  Shell.KeyBindingMode.NORMAL 
-                                                              | Shell.KeyBindingMode.OVERVIEW;
+                LayoutManager._trayPressure._actionMode =  Shell.ActionMode.NORMAL
+                                                              | Shell.ActionMode.OVERVIEW;
             }
         } else {
             //systems using the old dwell mechanism
