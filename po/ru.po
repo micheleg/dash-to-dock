@@ -1,13 +1,14 @@
 # Russian translation for dash-to-dock GNOME Shell extension
-#
-# vantu5z <vantu5z@mail.ru>, 2015.
+# 
+# Ivan Komaritsyn <vantu5z@mail.ru>, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2015-02-09 13:13+0300\n"
-"Last-Translator: vantu5z <vantu5z@mail.ru>\n"
+"POT-Creation-Date: 2015-02-27 17:19+0300\n"
+"PO-Revision-Date: 2015-02-27 18:33+0300\n"
+"Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -58,7 +59,7 @@ msgstr "Задержка перед скрытием [мс]"
 
 #: prefs.js:132
 msgid "Autohide"
-msgstr "Автоскрытие"
+msgstr "Автоматическое скрытие"
 
 #: prefs.js:139
 msgid "intellihide"
@@ -78,7 +79,7 @@ msgstr "Порог давления (пикселей)"
 
 #: prefs.js:234
 msgid "Show the dock on following monitor (if attached)"
-msgstr "Показывать Док на следующем мониторе (если подключен)"
+msgstr "Показывать Док на дополнительном мониторе (если подключен)"
 
 #: prefs.js:236
 msgid "Primary (default)"
@@ -141,8 +142,8 @@ msgid "Show running application icons"
 msgstr "Показывать иконки запущенных приложений"
 
 #: prefs.js:357
-msgid "Show applications button at the top"
-msgstr "Показывать кнопку \"Приложения\" сверху Дока"
+msgid "Show applications button first"
+msgstr "Перенести кнопку \"Приложения\" в начало"
 
 #: prefs.js:374
 msgid "Optional features"
@@ -170,11 +171,11 @@ msgstr "Активен весь Док"
 
 #: prefs.js:446
 msgid "Customize actions on mouse click"
-msgstr "Настройка действий по нажатию мыши"
+msgstr "Настроить действия по нажатию мыши"
 
 #: prefs.js:461
 msgid "Action on clicking on running app"
-msgstr "Действие по нажатию на запущенном приложении"
+msgstr "Действие по нажатию на иконку запущенного приложения"
 
 #: prefs.js:463
 msgid "Do nothing (default)"
@@ -198,11 +199,15 @@ msgstr ""
 "Минимизировать окно при shift+click (двойное нажатие скрывает все окна "
 "приложений)"
 
-#: prefs.js:498
-msgid "Appearence and Themes"
-msgstr "Отображение и Темы"
+#: prefs.js:495
+msgid "Make message tray insensitive to mouse events"
+msgstr "Сделать область сообщений нечувствительной к мыши"
 
-#: prefs.js:500
+#: prefs.js:516
+msgid "Appearence and Themes"
+msgstr "Внешний вид и Темы"
+
+#: prefs.js:518
 msgid ""
 "A customized theme is built in the extension. This is meant to work with the "
 "default Adwaita theme: the dash is shrunk to save space, its background "
@@ -210,33 +215,33 @@ msgid ""
 "each application are added."
 msgstr ""
 "Тема встроена в расширение. Она оптимизирована для темы Adwaita по "
-"умолчанию: Док сокращен, чтобы уменьшить промежутки; прозрачность фона "
-"снижена; включены индикаторы количества окон приложений."
+"умолчанию: Док уменьшен, чтобы сохранить пространство; прозрачность фона "
+"снижена; включены индикаторы количества окон для каждого приложения."
 
-#: prefs.js:511
+#: prefs.js:529
 msgid "Apply built in custom theme"
 msgstr "Применить встроенную тему"
 
-#: prefs.js:524
+#: prefs.js:542
 msgid ""
 "Alternatively, for a better integration with custom themes, each "
 "customization can be applied indipendently"
 msgstr ""
-"В альтернативу, для большей интеграции с пользовательской темой, каждый "
-"параметр можно настроить независимо"
+"Для большей интеграции с пользовательской темой, каждый параметр можно "
+"настроить независимо"
 
-#: prefs.js:533
+#: prefs.js:551
 msgid "Shrink the dash size by reducing padding"
 msgstr "Уменьшить Док за счёт промежутков"
 
-#: prefs.js:549
+#: prefs.js:567
 msgid "Show indicators for the number of windows of each application"
 msgstr "Показывать индикаторы количества окон для каждого приложения"
 
-#: prefs.js:567
+#: prefs.js:585
 msgid "Customize the dock background opacity"
 msgstr "Настройка прозрачности Дока"
 
-#: prefs.js:583
+#: prefs.js:601
 msgid "Opacity"
 msgstr "Непрозрачность"
