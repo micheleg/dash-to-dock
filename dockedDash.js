@@ -12,7 +12,6 @@ const Params = imports.misc.params;
 const Main = imports.ui.main;
 const Dash = imports.ui.dash;
 const IconGrid = imports.ui.iconGrid;
-const MessageTray = imports.ui.messageTray;
 const Overview = imports.ui.overview;
 const OverviewControls = imports.ui.overviewControls;
 const Tweener = imports.ui.tweener;
@@ -233,7 +232,6 @@ const dockedDash = new Lang.Class({
         this._pressureSensed = false;
         this._pressureBarrier = null;
         this._barrier = null;
-        this._messageTrayShowing = false;
         this._removeBarrierTimeoutId = 0;
 
         // Create a new dash object
@@ -320,16 +318,6 @@ const dockedDash = new Lang.Class({
                 Lang.bind(this, this._syncShowAppsButtonToggled)
             ],
             [
-                Main.messageTray,
-                'showing',
-                Lang.bind(this, this._onMessageTrayShowing)
-            ],
-            [
-                Main.messageTray,
-                'hiding',
-                Lang.bind(this, this._onMessageTrayHiding)
-            ],
-            [
                 global.screen,
                 'in-fullscreen-changed',
                 Lang.bind(this, this._onFullscreenChanged)
@@ -407,14 +395,6 @@ const dockedDash = new Lang.Class({
         this._dashSpacer = new OverviewControls.DashSpacer();
         this._dashSpacer.setDashActor(this._box);
 
-        // shift overview messageIndicator for bottom dock
-        this._oldMessageIndicatorPosition = Main.overview._controls._indicator.actor.get_first_child().y;
-        if (this._position ==  St.Side.BOTTOM) {
-          this._dashSpacer.connect('notify::height', Lang.bind(this, function(){
-              Main.overview._controls._indicator.actor.get_first_child().y = -this._dashSpacer.height;
-          }));
-        }
-
         if (this._position ==  St.Side.LEFT)
           Main.overview._controls._group.insert_child_at_index(this._dashSpacer, this._rtl?-1:0); // insert on first
         else if (this._position ==  St.Side.RIGHT)
@@ -474,8 +454,6 @@ const dockedDash = new Lang.Class({
         this._updatePressureBarrier();
         this._updateBarrier();
 
-        // Insensitive Message Tray
-        this._updateInsensitiveTray();
     },
 
     destroy: function(){
@@ -501,9 +479,6 @@ const dockedDash = new Lang.Class({
 
         // Remove the dashSpacer
         this._dashSpacer.destroy();
-
-        // restore messageIndicator position
-        Main.overview._controls._indicator.actor.get_first_child().y = this._oldMessageIndicatorPosition;
 
         // Reshow normal dash previously hidden, restore panel position if changed.
         Main.overview._controls.dash.actor.show();
@@ -567,7 +542,6 @@ const dockedDash = new Lang.Class({
         this._settings.connect('changed::extend-height', Lang.bind(this,this._resetPosition));
         this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
         this._settings.connect('changed::height-fraction', Lang.bind(this,this._resetPosition));
-        this._settings.connect('changed::insensitive-message-tray', Lang.bind(this,this._updateInsensitiveTray));
         this._settings.connect('changed::require-pressure-to-show', Lang.bind(this,this._updateBarrier));
         this._settings.connect('changed::pressure-threshold', Lang.bind(this,function() {
             this._updatePressureBarrier();
@@ -808,40 +782,6 @@ const dockedDash = new Lang.Class({
         this._hoverChanged();
     },
 
-    _onMessageTrayShowing: function() {
-
-        // Temporary move the dash below the top panel so that it slide below it.
-        Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.panelBox);
-
-        // Remove other tweens that could mess with the state machine
-        Tweener.removeTweens(this.actor);
-        Tweener.addTween(this.actor, {
-              y: this._y0 - Main.messageTray.actor.height,
-              time: MessageTray.ANIMATION_TIME,
-              transition: 'easeOutQuad'
-            });
-        this._messageTrayShowing = true;
-        this._updateBarrier();
-    },
-
-    _onMessageTrayHiding: function() {
-
-        // Remove other tweens that could mess with the state machine
-        Tweener.removeTweens(this.actor);
-        Tweener.addTween(this.actor, {
-              y: this._y0,
-              time: MessageTray.ANIMATION_TIME,
-              transition: 'easeOutQuad',
-              onComplete: Lang.bind(this, function(){
-                  // Reset desired dash stack order (on top to accept dnd of app icons)
-                  Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
-                })
-            });
-
-        this._messageTrayShowing = false;
-        this._updateBarrier();
-    },
-
     _onFullscreenChanged: function() {
         if (!this._slider.actor.visible)
             this._updateBarrier();
@@ -874,7 +814,7 @@ const dockedDash = new Lang.Class({
 
         // Create new barrier
         // Note: dash in fixed position doesn't use pressure barrier
-        if (this._slider.actor.visible && this._canUsePressure && this._autohideIsEnabled && this._settings.get_boolean('require-pressure-to-show') && !this._messageTrayShowing) {
+        if (this._slider.actor.visible && this._canUsePressure && this._autohideIsEnabled && this._settings.get_boolean('require-pressure-to-show')) {
             let x1, x2, y1, y2, direction;
 
             if(this._position==St.Side.LEFT){
@@ -1369,35 +1309,6 @@ const dockedDash = new Lang.Class({
             }
         }
 
-    },
-
-    // Makes the message not being triggered by mouse. SOURCE: insensitive-tray extension.
-    _updateInsensitiveTray: function() {
-
-        let insensitive = this._settings.get_boolean('insensitive-message-tray');
-
-        if("_trayPressure" in LayoutManager) {
-            // Systems supporting pressure
-            if (insensitive) {
-                LayoutManager._trayPressure._actionMode = null;
-            } else {
-                LayoutManager._trayPressure._actionMode =  Shell.ActionMode.NORMAL
-                                                              | Shell.ActionMode.OVERVIEW;
-            }
-        } else {
-            //systems using the old dwell mechanism
-            if (insensitive) {
-                this._injectionsHandler.addWithLabel('insensitive-message-tray',
-                    [
-                        Main.messageTray,
-                        '_trayDwellTimeout',
-                        function() { return false; }
-                    ]
-                );
-            } else {
-                this._injectionsHandler.removeWithLabel('insensitive-message-tray')
-            }
-        }
     }
 });
 Signals.addSignalMethods(dockedDash.prototype);

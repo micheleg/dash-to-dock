@@ -489,25 +489,6 @@ const WorkspaceSettingsWidget = new GObject.Class({
     customization.add(clickControl);
     customization.add(clickMain);
 
-    /* INSENSITIVE MESSAGE TRAY */
-
-    let insensitiveMessageTrayControl = new Gtk.Box({margin_left:10, margin_top:10, margin_bottom:5, margin_right:10});
-
-    let insensitiveMessageTrayLabel = new Gtk.Label({label: _("Make message tray insensitive to mouse events"),
-                                              xalign: 0, hexpand:true});
-    let insensitiveMessageTray = new Gtk.Switch({halign:Gtk.Align.END});
-            insensitiveMessageTray.set_active(this.settings.get_boolean('insensitive-message-tray'));
-            insensitiveMessageTray.connect('notify::active', Lang.bind(this, function(check){
-                this.settings.set_boolean('insensitive-message-tray', check.get_active());
-            }));
-
-    indentWidget(insensitiveMessageTray);
-
-    insensitiveMessageTrayControl.add(insensitiveMessageTrayLabel);
-    insensitiveMessageTrayControl.add(insensitiveMessageTray);
-
-    customization.add(insensitiveMessageTrayControl);
-
     notebook.append_page(customization, customizationTitle);
 
 
