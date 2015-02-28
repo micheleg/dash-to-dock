@@ -113,7 +113,7 @@ const myDashItemContainer = new Lang.Class({
     Extends: Dash.DashItemContainer,
 
     _init: function(settings) {
-      this._settings = settings;
+      this._dtdSettings = settings;
       this.parent();
     },
 
@@ -138,7 +138,7 @@ const myDashItemContainer = new Lang.Class({
 
       let x, y, xOffset, yOffset;
 
-      let position = getPosition(this._settings);
+      let position = getPosition(this._dtdSettings);
         this._isHorizontal = ( position == St.Side.TOP ||
                                position == St.Side.BOTTOM);
       let labelOffset = node.get_length('-x-offset');
@@ -211,7 +211,7 @@ const myShowAppsIcon = new Lang.Class({
     Extends: Dash.ShowAppsIcon,
 
     _init: function(settings) {
-      this._settings = settings;
+      this._dtdSettings = settings;
       this.parent();
 
       /* the variable equivalent to toggleButton has a different name in the appIcon class
@@ -252,7 +252,7 @@ const myShowAppsIcon = new Lang.Class({
         this.actor.fake_release();
 
         if (!this._menu) {
-            this._menu = new myShowAppsIconMenu(this, this._settings);
+            this._menu = new myShowAppsIconMenu(this, this._dtdSettings);
             this._menu.connect('open-state-changed', Lang.bind(this, function (menu, isPoppedUp) {
             if (!isPoppedUp)
                 this._onMenuPoppedDown();
@@ -285,7 +285,7 @@ const myDashActor = new Lang.Class({
     Extends: St.Widget,
 
     _init: function(settings) {
-        this._settings = settings;
+        this._dtdSettings = settings;
 
         this._position = getPosition(settings);
         this._isHorizontal = ( this._position == St.Side.TOP ||
@@ -313,7 +313,7 @@ const myDashActor = new Lang.Class({
         let offset_y = this._isHorizontal?0:showAppsNatHeight;
 
         let childBox = new Clutter.ActorBox();
-        if( this._settings.get_boolean('show-apps-at-top') ) {
+        if( this._dtdSettings.get_boolean('show-apps-at-top') ) {
             childBox.x1 = contentBox.x1 + offset_x;
             childBox.y1 = contentBox.y1 + offset_y;
             childBox.x2 = contentBox.x2;
@@ -377,7 +377,7 @@ const myDash = new Lang.Class({
         this._availableIconSizes = Dash.baseIconSizes;
         this._shownInitially = false;
 
-        this._settings = settings;
+        this._dtdSettings = settings;
         this._position = getPosition(settings);
         this._isHorizontal = ( this._position == St.Side.TOP ||
                                this._position == St.Side.BOTTOM );
@@ -396,7 +396,7 @@ const myDash = new Lang.Class({
         this._box._delegate = this;
         this._container.add_actor(this._box);
 
-        this._showAppsIcon = new myShowAppsIcon(this._settings);
+        this._showAppsIcon = new myShowAppsIcon(this._dtdSettings);
         this._showAppsIcon.childScale = 1;
         this._showAppsIcon.childOpacity = 255;
         this._showAppsIcon.icon.setIconSize(this.iconSize);
@@ -565,7 +565,7 @@ const myDash = new Lang.Class({
     },
 
     _createAppItem: function(app) {
-        let appIcon = new myAppIcon(this._settings, app,
+        let appIcon = new myAppIcon(this._dtdSettings, app,
                                              { setSizeManually: true,
                                                showLabel: false });
         if (appIcon._draggable) {
@@ -584,7 +584,7 @@ const myDash = new Lang.Class({
                             this._itemMenuStateChanged(item, opened);
                         }));
 
-        let item = new myDashItemContainer(this._settings);
+        let item = new myDashItemContainer(this._dtdSettings);
         item.setChild(appIcon.actor);
 
         // Override default AppIcon label_actor, now the
@@ -765,15 +765,15 @@ const myDash = new Lang.Class({
         // Apps supposed to be in the dash
         let newApps = [];
 
-        if( this._settings.get_boolean('show-favorites') ) {
+        if( this._dtdSettings.get_boolean('show-favorites') ) {
             for (let id in favorites)
                 newApps.push(favorites[id]);
         }
 
-        if( this._settings.get_boolean('show-running') ) {
+        if( this._dtdSettings.get_boolean('show-running') ) {
             for (let i = 0; i < running.length; i++) {
                 let app = running[i];
-                if (this._settings.get_boolean('show-favorites') && (app.get_id() in favorites) )
+                if (this._dtdSettings.get_boolean('show-favorites') && (app.get_id() in favorites) )
                     continue;
                 newApps.push(app);
             }
@@ -950,17 +950,13 @@ const myDash = new Lang.Class({
 
     handleDragOver : function(source, actor, x, y, time) {
 
-        // Don't allow to add favourites if they are not displayed
-        if( !this._settings.get_boolean('show-favorites') )
-            return DND.DragMotionResult.NO_DROP;
-
         let app = Dash.getAppFromSource(source);
 
         // Don't allow favoriting of transient apps
         if (app == null || app.is_window_backed())
             return DND.DragMotionResult.NO_DROP;
 
-        if (!this._settings.is_writable('favorite-apps'))
+        if (!this._settings.is_writable('favorite-apps') || !this._dtdSettings.get_boolean('show-favorites'))
             return DND.DragMotionResult.NO_DROP;
 
         let favorites = AppFavorites.getAppFavorites().getFavorites();
@@ -1044,10 +1040,6 @@ const myDash = new Lang.Class({
     // Draggable target interface
     acceptDrop : function(source, actor, x, y, time) {
 
-        // Don't allow to add favourites if they are not displayed
-        if( !this._settings.get_boolean('show-favorites') )
-            return true;
-
         let app = Dash.getAppFromSource(source);
 
         // Don't allow favoriting of transient apps
@@ -1055,7 +1047,7 @@ const myDash = new Lang.Class({
             return false;
         }
 
-        if (!this._settings.is_writable('favorite-apps'))
+        if (!this._settings.is_writable('favorite-apps') || !this._dtdSettings.get_boolean('show-favorites'))
             return false;
 
         let id = app.get_id();
@@ -1133,7 +1125,7 @@ const myAppIcon = new Lang.Class({
     // settings are required inside.
     _init: function(settings, app, iconParams, onActivateOverride) {
 
-        this._settings = settings;
+        this._dtdSettings = settings;
         this._maxN =4;
 
         this.parent(app, iconParams, onActivateOverride);
@@ -1175,7 +1167,7 @@ const myAppIcon = new Lang.Class({
         this._draggable.fakeRelease();
 
         if (!this._menu) {
-            this._menu = new myAppIconMenu(this, this._settings);
+            this._menu = new myAppIconMenu(this, this._dtdSettings);
             this._menu.connect('activate-window', Lang.bind(this, function (menu, window) {
                 this.activateWindow(window);
             }));
@@ -1207,7 +1199,7 @@ const myAppIcon = new Lang.Class({
 
     activate: function(button) {
 
-        if ( !this._settings.get_boolean('customize-click') ){
+        if ( !this._dtdSettings.get_boolean('customize-click') ){
             this.parent(button);
             return;
         }
@@ -1231,29 +1223,29 @@ const myAppIcon = new Lang.Class({
                 this.parent(button);
                 return;
 
-            } else if (this._settings.get_boolean('minimize-shift') && modifiers & Clutter.ModifierType.SHIFT_MASK){
+            } else if (this._dtdSettings.get_boolean('minimize-shift') && modifiers & Clutter.ModifierType.SHIFT_MASK){
                 // On double click, minimize all windows in the current workspace
                 minimizeWindow(this.app, event.get_click_count() > 1);
 
             } else if(this.app == focusedApp && !Main.overview._shown){
 
-                if(this._settings.get_enum('click-action') == clickAction.CYCLE_WINDOWS)
+                if(this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS)
                     cycleThroughWindows(this.app);
-                else if(this._settings.get_enum('click-action') == clickAction.MINIMIZE)
+                else if(this._dtdSettings.get_enum('click-action') == clickAction.MINIMIZE)
                     minimizeWindow(this.app, true);
-                else if(this._settings.get_enum('click-action') == clickAction.LAUNCH)
+                else if(this._dtdSettings.get_enum('click-action') == clickAction.LAUNCH)
                     this.app.open_new_window(-1);
 
             } else {
                 // Activate all window of the app or only le last used
-                if (this._settings.get_enum('click-action') == clickAction.CYCLE_WINDOWS && !Main.overview._shown){
+                if (this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS && !Main.overview._shown){
                     // If click cycles through windows I can activate one windows at a time
                     let windows = getAppInterestingWindows(this.app);
                     let w = windows[0];
                     Main.activateWindow(w);
-                } else if(this._settings.get_enum('click-action') == clickAction.LAUNCH)
+                } else if(this._dtdSettings.get_enum('click-action') == clickAction.LAUNCH)
                     this.app.open_new_window(-1);
-                else if(this._settings.get_enum('click-action') == clickAction.MINIMIZE){
+                else if(this._dtdSettings.get_enum('click-action') == clickAction.MINIMIZE){
                     // If click minimizes all, then one expects all windows to be reshown
                     activateAllWindows(this.app);
                 } else
