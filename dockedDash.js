@@ -98,8 +98,6 @@ const DashSlideContainer = new Lang.Class({
 
     _allocate: function(actor, box, flags) {
 
-        this.actor.set_allocation(box, flags);
-
         if (this._child == null)
             return;
 
