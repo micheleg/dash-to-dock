@@ -42,7 +42,7 @@ function getPosition(settings) {
 }
 
 /*
- * A simple Actor with one child whose allocation takes into account the
+ * A simple St.Widget with one child whose allocation takes into account the
  * slide out of its child via the _slidex parameter ([0:1]).
  *
  * Required since I want to track the input region of this container which is
@@ -53,15 +53,16 @@ function getPosition(settings) {
  * The slidex parameter can be used to directly animate the sliding. The parent
  * must have a WEST (SOUTH) anchor_point to achieve the sliding to the RIGHT (BOTTOM)
  * side.
+ *
+ * It can't be an extended object because of this: https://bugzilla.gnome.org/show_bug.cgi?id=688973.
+ * thus use the Shell.GenericContainer pattern.
 */
 
 const DashSlideContainer = new Lang.Class({
     Name: 'DashSlideContainer',
-    Extends: Clutter.Actor,
 
     _init: function(params) {
 
-        
         /* Default local params */
         let localDefaults = {
             side: St.Side.LEFT,
@@ -80,7 +81,12 @@ const DashSlideContainer = new Lang.Class({
             }
         }
 
-        this.parent(params);
+        this.actor = new Shell.GenericContainer(params);
+        this.actor.connect('get-preferred-width', Lang.bind(this, this._getPreferredWidth));
+        this.actor.connect('get-preferred-height', Lang.bind(this, this._getPreferredHeight));
+        this.actor.connect('allocate', Lang.bind(this, this._allocate));
+
+        this.actor._delegate = this;
 
         this._child = null;
 
@@ -91,9 +97,9 @@ const DashSlideContainer = new Lang.Class({
     },
 
 
-    vfunc_allocate: function(box, flags) {
+    _allocate: function(actor, box, flags) {
 
-        this.set_allocation(box, flags);
+        this.actor.set_allocation(box, flags);
 
         if (this._child == null)
             return;
@@ -134,25 +140,28 @@ const DashSlideContainer = new Lang.Class({
     },
 
     /* Just the child width but taking into account the slided out part */
-    vfunc_get_preferred_width: function(forHeight) {
+    _getPreferredWidth: function(actor, forHeight, alloc) {
         let [minWidth, natWidth ] = this._child.get_preferred_width(forHeight);
         if (this._side ==  St.Side.LEFT
           || this._side == St.Side.RIGHT) {
             minWidth = (minWidth - this._slideoutSize)*this._slidex + this._slideoutSize;
             natWidth = (natWidth - this._slideoutSize)*this._slidex + this._slideoutSize;
         }
-        return [minWidth, natWidth];
+
+        alloc.min_size = minWidth;
+        alloc.natural_size = natWidth;
     },
 
     /* Just the child height but taking into account the slided out part */
-    vfunc_get_preferred_height: function(forWidth) {
+    _getPreferredHeight: function(actor, forWidth,  alloc) {
         let [minHeight, natHeight] = this._child.get_preferred_height(forWidth);
         if (this._side ==  St.Side.TOP
           || this._side ==  St.Side.BOTTOM) {
             minHeight = (minHeight - this._slideoutSize)*this._slidex + this._slideoutSize;
             natHeight = (natHeight - this._slideoutSize)*this._slidex + this._slideoutSize;
         }
-        return [minHeight, natHeight];
+        alloc.min_size = minHeight;
+        alloc.natural_size = natHeight;
     },
 
     /* I was expecting it to be a virtual function... stil I don't understand
@@ -162,11 +171,11 @@ const DashSlideContainer = new Lang.Class({
 
         /* I'm supposed to have only on child */
         if(this._child !== null) {
-            this.remove_child(actor);
+            this.actor.remove_child(actor);
         }
 
         this._child = actor;
-        this.parent(actor);
+        this.actor.add_child(actor);
     },
 
     set slidex(value) {
@@ -365,7 +374,7 @@ const dockedDash = new Lang.Class({
                                               Lang.bind(Main.layoutManager, Main.layoutManager._queueUpdateRegions));
 
         this.dash._container.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
-        this._slider.connect(this._isHorizontal?'notify::x':'notify::y', Lang.bind(this, this._updateStaticBox));
+        this._slider.actor.connect(this._isHorizontal?'notify::x':'notify::y', Lang.bind(this, this._updateStaticBox));
 
         // sync hover after a popupmenu is closed
         this.dash.connect('menu-closed', Lang.bind(this, function(){this._box.sync_hover();}));
@@ -410,7 +419,7 @@ const dockedDash = new Lang.Class({
           Main.overview._overview.insert_child_at_index(this._dashSpacer, -1);
 
         // Add dash container actor and the container to the Chrome.
-        this.actor.set_child(this._slider);
+        this.actor.set_child(this._slider.actor);
         this._slider.add_child(this._box);
         this._box.add_actor(this.dash.actor);
 
@@ -418,7 +427,7 @@ const dockedDash = new Lang.Class({
         // The public method trackChrome requires the actor to be child of a tracked actor. Since I don't want the parent
         // to be tracked I use the private internal _trackActor instead.
         Main.uiGroup.add_child(this.actor);
-        Main.layoutManager._trackActor(this._slider, {trackFullscreen: true});
+        Main.layoutManager._trackActor(this._slider.actor, {trackFullscreen: true});
 
         // The dash need to be above the top_window_group, otherwise it doesn't
         // accept dnd of app icons when not in overiew mode, although the default
@@ -430,7 +439,7 @@ const dockedDash = new Lang.Class({
           Main.layoutManager._trackActor(this.dash.actor, {affectsStruts: true});
 
         // pretend this._slider is isToplevel child so that fullscreen is actually tracked
-        let index = Main.layoutManager._findActor(this._slider);
+        let index = Main.layoutManager._findActor(this._slider.actor);
         Main.layoutManager._trackedActors[index].isToplevel = true ;
 
         // Set initial position
@@ -817,7 +826,7 @@ const dockedDash = new Lang.Class({
     },
 
     _onFullscreenChanged: function() {
-        if (!this._slider.visible)
+        if (!this._slider.actor.visible)
             this._updateBarrier();
     },
 
@@ -848,7 +857,7 @@ const dockedDash = new Lang.Class({
 
         // Create new barrier
         // Note: dash in fixed position doesn't use pressure barrier
-        if (this._slider.visible && this._canUsePressure && this._autohideIsEnabled && this._settings.get_boolean('require-pressure-to-show') && !this._messageTrayShowing) {
+        if (this._slider.actor.visible && this._canUsePressure && this._autohideIsEnabled && this._settings.get_boolean('require-pressure-to-show') && !this._messageTrayShowing) {
             let x1, x2, y1, y2, direction;
 
             if(this._position==St.Side.LEFT){
@@ -1013,8 +1022,8 @@ const dockedDash = new Lang.Class({
     _updateStaticBox: function() {
 
         this.staticBox.init_rect(
-            this.actor.x + this._slider.x - (this._position==St.Side.RIGHT?this._box.width:0),
-            this.actor.y + this._slider.y - (this._position==St.Side.BOTTOM?this._box.height:0),
+            this.actor.x + this._slider.actor.x - (this._position==St.Side.RIGHT?this._box.width:0),
+            this.actor.y + this._slider.actor.y - (this._position==St.Side.BOTTOM?this._box.height:0),
             this._box.width,
             this._box.height
         );
