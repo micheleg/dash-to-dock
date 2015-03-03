@@ -77,8 +77,8 @@
 	background-image:none;
 }
 
-#dashtodockContainer.running-dots .app-well-app.focused > .overview-icon,
-#dashtodockContainer.dashtodock .app-well-app.focused > .overview-icon {
+#dashtodockContainer.running-dots .app-well-app.focused  .overview-icon,
+#dashtodockContainer.dashtodock .app-well-app.focused  .overview-icon {
     transition-duration: 250;
     background-gradient-start: rgba(255, 255, 255, .05);
     background-gradient-end: rgba(255, 255, 255, .15);
