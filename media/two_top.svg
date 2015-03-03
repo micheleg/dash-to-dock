@@ -23,21 +23,21 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <sodipodi:namedview
-     pagecolor="#ffffff"
+     pagecolor="#141414"
      bordercolor="#666666"
      borderopacity="0.21960784"
      objecttolerance="10"
      gridtolerance="10"
      guidetolerance="10"
-     inkscape:pageopacity="0"
+     inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:window-width="1150"
-     inkscape:window-height="703"
+     inkscape:window-width="477"
+     inkscape:window-height="463"
      id="namedview17"
      showgrid="true"
      fit-margin-top="0"
@@ -46,11 +46,11 @@
      fit-margin-bottom="0"
      showborder="true"
      inkscape:showpageshadow="false"
-     inkscape:zoom="5.656854"
-     inkscape:cx="-25.440848"
-     inkscape:cy="48.199594"
-     inkscape:window-x="214"
-     inkscape:window-y="27"
+     inkscape:zoom="1.4142135"
+     inkscape:cx="13.566081"
+     inkscape:cy="44.804286"
+     inkscape:window-x="306"
+     inkscape:window-y="105"
      inkscape:window-maximized="0"
      inkscape:current-layer="layer2"
      inkscape:snap-global="true"
@@ -95,14 +95,14 @@
            cy="57.991032"
            cx="10.834826"
            id="path3762"
-           style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
+           style="opacity:1;fill:#a6a6a6;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
         <ellipse
            ry="3.9910278"
            rx="3.8348253"
            cy="45.991028"
            cx="10.834826"
            id="path3762-2-50"
-           style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
+           style="opacity:1;fill:#a6a6a6;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
       </g>
     </g>
   </g>
