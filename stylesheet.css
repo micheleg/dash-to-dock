@@ -72,6 +72,15 @@
 
 /* Running and focused application style */
 
+
+/* hide the default "dot" */
+.running-dots .app-well-app-running-dot,
+.dashtodock .app-well-app-running-dot
+{
+  width: 0px;
+  height: 0px;
+}
+
 #dashtodockContainer.running-dots .app-well-app.running > .overview-icon,
 #dashtodockContainer.dashtodock .app-well-app.running > .overview-icon {
 	background-image:none;
@@ -79,12 +88,7 @@
 
 #dashtodockContainer.running-dots .app-well-app.focused  .overview-icon,
 #dashtodockContainer.dashtodock .app-well-app.focused  .overview-icon {
-    transition-duration: 250;
-    background-gradient-start: rgba(255, 255, 255, .05);
-    background-gradient-end: rgba(255, 255, 255, .15);
-    background-gradient-direction: vertical;
-    border-radius: 4px;
-    box-shadow: inset 0px 1px 2px 0px rgba(0, 0, 0, 1);
+    background-color: rgba(238, 238, 236, 0.1);
 }
 
 #dashtodockContainer.running-dots.left .running1,
