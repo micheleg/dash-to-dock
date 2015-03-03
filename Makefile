@@ -44,6 +44,16 @@ mergepo: potfile
 ./po/%.mo: ./po/%.po
 	msgfmt -c $< -o $@
 
+# generate svgs for left bottom right top by rotating the left ones
+generate_dots_svgs: ./media/dots.svg
+	cd media; \
+	for i in one two three four; do \
+		cp dots.svg $${i}.svg && inkscape $${i}.svg  --select=$${i} --verb=EditInvertInAllLayers --verb=EditDelete --verb=FileSave --verb=FileQuit  && \
+		cp $${i}.svg $${i}_top.svg && inkscape $${i}_top.svg  --select=$${i} --verb=ObjectRotate90 --verb=FileSave --verb=FileQuit && \
+		cp $${i}_top.svg $${i}_rtl.svg && inkscape $${i}_rtl.svg  --select=$${i} --verb=ObjectRotate90 --verb=FileSave --verb=FileQuit && \
+		cp $${i}_rtl.svg $${i}_bottom.svg && inkscape $${i}_bottom.svg  --select=$${i} --verb=ObjectRotate90 --verb=FileSave --verb=FileQuit ; \
+	done;
+
 install: install-local
 
 install-local: _build
