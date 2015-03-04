@@ -358,7 +358,7 @@ const myDashActor = new Lang.Class({
         // then calls BoxLayout), but we only request the showApps
         // button as the minimum size
 
-        let [, natWidth] = this.actor.layout_manager.get_preferred_width(this.actor, forHeight, alloc);
+        let [, natWidth] = this.actor.layout_manager.get_preferred_width(this.actor, forHeight);
 
         let themeNode = this.actor.get_theme_node();
         let adjustedForHeight = themeNode.adjust_for_height(forHeight);
@@ -366,7 +366,7 @@ const myDashActor = new Lang.Class({
         let [minWidth, ] = showAppsButton.get_preferred_height(adjustedForHeight);
         [minWidth, ] = themeNode.adjust_preferred_height(minWidth, natWidth);
 
-        alloc.minsize = minWidth;
+        alloc.min_size = minWidth;
         alloc.natural_size = natWidth;
 
     },
@@ -377,7 +377,7 @@ const myDashActor = new Lang.Class({
         // then calls BoxLayout), but we only request the showApps
         // button as the minimum size
 
-        let [, natHeight] = this.actor.layout_manager.get_preferred_height(this.actor, forWidth, alloc);
+        let [, natHeight] = this.actor.layout_manager.get_preferred_height(this.actor, forWidth);
 
         let themeNode = this.actor.get_theme_node();
         let adjustedForWidth = themeNode.adjust_for_width(forWidth);
@@ -385,7 +385,7 @@ const myDashActor = new Lang.Class({
         let [minHeight, ] = showAppsButton.get_preferred_height(adjustedForWidth);
         [minHeight, ] = themeNode.adjust_preferred_height(minHeight, natHeight);
 
-        alloc.minsize = minHeight;
+        alloc.min_size = minHeight;
         alloc.natural_size = natHeight;
     }
 });
