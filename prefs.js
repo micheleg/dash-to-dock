@@ -630,6 +630,18 @@ const WorkspaceSettingsWidget = new GObject.Class({
 
 
     notebook.append_page(appearence, appearenceTitle);
+
+    // ABOUT PANE
+
+    let aboutTitle = new Gtk.Label({label: _("About")});
+    let builder = new Gtk.Builder();
+    builder.add_from_file(Me.path + '/About.ui');
+    let About = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
+    let aboutBox = builder.get_object('about');
+    builder.get_object('extension_version').set_label(Me.metadata.version.toString());
+
+    notebook.append_page(aboutBox, aboutTitle);
+
 /*
     let OptionalFeaturesTitle = new Gtk.Label({label: _("Optional Features")});
     let OptionalFeatures = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL});
