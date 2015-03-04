@@ -259,7 +259,10 @@ function extendShowAppsIcon(showAppsIcon, settings){
               if (!isPoppedUp)
                   showAppsIcon._onMenuPoppedDown();
               }));
-              Main.overview.connect('hiding', Lang.bind(showAppsIcon, function () { showAppsIcon._menu.close(); }));
+              let id = Main.overview.connect('hiding', Lang.bind(showAppsIcon, function () { showAppsIcon._menu.close(); global.log('aaaaa');}));
+              showAppsIcon.actor.connect('destroy', function() {
+                  Main.overview.disconnect(id);
+              });
               showAppsIcon._menuManager.addMenu(showAppsIcon._menu);
           }
 
