@@ -254,7 +254,7 @@ function extendShowAppsIcon(showAppsIcon, settings){
               if (!isPoppedUp)
                   showAppsIcon._onMenuPoppedDown();
               }));
-              let id = Main.overview.connect('hiding', Lang.bind(showAppsIcon, function () { showAppsIcon._menu.close(); global.log('aaaaa');}));
+              let id = Main.overview.connect('hiding', Lang.bind(showAppsIcon, function () { showAppsIcon._menu.close(); }));
               showAppsIcon.actor.connect('destroy', function() {
                   Main.overview.disconnect(id);
               });
