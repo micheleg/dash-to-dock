@@ -310,11 +310,9 @@ const myDashActor = new Lang.Class({
     },
 
     _allocate: function(actor, box, flags) {
-        let contentBox = this.actor.get_theme_node().get_content_box(box);
+        let contentBox = box;
         let availWidth = contentBox.x2 - contentBox.x1;
         let availHeight = contentBox.y2 - contentBox.y1;
-
-        this.actor.set_allocation(box, flags);
 
         let [appIcons, showAppsButton] = actor.get_children();
         let [showAppsMinHeight, showAppsNatHeight] = showAppsButton.get_preferred_height(availWidth);
@@ -360,10 +358,8 @@ const myDashActor = new Lang.Class({
         let [, natWidth] = this.actor.layout_manager.get_preferred_width(this.actor, forHeight);
 
         let themeNode = this.actor.get_theme_node();
-        let adjustedForHeight = themeNode.adjust_for_height(forHeight);
         let [, showAppsButton] = this.actor.get_children();
-        let [minWidth, ] = showAppsButton.get_preferred_height(adjustedForHeight);
-        [minWidth, ] = themeNode.adjust_preferred_height(minWidth, natWidth);
+        let [minWidth, ] = showAppsButton.get_preferred_height(forHeight);
 
         alloc.min_size = minWidth;
         alloc.natural_size = natWidth;
@@ -379,10 +375,8 @@ const myDashActor = new Lang.Class({
         let [, natHeight] = this.actor.layout_manager.get_preferred_height(this.actor, forWidth);
 
         let themeNode = this.actor.get_theme_node();
-        let adjustedForWidth = themeNode.adjust_for_width(forWidth);
         let [, showAppsButton] = this.actor.get_children();
-        let [minHeight, ] = showAppsButton.get_preferred_height(adjustedForWidth);
-        [minHeight, ] = themeNode.adjust_preferred_height(minHeight, natHeight);
+        let [minHeight, ] = showAppsButton.get_preferred_height(forWidth);
 
         alloc.min_size = minHeight;
         alloc.natural_size = natHeight;
