@@ -291,6 +291,7 @@ const myDashActor = new Lang.Class({
 
     _init: function(settings) {
         this._dtdSettings = settings;
+        this._rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
 
         this._position = getPosition(settings);
         this._isHorizontal = ( this._position == St.Side.TOP ||
@@ -323,7 +324,10 @@ const myDashActor = new Lang.Class({
         let offset_y = this._isHorizontal?0:showAppsNatHeight;
 
         let childBox = new Clutter.ActorBox();
-        if( this._dtdSettings.get_boolean('show-apps-at-top') ) {
+        if( (this._dtdSettings.get_boolean('show-apps-at-top') && !this._isHorizontal)
+            || (this._dtdSettings.get_boolean('show-apps-at-top') && !this._rtl)
+            || (!this._dtdSettings.get_boolean('show-apps-at-top') && this._isHorizontal && this._rtl)
+          ) {
             childBox.x1 = contentBox.x1 + offset_x;
             childBox.y1 = contentBox.y1 + offset_y;
             childBox.x2 = contentBox.x2;
