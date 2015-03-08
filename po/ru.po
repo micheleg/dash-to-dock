@@ -1,14 +1,15 @@
 # Russian translation for dash-to-dock GNOME Shell extension
 # 
 # Ivan Komaritsyn <vantu5z@mail.ru>, 2015.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-27 17:19+0300\n"
+"POT-Creation-Date: 2015-03-08 21:09+0000\n"
 "PO-Revision-Date: 2015-02-27 18:33+0300\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
+"Language-Team: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -245,3 +246,7 @@ msgstr "Настройка прозрачности Дока"
 #: prefs.js:601
 msgid "Opacity"
 msgstr "Непрозрачность"
+
+#: prefs.js:636
+msgid "About"
+msgstr ""
