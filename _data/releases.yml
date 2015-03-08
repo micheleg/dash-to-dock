@@ -1,3 +1,20 @@
+- version: 39
+  date: 08-03-2015
+  shell_version: ["3.14"]
+  notes:
+    - "Improvement: various improvement to the startup animations."
+    - "Bug fix: fix missing and broken spring animation."
+    - "Improvement: improve animation in and out from the overview."
+    - "New feature: add option for insensitive messageTray."
+    - "Improvement: keep the dock actor below the modalDialogGroup."
+    - "Bug fix:  solve bug with wrong icons size in hidpi screen."
+    - "Fix: consider always on top windows for intellihide."
+    - "New feature: embed quit from dash functionalities."
+    - "Improvement: Update running dots style."
+    - "Bug fix: Correct bug on extension update"
+    - "Improvement: \"first\" is \"rigth\" for RTL languages, this correct the settings effect."
+  zip_url: https://extensions.gnome.org/review/download/4728.shell-extension.zip
+
 - version: 38
   date: 11-01-2015
   shell_version: ["3.12"]
