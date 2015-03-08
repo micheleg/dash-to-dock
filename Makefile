@@ -85,4 +85,4 @@ _build: all
 		mkdir -p $$lf/LC_MESSAGES; \
 		cp $$l $$lf/LC_MESSAGES/dashtodock.mo; \
 	done;
-	sed -i 's/"version": 0/"version": "$(VERSION)"/'  _build/metadata.json;
+	sed -i 's/"version": -1/"version": "$(VERSION)"/'  _build/metadata.json;
