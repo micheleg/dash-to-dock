@@ -3,12 +3,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Piotr Sokół <psokol@jabster.pl>, 2012, 2013, 2015.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-05 17:11+0000\n"
+"POT-Creation-Date: 2015-03-08 21:09+0000\n"
 "PO-Revision-Date: 2015-01-18 20:03+0100\n"
 "Last-Translator: Piotr Sokół <psokol@jabster.pl>\n"
 "Language-Team: polski <>\n"
@@ -145,7 +145,8 @@ msgid "Show running application icons"
 msgstr "Ikony uruchomionych programów"
 
 #: prefs.js:357
-msgid "Show applications button at the top"
+#, fuzzy
+msgid "Show applications button first"
 msgstr "Przycisk programów z drugiej strony"
 
 #: prefs.js:374
@@ -203,11 +204,15 @@ msgstr ""
 "Minimalizowanie okien kliknięciem z przytrzymanym klawiszem shift\n"
 "(dwukrotne kliknięcie minimalizuje wszystkie okna programu)"
 
-#: prefs.js:498
+#: prefs.js:495
+msgid "Make message tray insensitive to mouse events"
+msgstr ""
+
+#: prefs.js:516
 msgid "Appearence and Themes"
 msgstr "Wygląd"
 
-#: prefs.js:500
+#: prefs.js:518
 msgid ""
 "A customized theme is built in the extension. This is meant to work with the "
 "default Adwaita theme: the dash is shrunk to save space, its background "
@@ -219,32 +224,36 @@ msgstr ""
 "zmniejszony, zredukowano jego przezroczystość i dodano wskaźniki ilości "
 "okien programów."
 
-#: prefs.js:511
+#: prefs.js:529
 msgid "Apply built in custom theme"
 msgstr "Użycie zintegrowanego stylu"
 
-#: prefs.js:524
+#: prefs.js:542
 msgid ""
 "Alternatively, for a better integration with custom themes, each "
 "customization can be applied indipendently"
 msgstr ""
 "Dla lepszego dopasowania do stylu, każdą z cech można dostosować niezależnie."
 
-#: prefs.js:533
+#: prefs.js:551
 msgid "Shrink the dash size by reducing padding"
 msgstr "Zmniejszenie odległości krawędzi"
 
-#: prefs.js:549
+#: prefs.js:567
 msgid "Show indicators for the number of windows of each application"
 msgstr "Wskaźniki ilości okien"
 
-#: prefs.js:567
+#: prefs.js:585
 msgid "Customize the dock background opacity"
 msgstr "Dostosowanie przezroczystości tła"
 
-#: prefs.js:583
+#: prefs.js:601
 msgid "Opacity"
 msgstr "Nieprzezroczystość"
+
+#: prefs.js:636
+msgid "About"
+msgstr ""
 
 #~ msgid "Only when in autohide"
 #~ msgstr "Włączenie tylko podczas automatycznego ukrywania"
