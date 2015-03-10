@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -36,7 +36,7 @@
      guidetolerance="10"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:window-width="725"
+     inkscape:window-width="477"
      inkscape:window-height="463"
      id="namedview17"
      showgrid="true"
@@ -46,9 +46,9 @@
      fit-margin-bottom="0"
      showborder="true"
      inkscape:showpageshadow="false"
-     inkscape:zoom="3.9999998"
-     inkscape:cx="8.4085096"
-     inkscape:cy="55.696291"
+     inkscape:zoom="1.4142135"
+     inkscape:cx="13.566081"
+     inkscape:cy="46.2185"
      inkscape:window-x="306"
      inkscape:window-y="105"
      inkscape:window-maximized="0"
@@ -86,21 +86,21 @@
       <ellipse
          style="opacity:1;fill:#a6a6a6;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none"
          id="path3762-2-9"
-         cx="4.8348255"
+         cx="5.8348255"
          cy="60"
          rx="3.8348253"
          ry="3.9910278" />
       <ellipse
          style="opacity:1;fill:#a6a6a6;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none"
          id="path3762-2-9-9"
-         cx="4.8348255"
+         cx="5.8348255"
          cy="48"
          rx="3.8348253"
          ry="3.9910278" />
       <ellipse
          style="opacity:1;fill:#a6a6a6;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none"
          id="path3762-2-9-1"
-         cx="4.8348255"
+         cx="5.8348255"
          cy="36"
          rx="3.8348253"
          ry="3.9910278" />
