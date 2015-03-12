@@ -422,10 +422,7 @@ const dockedDash = new Lang.Class({
         Main.uiGroup.add_child(this.actor);
         Main.layoutManager._trackActor(this._slider.actor, {trackFullscreen: true});
 
-        // The dash need to be above the top_window_group, otherwise it doesn't
-        // accept dnd of app icons when not in overiew mode, although the default
-        // behavior is to keep newly added chrome elements below the the
-        // top_window_group.
+        // Keep the dash below the modalDialogGroup
         Main.layoutManager.uiGroup.set_child_below_sibling(this.actor,Main.layoutManager.modalDialogGroup);
 
         if ( this._settings.get_boolean('dock-fixed') )
@@ -1066,12 +1063,18 @@ const dockedDash = new Lang.Class({
     },
 
     _onDragStart: function(){
+        // The dash need to be above the top_window_group, otherwise it doesn't
+        // accept dnd of app icons when not in overiew mode.
+        Main.layoutManager.uiGroup.set_child_above_sibling(this.actor, global.top_window_group);
         this._oldignoreHover = this._ignoreHover;
         this._ignoreHover = true;
         this._animateIn(this._settings.get_double('animation-time'), 0);
     },
 
     _onDragEnd: function(){
+        // Restore drag default dash stack order
+        Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
+
         if(this._oldignoreHover)
           this._ignoreHover  = this._oldignoreHover;
         this._box.sync_hover();
