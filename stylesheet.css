@@ -172,10 +172,10 @@
 }
 
 #dashtodockContainer.dashtodock #dash {
-    background: rgba(0,0,0,0.9);
+    transition-duration: 250ms;
+    background: rgba(0,0,0,1);
 }
 
 #dashtodockContainer.dashtodock:overview #dash {
-    background: rgba(0,0,0,0.5);
-    transition-duration: 250ms;
+    background: #2e3436;
 }
