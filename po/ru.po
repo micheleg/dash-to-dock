@@ -249,4 +249,4 @@ msgstr "Непрозрачность"
 
 #: prefs.js:636
 msgid "About"
-msgstr ""
+msgstr "О программе"
