@@ -497,6 +497,8 @@ const dockedDash = new Lang.Class({
         // Reshow normal dash previously hidden, restore panel position if changed.
         Main.overview._controls.dash.actor.show();
         Main.overview._controls.dash.actor.set_width(-1); //reset default dash size
+        // This force the recalculation of the icon size
+        Main.overview._controls.dash._maxHeight = -1;
 
         // reset stored icon size  to the default dash
         Main.overview.dashIconSize = Main.overview._controls.dash.iconSize;
