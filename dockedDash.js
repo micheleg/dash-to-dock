@@ -619,7 +619,13 @@ const dockedDash = new Lang.Class({
             if (this._autohideIsEnabled) {
                 this._ignoreHover = false;
                 global.sync_pointer();
-                this._hoverChanged();
+
+                if( this._box.hover ) {
+                    this._animateIn(this._settings.get_double('animation-time'), 0);
+                } else {
+                    this._animateOut(this._settings.get_double('animation-time'), 0);
+                }
+
             } else {
                 this._removeAnimations();
                 this._animateOut(this._settings.get_double('animation-time'), 0);
@@ -644,17 +650,20 @@ const dockedDash = new Lang.Class({
 
         if (!this._ignoreHover) {
 
-            // Ignore hover if pressure barrier being used but pressureSensed not triggered
-            if (this._canUsePressure && this._settings.get_boolean('require-pressure-to-show') && this._barrier) {
-                if (this._pressureSensed == false) {
-                    return;
-                }
-            }
-
             // Skip if dock is not in autohide mode for instance because it is shown
             // by intellihide.
             if(this._autohideIsEnabled) {
                 if( this._box.hover ) {
+
+                    // Ignore hover if pressure barrier being used but pressureSensed not triggered
+                    if (this._canUsePressure
+                        && this._settings.get_boolean('require-pressure-to-show')
+                        && this._barrier
+                        && this._pressureSensed == false)
+                    {
+                        return;
+                    }
+
                     this._show();
                 } else {
                     this._hide();
