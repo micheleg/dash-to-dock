@@ -24,28 +24,28 @@
 
 #dashtodockContainer.shrink.left #dash,
 #dashtodockContainer.dashtodock.left #dash {
-    padding: 1px 0px;
+    padding: 1px;
     border-left: 0px;
     border-radius: 0px 6px 6px 0px;
 }
 
 #dashtodockContainer.shrink.right #dash,
 #dashtodockContainer.dashtodock.right #dash {
-    padding: 1px 0px;
+    padding: 1px;
     border-right: 0px;
     border-radius: 6px 0px 0px 6px;
 }
 
 #dashtodockContainer.shrink.top #dash,
 #dashtodockContainer.dashtodock.top #dash {
-    padding: 0px 1px;
+    padding: 1px;
     border-top: 0px;
     border-radius: 0px 0px 6px 6px;
 }
 
 #dashtodockContainer.shrink.bottom #dash,
 #dashtodockContainer.dashtodock.bottom #dash {
-    padding: 0px 1px;
+    padding: 1px;
     border-bottom: 0px;
     border-radius: 6px 6px 0px 0px;
 }
