@@ -407,6 +407,14 @@ const dockedDash = new Lang.Class({
         this._dashSpacer = new OverviewControls.DashSpacer();
         this._dashSpacer.setDashActor(this._box);
 
+        // shift overview messageIndicator for bottom dock
+        this._oldMessageIndicatorPosition = Main.overview._controls._indicator.actor.get_first_child().y;
+        if (this._position ==  St.Side.BOTTOM) {
+          this._dashSpacer.connect('notify::height', Lang.bind(this, function(){
+              Main.overview._controls._indicator.actor.get_first_child().y = -this._dashSpacer.height;
+          }));
+        }
+
         if (this._position ==  St.Side.LEFT)
           Main.overview._controls._group.insert_child_at_index(this._dashSpacer, this._rtl?-1:0); // insert on first
         else if (this._position ==  St.Side.RIGHT)
@@ -493,6 +501,9 @@ const dockedDash = new Lang.Class({
 
         // Remove the dashSpacer
         this._dashSpacer.destroy();
+
+        // restore messageIndicator position
+        Main.overview._controls._indicator.actor.get_first_child().y = this._oldMessageIndicatorPosition;
 
         // Reshow normal dash previously hidden, restore panel position if changed.
         Main.overview._controls.dash.actor.show();
