@@ -185,7 +185,7 @@ const intellihide = new Lang.Class({
 
                 let win = windows[i].get_meta_window();
                 if(win){
-                    let rect = win.get_outer_rect();
+                    let rect = win.get_frame_rect();
 
                     let test = ( rect.x < this._targetBox.x2) &&
                                ( rect.x +rect.width > this._targetBox.x1 ) &&
