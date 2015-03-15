@@ -70,6 +70,12 @@
     border-radius: 0;
 }
 
+#dashtodockContainer.dashtodock.extended.left #dash,
+#dashtodockContainer.dashtodock.extended.right #dash {
+    /* merge  with the panel */
+    background: black;
+}
+
 /* Running and focused application style */
 
 
@@ -172,10 +178,5 @@
 }
 
 #dashtodockContainer.dashtodock #dash {
-    transition-duration: 250ms;
-    background: rgba(0,0,0,1);
-}
-
-#dashtodockContainer.dashtodock:overview #dash {
     background: #2e3436;
 }
