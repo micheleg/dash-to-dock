@@ -1532,6 +1532,7 @@ const themeManager = new Lang.Class({
         this._getBackgroundColor();
         this._updateBackgroundOpacity();
         this._adjustTheme();
+        this._dash._redisplay();
     },
 
     /* Reimported back and adapted from atomdock */
