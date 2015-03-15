@@ -1,3 +1,23 @@
+- version: 41
+  date: 17-03-2015
+  shell_version: ["3.12"]
+  notes:
+    - "Backport: all features of version 38 and 40."
+  zip_url: https://extensions.gnome.org/review/download/4745.shell-extension.zip
+
+- version: 40
+  date: 17-03-2015
+  shell_version: ["3.14"]
+  notes:
+    - "Bug Fix: Fix autohide."
+    - "Bug Fix: Fix drag and drop of appicons outside the overview."
+    - "Bug Fix: Fix worng icon size on extension unload."
+    - "Bug Fix: Force recalculation of the iconsise on theme changes."
+    - "Improvement: Adjust the overview message indicator in bottom mode."
+    - "Improvement: makes vertical and horizontal padding equal."
+    - Update Russian translation.
+  zip_url: https://extensions.gnome.org/review/download/4744.shell-extension.zip
+
 - version: 39
   date: 08-03-2015
   shell_version: ["3.14"]
