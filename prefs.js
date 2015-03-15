@@ -275,6 +275,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
                 Mainloop.source_remove(dockMaxHeightTimeout);
             dockMaxHeightTimeout = Mainloop.timeout_add(250, Lang.bind(this, function(){
                 this.settings.set_double('height-fraction', s);
+                dockMaxHeightTimeout = 0;
                 return false;
             }));
         }));
