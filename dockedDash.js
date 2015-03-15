@@ -347,6 +347,11 @@ const dockedDash = new Lang.Class({
                 Lang.bind(this, function() {
                     Main.overview.dashIconSize = this.dash.iconSize;
                 })
+            ],
+            [
+              Main.legacyTray.actor.get_first_child(),
+              'notify::height',
+              Lang.bind(this, this._resetPosition)
             ]
         );
 
@@ -877,7 +882,14 @@ const dockedDash = new Lang.Class({
         if (this._isPrimaryMonitor()){
           if (!extendHeight || !this._fixedIsEnabled) {
               unavailableTopSpace = Main.panel.actor.height;
+              unavailableBottomSpace = Main.legacyTray.actor.get_first_child().height;
           }
+
+          if (!extendHeight && !this._fixedIsEnabled) {
+          // keep the dock visually centered mirroring the bottom space ( tray Icons)
+             unavailableTopSpace += unavailableBottomSpace;
+          }
+
           // Reserve space for the dash on the overview
           this._dashSpacer.show();
         } else {
