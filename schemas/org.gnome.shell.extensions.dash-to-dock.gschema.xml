@@ -51,7 +51,7 @@
       <description>Enable or disable intellihide mode</description>
     </key>
     <key type="b" name="intellihide-perapp">
-      <default>false</default>
+      <default>true</default>
       <summary>Dock dodges only same app windows</summary>
       <description></description>
     </key>
@@ -136,7 +136,7 @@
       <description>Make the extension work properly when bolt extensions is enabled</description>
     </key>
     <key type="d" name="height-fraction">
-      <default>0.95</default>
+      <default>0.90</default>
       <summary>Dock max height (fraction of available space)</summary>
     </key>
     <key type="b" name="extend-height">
