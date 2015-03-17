@@ -489,6 +489,7 @@ const dockedDash = new Lang.Class({
         // reset stored icon size  to the default dash
         Main.overview.dashIconSize = Main.overview._controls.dash.iconSize;
         this._revertMainPanel();
+        this._resetLegacyTray();
     },
 
     _bindSettingsChanges: function() {
@@ -949,6 +950,7 @@ const dockedDash = new Lang.Class({
 
         this._y0 = this.actor.y;
 
+        this._adjustLegacyTray();
         this._updateStaticBox();
     },
 
@@ -974,6 +976,31 @@ const dockedDash = new Lang.Class({
         panelActor.set_width(this._monitor.width);
         panelActor.set_margin_right(0);
         panelActor.set_margin_left(0);
+    },
+
+    _adjustLegacyTray: function(){
+
+        let use_work_area = true;
+
+        if ( this._fixedIsEnabled && !this._settings.get_boolean('extend-height')
+             && this._isPrimaryMonitor()
+             && (this._position == St.Side.BOTTOM ||this._position == St.Side.LEFT )
+             )
+        {
+            use_work_area = false;
+        }
+
+        Main.legacyTray.actor.clear_constraints();
+        let constraint = new Layout.MonitorConstraint({ primary: true,
+                                                        work_area: use_work_area});
+        Main.legacyTray.actor.add_constraint(constraint);
+    },
+
+    _resetLegacyTray: function() {
+        Main.legacyTray.actor.clear_constraints();
+        let constraint = new Layout.MonitorConstraint({ primary: true,
+                                                        work_area: true });
+        Main.legacyTray.actor.add_constraint(constraint);
     },
 
     _updateStaticBox: function() {
