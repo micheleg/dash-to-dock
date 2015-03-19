@@ -3,6 +3,7 @@
 const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
+const Gtk = imports.gi.Gtk;
 const Signals = imports.signals;
 const Lang = imports.lang;
 const Meta = imports.gi.Meta;
@@ -432,11 +433,15 @@ const myDash = new Lang.Class({
 
         this._containerObject = new myDashActor(settings);
         this._container = this._containerObject.actor;
+        this._scrollView = new St.ScrollView({ name: 'dashtodockDashScrollview',
+                                               hscrollbar_policy: Gtk.PolicyType.NEVER,
+                                               vscrollbar_policy: Gtk.PolicyType.NEVER });
         this._box = new St.BoxLayout({ vertical: !this._isHorizontal,
-                                       clip_to_allocation: true,
+                                       clip_to_allocation: false,
                                        x_align: Clutter.ActorAlign.START });
         this._box._delegate = this;
-        this._container.add_actor(this._box);
+        this._container.add_actor(this._scrollView);
+        this._scrollView.add_actor(this._box);
 
         this._showAppsIcon = new Dash.ShowAppsIcon();
         extendShowAppsIcon(this._showAppsIcon, this._dtdSettings);

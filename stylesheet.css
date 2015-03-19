@@ -50,6 +50,17 @@
     border-radius: 9px 9px 0px 0px;
 }
 
+/* Scrollview style */
+.bottom #dashtodockDashScrollview,
+.top #dashtodockDashScrollview {
+    -st-hfade-offset: 24px;
+}
+
+.left #dashtodockDashScrollview,
+.right #dashtodockDashScrollview {
+    -st-vfade-offset: 24px;
+}
+
 #dashtodockContainer.running-dots .dash-item-container > StButton,
 #dashtodockContainer.dashtodock .dash-item-container > StButton {
     transition-duration: 250;
