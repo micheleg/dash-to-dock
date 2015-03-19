@@ -408,6 +408,8 @@ const myDashActor = new Lang.Class({
  * - emit a custom signal when an app icon is added
  * - hide showApps label when the custom menu is shown.
  * - add cleanUpLabels method emitting a signal to hide labels
+ * - Add scrollview
+ *   Ensure actor is visible on keyfocus inseid the scrollview
  */
 const myDash = new Lang.Class({
     Name: 'dashToDock.myDash',
@@ -682,6 +684,11 @@ const myDash = new Lang.Class({
         let item = new Dash.DashItemContainer();
         extendDashItemContainer(item, this._settings);
         item.setChild(appIcon.actor);
+
+        appIcon.actor.connect('key-focus-in',
+            Lang.bind(this, function(actor) {
+                ensureActorVisibleInScrollView(this._scrollView, actor);
+        }));
 
         // Override default AppIcon label_actor, now the
         // accessible_name is set at DashItemContainer.setLabelText
@@ -1492,4 +1499,71 @@ function getAppInterestingWindows(app) {
     });
 
     return windows;
+}
+
+
+/*
+ * This is a copy of the same function in utils.js, but also adjust horizontal scrolling
+*/
+function ensureActorVisibleInScrollView(scrollView, actor) {
+
+    let adjust_v = true;
+    let adjust_h = true;
+
+    let vadjustment = scrollView.vscroll.adjustment;
+    let hadjustment = scrollView.hscroll.adjustment;
+    let [vvalue, vlower, vupper, vstepIncrement, vpageIncrement, vpageSize] = vadjustment.get_values();
+    let [hvalue, hlower, hupper, hstepIncrement, hpageIncrement, hpageSize] = hadjustment.get_values();
+
+    let voffset = 0;
+    let hoffset = 0;
+    let fade = scrollView.get_effect("fade");
+    if (fade){
+        voffset = fade.vfade_offset;
+        hoffset = fade.hfade_offset;
+    }
+
+    let box = actor.get_allocation_box();
+    let y1 = box.y1, y2 = box.y2, x1 = box.x1, x2 = box.x2;
+
+    let parent = actor.get_parent();
+    while (parent != scrollView) {
+        if (!parent)
+            throw new Error("actor not in scroll view");
+
+        let box = parent.get_allocation_box();
+        y1 += box.y1;
+        y2 += box.y1;
+        x1 += box.x1;
+        x2 += box.x1;
+        parent = parent.get_parent();
+    }
+
+    if (y1 < vvalue + voffset)
+        vvalue = Math.max(0, y1 - voffset);
+    else if (y2 > vvalue + vpageSize - voffset)
+        vvalue = Math.min(vupper, y2 + voffset - vpageSize);
+    else
+        adjust_v = false;
+
+    if (x1 < hvalue + hoffset)
+        hvalue = Math.max(0, x1 - hoffset);
+    else if (x2 > hvalue + hpageSize - hoffset)
+        hvalue = Math.min(hupper, x2 + hoffset - hpageSize);
+    else
+        adjust_h = false;
+
+    if (adjust_v) {
+        Tweener.addTween(vadjustment,
+                         { value: vvalue,
+                           time: Util.SCROLL_TIME,
+                           transition: 'easeOutQuad' });
+    }
+
+    if (adjust_h) {
+        Tweener.addTween(hadjustment,
+                         { value: hvalue,
+                           time: Util.SCROLL_TIME,
+                           transition: 'easeOutQuad' });
+    }
 }
