@@ -435,7 +435,11 @@ const myDash = new Lang.Class({
         this._container = this._containerObject.actor;
         this._scrollView = new St.ScrollView({ name: 'dashtodockDashScrollview',
                                                hscrollbar_policy: Gtk.PolicyType.NEVER,
-                                               vscrollbar_policy: Gtk.PolicyType.NEVER });
+                                               vscrollbar_policy: Gtk.PolicyType.NEVER,
+                                               enable_mouse_scrolling: false });
+
+        this._scrollView.connect('scroll-event', Lang.bind(this, this._onScrollEvent ));
+
         this._box = new St.BoxLayout({ vertical: !this._isHorizontal,
                                        clip_to_allocation: false,
                                        x_align: Clutter.ActorAlign.START });
@@ -526,6 +530,37 @@ const myDash = new Lang.Class({
 
     destroy: function() {
         this._signalsHandler.destroy();
+    },
+
+    _onScrollEvent: function(actor, event) {
+
+            let dx, dy;
+
+            let direction;
+
+            switch ( event.get_scroll_direction() ) {
+            case Clutter.ScrollDirection.UP:
+                direction = Meta.MotionDirection.UP;
+                break;
+            case Clutter.ScrollDirection.DOWN:
+                direction = Meta.MotionDirection.DOWN;
+                break;
+            case Clutter.ScrollDirection.SMOOTH:
+                [dx, dy] = event.get_scroll_delta();
+
+                let adjustment;
+                if (this._isHorizontal)
+                    adjustment = this._scrollView.get_hscroll_bar().get_adjustment();
+                else
+                    adjustment = this._scrollView.get_vscroll_bar().get_adjustment();
+
+                let delta = dy;
+
+                global.log(adjustment.get_value() + ' ' + dx + ' ' + dy )  ;
+
+                let adjustvalue = adjustment.get_value() + 10*delta;
+                adjustment.set_value(adjustvalue);
+            }
     },
 
     _onDragBegin: function() {
