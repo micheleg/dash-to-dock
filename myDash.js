@@ -536,33 +536,38 @@ const myDash = new Lang.Class({
 
     _onScrollEvent: function(actor, event) {
 
-            let dx, dy;
+        // Skipe double events mouse
+        if (event.is_pointer_emulated())
+            return true
 
-            let direction;
+        let adjustment, delta;
 
-            switch ( event.get_scroll_direction() ) {
-            case Clutter.ScrollDirection.UP:
-                direction = Meta.MotionDirection.UP;
-                break;
-            case Clutter.ScrollDirection.DOWN:
-                direction = Meta.MotionDirection.DOWN;
-                break;
-            case Clutter.ScrollDirection.SMOOTH:
-                [dx, dy] = event.get_scroll_delta();
+        if (this._isHorizontal)
+            adjustment = this._scrollView.get_hscroll_bar().get_adjustment();
+        else
+            adjustment = this._scrollView.get_vscroll_bar().get_adjustment();
 
-                let adjustment;
-                if (this._isHorizontal)
-                    adjustment = this._scrollView.get_hscroll_bar().get_adjustment();
-                else
-                    adjustment = this._scrollView.get_vscroll_bar().get_adjustment();
+        let increment = adjustment.step_increment;
 
-                let delta = dy;
+        switch ( event.get_scroll_direction() ) {
+        case Clutter.ScrollDirection.UP:
+            delta = -increment;
+            break;
+        case Clutter.ScrollDirection.DOWN:
+            delta = +increment;
+            break;
+        case Clutter.ScrollDirection.SMOOTH:
+            let [dx, dy] = event.get_scroll_delta();
+            delta = dy*increment;
+            // Also consider horizontal component, for instance touchpad
+            if (this._isHorizontal)
+                delta += dx*increment;
+            break;
 
-                global.log(adjustment.get_value() + ' ' + dx + ' ' + dy )  ;
+        }
 
-                let adjustvalue = adjustment.get_value() + 10*delta;
-                adjustment.set_value(adjustvalue);
-            }
+        adjustment.set_value(adjustment.get_value() + delta);
+
     },
 
     _onDragBegin: function() {
