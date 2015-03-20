@@ -705,21 +705,25 @@ const myDash = new Lang.Class({
 
         let themeNode = this._container.get_theme_node();
         let maxAllocation = new Clutter.ActorBox({ x1: 0, y1: 0,
-                                                   x2: 42 /* whatever */,
-                                                   y2: this._maxHeight });
+                                                   x2: this._isHorizontal?this._maxHeight:42 /* whatever */,
+                                                   y2: this._isHorizontal?42:this._maxHeight });
         let maxContent = themeNode.get_content_box(maxAllocation);
-        let availHeight = maxContent.y2 - maxContent.y1;
+        let availHeight;
+        if (this._isHorizontal)
+            availHeight = maxContent.x2 - maxContent.x1;
+        else
+            availHeight = maxContent.y2 - maxContent.y1;
         let spacing = themeNode.get_length('spacing');
 
         let firstButton = iconChildren[0].child;
         let firstIcon = firstButton._delegate.icon;
 
-        let minHeight, natHeight;
+        let minHeight, natHeight, maxWidth, natWidth;
 
         // Enforce the current icon size during the size request
         firstIcon.setIconSize(this.iconSize);
         [minHeight, natHeight] = firstButton.get_preferred_height(-1);
-        [minWidth, natWidth] = firstButton.get_preferred_height(-1);
+        [minWidth, natWidth] = firstButton.get_preferred_width(-1);
 
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         let iconSizes = this._availableIconSizes.map(function(s) {
