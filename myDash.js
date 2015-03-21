@@ -1504,6 +1504,8 @@ function getAppInterestingWindows(app) {
 
 /*
  * This is a copy of the same function in utils.js, but also adjust horizontal scrolling
+ * and perform few further cheks on the current value to avoid changing the values when
+ * it would be clamp to the current one in any case
 */
 function ensureActorVisibleInScrollView(scrollView, actor) {
 
@@ -1514,6 +1516,8 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
     let hadjustment = scrollView.hscroll.adjustment;
     let [vvalue, vlower, vupper, vstepIncrement, vpageIncrement, vpageSize] = vadjustment.get_values();
     let [hvalue, hlower, hupper, hstepIncrement, hpageIncrement, hpageSize] = hadjustment.get_values();
+
+    let [hvalue0, vvalue0] = [hvalue, vvalue];
 
     let voffset = 0;
     let hoffset = 0;
@@ -1541,26 +1545,22 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
 
     if (y1 < vvalue + voffset)
         vvalue = Math.max(0, y1 - voffset);
-    else if (y2 > vvalue + vpageSize - voffset)
-        vvalue = Math.min(vupper, y2 + voffset - vpageSize);
-    else
-        adjust_v = false;
+    else if (vvalue < vupper - vpageSize && y2 > vvalue + vpageSize - voffset)
+        vvalue = Math.min(vupper -vpageSize, y2 + voffset - vpageSize);
 
     if (x1 < hvalue + hoffset)
         hvalue = Math.max(0, x1 - hoffset);
-    else if (x2 > hvalue + hpageSize - hoffset)
-        hvalue = Math.min(hupper, x2 + hoffset - hpageSize);
-    else
-        adjust_h = false;
+    else if (hvalue < hupper - hpageSize && x2 > hvalue + hpageSize - hoffset)
+        hvalue = Math.min(hupper - hpageSize, x2 + hoffset - hpageSize);
 
-    if (adjust_v) {
+    if (vvalue !== vvalue0) {
         Tweener.addTween(vadjustment,
                          { value: vvalue,
                            time: Util.SCROLL_TIME,
                            transition: 'easeOutQuad' });
     }
 
-    if (adjust_h) {
+    if (hvalue !== hvalue0) {
         Tweener.addTween(hadjustment,
                          { value: hvalue,
                            time: Util.SCROLL_TIME,
