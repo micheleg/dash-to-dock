@@ -442,7 +442,7 @@ const dockedDash = new Lang.Class({
         // Apply custome css class according to the settings
         this._themeManager.updateCustomTheme();
 
-        this.dash.setMaxIconSize(this._settings.get_int('dash-max-icon-size'));
+        this.dash.setIconSize(this._settings.get_int('dash-min-icon-size'), this._settings.get_int('dash-max-icon-size'));
 
         // Since Gnome 3.8 dragging an app without having opened the overview before cause the attemp to
         //animate a null target since some variables are not initialized when the viewSelector is created
@@ -500,7 +500,11 @@ const dockedDash = new Lang.Class({
         }));
 
         this._settings.connect('changed::dash-max-icon-size', Lang.bind(this, function(){
-            this.dash.setMaxIconSize(this._settings.get_int('dash-max-icon-size'));
+            this.dash.setIconSize(this._settings.get_int('dash-min-icon-size'), this._settings.get_int('dash-max-icon-size'));
+        }));
+
+        this._settings.connect('changed::dash-min-icon-size', Lang.bind(this, function(){
+            this.dash.setIconSize(this._settings.get_int('dash-min-icon-size'), this._settings.get_int('dash-max-icon-size'));
         }));
 
         this._settings.connect('changed::show-favorites', Lang.bind(this, function(){
