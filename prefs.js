@@ -312,6 +312,34 @@ const WorkspaceSettingsWidget = new GObject.Class({
                                        margin_left:10, margin_top:10, margin_bottom:0, margin_right:10});
 
     let allSizes  =[ 16, 24, 32, 48, 64 ];
+    let minimumIconSizeBox = new Gtk.Box({spacing:30,});
+
+    let minimumIconSizeLabel = new Gtk.Label({label: _("Minimum icon size"), use_markup: true,
+                                              xalign: 0, valign: Gtk.Align.END, margin_bottom:5,  hexpand:true});
+
+    let minimumIconSize =  new Gtk.ComboBoxText({halign:Gtk.Align.END});
+
+            minimumIconSize.append_text(_("16"));
+            minimumIconSize.append_text(_("24"));
+            minimumIconSize.append_text(_("32"));
+            minimumIconSize.append_text(_("48"));
+            minimumIconSize.append_text(_("64"));
+
+            minimumIconSize.set_size_request(100, -1);
+
+            minimumIconSize.set_active(allSizes.indexOf(this.settings.get_int('dash-min-icon-size')));
+
+            minimumIconSize.connect('changed', Lang.bind (this, function(widget) {
+                this.settings.set_int('dash-min-icon-size', allSizes[widget.get_active()]);
+            }));
+
+    minimumIconSizeBox.add(minimumIconSizeLabel);
+    minimumIconSizeBox.add(minimumIconSize);
+
+    iconSizeMain.add(minimumIconSizeBox);
+
+    minimumIconSizeBox.add(minimumIconSize);
+
     let maximumIconSizeBox = new Gtk.Box({spacing:30,});
 
     let maximumIconSizeLabel = new Gtk.Label({label: _("Maximum icon size"), use_markup: true,
@@ -337,6 +365,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
     maximumIconSizeBox.add(maximumIconSize);
 
     iconSizeMain.add(maximumIconSizeBox);
+
     dockSettings.add(iconSizeMain);
 
     /* SHOW FAVORITES/RUNNING */
