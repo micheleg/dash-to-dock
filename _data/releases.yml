@@ -1,3 +1,11 @@
+- version: 42
+  date: 23-03-2015
+  shell_version: ["3.16"]
+  notes:
+    - Port to GNOME Shell 3.16.
+    - "Bug Fix: Fix icon size calculation with unequal vertical/horizontal icons padding"
+  zip_url: https://extensions.gnome.org/review/download/4751.shell-extension.zip
+
 - version: 41
   date: 17-03-2015
   shell_version: ["3.12"]
