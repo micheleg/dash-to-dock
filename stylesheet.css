@@ -1,21 +1,3 @@
-/* 1px padding to trigger the dash showing */
-.left #dashtodockBox {
-    padding-right:1px;
-}
-
-.right #dashtodockBox {
-    padding-left:1px;
-}
-
-.bottom #dashtodockBox {
-    padding-top:1px;
-}
-
-.top #dashtodockBox {
-    padding-bottom:1px;
-}
-
-
 /* Shrink the dash by reducing padding and border radius */
 #dashtodockContainer.shrink #dash,
 #dashtodockContainer.dashtodock #dash {
