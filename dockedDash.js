@@ -1,6 +1,7 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 const Clutter = imports.gi.Clutter;
+const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Lang = imports.lang;
 const Meta = imports.gi.Meta;
@@ -14,6 +15,7 @@ const Dash = imports.ui.dash;
 const IconGrid = imports.ui.iconGrid;
 const Overview = imports.ui.overview;
 const OverviewControls = imports.ui.overviewControls;
+const PointerWatcher = imports.ui.pointerWatcher;
 const Tweener = imports.ui.tweener;
 const Signals = imports.signals;
 const ViewSelector = imports.ui.viewSelector;
@@ -27,6 +29,8 @@ const Intellihide = Me.imports.intellihide;
 const MyDash = Me.imports.myDash;
 
 const PRESSURE_TIMEOUT = 1000;
+const DOCK_DWELL_CHECK_INTERVAL = 100;  //TODO
+const DOCK_DWELL_TIME = 250; //TODO
 
 /* Return the actual position reverseing left and right in rtl */
 function getPosition(settings) {
@@ -233,6 +237,12 @@ const dockedDash = new Lang.Class({
         this._pressureBarrier = null;
         this._barrier = null;
         this._removeBarrierTimeoutId = 0;
+
+        // Initialize dwelling system variables
+        this._dockDwelling = false;
+        this._dockWatch = null;
+        this._dockDwellUserTime = 0;
+        this._dockDwellTimeoutId = 0
 
         // Create a new dash object
         this.dash = new MyDash.myDash(this._settings);
@@ -454,6 +464,9 @@ const dockedDash = new Lang.Class({
         this._updatePressureBarrier();
         this._updateBarrier();
 
+        // setup dwelling system if pressure barriers are not available
+        this._setupDockDwellIfNeeded();
+
     },
 
     destroy: function(){
@@ -476,6 +489,12 @@ const dockedDash = new Lang.Class({
 
         // Remove existing barrier
         this._removeBarrier();
+
+        // Remove pointer watcher
+        if(this._dockWatch){
+            PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
+            this._dockWatch = null;
+        }
 
         // Remove the dashSpacer
         this._dashSpacer.destroy();
@@ -547,7 +566,15 @@ const dockedDash = new Lang.Class({
         this._settings.connect('changed::extend-height', Lang.bind(this,this._resetPosition));
         this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
         this._settings.connect('changed::height-fraction', Lang.bind(this,this._resetPosition));
-        this._settings.connect('changed::require-pressure-to-show', Lang.bind(this,this._updateBarrier));
+        this._settings.connect('changed::require-pressure-to-show', Lang.bind(this,function(){
+            // Remove pointer watcher
+            if(this._dockWatch){
+                PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
+                this._dockWatch = null;
+            }
+            this._setupDockDwellIfNeeded();
+            this._updateBarrier();
+        }));
         this._settings.connect('changed::pressure-threshold', Lang.bind(this,function() {
             this._updatePressureBarrier();
             this._updateBarrier();
@@ -748,6 +775,90 @@ const dockedDash = new Lang.Class({
                     this._updateBarrier();
             })
         });
+    },
+
+    // Dwelling system based on the GNOME Shell 3.14 messageTray code.
+    _setupDockDwellIfNeeded: function() {
+        // If we don't have extended barrier features, then we need
+        // to support the old tray dwelling mechanism.
+        if (!global.display.supports_extended_barriers() || !this._settings.get_boolean('require-pressure-to-show')) {
+            let pointerWatcher = PointerWatcher.getPointerWatcher();
+            this._dockWatch = pointerWatcher.addWatch(DOCK_DWELL_CHECK_INTERVAL, Lang.bind(this, this._checkDockDwell));
+            this._dockDwelling = false;
+            this._dockDwellUserTime = 0;
+        }
+    },
+
+    _checkDockDwell: function(x, y) {
+        let monitor = this._monitor;
+
+        // Check for the dock area
+        let shouldDwell = (x >= this.staticBox.x1 && x <= this.staticBox.x2 &&
+                           y >= this.staticBox.y1  && y <= this.staticBox.y2);
+
+        // Check for the correct screen edge
+        // Position is approximated to the lower integer
+        if(this._position==St.Side.LEFT){
+            shouldDwell = shouldDwell &&  x == this._monitor.x;
+        } else if(this._position==St.Side.RIGHT) {
+            shouldDwell = shouldDwell &&  x == this._monitor.x + this._monitor.width - 1;
+        } else if(this._position==St.Side.TOP) {
+            shouldDwell = shouldDwell &&  y == this._monitor.y;
+        } else if (this._position==St.Side.BOTTOM) {
+            shouldDwell = shouldDwell &&  y == this._monitor.y + this._monitor.height - 1;
+        }
+
+        if (shouldDwell) {
+            // We only set up dwell timeout when the user is not hovering over the dock
+            // already (!this._box._hover).
+            // The _dockDwelling variable is used so that we only try to
+            // fire off one dock dwell - if it fails (because, say, the user has the mouse down),
+            // we don't try again until the user moves the mouse up and down again.
+            if (!this._dockDwelling && !this._box._hover && this._dockDwellTimeoutId == 0) {
+                // Save the interaction timestamp so we can detect user input
+                let focusWindow = global.display.focus_window;
+                this._dockDwellUserTime = focusWindow ? focusWindow.user_time : 0;
+
+                this._dockDwellTimeoutId = Mainloop.timeout_add(DOCK_DWELL_TIME,
+                                                                Lang.bind(this, this._dockDwellTimeout));
+                GLib.Source.set_name_by_id(this._dockDwellTimeoutId, '[dash-to-dock] this._dockDwellTimeout');
+            }
+            this._dockDwelling = true;
+        } else {
+            this._cancelDockDwell();
+            this._dockDwelling = false;
+        }
+    },
+
+    _cancelDockDwell: function() {
+        if (this._dockDwellTimeoutId != 0) {
+            Mainloop.source_remove(this._dockDwellTimeoutId);
+            this._dockDwellTimeoutId = 0;
+        }
+    },
+
+    _dockDwellTimeout: function() {
+        this._dockDwellTimeoutId = 0;
+
+        if (this._monitor.inFullscreen)
+            return GLib.SOURCE_REMOVE;
+
+        // We don't want to open the tray when a modal dialog
+        // is up, so we check the modal count for that. When we are in the
+        // overview we have to take the overview's modal push into account
+        if (Main.modalCount > (Main.overview.visible ? 1 : 0))
+            return GLib.SOURCE_REMOVE;
+
+        // If the user interacted with the focus window since we started the tray
+        // dwell (by clicking or typing), don't activate the message tray
+        let focusWindow = global.display.focus_window;
+        let currentUserTime = focusWindow ? focusWindow.user_time : 0;
+        if (currentUserTime != this._dockDwellUserTime)
+            return GLib.SOURCE_REMOVE;
+
+        // Reuse the pressure version function, the logic is the same
+        this._onPressureSensed();
+        return GLib.SOURCE_REMOVE;
     },
 
     _updatePressureBarrier: function() {
