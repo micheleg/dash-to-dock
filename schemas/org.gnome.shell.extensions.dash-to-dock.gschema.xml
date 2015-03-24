@@ -66,7 +66,7 @@
       <description>Enable or disable requiring pressure to show the dash</description>
     </key>
     <key type="d" name="pressure-threshold">
-      <default>50</default>
+      <default>100</default>
       <summary>Pressure threshold</summary>
       <description>Sets how much pressure is needed to show the dash.</description>
     </key>
