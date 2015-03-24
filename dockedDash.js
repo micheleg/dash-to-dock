@@ -31,6 +31,13 @@ const MyDash = Me.imports.myDash;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;  //TODO
 
+const State = {
+    HIDDEN:  0,
+    SHOWING: 1,
+    SHOWN:   2,
+    HIDING:  3
+};
+
 /* Return the actual position reverseing left and right in rtl */
 function getPosition(settings) {
     let position = settings.get_enum('dock-position');
@@ -215,8 +222,8 @@ const dockedDash = new Lang.Class({
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.intellihide(this._settings);
 
-        // initialize animation status object
-        this._animStatus = new animationStatus(false);
+        // initialize dock state
+        this._dockState = State.HIDDEN;
 
         /* status variable: true when the overview is shown through the dash
          * applications button.
@@ -702,12 +709,11 @@ const dockedDash = new Lang.Class({
 
     _show: function() {
 
-        var anim = this._animStatus;
+        if ( this._dockState == State.HIDDEN || this._dockState == State.HIDING ) {
 
-        if(  anim.hidden() || anim.hiding()  ){
-
-            if(anim.hiding()){
-                // suppress all potential queued hiding animations (always give priority to show)
+            if(this._dockState == State.HIDING){
+                // suppress all potential queued hiding animations - i.e. added to Tweener but not started,
+                // always give priority to show
                 this._removeAnimations();
             }
 
@@ -718,22 +724,17 @@ const dockedDash = new Lang.Class({
 
     _hide: function() {
 
-        var anim = this._animStatus;
-
         // If no hiding animation is running or queued
-        if( anim.showing() || anim.shown() ){
+        if ( this._dockState == State.SHOWN || this._dockState == State.SHOWING ) {
 
             let delay;
 
-            // If a show is queued but still not started (i.e the mouse was 
-            // over the screen  border but then went away, i.e not a sufficient 
-            // amount of time is passeed to trigger the dock showing) remove it.
-            if( anim.showing()) {
+            if (this._dockState == State.SHOWING) {
                 //if a show already started, let it finish; queue hide without removing the show.
                 // to obtain this I increase the delay to avoid the overlap and interference 
                 // between the animations
-                delay = this._settings.get_double('hide-delay') + 1.2*this._settings.get_double('animation-time');
-            } else if( anim.shown() ) {
+                delay = this._settings.get_double('hide-delay') + this._settings.get_double('animation-time');
+            } else {
                 delay = this._settings.get_double('hide-delay');
             }
 
@@ -745,18 +746,15 @@ const dockedDash = new Lang.Class({
 
     _animateIn: function(time, delay) {
 
-        this._animStatus.queue(true);
+        this._dockState = State.SHOWING;
+
         Tweener.addTween(this._slider,{
             slidex: 1,
             time: time,
             delay: delay,
             transition: 'easeOutQuad',
-            onStart:  Lang.bind(this, function() {
-                this._animStatus.start();
-            }),
-            onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
             onComplete: Lang.bind(this, function() {
-                  this._animStatus.end();
+                  this._dockState = State.SHOWN;
                   // Remove barrier so that mouse pointer is released and can access monitors on other side of dock
                   // NOTE: Delay needed to keep mouse from moving past dock and re-hiding dock immediately. This
                   // gives users an opportunity to hover over the dock
@@ -770,18 +768,14 @@ const dockedDash = new Lang.Class({
 
     _animateOut: function(time, delay){
 
-        this._animStatus.queue(false);
+        this._dockState = State.HIDING;
         Tweener.addTween(this._slider,{
             slidex: 0,
             time: time,
             delay: delay ,
             transition: 'easeOutQuad',
-            onStart:  Lang.bind(this, function() {
-                this._animStatus.start();
-            }),
-            onOverwrite : Lang.bind(this, function() {this._animStatus.clear();}),
             onComplete: Lang.bind(this, function() {
-                    this._animStatus.end();
+                    this._dockState = State.HIDDEN;
                     this._updateBarrier();
             })
         });
@@ -1180,7 +1174,6 @@ const dockedDash = new Lang.Class({
 
     _removeAnimations: function() {
         Tweener.removeTweens(this._slider);
-        this._animStatus.clearAll();
     },
 
     _onDragStart: function(){
@@ -1506,87 +1499,6 @@ const dockedDash = new Lang.Class({
     }
 });
 Signals.addSignalMethods(dockedDash.prototype);
-
-/*
- * Store animation status in a perhaps overcomplicated way.
- * status is true for visible, false for hidden
- */
-const animationStatus = new Lang.Class({
-    Name: 'AnimationStatus',
-
-    _init: function(initialStatus){
-        this.status  = initialStatus;
-        this.nextStatus  = [];
-        this.queued = false;
-        this.running = false;
-    },
-
-    queue: function(nextStatus){
-        this.nextStatus.push(nextStatus);
-        this.queued = true;
-    },
-
-    start: function(){
-        if(this.nextStatus.length==1){
-            this.queued = false;
-        }
-        this.running = true;
-    },
-
-    end: function(){
-        if(this.nextStatus.length==1){
-            this.queued=false; // in the case end is called and start was not
-        }
-        this.running=false;
-        this.status = this.nextStatus.shift();
-    },
-
-    clear: function(){
-        if(this.nextStatus.length==1){
-            this.queued = false;
-        this.running = false;
-        }
-
-        this.nextStatus.splice(0, 1);
-    },
-
-    clearAll: function(){
-        this.queued  = false;
-        this.running = false;
-        this.nextStatus.splice(0, this.nextStatus.length);
-    },
-
-    // Return true if a showing animation is running or queued
-    showing: function(){
-        if( (this.running == true || this.queued == true) && this.nextStatus[0] == true)
-            return true;
-        else
-            return false;
-    },
-
-    shown: function(){
-        if( this.status==true && !(this.queued || this.running) )
-            return true;
-        else
-            return false;
-    },
-
-    // Return true if an hiding animation is running or queued
-    hiding: function(){
-        if( (this.running == true || this.queued == true) && this.nextStatus[0] == false )
-            return true;
-        else
-            return false;
-    },
-
-    hidden: function(){
-        if( this.status==false && !(this.queued || this.running) )
-            return true;
-        else
-            return false;
-    }
-});
-
 
 /* 
  * Manage theme customization and custom theme support
