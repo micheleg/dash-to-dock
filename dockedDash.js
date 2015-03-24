@@ -93,7 +93,7 @@ const DashSlideContainer = new Lang.Class({
         // slide parameter: 1 = visible, 0 = hidden.
         this._slidex = localParams.initialSlideValue;
         this._side = localParams.side;
-        this._slideoutSize = 1; // minimum size when slided out
+        this._slideoutSize = 0; // minimum size when slided out
     },
 
 
@@ -230,7 +230,6 @@ const dockedDash = new Lang.Class({
 
         // Initialize pressure barrier variables
         this._canUsePressure = false;
-        this._pressureSensed = false;
         this._pressureBarrier = null;
         this._barrier = null;
         this._messageTrayShowing = false;
@@ -668,16 +667,6 @@ const dockedDash = new Lang.Class({
             // by intellihide.
             if(this._autohideIsEnabled) {
                 if( this._box.hover ) {
-
-                    // Ignore hover if pressure barrier being used but pressureSensed not triggered
-                    if (this._canUsePressure
-                        && this._settings.get_boolean('require-pressure-to-show')
-                        && this._barrier
-                        && this._pressureSensed == false)
-                    {
-                        return;
-                    }
-
                     this._show();
                 } else {
                     this._hide();
@@ -807,9 +796,7 @@ const dockedDash = new Lang.Class({
 
     // handler for mouse pressure sensed
     _onPressureSensed: function() {
-        this._pressureSensed = true;
-        // Prevent dock from being shown accidentally by testing for mouse hover
-        this._hoverChanged();
+        this._show();
     },
 
     _onMessageTrayShowing: function() {
@@ -923,8 +910,6 @@ const dockedDash = new Lang.Class({
             }
         }
 
-        // Reset pressureSensed flag
-        this._pressureSensed = false;
     },
 
     _isPrimaryMonitor: function() {
