@@ -28,9 +28,7 @@ const Convenience = Me.imports.convenience;
 const Intellihide = Me.imports.intellihide;
 const MyDash = Me.imports.myDash;
 
-const PRESSURE_TIMEOUT = 1000;
 const DOCK_DWELL_CHECK_INTERVAL = 100;  //TODO
-const DOCK_DWELL_TIME = 250; //TODO
 
 /* Return the actual position reverseing left and right in rtl */
 function getPosition(settings) {
@@ -684,19 +682,13 @@ const dockedDash = new Lang.Class({
 
         if(  anim.hidden() || anim.hiding()  ){
 
-            let delay;
-            // If the dock is hidden, wait this._settings.get_double('show-delay') before showing it; 
-            // otherwise show it immediately.
-            if(anim.hidden()){
-                delay = this._settings.get_double('show-delay');
-            } else if(anim.hiding()){
+            if(anim.hiding()){
                 // suppress all potential queued hiding animations (always give priority to show)
                 this._removeAnimations();
-                delay = 0;
             }
 
             this.emit("showing");
-            this._animateIn(this._settings.get_double('animation-time'), delay);
+            this._animateIn(this._settings.get_double('animation-time'), 0);
         }
     },
 
@@ -713,16 +705,10 @@ const dockedDash = new Lang.Class({
             // over the screen  border but then went away, i.e not a sufficient 
             // amount of time is passeed to trigger the dock showing) remove it.
             if( anim.showing()) {
-                if(anim.running){
-                    //if a show already started, let it finish; queue hide without removing the show.
-                    // to obtain this I increase the delay to avoid the overlap and interference 
-                    // between the animations
-                    delay = this._settings.get_double('hide-delay') + 1.2*this._settings.get_double('animation-time') + this._settings.get_double('show-delay');
-
-                } else {
-                    this._removeAnimations();
-                    delay = 0;
-                }
+                //if a show already started, let it finish; queue hide without removing the show.
+                // to obtain this I increase the delay to avoid the overlap and interference 
+                // between the animations
+                delay = this._settings.get_double('hide-delay') + 1.2*this._settings.get_double('animation-time');
             } else if( anim.shown() ) {
                 delay = this._settings.get_double('hide-delay');
             }
@@ -819,7 +805,7 @@ const dockedDash = new Lang.Class({
                 let focusWindow = global.display.focus_window;
                 this._dockDwellUserTime = focusWindow ? focusWindow.user_time : 0;
 
-                this._dockDwellTimeoutId = Mainloop.timeout_add(DOCK_DWELL_TIME,
+                this._dockDwellTimeoutId = Mainloop.timeout_add(this._settings.get_double('show-delay')*1000,
                                                                 Lang.bind(this, this._dockDwellTimeout));
                 GLib.Source.set_name_by_id(this._dockDwellTimeoutId, '[dash-to-dock] this._dockDwellTimeout');
             }
@@ -873,7 +859,7 @@ const dockedDash = new Lang.Class({
 
         // Create new pressure barrier based on pressure threshold setting
         if (this._canUsePressure) {
-            this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, PRESSURE_TIMEOUT,
+            this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, this._settings.get_double('show-delay')*1000,
                                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
             this._pressureBarrier.connect('trigger', Lang.bind(this, function(barrier){
                 this._onPressureSensed();
