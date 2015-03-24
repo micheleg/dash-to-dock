@@ -628,7 +628,6 @@ const dockedDash = new Lang.Class({
                 this._ignoreHover = false;
                 // Do not hide if autohide is enabled and mouse is hover
                 if (!this._box.hover || !this._autohideIsEnabled) {
-                    this._removeAnimations();
                     this._animateOut(this._settings.get_double('animation-time'), 0);
                 }
             } else {
@@ -648,7 +647,6 @@ const dockedDash = new Lang.Class({
                 }
 
             } else {
-                this._removeAnimations();
                 this._animateOut(this._settings.get_double('animation-time'), 0);
             }
         }
