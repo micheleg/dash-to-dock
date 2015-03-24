@@ -908,6 +908,9 @@ const dockedDash = new Lang.Class({
     // handler for mouse pressure sensed
     _onPressureSensed: function() {
 
+        if (Main.overview.visibleTarget)
+            return;
+
         // In case the mouse move away from the dock area before hovering it, in such case the leave event
         // would never be triggered and the dock would stay visible forever.
         let triggerTimeoutId =  Mainloop.timeout_add(this._settings.get_double('animation-time')*1000,
