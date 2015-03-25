@@ -512,7 +512,8 @@ const dockedDash = new Lang.Class({
 
         // reset stored icon size  to the default dash
         Main.overview.dashIconSize = Main.overview._controls.dash.iconSize;
-        this._revertMainPanel();
+        // Reshow panel corners
+        this._revertPanelCorners();
         this._resetLegacyTray();
     },
 
@@ -968,16 +969,14 @@ const dockedDash = new Lang.Class({
 
         let extendHeight = this._settings.get_boolean('extend-height');
 
-        // check if the dock is on the primary monitor
+        // Reserve space for the dash on the overview
+        // if the dock is on the primary monitor
         if (this._isPrimaryMonitor()){
-          if (!extendHeight || !this._fixedIsEnabled) {
-              unavailableTopSpace = Main.panel.actor.height;
-          }
-          // Reserve space for the dash on the overview
-          this._dashSpacer.show();
+            unavailableTopSpace = Main.panel.actor.height;
+            this._dashSpacer.show();
         } else {
-          // No space is required in the overview of the dash
-          this._dashSpacer.hide();
+            // No space is required in the overview of the dash
+            this._dashSpacer.hide();
         }
 
         let fraction = this._settings.get_double('height-fraction');
@@ -1043,33 +1042,10 @@ const dockedDash = new Lang.Class({
         }
 
         this._y0 = this.actor.y;
+        this._adjustPanelCorners();
 
         this._adjustLegacyTray();
         this._updateStaticBox();
-    },
-
-    // Shift panel position to extend the dash to the full monitor height
-    _updateMainPanel: function() {
-        let extendHeight = this._settings.get_boolean('extend-height');
-        let panelActor = Main.panel.actor;
-
-        if (!this._isHorizontal && this._isPrimaryMonitor() && extendHeight && this._fixedIsEnabled) {
-            panelActor.set_width(this._monitor.width - this._box.width);
-            if (this._rtl) {
-                panelActor.set_margin_right(this._box.width - 1);
-            } else {
-                panelActor.set_margin_left(this._box.width - 1);
-            }
-        } else {
-            this._revertMainPanel();
-        }
-    },
-
-    _revertMainPanel: function() {
-        let panelActor = Main.panel.actor;
-        panelActor.set_width(this._monitor.width);
-        panelActor.set_margin_right(0);
-        panelActor.set_margin_left(0);
     },
 
     _adjustLegacyTray: function(){
@@ -1106,18 +1082,28 @@ const dockedDash = new Lang.Class({
             this._box.height
         );
 
-        // This prevents an allocation cycle warning. Somehow changing the topbar
-        // allocation causes an allocation of the dock actor and thus the cycle I
-        // think. This happens only if _updateStaticBox is called upon the
-        // allocation event (why?). This seems to prevent the warning and I checked
-        // that the function is called once to be sure.
-        Mainloop.timeout_add(10,
-                Lang.bind(this, function(){
-                  this._updateMainPanel();
-                  return false;
-                }));
-
         this._intellihide.updateTargetBox(this.staticBox);
+    },
+
+    // Adjust Panel corners
+    _adjustPanelCorners: function() {
+        let extendHeight = this._settings.get_boolean('extend-height');
+        if (!this._isHorizontal && this._isPrimaryMonitor() && extendHeight && this._fixedIsEnabled) {
+            if (this._position == St.Side.RIGHT) {
+                Main.panel._leftCorner.actor.show();
+                Main.panel._rightCorner.actor.hide();
+            } else {
+                Main.panel._leftCorner.actor.hide();
+                Main.panel._rightCorner.actor.show();
+            }
+        } else {
+            this._revertPanelCorners();
+        }
+    },
+
+    _revertPanelCorners: function() {
+        Main.panel._leftCorner.actor.show();
+        Main.panel._rightCorner.actor.show();
     },
 
     _getMonitor: function(){
