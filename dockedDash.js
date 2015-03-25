@@ -1118,13 +1118,8 @@ const dockedDash = new Lang.Class({
     _adjustPanelCorners: function() {
         let extendHeight = this._settings.get_boolean('extend-height');
         if (!this._isHorizontal && this._isPrimaryMonitor() && extendHeight && this._fixedIsEnabled) {
-            if (this._position == St.Side.RIGHT) {
-                Main.panel._leftCorner.actor.show();
-                Main.panel._rightCorner.actor.hide();
-            } else {
-                Main.panel._leftCorner.actor.hide();
-                Main.panel._rightCorner.actor.show();
-            }
+            Main.panel._rightCorner.actor.hide();
+            Main.panel._leftCorner.actor.hide();
         } else {
             this._revertPanelCorners();
         }
