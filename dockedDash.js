@@ -343,11 +343,6 @@ const dockedDash = new Lang.Class({
                 'hiding',
                 Lang.bind(this, this._onMessageTrayHiding)
             ],
-            [
-                global.screen,
-                'in-fullscreen-changed',
-                Lang.bind(this, this._onFullscreenChanged)
-            ],
             // Monitor windows overlapping
             [
                 this._intellihide,
@@ -878,6 +873,8 @@ const dockedDash = new Lang.Class({
             this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, this._settings.get_double('show-delay')*1000,
                                 Shell.KeyBindingMode.NORMAL | Shell.KeyBindingMode.OVERVIEW);
             this._pressureBarrier.connect('trigger', Lang.bind(this, function(barrier){
+                if (this._monitor.inFullscreen)
+                    return;
                 this._onPressureSensed();
             }));
         }
@@ -940,11 +937,6 @@ const dockedDash = new Lang.Class({
 
         this._messageTrayShowing = false;
         this._updateBarrier();
-    },
-
-    _onFullscreenChanged: function() {
-        if (!this._slider.actor.visible)
-            this._updateBarrier();
     },
 
     // Remove pressure barrier
