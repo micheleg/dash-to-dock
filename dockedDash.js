@@ -854,6 +854,8 @@ const dockedDash = new Lang.Class({
             this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, this._settings.get_double('show-delay')*1000,
                                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
             this._pressureBarrier.connect('trigger', Lang.bind(this, function(barrier){
+                if (this._monitor.inFullscreen)
+                    return;
                 this._onPressureSensed();
             }));
         }
