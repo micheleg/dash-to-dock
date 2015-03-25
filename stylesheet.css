@@ -59,14 +59,19 @@
 #dashtodockContainer.extended.right #dash,
 #dashtodockContainer.extended.bottom #dash,
 #dashtodockContainer.extended.left #dash {
-    border:0;
     border-radius: 0;
 }
 
-#dashtodockContainer.dashtodock.extended.left #dash,
-#dashtodockContainer.dashtodock.extended.right #dash {
-    /* merge  with the panel */
-    background: black;
+#dashtodockContainer.extended.top #dash,
+#dashtodockContainer.extended.bottom #dash {
+    border-left:0px;
+    border-right:0px;
+}
+
+#dashtodockContainer.extended.right #dash,
+#dashtodockContainer.extended.left #dash {
+    border-top:0px;
+    border-bottom:0px;
 }
 
 /* Running and focused application style */
