@@ -1136,6 +1136,12 @@ const myDash = new Lang.Class({
             this._box.insert_child_at_index(this._dragPlaceholder,
                                             this._dragPlaceholderPos);
             this._dragPlaceholder.show(fadeIn);
+            // Ensure the next and previous icon are visible when moving the placeholder
+            // (I assume there's room for both of them)
+            if (this._dragPlaceholderPos > 1)
+                ensureActorVisibleInScrollView(this._scrollView, this._box.get_children()[this._dragPlaceholderPos-1]);
+            if (this._dragPlaceholderPos < this._box.get_children().length-1)
+                ensureActorVisibleInScrollView(this._scrollView, this._box.get_children()[this._dragPlaceholderPos+1]);
         }
 
         // Remove the drag placeholder if we are not in the
