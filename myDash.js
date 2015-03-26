@@ -433,7 +433,8 @@ const myDash = new Lang.Class({
         this._containerObject = new myDashActor(settings);
         this._container = this._containerObject.actor;
         this._box = new St.BoxLayout({ vertical: !this._isHorizontal,
-                                       clip_to_allocation: true });
+                                       clip_to_allocation: true,
+                                       x_align: Clutter.ActorAlign.START });
         this._box._delegate = this;
         this._container.add_actor(this._box);
 
