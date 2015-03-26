@@ -687,7 +687,15 @@ const myDash = new Lang.Class({
 
         appIcon.actor.connect('key-focus-in',
             Lang.bind(this, function(actor) {
-                ensureActorVisibleInScrollView(this._scrollView, actor);
+
+                let [x_shift, y_shift] = ensureActorVisibleInScrollView(this._scrollView, actor);
+
+                // This signal is triggered also by mouse click. The popup menu is opened at the original
+                // coordinates. Thus correct for the shift which is going to be applied to the scrollview.
+                if (appIcon._menu) {
+                    appIcon._menu._boxPointer.xOffset = -x_shift;
+                    appIcon._menu._boxPointer.yOffset = -y_shift;
+                }
         }));
 
         // Override default AppIcon label_actor, now the
@@ -1520,7 +1528,8 @@ function getAppInterestingWindows(app) {
 /*
  * This is a copy of the same function in utils.js, but also adjust horizontal scrolling
  * and perform few further cheks on the current value to avoid changing the values when
- * it would be clamp to the current one in any case
+ * it would be clamp to the current one in any case.
+ * Return the amount of shift applied
 */
 function ensureActorVisibleInScrollView(scrollView, actor) {
 
@@ -1581,4 +1590,6 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
                            time: Util.SCROLL_TIME,
                            transition: 'easeOutQuad' });
     }
+
+    return [hvalue- hvalue0, vvalue - vvalue0];
 }
