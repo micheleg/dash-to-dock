@@ -144,7 +144,6 @@ function ItemShowLabel()  {
           xOffset = labelOffset;
           x = stageX + this.get_width() + xOffset;
           break;
-        break;
       case St.Side.RIGHT:
           yOffset = Math.floor((itemHeight - labelHeight) / 2);
           y = stageY + yOffset;
@@ -163,6 +162,17 @@ function ItemShowLabel()  {
           x = stageX + xOffset;
           break;
     }
+
+    // keep the label inside the screen border
+    // Only needed fot the x coordinate.
+
+    // Leave a few pixel gap
+    let gap = 5;
+    let monitor = Main.layoutManager.findMonitorForActor(this);
+    if ( x - monitor.x<gap)
+        x+= monitor.x - x + labelOffset;
+    else if ( x + labelWidth > monitor.x + monitor.width - gap)
+        x-= x + labelWidth -( monitor.x + monitor.width) + gap;
 
     this.label.set_position(x, y);
     Tweener.addTween(this.label,
