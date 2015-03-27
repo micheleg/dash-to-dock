@@ -431,6 +431,7 @@ const myDash = new Lang.Class({
         this._animatingPlaceholdersCount = 0;
         this._showLabelTimeoutId = 0;
         this._resetHoverTimeoutId = 0;
+        this._ensureAppIconVisibilityTimeoutId = 0;
         this._labelShowing = false;
 
         this._containerObject = new myDashActor(settings);
@@ -684,6 +685,22 @@ const myDash = new Lang.Class({
         let item = new Dash.DashItemContainer();
         extendDashItemContainer(item, this._settings);
         item.setChild(appIcon.actor);
+
+
+        appIcon.actor.connect('notify::hover', Lang.bind(this, function() {
+            if (appIcon.actor.hover){
+                this._ensureAppIconVisibilityTimeoutId = Mainloop.timeout_add(500, Lang.bind(this, function(){
+                    ensureActorVisibleInScrollView(this._scrollView, appIcon.actor);
+                    this._ensureAppIconVisibilityTimeoutId;
+                    return GLib.SOURCE_REMOVE;
+                }));
+            } else {
+                if (this._ensureAppIconVisibilityTimeoutId>0) {
+                    Mainloop.source_remove(this._ensureAppIconVisibilityTimeoutId);
+                    this._ensureAppIconVisibilityTimeoutId = 0;
+                }
+            }
+        }));
 
         appIcon.actor.connect('clicked',
             Lang.bind(this, function(actor) {
