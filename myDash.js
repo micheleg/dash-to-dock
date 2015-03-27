@@ -679,6 +679,11 @@ const myDash = new Lang.Class({
         extendDashItemContainer(item, this._dtdSettings);
         item.setChild(appIcon.actor);
 
+        appIcon.actor.connect('clicked',
+            Lang.bind(this, function(actor) {
+                ensureActorVisibleInScrollView(this._scrollView, actor);
+        }));
+
         appIcon.actor.connect('key-focus-in',
             Lang.bind(this, function(actor) {
 
