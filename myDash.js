@@ -537,7 +537,13 @@ const myDash = new Lang.Class({
 
     _onScrollEvent: function(actor, event) {
 
-        // Skipe double events mouse
+        // reset timeout to avid conflicts with the mousehover event
+        if (this._ensureAppIconVisibilityTimeoutId>0) {
+            Mainloop.source_remove(this._ensureAppIconVisibilityTimeoutId);
+            this._ensureAppIconVisibilityTimeoutId = 0;
+        }
+
+        // Skip to avoid double events mouse
         if (event.is_pointer_emulated())
             return true
 
@@ -689,7 +695,7 @@ const myDash = new Lang.Class({
 
         appIcon.actor.connect('notify::hover', Lang.bind(this, function() {
             if (appIcon.actor.hover){
-                this._ensureAppIconVisibilityTimeoutId = Mainloop.timeout_add(500, Lang.bind(this, function(){
+                this._ensureAppIconVisibilityTimeoutId = Mainloop.timeout_add(100, Lang.bind(this, function(){
                     ensureActorVisibleInScrollView(this._scrollView, appIcon.actor);
                     this._ensureAppIconVisibilityTimeoutId;
                     return GLib.SOURCE_REMOVE;
