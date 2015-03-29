@@ -697,7 +697,7 @@ const myDash = new Lang.Class({
             if (appIcon.actor.hover){
                 this._ensureAppIconVisibilityTimeoutId = Mainloop.timeout_add(100, Lang.bind(this, function(){
                     ensureActorVisibleInScrollView(this._scrollView, appIcon.actor);
-                    this._ensureAppIconVisibilityTimeoutId;
+                    this._ensureAppIconVisibilityTimeoutId = 0;
                     return GLib.SOURCE_REMOVE;
                 }));
             } else {
