@@ -1089,9 +1089,8 @@ const dockedDash = new Lang.Class({
     _onDragEnd: function(){
         // Restore drag default dash stack order
         Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
-
-        if(this._oldignoreHover)
-          this._ignoreHover  = this._oldignoreHover;
+        // restore previous ignoreHover. If it was not set, set it to false
+        this._ignoreHover  = (this._oldignoreHover == true);
         this._box.sync_hover();
         if(Main.overview._shown)
             this._pageChanged();
