@@ -406,6 +406,7 @@ const myDashActor = new Lang.Class({
  * - show running and/or favorite applications
  * - emit a custom signal when an app icon is added
  * - hide showApps label when the custom menu is shown.
+ * - add cleanUpLabels method emitting a signal to hide labels
  */
 const myDash = new Lang.Class({
     Name: 'dashToDock.myDash',
@@ -594,15 +595,26 @@ const myDash = new Lang.Class({
             this._labelShowing = false;
             item.hideLabel();
         }));
-            item.child.connect('destroy', function() {
-                Main.overview.disconnect(id);
-        });
+
+        let id2 = this.connect('cleanup-labels', Lang.bind(this, function() {
+            this._labelShowing = false;
+            item.hideLabel();
+        }));
+
+        item.child.connect('destroy', Lang.bind(this, function() {
+            Main.overview.disconnect(id);
+            this.disconnect(id2);
+        }));
 
         if (appIcon) {
             appIcon.connect('sync-tooltip', Lang.bind(this, function() {
                 this._syncLabel(item, appIcon);
             }));
         }
+    },
+
+    cleanUpLabels: function() {
+        this.emit('cleanup-labels');
     },
 
     _createAppItem: function(app) {
