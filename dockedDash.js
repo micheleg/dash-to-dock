@@ -1696,3 +1696,24 @@ const themeManager = new Lang.Class({
 
     }
 });
+
+
+/*
+ * Manually check if mouse "can be" hover from the mouse position. The hover porperty
+ * is not reliable when focus move from the clutter actors to the the windows, giving a false
+ * positive hover status. If the mouse pointer is not in the right position I can be sure
+ * that the hover has to be false.
+*/
+function isMouseHover(actor) {
+    let [pointerX, pointerY, mods] = global.get_pointer();
+
+    let [x, y] = actor.get_transformed_position();
+    let [width, height] =actor.get_transformed_size();
+
+    let test = (pointerX < x + width) &&
+               (pointerX > x) &&
+               (pointerY < y + height) &&
+               (pointerY > y);
+
+   return test;
+}
