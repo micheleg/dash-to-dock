@@ -311,7 +311,7 @@ const WorkspaceSettingsWidget = new GObject.Class({
     let iconSizeMain = new Gtk.Box({orientation:Gtk.Orientation.VERTICAL, homogeneous:true,
                                        margin_left:10, margin_top:10, margin_bottom:0, margin_right:10});
 
-    let allSizes  =[ 16, 24, 32, 48, 64 ];
+    let allSizes  =[ 16, 24, 32, 48, 64, 96, 128 ];
     let minimumIconSizeBox = new Gtk.Box({spacing:30,});
 
     let minimumIconSizeLabel = new Gtk.Label({label: _("Minimum icon size"), use_markup: true,
@@ -324,6 +324,8 @@ const WorkspaceSettingsWidget = new GObject.Class({
             minimumIconSize.append_text(_("32"));
             minimumIconSize.append_text(_("48"));
             minimumIconSize.append_text(_("64"));
+            minimumIconSize.append_text(_("96"));
+            minimumIconSize.append_text(_("128"));
 
             minimumIconSize.set_size_request(100, -1);
 
@@ -352,6 +354,8 @@ const WorkspaceSettingsWidget = new GObject.Class({
             maximumIconSize.append_text(_("32"));
             maximumIconSize.append_text(_("48"));
             maximumIconSize.append_text(_("64"));
+            maximumIconSize.append_text(_("96"));
+            maximumIconSize.append_text(_("128"));
 
             maximumIconSize.set_size_request(100, -1);
 
