@@ -815,6 +815,9 @@ const dockedDash = new Lang.Class({
 
         // Remove other tweens that could mess with the state machine
         Tweener.removeTweens(this.actor);
+        this._oldignoreHover = this._ignoreHover;
+        this._ignoreHover = true;
+        this.dash.cleanUpLabels();
         Tweener.addTween(this.actor, {
               y: this._y0 - Main.messageTray.actor.height,
               time: MessageTray.ANIMATION_TIME,
@@ -835,6 +838,10 @@ const dockedDash = new Lang.Class({
               onComplete: Lang.bind(this, function(){
                   // Reset desired dash stack order (on top to accept dnd of app icons)
                   Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
+                  // restore previous ignoreHover. If it was not set, set it to false
+                  this._ignoreHover  = (this._oldignoreHover == true);
+                  if (!isMouseHover(this._box))
+                      this._box.hover = false;
                 })
             });
 
