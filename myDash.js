@@ -597,8 +597,8 @@ const myDash = new Lang.Class({
         }));
 
         let id2 = this.connect('cleanup-labels', Lang.bind(this, function() {
-            this._labelShowing = false;
-            item.hideLabel();
+            // setting the hover to false also hide the label
+            item.child.hover = false;
         }));
 
         item.child.connect('destroy', Lang.bind(this, function() {
