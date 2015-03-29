@@ -410,14 +410,18 @@ const myDashActor = new Lang.Class({
  * - add cleanUpLabels method emitting a signal to hide labels
  * - Add scrollview
  *   Ensure actor is visible on keyfocus inseid the scrollview
+ * - add 128px icon size, might be usefull for hidpi display
  */
+
+const baseIconSizes = [ 16, 22, 24, 32, 48, 64, 96, 128 ];
+
 const myDash = new Lang.Class({
     Name: 'dashToDock.myDash',
 
     _init : function(settings) {
         this._maxHeight = -1;
         this.iconSize = 64;
-        this._availableIconSizes = Dash.baseIconSizes;
+        this._availableIconSizes = baseIconSizes;
         this._shownInitially = false;
 
         this._settings = settings;
@@ -1030,8 +1034,8 @@ const myDash = new Lang.Class({
 
     setIconSize: function(min_size, max_size) {
 
-        let min_allowed = Dash.baseIconSizes[0];
-        let max_allowed = Dash.baseIconSizes[Dash.baseIconSizes.length-1];
+        let min_allowed = baseIconSizes[0];
+        let max_allowed = baseIconSizes[Dash.baseIconSizes.length-1];
 
         if( min_size<=min_allowed ){
             this._availableIconSizes = [ min_allowed ];
@@ -1045,7 +1049,7 @@ const myDash = new Lang.Class({
         if (min_size > max_size)
             max_size = min_size;
 
-        this._availableIconSizes = Dash.baseIconSizes.filter(
+        this._availableIconSizes = baseIconSizes.filter(
             function(val){
                 return ( val>=min_size && val<=max_size);
             }
