@@ -1744,8 +1744,8 @@ const DndTargetPane = new Lang.Class({
             actor.add_constraint(constraint);
             actor._delegate = this;
             Main.layoutManager.uiGroup.add_actor(actor);
-            //This keep the pane actors below the dash
-            Main.layoutManager.uiGroup.set_child_below_sibling(actor, Main.layoutManager.panelBox);
+            //This raise the actors above the top_window_group to be picked for dnd, but keep it below the dash
+            Main.layoutManager.uiGroup.set_child_above_sibling(actor, global.top_window_group);
 
             this._actors[i] = actor;
         }
