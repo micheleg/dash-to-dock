@@ -12,6 +12,7 @@ const Params = imports.misc.params;
 
 const Main = imports.ui.main;
 const Dash = imports.ui.dash;
+const DND = imports.ui.dnd;
 const IconGrid = imports.ui.iconGrid;
 const MessageTray = imports.ui.messageTray;
 const Overview = imports.ui.overview;
@@ -219,6 +220,8 @@ const dockedDash = new Lang.Class({
         this._autohideIsEnabled = null;
         this._intellihideIsEnabled = null;
         this._fixedIsEnabled = null;
+
+        this._dndTargetPane = null;
 
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.intellihide(this._settings);
@@ -1157,6 +1160,9 @@ const dockedDash = new Lang.Class({
         this._oldignoreHover = this._ignoreHover;
         this._ignoreHover = true;
         this._animateIn(this._settings.get_double('animation-time'), 0);
+
+        if(!Main.overview.visible)
+            this._dndTargetPane = new DndTargetPane();
     },
 
     _onDragEnd: function(){
@@ -1168,6 +1174,11 @@ const dockedDash = new Lang.Class({
         this._box.sync_hover();
         if(Main.overview._shown)
             this._pageChanged();
+
+        if (this._dndTargetPane) {
+            this._dndTargetPane.destroy();
+            this._dndTargetPane = null;
+        }
     },
 
     _pageChanged: function() {
@@ -1710,3 +1721,111 @@ function isMouseHover(actor) {
 
    return test;
 }
+
+/*
+ * Actors covering all monitors area accepting dnd of application icons.
+ * The overview is shown if the dnd is not ended after as set timeout.
+*/
+
+const SHOW_OVERVIEW_TIMEOUT = 1000;
+
+const DndTargetPane = new Lang.Class({
+    Name: 'dashToDock.targetPane',
+
+    _init: function(){
+
+        this._showOverviewTimeout = 0;
+        let monitors = Main.layoutManager.monitors;
+        this._actors = Array(monitors.length);
+
+        for (let i = 0; i<monitors.length; i++) {
+            let actor = new Clutter.Actor();
+            let constraint = new Layout.MonitorConstraint({ index: i });
+            actor.add_constraint(constraint);
+            actor._delegate = this;
+            Main.layoutManager.uiGroup.add_actor(actor);
+            //This keep the pane actors below the dash
+            Main.layoutManager.uiGroup.set_child_below_sibling(actor, Main.layoutManager.panelBox);
+
+            this._actors[i] = actor;
+        }
+
+        this._dragMonitor = {
+            dragMotion: Lang.bind(this, this._onDragMotion)
+        };
+
+        DND.addDragMonitor(this._dragMonitor);
+
+    },
+
+    _show: function() {
+        this._actors.forEach(function(a) {
+            a.show();
+        });
+    },
+
+    _hide: function() {
+        this._actors.forEach(function(a) {
+            a.hide();
+        });
+    },
+
+    _onDragMotion: function(dragEvent) {
+
+        // Check if one of the pane actors is the target, i.e. no other actors cover them at
+        // the current mouse position. If so start the showOverviewTimeout if not already started
+        if (this._actors.indexOf(dragEvent.targetActor) !== -1) {
+            if (this._showOverviewTimeout == 0) {
+                this._showOverviewTimeout = Mainloop.timeout_add(SHOW_OVERVIEW_TIMEOUT, Lang.bind(this, function() {
+                    this._hide();
+                    Main.overview.show();
+                    this._showOverviewTimeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                }));
+            }
+        } else if (this._showOverviewTimeout > 0) {
+            // delete the timeout if I'm hovering for instance the dash, as
+            // it means the user want to reorder the favorite applications and by mistake
+            // dragged the application icon outside of it.
+            Mainloop.source_remove(this._showOverviewTimeout);
+            this._showOverviewTimeout = 0;
+        }
+
+        return DND.DragMotionResult.CONTINUE;
+    },
+
+    handleDragOver : function(source, actor, x, y, time) {
+
+        if (!source.shellWorkspaceLaunch)
+            return DND.DragMotionResult.NO_DROP;
+
+        return DND.DragMotionResult.COPY_DROP;
+    },
+
+    destroy: function(){
+
+        DND.removeDragMonitor(this._dragMonitor);
+
+        this._actors.forEach(function(a) {
+            a.destroy();
+        });
+
+        if (this._showOverviewTimeout > 0)
+            Mainloop.source_remove(this._showOverviewTimeout);
+        this._showOverviewTimeout = 0;
+    },
+
+    acceptDrop : function(source, actor, x, y, time) {
+
+        if (this._showOverviewTimeout > 0)
+            Mainloop.source_remove(this._showOverviewTimeout);
+        this._showOverviewTimeout = 0;
+
+        if (source.shellWorkspaceLaunch) {
+            source.shellWorkspaceLaunch({ workspace: -1, timestamp: time });
+            return true;
+        } else {
+            return false;
+        }
+    }
+});
