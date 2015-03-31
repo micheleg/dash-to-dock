@@ -931,7 +931,9 @@ const dockedDash = new Lang.Class({
                   // Reset desired dash stack order (on top to accept dnd of app icons)
                   Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
                   // restore previous ignoreHover. If it was not set, set it to false
-                  this._ignoreHover  = (this._oldignoreHover == true);
+                  if (this._oldignoreHover !== null)
+                      this._ignoreHover  = this._oldignoreHover;
+                  this._oldignoreHover == null;
                   if (!isMouseHover(this._box))
                       this._box.hover = false;
                 })
