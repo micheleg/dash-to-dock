@@ -213,6 +213,7 @@ const dockedDash = new Lang.Class({
 
         // Temporary ignore hover events linked to autohide for whatever reason
         this._ignoreHover = false;
+        this._oldignoreHover = null;
         // This variables are linked to the settings regardles of autohide or intellihide
         // being temporary disable. Get set by _updateVisibilityMode;
         this._autohideIsEnabled = null;
@@ -1159,8 +1160,9 @@ const dockedDash = new Lang.Class({
     _onDragEnd: function(){
         // Restore drag default dash stack order
         Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
-        // restore previous ignoreHover. If it was not set, set it to false
-        this._ignoreHover  = (this._oldignoreHover == true);
+        if (this._oldignoreHover !== null)
+            this._ignoreHover  = this._oldignoreHover;
+        this._oldignoreHover = null;
         this._box.sync_hover();
         if(Main.overview._shown)
             this._pageChanged();
