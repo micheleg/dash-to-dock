@@ -1313,6 +1313,9 @@ const myAppIcon = new Lang.Class({
          */
          this._updateRunningStyle();
 
+         // The actor needs to be reactive to accept xdnd from the desktop
+         this.actor.reactive = true;
+
     },
 
     _onDestroy: function() {
@@ -1454,6 +1457,15 @@ const myAppIcon = new Lang.Class({
             else
                 this.actor.add_style_class_name(className);
         }
+    },
+
+    acceptDrop: function(source, actor, x, y, time) {
+        global.log(source);
+    },
+
+    handleDragOver : function(source, actor, x, y, time) {
+        global.log(source);
+        return DND.DragMotionResult.COPY_DROP;
     }
 });
 
