@@ -304,6 +304,20 @@ const dockedDash = new Lang.Class({
                 'item-drag-cancelled',
                 Lang.bind(this, this._onDragEnd)
             ],
+            [
+                Main.xdndHandler,
+                'drag-begin',
+                Lang.bind(this, function() {
+                    Shell.util_set_hidden_from_pick(global.top_window_group, true);
+                })
+            ],
+            [
+                Main.xdndHandler,
+                'drag-end',
+                Lang.bind(this, function() {
+                    Shell.util_set_hidden_from_pick(global.top_window_group, false);
+                })
+            ],
             // update wne monitor changes, for instance in multimonitor when monitor are attached
             [
                 global.screen,
