@@ -58,6 +58,47 @@ const singleAppWindowsWorkspace = new Lang.Class({
 
         global.log('********************** ' + this.actor);
 
+        this._app = null;
+
+        // tmp debug
+        this.actor._delegate = this;  
+    },
+
+    updateApp: function(app) {
+
+        this._app = app;
+
+        let allWindows =global.get_window_actors().filter(this._isMyWindow, this);
+
+        let appWindows = [];
+        if(app)
+            appWindows = app.get_windows();//.filter(this._isOverviewWindow, this);
+
+        let currentWindows = this._windows;
+
+
+        global.log(this._windows.length);
+        global.log(appWindows.length);
+
+/*        
+        for (let i=0; i<appWindows.length; i++)
+            this._doAddWindow(appWindows[i].get_meta_window());
+*/
+
+          let toDelete = [];
+
+        currentWindows.forEach(function(w) {
+            toDelete.push(w.metaWindow);
+        }, this);
+
+
+        toDelete.forEach(function(w) {
+            this._doRemoveWindow(w);
+        }, this);
+
+        for (let i=0; i<appWindows.length; i++)
+            this._doAddWindow(appWindows[i]);
+
     },
 
     _isMyWindow2:function (actor) {
