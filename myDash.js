@@ -449,7 +449,8 @@ const myDash = new Lang.Class({
 
         this._box = new St.BoxLayout({ vertical: !this._isHorizontal,
                                        clip_to_allocation: false,
-                                       x_align: Clutter.ActorAlign.START });
+                                       x_align: Clutter.ActorAlign.START,
+                                       y_align: Clutter.ActorAlign.START });
         this._box._delegate = this;
         this._container.add_actor(this._scrollView);
         this._scrollView.add_actor(this._box);
