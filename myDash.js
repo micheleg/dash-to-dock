@@ -1313,9 +1313,13 @@ const myAppIcon = new Lang.Class({
          */
          this._updateRunningStyle();
 
-         // The actor needs to be reactive to accept xdnd from the desktop
-         this.actor.reactive = true;
+        this._showOverviewTimeout = 0;
 
+        this._dragMonitor = {
+            dragMotion: Lang.bind(this, this._onDragMotion)
+        };
+
+        DND.addDragMonitor(this._dragMonitor);
     },
 
     _onDestroy: function() {
@@ -1325,6 +1329,8 @@ const myAppIcon = new Lang.Class({
         // stateChangedId is already handled by parent)
         if(this._focusAppId>0)
             tracker.disconnect(this._focusAppId);
+
+        DND.removeDragMonitor(this._dragMonitor);
     },
 
     _updateRunningStyle: function() {
@@ -1459,11 +1465,41 @@ const myAppIcon = new Lang.Class({
         }
     },
 
+    _onDragMotion: function(dragEvent) {
+
+          if (dragEvent.source != Main.xdndHandler)
+              return DND.DragMotionResult.CONTINUE;
+
+          // Check if one of the pane actors is the target, i.e. no other actors cover them at
+          // the current mouse position. If so start the showOverviewTimeout if not already started
+          if (this.actor == dragEvent.targetActor) {
+              if (this._showOverviewTimeout == 0) {
+                  this._showOverviewTimeout = Mainloop.timeout_add(250/*SHOW_OVERVIEW_TIMEOUT*/, Lang.bind(this, function() {
+                      Main.overview.show();
+                      this._showOverviewTimeout = 0;
+                      return GLib.SOURCE_REMOVE;
+                  }));
+              }
+          } else if (this._showOverviewTimeout > 0) {
+              // delete the timeout if I'm hovering for instance the dash, as
+              // it means the user want to reorder the favorite applications and by mistake
+              // dragged the application icon outside of it.
+              Mainloop.source_remove(this._showOverviewTimeout);
+              this._showOverviewTimeout = 0;
+          }
+
+          return DND.DragMotionResult.CONTINUE;
+      },
+
     acceptDrop: function(source, actor, x, y, time) {
         global.log(source);
     },
 
     handleDragOver : function(source, actor, x, y, time) {
+
+        if (source != Main.xdndHandler)
+            return DND.DragMotionResult.CONTINUE;
+
         global.log(source);
         return DND.DragMotionResult.COPY_DROP;
     }
