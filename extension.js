@@ -10,7 +10,7 @@ const Main = imports.ui.main;
 
 let settings;
 let dock;
-
+let sview;
 let oldDash;
 
 function init() {
@@ -29,15 +29,7 @@ function enable() {
     Main.overview._dash = dock.dash;
     bindSettingsChanges();
 
-    let sview = new SingleAppWindowsView.singleAppWindowsView();
-    //let sview = new SingleAppWindowsView.singleAppWindowsWorkspace();
-    Main.overview.viewSelector._sview = sview ;
-    Main.overview.viewSelector._sviewPage = Main.overview.viewSelector._addPage(sview.actor, "test", 'emblem-documents-symbolic');
-
-
-//    a = new St.Widget();
-//    a.set_style("border:4px solid blue;");
-//    Main.overview.viewSelector._sviewPage = Main.overview.viewSelector._addPage(a, "test", 'emblem-documents-symbolic');
+    sview = new SingleAppWindowsView.singleAppWindowsView();
 
 }
 
@@ -45,10 +37,11 @@ function disable() {
     dock.destroy();
     settings.run_dispose();
     Main.overview._dash = oldDash;
-
+    sview.destroy();
     dock=null;
     settings = null;
     oldDash=null;
+    sview=null
 }
 
 

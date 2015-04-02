@@ -15,11 +15,46 @@ const singleAppWindowsView = new Lang.Class({
 
         this.actor.connect('notify::allocation', Lang.bind(this, this._updateWorkspacesActualGeometry));
 
+        Main.overview.viewSelector._sview = this ;
+        Main.overview.viewSelector._sviewPage = Main.overview.viewSelector._addPage(this.actor, "test", 'emblem-documents-symbolic');
+
+
+        Main.overview.viewSelector.show =  Lang.bind(Main.overview.viewSelector, function() {
+            if (Main.overview.viewSelector._sviewPage.activate == true) {
+                Main.overview.viewSelector._sviewPage.activate = null;
+                this.reset();
+                this._workspacesDisplay.show(false);
+                this._activePage = null;
+                this._showPage(this._sviewPage);
+
+            } else {
+
+                this.reset();
+                this._workspacesDisplay.show(this._showAppsButton.checked);
+                this._activePage = null;
+
+                if (this._showAppsButton.checked)
+                    this._showPage(this._appsPage);
+                else
+                    this._showPage(this._workspacesPage);
+
+                if (!this._workspacesDisplay.activeWorkspaceHasMaximizedWindows())
+                    Main.overview.fadeOutDesktop();
+
+            }
+        });
+
+
         this._update();
     },
 
-    _update: function(){
-  
+    destroy: function(){
+        this.actor.destroy();
+        Main.overview.viewSelector._sview = null;
+    },
+
+    _update: function() {
+
         if (this._workspace)
             this._workspace.actor.destroy();
         this._workspace = new singleAppWindowsWorkspace() ;
@@ -37,11 +72,17 @@ const singleAppWindowsView = new Lang.Class({
 
     _updateWorkspacesActualGeometry: function() {
 
-            let geom = this.actor.get_allocation_geometry();
-            this._workspace.setActualGeometry(geom);
-            // I don't know what it is...
-            this._workspace.setFullGeometry(geom);
-      }
+        let geom = this.actor.get_allocation_geometry();
+        this._workspace.setActualGeometry(geom);
+        // I don't know what it is...
+        this._workspace.setFullGeometry(geom);
+
+    },
+
+    updateApp: function(app) {
+        this._workspace.updateApp(app);
+
+    }
 
 });
 

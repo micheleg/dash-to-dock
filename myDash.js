@@ -97,6 +97,37 @@ const myAppIconMenu = new Lang.Class({
                     this._closeWindowInstance(windows[i])
                 }
             }));
+
+            let showAppWindowsText = _("Show app windows");
+            this._showAppWindowsMenuItem = this._appendMenuItem(showAppWindowsText);
+            this._showAppWindowsMenuItem.connect('activate', Lang.bind(this, function() {
+
+                Main.overview.viewSelector._sview.updateApp(app);
+                if (!Main.overview._shown) {
+                Main.overview.viewSelector._sviewPage.activate =  true;
+/*
+                        Main.overview.viewSelector._activePage.opacity=0;
+                    Main.overview.viewSelector._activePage.hide();
+                    Main.overview.viewSelector._activePage = Main.overview.viewSelector._sviewPage;
+                    Main.overview.viewSelector._activePage.show();*/
+
+/*                    let overviewShowingId = Main.overview.connect('showing', Lang.bind(this, function(){
+                        Main.overview.disconnect(overviewShowingId);
+
+                        Main.overview.viewSelector._activePage.opacity = 0;
+                    }));
+
+                    let overviewShownId = Main.overview.connect('shown', Lang.bind(this, function(){
+                        Main.overview.disconnect(overviewShownId);
+                        Main.overview.viewSelector._showPage(Main.overview.viewSelector._sviewPage);
+                    }));*/
+                    Main.overview.show();
+
+                } else {
+                    Main.overview.viewSelector._showPage(Main.overview.viewSelector._sviewPage);
+                }
+            }));
+
         }
     }
 });

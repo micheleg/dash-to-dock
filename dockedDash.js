@@ -1199,7 +1199,9 @@ const dockedDash = new Lang.Class({
 
         let activePage = Main.overview.viewSelector.getActivePage();
         let dashVisible = (activePage == ViewSelector.ViewPage.WINDOWS ||
-                           activePage == ViewSelector.ViewPage.APPS);
+                           activePage == ViewSelector.ViewPage.APPS ||
+                           Main.overview.viewSelector._activePage == Main.overview.viewSelector._sviewPage
+                          );
 
         if(dashVisible){
             this._animateIn(this._settings.get_double('animation-time'), 0);
