@@ -3,6 +3,8 @@
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const DockedDash = Me.imports.dockedDash;
+const St = imports.gi.St;
+const SingleAppWindowsView = Me.imports.singleAppWindowsView;
 
 const Main = imports.ui.main;
 
@@ -26,6 +28,17 @@ function enable() {
     oldDash  = Main.overview._dash;
     Main.overview._dash = dock.dash;
     bindSettingsChanges();
+
+    let sview = new SingleAppWindowsView.singleAppWindowsView();
+    //let sview = new SingleAppWindowsView.singleAppWindowsWorkspace();
+    Main.overview.viewSelector._sview = sview ;
+    Main.overview.viewSelector._sviewPage = Main.overview.viewSelector._addPage(sview.actor, "test", 'emblem-documents-symbolic');
+
+
+//    a = new St.Widget();
+//    a.set_style("border:4px solid blue;");
+//    Main.overview.viewSelector._sviewPage = Main.overview.viewSelector._addPage(a, "test", 'emblem-documents-symbolic');
+
 }
 
 function disable() {
