@@ -271,7 +271,7 @@ function extendShowAppsIcon(showAppsIcon, settings){
                   showAppsIcon._onMenuPoppedDown();
               }));
               let id = Main.overview.connect('hiding', Lang.bind(showAppsIcon, function () { showAppsIcon._menu.close(); }));
-              showAppsIcon.actor.connect('destroy', function() {
+              showAppsIcon._menu.actor.connect('destroy', function() {
                   Main.overview.disconnect(id);
               });
               showAppsIcon._menuManager.addMenu(showAppsIcon._menu);
@@ -1332,7 +1332,10 @@ const myAppIcon = new Lang.Class({
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
             }));
-            Main.overview.connect('hiding', Lang.bind(this, function () { this._menu.close(); }));
+            let id = Main.overview.connect('hiding', Lang.bind(this, function () { this._menu.close(); }));
+            this._menu.actor.connect('destroy', function() {
+                Main.overview.disconnect(id);
+            });
 
             this._menuManager.addMenu(this._menu);
         }
