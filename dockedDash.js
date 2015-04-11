@@ -1325,28 +1325,6 @@ const dockedDash = new Lang.Class({
             let activeWs = global.screen.get_active_workspace();
             let direction = null;
 
-            // filter events occuring not near the screen border if required
-            if(this._settings.get_boolean('scroll-switch-workspace-whole')==false) {
-
-                let [x,y] = event.get_coords();
-
-                if ( ( this._position == St.Side.RIGHT &&
-                       x < this.staticBox.x2 - 1
-                     ) ||
-                     ( this._position == St.Side.LEFT &&
-                       x > this.staticBox.x1 + 1
-                     ) ||
-                     ( this._position == St.Side.BOTTOM &&
-                       y < this.staticBox.y2 - 1
-                     ) ||
-                     ( this._position == St.Side.TOP &&
-                       y > this.staticBox.y1 + 1
-                     )
-                   ) {
-                    return false;
-                }
-            }
-
             switch ( event.get_scroll_direction() ) {
             case Clutter.ScrollDirection.UP:
                 direction = Meta.MotionDirection.UP;
