@@ -95,10 +95,10 @@
       <summary>Maximum dash icon size</summary>
       <description>Set the allowed maximum dash icon size. Allowed range: 16..64.</description>
     </key>
-    <key type="i" name="dash-min-icon-size">
-      <default>48</default>
-      <summary>Mainimum dash icon size</summary>
-      <description>Set the allowed minimum dash icon size. Allowed range: 16..64.</description>
+    <key type="b" name="icon-size-fixed">
+      <default>false</default>
+      <summary>Fixed icon size</summary>
+      <description>Keep the icon size fived by scrolling the dock.</description>
     </key>
     <key type="b" name="apply-custom-theme">
       <default>false</default>
