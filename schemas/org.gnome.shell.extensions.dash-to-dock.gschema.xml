@@ -31,7 +31,7 @@
       <description>Sets the delay after the mouse reaches the screen border before showing the dock.</description>
     </key>
     <key type="d" name="hide-delay">
-      <default>0.10</default>
+      <default>0.20</default>
       <summary>Show delay</summary>
       <description>Sets the delay after the mouse left the dock before hiding it.</description>
     </key>
