@@ -1035,28 +1035,21 @@ const myDash = new Lang.Class({
         this._box.queue_relayout();
     },
 
-    setIconSize: function(min_size, max_size) {
+    setIconSize: function(max_size) {
 
-        let min_allowed = baseIconSizes[0];
-        let max_allowed = baseIconSizes[Dash.baseIconSizes.length-1];
+        let max_allowed = baseIconSizes[baseIconSizes.length-1];
+        max_size = Math.min(max_size, max_allowed);
 
-        if( min_size<=min_allowed ){
-            this._availableIconSizes = [ min_allowed ];
+        if (this._settings.get_boolean('icon-size-fixed')) {
+            this._availableIconSizes = [ max_size ];
+        } else {
+            this._availableIconSizes = baseIconSizes.filter(
+                function(val){
+                    return (val<max_size);
+                }
+            );
+            this._availableIconSizes.push(max_size);
         }
-
-        if( max_size>=max_allowed ){
-            this._availableIconSizes = [ max_allowed ];
-        }
-
-        // I decide minimum wins in case of bad settings
-        if (min_size > max_size)
-            max_size = min_size;
-
-        this._availableIconSizes = baseIconSizes.filter(
-            function(val){
-                return ( val>=min_size && val<=max_size);
-            }
-        );
 
         // Changing too rapidly icon size settings cause the whole Shell to freeze
         // I've not discovered exactly why, but disabling animation by setting
