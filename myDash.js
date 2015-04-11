@@ -552,7 +552,7 @@ const myDash = new Lang.Class({
 
         // Skip to avoid double events mouse
         if (event.is_pointer_emulated())
-            return true
+            return Clutter.EVENT_STOP;
 
         let adjustment, delta;
 
@@ -581,6 +581,8 @@ const myDash = new Lang.Class({
         }
 
         adjustment.set_value(adjustment.get_value() + delta);
+
+        return Clutter.EVENT_STOP;
 
     },
 
