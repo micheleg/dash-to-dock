@@ -51,7 +51,7 @@
       <description>Enable or disable intellihide mode</description>
     </key>
     <key type="b" name="intellihide-perapp">
-      <default>false</default>
+      <default>true</default>
       <summary>Dock dodges only same app windows</summary>
       <description></description>
     </key>
