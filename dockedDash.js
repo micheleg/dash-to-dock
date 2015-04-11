@@ -467,11 +467,10 @@ const dockedDash = new Lang.Class({
             this._paintId=0;
         }
 
+        this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'));
 
         // Apply custome css class according to the settings
         this._themeManager.updateCustomTheme();
-
-        this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'));
 
         // Since Gnome 3.8 dragging an app without having opened the overview before cause the attemp to
         //animate a null target since some variables are not initialized when the viewSelector is created
