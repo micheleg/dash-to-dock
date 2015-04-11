@@ -111,6 +111,10 @@ const Settings = new Lang.Class({
                             this._builder.get_object('intelligent_autohide_button'),
                             'sensitive',
                             Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this._settings.bind('insensitive-message-tray',
+                            this._builder.get_object('insensitive_messagetray_checkbutton'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('autohide',
                             this._builder.get_object('autohide_switch'),
                             'active',
