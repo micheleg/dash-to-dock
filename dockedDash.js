@@ -1376,20 +1376,19 @@ const dockedDash = new Lang.Class({
             if(direction !==null ){
 
                 // Prevent scroll events from triggering too many workspace switches
-                // by adding a deadtime between each scroll event.
+                // by adding a 250ms deadtime between each scroll event.
                 // Usefull on laptops when using a touchpad.
-                if(this._settings.get_boolean('scroll-switch-workspace-one-at-a-time')){
-                    // During the deadtime do nothing
-                    if(this._optionalScrollWorkspaceSwitchDeadTimeId>0)
-                        return false;
-                    else {
-                        this._optionalScrollWorkspaceSwitchDeadTimeId =
-                                Mainloop.timeout_add(this._settings.get_int('scroll-switch-workspace-dead-time'),
-                                    Lang.bind(this, function() {
-                                        this._optionalScrollWorkspaceSwitchDeadTimeId=0;
-                                    }
-                        ));
-                    }
+
+                // During the deadtime do nothing
+                if(this._optionalScrollWorkspaceSwitchDeadTimeId>0)
+                    return false;
+                else {
+                    this._optionalScrollWorkspaceSwitchDeadTimeId =
+                            Mainloop.timeout_add(250,
+                                Lang.bind(this, function() {
+                                    this._optionalScrollWorkspaceSwitchDeadTimeId=0;
+                                }
+                    ));
                 }
 
 
