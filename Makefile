@@ -37,9 +37,11 @@ mergepo: potfile
 		msgmerge -U $$l ./po/dashtodock.pot; \
 	done;
 
-./po/dashtodock.pot: $(TOLOCALIZE)
+./po/dashtodock.pot: $(TOLOCALIZE) Settings.ui
 	mkdir -p po
 	xgettext -k_ -kN_ -o po/dashtodock.pot --package-name "Dash to Dock" $(TOLOCALIZE)
+	intltool-extract --type=gettext/glade Settings.ui
+	xgettext -k_ -kN_ --join-existing -o po/dashtodock.pot Settings.ui.h
 
 ./po/%.mo: ./po/%.po
 	msgfmt -c $< -o $@
