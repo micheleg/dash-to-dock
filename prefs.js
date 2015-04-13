@@ -28,6 +28,8 @@ const Settings = new Lang.Class({
 
         this._settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
 
+        this._rtl = Gtk.Widget.get_default_direction()==Gtk.TextDirection.RTL;
+
         this._builder = new Gtk.Builder();
         this._builder.set_translation_domain(Me.metadata['gettext-domain']);
         this._builder.add_from_file(Me.path + '/Settings.ui');
@@ -101,6 +103,12 @@ const Settings = new Lang.Class({
             case 3:
                 this._builder.get_object('position_left_button').set_active(true);
                 break;
+        }
+
+        if (this._rtl) {
+            /* Left is Right in rtl as a setting */
+            this._builder.get_object('position_left_button').set_label(_("Right"));
+            this._builder.get_object('position_right_button').set_label(_("Left"));
         }
 
         // Intelligent autohide options
@@ -205,6 +213,20 @@ const Settings = new Lang.Class({
         DEFAULT_ICONS_SIZES.forEach(function(val){
                 icon_size_scale.add_mark(val, Gtk.PositionType.TOP, val.toString());
         });
+
+        // Corrent for rtl languages
+        if (this._rtl) {
+            // Flip value position: this is not done automatically
+            this._builder.get_object('dock_size_scale').set_value_pos(Gtk.PositionType.LEFT);
+            icon_size_scale.set_value_pos(Gtk.PositionType.LEFT);
+            /* I suppose due to a bug, having a more than one mark and one above a value of 100
+             * makes the rendering of the marks wrong in rtl. This doesn't happen setting the scale as not flippable
+             * and then manually inverting it
+             */
+            icon_size_scale.set_flippable(false);
+            icon_size_scale.set_inverted(true);
+        }
+
         this._settings.bind('icon-size-fixed', this._builder.get_object('icon_size_fixed_checkbutton'), 'active', Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('extend-height', this._builder.get_object('dock_size_extend_checkbutton'), 'active', Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('extend-height', this._builder.get_object('dock_size_scale'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
