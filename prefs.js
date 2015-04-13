@@ -29,6 +29,7 @@ const Settings = new Lang.Class({
         this._settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
 
         this._builder = new Gtk.Builder();
+        this._builder.set_translation_domain(Me.metadata['gettext-domain']);
         this._builder.add_from_file(Me.path + '/Settings.ui');
 
         this.widget = this._builder.get_object('settings_notebook');
