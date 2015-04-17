@@ -1,3 +1,32 @@
+- version: 44
+  date: 17-04-2015
+  shell_version: ["3.16"]
+  notes:
+    - Ensure labels stay inside the screen area. [e020c72] 
+    - Fix alignment in extended mode. [5be10ba, 3f81640]
+    - Add scrollview for overflowing dash [50741f, 24f85c7, 40fc92b, 9920979, 7b16423, bb7d074, b4e3742, d58b97c, 94dbd94, a898d55, c1c5416, 816f55c]
+    - Dock slide out completely (remove 1px transparent padding). [332ac4c]
+    - Improve and simplify autohide code [55c44bc3, 221701, ad5c50a, fdf04aa, 0c0e88d, f073d36, 97e4a2b, 653a4b9, 7ad6ca0]
+    - Do not shift main panel on extended mode. [02b0f67]
+    - Do not remove the external border in extended mode. [172c4aa]
+    - Hide both rounded corder in extended fixed mode. [7dea987]
+    - Increase maximum icon size to 128 px. [03fc047, 975d2d5]
+    - Add arabic translation. [ae8fdfc, c79d1bf]
+    - Drop option for edge only sensitivity to workspace switch. [b13eb49]
+    - Use a fixed icon option instead of minimum size. [3a19998, 12c5c6e, 12c5c6e]
+    - Fix wrong icon size on extension reload. [4617e35]
+    - Drop switch workspace deadtime options, always enable it. [33bfa1b]
+    - Renew settings UI. [7aad3b8, 11d21e9, eb2aaf8]
+    - Improve startup animation. [62f259b, 8a081e3]
+  zip_url: https://extensions.gnome.org/review/download/4881.shell-extension.zip
+
+- version: 43
+  date: 17-04-2015
+  shell_version: ["3.14"]
+  notes:
+    - Version 44 backported to GNOME Shell 3.14.
+  zip_url: https://extensions.gnome.org/review/download/4880.shell-extension.zip
+
 - version: 42
   date: 23-03-2015
   shell_version: ["3.16"]
