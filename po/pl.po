@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-08 21:09+0000\n"
+"POT-Creation-Date: 2015-04-17 21:42+0100\n"
 "PO-Revision-Date: 2015-01-18 20:03+0100\n"
 "Last-Translator: Piotr Sokół <psokol@jabster.pl>\n"
 "Language-Team: polski <>\n"
@@ -20,240 +20,383 @@ msgstr ""
 "%100<10 || n%100>=20)) ? 1 : 2));\n"
 "X-Generator: Gtranslator 2.91.6\n"
 
-#: prefs.js:34
-msgid "Main Settings"
-msgstr "Ogólne"
+#: prefs.js:69
+msgid "Primary monitor"
+msgstr ""
 
-#: prefs.js:43
-msgid "Dock Position"
-msgstr "Położenie paska"
+#: prefs.js:78 prefs.js:85
+msgid "Secondary monitor "
+msgstr ""
 
-#: prefs.js:47
-msgid "Top"
-msgstr "Góra"
-
-#: prefs.js:51 prefs.js:60
-msgid "Left"
-msgstr "Lewo"
-
-#: prefs.js:53 prefs.js:58
+#: prefs.js:110 Settings.ui.h:6
 msgid "Right"
 msgstr "Prawo"
 
-#: prefs.js:55
+#: prefs.js:111 Settings.ui.h:3
+msgid "Left"
+msgstr "Lewo"
+
+#: prefs.js:165
+msgid "Intelligent autohide customization"
+msgstr ""
+
+#: prefs.js:172
+msgid "Reset to defaults"
+msgstr ""
+
+#: Settings.ui.h:1
+msgid "Show the dock on"
+msgstr ""
+
+#: Settings.ui.h:2
+msgid "Position on screen"
+msgstr ""
+
+#: Settings.ui.h:4
 msgid "Bottom"
 msgstr "Dół"
 
-#: prefs.js:79
-msgid "Dock is fixed and always visible"
-msgstr "Zawsze widoczny pasek"
+#: Settings.ui.h:5
+msgid "Top"
+msgstr "Góra"
 
-#: prefs.js:95
-msgid "Animation time [ms]"
-msgstr "Czas animacji [ms]"
+#: Settings.ui.h:7
+msgid ""
+"Hide the dock when it obstructs a window of the the current application. "
+"More refined settings are available."
+msgstr ""
 
-#: prefs.js:106
-msgid "Show delay [ms]"
-msgstr "Opóźnienie wysuwania [ms]"
-
-#: prefs.js:117
-msgid "Hide delay [ms]"
-msgstr "Opóźnienie ukrywania [ms]"
-
-#: prefs.js:132
-msgid "Autohide"
-msgstr "Automatyczne ukrywanie"
-
-#: prefs.js:139
-msgid "intellihide"
+#: Settings.ui.h:8
+#, fuzzy
+msgid "Intelligent autohide"
 msgstr "Ukrywanie przed oknami"
 
-#: prefs.js:167
-msgid "Application based intellihide"
-msgstr "Ukrywanie tylko przed uaktywnionymi oknami"
+#: Settings.ui.h:9
+msgid "Insensitive Message Tray"
+msgstr ""
 
-#: prefs.js:185
-msgid "Require pressure to show the dock"
-msgstr "Wymagany nacisk do wyświetlenia paska"
+#: Settings.ui.h:10
+msgid "Dock size limit"
+msgstr ""
 
-#: prefs.js:195
-msgid "Pressure threshold (px)"
-msgstr "Próg nacisku (px)"
+#: Settings.ui.h:11
+msgid "Panel mode: extend to the screen edge"
+msgstr ""
 
-#: prefs.js:234
-msgid "Show the dock on following monitor (if attached)"
-msgstr "Wyświetlanie paska na podłączonym ekranie"
+#: Settings.ui.h:12
+msgid "Icon size limit"
+msgstr ""
 
-#: prefs.js:236
-msgid "Primary (default)"
-msgstr "Podstawowy (domyślnie)"
+#: Settings.ui.h:13
+msgid "Fixed icon size: scroll to reveal other icons"
+msgstr ""
 
-#: prefs.js:237
-msgid "1"
-msgstr "1"
+#: Settings.ui.h:14
+msgid "Position and size"
+msgstr ""
 
-#: prefs.js:238
-msgid "2"
-msgstr "2"
-
-#: prefs.js:239
-msgid "3"
-msgstr "3"
-
-#: prefs.js:240
-msgid "4"
-msgstr "4"
-
-#: prefs.js:265
-msgid "Max height"
-msgstr "Maksymalna wysokość"
-
-#: prefs.js:283
-msgid "Expand (experimental and buggy)"
-msgstr "Rozciągnięcie (opcja eksperymentalna)"
-
-#: prefs.js:316
-msgid "Maximum icon size"
-msgstr "Maksymalny rozmiar ikony"
-
-#: prefs.js:321
-msgid "16"
-msgstr "16"
-
-#: prefs.js:322
-msgid "24"
-msgstr "24"
-
-#: prefs.js:323
-msgid "32"
-msgstr "32"
-
-#: prefs.js:324
-msgid "48"
-msgstr "48"
-
-#: prefs.js:325
-msgid "64"
-msgstr "64"
-
-#: prefs.js:347
-msgid "Show favorite application icons"
+#: Settings.ui.h:15
+#, fuzzy
+msgid "Show favorite applications"
 msgstr "Ikony ulubionych programów"
 
-#: prefs.js:352
-msgid "Show running application icons"
+#: Settings.ui.h:16
+#, fuzzy
+msgid "Show running applications"
 msgstr "Ikony uruchomionych programów"
 
-#: prefs.js:357
+#: Settings.ui.h:17
+msgid "Move the applications button at the beginning of the dock."
+msgstr ""
+
+#: Settings.ui.h:18
 #, fuzzy
-msgid "Show applications button first"
+msgid "<i>Show Applications</i> icon first"
 msgstr "Przycisk programów z drugiej strony"
 
-#: prefs.js:374
-msgid "Optional features"
-msgstr "Dodatkowe"
-
-#: prefs.js:380
-msgid "Switch workspace when scrolling over the dock"
-msgstr "Przełączanie obszarów roboczych kółkiem myszy"
-
-#: prefs.js:391
-msgid "Switch one workspace at a time"
-msgstr "Ograniczenie do jednego obszaru na raz"
-
-#: prefs.js:400
-msgid "Deadtime between each workspace switching [ms]"
-msgstr "Opóźnienie przełączenia pomiędzy obszarami roboczymi [ms]"
-
-#: prefs.js:411
-msgid "Only a 1px wide area close to the screen edge is active"
+#: Settings.ui.h:19
+msgid "Behaviour when cliking on the icon of a running application."
 msgstr ""
-"Ograniczenie aktywnego obszaru do szerokości 1 piksela od krawędzi ekranu"
 
-#: prefs.js:417
-msgid "All the area of the dock is active"
-msgstr "Aktywny cały obszar paska"
+#: Settings.ui.h:20
+msgid "Click action"
+msgstr ""
 
-#: prefs.js:446
-msgid "Customize actions on mouse click"
-msgstr "Dostosowanie kliknięcia przyciskiem myszy"
-
-#: prefs.js:461
-msgid "Action on clicking on running app"
-msgstr "Działanie kliknięcia ikony uruchomionego programu"
-
-#: prefs.js:463
-msgid "Do nothing (default)"
+#: Settings.ui.h:21
+#, fuzzy
+msgid "Do nothing"
 msgstr "Brak (domyślnie)"
 
-#: prefs.js:464
+#: Settings.ui.h:22
 msgid "Minimize"
 msgstr "Zminimalizowanie okna"
 
-#: prefs.js:465
-msgid "Launch new window"
+#: Settings.ui.h:23
+#, fuzzy
+msgid "Launch new instance"
 msgstr "Otwarcie nowego okna"
 
-#: prefs.js:466
-msgid "Cycle through application windows"
+#: Settings.ui.h:24
+#, fuzzy
+msgid "Cycle throw windows"
 msgstr "Przełączenie pomiędzy oknami"
 
-#: prefs.js:477
-msgid "Minimize window on shift+click (double click for all app windows)"
-msgstr ""
-"Minimalizowanie okien kliknięciem z przytrzymanym klawiszem shift\n"
-"(dwukrotne kliknięcie minimalizuje wszystkie okna programu)"
-
-#: prefs.js:495
-msgid "Make message tray insensitive to mouse events"
-msgstr ""
-
-#: prefs.js:516
-msgid "Appearence and Themes"
-msgstr "Wygląd"
-
-#: prefs.js:518
+#: Settings.ui.h:25
 msgid ""
-"A customized theme is built in the extension. This is meant to work with the "
-"default Adwaita theme: the dash is shrunk to save space, its background "
-"transparency reduced, and custom indicators for the number of windows of "
-"each application are added."
+"When set to minimize, double clicking minimizes all the windows of the "
+"application."
 msgstr ""
-"Wraz z rozszerzeniem udostępniony jest zmodyfikowany styl paska, "
-"zaprojektowany do działania z domyślnym stylem Adwaita: pasek został "
-"zmniejszony, zredukowano jego przezroczystość i dodano wskaźniki ilości "
-"okien programów."
 
-#: prefs.js:529
-msgid "Apply built in custom theme"
+#: Settings.ui.h:26
+msgid "Shift+Click action"
+msgstr ""
+
+#: Settings.ui.h:27
+#, fuzzy
+msgid "Minimize window"
+msgstr "Zminimalizowanie okna"
+
+#: Settings.ui.h:28
+msgid ""
+"The area of the dock close to the screen edge and the <i>Show Applications</"
+"i> icon are active."
+msgstr ""
+
+#: Settings.ui.h:29
+#, fuzzy
+msgid "Switch workspace by scrolling on the dock"
+msgstr "Przełączanie obszarów roboczych kółkiem myszy"
+
+#: Settings.ui.h:30
+msgid "Behavior"
+msgstr ""
+
+#: Settings.ui.h:31
+msgid ""
+"Few customizations meant to integrate the dock wih the default GNOME theme. "
+"Alternatively, specific options can be enabled below."
+msgstr ""
+
+#: Settings.ui.h:32
+#, fuzzy
+msgid "Use built-in theme"
 msgstr "Użycie zintegrowanego stylu"
 
-#: prefs.js:542
-msgid ""
-"Alternatively, for a better integration with custom themes, each "
-"customization can be applied indipendently"
+#: Settings.ui.h:33
+msgid "Save space reducing padding and border radius."
 msgstr ""
-"Dla lepszego dopasowania do stylu, każdą z cech można dostosować niezależnie."
 
-#: prefs.js:551
-msgid "Shrink the dash size by reducing padding"
-msgstr "Zmniejszenie odległości krawędzi"
+#: Settings.ui.h:34
+msgid "Shrink the dash"
+msgstr ""
 
-#: prefs.js:567
-msgid "Show indicators for the number of windows of each application"
+#: Settings.ui.h:35
+#, fuzzy
+msgid "Show a dot for each windows of the application."
 msgstr "Wskaźniki ilości okien"
 
-#: prefs.js:585
-msgid "Customize the dock background opacity"
+#: Settings.ui.h:36
+msgid "Show windows counter indicators"
+msgstr ""
+
+#: Settings.ui.h:37
+#, fuzzy
+msgid "Tune the dash background opacity."
 msgstr "Dostosowanie przezroczystości tła"
 
-#: prefs.js:601
+#: Settings.ui.h:38
+#, fuzzy
+msgid "Customize opacity"
+msgstr "Dostosowanie przezroczystości tła"
+
+#: Settings.ui.h:39
 msgid "Opacity"
 msgstr "Nieprzezroczystość"
 
-#: prefs.js:636
+#: Settings.ui.h:40
+msgid "Appearance"
+msgstr ""
+
+#: Settings.ui.h:41
+msgid "version: "
+msgstr ""
+
+#: Settings.ui.h:42
+msgid "Moves the dash out of the overview transforming it in a dock"
+msgstr ""
+
+#: Settings.ui.h:43
+msgid "Created by"
+msgstr ""
+
+#: Settings.ui.h:44
+msgid ""
+"<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
+"See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+"\">GNU General Public License, version 2 or later</a> for details.</span>"
+msgstr ""
+
+#: Settings.ui.h:46
 msgid "About"
 msgstr ""
+
+#: Settings.ui.h:47
+msgid "Show the dock by mouse hover on the screen edge."
+msgstr ""
+
+#: Settings.ui.h:48
+msgid "Autohide"
+msgstr "Automatyczne ukrywanie"
+
+#: Settings.ui.h:49
+#, fuzzy
+msgid "Push to show: require pressure to show the dock"
+msgstr "Wymagany nacisk do wyświetlenia paska"
+
+#: Settings.ui.h:50
+msgid "Show the dock when it doesn't obstruct application windows."
+msgstr ""
+
+#: Settings.ui.h:51
+msgid "Dodge windows"
+msgstr ""
+
+#: Settings.ui.h:52
+msgid "Only consider windows of the focused application"
+msgstr ""
+
+#: Settings.ui.h:53
+#, fuzzy
+msgid "Animation duration (s)"
+msgstr "Czas animacji [ms]"
+
+#: Settings.ui.h:54
+msgid "0.000"
+msgstr ""
+
+#: Settings.ui.h:55
+msgid "Hide timeout (s)"
+msgstr ""
+
+#: Settings.ui.h:56
+msgid "Show timeout (s)"
+msgstr ""
+
+#: Settings.ui.h:57
+#, fuzzy
+msgid "Pressure threshold"
+msgstr "Próg nacisku (px)"
+
+#~ msgid "Main Settings"
+#~ msgstr "Ogólne"
+
+#~ msgid "Dock Position"
+#~ msgstr "Położenie paska"
+
+#~ msgid "Dock is fixed and always visible"
+#~ msgstr "Zawsze widoczny pasek"
+
+#~ msgid "Show delay [ms]"
+#~ msgstr "Opóźnienie wysuwania [ms]"
+
+#~ msgid "Hide delay [ms]"
+#~ msgstr "Opóźnienie ukrywania [ms]"
+
+#~ msgid "Application based intellihide"
+#~ msgstr "Ukrywanie tylko przed uaktywnionymi oknami"
+
+#~ msgid "Show the dock on following monitor (if attached)"
+#~ msgstr "Wyświetlanie paska na podłączonym ekranie"
+
+#~ msgid "Primary (default)"
+#~ msgstr "Podstawowy (domyślnie)"
+
+#~ msgid "1"
+#~ msgstr "1"
+
+#~ msgid "2"
+#~ msgstr "2"
+
+#~ msgid "3"
+#~ msgstr "3"
+
+#~ msgid "4"
+#~ msgstr "4"
+
+#~ msgid "Max height"
+#~ msgstr "Maksymalna wysokość"
+
+#~ msgid "Expand (experimental and buggy)"
+#~ msgstr "Rozciągnięcie (opcja eksperymentalna)"
+
+#~ msgid "Maximum icon size"
+#~ msgstr "Maksymalny rozmiar ikony"
+
+#~ msgid "16"
+#~ msgstr "16"
+
+#~ msgid "24"
+#~ msgstr "24"
+
+#~ msgid "32"
+#~ msgstr "32"
+
+#~ msgid "48"
+#~ msgstr "48"
+
+#~ msgid "64"
+#~ msgstr "64"
+
+#~ msgid "Optional features"
+#~ msgstr "Dodatkowe"
+
+#~ msgid "Switch one workspace at a time"
+#~ msgstr "Ograniczenie do jednego obszaru na raz"
+
+#~ msgid "Deadtime between each workspace switching [ms]"
+#~ msgstr "Opóźnienie przełączenia pomiędzy obszarami roboczymi [ms]"
+
+#~ msgid "Only a 1px wide area close to the screen edge is active"
+#~ msgstr ""
+#~ "Ograniczenie aktywnego obszaru do szerokości 1 piksela od krawędzi ekranu"
+
+#~ msgid "All the area of the dock is active"
+#~ msgstr "Aktywny cały obszar paska"
+
+#~ msgid "Customize actions on mouse click"
+#~ msgstr "Dostosowanie kliknięcia przyciskiem myszy"
+
+#~ msgid "Action on clicking on running app"
+#~ msgstr "Działanie kliknięcia ikony uruchomionego programu"
+
+#~ msgid "Minimize window on shift+click (double click for all app windows)"
+#~ msgstr ""
+#~ "Minimalizowanie okien kliknięciem z przytrzymanym klawiszem shift\n"
+#~ "(dwukrotne kliknięcie minimalizuje wszystkie okna programu)"
+
+#~ msgid "Appearence and Themes"
+#~ msgstr "Wygląd"
+
+#~ msgid ""
+#~ "A customized theme is built in the extension. This is meant to work with "
+#~ "the default Adwaita theme: the dash is shrunk to save space, its "
+#~ "background transparency reduced, and custom indicators for the number of "
+#~ "windows of each application are added."
+#~ msgstr ""
+#~ "Wraz z rozszerzeniem udostępniony jest zmodyfikowany styl paska, "
+#~ "zaprojektowany do działania z domyślnym stylem Adwaita: pasek został "
+#~ "zmniejszony, zredukowano jego przezroczystość i dodano wskaźniki ilości "
+#~ "okien programów."
+
+#~ msgid ""
+#~ "Alternatively, for a better integration with custom themes, each "
+#~ "customization can be applied indipendently"
+#~ msgstr ""
+#~ "Dla lepszego dopasowania do stylu, każdą z cech można dostosować "
+#~ "niezależnie."
+
+#~ msgid "Shrink the dash size by reducing padding"
+#~ msgstr "Zmniejszenie odległości krawędzi"
 
 #~ msgid "Only when in autohide"
 #~ msgstr "Włączenie tylko podczas automatycznego ukrywania"
