@@ -754,7 +754,7 @@
                               <item translatable="yes">Do nothing</item>
                               <item translatable="yes">Minimize</item>
                               <item translatable="yes">Launch new instance</item>
-                              <item translatable="yes">Cycle throw windows</item>
+                              <item translatable="yes">Cycle through windows</item>
                             </items>
                           </object>
                           <packing>
