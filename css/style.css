@@ -417,8 +417,7 @@ p.post-date {
 
 footer {
     clear:both;
-    height: 90px;
-    line-height:100%;
+    min-height: 90px;
     margin:auto;
     padding: 30px ;
     font-size:0.875em;
@@ -427,10 +426,6 @@ footer {
     color:#333333;
     background: #4378c8;
     background: #274c85 linear-gradient(to bottom , #305b9c  0% , #4378c8 40%) repeat-x;
-}
-
-footer p {
-    margin:0;
 }
 
 footer .vcard {
@@ -443,12 +438,16 @@ footer .vcard {
     background: transparent url('../media/envelope.png') no-repeat 0px 15px;
 }
 
+footer .vcard p {
+    margin:0;
+}
+
 
 footer .fn{
     text-transform:uppercase;
 }
 
-footer a{
+footer a, footer a:visited{
     text-decoration:none;
     font-weight:normal;
     color:white;
