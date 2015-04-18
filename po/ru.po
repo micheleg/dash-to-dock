@@ -1,30 +1,30 @@
 # Russian translation for dash-to-dock GNOME Shell extension
-# 
+#
+#
 # Ivan Komaritsyn <vantu5z@mail.ru>, 2015.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-17 21:42+0100\n"
-"PO-Revision-Date: 2015-02-27 18:33+0300\n"
+"POT-Creation-Date: 2015-04-18 14:07+0100\n"
+"PO-Revision-Date: 2015-04-18 17:49+0900\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
-"Language-Team: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
-"X-Generator: Gtranslator 2.91.6\n"
+"X-Generator: Gtranslator 2.91.7\n"
 
 #: prefs.js:69
 msgid "Primary monitor"
-msgstr ""
+msgstr "Основной монитор"
 
 #: prefs.js:78 prefs.js:85
 msgid "Secondary monitor "
-msgstr ""
+msgstr "Дополнительный монитор"
 
 #: prefs.js:110 Settings.ui.h:6
 msgid "Right"
@@ -36,19 +36,19 @@ msgstr "Слева"
 
 #: prefs.js:165
 msgid "Intelligent autohide customization"
-msgstr ""
+msgstr "Настройка автоскрытия"
 
 #: prefs.js:172
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Сбросить настройки"
 
 #: Settings.ui.h:1
 msgid "Show the dock on"
-msgstr ""
+msgstr "Показывать Док на"
 
 #: Settings.ui.h:2
 msgid "Position on screen"
-msgstr ""
+msgstr "Расположение на экране"
 
 #: Settings.ui.h:4
 msgid "Bottom"
@@ -63,9 +63,10 @@ msgid ""
 "Hide the dock when it obstructs a window of the the current application. "
 "More refined settings are available."
 msgstr ""
+"Скрывать Док, если он перекрывается окном активного приложения. Доступны "
+"дополнительные настройки."
 
 #: Settings.ui.h:8
-#, fuzzy
 msgid "Intelligent autohide"
 msgstr "Интеллектуальное скрытие"
 
@@ -75,137 +76,134 @@ msgstr ""
 
 #: Settings.ui.h:10
 msgid "Dock size limit"
-msgstr ""
+msgstr "Ограничение размера Дока"
 
 #: Settings.ui.h:11
 msgid "Panel mode: extend to the screen edge"
-msgstr ""
+msgstr "Режим панели: растянута по всей стороне экрана"
 
 #: Settings.ui.h:12
 msgid "Icon size limit"
-msgstr ""
+msgstr "Ограничение размера иконок"
 
 #: Settings.ui.h:13
 msgid "Fixed icon size: scroll to reveal other icons"
 msgstr ""
+"Фиксированный размер иконок: используйте прокрутку для доступа к нужному "
+"приложению"
 
 #: Settings.ui.h:14
 msgid "Position and size"
-msgstr ""
+msgstr "Положение и размер"
 
 #: Settings.ui.h:15
-#, fuzzy
 msgid "Show favorite applications"
-msgstr "Показывать иконки избранных приложений"
+msgstr "Показывать избранные приложения"
 
 #: Settings.ui.h:16
-#, fuzzy
 msgid "Show running applications"
-msgstr "Показывать иконки запущенных приложений"
+msgstr "Показывать запущенные приложения"
 
 #: Settings.ui.h:17
 msgid "Move the applications button at the beginning of the dock."
-msgstr ""
+msgstr "Перемещает кнопку «Приложения» в начало Дока."
 
 #: Settings.ui.h:18
-#, fuzzy
 msgid "<i>Show Applications</i> icon first"
-msgstr "Перенести кнопку «Приложения» в начало"
+msgstr "Перенести иконку <i>«Приложения»</i> в начало"
 
 #: Settings.ui.h:19
 msgid "Behaviour when cliking on the icon of a running application."
-msgstr ""
+msgstr "Поведение при нажатии на иконку запущенного приложения."
 
 #: Settings.ui.h:20
 msgid "Click action"
-msgstr ""
+msgstr "Действие по нажатию"
 
 #: Settings.ui.h:21
-#, fuzzy
 msgid "Do nothing"
-msgstr "Ничего не делать (по умолчанию)"
+msgstr "Ничего не делать"
 
 #: Settings.ui.h:22
 msgid "Minimize"
 msgstr "Минимизировать"
 
 #: Settings.ui.h:23
-#, fuzzy
 msgid "Launch new instance"
 msgstr "Открыть новое окно"
 
+#
 #: Settings.ui.h:24
-#, fuzzy
-msgid "Cycle throw windows"
-msgstr "Переключение между окнами приложения"
+msgid "Cycle through windows"
+msgstr "Переключить окно приложения"
 
 #: Settings.ui.h:25
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
+"Если установлено на «Минимизировать», то двойной клик минимизирует все окна "
+"данного приложения."
 
 #: Settings.ui.h:26
 msgid "Shift+Click action"
-msgstr ""
+msgstr "Действие по Shift+Click"
 
 #: Settings.ui.h:27
-#, fuzzy
 msgid "Minimize window"
-msgstr "Минимизировать"
+msgstr "Минимизировать окно"
 
 #: Settings.ui.h:28
 msgid ""
 "The area of the dock close to the screen edge and the <i>Show Applications</"
 "i> icon are active."
-msgstr ""
+msgstr "Активная область: область Дока у стороны экрана и иконка «Приложения»."
 
 #: Settings.ui.h:29
-#, fuzzy
 msgid "Switch workspace by scrolling on the dock"
-msgstr "Переключать рабочие столы при «скролинге» по Доку"
+msgstr "Переключать рабочие столы при прокрутке на Доке"
 
 #: Settings.ui.h:30
 msgid "Behavior"
-msgstr ""
+msgstr "Поведение"
 
 #: Settings.ui.h:31
 msgid ""
 "Few customizations meant to integrate the dock wih the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
+"Сбалансированные настройки для интеграции Дока с темой Gnome по умолчанию. "
+"Ниже можно установить настройки вручную."
 
 #: Settings.ui.h:32
-#, fuzzy
 msgid "Use built-in theme"
-msgstr "Применить встроенную тему"
+msgstr "Использовать встроенную тему"
 
 #: Settings.ui.h:33
 msgid "Save space reducing padding and border radius."
 msgstr ""
+"Экономия рабочего пространства за чсёт промежутков и использования "
+"скругленных углов."
 
 #: Settings.ui.h:34
 msgid "Shrink the dash"
-msgstr ""
+msgstr "Сжать Док"
 
 #: Settings.ui.h:35
-#, fuzzy
 msgid "Show a dot for each windows of the application."
-msgstr "Показывать индикаторы количества окон для каждого приложения"
+msgstr "Отображает точку для каждого окна приложения."
 
 #: Settings.ui.h:36
 msgid "Show windows counter indicators"
-msgstr ""
+msgstr "Показывать индикаторы количества окон"
 
 #: Settings.ui.h:37
-#, fuzzy
 msgid "Tune the dash background opacity."
-msgstr "Настройка прозрачности Дока"
+msgstr "Настройка прозрачности фона Дока."
 
 #: Settings.ui.h:38
-#, fuzzy
 msgid "Customize opacity"
-msgstr "Настройка прозрачности Дока"
+msgstr "Настроить прозрачность"
 
 #: Settings.ui.h:39
 msgid "Opacity"
@@ -213,19 +211,19 @@ msgstr "Непрозрачность"
 
 #: Settings.ui.h:40
 msgid "Appearance"
-msgstr ""
+msgstr "Внешний вид"
 
 #: Settings.ui.h:41
 msgid "version: "
-msgstr ""
+msgstr "версия: "
 
 #: Settings.ui.h:42
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr ""
+msgstr "Показывает панель из режима «Обзор» в виде дока"
 
 #: Settings.ui.h:43
 msgid "Created by"
-msgstr ""
+msgstr "Автор"
 
 #: Settings.ui.h:44
 msgid ""
@@ -233,6 +231,11 @@ msgid ""
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
 "\">GNU General Public License, version 2 or later</a> for details.</span>"
 msgstr ""
+"<span size=\"small\">Эта программа распространяется БЕЗ КАКИХ ЛИБО "
+"ГАРАНТИЙ.\n"
+"Смотри <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+"\">GNU General Public License, версия 2 или позднее</a> для информации.</"
+"span>"
 
 #: Settings.ui.h:46
 msgid "About"
@@ -240,50 +243,47 @@ msgstr "О программе"
 
 #: Settings.ui.h:47
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr ""
+msgstr "Показывать Док при подведении мыши к стороне экрана."
 
 #: Settings.ui.h:48
 msgid "Autohide"
 msgstr "Автоматическое скрытие"
 
 #: Settings.ui.h:49
-#, fuzzy
 msgid "Push to show: require pressure to show the dock"
-msgstr "Требуется давление для появления Дока"
+msgstr "Давление для появления: требуется давление для открытия Дока"
 
 #: Settings.ui.h:50
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr ""
+msgstr "Показывать Док, когда он не перекрыт окнами приложений."
 
 #: Settings.ui.h:51
 msgid "Dodge windows"
-msgstr ""
+msgstr "Перекрытие окнами"
 
 #: Settings.ui.h:52
 msgid "Only consider windows of the focused application"
-msgstr ""
+msgstr "Срабатывает только на активное окно приложения"
 
 #: Settings.ui.h:53
-#, fuzzy
 msgid "Animation duration (s)"
-msgstr "Время анимации [мс]"
+msgstr "Время анимации (сек.)"
 
 #: Settings.ui.h:54
 msgid "0.000"
-msgstr ""
+msgstr "0.000"
 
 #: Settings.ui.h:55
 msgid "Hide timeout (s)"
-msgstr ""
+msgstr "Задержка скрытия (сек.)"
 
 #: Settings.ui.h:56
 msgid "Show timeout (s)"
-msgstr ""
+msgstr "Задержка открытия (сек.)"
 
 #: Settings.ui.h:57
-#, fuzzy
 msgid "Pressure threshold"
-msgstr "Порог давления (пикселей)"
+msgstr "Порог давления"
 
 #~ msgid "Main Settings"
 #~ msgstr "Основные настройки"
