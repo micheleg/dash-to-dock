@@ -738,6 +738,26 @@ const myDash = new Lang.Class({
         return item;
     },
 
+    // Return an array with the "proper" appIcons currently in the dash
+    _getAppIcons: function() {
+        // Only consider children which are "proper"
+        // icons (i.e. ignoring drag placeholders) and which are not
+        // animating out (which means they will be destroyed at the end of
+        // the animation)
+        let iconChildren = this._box.get_children().filter(function(actor) {
+            return actor.child &&
+                   actor.child._delegate &&
+                   actor.child._delegate.icon &&
+                   !actor.animatingOut;
+        });
+
+        let appIcons = iconChildren.map(function(actor){
+            return actor.child._delegate;
+        });
+
+      return appIcons;
+    },
+
     _itemMenuStateChanged: function(item, opened) {
         // When the menu closes, it calls sync_hover, which means
         // that the notify::hover handler does everything we need to.
