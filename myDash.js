@@ -1067,6 +1067,9 @@ const myDash = new Lang.Class({
         // Workaround for https://bugzilla.gnome.org/show_bug.cgi?id=692744
         // Without it, StBoxLayout may use a stale size cache
         this._box.queue_relayout();
+
+        // This is required for icon reordering when the scrollview is used.
+        this._updateAppIconsGeometry();
     },
 
     setIconSize: function (max_size, doNotAnimate) {
