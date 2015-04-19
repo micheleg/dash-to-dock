@@ -496,13 +496,10 @@ const myDash = new Lang.Class({
         }
 
         // Update minimization animation target position on allocation of the
-        // container, which includes change in position of a children
-        this._container.connect('notify::allocation', Lang.bind(this, function() {
-            let appIcons = this._getAppIcons();
-            appIcons.forEach(function(icon){
-                icon.updateIconGeometry();
-            });
-        }));
+        // container and on scrollview change.
+        this._box.connect('notify::allocation', Lang.bind(this, this._updateAppIconsGeometry));
+        let scrollViewAdjustment = this._isHorizontal?this._scrollView.hscroll.adjustment:this._scrollView.vscroll.adjustment;
+        scrollViewAdjustment.connect('notify::value', Lang.bind(this, this._updateAppIconsGeometry));
 
         this._workId = Main.initializeDeferredWork(this._box, Lang.bind(this, this._redisplay));
 
@@ -768,6 +765,13 @@ const myDash = new Lang.Class({
         });
 
       return appIcons;
+    },
+
+    _updateAppIconsGeometry: function() {
+        let appIcons = this._getAppIcons();
+        appIcons.forEach(function(icon){
+            icon.updateIconGeometry();
+        });
     },
 
     _itemMenuStateChanged: function(item, opened) {
