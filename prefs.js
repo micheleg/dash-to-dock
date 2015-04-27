@@ -238,10 +238,6 @@ const Settings = new Lang.Class({
                             this._builder.get_object('show_running_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('show-favorites',
-                            this._builder.get_object('show_favorite_switch'),
-                            'active',
-                            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-apps-at-top',
                             this._builder.get_object('application_button_first_switch'),
                             'active',

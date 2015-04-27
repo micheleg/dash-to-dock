@@ -110,11 +110,6 @@
       <summary>Show running apps</summary>
       <description>Show or hide running appplications icons in the dash</description>
     </key>
-    <key type="b" name="show-favorites">
-      <default>true</default>
-      <summary>Show favorites apps</summary>
-      <description>Show or hide favorite appplications icons in the dash</description>
-    </key>
     <key type="b" name="show-apps-at-top">
       <default>false</default>
       <summary>Show application button at top</summary>
