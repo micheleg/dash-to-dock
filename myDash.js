@@ -945,15 +945,13 @@ const myDash = new Lang.Class({
         // Apps supposed to be in the dash
         let newApps = [];
 
-        if( this._dtdSettings.get_boolean('show-favorites') ) {
-            for (let id in favorites)
-                newApps.push(favorites[id]);
-        }
+        for (let id in favorites)
+            newApps.push(favorites[id]);
 
         if( this._dtdSettings.get_boolean('show-running') ) {
             for (let i = 0; i < running.length; i++) {
                 let app = running[i];
-                if (this._dtdSettings.get_boolean('show-favorites') && (app.get_id() in favorites) )
+                if (app.get_id() in favorites)
                     continue;
                 newApps.push(app);
             }
@@ -1139,7 +1137,7 @@ const myDash = new Lang.Class({
         if (app == null || app.is_window_backed())
             return DND.DragMotionResult.NO_DROP;
 
-        if (!this._settings.is_writable('favorite-apps') || !this._dtdSettings.get_boolean('show-favorites'))
+        if (!this._settings.is_writable('favorite-apps'))
             return DND.DragMotionResult.NO_DROP;
 
         let favorites = AppFavorites.getAppFavorites().getFavorites();
@@ -1236,7 +1234,7 @@ const myDash = new Lang.Class({
             return false;
         }
 
-        if (!this._settings.is_writable('favorite-apps') || !this._dtdSettings.get_boolean('show-favorites'))
+        if (!this._settings.is_writable('favorite-apps'))
             return false;
 
         let id = app.get_id();
