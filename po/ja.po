@@ -2,14 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the dash-to-dock package.
 # Jiro Matsuzawa <jmatsuzawa@gnome.org>, 2013.
-# Debonne Hooties <debonne.hooties@gmail.com>, 2015.
-# 
+# Debonne Hooties <debonne.hooties＠gmail.com>, 2014-2015.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-28 22:00+0900\n"
-"PO-Revision-Date: 2015-04-29 10:18+0900\n"
+"POT-Creation-Date: 2015-05-04 15:56+0100\n"
+"PO-Revision-Date: 2015-04-29 01:49+0900\n"
 "Last-Translator: Debonne Hooties <debonne.hooties＠gmail.com>\n"
 "Language-Team: Safranjoepe (an unofficial team of Japanese) <>\n"
 "Language: ja\n"
@@ -44,7 +44,7 @@ msgstr "既定値にリセット"
 
 #: Settings.ui.h:1
 msgid "Show the dock on"
-msgstr "Dockを表示するモニター"
+msgstr "ドックを表示するモニター"
 
 #: Settings.ui.h:2
 msgid "Position on screen"
@@ -63,8 +63,8 @@ msgid ""
 "Hide the dock when it obstructs a window of the the current application. "
 "More refined settings are available."
 msgstr ""
-"開いているウィンドウの邪魔にならないようDockの表示/非表示を自動的に切り替えま"
-"す。より洗練された表示設定も可能です。"
+"開いているウィンドウの邪魔にならないようドックの表示/非表示を自動的に切り替え"
+"ます。より洗練された表示設定も可能です。"
 
 #: Settings.ui.h:8
 msgid "Intelligent autohide"
@@ -76,11 +76,11 @@ msgstr ""
 
 #: Settings.ui.h:10
 msgid "Dock size limit"
-msgstr "Dockサイズの上限"
+msgstr "ドックサイズの上限"
 
 #: Settings.ui.h:11
 msgid "Panel mode: extend to the screen edge"
-msgstr "パネルモード（画面の端までDockを拡張）"
+msgstr "パネルモード（画面の端までドックを拡張）"
 
 #: Settings.ui.h:12
 msgid "Icon size limit"
@@ -156,7 +156,7 @@ msgstr ""
 
 #: Settings.ui.h:28
 msgid "Switch workspace by scrolling on the dock"
-msgstr "Dock上でスクロールしたらワークスペースを切り替える"
+msgstr "ドック上でスクロールしたらワークスペースを切り替える"
 
 #: Settings.ui.h:29
 msgid "Behavior"
@@ -212,8 +212,7 @@ msgstr "バージョン: "
 
 #: Settings.ui.h:41
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr ""
-"Dockを表示することでアクティビティ画面以外でもDashの操作を可能にします。"
+msgstr "Dashをドック化してアクティビティ画面以外でもDash操作を可能にします。"
 
 #: Settings.ui.h:42
 msgid "Created by"
@@ -237,7 +236,7 @@ msgstr "情報"
 #: Settings.ui.h:46
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr ""
-"Dockを表示したいとき、ポインターを画面端に移動するとDockが表示されます。"
+"ドックを表示したいとき、ポインターを画面端に移動するとドックが表示されます。"
 
 #: Settings.ui.h:47
 msgid "Autohide"
@@ -250,7 +249,9 @@ msgstr ""
 
 #: Settings.ui.h:49
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr "アプリケーションウィンドウと重なるときはDockを表示しません。"
+msgstr ""
+"ドックを常に表示しますが、アプリケーションウィンドウと重なるときは表示しませ"
+"ん。"
 
 #: Settings.ui.h:50
 msgid "Dodge windows"
