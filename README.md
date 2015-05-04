@@ -8,7 +8,7 @@ For installation instructions and more information visit [https://micheleg.githu
 
 ## Installation from source
 
-The extension can be installed directly from source, either for the convenience of using git or to test the latest development version. Clone the desire branch with git
+The extension can be installed directly from source, either for the convenience of using git or to test the latest development version. Clone the desired branch with git
 
 <pre>git clone https://github.com/micheleg/dash-to-dock.git</pre>
 or download the branch from github. A simple Makefile is included. Then run
@@ -32,7 +32,7 @@ You can
 <a href="http://flattr.com/thing/1047592/" target="_blank">
 <img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>
 
-or 
+or
 
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3S5HFFG2BWGPL" target="_blank">
 <img src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" alt="PayPal — The safer, easier way to pay online."/></a>
