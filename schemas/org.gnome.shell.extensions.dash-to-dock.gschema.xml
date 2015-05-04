@@ -93,7 +93,7 @@
     <key type="b" name="apply-custom-theme">
       <default>false</default>
       <summary>Apply custom theme</summary>
-      <description>Apply customization to the dash appearence</description>
+      <description>Apply customization to the dash appearance</description>
     </key>
     <key type="b" name="custom-theme-shrink">
       <default>false</default>
@@ -136,7 +136,7 @@
     <key type="b" name="customize-click">
       <default>true</default>
       <summary>Customize click behaviour</summary>
-      <description>Custmize action on various mouse events</description>
+      <description>Customize action on various mouse events</description>
     </key>
     <key type="b" name="minimize-shift">
       <default>true</default>
