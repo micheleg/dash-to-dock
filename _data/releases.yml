@@ -1,3 +1,21 @@
+- version: 46
+  date: 16-05-2015
+  shell_version: ["3.16"]
+  notes:
+    - Minimize windows to their respective dash icons [568294b, 08d760c, be8e941].
+    - "Fix autohide bug with zero animation time #166 [fe038b3]."
+    - Remove show-favorites option [727b909].
+    - Fix settings [4b08a7e, 3816b49].
+    - Update Russian, Arabic, Slovak, Japanese, and Dutchtranslations.
+  zip_url: https://extensions.gnome.org/review/download/4965.shell-extension.zip
+
+- version: 45
+  date: 16-05-2015
+  shell_version: ["3.14"]
+  notes:
+    - This i a backport of version 46 to GNOME 3.14
+  zip_url: https://extensions.gnome.org/review/download/4964.shell-extension.zip
+
 - version: 44
   date: 17-04-2015
   shell_version: ["3.16"]
