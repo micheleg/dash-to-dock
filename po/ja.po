@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-04 15:56+0100\n"
+"POT-Creation-Date: 2015-05-16 16:02+0100\n"
 "PO-Revision-Date: 2015-04-29 01:49+0900\n"
 "Last-Translator: Debonne Hooties <debonne.hooties＠gmail.com>\n"
 "Language-Team: Safranjoepe (an unofficial team of Japanese) <>\n"
@@ -107,7 +107,8 @@ msgid "<i>Show Applications</i> icon first"
 msgstr "<i>アプリケーションリスト</i>を上に表示"
 
 #: Settings.ui.h:18
-msgid "Behaviour when cliking on the icon of a running application."
+#, fuzzy
+msgid "Behaviour when clicking on the icon of a running application."
 msgstr "実行中アプリケーションのアイコンをクリックした時の動作を指定します。"
 
 #: Settings.ui.h:19
