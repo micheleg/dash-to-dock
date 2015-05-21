@@ -1,198 +1,197 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Translation for cs
+# Copyright (C) 2014 Michele
+# This file is distributed under the same license as the dash-to-dock package.
+# Jiří Doubravský <jiri.doubravsky@gmail.com>, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-16 15:00+0100\n"
-"PO-Revision-Date: 2012-12-29 11:40+0100\n"
-"Last-Translator: Petr Marek <contact@petrmarek.eu>\n"
-"Language-Team: Czech <LL@li.org>\n"
+"POT-Creation-Date: 2015-05-22 00:04+0100\n"
+"PO-Revision-Date: 2015-05-21 21:17+0100\n"
+"Last-Translator: Jiří Doubravský <jiri.doubravsky@gmail.com>\n"
+"Language-Team: CZECH <jiri.doubravsky@gmail.com>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.7.5\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 #: prefs.js:69
 msgid "Primary monitor"
-msgstr ""
+msgstr "Primární obrazovka"
 
 #: prefs.js:78 prefs.js:85
 msgid "Secondary monitor "
-msgstr ""
+msgstr "Sekundární obrazovka"
 
 #: prefs.js:110 Settings.ui.h:6
 msgid "Right"
-msgstr ""
+msgstr "Vpravo"
 
 #: prefs.js:111 Settings.ui.h:3
 msgid "Left"
-msgstr ""
+msgstr "Vlevo"
 
 #: prefs.js:161
 msgid "Intelligent autohide customization"
-msgstr ""
+msgstr "Přizpůsobení chytrého skrývání"
 
 #: prefs.js:168
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Vrátit výchozí nastavení"
 
 #: Settings.ui.h:1
 msgid "Show the dock on"
-msgstr ""
+msgstr "Kde zobrazit dok"
 
 #: Settings.ui.h:2
 msgid "Position on screen"
-msgstr ""
+msgstr "Umístění na obrazovce"
 
 #: Settings.ui.h:4
 msgid "Bottom"
-msgstr ""
+msgstr "Dole"
 
 #: Settings.ui.h:5
 msgid "Top"
-msgstr ""
+msgstr "Nahoře"
 
 #: Settings.ui.h:7
 msgid ""
 "Hide the dock when it obstructs a window of the the current application. "
 "More refined settings are available."
 msgstr ""
+"Skývat dok automaticky kdykoliv by překážel otevřenému oknu aktivní "
+"aplikace. Více možností k dispozici."
 
 #: Settings.ui.h:8
-#, fuzzy
 msgid "Intelligent autohide"
-msgstr "Inteligentní schování"
+msgstr "Chytré skrývání"
 
 #: Settings.ui.h:9
 msgid "Dock size limit"
-msgstr ""
+msgstr "Maximální velikost doku"
 
 #: Settings.ui.h:10
 msgid "Panel mode: extend to the screen edge"
-msgstr ""
+msgstr "Režim zobrazení: roztáhnout od kraje ke kraji"
 
 #: Settings.ui.h:11
 msgid "Icon size limit"
-msgstr ""
+msgstr "Maximální velikost ikon"
 
 #: Settings.ui.h:12
 msgid "Fixed icon size: scroll to reveal other icons"
-msgstr ""
+msgstr "Neměnná velikost ikon: rolováním je možné zobrazit další"
 
 #: Settings.ui.h:13
 msgid "Position and size"
-msgstr ""
+msgstr "Umístění a velikost"
 
 #: Settings.ui.h:14
-#, fuzzy
 msgid "Show running applications"
-msgstr "Ukazovat ikony spuštěných aplikací"
+msgstr "Zobrazit spuštěné aplikace"
 
 #: Settings.ui.h:15
 msgid "Move the applications button at the beginning of the dock."
-msgstr ""
+msgstr "Přesunout tlačítko přístupu ke všem aplikacím na začátek"
 
 #: Settings.ui.h:16
-#, fuzzy
 msgid "<i>Show Applications</i> icon first"
-msgstr "Ukazovat ikony spuštěných aplikací"
+msgstr "<i>Zobrazit tlačítko všech aplikací</i> jako první"
 
 #: Settings.ui.h:17
+#, fuzzy
 msgid "Behaviour when clicking on the icon of a running application."
-msgstr ""
+msgstr "Akce klepnutím na ikonu běžící aplikace"
 
 #: Settings.ui.h:18
 msgid "Click action"
-msgstr ""
+msgstr "Akce klepnutím"
 
 #: Settings.ui.h:19
-#, fuzzy
 msgid "Do nothing"
-msgstr "Nedělat nic (výchozí)"
+msgstr "Nedělat nic"
 
 #: Settings.ui.h:20
 msgid "Minimize"
 msgstr "Minimalizovat"
 
 #: Settings.ui.h:21
-#, fuzzy
 msgid "Launch new instance"
-msgstr "Spustit nové okno"
+msgstr "Otevřít nové okno"
 
 #: Settings.ui.h:22
 #, fuzzy
 msgid "Cycle through windows"
-msgstr "Střídat skrze běžící okna aplikace"
+msgstr "Přepínat mezi existujícími okny"
 
 #: Settings.ui.h:23
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
+"Pokud zvolíte minimalizaci, dvojté poklepání minimalizuje všechna okna "
+"aplikace."
 
 #: Settings.ui.h:24
 msgid "Shift+Click action"
-msgstr ""
+msgstr "Shift+Klik akce"
 
 #: Settings.ui.h:25
-#, fuzzy
 msgid "Minimize window"
-msgstr "Minimalizovat"
+msgstr "Minimalizovat okno"
 
 #: Settings.ui.h:26
 msgid ""
 "The area of the dock close to the screen edge and the <i>Show Applications</"
 "i> icon are active."
 msgstr ""
+"Oblast po okrajích doku a tlačítko zobrazení všech aplikací jsou aktivní."
 
 #: Settings.ui.h:27
-#, fuzzy
 msgid "Switch workspace by scrolling on the dock"
-msgstr "Měnit workspace při scrollování na docku"
+msgstr "Přepínat pracovní plochy kolečkem myši nad dokem."
 
 #: Settings.ui.h:28
 msgid "Behavior"
-msgstr ""
+msgstr "Chování"
 
 #: Settings.ui.h:29
 msgid ""
 "Few customizations meant to integrate the dock wih the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
-msgstr ""
+msgstr "Výchozí motiv doku nebo alternativní přizpůsobitelný motiv."
 
 #: Settings.ui.h:30
 msgid "Use built-in theme"
-msgstr ""
+msgstr "Použít výchozí motiv doku"
 
 #: Settings.ui.h:31
 msgid "Save space reducing padding and border radius."
-msgstr ""
+msgstr "Prostorově méně náročné zobrazení, zmenšením volného místa kolem ikon"
 
 #: Settings.ui.h:32
 msgid "Shrink the dash"
-msgstr ""
+msgstr "Zmenšit panel"
 
 #: Settings.ui.h:33
 msgid "Show a dot for each windows of the application."
-msgstr ""
+msgstr "Zobrazit pod ikonou tečku indikující každé otevřené okno aplikace."
 
 #: Settings.ui.h:34
 msgid "Show windows counter indicators"
-msgstr ""
+msgstr "Zobrazit indikátory počtu oken"
 
 #: Settings.ui.h:35
-#, fuzzy
 msgid "Tune the dash background opacity."
-msgstr "Nastavit průhlednost pozadí docku"
+msgstr "Nastavit průhlednost panelu."
 
 #: Settings.ui.h:36
-#, fuzzy
 msgid "Customize opacity"
-msgstr "Nastavit průhlednost pozadí docku"
+msgstr "Volitelná průhlednost"
 
 #: Settings.ui.h:37
 msgid "Opacity"
@@ -200,19 +199,21 @@ msgstr "Průhlednost"
 
 #: Settings.ui.h:38
 msgid "Appearance"
-msgstr ""
+msgstr "Vzhled"
 
 #: Settings.ui.h:39
 msgid "version: "
-msgstr ""
+msgstr "verze:"
 
 #: Settings.ui.h:40
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr ""
+"Verplaatst de dash naar buiten het activiteitenoverzicht zodat het een dock "
+"wordt"
 
 #: Settings.ui.h:41
 msgid "Created by"
-msgstr ""
+msgstr "Autor "
 
 #: Settings.ui.h:42
 msgid ""
@@ -220,138 +221,57 @@ msgid ""
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
 "\">GNU General Public License, version 2 or later</a> for details.</span>"
 msgstr ""
+"<span size=\"small\">Na tento program NEJSOU POSKYTOVÁNY ZÁRUKY.\n"
+"Podrobněji viz <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0."
+"html\">GNU General Public License, verze 2 nebo pozdější</a>.</span>"
 
 #: Settings.ui.h:44
 msgid "About"
-msgstr ""
+msgstr "O tomto doplňku"
 
 #: Settings.ui.h:45
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr ""
+msgstr "Zobrazit dok najetím myši ke kraji obrazovky."
 
 #: Settings.ui.h:46
 msgid "Autohide"
-msgstr "Automatické schování"
+msgstr "Automatické skrývání"
 
 #: Settings.ui.h:47
 msgid "Push to show: require pressure to show the dock"
-msgstr ""
+msgstr "Zatlač: k zobrazení doku je potřeba na kraj přitlačit"
 
 #: Settings.ui.h:48
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr ""
+msgstr "Zobrazit dok, kdykoliv sám nepřekáží spuštěným aplikacím"
 
 #: Settings.ui.h:49
 msgid "Dodge windows"
-msgstr ""
+msgstr "Uhýbat oknům"
 
 #: Settings.ui.h:50
 msgid "Only consider windows of the focused application"
-msgstr ""
+msgstr "Brát v úvahu jen okna aktivní aplikace"
 
 #: Settings.ui.h:51
-#, fuzzy
 msgid "Animation duration (s)"
-msgstr "Délka animace [ms]"
+msgstr "Délka efektů (s)"
 
 #: Settings.ui.h:52
 msgid "0.000"
-msgstr ""
+msgstr "0.000"
 
 #: Settings.ui.h:53
 msgid "Hide timeout (s)"
-msgstr ""
+msgstr "Odklad skrývání (s)"
 
 #: Settings.ui.h:54
 msgid "Show timeout (s)"
-msgstr ""
+msgstr "Odklad zobrazení (s)"
 
 #: Settings.ui.h:55
 msgid "Pressure threshold"
-msgstr ""
+msgstr "Míra tlaku (px)"
 
-#, fuzzy
 #~ msgid "Show favorite applications"
-#~ msgstr "Ukazovat ikony oblíbených aplikací"
-
-#~ msgid "Main Settings"
-#~ msgstr "Hlavní nastavení"
-
-#~ msgid "Dock is fixed and always visible"
-#~ msgstr "Dock je zafixovaný a je vždy vidět"
-
-#~ msgid "Show delay [ms]"
-#~ msgstr "Délka prodlení před zobrazením [ms]"
-
-#~ msgid "Hide delay [ms]"
-#~ msgstr "Délka prodlení před schováním [ms]"
-
-#~ msgid "Application based intellihide"
-#~ msgstr "Inteligentní schování dle aplikací"
-
-#~ msgid "Show the dock on following monitor (if attached)"
-#~ msgstr "Ukazovat dock na následující obrazovce (pokud je připojena)"
-
-#~ msgid "Primary (default)"
-#~ msgstr "Primární (výchozí)"
-
-#~ msgid "1"
-#~ msgstr "1"
-
-#~ msgid "2"
-#~ msgstr "2"
-
-#~ msgid "3"
-#~ msgstr "3"
-
-#~ msgid "4"
-#~ msgstr "4"
-
-#~ msgid "Max height"
-#~ msgstr "Maximální výška"
-
-#~ msgid "Expand (experimental and buggy)"
-#~ msgstr "Roztáhnout (experimentální a zabugované)"
-
-#~ msgid "Maximum icon size"
-#~ msgstr "Maximální velikost ikon"
-
-#~ msgid "16"
-#~ msgstr "16"
-
-#~ msgid "24"
-#~ msgstr "24"
-
-#~ msgid "32"
-#~ msgstr "32"
-
-#~ msgid "48"
-#~ msgstr "48"
-
-#~ msgid "64"
-#~ msgstr "64"
-
-#~ msgid "Optional features"
-#~ msgstr "Nepovinné funkce"
-
-#~ msgid "Switch one workspace at a time"
-#~ msgstr "Měnit jen jeden workspace najednou"
-
-#~ msgid "Only a 1px wide area close to the screen edge is active"
-#~ msgstr "Aktivní je jen oblast jednoho pixelu u hranice obrazovky"
-
-#~ msgid "All the area of the dock is active"
-#~ msgstr "Celá oblast docku je aktivní"
-
-#~ msgid "Customize actions on mouse click"
-#~ msgstr "Nastavit akce při kliknutí myši"
-
-#~ msgid "Action on clicking on running app"
-#~ msgstr "Akce spuštěná při kliknutí na běžící aplikaci"
-
-#~ msgid "Minimize window on shift+click (double click for all app windows)"
-#~ msgstr ""
-#~ "Minimalizovat okno při shift+kliknutí (dvojklik pro všechny okna aplikací)"
-
-#~ msgid "Only when in autohide"
-#~ msgstr "Jen při automatickém schovávání"
+#~ msgstr "Zobrazit oblíbené aplikace"
