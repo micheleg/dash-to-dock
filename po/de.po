@@ -9,23 +9,25 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-16 15:00+0100\n"
-"PO-Revision-Date: 2015-01-16 17:37+0100\n"
-"Last-Translator: Jonatan Zeidler <jonatan_zeidler@gmx.de>\n"
+"POT-Creation-Date: 2015-05-21 23:55+0100\n"
+"PO-Revision-Date: 2015-05-21 19:20+0100\n"
+"Last-Translator: Agilo Luitger Kern <post@agilo-kern.de>\n"
 "Language-Team: jonius <jonatan_zeidler@gmx.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.7.5\n"
 
+# Konjugation wegen Stellung im Satz
 #: prefs.js:69
 msgid "Primary monitor"
-msgstr ""
+msgstr "primärer Anzeige"
 
+# Konjugation wegen Stellung im Satz
 #: prefs.js:78 prefs.js:85
 msgid "Secondary monitor "
-msgstr ""
+msgstr "sekundärer Anzeige"
 
 #: prefs.js:110 Settings.ui.h:6
 msgid "Right"
@@ -37,19 +39,20 @@ msgstr "Links"
 
 #: prefs.js:161
 msgid "Intelligent autohide customization"
-msgstr ""
+msgstr "Automatisches Ausblenden anpassen"
 
+# Verwende Übersetzung aus Nautilus
 #: prefs.js:168
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Auf Vorgaben zurücksetzen"
 
 #: Settings.ui.h:1
 msgid "Show the dock on"
-msgstr ""
+msgstr "Dock anzeigen auf"
 
 #: Settings.ui.h:2
 msgid "Position on screen"
-msgstr ""
+msgstr "Position auf Bildschirm"
 
 #: Settings.ui.h:4
 msgid "Bottom"
@@ -64,85 +67,86 @@ msgid ""
 "Hide the dock when it obstructs a window of the the current application. "
 "More refined settings are available."
 msgstr ""
+"Das Dock automatisch ausblenden, falls es ein Fenster der laufenden "
+"Anwendung überlagert. Einstellungen können weiter verfeinert werden."
 
 #: Settings.ui.h:8
-#, fuzzy
 msgid "Intelligent autohide"
-msgstr "Intelligentes Verstecken"
+msgstr "Automatisch ausblenden"
 
 #: Settings.ui.h:9
 msgid "Dock size limit"
-msgstr ""
+msgstr "Maximale Dockgröße"
 
 #: Settings.ui.h:10
 msgid "Panel mode: extend to the screen edge"
-msgstr ""
+msgstr "Panelmodus: bis zu Bildschirmkanten ausdehnen"
 
 #: Settings.ui.h:11
 msgid "Icon size limit"
-msgstr ""
+msgstr "Maximale Icongröße"
 
 #: Settings.ui.h:12
 msgid "Fixed icon size: scroll to reveal other icons"
-msgstr ""
+msgstr "Feste Icongröße: andere Icons durch Scrollen sichtbar machen"
 
 #: Settings.ui.h:13
 msgid "Position and size"
-msgstr ""
+msgstr "Position und Größe"
 
 #: Settings.ui.h:14
-#, fuzzy
 msgid "Show running applications"
-msgstr "Laufende Anwendungen zeigen"
+msgstr "Laufende Anwendungen anzeigen"
 
 #: Settings.ui.h:15
 msgid "Move the applications button at the beginning of the dock."
-msgstr ""
+msgstr "Anwendungen-anzeigen-Button an den Anfang verschieben"
 
+# Durchkopplung von Kompositum
 #: Settings.ui.h:16
-#, fuzzy
 msgid "<i>Show Applications</i> icon first"
-msgstr "Zeige Anwendungsbutton oben"
+msgstr "<i>Anwendungen anzeigen</i> zuerst"
 
 #: Settings.ui.h:17
+#, fuzzy
 msgid "Behaviour when clicking on the icon of a running application."
-msgstr ""
+msgstr "Verhalten, wenn auf das Icon einer laufenden Anwendung geklickt wird."
 
 #: Settings.ui.h:18
 msgid "Click action"
-msgstr ""
+msgstr "Wirkung bei Mausklick"
 
 #: Settings.ui.h:19
-#, fuzzy
 msgid "Do nothing"
-msgstr "Nichts tun (Standard)"
+msgstr "Nichts tun"
 
 #: Settings.ui.h:20
 msgid "Minimize"
 msgstr "Minimieren"
 
 #: Settings.ui.h:21
-#, fuzzy
 msgid "Launch new instance"
 msgstr "Neues Fenster"
 
+# Vielleicht einen Tick besser als „umschalten“?
 #: Settings.ui.h:22
 #, fuzzy
 msgid "Cycle through windows"
-msgstr "Zwischen den Fenstern der Anwendung umschalten"
+msgstr "Zwischen den Fenstern der Anwendung wechseln"
 
 #: Settings.ui.h:23
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
+"Wenn auf »Minimieren« eingestellt, können durch Doppelklick alle Fenster der "
+"Anwendung gleichzeitig minimiert werden."
 
 #: Settings.ui.h:24
 msgid "Shift+Click action"
-msgstr ""
+msgstr "Wirkung bei Umschalttaste + Mausklick"
 
 #: Settings.ui.h:25
-#, fuzzy
 msgid "Minimize window"
 msgstr "Minimieren"
 
@@ -151,53 +155,54 @@ msgid ""
 "The area of the dock close to the screen edge and the <i>Show Applications</"
 "i> icon are active."
 msgstr ""
+"Hierzu mit Mauszeiger Bereich des Docks nahe der Bildschirmkante oder "
+"<i>Anwendungen-anzeigen</i>-Button überfahren."
 
 #: Settings.ui.h:27
-#, fuzzy
 msgid "Switch workspace by scrolling on the dock"
-msgstr "Über das Dock scrollen, um Arbeitsflächen zu wechseln"
+msgstr "Arbeitsfläche durch Scrollen wechseln"
 
+# Verwende Übersetzung aus Nautilus
 #: Settings.ui.h:28
 msgid "Behavior"
-msgstr ""
+msgstr "Verhalten"
 
 #: Settings.ui.h:29
 msgid ""
 "Few customizations meant to integrate the dock wih the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
+"Einige Anpassungen, durch die das Dock besser in das standardmäßige GNOME-"
+"Thema eingepasst werden soll. Alternativ können im Folgenden besondere "
+"Einstellungen vorgenommen werden."
 
 #: Settings.ui.h:30
-#, fuzzy
 msgid "Use built-in theme"
-msgstr "Enthaltenes angepasstes Thema nutzen"
+msgstr "Angepasstes Thema dieser Erweiterung nutzen"
 
 #: Settings.ui.h:31
 msgid "Save space reducing padding and border radius."
-msgstr ""
+msgstr "Platz sparen, indem Innenabstand und Eckenradius verkleinert werden."
 
 #: Settings.ui.h:32
 msgid "Shrink the dash"
-msgstr ""
+msgstr "Dash verkleinern"
 
 #: Settings.ui.h:33
-#, fuzzy
 msgid "Show a dot for each windows of the application."
-msgstr "Für jede Anwendung einen Indikator für die Anzahl der Fenster einfügen"
+msgstr "Für jedes Fenster einer Anwendung einen kleinen Indikator einblenden."
 
 #: Settings.ui.h:34
 msgid "Show windows counter indicators"
-msgstr ""
+msgstr "Indikatoren für Fensterzahl"
 
 #: Settings.ui.h:35
-#, fuzzy
 msgid "Tune the dash background opacity."
-msgstr "Dock-Hintergrundtransparenz anpassen"
+msgstr "Die Hintergrundtransparenz des Docks einstellen."
 
 #: Settings.ui.h:36
-#, fuzzy
 msgid "Customize opacity"
-msgstr "Dock-Hintergrundtransparenz anpassen"
+msgstr "Transparenz anpassen"
 
 #: Settings.ui.h:37
 msgid "Opacity"
@@ -205,19 +210,19 @@ msgstr "Transparenz"
 
 #: Settings.ui.h:38
 msgid "Appearance"
-msgstr ""
+msgstr "Erscheinungsbild"
 
 #: Settings.ui.h:39
 msgid "version: "
-msgstr ""
+msgstr "Version: "
 
 #: Settings.ui.h:40
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr ""
+msgstr "Verwandelt das Dash aus dem Übersichtsmodus in ein Dock."
 
 #: Settings.ui.h:41
 msgid "Created by"
-msgstr ""
+msgstr "Erstellt von"
 
 #: Settings.ui.h:42
 msgid ""
@@ -225,40 +230,46 @@ msgid ""
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
 "\">GNU General Public License, version 2 or later</a> for details.</span>"
 msgstr ""
+"<span size=\"small\">Für dieses Programm besteht KEINERLEI GARANTIE.\n"
+" Details finden Sie in der <a href=\"https://www.gnu.org/licenses/old-"
+"licenses/gpl-2.0.html\">GNU General Public License, Version 2 oder später</"
+"a>.</span>"
 
+# Verwende Übersetzung aus Nautilus
 #: Settings.ui.h:44
 msgid "About"
-msgstr ""
+msgstr "Info"
 
 #: Settings.ui.h:45
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr ""
+msgstr "Dock einblenden, wenn Mauszeiger an Bildschirmkante anliegt."
 
 #: Settings.ui.h:46
 msgid "Autohide"
 msgstr "Autoverstecken"
 
 #: Settings.ui.h:47
-#, fuzzy
 msgid "Push to show: require pressure to show the dock"
-msgstr "Druck benötigt, um das Dock anzuzeigen"
+msgstr ""
+"Anstoßen erforderlich: Dock nur einblenden, wenn Mauszeiger schnell gegen "
+"Bildschirmkante stößt"
 
 #: Settings.ui.h:48
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr ""
+msgstr "Dock einblenden, falls es keine Anwendungsfenster überlagert."
 
 #: Settings.ui.h:49
 msgid "Dodge windows"
-msgstr ""
+msgstr "Fenstern ausweichen"
 
 #: Settings.ui.h:50
 msgid "Only consider windows of the focused application"
-msgstr ""
+msgstr "Nur Fenster der fokussierten Anwendung einbeziehen."
 
+# Nach DIN 1313 werden Einheiten nicht in Klammern gesetzt
 #: Settings.ui.h:51
-#, fuzzy
 msgid "Animation duration (s)"
-msgstr "Animationsdauer [ms]"
+msgstr "Animationsdauer in s"
 
 #: Settings.ui.h:52
 msgid "0.000"
@@ -266,18 +277,16 @@ msgstr ""
 
 #: Settings.ui.h:53
 msgid "Hide timeout (s)"
-msgstr ""
+msgstr "Ausblende-Verzögerung in s"
 
 #: Settings.ui.h:54
 msgid "Show timeout (s)"
-msgstr ""
+msgstr "Einblende-Verzögerung in s"
 
 #: Settings.ui.h:55
-#, fuzzy
 msgid "Pressure threshold"
-msgstr "Druckschwellwert (px)"
+msgstr "Stoßschwellwert"
 
-#, fuzzy
 #~ msgid "Show favorite applications"
 #~ msgstr "Favoriten anzeigen"
 
