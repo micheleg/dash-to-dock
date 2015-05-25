@@ -332,11 +332,6 @@ const dockedDash = new Lang.Class({
                 'notify::checked',
                 Lang.bind(this, this._syncShowAppsButtonToggled)
             ],
-            [
-                global.screen,
-                'in-fullscreen-changed',
-                Lang.bind(this, this._onFullscreenChanged)
-            ],
             // Monitor windows overlapping
             [
                 this._intellihide,
@@ -873,11 +868,6 @@ const dockedDash = new Lang.Class({
                                                                   }));
 
         this._show();
-    },
-
-    _onFullscreenChanged: function() {
-        if (!this._slider.actor.visible)
-            this._updateBarrier();
     },
 
     // Remove pressure barrier
