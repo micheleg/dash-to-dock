@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-05-26 22:50+0200\n"
-"PO-Revision-Date: 2015-05-26 23:00+0100\n"
+"PO-Revision-Date: 2015-05-26 23:05+0100\n"
 "Last-Translator: Agilo Luitger Kern <post@agilo-kern.de>\n"
 "Language-Team: jonius <jonatan_zeidler@gmx.de>\n"
 "Language: de\n"
@@ -22,12 +22,12 @@ msgstr ""
 # Konjugation wegen Stellung im Satz
 #: prefs.js:69
 msgid "Primary monitor"
-msgstr "primärer Anzeige"
+msgstr "Primärer Anzeige"
 
 # Konjugation wegen Stellung im Satz
 #: prefs.js:78 prefs.js:85
 msgid "Secondary monitor "
-msgstr "sekundärer Anzeige"
+msgstr "Sekundärer Anzeige"
 
 #: prefs.js:110 Settings.ui.h:6
 msgid "Right"
@@ -275,7 +275,7 @@ msgstr "Animationsdauer in s"
 
 #: Settings.ui.h:53
 msgid "0.000"
-msgstr ""
+msgstr "0,000"
 
 #: Settings.ui.h:54
 msgid "Hide timeout (s)"
