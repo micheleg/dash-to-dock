@@ -8,9 +8,9 @@ msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-04-17 21:33+0100\n"
-"PO-Revision-Date: 2012-12-20 20:45+1100\n"
-"Last-Translator: Carlos Alberto Junior Spohr Poletto <carlos."
-"spohr@gmail>com>\n"
+"PO-Revision-Date: 2015-06-06 03:30+0000\n"
+"Last-Translator: Thales Pereira <thales."
+"acp@gmail.com>\n"
 "Language-Team: Carlos Alberto Junior Spohr Poletto <carlos.spohr@gmail>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
@@ -22,49 +22,52 @@ msgstr ""
 
 #: prefs.js:69
 msgid "Primary monitor"
-msgstr ""
+msgstr "Monitor Primário"
 
 #: prefs.js:78 prefs.js:85
 msgid "Secondary monitor "
-msgstr ""
+msgstr "Monitor Secundário"
 
 #: prefs.js:110 Settings.ui.h:6
 msgid "Right"
-msgstr ""
+msgstr "Direita"
 
 #: prefs.js:111 Settings.ui.h:3
 msgid "Left"
-msgstr ""
+msgstr "Esquerda"
 
 #: prefs.js:161
 msgid "Intelligent autohide customization"
-msgstr ""
+msgstr "Configuração da Ocultação Inteligente"
 
 #: prefs.js:168
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Restaurar o padrão"
 
 #: Settings.ui.h:1
 msgid "Show the dock on"
-msgstr ""
+msgstr "Exibir o dock"
 
 #: Settings.ui.h:2
 msgid "Position on screen"
-msgstr ""
+msgstr "Posição na tela"
 
 #: Settings.ui.h:4
 msgid "Bottom"
-msgstr ""
+msgstr "Embaixo"
 
 #: Settings.ui.h:5
 msgid "Top"
-msgstr ""
+msgstr "Em cima"
 
 #: Settings.ui.h:7
 msgid ""
-"Hide the dock when it obstructs a window of the the current application. "
+"Hide the dock when it obstructs a window of the the current application."
 "More refined settings are available."
 msgstr ""
+"Ocultar o dock quando algum aplicativo em uso sobrepor o mesmo."
+"Definições mais refinadas estão disponíveis."
+
 
 #: Settings.ui.h:8
 #, fuzzy
@@ -73,50 +76,50 @@ msgstr "Ocultação inteligente"
 
 #: Settings.ui.h:9
 msgid "Dock size limit"
-msgstr ""
+msgstr "Tamanho limite do dock"
 
 #: Settings.ui.h:10
 msgid "Panel mode: extend to the screen edge"
-msgstr ""
+msgstr "Modo do painel: extender até a borda da tela"
 
 #: Settings.ui.h:11
 msgid "Icon size limit"
-msgstr ""
+msgstr "Tamanho limite do ícone"
 
 #: Settings.ui.h:12
 msgid "Fixed icon size: scroll to reveal other icons"
-msgstr ""
+msgstr "Tamanho do ícone fixo: use o scroll do mouse para revelar outro ícone"
 
 #: Settings.ui.h:13
 msgid "Position and size"
-msgstr ""
+msgstr "Posição e tamanho"
 
 #: Settings.ui.h:14
 #, fuzzy
 msgid "Show favorite applications"
-msgstr "Mostrar ícones das aplicações favoritas"
+msgstr "Mostrar aplicativos favoritos"
 
 #: Settings.ui.h:15
 #, fuzzy
 msgid "Show running applications"
-msgstr "Mostrar aplicações em execução"
+msgstr "Mostrar aplicativos em execução"
 
 #: Settings.ui.h:16
 msgid "Move the applications button at the beginning of the dock."
-msgstr ""
+msgstr "Mover o botão de aplicativos para o íncio do dock."
 
 #: Settings.ui.h:17
 #, fuzzy
 msgid "<i>Show Applications</i> icon first"
-msgstr "Mostrar aplicações em execução"
+msgstr "<i>Mostrar Aplicativos</i> como primeiro ícone"
 
 #: Settings.ui.h:18
 msgid "Behaviour when cliking on the icon of a running application."
-msgstr ""
+msgstr "Comportamento quando clicar sobre o ícone de um aplicativo em execução."
 
 #: Settings.ui.h:19
 msgid "Click action"
-msgstr ""
+msgstr "Ação do clique"
 
 #: Settings.ui.h:20
 #, fuzzy
@@ -142,56 +145,63 @@ msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
+"Quando minimizar, o duplo clique minizará todas as janelas dos"
+"aplicativos"
+
 
 #: Settings.ui.h:25
 msgid "Shift+Click action"
-msgstr ""
+msgstr "Ação do Shift+Click"
 
 #: Settings.ui.h:26
 #, fuzzy
 msgid "Minimize window"
-msgstr "Minimizar"
+msgstr "Minimizar janela"
 
 #: Settings.ui.h:27
 msgid ""
 "The area of the dock close to the screen edge and the <i>Show Applications</"
 "i> icon are active."
 msgstr ""
+"A área do dock perto da borda da tela e o <i>Mostrar Aplicativos</"
+"i> ícones são ativados"
 
 #: Settings.ui.h:28
 #, fuzzy
 msgid "Switch workspace by scrolling on the dock"
-msgstr "Trocar de espaço de trabalho quando scrolar o mouse sobre o dock"
+msgstr "Trocar de área de trabalho quando usar o scroll do mouse sobre o dock"
 
 #: Settings.ui.h:29
 msgid "Behavior"
-msgstr ""
+msgstr "Comportamento"
 
 #: Settings.ui.h:30
 msgid ""
 "Few customizations meant to integrate the dock wih the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
+"Poucas configurações são destinados a integração do dock com o tema padrão do gnome. "
+""
 
 #: Settings.ui.h:31
 msgid "Use built-in theme"
-msgstr ""
+msgstr "Usar o tema do sistema"
 
 #: Settings.ui.h:32
 msgid "Save space reducing padding and border radius."
-msgstr ""
+msgstr "Economizar espaço reduzindo preenchimento e a borda arredondada"
 
 #: Settings.ui.h:33
 msgid "Shrink the dash"
-msgstr ""
+msgstr "Encolher o dash"
 
 #: Settings.ui.h:34
 msgid "Show a dot for each windows of the application."
-msgstr ""
+msgstr "Mostrar um ponto para cada janela do aplicativo"
 
 #: Settings.ui.h:35
 msgid "Show windows counter indicators"
-msgstr ""
+msgstr "Mostrar indicadores de contador de janelas"
 
 #: Settings.ui.h:36
 #, fuzzy
@@ -201,7 +211,7 @@ msgstr "Alterar a opacidade do fundo do dock"
 #: Settings.ui.h:37
 #, fuzzy
 msgid "Customize opacity"
-msgstr "Alterar a opacidade do fundo do dock"
+msgstr "Configurar opacidade"
 
 #: Settings.ui.h:38
 msgid "Opacity"
@@ -209,19 +219,19 @@ msgstr "Opacidade"
 
 #: Settings.ui.h:39
 msgid "Appearance"
-msgstr ""
+msgstr "Aparência"
 
 #: Settings.ui.h:40
 msgid "version: "
-msgstr ""
+msgstr "versão:"
 
 #: Settings.ui.h:41
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr ""
+msgstr "Mover o dash para fora da visão geral transformando-o em dock"
 
 #: Settings.ui.h:42
 msgid "Created by"
-msgstr ""
+msgstr "Criado por"
 
 #: Settings.ui.h:43
 msgid ""
@@ -229,34 +239,37 @@ msgid ""
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
 "\">GNU General Public License, version 2 or later</a> for details.</span>"
 msgstr ""
+"<span size=\"small\">Este programa é distribuido SEM QUALQUER GARANTIA.\n"
+"Veja em <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+"\">GNU General Public License, versão 2 ou posterior</a> para maiores detalhes.</span>"
 
 #: Settings.ui.h:45
 msgid "About"
-msgstr ""
+msgstr "Sobre"
 
 #: Settings.ui.h:46
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr ""
+msgstr "Mostrar o dock quando o mouse pairar sobre a tela."
 
 #: Settings.ui.h:47
 msgid "Autohide"
-msgstr "Masquage automatique"
+msgstr "Ocultação"
 
 #: Settings.ui.h:48
 msgid "Push to show: require pressure to show the dock"
-msgstr ""
+msgstr "Empurrar para mostrar: requer pressão para mostrar o dock"
 
 #: Settings.ui.h:49
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr ""
+msgstr "Mostrar o dock quando nenhum aplicativo sobrepor o mesmo."
 
 #: Settings.ui.h:50
 msgid "Dodge windows"
-msgstr ""
+msgstr "Esconder Janela"
 
 #: Settings.ui.h:51
 msgid "Only consider windows of the focused application"
-msgstr ""
+msgstr "Considere apenas janelas de aplicativos em uso."
 
 #: Settings.ui.h:52
 #, fuzzy
@@ -269,11 +282,11 @@ msgstr ""
 
 #: Settings.ui.h:54
 msgid "Hide timeout (s)"
-msgstr ""
+msgstr "Ocultar tempo limite."
 
 #: Settings.ui.h:55
 msgid "Show timeout (s)"
-msgstr ""
+msgstr "Mostrar tempo limite."
 
 #: Settings.ui.h:56
 msgid "Pressure threshold"
