@@ -260,6 +260,9 @@ const dockedDash = new Lang.Class({
         // connect app icon into the view selector
         this.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
 
+        if (!this._settings.get_boolean('show-show-apps-button'))
+            this.dash.hideShowAppsButton();
+
         // Create the main actor and the containers for sliding in and out and
         // centering, turn on track hover
 
@@ -559,6 +562,13 @@ const dockedDash = new Lang.Class({
 
         this._settings.connect('changed::show-apps-at-top', Lang.bind(this, function(){
             this.dash.resetAppIcons();
+        }));
+
+        this._settings.connect('changed::show-show-apps-button', Lang.bind(this, function(){
+            if (this._settings.get_boolean('show-show-apps-button'))
+                this.dash.showShowAppsButton();
+            else
+                this.dash.hideShowAppsButton();
         }));
 
         this._settings.connect('changed::dock-fixed', Lang.bind(this, function(){
