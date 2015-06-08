@@ -238,9 +238,17 @@ const Settings = new Lang.Class({
                             this._builder.get_object('show_favorite_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('show-apps-at-top',
-                            this._builder.get_object('application_button_first_switch'),
+        this._settings.bind('show-show-apps-button',
+                            this._builder.get_object('show_applications_button_switch'),
                             'active',
+                            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-apps-at-top',
+                            this._builder.get_object('application_button_first_button'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-show-apps-button',
+                            this._builder.get_object('application_button_first_button'),
+                            'sensitive',
                             Gio.SettingsBindFlags.DEFAULT);
 
         this._builder.get_object('click_action_combo').set_active(this._settings.get_enum('click-action'));

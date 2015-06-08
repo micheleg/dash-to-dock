@@ -632,7 +632,7 @@
                         <property name="margin_bottom">12</property>
                         <property name="column_spacing">32</property>
                         <child>
-                          <object class="GtkSwitch" id="application_button_first_switch">
+                          <object class="GtkSwitch" id="show_applications_button_switch">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="halign">end</property>
@@ -650,7 +650,7 @@
                             <property name="can_focus">False</property>
                             <property name="hexpand">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Move the applications button at the beginning of the dock.</property>
+                            <property name="label" translatable="yes">If disabled, these settings are acccessible from gnome-tweak-tool or the extension website.</property>
                             <property name="wrap">True</property>
                             <style>
                               <class name="dim-label"/>
@@ -667,12 +667,27 @@
                             <property name="can_focus">False</property>
                             <property name="hexpand">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">&lt;i&gt;Show Applications&lt;/i&gt; icon first</property>
+                            <property name="label" translatable="yes">Show &lt;i&gt;Show Applications&lt;/i&gt; icon</property>
                             <property name="use_markup">True</property>
                           </object>
                           <packing>
                             <property name="left_attach">0</property>
                             <property name="top_attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="application_button_first_button">
+                            <property name="label" translatable="yes">Move the applications button at the beginning of the dock.</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="xalign">0</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">2</property>
+                            <property name="width">2</property>
                           </packing>
                         </child>
                       </object>
