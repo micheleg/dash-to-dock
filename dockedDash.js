@@ -525,6 +525,10 @@ const dockedDash = new Lang.Class({
             this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'));
         }));
 
+        this._settings.connect('changed::show-favorites', Lang.bind(this, function(){
+            this.dash.resetAppIcons();
+        }));
+
         this._settings.connect('changed::show-running', Lang.bind(this, function(){
             this.dash.resetAppIcons();
         }));
