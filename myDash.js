@@ -1275,7 +1275,20 @@ const myDash = new Lang.Class({
             }));
 
         return true;
+    },
+
+    showShowAppsButton: function() {
+        this.showAppsButton.visible = true
+        this.showAppsButton.set_width(-1)
+        this.showAppsButton.set_height(-1)
+    },
+
+    hideShowAppsButton: function() {
+        this.showAppsButton.hide()
+        this.showAppsButton.set_width(0)
+        this.showAppsButton.set_height(0)
     }
+
 });
 
 Signals.addSignalMethods(myDash.prototype);
