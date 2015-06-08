@@ -949,13 +949,15 @@ const myDash = new Lang.Class({
         // Apps supposed to be in the dash
         let newApps = [];
 
-        for (let id in favorites)
-            newApps.push(favorites[id]);
+        if( this._settings.get_boolean('show-favorites') ) {
+            for (let id in favorites)
+                newApps.push(favorites[id]);
+        }
 
         if( this._settings.get_boolean('show-running') ) {
             for (let i = 0; i < running.length; i++) {
                 let app = running[i];
-                if (app.get_id() in favorites)
+                if (this._settings.get_boolean('show-favorites') && (app.get_id() in favorites) )
                     continue;
                 newApps.push(app);
             }
@@ -1134,6 +1136,11 @@ const myDash = new Lang.Class({
     },
 
     handleDragOver : function(source, actor, x, y, time) {
+
+        // Don't allow to add favourites if they are not displayed
+        if( !this._settings.get_boolean('show-favorites') )
+            return DND.DragMotionResult.NO_DROP;
+
         let app = Dash.getAppFromSource(source);
 
         // Don't allow favoriting of transient apps
@@ -1226,6 +1233,11 @@ const myDash = new Lang.Class({
 
     // Draggable target interface
     acceptDrop : function(source, actor, x, y, time) {
+
+        // Don't allow to add favourites if they are not displayed
+        if( !this._settings.get_boolean('show-favorites') )
+            return true;
+
         let app = Dash.getAppFromSource(source);
 
         // Don't allow favoriting of transient apps
