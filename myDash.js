@@ -561,12 +561,20 @@ const myDash = new Lang.Class({
         if (event.is_pointer_emulated())
             return Clutter.EVENT_STOP;
 
-        let adjustment, delta;
+        let adjustment, delta, needscroll;
 
-        if (this._isHorizontal)
+        if (this._isHorizontal) {
             adjustment = this._scrollView.get_hscroll_bar().get_adjustment();
-        else
+            needscroll = actor.get_width() < actor.get_preferred_width(-1)[1];
+        } else {
             adjustment = this._scrollView.get_vscroll_bar().get_adjustment();
+            needscroll = actor.get_height() < actor.get_preferred_height(-1)[1];
+        }
+
+        // If scroll is not needed, either because icon are set to be resized or
+        // the space available is enough, let the scroll event propagate.
+        if (!needscroll)
+          return Clutter.EVENT_PROPAGATE;
 
         let increment = adjustment.step_increment;
 
