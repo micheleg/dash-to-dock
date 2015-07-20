@@ -911,7 +911,7 @@ const dockedDash = new Lang.Class({
 
         // Create new barrier
         // Note: dash in fixed position doesn't use pressure barrier
-        if (this._slider.actor.visible && this._canUsePressure && this._autohideIsEnabled && this._settings.get_boolean('require-pressure-to-show')) {
+        if (this._canUsePressure && this._autohideIsEnabled && this._settings.get_boolean('require-pressure-to-show')) {
             let x1, x2, y1, y2, direction;
 
             if(this._position==St.Side.LEFT){
