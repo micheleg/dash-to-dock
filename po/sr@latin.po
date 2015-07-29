@@ -1,0 +1,290 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-07-29 17:33+0200\n"
+"PO-Revision-Date: 2015-07-29 18:11+0200\n"
+"Last-Translator: Slobodan Terzić <Xabre@archlinux.info>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.2\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: sr@latin\n"
+
+#: prefs.js:69
+msgid "Primary monitor"
+msgstr "primarnom monitoru"
+
+#: prefs.js:78 prefs.js:85
+msgid "Secondary monitor "
+msgstr "sekundarnom monitoru"
+
+#: prefs.js:110 Settings.ui.h:6
+msgid "Right"
+msgstr "desno"
+
+#: prefs.js:111 Settings.ui.h:3
+msgid "Left"
+msgstr "levo"
+
+#: prefs.js:161
+msgid "Intelligent autohide customization"
+msgstr "Postavke inteligentnog samosakrivanja"
+
+#: prefs.js:168
+msgid "Reset to defaults"
+msgstr "Povrati osnovno"
+
+#: Settings.ui.h:1
+msgid "Show the dock on"
+msgstr "Prikaži dok na"
+
+#: Settings.ui.h:2
+msgid "Position on screen"
+msgstr "Pozicija na ekranu"
+
+#: Settings.ui.h:4
+msgid "Bottom"
+msgstr "dno"
+
+#: Settings.ui.h:5
+msgid "Top"
+msgstr "vrh"
+
+#: Settings.ui.h:7
+msgid ""
+"Hide the dock when it obstructs a window of the the current application. "
+"More refined settings are available."
+msgstr ""
+"Sakrij dok kada je na putu prozora trenutnog programa. Dostupne su finije "
+"postavke."
+
+#: Settings.ui.h:8
+msgid "Intelligent autohide"
+msgstr "Inteligentno samosakrivanje"
+
+#: Settings.ui.h:9
+msgid "Dock size limit"
+msgstr "Ograničenje veličine doka"
+
+#: Settings.ui.h:10
+msgid "Panel mode: extend to the screen edge"
+msgstr "Režim panela: proširen do ivica ekrana"
+
+#: Settings.ui.h:11
+msgid "Icon size limit"
+msgstr "Ograničenje veličine ikona"
+
+#: Settings.ui.h:12
+msgid "Fixed icon size: scroll to reveal other icons"
+msgstr "Ustaljena veličina ikona: klizajte za druge ikone"
+
+#: Settings.ui.h:13
+msgid "Position and size"
+msgstr "Pozicija i veličina"
+
+#: Settings.ui.h:14
+msgid "Show favorite applications"
+msgstr "Prikaz omiljenih programa"
+
+#: Settings.ui.h:15
+msgid "Show running applications"
+msgstr "Prikaz pokrenutih programa"
+
+#: Settings.ui.h:16
+msgid ""
+"If disabled, these settings are acccessible from gnome-tweak-tool or the "
+"extension website."
+msgstr ""
+"Ukoliko je onemogućeno, ove postavke su dostupne kroz alatku za lickanje ili "
+"veb sajt proširenja."
+
+#: Settings.ui.h:17
+msgid "Show <i>Show Applications</i> icon"
+msgstr "Prikaz ikone <i>Prikaži programe</i>"
+
+#: Settings.ui.h:18
+msgid "Move the applications button at the beginning of the dock."
+msgstr "Pomeri dugme programa na početak doka"
+
+#: Settings.ui.h:19
+msgid "Behaviour when clicking on the icon of a running application."
+msgstr "Ponašanje pri kliku na pokrenuti program."
+
+#: Settings.ui.h:20
+msgid "Click action"
+msgstr "Radnja klika"
+
+#: Settings.ui.h:21
+msgid "Do nothing"
+msgstr "ništa"
+
+#: Settings.ui.h:22
+msgid "Minimize"
+msgstr "minimizuj"
+
+#: Settings.ui.h:23
+msgid "Launch new instance"
+msgstr "pokreni novi primerak"
+
+#: Settings.ui.h:24
+msgid "Cycle through windows"
+msgstr "kruženje kroz prozore"
+
+#: Settings.ui.h:25
+msgid ""
+"When set to minimize, double clicking minimizes all the windows of the "
+"application."
+msgstr ""
+"Kad je postavljeno na minimizovanje, dupli klik minimizuje sve prozore "
+"programa."
+
+#: Settings.ui.h:26
+msgid "Shift+Click action"
+msgstr "Radnja šift+klika"
+
+#: Settings.ui.h:27
+msgid "Minimize window"
+msgstr "minimiuj prozor"
+
+#: Settings.ui.h:28
+msgid ""
+"If icons overflow the dock, only  the <i>Show Applications</i> icon is "
+"active."
+msgstr ""
+"Ako se ikone preklapaju na doku, prikazuje se samo ikona <i>Prikaži "
+"programe</i>."
+
+#: Settings.ui.h:29
+msgid "Switch workspace by scrolling on the dock"
+msgstr "Promena radnog prostora klizanjem po doku"
+
+#: Settings.ui.h:30
+msgid "Behavior"
+msgstr "Ponašanje"
+
+#: Settings.ui.h:31
+msgid ""
+"Few customizations meant to integrate the dock wih the default GNOME theme. "
+"Alternatively, specific options can be enabled below."
+msgstr ""
+"Nekoliko postavki je namenjeno ugrađivanju doka u osnovnu temu Gnoma. "
+"Alternativno, posebne postavke se mogu urediti ispod."
+
+#: Settings.ui.h:32
+msgid "Use built-in theme"
+msgstr "Koristi ugrađenu temu"
+
+#: Settings.ui.h:33
+msgid "Save space reducing padding and border radius."
+msgstr "Čuva prostor sužavanjem popune i opsega ivica."
+
+#: Settings.ui.h:34
+msgid "Shrink the dash"
+msgstr "Skupi ploču"
+
+#: Settings.ui.h:35
+msgid "Show a dot for each windows of the application."
+msgstr "Prikazuje tačku za svaki prozor programa."
+
+#: Settings.ui.h:36
+msgid "Show windows counter indicators"
+msgstr "Prikaz indikatora brojača prozora."
+
+#: Settings.ui.h:37
+msgid "Tune the dash background opacity."
+msgstr "Prilagodi prozirnost pozadine ploče."
+
+#: Settings.ui.h:38
+msgid "Customize opacity"
+msgstr "Prilagoćavanje prozirnosti"
+
+#: Settings.ui.h:39
+msgid "Opacity"
+msgstr "Prozirnost"
+
+#: Settings.ui.h:40
+msgid "Appearance"
+msgstr "Izgled"
+
+#: Settings.ui.h:41
+msgid "version: "
+msgstr "verzija:"
+
+#: Settings.ui.h:42
+msgid "Moves the dash out of the overview transforming it in a dock"
+msgstr "Pomera ploču iz globalnog prikaza, pretvarajući je u dok"
+
+#: Settings.ui.h:43
+msgid "Created by"
+msgstr "Napravi"
+
+#: Settings.ui.h:44
+msgid "Webpage"
+msgstr "Veb stranica"
+
+#: Settings.ui.h:45
+msgid ""
+"<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
+"See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+"\">GNU General Public License, version 2 or later</a> for details.</span>"
+msgstr ""
+"<span size=\"small\">Ovaj program se dostavlja BEZ IKAKVIH GARANCIJA.\n"
+"Pogledajte <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+"\">GNUovu Opštu Javnu licencu, verzija 2 ili kasnija</a>, za detalje.</span>"
+
+#: Settings.ui.h:47
+msgid "About"
+msgstr "O programu"
+
+#: Settings.ui.h:48
+msgid "Show the dock by mouse hover on the screen edge."
+msgstr "Prikaži dok prelazom miša peko ivice ekrana."
+
+#: Settings.ui.h:49
+msgid "Autohide"
+msgstr "Samoskrivanje"
+
+#: Settings.ui.h:50
+msgid "Push to show: require pressure to show the dock"
+msgstr "Prikaz pritiskom: zahteva pritisak za prikaz doka"
+
+#: Settings.ui.h:51
+msgid "Show the dock when it doesn't obstruct application windows."
+msgstr "Prikazuje dok kada nije na putu prozorima programa."
+
+#: Settings.ui.h:52
+msgid "Dodge windows"
+msgstr "Izbegavanje rozora"
+
+#: Settings.ui.h:53
+msgid "Only consider windows of the focused application"
+msgstr "Razmatraj samo prozor fokusiranog programa"
+
+#: Settings.ui.h:54
+msgid "Animation duration (s)"
+msgstr "Trajanje(a) animacije"
+
+#: Settings.ui.h:55
+msgid "0.000"
+msgstr "0,000"
+
+#: Settings.ui.h:56
+msgid "Hide timeout (s)"
+msgstr "Zastoj skrivanja"
+
+#: Settings.ui.h:57
+msgid "Show timeout (s)"
+msgstr "Zastoj prikazivanja"
+
+#: Settings.ui.h:58
+msgid "Pressure threshold"
+msgstr "Prag pritiska"
