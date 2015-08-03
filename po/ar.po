@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-16 16:02+0100\n"
+"POT-Creation-Date: 2015-08-03 19:06+0100\n"
 "PO-Revision-Date: 2015-04-18 18:01+0100\n"
 "Last-Translator: Jean-Baptiste Le Cz <jb.lecoz@gmail.com>\n"
 "Language-Team: Faissal Chamekh <chamfay@gmail.com>\n"
@@ -95,125 +95,140 @@ msgid "Position and size"
 msgstr "الموضع والحجم"
 
 #: Settings.ui.h:15
+msgid "Show favorite applications"
+msgstr "أظهر التطبيقات المفضّلة"
+
+#: Settings.ui.h:16
 msgid "Show running applications"
 msgstr "أظهر التطبيقات قيد التشغيل"
 
-#: Settings.ui.h:16
+#: Settings.ui.h:17
+msgid ""
+"If disabled, these settings are acccessible from gnome-tweak-tool or the "
+"extension website."
+msgstr ""
+
+#: Settings.ui.h:18
+#, fuzzy
+msgid "Show <i>Show Applications</i> icon"
+msgstr "أظهر أيقونة التطبيقات أولا"
+
+#: Settings.ui.h:19
 msgid "Move the applications button at the beginning of the dock."
 msgstr ""
 
-#: Settings.ui.h:17
-msgid "<i>Show Applications</i> icon first"
-msgstr "أظهر أيقونة التطبيقات أولا"
-
-#: Settings.ui.h:18
+#: Settings.ui.h:20
 #, fuzzy
 msgid "Behaviour when clicking on the icon of a running application."
 msgstr "التصرّف عن النقر على أيقونة التطبيق قيد التشغيل."
 
-#: Settings.ui.h:19
+#: Settings.ui.h:21
 msgid "Click action"
 msgstr "حدث النقر"
 
-#: Settings.ui.h:20
+#: Settings.ui.h:22
 msgid "Do nothing"
 msgstr "لا تفعل شيئا"
 
-#: Settings.ui.h:21
+#: Settings.ui.h:23
 msgid "Minimize"
 msgstr "صغّر"
 
-#: Settings.ui.h:22
+#: Settings.ui.h:24
 msgid "Launch new instance"
 msgstr "شغّل نسخة جديدة"
 
-#: Settings.ui.h:23
+#: Settings.ui.h:25
 msgid "Cycle through windows"
 msgstr "التبديل بين النوافذ"
 
-#: Settings.ui.h:24
+#: Settings.ui.h:26
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
 
-#: Settings.ui.h:25
+#: Settings.ui.h:27
 msgid "Shift+Click action"
 msgstr "حدث Shift+Click"
 
-#: Settings.ui.h:26
+#: Settings.ui.h:28
 msgid "Minimize window"
 msgstr "صغّر النافذة"
 
-#: Settings.ui.h:27
+#: Settings.ui.h:29
 msgid ""
-"The area of the dock close to the screen edge and the <i>Show Applications</"
-"i> icon are active."
+"If icons overflow the dock, only  the <i>Show Applications</i> icon is "
+"active."
 msgstr ""
 
-#: Settings.ui.h:28
+#: Settings.ui.h:30
 msgid "Switch workspace by scrolling on the dock"
 msgstr "بدّل مساحة العمل عند التمرير فوق المرساة"
 
-#: Settings.ui.h:29
+#: Settings.ui.h:31
 msgid "Behavior"
 msgstr "السلوك"
 
-#: Settings.ui.h:30
+#: Settings.ui.h:32
 msgid ""
 "Few customizations meant to integrate the dock wih the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
 
-#: Settings.ui.h:31
+#: Settings.ui.h:33
 msgid "Use built-in theme"
 msgstr "استعمل السمة المضمّنة"
 
-#: Settings.ui.h:32
+#: Settings.ui.h:34
 msgid "Save space reducing padding and border radius."
 msgstr ""
 
-#: Settings.ui.h:33
+#: Settings.ui.h:35
 msgid "Shrink the dash"
 msgstr "تقليص المرساة"
 
-#: Settings.ui.h:34
+#: Settings.ui.h:36
 msgid "Show a dot for each windows of the application."
 msgstr "أظهر نقطة لكل نوافذة من التطبيق."
 
-#: Settings.ui.h:35
+#: Settings.ui.h:37
 msgid "Show windows counter indicators"
 msgstr "أظهر مؤشرات عدد النوافذ"
 
-#: Settings.ui.h:36
+#: Settings.ui.h:38
 msgid "Tune the dash background opacity."
 msgstr "ضبط إعتام خلفية المرساة."
 
-#: Settings.ui.h:37
+#: Settings.ui.h:39
 msgid "Customize opacity"
 msgstr "خصّص الإعتام"
 
-#: Settings.ui.h:38
+#: Settings.ui.h:40
 msgid "Opacity"
 msgstr "العتمة"
 
-#: Settings.ui.h:39
+#: Settings.ui.h:41
 msgid "Appearance"
 msgstr "المظهر"
 
-#: Settings.ui.h:40
+#: Settings.ui.h:42
 msgid "version: "
 msgstr "الإصدار:"
 
-#: Settings.ui.h:41
+#: Settings.ui.h:43
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr ""
 
-#: Settings.ui.h:42
+#: Settings.ui.h:44
 msgid "Created by"
 msgstr "أنشئ من طرف"
 
-#: Settings.ui.h:43
+#: Settings.ui.h:45
+msgid "Webpage"
+msgstr ""
+
+#: Settings.ui.h:46
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -223,56 +238,53 @@ msgstr ""
 "لمزيد من المعلومات أنظر <a href=\"https://www.gnu.org/licenses/old-licenses/"
 "gpl-2.0.html\">رخصة غنو العمومية، الإصدارة 2 فما فوق.</span>"
 
-#: Settings.ui.h:45
+#: Settings.ui.h:48
 msgid "About"
 msgstr "حول"
 
-#: Settings.ui.h:46
+#: Settings.ui.h:49
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "أظهر المرساة بتمرير الفأرة على حافة النافذة"
 
-#: Settings.ui.h:47
+#: Settings.ui.h:50
 msgid "Autohide"
 msgstr "إخفاء تلقائي"
 
-#: Settings.ui.h:48
+#: Settings.ui.h:51
 msgid "Push to show: require pressure to show the dock"
 msgstr "اضغط للإظهار: يتطلب ضغطا لإظهار المرساة"
 
-#: Settings.ui.h:49
+#: Settings.ui.h:52
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "إظهار المرساة عندما لا تحجب نوافذ التطبيق."
 
-#: Settings.ui.h:50
+#: Settings.ui.h:53
 msgid "Dodge windows"
 msgstr ""
 
-#: Settings.ui.h:51
+#: Settings.ui.h:54
 msgid "Only consider windows of the focused application"
 msgstr ""
 
-#: Settings.ui.h:52
+#: Settings.ui.h:55
 msgid "Animation duration (s)"
 msgstr "مدة التحريك (ثا)"
 
-#: Settings.ui.h:53
+#: Settings.ui.h:56
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:54
+#: Settings.ui.h:57
 msgid "Hide timeout (s)"
 msgstr "زمن الاختفاء (ثا)"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:58
 msgid "Show timeout (s)"
 msgstr "زمن الظهور (ثا)"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:59
 msgid "Pressure threshold"
 msgstr "عتبة الضغط"
-
-#~ msgid "Show favorite applications"
-#~ msgstr "أظهر التطبيقات المفضّلة"
 
 #~ msgid "Main Settings"
 #~ msgstr "الخصائص الأساسية"
