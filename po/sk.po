@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-16 15:00+0100\n"
+"POT-Creation-Date: 2015-08-03 18:59+0100\n"
 "PO-Revision-Date: 2015-04-25 12:50+0100\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: \n"
@@ -91,43 +91,54 @@ msgid "Position and size"
 msgstr "Pozícia a veľkosť"
 
 #: Settings.ui.h:14
+msgid "Show favorite applications"
+msgstr "Zobraziť obľúbené aplikácie"
+
+#: Settings.ui.h:15
 msgid "Show running applications"
 msgstr "Zobraziť spustené aplikácie"
 
-#: Settings.ui.h:15
+#: Settings.ui.h:16
+msgid ""
+"If disabled, these settings are acccessible from gnome-tweak-tool or the "
+"extension website."
+msgstr ""
+
+#: Settings.ui.h:17
+#, fuzzy
+msgid "Show <i>Show Applications</i> icon"
+msgstr "<i>Zobraziť ikonu Aplikácie</i> ako prvú"
+
+#: Settings.ui.h:18
 msgid "Move the applications button at the beginning of the dock."
 msgstr "Premiestni tlačidlo aplikácií na začiatok doku."
 
-#: Settings.ui.h:16
-msgid "<i>Show Applications</i> icon first"
-msgstr "<i>Zobraziť ikonu Aplikácie</i> ako prvú"
-
-#: Settings.ui.h:17
+#: Settings.ui.h:19
 #, fuzzy
 msgid "Behaviour when clicking on the icon of a running application."
 msgstr "Správanie pri kliknutí na ikonu spustenej aplikácie."
 
-#: Settings.ui.h:18
+#: Settings.ui.h:20
 msgid "Click action"
 msgstr "Akcia po kliknutí"
 
-#: Settings.ui.h:19
+#: Settings.ui.h:21
 msgid "Do nothing"
 msgstr "Nevykonať nič"
 
-#: Settings.ui.h:20
+#: Settings.ui.h:22
 msgid "Minimize"
 msgstr "Minimalizovať"
 
-#: Settings.ui.h:21
+#: Settings.ui.h:23
 msgid "Launch new instance"
 msgstr "Spustiť novú inštanciu"
 
-#: Settings.ui.h:22
+#: Settings.ui.h:24
 msgid "Cycle through windows"
 msgstr "Striedať okná"
 
-#: Settings.ui.h:23
+#: Settings.ui.h:25
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
@@ -135,84 +146,88 @@ msgstr ""
 "Keď je nastavené na minimalizovanie, dvojklik minimalizuje všetky okná "
 "aplikácie."
 
-#: Settings.ui.h:24
+#: Settings.ui.h:26
 msgid "Shift+Click action"
 msgstr "Akcia Shift+Kliknutie"
 
-#: Settings.ui.h:25
+#: Settings.ui.h:27
 msgid "Minimize window"
 msgstr "Minimalizovať okno"
 
-#: Settings.ui.h:26
+#: Settings.ui.h:28
 msgid ""
-"The area of the dock close to the screen edge and the <i>Show Applications</"
-"i> icon are active."
+"If icons overflow the dock, only  the <i>Show Applications</i> icon is "
+"active."
 msgstr ""
 
-#: Settings.ui.h:27
+#: Settings.ui.h:29
 msgid "Switch workspace by scrolling on the dock"
 msgstr "Prepínať pracovné priestory rolovaním na doku"
 
-#: Settings.ui.h:28
+#: Settings.ui.h:30
 msgid "Behavior"
 msgstr "Správanie"
 
-#: Settings.ui.h:29
+#: Settings.ui.h:31
 msgid ""
 "Few customizations meant to integrate the dock wih the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
 "Niekoľko úprav na integrovanie doku s predvolenou témou prostredia GNOME. "
 
-#: Settings.ui.h:30
+#: Settings.ui.h:32
 msgid "Use built-in theme"
 msgstr "Použiť zabudovanú tému"
 
-#: Settings.ui.h:31
+#: Settings.ui.h:33
 msgid "Save space reducing padding and border radius."
 msgstr "Ušetrí miesto zmenšením rádiusu odsadenia a okrajov."
 
-#: Settings.ui.h:32
+#: Settings.ui.h:34
 msgid "Shrink the dash"
 msgstr "Zmenšiť dok"
 
-#: Settings.ui.h:33
+#: Settings.ui.h:35
 msgid "Show a dot for each windows of the application."
 msgstr "Zobrazí bodku za každé okno aplikácie."
 
-#: Settings.ui.h:34
+#: Settings.ui.h:36
 msgid "Show windows counter indicators"
 msgstr "Zobraziť indikátory počítadiel okien"
 
-#: Settings.ui.h:35
+#: Settings.ui.h:37
 msgid "Tune the dash background opacity."
 msgstr "Vyladí krytie pozadia doku."
 
-#: Settings.ui.h:36
+#: Settings.ui.h:38
 msgid "Customize opacity"
 msgstr "Prispôsobenie krytia"
 
-#: Settings.ui.h:37
+#: Settings.ui.h:39
 msgid "Opacity"
 msgstr "Krytie"
 
-#: Settings.ui.h:38
+#: Settings.ui.h:40
 msgid "Appearance"
 msgstr "Vzhľad"
 
-#: Settings.ui.h:39
+#: Settings.ui.h:41
 msgid "version: "
 msgstr "Verzia: "
 
-#: Settings.ui.h:40
+#: Settings.ui.h:42
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr ""
 
-#: Settings.ui.h:41
+#: Settings.ui.h:43
 msgid "Created by"
 msgstr "Vytvoril"
 
-#: Settings.ui.h:42
+#: Settings.ui.h:44
+msgid "Webpage"
+msgstr ""
+
+#: Settings.ui.h:45
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -223,53 +238,50 @@ msgstr ""
 "licenses/gpl-2.0.html\">Licenciu GNU General Public, verzie 2 alebo novšiu</"
 "a>.</span>"
 
-#: Settings.ui.h:44
+#: Settings.ui.h:47
 msgid "About"
 msgstr "O rozšírení"
 
-#: Settings.ui.h:45
+#: Settings.ui.h:48
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "Zobrazí dok prejdením myši na hranu obrazovky."
 
-#: Settings.ui.h:46
+#: Settings.ui.h:49
 msgid "Autohide"
 msgstr "Automatické skrytie"
 
-#: Settings.ui.h:47
+#: Settings.ui.h:50
 msgid "Push to show: require pressure to show the dock"
 msgstr "Zobraziť stlačením: vyžaduje tlak na zobrazenie doku"
 
-#: Settings.ui.h:48
+#: Settings.ui.h:51
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Zobrazí dok, keď nebude zasahovať do okien aplikácií."
 
-#: Settings.ui.h:49
+#: Settings.ui.h:52
 msgid "Dodge windows"
 msgstr ""
 
-#: Settings.ui.h:50
+#: Settings.ui.h:53
 msgid "Only consider windows of the focused application"
 msgstr "Zohľadniť iba okná zameranej aplikácie"
 
-#: Settings.ui.h:51
+#: Settings.ui.h:54
 msgid "Animation duration (s)"
 msgstr "Trvanie animácie (s)"
 
-#: Settings.ui.h:52
+#: Settings.ui.h:55
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:53
+#: Settings.ui.h:56
 msgid "Hide timeout (s)"
 msgstr "Časový limit na skrytie (s)"
 
-#: Settings.ui.h:54
+#: Settings.ui.h:57
 msgid "Show timeout (s)"
 msgstr "Zobraziť časový limit (s)"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:58
 msgid "Pressure threshold"
 msgstr "Medza tlaku"
-
-#~ msgid "Show favorite applications"
-#~ msgstr "Zobraziť obľúbené aplikácie"
