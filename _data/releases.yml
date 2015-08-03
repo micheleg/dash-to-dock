@@ -1,3 +1,22 @@
+- version: 48
+  date: 16-05-2015
+  shell_version: ["3.14"]
+  notes:
+    - This is a backport of version 47 to GNOME 3.14
+  zip_url: https://extensions.gnome.org/review/download/5078.shell-extension.zip
+
+- version: 47
+  date: 16-05-2015
+  shell_version: ["3.16"]
+  notes:
+    - Fix bugs with fullscreen [91e79136, 8210bd0a].
+    - Fix bug due to padding in the dock container [cbcc067c].
+    - Restore show/hide favorites option [9cbec67c,02fbe389].
+    - Allow workspace switch scrolling all over the dock [64b30ca7].
+    - Add function to show/hide 'show applications' button [51f037e4, 82b2e7ca].
+    - Update Russian, Serbian, Brazilian, Czech, and German translations.
+  zip_url: https://extensions.gnome.org/review/download/5077.shell-extension.zip
+
 - version: 46
   date: 16-05-2015
   shell_version: ["3.16"]
@@ -13,7 +32,7 @@
   date: 16-05-2015
   shell_version: ["3.14"]
   notes:
-    - This i a backport of version 46 to GNOME 3.14
+    - This is a backport of version 46 to GNOME 3.14
   zip_url: https://extensions.gnome.org/review/download/4964.shell-extension.zip
 
 - version: 44
