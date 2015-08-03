@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-30 09:24+0300\n"
-"PO-Revision-Date: 2015-06-30 09:30+0300\n"
+"POT-Creation-Date: 2015-08-03 09:53+0300\n"
+"PO-Revision-Date: 2015-08-03 10:11+0300\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -74,7 +74,7 @@ msgstr "Ограничение размера Дока"
 
 #: Settings.ui.h:10
 msgid "Panel mode: extend to the screen edge"
-msgstr "Режим панели: растянута по всей стороне экрана"
+msgstr "Режим панели: Док растянут по всей стороне экрана"
 
 #: Settings.ui.h:11
 msgid "Icon size limit"
@@ -112,7 +112,7 @@ msgstr "Показывать иконку <i>«Приложения»</i>"
 
 #: Settings.ui.h:18
 msgid "Move the applications button at the beginning of the dock."
-msgstr "Перемещает кнопку «Приложения» в начало Дока."
+msgstr "Расположить кнопку «Приложения» с другой стороны Дока."
 
 #: Settings.ui.h:19
 msgid "Behaviour when clicking on the icon of a running application."
@@ -156,9 +156,11 @@ msgstr "Минимизировать окно"
 
 #: Settings.ui.h:28
 msgid ""
-"The area of the dock close to the screen edge and the <i>Show Applications</"
-"i> icon are active."
-msgstr "Активная область: область Дока у стороны экрана и иконка «Приложения»."
+"If icons overflow the dock, only  the <i>Show Applications</i> icon is "
+"active."
+msgstr ""
+"Если Док переполнен иконками приложений то активна только иконка "
+"<i>«Приложения»</i>."
 
 #: Settings.ui.h:29
 msgid "Switch workspace by scrolling on the dock"
@@ -183,8 +185,8 @@ msgstr "Использовать встроенную тему"
 #: Settings.ui.h:33
 msgid "Save space reducing padding and border radius."
 msgstr ""
-"Экономия рабочего пространства за чсёт промежутков и использования "
-"скругленных углов."
+"Экономия рабочего пространства за счёт уменьшения промежутков и "
+"использования скругленных углов."
 
 #: Settings.ui.h:34
 msgid "Shrink the dash"
@@ -268,7 +270,7 @@ msgstr "Перекрытие окнами"
 
 #: Settings.ui.h:53
 msgid "Only consider windows of the focused application"
-msgstr "Срабатывает только на активное окно приложения"
+msgstr "Применить только к активным окнам приложений"
 
 #: Settings.ui.h:54
 msgid "Animation duration (s)"
