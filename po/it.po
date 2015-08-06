@@ -86,7 +86,7 @@ msgstr ""
 
 #: Settings.ui.h:13
 msgid "Position and size"
-msgstr "Posizione e dimesnione"
+msgstr "Posizione e dimensione"
 
 #: Settings.ui.h:14
 #, fuzzy
