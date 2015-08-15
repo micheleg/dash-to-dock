@@ -49,7 +49,8 @@ const intellihide = new Lang.Class({
 
         this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._tracker = Shell.WindowTracker.get_default();
-        this._focusApp = null;
+        this._focusApp = null; // The application whose window is focused.
+        this._topApp = null; //The application whose window is on top on the monitor with the dock.
 
         this._isEnabled = false;
         this.status = OverlapStatus.UNDEFINED;
@@ -181,27 +182,51 @@ const intellihide = new Lang.Class({
 
         if (windows.length>0){
 
-            // This is the window on top of all others in the current workspace
-            let topWindow = windows[windows.length-1].get_meta_window();
-            // If there isn't a focused app, use that of the window on top
-            this._focusApp = this._tracker.focus_app || this._tracker.get_window_app(topWindow);
 
-            windows = windows.filter(this._intellihideFilterInteresting, this);
+            /*
+             * Get the top window on the monitor where the dock is placed.
+             * The idea is that we dont want to overlap with the windows of the topmost application,
+             * event is it's not the focused app -- for instance because in multimonitor the user
+             * select a window in the secondary monitor.
+             */
 
-            for(let i=0; i< windows.length; i++){
+            let monitorIndex = this._settings.get_int('preferred-monitor');
 
-                let win = windows[i].get_meta_window();
-                if(win){
-                    let rect = win.get_frame_rect();
+            if (monitorIndex < 0 || monitorIndex > Main.layoutManager.monitors.length)
+                monitorIndex = Main.layoutManager.primaryIndex;
 
-                    let test = ( rect.x < this._targetBox.x2) &&
-                               ( rect.x +rect.width > this._targetBox.x1 ) &&
-                               ( rect.y < this._targetBox.y2 ) &&
-                               ( rect.y +rect.height > this._targetBox.y1 );
+            let topWindow = null;
+            for (let i = windows.length-1; i>=0; i--) {
+                if (windows[i].get_meta_window().get_monitor() == monitorIndex){
+                    topWindow = windows[i].get_meta_window();
+                    break;
+                }
+            }
 
-                    if(test){
-                        overlaps = OverlapStatus.TRUE;
-                        break;
+            if (topWindow !== null) {
+
+                // If there isn't a focused app, use that of the window on top
+                this._focusApp = this._tracker.focus_app ||
+                                 this._tracker.get_window_app(windows[windows.length-1].get_meta_window());
+                this._topApp = this._tracker.get_window_app(topWindow);
+
+                windows = windows.filter(this._intellihideFilterInteresting, this);
+
+                for(let i=0; i< windows.length; i++){
+
+                    let win = windows[i].get_meta_window();
+                    if(win){
+                        let rect = win.get_frame_rect();
+
+                        let test = ( rect.x < this._targetBox.x2) &&
+                                   ( rect.x +rect.width > this._targetBox.x1 ) &&
+                                   ( rect.y < this._targetBox.y2 ) &&
+                                   ( rect.y +rect.height > this._targetBox.y1 );
+
+                        if(test){
+                            overlaps = OverlapStatus.TRUE;
+                            break;
+                        }
                     }
                 }
             }
@@ -233,7 +258,7 @@ const intellihide = new Lang.Class({
         var wksp_index = wksp.index();
 
         // Skip windows of other apps
-        if(this._focusApp && this._settings.get_boolean('intellihide-perapp')) {
+        if(this._settings.get_boolean('intellihide-perapp') && this._focusApp ) {
             // The DropDownTerminal extension is not an application per se
             // so we match its window by wm class instead
             if (meta_win.get_wm_class() == 'DropDownTerminalWindow')
@@ -241,9 +266,9 @@ const intellihide = new Lang.Class({
 
             let currentApp = this._tracker.get_window_app(meta_win);
 
-            // But consider half maximized windows ( Useful if one is using
-            // two apps side by side and windows which are alwayson top
-            if( this._focusApp != currentApp
+            // Consider half maximized windows ( useful if one is using
+            // two apps side by side) and windows which are alwayson top
+            if( currentApp != this._focusApp && currentApp != this._topApp
                 && !(meta_win.maximized_vertically && !meta_win.maximized_horizontally)
                 && !meta_win.is_above()
               ) {
