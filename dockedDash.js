@@ -818,11 +818,11 @@ const dockedDash = new Lang.Class({
 
         if (shouldDwell) {
             // We only set up dwell timeout when the user is not hovering over the dock
-            // already (!this._box._hover).
+            // already (!this._box.hover).
             // The _dockDwelling variable is used so that we only try to
             // fire off one dock dwell - if it fails (because, say, the user has the mouse down),
             // we don't try again until the user moves the mouse up and down again.
-            if (!this._dockDwelling && !this._box._hover && this._dockDwellTimeoutId == 0) {
+            if (!this._dockDwelling && !this._box.hover && this._dockDwellTimeoutId == 0) {
                 // Save the interaction timestamp so we can detect user input
                 let focusWindow = global.display.focus_window;
                 this._dockDwellUserTime = focusWindow ? focusWindow.user_time : 0;
