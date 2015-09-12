@@ -1391,6 +1391,13 @@ const myAppIcon = new Lang.Class({
     // Update taraget for minimization animation
     updateIconGeometry: function() {
 
+        // If (for unknown reason) the actor is not on the stage the reported size
+        // and position are random values, which might exceeds the integer range
+        // resulting in an error when assigned to the a rect. This is a more like
+        // a workaround to prevent flooding the system with errors.
+        if (this.actor.get_stage() == null)
+            return
+
         let rect = new Meta.Rectangle();
 
         [rect.x, rect.y] = this.actor.get_transformed_position();
