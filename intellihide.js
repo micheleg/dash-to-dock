@@ -90,6 +90,13 @@ const intellihide = new Lang.Class({
                 'restacked',
                 Lang.bind(this, this._checkOverlap)
             ],
+            // when windows are alwasy on top, the focus window can change 
+            // without the windows being restacked. Thus monitor window focus change.
+            [
+                this._tracker,
+                'notify::focus-app',
+                Lang.bind(this, this._checkOverlap)
+            ],
             // update wne monitor changes, for instance in multimonitor when monitor are attached
             [
                 global.screen,
