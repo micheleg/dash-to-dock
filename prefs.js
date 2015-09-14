@@ -136,10 +136,6 @@ const Settings = new Lang.Class({
                             this._builder.get_object('intellihide_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('intellihide-perapp',
-                            this._builder.get_object('per_app_intellihide_checkbutton'),
-                            'active',
-                            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('animation-time',
                             this._builder.get_object('animation_duration_spinbutton'),
                             'value',
@@ -175,9 +171,19 @@ const Settings = new Lang.Class({
             dialog.get_content_area().add(box);
 
             this._settings.bind('intellihide',
-                            this._builder.get_object('per_app_intellihide_checkbutton'),
+                            this._builder.get_object('intellihide_mode_box'),
                             'sensitive',
                             Gio.SettingsBindFlags.GET);
+
+            // intellihide mode
+
+            let intellihideModeRadioButtons = [
+                this._builder.get_object('all_windows_radio_button'),
+                this._builder.get_object('focus_application_windows_radio_button'),
+                this._builder.get_object('maximized_windows_radio_button')
+            ];
+
+            intellihideModeRadioButtons[this._settings.get_enum('intellihide-mode')].set_active(true);
 
             this._settings.bind('autohide',
                             this._builder.get_object('require_pressure_checkbutton'),
@@ -187,11 +193,12 @@ const Settings = new Lang.Class({
             dialog.connect('response', Lang.bind(this, function(dialog, id) {
                 if (id == 1) {
                     // restore default settings for the relevant keys
-                    let keys = ['intellihide', 'autohide', 'intellihide-perapp', 'require-pressure-to-show',
+                    let keys = ['intellihide', 'autohide', 'intellihide-mode', 'require-pressure-to-show',
                                 'animation-time', 'show-delay', 'hide-delay'];
                     keys.forEach(function(val){
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);
+                    intellihideModeRadioButtons[this._settings.get_enum('intellihide-mode')].set_active(true);
                 } else {
                     // remove the settings box so it doesn't get destroyed;
                     dialog.get_content_area().remove(box);
@@ -362,6 +369,21 @@ const Settings = new Lang.Class({
 
             custom_opacity_scale_format_value_cb: function(scale, value) {
                 return Math.round(value*100) + ' %';
+            },
+
+            all_windows_radio_button_toggled_cb: function (button){
+                if (button.get_active())
+                    this._settings.set_enum('intellihide-mode', 0);
+            },
+
+            focus_application_windows_radio_button_toggled_cb: function (button){
+                if (button.get_active())
+                    this._settings.set_enum('intellihide-mode', 1);
+            },
+
+            maximized_windows_radio_button_toggled_cb: function (button){
+                if (button.get_active())
+                    this._settings.set_enum('intellihide-mode', 2);
             }
     }
 });

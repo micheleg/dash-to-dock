@@ -1630,7 +1630,7 @@ See the &lt;a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;G
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <child>
-                  <object class="GtkGrid" id="buitin_theme3">
+                  <object class="GtkGrid" id="intellihide_grid">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_left">12</property>
@@ -1682,14 +1682,64 @@ See the &lt;a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;G
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkCheckButton" id="per_app_intellihide_checkbutton">
-                        <property name="label" translatable="yes">Only consider windows of the focused application</property>
+                      <object class="GtkBox" id="intellihide_mode_box">
                         <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="receives_default">False</property>
-                        <property name="margin_top">12</property>
-                        <property name="xalign">0</property>
-                        <property name="draw_indicator">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkRadioButton" id="all_windows_radio_button">
+                            <property name="label" translatable="yes">All windows</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="margin_top">12</property>
+                            <property name="xalign">0</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="all_windows_radio_button_toggled_cb" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="focus_application_windows_radio_button">
+                            <property name="label" translatable="yes">Only focused application's windows</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="xalign">0</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                            <property name="group">all_windows_radio_button</property>
+                            <signal name="toggled" handler="focus_application_windows_radio_button_toggled_cb" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="maximized_windows_radio_button">
+                            <property name="label" translatable="yes">Only maximized windows</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="xalign">0</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                            <property name="group">all_windows_radio_button</property>
+                            <signal name="toggled" handler="maximized_windows_radio_button_toggled_cb" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>

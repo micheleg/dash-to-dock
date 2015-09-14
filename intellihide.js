@@ -20,6 +20,12 @@ const OverlapStatus = {
     TRUE: 1
 };
 
+const IntellihideMode = {
+    ALL_WINDOWS: 0,
+    FOCUS_APPLICATION_WINDOWS: 1,
+    MAXIMIZED_WINDOWS : 2
+};
+
 // List of windows type taken into account. Order is important (keep the original
 // enum order).
 const handledWindowTypes = [
@@ -257,23 +263,38 @@ const intellihide = new Lang.Class({
         var wksp = meta_win.get_workspace();
         var wksp_index = wksp.index();
 
-        // Skip windows of other apps
-        if(this._settings.get_boolean('intellihide-perapp') && this._focusApp ) {
-            // The DropDownTerminal extension is not an application per se
-            // so we match its window by wm class instead
-            if (meta_win.get_wm_class() == 'DropDownTerminalWindow')
-                return true;
+        // Depending on the intellihide mode, exclude non-relevent windows
+        switch (this._settings.get_enum('intellihide-mode')) {
+            case IntellihideMode.ALL_WINDOWS:
+                // Do nothing
+                break;
 
-            let currentApp = this._tracker.get_window_app(meta_win);
+            case IntellihideMode.FOCUS_APPLICATION_WINDOWS:
+                // Skip windows of other apps
+                if (this._focusApp ) {
+                    // The DropDownTerminal extension is not an application per se
+                    // so we match its window by wm class instead
+                    if (meta_win.get_wm_class() == 'DropDownTerminalWindow')
+                        return true;
 
-            // Consider half maximized windows ( useful if one is using
-            // two apps side by side) and windows which are alwayson top
-            if( currentApp != this._focusApp && currentApp != this._topApp
-                && !(meta_win.maximized_vertically || meta_win.maximized_horizontally)
-                && !meta_win.is_above()
-              ) {
-                return false;
-            }
+                    let currentApp = this._tracker.get_window_app(meta_win);
+
+                    // Consider half and fully maximized windows ( useful if one is using
+                    // two apps side by side) and windows which are alwayson top
+                    if( currentApp != this._focusApp && currentApp != this._topApp
+                        && !(meta_win.maximized_vertically || meta_win.maximized_horizontally)
+                        && !meta_win.is_above()
+                      ) {
+                        return false;
+                    }
+                }
+                break;
+
+            case IntellihideMode.MAXIMIZED_WINDOWS:
+                // Skip unmaximized windows
+                if (!meta_win.maximized_vertically  &&  !meta_win.maximized_horizontally)
+                    return false;
+                break;
         }
 
         if ( wksp_index == currentWorkspace && meta_win.showing_on_its_workspace() ) {

@@ -589,7 +589,7 @@ const dockedDash = new Lang.Class({
 
         this._settings.connect('changed::intellihide', Lang.bind(this, this._updateVisibilityMode));
 
-        this._settings.connect('changed::intellihide-perapp', Lang.bind(this, function(){
+        this._settings.connect('changed::intellihide-mode', Lang.bind(this, function(){
             this._intellihide.forceUpdate();
         }));
 

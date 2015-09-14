@@ -14,6 +14,11 @@
     <value value='2' nick='BOTTOM'/>
     <value value='3' nick='LEFT'/>
   </enum>
+  <enum id='org.gnome.shell.extensions.dash-to-dock.intellihide-mode'>
+    <value value='0' nick='ALL_WINDOWS'/>
+    <value value='1' nick='FOCUS_APPLICATION_WINDOWS'/>
+    <value value='2' nick='MAXIMIZED_WINDOWS'/>
+  </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key name="dock-position" enum="org.gnome.shell.extensions.dash-to-dock.position">
       <default>'LEFT'</default>
@@ -50,9 +55,9 @@
       <summary>Dock dodges windows</summary>
       <description>Enable or disable intellihide mode</description>
     </key>
-    <key type="b" name="intellihide-perapp">
-      <default>true</default>
-      <summary>Dock dodges only same app windows</summary>
+    <key name="intellihide-mode" enum="org.gnome.shell.extensions.dash-to-dock.intellihide-mode">
+      <default>'FOCUS_APPLICATION_WINDOWS'</default>
+      <summary>Define which windows are considered for intellihide.</summary>
       <description></description>
     </key>
     <key type="b" name="autohide">
