@@ -269,7 +269,7 @@ const intellihide = new Lang.Class({
             // Consider half maximized windows ( useful if one is using
             // two apps side by side) and windows which are alwayson top
             if( currentApp != this._focusApp && currentApp != this._topApp
-                && !(meta_win.maximized_vertically && !meta_win.maximized_horizontally)
+                && !(meta_win.maximized_vertically || meta_win.maximized_horizontally)
                 && !meta_win.is_above()
               ) {
                 return false;
