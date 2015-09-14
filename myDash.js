@@ -80,7 +80,7 @@ const myAppIconMenu = new Lang.Class({
 
         // quit menu
         let app = this._source.app;
-        let count = app.get_n_windows();
+        let count = getAppInterestingWindows(app).length;
         if ( count > 0) {
             this._appendSeparator();
             let quitFromDashMenuText = "";
