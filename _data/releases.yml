@@ -1,3 +1,14 @@
+- version: 49
+  date: 120-09-2015
+  shell_version: ["3.18"]
+  notes:
+    - Port to GNOME Shell 3.18 [788fc6, 4eadd6].
+    - Update Italian and French translations [bd0adb, 1b3473].
+    - Improve intellihide heuristics  [62b836, acf12a, 4eabe6, eca036].
+    - "Bugfix: skip nautilus desktop window in the quit menu [13d9fe]."
+    - "Bugfix: prevent errors when updating minimize targets [8d5415]."
+  zip_url: https://extensions.gnome.org/review/download/5161.shell-extension.zip
+
 - version: 48
   date: 16-05-2015
   shell_version: ["3.14"]
