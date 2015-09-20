@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-03 18:59+0100\n"
+"POT-Creation-Date: 2015-09-20 14:04+0100\n"
 "PO-Revision-Date: 2015-01-18 20:03+0100\n"
 "Last-Translator: Piotr Sokół <psokol@jabster.pl>\n"
 "Language-Team: polski <>\n"
@@ -36,11 +36,11 @@ msgstr "Prawo"
 msgid "Left"
 msgstr "Lewo"
 
-#: prefs.js:161
+#: prefs.js:157
 msgid "Intelligent autohide customization"
 msgstr ""
 
-#: prefs.js:168
+#: prefs.js:164
 msgid "Reset to defaults"
 msgstr ""
 
@@ -268,27 +268,36 @@ msgid "Dodge windows"
 msgstr ""
 
 #: Settings.ui.h:53
-msgid "Only consider windows of the focused application"
+msgid "All windows"
 msgstr ""
 
 #: Settings.ui.h:54
+msgid "Only focused application's windows"
+msgstr ""
+
+#: Settings.ui.h:55
+#, fuzzy
+msgid "Only maximized windows"
+msgstr "Zminimalizowanie okna"
+
+#: Settings.ui.h:56
 #, fuzzy
 msgid "Animation duration (s)"
 msgstr "Czas animacji [ms]"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:57
 msgid "0.000"
 msgstr ""
 
-#: Settings.ui.h:56
+#: Settings.ui.h:58
 msgid "Hide timeout (s)"
 msgstr ""
 
-#: Settings.ui.h:57
+#: Settings.ui.h:59
 msgid "Show timeout (s)"
 msgstr ""
 
-#: Settings.ui.h:58
+#: Settings.ui.h:60
 #, fuzzy
 msgid "Pressure threshold"
 msgstr "Próg nacisku (px)"

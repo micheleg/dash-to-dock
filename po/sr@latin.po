@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-03 18:59+0100\n"
+"POT-Creation-Date: 2015-09-20 14:04+0100\n"
 "PO-Revision-Date: 2015-07-29 18:11+0200\n"
 "Last-Translator: Slobodan Terzić <Xabre@archlinux.info>\n"
 "Language-Team: \n"
@@ -35,11 +35,11 @@ msgstr "desno"
 msgid "Left"
 msgstr "levo"
 
-#: prefs.js:161
+#: prefs.js:157
 msgid "Intelligent autohide customization"
 msgstr "Postavke inteligentnog samosakrivanja"
 
-#: prefs.js:168
+#: prefs.js:164
 msgid "Reset to defaults"
 msgstr "Povrati osnovno"
 
@@ -266,25 +266,38 @@ msgid "Dodge windows"
 msgstr "Izbegavanje rozora"
 
 #: Settings.ui.h:53
-msgid "Only consider windows of the focused application"
-msgstr "Razmatraj samo prozor fokusiranog programa"
+#, fuzzy
+msgid "All windows"
+msgstr "Izbegavanje rozora"
 
 #: Settings.ui.h:54
+msgid "Only focused application's windows"
+msgstr ""
+
+#: Settings.ui.h:55
+#, fuzzy
+msgid "Only maximized windows"
+msgstr "minimiuj prozor"
+
+#: Settings.ui.h:56
 msgid "Animation duration (s)"
 msgstr "Trajanje(a) animacije"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:57
 msgid "0.000"
 msgstr "0,000"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:58
 msgid "Hide timeout (s)"
 msgstr "Zastoj skrivanja"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:59
 msgid "Show timeout (s)"
 msgstr "Zastoj prikazivanja"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:60
 msgid "Pressure threshold"
 msgstr "Prag pritiska"
+
+#~ msgid "Only consider windows of the focused application"
+#~ msgstr "Razmatraj samo prozor fokusiranog programa"

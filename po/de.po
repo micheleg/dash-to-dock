@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-03 18:59+0100\n"
+"POT-Creation-Date: 2015-09-20 14:04+0100\n"
 "PO-Revision-Date: 2015-05-26 23:21+0100\n"
 "Last-Translator: Agilo Luitger Kern <post@agilo-kern.de>\n"
 "Language-Team: jonius <jonatan_zeidler@gmx.de>\n"
@@ -37,12 +37,12 @@ msgstr "Rechts"
 msgid "Left"
 msgstr "Links"
 
-#: prefs.js:161
+#: prefs.js:157
 msgid "Intelligent autohide customization"
 msgstr "Automatisches Ausblenden anpassen"
 
 # Verwende Übersetzung aus Nautilus
-#: prefs.js:168
+#: prefs.js:164
 msgid "Reset to defaults"
 msgstr "Auf Vorgaben zurücksetzen"
 
@@ -277,29 +277,42 @@ msgid "Dodge windows"
 msgstr "Fenstern ausweichen"
 
 #: Settings.ui.h:53
-msgid "Only consider windows of the focused application"
-msgstr "Nur Fenster der fokussierten Anwendung einbeziehen"
+#, fuzzy
+msgid "All windows"
+msgstr "Fenstern ausweichen"
+
+#: Settings.ui.h:54
+msgid "Only focused application's windows"
+msgstr ""
+
+#: Settings.ui.h:55
+#, fuzzy
+msgid "Only maximized windows"
+msgstr "Minimieren"
 
 # Nach DIN 1313 werden Einheiten nicht in Klammern gesetzt
-#: Settings.ui.h:54
+#: Settings.ui.h:56
 msgid "Animation duration (s)"
 msgstr "Animationsdauer in s"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:57
 msgid "0.000"
 msgstr "0,000"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:58
 msgid "Hide timeout (s)"
 msgstr "Ausblende-Verzögerung in s"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:59
 msgid "Show timeout (s)"
 msgstr "Einblende-Verzögerung in s"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:60
 msgid "Pressure threshold"
 msgstr "Stoßschwellwert"
+
+#~ msgid "Only consider windows of the focused application"
+#~ msgstr "Nur Fenster der fokussierten Anwendung einbeziehen"
 
 #~ msgid "Main Settings"
 #~ msgstr "Grundeinstellungen"

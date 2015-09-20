@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-03 09:53+0300\n"
+"POT-Creation-Date: 2015-09-20 14:04+0100\n"
 "PO-Revision-Date: 2015-08-03 10:11+0300\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language: ru\n"
@@ -32,11 +32,11 @@ msgstr "Справа"
 msgid "Left"
 msgstr "Слева"
 
-#: prefs.js:161
+#: prefs.js:157
 msgid "Intelligent autohide customization"
 msgstr "Настройка автоскрытия"
 
-#: prefs.js:168
+#: prefs.js:164
 msgid "Reset to defaults"
 msgstr "Сбросить настройки"
 
@@ -269,28 +269,41 @@ msgid "Dodge windows"
 msgstr "Перекрытие окнами"
 
 #: Settings.ui.h:53
-msgid "Only consider windows of the focused application"
-msgstr "Применить только к активным окнам приложений"
+#, fuzzy
+msgid "All windows"
+msgstr "Перекрытие окнами"
 
 #: Settings.ui.h:54
+msgid "Only focused application's windows"
+msgstr ""
+
+#: Settings.ui.h:55
+#, fuzzy
+msgid "Only maximized windows"
+msgstr "Минимизировать окно"
+
+#: Settings.ui.h:56
 msgid "Animation duration (s)"
 msgstr "Время анимации (сек.)"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:57
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:58
 msgid "Hide timeout (s)"
 msgstr "Задержка скрытия (сек.)"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:59
 msgid "Show timeout (s)"
 msgstr "Задержка открытия (сек.)"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:60
 msgid "Pressure threshold"
 msgstr "Порог давления"
+
+#~ msgid "Only consider windows of the focused application"
+#~ msgstr "Применить только к активным окнам приложений"
 
 #~ msgid "Main Settings"
 #~ msgstr "Основные настройки"

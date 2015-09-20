@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-03 18:59+0100\n"
+"POT-Creation-Date: 2015-09-20 14:04+0100\n"
 "PO-Revision-Date: 2015-04-29 01:49+0900\n"
 "Last-Translator: Debonne Hooties <debonne.hooties＠gmail.com>\n"
 "Language-Team: Safranjoepe (an unofficial team of Japanese) <>\n"
@@ -34,11 +34,11 @@ msgstr "右"
 msgid "Left"
 msgstr "左"
 
-#: prefs.js:161
+#: prefs.js:157
 msgid "Intelligent autohide customization"
 msgstr "インテリジェント表示の設定"
 
-#: prefs.js:168
+#: prefs.js:164
 msgid "Reset to defaults"
 msgstr "既定値にリセット"
 
@@ -272,25 +272,39 @@ msgid "Dodge windows"
 msgstr "ウィンドウ重なり防止"
 
 #: Settings.ui.h:53
-msgid "Only consider windows of the focused application"
-msgstr "対象ウィンドウをフォーカスされているアプリケーションのものに限定する"
+#, fuzzy
+msgid "All windows"
+msgstr "ウィンドウ重なり防止"
 
 #: Settings.ui.h:54
+msgid "Only focused application's windows"
+msgstr ""
+
+#: Settings.ui.h:55
+#, fuzzy
+msgid "Only maximized windows"
+msgstr "ウィンドウの最小化"
+
+#: Settings.ui.h:56
 msgid "Animation duration (s)"
 msgstr "アニメーション表示時間 (秒)"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:57
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:58
 msgid "Hide timeout (s)"
 msgstr "非表示までのタイムアウト (秒)"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:59
 msgid "Show timeout (s)"
 msgstr "表示までのタイムアウト (秒)"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:60
 msgid "Pressure threshold"
 msgstr "押し込み量 (ピクセル)"
+
+#~ msgid "Only consider windows of the focused application"
+#~ msgstr ""
+#~ "対象ウィンドウをフォーカスされているアプリケーションのものに限定する"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-03 18:59+0100\n"
+"POT-Creation-Date: 2015-09-20 14:04+0100\n"
 "PO-Revision-Date: 2015-04-25 12:50+0100\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: \n"
@@ -34,11 +34,11 @@ msgstr "Vpravo"
 msgid "Left"
 msgstr "Vľavo"
 
-#: prefs.js:161
+#: prefs.js:157
 msgid "Intelligent autohide customization"
 msgstr "Prispôsobenie inteligentného automatického skrývania"
 
-#: prefs.js:168
+#: prefs.js:164
 msgid "Reset to defaults"
 msgstr "Obnoviť pôvodné"
 
@@ -263,25 +263,37 @@ msgid "Dodge windows"
 msgstr ""
 
 #: Settings.ui.h:53
-msgid "Only consider windows of the focused application"
-msgstr "Zohľadniť iba okná zameranej aplikácie"
+msgid "All windows"
+msgstr ""
 
 #: Settings.ui.h:54
+msgid "Only focused application's windows"
+msgstr ""
+
+#: Settings.ui.h:55
+#, fuzzy
+msgid "Only maximized windows"
+msgstr "Minimalizovať okno"
+
+#: Settings.ui.h:56
 msgid "Animation duration (s)"
 msgstr "Trvanie animácie (s)"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:57
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:58
 msgid "Hide timeout (s)"
 msgstr "Časový limit na skrytie (s)"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:59
 msgid "Show timeout (s)"
 msgstr "Zobraziť časový limit (s)"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:60
 msgid "Pressure threshold"
 msgstr "Medza tlaku"
+
+#~ msgid "Only consider windows of the focused application"
+#~ msgstr "Zohľadniť iba okná zameranej aplikácie"

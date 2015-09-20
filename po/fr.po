@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-03 18:59+0100\n"
+"POT-Creation-Date: 2015-09-20 14:04+0100\n"
 "PO-Revision-Date: 2015-09-10 19:41+0100\n"
 "Last-Translator: Thomas GONET <th.gonet@gmail.com>\n"
 "Language-Team: Jean-Baptiste Le Cz <jb.lecoz@gmail.com>\n"
@@ -33,11 +33,11 @@ msgstr "Droite"
 msgid "Left"
 msgstr "Gauche"
 
-#: prefs.js:161
+#: prefs.js:157
 msgid "Intelligent autohide customization"
 msgstr "Personnalisation du masquage automatique"
 
-#: prefs.js:168
+#: prefs.js:164
 msgid "Reset to defaults"
 msgstr "Restaurer la configuration par défaut"
 
@@ -58,11 +58,12 @@ msgid "Top"
 msgstr "Haut"
 
 #: Settings.ui.h:7
-msgid "Hide the dock when it obstructs a window of the the current application. "
+msgid ""
+"Hide the dock when it obstructs a window of the the current application. "
 "More refined settings are available."
-msgstr "Cache le dock quand il gène l'application principale. D'autres paramètres "
+msgstr ""
+"Cache le dock quand il gène l'application principale. D'autres paramètres "
 "plus spécifiques sont disponibles."
-
 
 #: Settings.ui.h:8
 msgid "Intelligent autohide"
@@ -97,9 +98,11 @@ msgid "Show running applications"
 msgstr "Afficher les applications en cours"
 
 #: Settings.ui.h:16
-msgid "If disabled, these settings are acccessible from gnome-tweak-tool or the "
+msgid ""
+"If disabled, these settings are acccessible from gnome-tweak-tool or the "
 "extension website."
-msgstr "Si désactivés, ces paramètres sont acccessibles via gnome-tweak-tool ou le "
+msgstr ""
+"Si désactivés, ces paramètres sont acccessibles via gnome-tweak-tool ou le "
 "site d'extenstion GNOME."
 
 #: Settings.ui.h:17
@@ -135,9 +138,11 @@ msgid "Cycle through windows"
 msgstr "Cycler sur les fenêtres"
 
 #: Settings.ui.h:25
-msgid "When set to minimize, double clicking minimizes all the windows of the "
+msgid ""
+"When set to minimize, double clicking minimizes all the windows of the "
 "application."
-msgstr "Quand reglé sur Minimiser, double-cliquer minimise toutes les fenêtres de "
+msgstr ""
+"Quand reglé sur Minimiser, double-cliquer minimise toutes les fenêtres de "
 "l'application."
 
 #: Settings.ui.h:26
@@ -149,9 +154,11 @@ msgid "Minimize window"
 msgstr "Minimiser la fenêtre"
 
 #: Settings.ui.h:28
-msgid "If icons overflow the dock, only  the <i>Show Applications</i> icon is "
+msgid ""
+"If icons overflow the dock, only  the <i>Show Applications</i> icon is "
 "active."
-msgstr "Si les icônes dépassent du dock, ne fonctionne qu'au dessus du raccourci "
+msgstr ""
+"Si les icônes dépassent du dock, ne fonctionne qu'au dessus du raccourci "
 "<i>Afficher les Applications</i>."
 
 #: Settings.ui.h:29
@@ -163,9 +170,11 @@ msgid "Behavior"
 msgstr "Comportement"
 
 #: Settings.ui.h:31
-msgid "Few customizations meant to integrate the dock wih the default GNOME theme. "
+msgid ""
+"Few customizations meant to integrate the dock wih the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
-msgstr "Assortir le dock avec le thème par défaut. Sinon, vous pouvez personnaliser "
+msgstr ""
+"Assortir le dock avec le thème par défaut. Sinon, vous pouvez personnaliser "
 "quelques paramètres ci-dessous."
 
 #: Settings.ui.h:32
@@ -221,10 +230,12 @@ msgid "Webpage"
 msgstr "Site web"
 
 #: Settings.ui.h:45
-msgid "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
+msgid ""
+"<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
 "\">GNU General Public License, version 2 or later</a> for details.</span>"
-msgstr "<span size=\"small\">Ce programme est distribué SANS AUCUNE GARANTIE.\n"
+msgstr ""
+"<span size=\"small\">Ce programme est distribué SANS AUCUNE GARANTIE.\n"
 "Consultez la <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
 "\">Licence Générale Publique GNU version 2 ou plus récente</a> pour plus "
 "d'informations.</span>"
@@ -254,25 +265,38 @@ msgid "Dodge windows"
 msgstr "Masquage automatique intelligent"
 
 #: Settings.ui.h:53
-msgid "Only consider windows of the focused application"
-msgstr "Ne prendre en compte que l'application courante"
+#, fuzzy
+msgid "All windows"
+msgstr "Masquage automatique intelligent"
 
 #: Settings.ui.h:54
+msgid "Only focused application's windows"
+msgstr ""
+
+#: Settings.ui.h:55
+#, fuzzy
+msgid "Only maximized windows"
+msgstr "Minimiser la fenêtre"
+
+#: Settings.ui.h:56
 msgid "Animation duration (s)"
 msgstr "Durée de l'animation (s)"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:57
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:58
 msgid "Hide timeout (s)"
 msgstr "Délai de masquage (s)"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:59
 msgid "Show timeout (s)"
 msgstr "Délai d'apparition (s)"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:60
 msgid "Pressure threshold"
 msgstr "Seuil de pression"
+
+#~ msgid "Only consider windows of the focused application"
+#~ msgstr "Ne prendre en compte que l'application courante"

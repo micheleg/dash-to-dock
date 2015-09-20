@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-03 18:59+0100\n"
+"POT-Creation-Date: 2015-09-20 14:04+0100\n"
 "PO-Revision-Date: 2013-07-21 22:27+0800\n"
 "Last-Translator: tuhaihe <1132321739qq@gmail.com>\n"
 "Language-Team:  <>\n"
@@ -33,11 +33,11 @@ msgstr ""
 msgid "Left"
 msgstr ""
 
-#: prefs.js:161
+#: prefs.js:157
 msgid "Intelligent autohide customization"
 msgstr ""
 
-#: prefs.js:168
+#: prefs.js:164
 msgid "Reset to defaults"
 msgstr ""
 
@@ -262,27 +262,36 @@ msgid "Dodge windows"
 msgstr ""
 
 #: Settings.ui.h:53
-msgid "Only consider windows of the focused application"
+msgid "All windows"
 msgstr ""
 
 #: Settings.ui.h:54
+msgid "Only focused application's windows"
+msgstr ""
+
+#: Settings.ui.h:55
+#, fuzzy
+msgid "Only maximized windows"
+msgstr "最小化"
+
+#: Settings.ui.h:56
 #, fuzzy
 msgid "Animation duration (s)"
 msgstr "动画时间(毫秒)"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:57
 msgid "0.000"
 msgstr ""
 
-#: Settings.ui.h:56
+#: Settings.ui.h:58
 msgid "Hide timeout (s)"
 msgstr ""
 
-#: Settings.ui.h:57
+#: Settings.ui.h:59
 msgid "Show timeout (s)"
 msgstr ""
 
-#: Settings.ui.h:58
+#: Settings.ui.h:60
 msgid "Pressure threshold"
 msgstr ""
 
