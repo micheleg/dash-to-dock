@@ -26,7 +26,7 @@
       <description>Dock is shown on the Left, Right, Top or Bottom side of the screen.</description>
     </key>
     <key type="d" name="animation-time">
-      <default>0.25</default>
+      <default>0.2</default>
       <summary>Animation time</summary>
       <description>Sets the time duration of the autohide effect.</description>
     </key>
