@@ -2,15 +2,15 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the dash-to-dock package.
 # Jiro Matsuzawa <jmatsuzawa@gnome.org>, 2013.
-# Debonne Hooties <debonne.hooties＠gmail.com>, 2014-2015.
+# Debonne Hooties <debonne.hooties@gmail.com>, 2014-2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-03 19:06+0100\n"
-"PO-Revision-Date: 2015-04-29 01:49+0900\n"
-"Last-Translator: Debonne Hooties <debonne.hooties＠gmail.com>\n"
+"POT-Creation-Date: 2015-09-26 00:11+0100\n"
+"PO-Revision-Date: 2015-09-22　10:02+0900\n"
+"Last-Translator: Debonne Hooties <debonne.hooties@gmail.com>\n"
 "Language-Team: Safranjoepe (an unofficial team of Japanese) <>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -34,11 +34,11 @@ msgstr "右"
 msgid "Left"
 msgstr "左"
 
-#: prefs.js:165
+#: prefs.js:161
 msgid "Intelligent autohide customization"
 msgstr "インテリジェント表示の設定"
 
-#: prefs.js:172
+#: prefs.js:168
 msgid "Reset to defaults"
 msgstr "既定値にリセット"
 
@@ -95,9 +95,8 @@ msgid "Position and size"
 msgstr "位置とサイズ"
 
 #: Settings.ui.h:15
-#, fuzzy
 msgid "Show favorite applications"
-msgstr "実行中アプリケーションの表示"
+msgstr "お気に入りアプリケーションの表示"
 
 #: Settings.ui.h:16
 msgid "Show running applications"
@@ -108,42 +107,47 @@ msgid ""
 "If disabled, these settings are acccessible from gnome-tweak-tool or the "
 "extension website."
 msgstr ""
+"オフにしたときは、gnome-tweak-tool または拡張機能ウェブサイトを経由してこの設"
+"定ダイアログにアクセスします。"
 
 #: Settings.ui.h:18
-#, fuzzy
 msgid "Show <i>Show Applications</i> icon"
-msgstr "<i>アプリケーションリスト</i>を上に表示"
+msgstr "<i>[アプリケーションリスト]</i>ボタンの表示"
 
 #: Settings.ui.h:19
 msgid "Move the applications button at the beginning of the dock."
-msgstr "アプリケーションリストボタンを最上段に表示します。"
+msgstr "アプリケーションリストボタンを最上段（または左端）に表示"
 
 #: Settings.ui.h:20
 #, fuzzy
-msgid "Behaviour when clicking on the icon of a running application."
-msgstr "実行中アプリケーションのアイコンをクリックした時の動作を指定します。"
+msgid "Animate <i>Show Applications</i>."
+msgstr "<i>[アプリケーションリスト]</i>ボタンの表示"
 
 #: Settings.ui.h:21
+msgid "Behaviour when clicking on the icon of a running application."
+msgstr "実行中アプリケーションのアイコンをクリックしたときの動作を指定します。"
+
+#: Settings.ui.h:22
 msgid "Click action"
 msgstr "クリック時のアクション"
 
-#: Settings.ui.h:22
+#: Settings.ui.h:23
 msgid "Do nothing"
 msgstr "何もしない"
 
-#: Settings.ui.h:23
+#: Settings.ui.h:24
 msgid "Minimize"
 msgstr "ウィンドウの最小化"
 
-#: Settings.ui.h:24
+#: Settings.ui.h:25
 msgid "Launch new instance"
 msgstr "新しいウィンドウを開く"
 
-#: Settings.ui.h:25
+#: Settings.ui.h:26
 msgid "Cycle through windows"
 msgstr "ウィンドウの切り替え"
 
-#: Settings.ui.h:26
+#: Settings.ui.h:27
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
@@ -151,32 +155,31 @@ msgstr ""
 "[ウィンドウの最小化] に設定したときは、アイコンをダブルクリックするとそのアプ"
 "リケーションのウィンドウをすべて最小化します。"
 
-#: Settings.ui.h:27
+#: Settings.ui.h:28
 msgid "Shift+Click action"
 msgstr "Shift+クリック時のアクション"
 
-#: Settings.ui.h:28
+#: Settings.ui.h:29
 msgid "Minimize window"
 msgstr "ウィンドウの最小化"
 
-#: Settings.ui.h:29
-#, fuzzy
+#: Settings.ui.h:30
 msgid ""
 "If icons overflow the dock, only  the <i>Show Applications</i> icon is "
 "active."
 msgstr ""
-"画面端に隣接する領域または<i>アプリケーションリスト</i>アイコン上でのスクロー"
-"ルするとワークスペースを変更します。"
+"ドックがアイコンで満たされているときは、<i>[アプリケーションリスト]</i> ボタ"
+"ン上のスクロールのみ有効です。"
 
-#: Settings.ui.h:30
+#: Settings.ui.h:31
 msgid "Switch workspace by scrolling on the dock"
 msgstr "ドック上でスクロールしたらワークスペースを切り替える"
 
-#: Settings.ui.h:31
+#: Settings.ui.h:32
 msgid "Behavior"
 msgstr "動作"
 
-#: Settings.ui.h:32
+#: Settings.ui.h:33
 msgid ""
 "Few customizations meant to integrate the dock wih the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
@@ -184,59 +187,59 @@ msgstr ""
 "この設定がオンのときは、お使いのGNOMEテーマとの調和を図るためカスタマイズは無"
 "効になります。オフのときは、以下のカスタマイズが可能です。"
 
-#: Settings.ui.h:33
+#: Settings.ui.h:34
 msgid "Use built-in theme"
 msgstr "ビルトインテーマの使用"
 
-#: Settings.ui.h:34
+#: Settings.ui.h:35
 msgid "Save space reducing padding and border radius."
 msgstr "境界線の太さとパディングを減らして表示域を小さくします。"
 
-#: Settings.ui.h:35
+#: Settings.ui.h:36
 msgid "Shrink the dash"
 msgstr "Dashの縮小表示"
 
-#: Settings.ui.h:36
+#: Settings.ui.h:37
 msgid "Show a dot for each windows of the application."
 msgstr "アプリケーションウィンドウの数をドットで表示します。"
 
-#: Settings.ui.h:37
+#: Settings.ui.h:38
 msgid "Show windows counter indicators"
 msgstr "ウィンドウ数インジケーターの表示"
 
-#: Settings.ui.h:38
+#: Settings.ui.h:39
 msgid "Tune the dash background opacity."
 msgstr "Dash背景の不透明度を調整します"
 
-#: Settings.ui.h:39
+#: Settings.ui.h:40
 msgid "Customize opacity"
 msgstr "不透明度の調整"
 
-#: Settings.ui.h:40
+#: Settings.ui.h:41
 msgid "Opacity"
 msgstr "不透明度"
 
-#: Settings.ui.h:41
+#: Settings.ui.h:42
 msgid "Appearance"
 msgstr "外観"
 
-#: Settings.ui.h:42
+#: Settings.ui.h:43
 msgid "version: "
 msgstr "バージョン: "
 
-#: Settings.ui.h:43
+#: Settings.ui.h:44
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "Dashをドック化してアクティビティ画面以外でもDash操作を可能にします。"
 
-#: Settings.ui.h:44
-msgid "Created by"
-msgstr "作者："
-
 #: Settings.ui.h:45
-msgid "Webpage"
-msgstr ""
+msgid "Created by"
+msgstr "作者:"
 
 #: Settings.ui.h:46
+msgid "Webpage"
+msgstr "ウェブページ"
+
+#: Settings.ui.h:47
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -247,54 +250,62 @@ msgstr ""
 "\">GNU一般公衆ライセンス（GPL）バージョン2</a> またはそれ以降のバージョンをご"
 "覧ください。</span>"
 
-#: Settings.ui.h:48
+#: Settings.ui.h:49
 msgid "About"
 msgstr "情報"
 
-#: Settings.ui.h:49
+#: Settings.ui.h:50
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr ""
 "ドックを表示したいとき、ポインターを画面端に移動するとドックが表示されます。"
 
-#: Settings.ui.h:50
+#: Settings.ui.h:51
 msgid "Autohide"
 msgstr "オンデマンド表示"
 
-#: Settings.ui.h:51
+#: Settings.ui.h:52
 msgid "Push to show: require pressure to show the dock"
 msgstr ""
 "押し込んで表示（画面外にポインターを移動するようにマウスを動かして表示）"
 
-#: Settings.ui.h:52
+#: Settings.ui.h:53
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr ""
 "ドックを常に表示しますが、アプリケーションウィンドウと重なるときは表示しませ"
 "ん。"
 
-#: Settings.ui.h:53
+#: Settings.ui.h:54
 msgid "Dodge windows"
 msgstr "ウィンドウ重なり防止"
 
-#: Settings.ui.h:54
-msgid "Only consider windows of the focused application"
-msgstr "対象ウィンドウをフォーカスされているアプリケーションのものに限定する"
-
 #: Settings.ui.h:55
+msgid "All windows"
+msgstr "すべてのウィンドウが対象"
+
+#: Settings.ui.h:56
+msgid "Only focused application's windows"
+msgstr "フォーカスされたアプリケーションのウィンドウが対象"
+
+#: Settings.ui.h:57
+msgid "Only maximized windows"
+msgstr "最大化されたウィンドウが対象"
+
+#: Settings.ui.h:58
 msgid "Animation duration (s)"
 msgstr "アニメーション表示時間 (秒)"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:59
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:60
 msgid "Hide timeout (s)"
 msgstr "非表示までのタイムアウト (秒)"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:61
 msgid "Show timeout (s)"
 msgstr "表示までのタイムアウト (秒)"
 
-#: Settings.ui.h:59
+#: Settings.ui.h:62
 msgid "Pressure threshold"
 msgstr "押し込み量 (ピクセル)"
