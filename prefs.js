@@ -190,6 +190,23 @@ const Settings = new Lang.Class({
                             'sensitive',
                             Gio.SettingsBindFlags.GET);
 
+            this._settings.bind('require-pressure-to-show',
+                                this._builder.get_object('show_timeout_spinbutton'),
+                                'sensitive',
+                                Gio.SettingsBindFlags.INVERT_BOOLEAN);
+            this._settings.bind('require-pressure-to-show',
+                                this._builder.get_object('show_timeout_label'),
+                                'sensitive',
+                                Gio.SettingsBindFlags.INVERT_BOOLEAN);
+            this._settings.bind('require-pressure-to-show',
+                                this._builder.get_object('pressure_threshold_spinbutton'),
+                                'sensitive',
+                                Gio.SettingsBindFlags.DEFAULT);
+            this._settings.bind('require-pressure-to-show',
+                                this._builder.get_object('pressure_threshold_label'),
+                                'sensitive',
+                                Gio.SettingsBindFlags.DEFAULT);
+
             dialog.connect('response', Lang.bind(this, function(dialog, id) {
                 if (id == 1) {
                     // restore default settings for the relevant keys
