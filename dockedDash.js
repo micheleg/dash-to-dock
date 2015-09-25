@@ -1185,6 +1185,7 @@ const dockedDash = new Lang.Class({
         // status (due to the _syncShowAppsButtonToggled function below) and it
         // has already performed the desired action.
 
+        let animate = this._settings.get_boolean('animate-show-apps');
         let selector = Main.overview.viewSelector;
 
         if(selector._showAppsButton.checked !== this.dash.showAppsButton.checked){
@@ -1201,58 +1202,64 @@ const dockedDash = new Lang.Class({
             });
 
             if(this.dash.showAppsButton.checked){
-                // force entering overview if needed
+
+                // force spring animation triggering.By default the animation only
+                // runs if we are already inside the overview.
                 if (!Main.overview._shown) {
+                    if (animate) {
+                        let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
+                        let grid = view._grid;
 
-                    let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
-                    let grid = view._grid;
+                        // Animate in the the appview, hide the appGrid to avoiud flashing
+                        // Go to the appView before entering the overview, skipping the workspaces.
+                        // Do this manually avoiding opacity in transitions so that the setting of the opacity
+                        // to 0 doesn't get overwritten.
+                        Main.overview.viewSelector._activePage.opacity = 0;
+                        Main.overview.viewSelector._activePage.hide();
+                        Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
+                        Main.overview.viewSelector._activePage.show();
+                        grid.actor.opacity = 0;
 
-                    // Animate in the the appview, hide the appGrid to avoiud flashing
-                    // Go to the appView before entering the overview, skipping the workspaces.
-                    // Do this manually avoiding opacity in transitions so that the setting of the opacity
-                    // to 0 doesn't get overwritten.
-                    Main.overview.viewSelector._activePage.opacity = 0;
-                    Main.overview.viewSelector._activePage.hide();
-                    Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
-                    Main.overview.viewSelector._activePage.show();
-                    grid.actor.opacity = 0;
-                    selector._showAppsButton.checked = true;
 
-                    // The animation has to be trigered manually because the AppDisplay.animate 
-                    // method is waiting for an allocation not happening, as we skip the workspace view
-                    // and the appgrid could already be allocated from previous shown.
-                    // It has to be triggered after the overview is shown as wrong coordinates are obtained
-                    // otherwise.
-                    let overviewShownId = Main.overview.connect('shown', Lang.bind(this, function(){
-                        Main.overview.disconnect(overviewShownId);
-                        Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
-                            grid.actor.opacity = 255;
-                            grid.animateSpring(IconGrid.AnimationDirection.IN, this.dash.showAppsButton);
-                        }));
-                      }));
-
-                    // Finally show the overview
-                    Main.overview.show();
-                    this.forcedOverview = true;
-                } else {
-                    selector._showAppsButton.checked = true;
+                        // The animation has to be trigered manually because the AppDisplay.animate
+                        // method is waiting for an allocation not happening, as we skip the workspace view
+                        // and the appgrid could already be allocated from previous shown.
+                        // It has to be triggered after the overview is shown as wrong coordinates are obtained
+                        // otherwise.
+                        let overviewShownId = Main.overview.connect('shown', Lang.bind(this, function(){
+                            Main.overview.disconnect(overviewShownId);
+                            Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
+                                grid.actor.opacity = 255;
+                                grid.animateSpring(IconGrid.AnimationDirection.IN, this.dash.showAppsButton);
+                            }));
+                          }));
+                    }
                 }
+
+                // Finally show the overview
+                selector._showAppsButton.checked = true;
+                this.forcedOverview = true;
+                Main.overview.show();
+
             } else {
                 if (this.forcedOverview) {
                     // force exiting overview if needed
 
-                    // Manually trigger springout animation without activating the
-                    // workspaceView to avoid the zoomout animation. Hide the appPage
-                    // onComplete to avoid ugly flashing of original icons.
-                    let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
-                    let grid = view._grid;
-                    view.animate(IconGrid.AnimationDirection.OUT, Lang.bind(this, function(){
-                        Main.overview.viewSelector._appsPage.hide();
+                    if (animate) {
+                        // Manually trigger springout animation without activating the
+                        // workspaceView to avoid the zoomout animation. Hide the appPage
+                        // onComplete to avoid ugly flashing of original icons.
+                        let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
+                        let grid = view._grid;
+                        view.animate(IconGrid.AnimationDirection.OUT, Lang.bind(this, function(){
+                            Main.overview.viewSelector._appsPage.hide();
+                            Main.overview.hide();
+                            selector._showAppsButton.checked = false;
+                            this.forcedOverview = false;
+                        }));
+                    } else {
                         Main.overview.hide();
-                        selector._showAppsButton.checked = false;
-                        this.forcedOverview = false;
-                    }));
-
+                    }
                 } else {
                     selector._showAppsButton.checked = false;
                 }
