@@ -65,7 +65,7 @@ msgid ""
 "Hide the dock when it obstructs a window of the the current application. "
 "More refined settings are available."
 msgstr ""
-"Ocultar o dock quando algum aplicativo em uso sobrepor o mesmo.Definições "
+"Ocultar o dock quando algum aplicativo em uso sobrepor o mesmo. Definições "
 "mais refinadas estão disponíveis."
 
 #: Settings.ui.h:8
@@ -79,7 +79,7 @@ msgstr "Tamanho limite do dock"
 
 #: Settings.ui.h:10
 msgid "Panel mode: extend to the screen edge"
-msgstr "Modo do painel: extender até a borda da tela"
+msgstr "Modo do painel: estender até a borda da tela"
 
 #: Settings.ui.h:11
 msgid "Icon size limit"
@@ -152,7 +152,7 @@ msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
-"Quando minimizar, o duplo clique minizará todas as janelas dosaplicativos"
+"Quando minimizar, o duplo clique minizará todas as janelas dos aplicativos"
 
 #: Settings.ui.h:26
 msgid "Shift+Click action"
@@ -285,7 +285,7 @@ msgstr "Esconder Janela"
 
 #: Settings.ui.h:54
 msgid "Only focused application's windows"
-msgstr ""
+msgstr "Apenas janelas de aplicativos em foco"
 
 #: Settings.ui.h:55
 #, fuzzy
