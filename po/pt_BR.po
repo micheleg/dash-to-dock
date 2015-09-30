@@ -7,25 +7,23 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-20 14:04+0100\n"
-"PO-Revision-Date: 2015-06-06 03:30+0000\n"
-"Last-Translator: Thales Pereira <thales.acp@gmail.com>\n"
+"POT-Creation-Date: 2015-10-01 00:46+0100\n"
+"PO-Revision-Date: 2015-09-29 18:09-0300\n"
+"Last-Translator: Fábio Nogueira <deb-user-ba@ubuntu.com>\n"
 "Language-Team: Carlos Alberto Junior Spohr Poletto <carlos.spohr@gmail>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"\n"
-"X-Poedit-Language: Portuguese\n"
-"X-Poedit-Country: Brazil\n"
+"X-Generator: Poedit 1.8.4\n"
 
 #: prefs.js:69
 msgid "Primary monitor"
-msgstr "Monitor Primário"
+msgstr "Monitor primário"
 
 #: prefs.js:78 prefs.js:85
 msgid "Secondary monitor "
-msgstr "Monitor Secundário"
+msgstr "Monitor secundário"
 
 #: prefs.js:110 Settings.ui.h:6
 msgid "Right"
@@ -37,7 +35,7 @@ msgstr "Esquerda"
 
 #: prefs.js:157
 msgid "Intelligent autohide customization"
-msgstr "Configuração da Ocultação Inteligente"
+msgstr "Configuração da ocultação inteligente"
 
 #: prefs.js:164
 msgid "Reset to defaults"
@@ -60,16 +58,14 @@ msgid "Top"
 msgstr "Em cima"
 
 #: Settings.ui.h:7
-#, fuzzy
 msgid ""
 "Hide the dock when it obstructs a window of the the current application. "
 "More refined settings are available."
 msgstr ""
-"Ocultar o dock quando algum aplicativo em uso sobrepor o mesmo.Definições "
-"mais refinadas estão disponíveis."
+"Ocultar o dock quando o mesmo sobrepor a janela do aplicativo em uso. "
+"Definições mais aperfeiçoadas estão disponíveis."
 
 #: Settings.ui.h:8
-#, fuzzy
 msgid "Intelligent autohide"
 msgstr "Ocultação inteligente"
 
@@ -94,12 +90,10 @@ msgid "Position and size"
 msgstr "Posição e tamanho"
 
 #: Settings.ui.h:14
-#, fuzzy
 msgid "Show favorite applications"
 msgstr "Mostrar aplicativos favoritos"
 
 #: Settings.ui.h:15
-#, fuzzy
 msgid "Show running applications"
 msgstr "Mostrar aplicativos em execução"
 
@@ -108,11 +102,12 @@ msgid ""
 "If disabled, these settings are acccessible from gnome-tweak-tool or the "
 "extension website."
 msgstr ""
+"Se desabilitado, essas configurações estão acessíveis através do gnome-tweak-"
+"tool ou no site da extensão."
 
 #: Settings.ui.h:17
-#, fuzzy
 msgid "Show <i>Show Applications</i> icon"
-msgstr "<i>Mostrar Aplicativos</i> como primeiro ícone"
+msgstr "Exibir ícone de <i>Mostrar Aplicativos</i>"
 
 #: Settings.ui.h:18
 msgid "Move the applications button at the beginning of the dock."
@@ -120,68 +115,67 @@ msgstr "Mover o botão de aplicativos para o íncio do dock."
 
 #: Settings.ui.h:19
 #, fuzzy
-msgid "Behaviour when clicking on the icon of a running application."
-msgstr ""
-"Comportamento quando clicar sobre o ícone de um aplicativo em execução."
+msgid "Animate <i>Show Applications</i>."
+msgstr "Exibir ícone de <i>Mostrar Aplicativos</i>"
 
 #: Settings.ui.h:20
+msgid "Behaviour when clicking on the icon of a running application."
+msgstr "Comportamento ao clicar sobre o ícone de um aplicativo em execução."
+
+#: Settings.ui.h:21
 msgid "Click action"
 msgstr "Ação do clique"
 
-#: Settings.ui.h:21
-#, fuzzy
-msgid "Do nothing"
-msgstr "Não faça nada (padrão)"
-
 #: Settings.ui.h:22
+msgid "Do nothing"
+msgstr "Não faça nada"
+
+#: Settings.ui.h:23
 msgid "Minimize"
 msgstr "Minimizar"
 
-#: Settings.ui.h:23
-#, fuzzy
-msgid "Launch new instance"
-msgstr "Abrir uma nova janela"
-
 #: Settings.ui.h:24
-#, fuzzy
-msgid "Cycle through windows"
-msgstr "Percorrer janelas de aplicativos"
+msgid "Launch new instance"
+msgstr "Iniciar nova instância"
 
 #: Settings.ui.h:25
+msgid "Cycle through windows"
+msgstr "Percorrer através das janelas"
+
+#: Settings.ui.h:26
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
 "Quando minimizar, o duplo clique minizará todas as janelas dosaplicativos"
 
-#: Settings.ui.h:26
+#: Settings.ui.h:27
 msgid "Shift+Click action"
 msgstr "Ação do Shift+Click"
 
-#: Settings.ui.h:27
-#, fuzzy
+#: Settings.ui.h:28
 msgid "Minimize window"
 msgstr "Minimizar janela"
 
-#: Settings.ui.h:28
-#, fuzzy
+#: Settings.ui.h:29
 msgid ""
 "If icons overflow the dock, only  the <i>Show Applications</i> icon is "
 "active."
 msgstr ""
+"Se os ícones transbordar o dock, apenas o ícone <i> Mostrar Aplicativos </i> "
+"será ativo.\n"
 "A área do dock perto da borda da tela e o <i>Mostrar Aplicativos</i> ícones "
 "são ativados"
 
-#: Settings.ui.h:29
-#, fuzzy
+#: Settings.ui.h:30
 msgid "Switch workspace by scrolling on the dock"
 msgstr "Trocar de área de trabalho quando usar o scroll do mouse sobre o dock"
 
-#: Settings.ui.h:30
+#: Settings.ui.h:31
 msgid "Behavior"
 msgstr "Comportamento"
 
-#: Settings.ui.h:31
+#: Settings.ui.h:32
 msgid ""
 "Few customizations meant to integrate the dock wih the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
@@ -189,61 +183,59 @@ msgstr ""
 "Poucas configurações são destinados a integração do dock com o tema padrão "
 "do gnome. "
 
-#: Settings.ui.h:32
+#: Settings.ui.h:33
 msgid "Use built-in theme"
 msgstr "Usar o tema do sistema"
 
-#: Settings.ui.h:33
+#: Settings.ui.h:34
 msgid "Save space reducing padding and border radius."
 msgstr "Economizar espaço reduzindo preenchimento e a borda arredondada"
 
-#: Settings.ui.h:34
+#: Settings.ui.h:35
 msgid "Shrink the dash"
 msgstr "Encolher o dash"
 
-#: Settings.ui.h:35
+#: Settings.ui.h:36
 msgid "Show a dot for each windows of the application."
 msgstr "Mostrar um ponto para cada janela do aplicativo"
 
-#: Settings.ui.h:36
+#: Settings.ui.h:37
 msgid "Show windows counter indicators"
 msgstr "Mostrar indicadores de contador de janelas"
 
-#: Settings.ui.h:37
-#, fuzzy
-msgid "Tune the dash background opacity."
-msgstr "Alterar a opacidade do fundo do dock"
-
 #: Settings.ui.h:38
-#, fuzzy
-msgid "Customize opacity"
-msgstr "Configurar opacidade"
+msgid "Tune the dash background opacity."
+msgstr "Ajustar a opacidade do fundo do dash."
 
 #: Settings.ui.h:39
+msgid "Customize opacity"
+msgstr "Customizar opacidade"
+
+#: Settings.ui.h:40
 msgid "Opacity"
 msgstr "Opacidade"
 
-#: Settings.ui.h:40
+#: Settings.ui.h:41
 msgid "Appearance"
 msgstr "Aparência"
 
-#: Settings.ui.h:41
+#: Settings.ui.h:42
 msgid "version: "
 msgstr "versão:"
 
-#: Settings.ui.h:42
+#: Settings.ui.h:43
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "Mover o dash para fora da visão geral transformando-o em dock"
 
-#: Settings.ui.h:43
+#: Settings.ui.h:44
 msgid "Created by"
 msgstr "Criado por"
 
-#: Settings.ui.h:44
-msgid "Webpage"
-msgstr ""
-
 #: Settings.ui.h:45
+msgid "Webpage"
+msgstr "Página Web"
+
+#: Settings.ui.h:46
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -254,64 +246,61 @@ msgstr ""
 "\">GNU General Public License, versão 2 ou posterior</a> para maiores "
 "detalhes.</span>"
 
-#: Settings.ui.h:47
+#: Settings.ui.h:48
 msgid "About"
 msgstr "Sobre"
 
-#: Settings.ui.h:48
+#: Settings.ui.h:49
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "Mostrar o dock quando o mouse pairar sobre a tela."
 
-#: Settings.ui.h:49
+#: Settings.ui.h:50
 msgid "Autohide"
 msgstr "Ocultação"
 
-#: Settings.ui.h:50
+#: Settings.ui.h:51
 msgid "Push to show: require pressure to show the dock"
 msgstr "Empurrar para mostrar: requer pressão para mostrar o dock"
 
-#: Settings.ui.h:51
+#: Settings.ui.h:52
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Mostrar o dock quando nenhum aplicativo sobrepor o mesmo."
 
-#: Settings.ui.h:52
+#: Settings.ui.h:53
 msgid "Dodge windows"
 msgstr "Esconder Janela"
 
-#: Settings.ui.h:53
-#, fuzzy
-msgid "All windows"
-msgstr "Esconder Janela"
-
 #: Settings.ui.h:54
-msgid "Only focused application's windows"
-msgstr ""
+msgid "All windows"
+msgstr "Todas as janelas"
 
 #: Settings.ui.h:55
-#, fuzzy
-msgid "Only maximized windows"
-msgstr "Minimizar janela"
+msgid "Only focused application's windows"
+msgstr "Focado apenas nas janelas dos aplicativos"
 
 #: Settings.ui.h:56
-#, fuzzy
-msgid "Animation duration (s)"
-msgstr "Tempo da animação [ms]"
+msgid "Only maximized windows"
+msgstr "Somente janelas maximizadas"
 
 #: Settings.ui.h:57
-msgid "0.000"
-msgstr ""
+msgid "Animation duration (s)"
+msgstr "Tempo da animação [s]"
 
 #: Settings.ui.h:58
-msgid "Hide timeout (s)"
-msgstr "Ocultar tempo limite."
+msgid "0.000"
+msgstr "0.000"
 
 #: Settings.ui.h:59
-msgid "Show timeout (s)"
-msgstr "Mostrar tempo limite."
+msgid "Hide timeout (s)"
+msgstr "Ocultar tempo limite [s]"
 
 #: Settings.ui.h:60
+msgid "Show timeout (s)"
+msgstr "Mostrar tempo limite [s]"
+
+#: Settings.ui.h:61
 msgid "Pressure threshold"
-msgstr ""
+msgstr "Limite de pressão"
 
 #~ msgid "Only consider windows of the focused application"
 #~ msgstr "Considere apenas janelas de aplicativos em uso."
