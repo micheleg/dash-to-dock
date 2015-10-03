@@ -56,11 +56,10 @@ header {
 }
 
 header h1 {
-    display:inline;
     font-size:1.6em;
-    padding:10px 30px 10px 0px;
     font-weight:normal;
     margin:0;
+    text-align:center;
 
 }
 
@@ -69,11 +68,11 @@ header  h1 a, header h1 a:visited {
 }
 
 header h2 {
-    display:inline;
     font-size:1.1em;
     color:#4d4d4d;
     font-weight:normal;
     margin:0;
+    text-align:center;
 }
 
 
@@ -93,9 +92,12 @@ a:hover{
 #menu ul{
     clear:both;
     color:black;
-    text-align:right;
+    text-align:center;
     margin:0;
-    padding: 40px 0px 15px 0px;
+    padding: 25px 0px;
+    border: 1px solid #d3d7cf;
+    border-width: 1px 0px;
+    margin-top:50px;
 }
 
 #menu li{
@@ -105,7 +107,6 @@ a:hover{
 
 #menu a, #menu a:visited {
     color:black;
-    font-weight:bold;
     text-decoration:none;
     padding: 8px 20px 5px 20px;
 }
@@ -127,10 +128,6 @@ a:hover{
 }
 
 #homepanel {
-    padding:50px 15px 0px 15px;
-    background: #ececec;
-    border-radius: 5px;
-    box-shadow: 0px 0px 5px 0px #d3d7cf inset;
 }
 
 #homepanel img {
@@ -141,7 +138,7 @@ a:hover{
 #hometitle {
     font-family: "cantarell", sans-serif;
     font-size:2.5em;
-    color: #4378c8;
+    color: #555753;
     text-align:center;
     margin:0;
     padding:20px 0;
@@ -162,7 +159,7 @@ a:hover{
 
 .container {
     margin:auto;
-    max-width:930px;
+    max-width:960px;
     padding:0 15px;
 }
 
