@@ -549,6 +549,10 @@ const myDash = new Lang.Class({
 
     _onScrollEvent: function(actor, event) {
 
+        // If scroll is not used because the icon is resized, let the scroll event propagate.
+        if (!this._settings.get_boolean('icon-size-fixed'))
+          return Clutter.EVENT_PROPAGATE;
+
         // reset timeout to avid conflicts with the mousehover event
         if (this._ensureAppIconVisibilityTimeoutId>0) {
             Mainloop.source_remove(this._ensureAppIconVisibilityTimeoutId);
@@ -559,20 +563,12 @@ const myDash = new Lang.Class({
         if (event.is_pointer_emulated())
             return Clutter.EVENT_STOP;
 
-        let adjustment, delta, needscroll;
+        let adjustment, delta;
 
-        if (this._isHorizontal) {
+        if (this._isHorizontal)
             adjustment = this._scrollView.get_hscroll_bar().get_adjustment();
-            needscroll = actor.get_width() < actor.get_preferred_width(-1)[1];
-        } else {
+        else
             adjustment = this._scrollView.get_vscroll_bar().get_adjustment();
-            needscroll = actor.get_height() < actor.get_preferred_height(-1)[1];
-        }
-
-        // If scroll is not needed, either because icon are set to be resized or
-        // the space available is enough, let the scroll event propagate.
-        if (!needscroll)
-          return Clutter.EVENT_PROPAGATE;
 
         let increment = adjustment.step_increment;
 
