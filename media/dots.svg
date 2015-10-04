@@ -13,7 +13,7 @@
    height="96"
    id="svg11252"
    version="1.1"
-   inkscape:version="0.91+devel r13910 custom"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="dots.svg">
   <metadata
      id="metadata19">
@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -37,7 +37,7 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:window-width="1366"
-     inkscape:window-height="704"
+     inkscape:window-height="709"
      id="namedview17"
      showgrid="true"
      fit-margin-top="0"
@@ -46,11 +46,11 @@
      fit-margin-bottom="0"
      showborder="true"
      inkscape:showpageshadow="false"
-     inkscape:zoom="1.9999999"
-     inkscape:cx="-150.92101"
-     inkscape:cy="89.344802"
+     inkscape:zoom="11.313708"
+     inkscape:cx="-9.3857154"
+     inkscape:cy="21.838605"
      inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer4"
      inkscape:snap-global="true"
@@ -131,21 +131,21 @@
     <g
        id="three">
       <ellipse
-         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none"
+         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#ffffff;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none"
          id="path3762-2-9"
          cx="5.8348255"
          cy="60"
          rx="3.8348253"
          ry="3.9910278" />
       <ellipse
-         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none"
+         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#ffffff;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none"
          id="path3762-2-9-9"
          cx="5.8348255"
          cy="48"
          rx="3.8348253"
          ry="3.9910278" />
       <ellipse
-         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none"
+         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#ffffff;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none"
          id="path3762-2-9-1"
          cx="5.8348255"
          cy="36"
@@ -176,28 +176,28 @@
            cy="65.883972"
            cx="5.8348255"
            id="path3762-2-6"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#ffffff;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
         <ellipse
            ry="3.9910278"
            rx="3.8348253"
            cy="53.883972"
            cx="5.8348255"
            id="path3762-2-8"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#ffffff;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
         <ellipse
            ry="3.9910278"
            rx="3.8348253"
            cy="41.883972"
            cx="5.8348255"
            id="path3762-2-5"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#ffffff;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
         <ellipse
            ry="3.9910278"
            rx="3.8348253"
            cy="29.883972"
            cx="5.8348255"
            id="path3762-2-9-8"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#ffffff;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
       </g>
       <rect
          style="color:#000000;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.95577884;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
