@@ -302,11 +302,18 @@ const dockedDash = new Lang.Class({
                 'item-drag-cancelled',
                 Lang.bind(this, this._onDragEnd)
             ],
-            // update wne monitor changes, for instance in multimonitor when monitor are attached
+            // update when monitor changes, for instance in multimonitor when monitor are attached
             [
                 global.screen,
                 'monitors-changed',
                 Lang.bind(this, this._resetPosition )
+            ],
+            // update when workarea changes, for instance if  other extensions modify the struts
+            //(like moving th panel at the bottom)
+            [
+                global.screen,
+                'workareas-changed',
+                Lang.bind(this, this._resetPosition)
             ],
             [
                 Main.overview,
@@ -961,17 +968,24 @@ const dockedDash = new Lang.Class({
         // Ensure variables linked to settings are updated.
         this._updateVisibilityMode();
 
-        this._monitor = this._getMonitor();
-
-        let unavailableTopSpace = 0;
-        let unavailableBottomSpace = 0;
-
+        let monitorIndex = this._settings.get_int('preferred-monitor');
         let extendHeight = this._settings.get_boolean('extend-height');
+
+        if (monitorIndex >0 && monitorIndex< Main.layoutManager.monitors.length)
+            this._monitor = Main.layoutManager.monitors[monitorIndex];
+        else {
+            monitorIndex = Main.layoutManager.primaryIndex
+            this._monitor = Main.layoutManager.primaryMonitor;
+        }
+
+        // Note: do not use the workarea coordinates in the direction on which the dock is placed,
+        // to avoid a loop [position change -> workArea change -> position change] with
+        // fixed dock.
+        let workArea = Main.layoutManager.getWorkAreaForMonitor(monitorIndex);
 
         // Reserve space for the dash on the overview
         // if the dock is on the primary monitor
         if (this._isPrimaryMonitor()){
-            unavailableTopSpace = Main.panel.actor.height;
             this._dashSpacer.show();
         } else {
             // No space is required in the overview of the dash
@@ -989,20 +1003,19 @@ const dockedDash = new Lang.Class({
 
         if(this._isHorizontal){
 
-            let availableWidth = this._monitor.width;
-            this.actor.width = Math.round( fraction * availableWidth);
+            this.actor.width = Math.round( fraction * workArea.width);
 
             let pos_y;
             if( this._position == St.Side.BOTTOM) {
                 pos_y =  this._monitor.y + this._monitor.height;
                 anchor_point = Clutter.Gravity.SOUTH_WEST;
             } else {
-                pos_y =  this._monitor.y + unavailableTopSpace;
+                pos_y = workArea.y;
                 anchor_point = Clutter.Gravity.NORTH_WEST;
             }
 
             this.actor.move_anchor_point_from_gravity(anchor_point);
-            this.actor.x = this._monitor.x + Math.round( (1-fraction)/2 * availableWidth);
+            this.actor.x = workArea.x + Math.round( (1-fraction)/2 * workArea.width);
             this.actor.y = pos_y;
 
             if(extendHeight){
@@ -1015,8 +1028,7 @@ const dockedDash = new Lang.Class({
 
         } else {
 
-            let availableHeight = this._monitor.height - unavailableTopSpace - unavailableBottomSpace;
-            this.actor.height = Math.round( fraction * availableHeight);
+            this.actor.height = Math.round( fraction * workArea.height);
 
             let pos_x;
             if( this._position == St.Side.RIGHT) {
@@ -1029,7 +1041,7 @@ const dockedDash = new Lang.Class({
 
             this.actor.move_anchor_point_from_gravity(anchor_point);
             this.actor.x = pos_x;
-            this.actor.y = this._monitor.y + unavailableTopSpace + Math.round( (1-fraction)/2 * availableHeight);
+            this.actor.y = workArea.y + Math.round( (1-fraction)/2 * workArea.height);
 
             if(extendHeight){
                 this.dash._container.set_height(this.actor.height);
@@ -1098,19 +1110,6 @@ const dockedDash = new Lang.Class({
     _revertPanelCorners: function() {
         Main.panel._leftCorner.actor.show();
         Main.panel._rightCorner.actor.show();
-    },
-
-    _getMonitor: function(){
-
-        let monitorIndex = this._settings.get_int('preferred-monitor');
-        let monitor;
-
-        if (monitorIndex >0 && monitorIndex< Main.layoutManager.monitors.length)
-            monitor = Main.layoutManager.monitors[monitorIndex];
-        else
-            monitor = Main.layoutManager.primaryMonitor;
-
-        return monitor;
     },
 
     _removeAnimations: function() {
