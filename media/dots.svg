@@ -47,12 +47,12 @@
      showborder="true"
      inkscape:showpageshadow="false"
      inkscape:zoom="11.313708"
-     inkscape:cx="-9.3857154"
-     inkscape:cy="21.838605"
+     inkscape:cx="-23.483657"
+     inkscape:cy="57.017169"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer4"
+     inkscape:current-layer="layer1"
      inkscape:snap-global="true"
      showguides="true"
      inkscape:guide-bbox="true"
@@ -86,7 +86,7 @@
          cy="48"
          cx="5.8348255"
          id="path3762-2"
-         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
+         style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#ffffff;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
     </g>
   </g>
   <g
@@ -112,14 +112,14 @@
            cy="57.991032"
            cx="10.834826"
            id="path3762"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#ffffff;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
         <ellipse
            ry="3.9910278"
            rx="3.8348253"
            cy="45.991028"
            cx="10.834826"
            id="path3762-2-50"
-           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:none;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
+           style="opacity:1;fill:#215d9c;fill-opacity:1;stroke:#ffffff;stroke-width:0.9557789;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;marker-start:none" />
       </g>
     </g>
   </g>
