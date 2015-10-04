@@ -1247,6 +1247,7 @@ const dockedDash = new Lang.Class({
                 // force spring animation triggering.By default the animation only
                 // runs if we are already inside the overview.
                 if (!Main.overview._shown) {
+                    this.forcedOverview = true;
                     if (animate) {
                         let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
                         let grid = view._grid;
@@ -1279,7 +1280,6 @@ const dockedDash = new Lang.Class({
 
                 // Finally show the overview
                 selector._showAppsButton.checked = true;
-                this.forcedOverview = true;
                 Main.overview.show();
 
             } else {
@@ -1300,9 +1300,11 @@ const dockedDash = new Lang.Class({
                         }));
                     } else {
                         Main.overview.hide();
+                        this.forcedOverview = false;
                     }
                 } else {
                     selector._showAppsButton.checked = false;
+                    this.forcedOverview = false;
                 }
 
             }
