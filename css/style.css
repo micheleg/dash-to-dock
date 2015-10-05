@@ -144,19 +144,6 @@ a:hover{
     padding:20px 0;
 }
 
-#title {
-
-    padding:20px 15px 20px 15px;
-    background: #ececec;
-    border-radius: 5px;
-    box-shadow: 0px 0px 5px 0px #d3d7cf inset;
-    font-family: "cantarell", sans-serif;
-    font-size:2.5em;
-    color: #4378c8;
-    text-align:center;
-    font-weight:normal;
-}
-
 .container {
     margin:auto;
     max-width:960px;
