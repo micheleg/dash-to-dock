@@ -318,9 +318,15 @@ a.small-button-link:hover:active{
 }
 
 #donations li {
-    display:inline-block;
-    padding: 0px 15px;
-    vertical-align: top;
+    height:50px;
+    min-width:100px;
+    padding: 0px 5px;
+}
+
+#donations span {
+  display:table-cell;
+  height:50px;
+  vertical-align:middle;
 }
 
 #lovebar {
@@ -348,7 +354,7 @@ a.small-button-link:hover:active{
 @media all and (min-width: 960px) {
 
   #lovebar {
-      background: url('../media/puzzle.png') center center no-repeat;
+      background: url('../media/puzzle.png') center center no-repeat, url('../media/gradient.png') center center no-repeat;
       height: 50px;
       padding: 75px 0px;
   }
@@ -360,12 +366,6 @@ a.small-button-link:hover:active{
   .lovebarBox2 {
       float:right;
   }
-}
-
-#lovebar li {
-    padding:0;
-    padding:5px 0px;
-    min-width:100px;
 }
 
 .download {
