@@ -273,7 +273,7 @@ const dockedDash = new Lang.Class({
             ],
             // Follow 3.8 behaviour: hide on appview
             [
-                Main.overview.viewSelector,
+                Main.overview._viewSelector,
                 'page-changed',
                 Lang.bind(this, this._pageChanged)
             ],
@@ -337,22 +337,22 @@ const dockedDash = new Lang.Class({
         // Hiding the parent container seems to work properly instead
         // I don't know if it's linked with this bug: https://bugzilla.gnome.org/show_bug.cgi?id=692744.
         // However tha same workaround doesn't work.
-        Main.overview._controls._dashSlider.actor.hide();
+        Main.overview._controls.dashSlider.actor.hide();
 
         // Also set dash width to 0, so it's not taken into account by code calculaing the reserved space in the overview
-        Main.overview._controls.dash.actor.set_width(0);
+        Main.overview._dash.actor.set_width(0);
 
         // Manage the DashSpacer which is used to reserve space in the overview for the dock
         // Replace the current dashSpacer with a new one pointing at the dashtodock dash
         // and positioned according to the dash positioning. It gets restored on extension unload.
-        Main.overview._controls._dashSpacer.destroy();
+        Main.overview._controls.dashSpacer.destroy();
         this._dashSpacer = new OverviewControls.DashSpacer();
         this._dashSpacer.setDashActor(this._box);
 
         if (this._position ==  St.Side.LEFT)
-          Main.overview._controls._group.insert_child_at_index(this._dashSpacer, this._rtl?-1:0); // insert on first
+          Main.overview._group.insert_child_at_index(this._dashSpacer, this._rtl?-1:0); // insert on first
         else if (this._position ==  St.Side.RIGHT)
-            Main.overview._controls._group.insert_child_at_index(this._dashSpacer, this._rtl?0:-1); // insert on last
+            Main.overview._group.insert_child_at_index(this._dashSpacer, this._rtl?0:-1); // insert on last
         else if (this._position ==  St.Side.TOP)
             Main.overview._overview.insert_child_at_index(this._dashSpacer, 0);
         else if (this._position ==  St.Side.BOTTOM)
@@ -430,13 +430,13 @@ const dockedDash = new Lang.Class({
 
         // Restore the default dashSpacer and link it to the standard dash
         this._dashSpacer.destroy();
-        Main.overview._controls._dashSpacer = new OverviewControls.DashSpacer();
-        Main.overview._controls._group.insert_child_at_index(Main.overview._controls._dashSpacer, 0);
-        Main.overview._controls._dashSpacer.setDashActor(Main.overview._controls._dashSlider.actor);
+        Main.overview._controls.dashSpacer = new OverviewControls.DashSpacer();
+        Main.overview._group.insert_child_at_index(Main.overview._controls.dashSpacer, 0);
+        Main.overview._controls.dashSpacer.setDashActor(Main.overview._controls.dashSlider.actor);
 
         // Reshow normal dash previously hidden, restore panel position if changed.
-        Main.overview._controls._dashSlider.actor.show();
-        Main.overview._controls.dash.actor.set_width(-1); //reset default dash size
+        Main.overview._controls.dashSlider.actor.show();
+        Main.overview._dash.actor.set_width(-1); //reset default dash size
         this._revertMainPanel();
     },
 
@@ -930,7 +930,7 @@ const dockedDash = new Lang.Class({
 
     _pageChanged: function() {
 
-        let activePage = Main.overview.viewSelector.getActivePage();
+        let activePage = Main.overview._viewSelector.getActivePage();
         let dashVisible = (activePage == ViewSelector.ViewPage.WINDOWS ||
                            activePage == ViewSelector.ViewPage.APPS);
 
@@ -1034,7 +1034,7 @@ const dockedDash = new Lang.Class({
         function onScrollEvent(actor, event) {
 
             // When in overview change workscape only in windows view
-            if (Main.overview.visible && Main.overview.viewSelector.getActivePage() !== ViewSelector.ViewPage.WINDOWS)
+            if (Main.overview.visible && Main.overview._viewSelector.getActivePage() !== ViewSelector.ViewPage.WINDOWS)
                 return false;
 
             let activeWs = global.screen.get_active_workspace();
