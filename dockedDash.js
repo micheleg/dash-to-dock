@@ -337,7 +337,7 @@ const dockedDash = new Lang.Class({
         // Hiding the parent container seems to work properly instead
         // I don't know if it's linked with this bug: https://bugzilla.gnome.org/show_bug.cgi?id=692744.
         // However tha same workaround doesn't work.
-        Main.overview._controls.dashSlider.actor.hide();
+        Main.overview._controls._dashSlider.actor.hide();
 
         // Also set dash width to 0, so it's not taken into account by code calculaing the reserved space in the overview
         Main.overview._dash.actor.set_width(0);
@@ -432,10 +432,10 @@ const dockedDash = new Lang.Class({
         this._dashSpacer.destroy();
         Main.overview._controls.dashSpacer = new OverviewControls.DashSpacer();
         Main.overview._group.insert_child_at_index(Main.overview._controls.dashSpacer, 0);
-        Main.overview._controls.dashSpacer.setDashActor(Main.overview._controls.dashSlider.actor);
+        Main.overview._controls.dashSpacer.setDashActor(Main.overview._controls._dashSlider.actor);
 
         // Reshow normal dash previously hidden, restore panel position if changed.
-        Main.overview._controls.dashSlider.actor.show();
+        Main.overview._controls._dashSlider.actor.show();
         Main.overview._dash.actor.set_width(-1); //reset default dash size
         this._revertMainPanel();
     },
