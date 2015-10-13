@@ -345,7 +345,13 @@ const dockedDash = new Lang.Class({
         // Manage the DashSpacer which is used to reserve space in the overview for the dock
         // Replace the current dashSpacer with a new one pointing at the dashtodock dash
         // and positioned according to the dash positioning. It gets restored on extension unload.
-        Main.overview._controls.dashSpacer.destroy();
+
+        // CENTOS 7 compatibility: they backport changes from 3.16
+        if (Main.overview._controls.dashSpacer)
+            Main.overview._controls.dashSpacer.destroy();
+        else
+            Main.overview._controls._dashSpacer.destroy();
+
         this._dashSpacer = new OverviewControls.DashSpacer();
         this._dashSpacer.setDashActor(this._box);
 
@@ -430,9 +436,17 @@ const dockedDash = new Lang.Class({
 
         // Restore the default dashSpacer and link it to the standard dash
         this._dashSpacer.destroy();
-        Main.overview._controls.dashSpacer = new OverviewControls.DashSpacer();
-        Main.overview._group.insert_child_at_index(Main.overview._controls.dashSpacer, 0);
-        Main.overview._controls.dashSpacer.setDashActor(Main.overview._controls._dashSlider.actor);
+
+        // CENTOS 7 compatibility: they backport changes from 3.16
+        if (Main.overview._controls.dashSpacer) {
+            Main.overview._controls.dashSpacer = new OverviewControls.DashSpacer();
+            Main.overview._group.insert_child_at_index(Main.overview._controls.dashSpacer, 0);
+            Main.overview._controls.dashSpacer.setDashActor(Main.overview._controls._dashSlider.actor);
+        } else {
+            Main.overview._controls._dashSpacer = new OverviewControls.DashSpacer();
+            Main.overview._group.insert_child_at_index(Main.overview._controls._dashSpacer, 0);
+            Main.overview._controls._dashSpacer.setDashActor(Main.overview._controls._dashSlider.actor);
+        }
 
         // Reshow normal dash previously hidden, restore panel position if changed.
         Main.overview._controls._dashSlider.actor.show();
