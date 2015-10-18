@@ -1352,11 +1352,20 @@ const myAppIcon = new Lang.Class({
                                                           this._onFocusAppChanged));
 
         this._dots = null;
-        this._dtdSettings.connect('changed::custom-theme-running-dots',
-                                   Lang.bind(this, this._toggleDots));
 
-        this._dtdSettings.connect('changed::apply-custom-theme',
-                                   Lang.bind(this, this._toggleDots));
+        let keys = ['apply-custom-theme',
+                    'custom-theme-running-dots',
+                   'custom-theme-customize-running-dots',
+                   'custom-theme-running-dots-color',
+                   'custom-theme-running-dots-border-color',
+                   'custom-theme-running-dots-border-width'];
+
+        keys.forEach(function(key){
+          this._dtdSettings.connect('changed::'+key,
+                                 Lang.bind(this, this._toggleDots)
+          );
+        }, this );
+
         this._toggleDots();
     },
 
@@ -1412,9 +1421,11 @@ const myAppIcon = new Lang.Class({
         // are used by the parent class.
         this._dot.opacity = 0;
 
-        // Do nothing if dots already exist
-        if (this._dots)
-            return
+        // Just update style if dots already exist
+        if (this._dots) {
+            this._updateCounterClass();
+            return;
+        }
 
         this._dots = new St.DrawingArea({x_expand: true, y_expand: true});
         this._dots.connect('repaint', Lang.bind(this,
@@ -1551,12 +1562,22 @@ const myAppIcon = new Lang.Class({
 
     _drawCircles: function(area, side) {
 
-        // Re-use the style - background color, and border width and color -
-        // of the default dot
-        let themeNode = this._dot.get_theme_node();
-        let borderColor = themeNode.get_border_color(side);
-        let borderWidth = themeNode.get_border_width(side);
-        let bodyColor = themeNode.get_background_color();
+        let borderColor, borderWidth, bodyColor;
+
+        if (!this._dtdSettings.get_boolean('apply-custom-theme')
+            && this._dtdSettings.get_boolean('custom-theme-running-dots')
+            && this._dtdSettings.get_boolean('custom-theme-customize-running-dots')) {
+            borderColor = Clutter.color_from_string(this._dtdSettings.get_string('custom-theme-running-dots-border-color'))[1];
+            borderWidth = this._dtdSettings.get_int('custom-theme-running-dots-border-width');
+            bodyColor =  Clutter.color_from_string(this._dtdSettings.get_string('custom-theme-running-dots-color'))[1];
+        } else {
+            // Re-use the style - background color, and border width and color -
+            // of the default dot
+            let themeNode = this._dot.get_theme_node();
+            borderColor = themeNode.get_border_color(side);
+            borderWidth = themeNode.get_border_width(side);
+            bodyColor = themeNode.get_background_color();
+        }
 
         let [width, height] = area.get_surface_size();
         let cr = area.get_context();
