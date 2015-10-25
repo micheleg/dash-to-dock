@@ -356,9 +356,9 @@ const dockedDash = new Lang.Class({
         this._dashSpacer.setDashActor(this._box);
 
         if (this._position ==  St.Side.LEFT)
-          global.overlay_group.insert_child_at_index(this._dashSpacer, this._rtl?-1:0); // insert on first
+          Main.overview._controls._group.insert_child_at_index(this._dashSpacer, this._rtl?-1:0); // insert on first
         else if (this._position ==  St.Side.RIGHT)
-            global.overlay_group.insert_child_at_index(this._dashSpacer, this._rtl?0:-1); // insert on last
+            Main.overview._controls._group.insert_child_at_index(this._dashSpacer, this._rtl?0:-1); // insert on last
         else if (this._position ==  St.Side.TOP)
             Main.overview._overview.insert_child_at_index(this._dashSpacer, 0);
         else if (this._position ==  St.Side.BOTTOM)
@@ -440,11 +440,11 @@ const dockedDash = new Lang.Class({
         // CENTOS 7 compatibility: they backport changes from 3.16
         if (Main.overview._controls.dashSpacer) {
             Main.overview._controls.dashSpacer = new OverviewControls.DashSpacer();
-            global.overlay_group.insert_child_at_index(Main.overview._controls.dashSpacer, 0);
+            Main.overview._controls._group.insert_child_at_index(Main.overview._controls.dashSpacer, 0);
             Main.overview._controls.dashSpacer.setDashActor(Main.overview._controls._dashSlider.actor);
         } else {
             Main.overview._controls._dashSpacer = new OverviewControls.DashSpacer();
-            global.overlay_group.insert_child_at_index(Main.overview._controls._dashSpacer, 0);
+            Main.overview._controls._group.insert_child_at_index(Main.overview._controls._dashSpacer, 0);
             Main.overview._controls._dashSpacer.setDashActor(Main.overview._controls._dashSlider.actor);
         }
 
