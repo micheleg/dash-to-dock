@@ -267,7 +267,17 @@ const MyAppIcon = new Lang.Class({
 
         // We customize the action only when the application is already running
         if (appIsRunning) {
+
+            buttonAction=99;
+
             switch (buttonAction) {
+            case (99):
+                Main.overview.viewSelector._a.setApp(this.app);
+                Main.overview.show();
+                Main.overview.viewSelector._showPage(Main.overview.viewSelector._appWindowsPage);
+                return
+                break;
+
             case clickAction.MINIMIZE:
                 // In overview just activate the app, unless the acion is explicitely
                 // requested with a keyboard modifier
