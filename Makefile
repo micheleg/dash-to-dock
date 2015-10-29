@@ -2,7 +2,7 @@
 
 UUID = dash-to-dock@micxgx.gmail.com
 BASE_MODULES = extension.js stylesheet.css metadata.json COPYING README.md
-EXTRA_MODULES = dockedDash.js intellihide.js myDash.js convenience.js prefs.js Settings.ui
+EXTRA_MODULES = dockedDash.js intellihide.js myDash.js windowPreview.js convenience.js prefs.js Settings.ui
 EXTRA_MEDIA = logo.svg
 TOLOCALIZE =  prefs.js
 MSGSRC = $(wildcard po/*.po)
