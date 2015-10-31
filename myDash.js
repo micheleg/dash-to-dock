@@ -1503,6 +1503,12 @@ const myAppIcon = new Lang.Class({
     _onDestroy: function() {
         this.parent();
 
+        // This is necessary due to an upstream bug
+        // https://bugzilla.gnome.org/show_bug.cgi?id=757556
+        // It can be safely removed once it get solved upstrea.
+        if (this._menu)
+            this._menu.close(false);
+
         // Disconect global signals
         // stateChangedId is already handled by parent)
         if(this._focusAppId>0)
