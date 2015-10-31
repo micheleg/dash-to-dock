@@ -340,42 +340,66 @@ const Settings = new Lang.Class({
                              'active',
                              Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('custom-theme-running-dots',
-                            this._builder.get_object('dot_style_box'),
+                            this._builder.get_object('running_dots_advance_settings_button'),
                             'sensitive',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('custom-theme-customize-running-dots',
-                            this._builder.get_object('dot_style_button'),
-                            'active',
-                            Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('custom-theme-customize-running-dots',
-                            this._builder.get_object('dot_style_settings_box'),
-                            'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
-        let rgba = new Gdk.RGBA();
-        rgba.parse(this._settings.get_string('custom-theme-running-dots-color'));
-        this._builder.get_object('dot_color_colorbutton').set_rgba(rgba);
+        // Create dialog for running dots advanced settings
+        this._builder.get_object('running_dots_advance_settings_button').connect('clicked', Lang.bind(this, function() {
 
-        this._builder.get_object('dot_color_colorbutton').connect('notify::color', Lang.bind(this, function(button) {
-            let rgba = button.get_rgba();
-            let css = rgba.to_string();
-            let hexString = cssHexString(css);
-            this._settings.set_string('custom-theme-running-dots-color', hexString);
+            let dialog = new Gtk.Dialog({ title: _("Customize running indicators"),
+                                          transient_for: this.widget.get_toplevel(),
+                                          use_header_bar: true,
+                                          modal: true });
+
+            let box = this._builder.get_object('running_dots_advance_settings_box');
+            dialog.get_content_area().add(box);
+
+            this._settings.bind('custom-theme-customize-running-dots',
+                                this._builder.get_object('dot_style_switch'),
+                                'active',
+                                Gio.SettingsBindFlags.DEFAULT);
+            this._settings.bind('custom-theme-customize-running-dots',
+                                this._builder.get_object('dot_style_settings_box'),
+                                'sensitive', Gio.SettingsBindFlags.DEFAULT);
+
+            let rgba = new Gdk.RGBA();
+            rgba.parse(this._settings.get_string('custom-theme-running-dots-color'));
+            this._builder.get_object('dot_color_colorbutton').set_rgba(rgba);
+
+            this._builder.get_object('dot_color_colorbutton').connect('notify::color', Lang.bind(this, function(button) {
+                let rgba = button.get_rgba();
+                let css = rgba.to_string();
+                let hexString = cssHexString(css);
+                this._settings.set_string('custom-theme-running-dots-color', hexString);
+            }));
+
+            rgba.parse(this._settings.get_string('custom-theme-running-dots-border-color'));
+            this._builder.get_object('dot_border_color_colorbutton').set_rgba(rgba);
+
+            this._builder.get_object('dot_border_color_colorbutton').connect('notify::color', Lang.bind(this, function(button) {
+                let rgba = button.get_rgba();
+                let css = rgba.to_string();
+                let hexString = cssHexString(css);
+                this._settings.set_string('custom-theme-running-dots-border-color', hexString);
+            }));
+
+            this._settings.bind('custom-theme-running-dots-border-width',
+                                this._builder.get_object('dot_border_width_spin_button'),
+                                'value',
+                                Gio.SettingsBindFlags.DEFAULT);
+
+
+            dialog.connect('response', Lang.bind(this, function(dialog, id) {
+                // remove the settings box so it doesn't get destroyed;
+                dialog.get_content_area().remove(box);
+                dialog.destroy();
+                return;
+            }));
+
+            dialog.show_all();
+
         }));
-
-        rgba.parse(this._settings.get_string('custom-theme-running-dots-border-color'));
-        this._builder.get_object('dot_border_color_colorbutton').set_rgba(rgba);
-
-        this._builder.get_object('dot_border_color_colorbutton').connect('notify::color', Lang.bind(this, function(button) {
-            let rgba = button.get_rgba();
-            let css = rgba.to_string();
-            let hexString = cssHexString(css);
-            this._settings.set_string('custom-theme-running-dots-border-color', hexString);
-        }));
-
-        this._settings.bind('custom-theme-running-dots-border-width',
-                            this._builder.get_object('dot_border_width_spin_button'),
-                            'value',
-                            Gio.SettingsBindFlags.DEFAULT);
 
         this._settings.bind('opaque-background', this._builder.get_object('customize_opacity_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
         this._builder.get_object('custom_opacity_scale').set_value(this._settings.get_double('background-opacity'));
