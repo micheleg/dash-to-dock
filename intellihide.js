@@ -1,5 +1,6 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
@@ -65,6 +66,7 @@ const intellihide = new Lang.Class({
         // Main id of the timeout controlling timeout for updateDockVisibility function 
         // when windows are dragged around (move and resize)
         this._windowChangedTimeout = 0;
+        this._filterkeybindingId = 0;
 
         // Connect global signals
         this._signalsHandler.add (
@@ -78,6 +80,30 @@ const intellihide = new Lang.Class({
                 global.display,
                 'grab-op-end',
                 Lang.bind(this, this._grabOpEnd)
+            ],
+            // This intercept keybindings and let them execute (return false)
+            // The is a workaround to force an overlap check for those window
+            // position and size change which are not included in the other shell signals
+            // because triggered directly by this keybindings. Known examples are:
+            // 'move-to-corner-**', 'move-to-monitor-**'. The check is delayed to
+            // let the action be executed.
+            [
+                global.window_manager,
+                'filter-keybinding',
+                Lang.bind(this, function(){
+                    // There's no need when not in normal mode (for instance in overview mode)
+                    if (Main.actionMode != Shell.ActionMode.NORMAL)
+                        return false;
+
+                    this._filterkeybindingId = Mainloop.timeout_add(INTELLIHIDE_CHECK_INTERVAL,
+                        Lang.bind(this, function(){
+                            this._filterkeybindingId = 0;
+                            this._checkOverlap();
+                            return GLib.SOURCE_REMOVE;
+                    }));
+
+                    return false;
+                  })
             ],
             // direct maximize/unmazimize are not included in grab-operations
             [
@@ -117,6 +143,10 @@ const intellihide = new Lang.Class({
         if(this._windowChangedTimeout>0)
             Mainloop.source_remove(this._windowChangedTimeout); // Just to be sure
         this._windowChangedTimeout=0;
+
+        if(this._filterkeybindingId>0)
+            Mainloop.source_remove(this._filterkeybindingId);
+        this._filterkeybindingId = 0;
     },
 
     enable: function() {
