@@ -73,6 +73,22 @@ const WindowPreviewMenuItem = new Lang.Class({
 
         let mutterWindow = metaWin.get_compositor_private();
 
+        // Newly-created windows are added to a workspace before
+        // the compositor finds out about them...
+        // Moreover sometimes they return an empty texture, thus as a workarounf also check for it size
+        if (!mutterWindow || !mutterWindow.get_texture() || !mutterWindow.get_texture().get_size()[0]) {
+            let id = Mainloop.idle_add(Lang.bind(this,
+                                            function () {
+                                                // Check if there's still a point in getting the texture,
+                                                // otherwise this could go on indefinitely
+                                                if (this.actor && metaWin.get_workspace())
+                                                    this._cloneTexture(metaWin);
+                                                return GLib.SOURCE_REMOVE;
+                                            }));
+            GLib.Source.set_name_by_id(id, '[dash-to-dock] this._cloneTexture');
+            return;
+        }
+
         let windowTexture = mutterWindow.get_texture();
         let [width, height] = windowTexture.get_size();
 
