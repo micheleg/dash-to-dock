@@ -86,6 +86,7 @@ const myAppIconMenu = new Lang.Class({
             // of the current desktop and other windows.
 
             this._allWindowsMenuItem = new PopupMenu.PopupSubMenuMenuItem(_('All Windows'), false);
+            this._allWindowsMenuItem.actor.hide();
             this.addMenuItem(this._allWindowsMenuItem);
 
             if (!this._source.app.is_window_backed()) {
@@ -219,11 +220,11 @@ const myAppIconMenu = new Lang.Class({
 
               }
 
+          // The menu is created hidden and never hidded after being shown. Instead, a singlal
+          // connected to its items destroy will set is insensitive if no more windows preview are shown.
           if (windows.length > 0){
               this._allWindowsMenuItem.actor.show();
-          } else {
-              this._allWindowsMenuItem.actor.hide();
-              this._allWindowsMenuItem.menu.close();
+              this._allWindowsMenuItem.setSensitive(true);
           }
 
           // Update separators
@@ -253,6 +254,12 @@ const myAppIconMenu = new Lang.Class({
                     this._allWindowsMenuItem.menu.addMenuItem(item);
                     item.connect('activate', Lang.bind(this, function() {
                         this.emit('activate-window', window);
+                    }));
+
+                    // This is to achieve a more gracefull transition when the last windows is closed.
+                    item.connect('destroy', Lang.bind(this, function() {
+                        if(this._allWindowsMenuItem.menu._getMenuItems().length == 1) // It's still counting the item just going to be destroyed
+                            this._allWindowsMenuItem.setSensitive(false);
                     }));
                 }
             }
