@@ -50,6 +50,7 @@ function getPosition(settings) {
  * - Add close windows option based on quitfromdash extension
  *   (https://github.com/deuill/shell-extension-quitfromdash)
  * - Add open windows thumbnails instead of list
+ * - update menu when application windows change
  */
 
 const SHOW_WINDOWS_PREVIEW = true;
@@ -84,39 +85,8 @@ const myAppIconMenu = new Lang.Class({
             // Display the app windows menu items and the separator between windows
             // of the current desktop and other windows.
 
-            let windows = this._source.app.get_windows().filter(function(w) {
-                return !w.skip_taskbar;
-            });
-
-            if (windows.length > 0) {
-
-                this._allWindowsMenuItem = new PopupMenu.PopupSubMenuMenuItem(_('All Windows'), false);
-                this.addMenuItem(this._allWindowsMenuItem);
-
-                let activeWorkspace = global.screen.get_active_workspace();
-                let separatorShown =  windows[0].get_workspace() != activeWorkspace;
-
-                for (let i = 0; i < windows.length; i++) {
-                    let window = windows[i];
-                    if (!separatorShown && window.get_workspace() != activeWorkspace) {
-                        this._allWindowsMenuItem.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
-                        separatorShown = true;
-                    }
-
-                    let item = new WindowPreview.WindowPreviewMenuItem(window);
-                    this._allWindowsMenuItem.menu.addMenuItem(item);
-                    item.connect('activate', Lang.bind(this, function() {
-                        this.emit('activate-window', window);
-                    }));
-
-                }
-
-                // Try to set the width to that of the submenu.
-                // TODO: can't get the actual size, getting a bit less.
-                // Temporary workaround: add 15px to compensate
-                this._allWindowsMenuItem.actor.width =  this._allWindowsMenuItem.menu.actor.width + 15;
-
-            }
+            this._allWindowsMenuItem = new PopupMenu.PopupSubMenuMenuItem(_('All Windows'), false);
+            this.addMenuItem(this._allWindowsMenuItem);
 
             if (!this._source.app.is_window_backed()) {
                 this._appendSeparator();
@@ -193,26 +163,100 @@ const myAppIconMenu = new Lang.Class({
         }
 
         // quit menu
-        let app = this._source.app;
-        let count = getAppInterestingWindows(app).length;
-        if ( count > 0) {
-            this._appendSeparator();
-            let quitFromDashMenuText = "";
-            if (count == 1)
-                quitFromDashMenuText = _("Quit");
-            else
-                quitFromDashMenuText = _("Quit " + count + " Windows");
+        this._appendSeparator();
+        this._quitfromDashMenuItem = this._appendMenuItem(_("Quit"));
+        this._quitfromDashMenuItem.connect('activate', Lang.bind(this, function() {
+            let app = this._source.app;
+            let windows = app.get_windows();
+            for (let i = 0; i < windows.length; i++) {
+                this._closeWindowInstance(windows[i])
+            }
+        }));
 
-            this._quitfromDashMenuItem = this._appendMenuItem(quitFromDashMenuText);
-            this._quitfromDashMenuItem.connect('activate', Lang.bind(this, function() {
-                let app = this._source.app;
-                let windows = app.get_windows();
+        this.update();
+    },
+
+    // update menu content when application windows change. This is desirable as actions
+    // acting on windows (closing) are performed while the menu is shown.
+    update: function() {
+
+      if(SHOW_WINDOWS_PREVIEW){
+
+          let windows = this._source.app.get_windows().filter(function(w) {
+              return !w.skip_taskbar;
+          });
+
+          // update, show or hide the quit menu
+          if ( windows.length > 0) {
+              let quitFromDashMenuText = "";
+              if (windows.length == 1)
+                  this._quitfromDashMenuItem.label.set_text(_("Quit"));
+              else
+                  this._quitfromDashMenuItem.label.set_text(_("Quit " + windows.length + " Windows"));
+
+              this._quitfromDashMenuItem.actor.show();
+
+          } else {
+              this._quitfromDashMenuItem.actor.hide();
+          }
+
+          // update, show, or hide the allWindows menu
+          // Check if there are new windows not already displayed. In such case, repopulate the allWindows
+          // menu. Windows removal is already handled by each preview being connected to the destroy signal
+          let old_windows = this._allWindowsMenuItem.menu._getMenuItems().map(function(item){
+              if (item._window)
+                  return item._window;
+          })
+
+          let new_windows = windows.filter(function(w) {return old_windows.indexOf(w) < 0;});
+          if (new_windows.length > 0) {
+              this._populateAllWindowMenu(windows);
+
+              // Try to set the width to that of the submenu.
+              // TODO: can't get the actual size, getting a bit less.
+              // Temporary workaround: add 15px to compensate
+              this._allWindowsMenuItem.actor.width =  this._allWindowsMenuItem.menu.actor.width + 15;
+
+              }
+
+          if (windows.length > 0){
+              this._allWindowsMenuItem.actor.show();
+          } else {
+              this._allWindowsMenuItem.actor.hide();
+              this._allWindowsMenuItem.menu.close();
+          }
+
+          // Update separators
+          this._getMenuItems().forEach(Lang.bind(this, this._updateSeparatorVisibility));
+      }
+
+
+    },
+
+    _populateAllWindowMenu: function(windows) {
+
+        this._allWindowsMenuItem.menu.removeAll();
+
+            if (windows.length > 0) {
+
+                let activeWorkspace = global.screen.get_active_workspace();
+                let separatorShown =  windows[0].get_workspace() != activeWorkspace;
+
                 for (let i = 0; i < windows.length; i++) {
-                    this._closeWindowInstance(windows[i])
+                    let window = windows[i];
+                    if (!separatorShown && window.get_workspace() != activeWorkspace) {
+                        this._allWindowsMenuItem.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+                        separatorShown = true;
+                    }
+
+                    let item = new WindowPreview.WindowPreviewMenuItem(window);
+                    this._allWindowsMenuItem.menu.addMenuItem(item);
+                    item.connect('activate', Lang.bind(this, function() {
+                        this.emit('activate-window', window);
+                    }));
                 }
-            }));
-        }
-    }
+            }
+    },
 });
 Signals.addSignalMethods(myAppIconMenu.prototype);
 
@@ -1429,7 +1473,7 @@ Signals.addSignalMethods(myDash.prototype);
  * - add a .focused style to the focused app
  * - Customize click actions.
  * - Update minimization animation target
- *
+ * - Update menu if open on windows change
  */
 
 let tracker = Shell.WindowTracker.get_default();
@@ -1499,6 +1543,9 @@ const myAppIcon = new Lang.Class({
     },
 
     onWindowsChanged: function() {
+
+      if (this._menu && this._menu.isOpen)
+          this._menu.update();
 
       this._updateRunningStyle();
       this.updateIconGeometry();
