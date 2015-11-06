@@ -156,6 +156,11 @@
       <summary>Provide workspace isolation</summary>
       <description>Dash shows only windows from the currentworkspace</description>
     </key>
+    <key type="b" name="show-windows-preview">
+      <default>true</default>
+      <summary>Show preview of the open windows</summary>
+      <description>Replace open windows list with windows previews</description>
+    </key>
     <key type="b" name="show-favorites">
       <default>true</default>
       <summary>Show favorites apps</summary>
