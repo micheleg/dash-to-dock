@@ -543,7 +543,6 @@ function resetRecentlyClickedApp() {
  * - Add open windows thumbnails instead of list
  * - update menu when application windows change
  */
-const SHOW_WINDOWS_PREVIEW = true;
 const MyAppIconMenu = new Lang.Class({
     Name: 'DashToDock.MyAppIconMenu',
     Extends: AppDisplay.AppIconMenu,
@@ -567,7 +566,7 @@ const MyAppIconMenu = new Lang.Class({
     _redisplay: function() {
         this.removeAll();
 
-        if (SHOW_WINDOWS_PREVIEW) {
+        if (this._dtdSettings.get_boolean('show-windows-preview')) {
             // Display the app windows menu items and the separator between windows
             // of the current desktop and other windows.
 
@@ -667,7 +666,7 @@ const MyAppIconMenu = new Lang.Class({
     // acting on windows (closing) are performed while the menu is shown.
     update: function() {
 
-      if(SHOW_WINDOWS_PREVIEW){
+      if(this._dtdSettings.get_boolean('show-windows-preview')){
 
           let windows = this._source.app.get_windows().filter(function(w) {
               return !w.skip_taskbar;
