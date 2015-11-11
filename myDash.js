@@ -552,7 +552,7 @@ const myDash = new Lang.Class({
     _onScrollEvent: function(actor, event) {
 
         // If scroll is not used because the icon is resized, let the scroll event propagate.
-        if (!this._settings.get_boolean('icon-size-fixed'))
+        if (!this._dtdSettings.get_boolean('icon-size-fixed'))
           return Clutter.EVENT_PROPAGATE;
 
         // reset timeout to avid conflicts with the mousehover event
