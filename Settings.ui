@@ -930,7 +930,7 @@
                             <property name="can_focus">False</property>
                             <property name="hexpand">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">If icons overflow the dock, only  the &lt;i&gt;Show Applications&lt;/i&gt; icon is active.</property>
+                            <property name="label" translatable="yes">With fixed icon size, only the edge of the dock and the &lt;i&gt;Show Applications&lt;/i&gt; icon are active.</property>
                             <property name="use_markup">True</property>
                             <property name="wrap">True</property>
                             <style>
