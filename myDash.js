@@ -559,8 +559,8 @@ const myDash = new Lang.Class({
         // as the actor will only receive events within his bounds.
         let stage_x, stage_y, ok, event_x, event_y, actor_w, actor_h;
         [stage_x, stage_y] = event.get_coords();
-        [ok, event_x, event_y] = this.actor.transform_stage_point(stage_x, stage_y);
-        [actor_w, actor_h] = this.actor.get_size();
+        [ok, event_x, event_y] = actor.transform_stage_point(stage_x, stage_y);
+        [actor_w, actor_h] = actor.get_size();
 
         // If the scroll event is within a 1px margin from
         // the relevant edge of the actor, let the event propagate.
