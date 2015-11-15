@@ -1242,7 +1242,7 @@
                             <property name="can_focus">False</property>
                             <property name="hexpand">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Few customizations meant to integrate the dock wih the default GNOME theme. Alternatively, specific options can be enabled below.</property>
+                            <property name="label" translatable="yes">Few customizations meant to integrate the dock with the default GNOME theme. Alternatively, specific options can be enabled below.</property>
                             <property name="wrap">True</property>
                             <style>
                               <class name="dim-label"/>
