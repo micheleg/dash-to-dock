@@ -88,7 +88,7 @@ const myAppIconMenu = new Lang.Class({
             if (count == 1)
                 quitFromDashMenuText = _("Quit");
             else
-                quitFromDashMenuText = _("Quit " + count + " Windows");
+                quitFromDashMenuText = _("Quit") + ' ' + count + ' ' + _("Windows");
 
             this._quitfromDashMenuItem = this._appendMenuItem(quitFromDashMenuText);
             this._quitfromDashMenuItem.connect('activate', Lang.bind(this, function() {
@@ -201,7 +201,7 @@ const myShowAppsIconMenu = new Lang.Class({
     _redisplay: function() {
         this.removeAll();
 
-        let item = this._appendMenuItem(_("Dash to Dock Settings"));
+        let item = this._appendMenuItem(_("Settings"));
 
         item.connect('activate', function () {
             Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
