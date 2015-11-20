@@ -263,6 +263,7 @@ const myAppIconMenu = new Lang.Class({
                             this._allWindowsMenuItem.setSensitive(false);
                     }));
                 }
+            this._allWindowsMenuItem.menu.open();
             }
     },
 });
