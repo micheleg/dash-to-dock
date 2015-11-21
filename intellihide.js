@@ -63,53 +63,15 @@ const intellihide = new Lang.Class({
         this.status = OverlapStatus.UNDEFINED;
         this._targetBox = null;
 
-        // Main id of the timeout controlling timeout for updateDockVisibility function 
-        // when windows are dragged around (move and resize)
-        this._windowChangedTimeout = 0;
-        this._filterkeybindingId = 0;
+        this._checkOverlapTimeoutId = 0;
 
         // Connect global signals
         this._signalsHandler.add (
-            // Add timeout when window grab-operation begins and remove it when it ends.
+            // Add signals on windows created from now on
             [
                 global.display,
-                'grab-op-begin',
-                Lang.bind(this, this._grabOpBegin)
-            ],
-            [
-                global.display,
-                'grab-op-end',
-                Lang.bind(this, this._grabOpEnd)
-            ],
-            // This intercept keybindings and let them execute (return false)
-            // The is a workaround to force an overlap check for those window
-            // position and size change which are not included in the other shell signals
-            // because triggered directly by this keybindings. Known examples are:
-            // 'move-to-corner-**', 'move-to-monitor-**'. The check is delayed to
-            // let the action be executed.
-            [
-                global.window_manager,
-                'filter-keybinding',
-                Lang.bind(this, function(){
-                    // There's no need when not in normal mode (for instance in overview mode)
-                    if (Main.actionMode != Shell.ActionMode.NORMAL)
-                        return false;
-
-                    this._filterkeybindingId = Mainloop.timeout_add(INTELLIHIDE_CHECK_INTERVAL,
-                        Lang.bind(this, function(){
-                            this._filterkeybindingId = 0;
-                            this._checkOverlap();
-                            return GLib.SOURCE_REMOVE;
-                    }));
-
-                    return false;
-                  })
-            ],
-            // direct maximize/unmazimize are not included in grab-operations
-            [
-                global.window_manager,
-                'size-change', 
-                Lang.bind(this, this._checkOverlap )
+                'window-created',
+                Lang.bind(this, this._windowCreated)
             ],
             // triggered for instance when the window list order changes,
             // included when the workspace is switched
@@ -153,14 +115,17 @@ const intellihide = new Lang.Class({
 
       this._isEnabled = true;
       this._status = OverlapStatus.UNDEFINED;
+      global.get_window_actors().forEach(function(win){
+                this._addWindowSignals(win.get_meta_window())
+            }, this);
       this._checkOverlap();
     },
 
     disable: function() {
         this._isEnabled = false;
-        if(this._windowChangedTimeout>0)
-            Mainloop.source_remove(this._windowChangedTimeout);
-        this._windowChangedTimeout = 0;
+        global.get_window_actors().forEach(function(win){
+                this._removeWindowSignals(win.get_meta_window())
+            }, this);
     },
 
     updateTargetBox: function(box) {
@@ -180,30 +145,50 @@ const intellihide = new Lang.Class({
             return false;
     },
 
-    _grabOpBegin: function() {
-        if(this._isEnabled){
-            if(this._windowChangedTimeout>0)
-                Mainloop.source_remove(this._windowChangedTimeout); // Just to be sure
+    _windowCreated: function(__unused_display, the_window) {
 
-            this._windowChangedTimeout = Mainloop.timeout_add(INTELLIHIDE_CHECK_INTERVAL,
-                Lang.bind(this, function(){
-                    this._checkOverlap();
-                    return true; // to make the loop continue
-                })
+        this._addWindowSignals(the_window);
+
+    },
+
+    _addWindowSignals: function(the_window) {
+            
+            // Looking for a way to avoid to add custom variables ...
+            the_window.dtd_onPositionChanged = the_window.connect(
+                'position-changed', Lang.bind(this, this._checkOverlap)
             );
+
+            the_window.dtd_onSizeChanged = the_window.connect(
+                'size-changed', Lang.bind(this, this._checkOverlap)
+            );
+
+    },
+
+    _removeWindowSignals: function(the_window) {
+
+        if( the_window && the_window.dtd__onSizeChanged ) {
+               the_window.disconnect(the_window.dtd_onSizeChanged);
+               delete the_window._micheledash_onSizeChanged;
+        }
+
+        if( the_window && the_window.dtd_onPositionChanged ) {
+               the_window.disconnect(the_window.dtd_onPositionChanged);
+               delete the_window.dtd_onPositionChanged;
         }
     },
 
-    _grabOpEnd: function() {
-
-            if(this._windowChangedTimeout>0)
-                Mainloop.source_remove(this._windowChangedTimeout);
-
-            this._windowChangedTimeout=0;
-            this._checkOverlap();
-    },
-
     _checkOverlap: function() {
+
+        /* Limit the number of calls to thi function */
+        if(this._checkOverlapTimeoutId)
+            return
+
+        this._checkOverlapTimeoutId =
+                    Mainloop.timeout_add(INTELLIHIDE_CHECK_INTERVAL,
+                        Lang.bind(this, function() {
+                            this._checkOverlapTimeoutId = 0;
+                        }
+            ));
 
         if( !this._isEnabled || this._targetBox == null)
             return;
