@@ -156,11 +156,11 @@ const intellihide = new Lang.Class({
             
             // Looking for a way to avoid to add custom variables ...
             the_window.dtd_onPositionChanged = the_window.connect(
-                'position-changed', Lang.bind(this, this._checkOverlap)
+                'position-changed', Lang.bind(this, this._filterCheckOverlap)
             );
 
             the_window.dtd_onSizeChanged = the_window.connect(
-                'size-changed', Lang.bind(this, this._checkOverlap)
+                'size-changed', Lang.bind(this, this._filterCheckOverlap)
             );
 
     },
@@ -178,9 +178,8 @@ const intellihide = new Lang.Class({
         }
     },
 
-    _checkOverlap: function() {
-
-        /* Limit the number of calls to thi function */
+    _filterCheckOverlap: function() {
+        /* Limit the number of calls to the checkOverlap function */
         if(this._checkOverlapTimeoutId)
             return
 
@@ -190,6 +189,11 @@ const intellihide = new Lang.Class({
                             this._checkOverlapTimeoutId = 0;
                         }
             ));
+
+        this._checkOverlap();
+    },
+
+    _checkOverlap: function() {
 
         if( !this._isEnabled || this._targetBox == null)
             return;
