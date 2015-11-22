@@ -31,6 +31,7 @@ const IntellihideMode = {
 // enum order).
 const handledWindowTypes = [
   Meta.WindowType.NORMAL,
+  Meta.WindowType.DOCK,
   Meta.WindowType.DIALOG,
   Meta.WindowType.MODAL_DIALOG,
   Meta.WindowType.TOOLBAR,
