@@ -553,7 +553,10 @@ const myDash = new Lang.Class({
 
         // If scroll is not used because the icon is resized, let the scroll event propagate.
         if (!this._dtdSettings.get_boolean('icon-size-fixed'))
-          return Clutter.EVENT_PROPAGATE;
+            return Clutter.EVENT_PROPAGATE;
+
+        let monitorIndex = this._dtdSettings.get_int('preferred-monitor');
+        let workArea = Main.layoutManager.getWorkAreaForMonitor(monitorIndex);
 
         // Event coordinates are relative to the stage but can be transformed
         // as the actor will only receive events within his bounds.
@@ -562,14 +565,31 @@ const myDash = new Lang.Class({
         [ok, event_x, event_y] = actor.transform_stage_point(stage_x, stage_y);
         [actor_w, actor_h] = actor.get_size();
 
-        // If the scroll event is within a 1px margin from
-        // the relevant edge of the actor, let the event propagate.
-        if ((this._position == St.Side.LEFT && event_x <= 1)
-            || (this._position == St.Side.RIGHT && event_x >= actor_w - 2)
-            || (this._position == St.Side.TOP && event_y <= 1)
-            || (this._position == St.Side.BOTTOM && event_y >= actor_h - 2))
-            return Clutter.EVENT_PROPAGATE;
-            
+        // If there is no need to scroll, or if the scroll event is within a 1px
+        // margin from the relevant edge of the actor, let the event propagate.
+        switch( this._position ) {
+            case St.Side.LEFT:
+                if (workArea.height > this._container.height || actor.child.height < actor.height
+                    || event_x <= 1)
+                    return Clutter.EVENT_PROPAGATE;
+                break;
+            case St.Side.RIGHT:
+                if (workArea.height > this._container.height || actor.child.height < actor.height
+                    || event_x >= actor_w - 2)
+                    return Clutter.EVENT_PROPAGATE;
+                break;
+            case St.Side.TOP:
+                if (workArea.width > this._container.width || actor.child.width < actor.width
+                    || event_y <= 1)
+                    return Clutter.EVENT_PROPAGATE;
+                break;
+            case St.Side.BOTTOM:
+                if (workArea.width > this._container.width || actor.child.width < actor.width
+                    || event_y >= actor_h - 2)
+                    return Clutter.EVENT_PROPAGATE;
+                break;
+        }
+
         // reset timeout to avid conflicts with the mousehover event
         if (this._ensureAppIconVisibilityTimeoutId>0) {
             Mainloop.source_remove(this._ensureAppIconVisibilityTimeoutId);
