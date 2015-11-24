@@ -453,13 +453,13 @@ const dockedDash = new Lang.Class({
         // The public method trackChrome requires the actor to be child of a tracked actor. Since I don't want the parent
         // to be tracked I use the private internal _trackActor instead.
         Main.uiGroup.add_child(this.actor);
-        Main.layoutManager._trackActor(this._slider.actor, {trackFullscreen: true});
+        Main.layoutManager._trackActor(this._slider.actor);
 
         // Keep the dash below the modalDialogGroup
         Main.layoutManager.uiGroup.set_child_below_sibling(this.actor,Main.layoutManager.modalDialogGroup);
 
         if ( this._settings.get_boolean('dock-fixed') )
-          Main.layoutManager._trackActor(this.dash.actor, {affectsStruts: true});
+          Main.layoutManager._trackActor(this.dash.actor, {affectsStruts: true, trackFullscreen: true});
 
         // pretend this._slider is isToplevel child so that fullscreen is actually tracked
         let index = Main.layoutManager._findActor(this._slider.actor);
@@ -588,7 +588,7 @@ const dockedDash = new Lang.Class({
         this._settings.connect('changed::dock-fixed', Lang.bind(this, function(){
 
             if(this._settings.get_boolean('dock-fixed')) {
-                Main.layoutManager._trackActor(this.dash.actor, {affectsStruts: true});
+                Main.layoutManager._trackActor(this.dash.actor, {affectsStruts: true, trackFullscreen: true});
             } else {
                 Main.layoutManager._untrackActor(this.dash.actor);
             }
@@ -862,9 +862,6 @@ const dockedDash = new Lang.Class({
     _dockDwellTimeout: function() {
         this._dockDwellTimeoutId = 0;
 
-        if (this._monitor.inFullscreen)
-            return GLib.SOURCE_REMOVE;
-
         // We don't want to open the tray when a modal dialog
         // is up, so we check the modal count for that. When we are in the
         // overview we have to take the overview's modal push into account
@@ -903,8 +900,6 @@ const dockedDash = new Lang.Class({
             this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, this._settings.get_double('show-delay')*1000,
                                 Shell.KeyBindingMode.NORMAL | Shell.KeyBindingMode.OVERVIEW);
             this._pressureBarrier.connect('trigger', Lang.bind(this, function(barrier){
-                if (this._monitor.inFullscreen)
-                    return;
                 this._onPressureSensed();
             }));
         }
