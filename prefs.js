@@ -321,7 +321,7 @@ const Settings = new Lang.Class({
                 this._settings.set_enum('click-action', widget.get_active());
         }));
 
-        this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_boolean('minimize-shift')?0:1);
+        this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_boolean('minimize-shift')?1:0);
 
         this._builder.get_object('shift_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
                 this._settings.set_boolean('minimize-shift', widget.get_active()==1);
