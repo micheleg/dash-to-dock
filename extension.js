@@ -12,7 +12,7 @@ let dock;
 let oldDash;
 
 function init() {
-    Convenience.initTranslations();
+
 }
 
 function enable() {
