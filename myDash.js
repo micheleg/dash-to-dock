@@ -200,7 +200,7 @@ const myShowAppsIconMenu = new Lang.Class({
     _redisplay: function() {
         this.removeAll();
 
-        let item = this._appendMenuItem(_("Settings"));
+        let item = this._appendMenuItem("Dash to Dock " + _("Settings"));
 
         item.connect('activate', function () {
             Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
