@@ -304,10 +304,10 @@ const intellihide = new Lang.Class({
 
                     let currentApp = this._tracker.get_window_app(meta_win);
 
-                    // Consider half and fully maximized windows ( useful if one is using
+                    // Consider half maximized windows ( useful if one is using
                     // two apps side by side) and windows which are alwayson top
                     if( currentApp != this._focusApp && currentApp != this._topApp
-                        && !(meta_win.maximized_vertically || meta_win.maximized_horizontally)
+                        && !(meta_win.maximized_vertically && !meta_win.maximized_horizontally)
                         && !meta_win.is_above()
                       ) {
                         return false;
