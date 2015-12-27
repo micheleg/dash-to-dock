@@ -233,18 +233,19 @@ const intellihide = new Lang.Class({
 
             let topWindow = null;
             for (let i = windows.length-1; i>=0; i--) {
-                if (windows[i].get_meta_window().get_monitor() == monitorIndex){
-                    topWindow = windows[i].get_meta_window();
+                let meta_win = windows[i].get_meta_window();
+                if (this._handledWindow(meta_win)
+                    && meta_win.get_monitor() == monitorIndex) {
+                    topWindow = meta_win;
                     break;
                 }
             }
 
             if (topWindow !== null) {
 
-                // If there isn't a focused app, use that of the window on top
-                this._focusApp = this._tracker.focus_app ||
-                                 this._tracker.get_window_app(windows[windows.length-1].get_meta_window());
                 this._topApp = this._tracker.get_window_app(topWindow);
+                // If there isn't a focused app, use that of the window on top
+                this._focusApp = this._tracker.focus_app || this._topApp
 
                 windows = windows.filter(this._intellihideFilterInteresting, this);
 
