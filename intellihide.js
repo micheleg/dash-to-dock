@@ -304,11 +304,15 @@ const intellihide = new Lang.Class({
                         return true;
 
                     let currentApp = this._tracker.get_window_app(meta_win);
+                    let focusWindow = global.display.get_focus_window()
 
-                    // Consider half maximized windows ( useful if one is using
-                    // two apps side by side) and windows which are alwayson top
+                    // Consider half maximized windows side by side
+                    // and windows which are alwayson top
                     if( currentApp != this._focusApp && currentApp != this._topApp
-                        && !(meta_win.maximized_vertically && !meta_win.maximized_horizontally)
+                        && !( (focusWindow && focusWindow.maximized_vertically && !focusWindow.maximized_horizontally)
+                              && (meta_win.maximized_vertically && !meta_win.maximized_horizontally)
+                              && meta_win.get_monitor() == focusWindow.get_monitor()
+                            )
                         && !meta_win.is_above()
                       ) {
                         return false;
