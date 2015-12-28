@@ -1302,6 +1302,7 @@ Signals.addSignalMethods(myDash.prototype);
  * Extend AppIcon
  *
  * - Pass settings to the constructor and bind settings changes
+ * - Apply a css class based on the number of windows of each application (#N);
  * - Draw a dot for each window of the application based on the default "dot" style which is hidden (#N);
  *   a class of the form "running#N" is applied to the AppWellIcon actor.
  *   like the original .running one.
@@ -1554,10 +1555,20 @@ const myAppIcon = new Lang.Class({
     },
 
     _updateCounterClass: function() {
-        if (!this._dots)
-            return
-        this._nWindows = getAppInterestingWindows(this.app).length;
-        this._dots.queue_repaint();
+
+        let maxN = 4;
+        this._nWindows = Math.min(getAppInterestingWindows(this.app).length, maxN);
+
+        for(let i = 1; i<=maxN; i++){
+            let className = 'running'+i;
+            if(i!=this._nWindows)
+                this.actor.remove_style_class_name(className);
+            else
+                this.actor.add_style_class_name(className);
+        }
+
+        if (this._dots)
+            this._dots.queue_repaint();
     },
 
     _drawCircles: function(area, side) {
@@ -1587,10 +1598,7 @@ const myAppIcon = new Lang.Class({
         radius = Math.max(radius, borderWidth/4+1);
         let padding = 0; // distance from the margin
         let spacing = radius + borderWidth; // separation between the dots
-        const n_max = 4;
         let n = this._nWindows;
-        if(n > n_max)
-            n = n_max;
 
         cr.setLineWidth(borderWidth);
         Clutter.cairo_set_source_color(cr, borderColor);
