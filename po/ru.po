@@ -1,12 +1,12 @@
 # Russian translation for dash-to-dock GNOME Shell extension
-# Ivan Komaritsyn <vantu5z@mail.ru>, 2015.
+# Ivan Komaritsyn <vantu5z@mail.ru>, 2015, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-22 18:33+0900\n"
-"PO-Revision-Date: 2015-11-22 19:09+0900\n"
+"POT-Creation-Date: 2016-01-06 12:20+0300\n"
+"PO-Revision-Date: 2016-01-06 12:26+0300\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -180,11 +180,11 @@ msgstr "Минимизировать окно"
 
 #: Settings.ui.h:33
 msgid ""
-"If icons overflow the dock, only  the <i>Show Applications</i> icon is "
-"active."
+"With fixed icon size, only the edge of the dock and the <i>Show "
+"Applications</i> icon are active."
 msgstr ""
-"Если Док переполнен иконками приложений, то активна только область иконки "
-"<i>«Приложения»</i>."
+"При фиксированном размере иконок приложений активна только область иконки "
+"<i>«Приложения»</i> и край дока."
 
 #: Settings.ui.h:34
 msgid "Switch workspace by scrolling on the dock"
@@ -270,7 +270,7 @@ msgstr ""
 
 #: Settings.ui.h:52
 msgid "About"
-msgstr "О программе"
+msgstr "О дополнении"
 
 #: Settings.ui.h:53
 msgid "Show the dock by mouse hover on the screen edge."
