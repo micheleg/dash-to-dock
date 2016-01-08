@@ -1658,11 +1658,11 @@ const myAppIcon = new Lang.Class({
                     // scrollable so the minimum height is smaller than the natural height.
                     let monitor_index = Main.layoutManager.findIndexForActor(this.actor);
                     let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor_index);
-                    let position = getPosition(this._settings);
+                    let position = getPosition(this._dtdSettings);
                     this._isHorizontal = ( position == St.Side.TOP ||
                                            position == St.Side.BOTTOM);
                     // If horizontal also remove the height of the dash
-                    let additional_margin = this._isHorizontal && !this._settings.get_boolean('dock-fixed') ? Main.overview._dash.actor.height : 0;
+                    let additional_margin = this._isHorizontal && !this._dtdSettings.get_boolean('dock-fixed') ? Main.overview._dash.actor.height : 0;
                     let verticalMargins = this._menu.actor.margin_top + this._menu.actor.margin_bottom;
                     this._menu.actor.style = ('max-height: ' + Math.round(workArea.height - additional_margin - verticalMargins) + 'px;');
                 }
