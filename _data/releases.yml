@@ -1,3 +1,34 @@
+- version: 52
+  date: 30-01-2016
+  shell_version: ["3.16"]
+  notes:
+    backport of versions 49 and 50
+  zip_url: https://extensions.gnome.org/review/download/5574.shell-extension.zip
+
+- version: 51
+  date: 30-01-2016
+  shell_version: ["3.14"]
+  notes:
+    backport of versions 49 and 50
+  zip_url: https://extensions.gnome.org/review/download/5573.shell-extension.zip
+
+- version: 50
+  date: 30-12-2015
+  shell_version: ["3.18"]
+  notes:
+  - Add option to disable "Show Applications" animation [ecc0a8c].
+  - Restore workspace switching on the screen edge in fixed-sized icons [ab5367d, d8ebb5a, ef68847].
+  - Improve running dots adding settings [a76837d, 7afa750, a82c452, 8af0dfa, 5862c08].
+  - Restore running-dots css classes for third-parties theming support [fc05e78].
+  - Update Japanese, Russian, German, Simplified Chinese and Brasilian Portuguese translations [62888bd, dc4bf11, 54f54f8, 09b943e, f76b875, 4551dc9, 84ddad9, d6ca0c1].
+  - Add Spanish and Turkish translations [39c6bb7, 67536d1].
+  - Intellihide: improve heuristics for side by side case and multimonitor [c3d5c7d, 197cbaa, 872b232].
+  - Intellihide: fix bug windows change triggered by keybindings [7e41e23].
+  - Workaround libsrvg bug [8a7e74e].
+  - Fix dock placement with unusual panels settings [5816437].
+  - Fix showApps behaviour regression [02cd746]
+  zip_url: https://extensions.gnome.org/review/download/5523.shell-extension.zip
+
 - version: 49
   date: 12-09-2015
   shell_version: ["3.18"]
