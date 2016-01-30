@@ -211,7 +211,7 @@ const Settings = new Lang.Class({
                 if (id == 1) {
                     // restore default settings for the relevant keys
                     let keys = ['intellihide', 'autohide', 'intellihide-mode', 'require-pressure-to-show',
-                                'animation-time', 'show-delay', 'hide-delay'];
+                                'animation-time', 'show-delay', 'hide-delay', 'pressure-threshold'];
                     keys.forEach(function(val){
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);
