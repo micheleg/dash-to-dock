@@ -1,5 +1,5 @@
 - version: 49
-  date: 120-09-2015
+  date: 12-09-2015
   shell_version: ["3.18"]
   notes:
     - Port to GNOME Shell 3.18 [788fc6, 4eadd6].
