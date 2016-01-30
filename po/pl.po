@@ -210,10 +210,6 @@ msgstr ""
 msgid "Use built-in theme"
 msgstr "Użycie zintegrowanego stylu"
 
-#: Settings.ui.h:37
-msgid "Use built-in theme"
-msgstr "Użycie zintegrowanego stylu"
-
 #: Settings.ui.h:38
 msgid "Save space reducing padding and border radius."
 msgstr ""
