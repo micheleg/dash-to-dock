@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-26 00:11+0100\n"
+"POT-Creation-Date: 2016-01-30 23:45+0000\n"
 "PO-Revision-Date: 2015-09-22　10:02+0900\n"
 "Last-Translator: Debonne Hooties <debonne.hooties@gmail.com>\n"
 "Language-Team: Safranjoepe (an unofficial team of Japanese) <>\n"
@@ -164,9 +164,10 @@ msgid "Minimize window"
 msgstr "ウィンドウの最小化"
 
 #: Settings.ui.h:30
+#, fuzzy
 msgid ""
-"If icons overflow the dock, only  the <i>Show Applications</i> icon is "
-"active."
+"With fixed icon size, only the edge of the dock and the <i>Show "
+"Applications</i> icon are active."
 msgstr ""
 "ドックがアイコンで満たされているときは、<i>[アプリケーションリスト]</i> ボタ"
 "ン上のスクロールのみ有効です。"
@@ -180,8 +181,9 @@ msgid "Behavior"
 msgstr "動作"
 
 #: Settings.ui.h:33
+#, fuzzy
 msgid ""
-"Few customizations meant to integrate the dock wih the default GNOME theme. "
+"Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
 "この設定がオンのときは、お使いのGNOMEテーマとの調和を図るためカスタマイズは無"

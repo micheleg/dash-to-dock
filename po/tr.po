@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-26 14:01+0000\n"
+"POT-Creation-Date: 2016-01-30 23:45+0000\n"
 "PO-Revision-Date: 2015-12-24 12:08+0200\n"
 "Last-Translator: Mustafa Akgün <mustafa.akgun@gmail.com>\n"
 "Language-Team: Mustafa Akgün <mustafa.akgun@gmail.com>\n"
@@ -18,69 +18,47 @@ msgstr ""
 "X-Generator: Poedit 1.8.6\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: prefs.js:102
+#: prefs.js:69
 msgid "Primary monitor"
 msgstr "Ana Ekran"
 
-#: prefs.js:111 prefs.js:118
+#: prefs.js:78 prefs.js:85
 msgid "Secondary monitor "
 msgstr "İkincil Ekran"
 
-#: prefs.js:143 Settings.ui.h:10
+#: prefs.js:110 Settings.ui.h:6
 msgid "Right"
 msgstr "Sağ"
 
-#: prefs.js:144 Settings.ui.h:7
+#: prefs.js:111 Settings.ui.h:3
 msgid "Left"
 msgstr "Sol"
 
-#: prefs.js:190
+#: prefs.js:161
 msgid "Intelligent autohide customization"
 msgstr "Akıllı otomatik saklama ayarları"
 
-#: prefs.js:197
+#: prefs.js:168
 msgid "Reset to defaults"
 msgstr "Öntanımlı ayarlara geri dön"
 
-#: prefs.js:350
-#, fuzzy
-msgid "Customize running indicators"
-msgstr "Çalışan uygulamaları göster"
-
 #: Settings.ui.h:1
-#, fuzzy
-msgid "Customize indicator style"
-msgstr "Parlaklığı ayarla"
-
-#: Settings.ui.h:2
-msgid "Color"
-msgstr ""
-
-#: Settings.ui.h:3
-msgid "Border color"
-msgstr ""
-
-#: Settings.ui.h:4
-msgid "Border width"
-msgstr ""
-
-#: Settings.ui.h:5
 msgid "Show the dock on"
 msgstr "Panelde göster"
 
-#: Settings.ui.h:6
+#: Settings.ui.h:2
 msgid "Position on screen"
 msgstr "Ekrandaki konumu"
 
-#: Settings.ui.h:8
+#: Settings.ui.h:4
 msgid "Bottom"
 msgstr "Alt"
 
-#: Settings.ui.h:9
+#: Settings.ui.h:5
 msgid "Top"
 msgstr "Üst"
 
-#: Settings.ui.h:11
+#: Settings.ui.h:7
 msgid ""
 "Hide the dock when it obstructs a window of the the current application. "
 "More refined settings are available."
@@ -88,39 +66,43 @@ msgstr ""
 "Etkin uygulamanın penceresini engellediğinde paneli gizle. Daha ileri "
 "ayarlar mevcuttur."
 
-#: Settings.ui.h:12
+#: Settings.ui.h:8
 msgid "Intelligent autohide"
 msgstr "Akıllı otogizleme"
 
-#: Settings.ui.h:13
+#: Settings.ui.h:9
+msgid "Insensitive Message Tray"
+msgstr ""
+
+#: Settings.ui.h:10
 msgid "Dock size limit"
 msgstr "Panel ölçü sınırı"
 
-#: Settings.ui.h:14
+#: Settings.ui.h:11
 msgid "Panel mode: extend to the screen edge"
 msgstr "Panel modu: Ekran köşelerine genişlet"
 
-#: Settings.ui.h:15
+#: Settings.ui.h:12
 msgid "Icon size limit"
 msgstr "Simge ölçü sınırı"
 
-#: Settings.ui.h:16
+#: Settings.ui.h:13
 msgid "Fixed icon size: scroll to reveal other icons"
 msgstr "Sabit simge ölçüsü: Diğer simgeleri görmek için kaydır"
 
-#: Settings.ui.h:17
+#: Settings.ui.h:14
 msgid "Position and size"
 msgstr "Konum ve ölçü"
 
-#: Settings.ui.h:18
+#: Settings.ui.h:15
 msgid "Show favorite applications"
 msgstr "Kullanılan uygulamaları göster"
 
-#: Settings.ui.h:19
+#: Settings.ui.h:16
 msgid "Show running applications"
 msgstr "Çalışan uygulamaları göster"
 
-#: Settings.ui.h:20
+#: Settings.ui.h:17
 msgid ""
 "If disabled, these settings are acccessible from gnome-tweak-tool or the "
 "extension website."
@@ -128,44 +110,44 @@ msgstr ""
 "Eğer engellenmiş ise, bu ayarlara Gnome-tweak-tool ile  veya Gnome extension "
 "sitesinden ulaşılabilir."
 
-#: Settings.ui.h:21
+#: Settings.ui.h:18
 msgid "Show <i>Show Applications</i> icon"
 msgstr "<i>Uygulamaları Göster</i> simgesini göster"
 
-#: Settings.ui.h:22
+#: Settings.ui.h:19
 msgid "Move the applications button at the beginning of the dock."
 msgstr "Uygulamalar düğmesini panelin başlangıcına taşı "
 
-#: Settings.ui.h:23
+#: Settings.ui.h:20
 #, fuzzy
 msgid "Animate <i>Show Applications</i>."
 msgstr "<i>Uygulamaları Göster</i> simgesini göster"
 
-#: Settings.ui.h:24
+#: Settings.ui.h:21
 msgid "Behaviour when clicking on the icon of a running application."
 msgstr "Çalışan uygulama simgesine tıkladığındaki davranış"
 
-#: Settings.ui.h:25
+#: Settings.ui.h:22
 msgid "Click action"
 msgstr "Hareket için tıkla"
 
-#: Settings.ui.h:26
+#: Settings.ui.h:23
 msgid "Do nothing"
 msgstr "Hiç birşey yapma"
 
-#: Settings.ui.h:27
+#: Settings.ui.h:24
 msgid "Minimize"
 msgstr "Küçült"
 
-#: Settings.ui.h:28
+#: Settings.ui.h:25
 msgid "Launch new instance"
 msgstr "Yeni durumu başlat"
 
-#: Settings.ui.h:29
+#: Settings.ui.h:26
 msgid "Cycle through windows"
 msgstr "Penceler döngüsü"
 
-#: Settings.ui.h:30
+#: Settings.ui.h:27
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
@@ -173,29 +155,30 @@ msgstr ""
 "En küçüğe ayarlandığında, tüm uygulama pencerelerini küçültmek için çift "
 "tıklayın."
 
-#: Settings.ui.h:31
+#: Settings.ui.h:28
 msgid "Shift+Click action"
 msgstr "Shift+Tıkla hareketi"
 
-#: Settings.ui.h:32
+#: Settings.ui.h:29
 msgid "Minimize window"
 msgstr "Pencereyi küçült"
 
-#: Settings.ui.h:33
+#: Settings.ui.h:30
+#, fuzzy
 msgid ""
-"If icons overflow the dock, only  the <i>Show Applications</i> icon is "
-"active."
+"With fixed icon size, only the edge of the dock and the <i>Show "
+"Applications</i> icon are active."
 msgstr "Eğer simgeler taşmışsa, sadece kullanılan <i>Uygulamayı göster</i> "
 
-#: Settings.ui.h:34
+#: Settings.ui.h:31
 msgid "Switch workspace by scrolling on the dock"
 msgstr "Panel üzerinde kaydırma çalışma alanını değiştirme"
 
-#: Settings.ui.h:35
+#: Settings.ui.h:32
 msgid "Behavior"
 msgstr "Davranış"
 
-#: Settings.ui.h:36
+#: Settings.ui.h:33
 #, fuzzy
 msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
@@ -204,59 +187,59 @@ msgstr ""
 "Gnome varsayılan tema ile birkaç özelleştirme gelmektedir . Ek olarak diğer "
 "seçenekleri, aşağıda bazı ayarlar ile özelleştirebilirsiniz."
 
-#: Settings.ui.h:37
+#: Settings.ui.h:34
 msgid "Use built-in theme"
 msgstr "Varsayılan temayı kullan"
 
-#: Settings.ui.h:38
+#: Settings.ui.h:35
 msgid "Save space reducing padding and border radius."
 msgstr "Yer kazanmak için dolguyu ve kenar çevresini azalt."
 
-#: Settings.ui.h:39
+#: Settings.ui.h:36
 msgid "Shrink the dash"
 msgstr "Paneli daralt"
 
-#: Settings.ui.h:40
+#: Settings.ui.h:37
 msgid "Show a dot for each windows of the application."
 msgstr "Uygulamanın her penceresi için bir nokta göster"
 
-#: Settings.ui.h:41
+#: Settings.ui.h:38
 msgid "Show windows counter indicators"
 msgstr "Pencere sayacını göster"
 
-#: Settings.ui.h:42
+#: Settings.ui.h:39
 msgid "Tune the dash background opacity."
 msgstr "Panel arkaplanının parlaklığını ayarla"
 
-#: Settings.ui.h:43
+#: Settings.ui.h:40
 msgid "Customize opacity"
 msgstr "Parlaklığı ayarla"
 
-#: Settings.ui.h:44
+#: Settings.ui.h:41
 msgid "Opacity"
 msgstr "Parlaklık"
 
-#: Settings.ui.h:45
+#: Settings.ui.h:42
 msgid "Appearance"
 msgstr "Görünüm"
 
-#: Settings.ui.h:46
+#: Settings.ui.h:43
 msgid "version: "
 msgstr "Sürüm: "
 
-#: Settings.ui.h:47
+#: Settings.ui.h:44
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "Panele genel dönüşümünü taşır"
 
-#: Settings.ui.h:48
+#: Settings.ui.h:45
 msgid "Created by"
 msgstr "Tarafından oluşturulmuştur:"
 
-#: Settings.ui.h:49
+#: Settings.ui.h:46
 msgid "Webpage"
 msgstr "Web sitesi"
 
-#: Settings.ui.h:50
+#: Settings.ui.h:47
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -267,62 +250,70 @@ msgstr ""
 "licenses/gpl-2.0.html\">GNU Genel Halk Lisansı, sürüm 2 veya üstü</a> "
 "tıklayın</span>"
 
-#: Settings.ui.h:52
+#: Settings.ui.h:49
 msgid "About"
 msgstr "Hakkında"
 
-#: Settings.ui.h:53
+#: Settings.ui.h:50
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "Fare Ekran köşeleri üzerinde iken paneli göster. "
 
-#: Settings.ui.h:54
+#: Settings.ui.h:51
 msgid "Autohide"
 msgstr "Otogizleme"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:52
 msgid "Push to show: require pressure to show the dock"
 msgstr "Göstermek için it: Panelin gösterilmesi icin etki gerektirir."
 
-#: Settings.ui.h:56
+#: Settings.ui.h:53
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Uygulama penceresini engellemediğinde paneli göster."
 
-#: Settings.ui.h:57
+#: Settings.ui.h:54
 msgid "Dodge windows"
 msgstr "Pencereleri atlat"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:55
 msgid "All windows"
 msgstr "Bütün pencereler"
 
-#: Settings.ui.h:59
+#: Settings.ui.h:56
 msgid "Only focused application's windows"
 msgstr "Sadece odaklanan uygulamanın pencereleri"
 
-#: Settings.ui.h:60
+#: Settings.ui.h:57
 msgid "Only maximized windows"
 msgstr "Sadece büyütülen pencereler"
 
-#: Settings.ui.h:61
+#: Settings.ui.h:58
 #, fuzzy
 msgid "Animation duration (s)"
 msgstr "Canlandırma süresi(s)"
 
-#: Settings.ui.h:62
+#: Settings.ui.h:59
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:63
+#: Settings.ui.h:60
 msgid "Hide timeout (s)"
 msgstr "Gecikme zaman aşımı(s)"
 
-#: Settings.ui.h:64
+#: Settings.ui.h:61
 msgid "Show timeout (s)"
 msgstr "Zaman aşımını göster(s)"
 
-#: Settings.ui.h:65
+#: Settings.ui.h:62
 msgid "Pressure threshold"
 msgstr "Etki eşiği"
+
+#, fuzzy
+#~ msgid "Customize running indicators"
+#~ msgstr "Çalışan uygulamaları göster"
+
+#, fuzzy
+#~ msgid "Customize indicator style"
+#~ msgstr "Parlaklığı ayarla"
 
 #~ msgid "Only consider windows of the focused application"
 #~ msgstr "Sadece açık olan uygulama penceresini dikkate al"

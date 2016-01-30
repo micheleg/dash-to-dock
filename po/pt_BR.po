@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-01 00:46+0100\n"
+"POT-Creation-Date: 2016-01-30 23:45+0000\n"
 "PO-Revision-Date: 2016-01-28 16:15-0300\n"
 "Last-Translator: Fábio Nogueira <deb-user-ba@ubuntu.com>\n"
 "Language-Team: Português do Brasil\n"
@@ -162,9 +162,10 @@ msgid "Minimize window"
 msgstr "Minimizar janela"
 
 #: Settings.ui.h:30
+#, fuzzy
 msgid ""
-"If icons overflow the dock, only  the <i>Show Applications</i> icon is "
-"active."
+"With fixed icon size, only the edge of the dock and the <i>Show "
+"Applications</i> icon are active."
 msgstr ""
 "Se os ícones transbordar o dock, apenas o ícone <i> Mostrar Aplicativos </i> "
 "será ativo.\n"
@@ -180,8 +181,9 @@ msgid "Behavior"
 msgstr "Comportamento"
 
 #: Settings.ui.h:33
+#, fuzzy
 msgid ""
-"Few customizations meant to integrate the dock wih the default GNOME theme. "
+"Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
 "Poucas configurações são destinados a integração do dock com o tema padrão "
