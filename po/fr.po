@@ -125,7 +125,7 @@ msgid ""
 "extension website."
 msgstr ""
 "Si désactivés, ces paramètres sont acccessibles via gnome-tweak-tool ou le "
-"site d'extenstion GNOME."
+"site d'extension GNOME."
 
 #: Settings.ui.h:21
 msgid "Show <i>Show Applications</i> icon"
@@ -169,7 +169,7 @@ msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
-"Quand reglé sur Minimiser, double-cliquer minimise toutes les fenêtres de "
+"Quand réglé sur Minimiser, double-cliquer minimise toutes les fenêtres de "
 "l'application."
 
 #: Settings.ui.h:31
@@ -191,7 +191,7 @@ msgstr ""
 
 #: Settings.ui.h:34
 msgid "Switch workspace by scrolling on the dock"
-msgstr "Changer d'espace de travail par défilement au dessus du dock"
+msgstr "Changer d'espace de travail par défilement au-dessus du dock"
 
 #: Settings.ui.h:35
 msgid "Behavior"
@@ -287,7 +287,7 @@ msgstr "Pousser pour Afficher: requiert une pression pour afficher le dock"
 
 #: Settings.ui.h:56
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr "Afficher le dock quand il ne gène pas les fenêtres."
+msgstr "Afficher le dock quand il ne gêne pas les fenêtres."
 
 #: Settings.ui.h:57
 msgid "Dodge windows"
@@ -296,16 +296,16 @@ msgstr "Masquage automatique intelligent"
 #: Settings.ui.h:58
 #, fuzzy
 msgid "All windows"
-msgstr "Masquage automatique intelligent"
+msgstr "Toutes les fenêtres"
 
 #: Settings.ui.h:59
 msgid "Only focused application's windows"
-msgstr ""
+msgstr "Seulement la fenêtre de l'application active"
 
 #: Settings.ui.h:60
 #, fuzzy
 msgid "Only maximized windows"
-msgstr "Minimiser la fenêtre"
+msgstr "Seulement les fenêtres maximisées"
 
 #: Settings.ui.h:61
 msgid "Animation duration (s)"
