@@ -103,7 +103,7 @@ msgid ""
 "extension website."
 msgstr ""
 "Si désactivés, ces paramètres sont acccessibles via gnome-tweak-tool ou le "
-"site d'extenstion GNOME."
+"site d'extension GNOME."
 
 #: Settings.ui.h:17
 msgid "Show <i>Show Applications</i> icon"
@@ -142,7 +142,7 @@ msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
-"Quand reglé sur Minimiser, double-cliquer minimise toutes les fenêtres de "
+"Quand réglé sur Minimiser, double-cliquer minimise toutes les fenêtres de "
 "l'application."
 
 #: Settings.ui.h:26
@@ -163,7 +163,7 @@ msgstr ""
 
 #: Settings.ui.h:29
 msgid "Switch workspace by scrolling on the dock"
-msgstr "Changer d'espace de travail par défilement au dessus du dock"
+msgstr "Changer d'espace de travail par défilement au-dessus du dock"
 
 #: Settings.ui.h:30
 msgid "Behavior"
@@ -258,7 +258,7 @@ msgstr "Pousser pour Afficher: requiert une pression pour afficher le dock"
 
 #: Settings.ui.h:51
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr "Afficher le dock quand il ne gène pas les fenêtres."
+msgstr "Afficher le dock quand il ne gêne pas les fenêtres."
 
 #: Settings.ui.h:52
 msgid "Dodge windows"
