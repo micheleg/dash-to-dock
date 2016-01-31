@@ -267,16 +267,16 @@ msgstr "Masquage automatique intelligent"
 #: Settings.ui.h:53
 #, fuzzy
 msgid "All windows"
-msgstr "Masquage automatique intelligent"
+msgstr "Toutes les fenêtres"
 
 #: Settings.ui.h:54
 msgid "Only focused application's windows"
-msgstr ""
+msgstr "Seulement la fenêtre de l'application active"
 
 #: Settings.ui.h:55
 #, fuzzy
 msgid "Only maximized windows"
-msgstr "Minimiser la fenêtre"
+msgstr "Seulement les fenêtres maximisées"
 
 #: Settings.ui.h:56
 msgid "Animation duration (s)"
