@@ -67,6 +67,8 @@ const intellihide = new Lang.Class({
         this._checkOverlapTimeoutContinue = false;
         this._checkOverlapTimeoutId = 0;
 
+        this._monitorIndex = Main.layoutManager.primaryIndex;
+
         // Connect global signals
         this._signalsHandler.add (
             // Add signals on windows created from now on
@@ -220,16 +222,16 @@ const intellihide = new Lang.Class({
              * select a window in the secondary monitor.
              */
 
-            let monitorIndex = this._settings.get_int('preferred-monitor');
+            this._monitorIndex = this._settings.get_int('preferred-monitor');
 
-            if (monitorIndex < 0 || monitorIndex > Main.layoutManager.monitors.length)
-                monitorIndex = Main.layoutManager.primaryIndex;
+            if (this._monitorIndex < 0 || this._monitorIndex > Main.layoutManager.monitors.length)
+                this._monitorIndex = Main.layoutManager.primaryIndex;
 
             let topWindow = null;
             for (let i = windows.length-1; i>=0; i--) {
                 let meta_win = windows[i].get_meta_window();
                 if (this._handledWindow(meta_win)
-                    && meta_win.get_monitor() == monitorIndex) {
+                    && meta_win.get_monitor() == this._monitorIndex) {
                     topWindow = meta_win;
                     break;
                 }
@@ -276,12 +278,9 @@ const intellihide = new Lang.Class({
     _intellihideFilterInteresting: function(wa){
 
         let meta_win = wa.get_meta_window();
-        if (!meta_win || !this._handledWindow(meta_win)) {
+        if (!meta_win) {
             return false;
         }
-
-        if ( !this._handledWindow(meta_win) )
-            return false;
 
         // Ad-hoc cases:
         //
@@ -295,55 +294,59 @@ const intellihide = new Lang.Class({
         let wksp = meta_win.get_workspace();
         let wksp_index = wksp.index();
 
-        // Depending on the intellihide mode, exclude non-relevent windows
+        // Skip windows not showing on the current workspace
+        if ( wksp_index != currentWorkspace || !meta_win.showing_on_its_workspace() )
+            return false;
+
+        // Only consider certain window types
+        if ( !this._handledWindow(meta_win) )
+            return false;
+
+        // Depending on the intellihide mode, exclude non-relevent windows:
+
+        // Always consider windows which are always on top
+        if (meta_win.is_above())
+            return true;
+
         switch (this._settings.get_enum('intellihide-mode')) {
             case IntellihideMode.ALL_WINDOWS:
-                // Do nothing
+                // Do nothing, consider all windows
+                return true;
                 break;
 
             case IntellihideMode.FOCUS_APPLICATION_WINDOWS:
-                // Skip windows of other apps
                 if (this._focusApp ) {
 
                     let currentApp = this._tracker.get_window_app(meta_win);
                     let focusWindow = global.display.get_focus_window()
 
-                    // Consider half maximized windows side by side
-                    // and windows which are alwayson top
-                    if( currentApp != this._focusApp && currentApp != this._topApp
-                        && !( (focusWindow && focusWindow.maximized_vertically && !focusWindow.maximized_horizontally)
-                              && (meta_win.maximized_vertically && !meta_win.maximized_horizontally)
-                              && meta_win.get_monitor() == focusWindow.get_monitor()
+                    // Consider if belonging either to the focus app or the topApp
+                    if (currentApp == this._focusApp || currentApp == this._topApp)
+                        return true
+
+                    // Additionally consider half maximized windows side by side,
+                    // when one of the two is the focus window
+                    if( (focusWindow && focusWindow.maximized_vertically && !focusWindow.maximized_horizontally)
+                         && (meta_win.maximized_vertically && !meta_win.maximized_horizontally)
+                         && meta_win.get_monitor() == focusWindow.get_monitor()
                             )
-                        && !meta_win.is_above()
-                      ) {
-                        return false;
-                    }
+                        return true;
                 }
                 break;
 
             case IntellihideMode.MAXIMIZED_WINDOWS:
-                // Skip unmaximized windows
-                if (!meta_win.maximized_vertically  &&  !meta_win.maximized_horizontally)
-                    return false;
+                // Consider maximized and half maximized windows
+                if (meta_win.maximized_vertically || meta_win.maximized_horizontally)
+                    return true;
                 break;
         }
 
-        if ( wksp_index == currentWorkspace && meta_win.showing_on_its_workspace() ) {
-            return true;
-        } else {
-            return false;
-        }
-
+        return false;
     },
 
     // Filter windows by type
     // inspired by Opacify@gnome-shell.localdomain.pl
     _handledWindow: function(metaWindow) {
-        // The DropDownTerminal extension uses the POPUP_MENU window type hint
-        // so we match its window by wm class instead
-        if (metaWindow.get_wm_class() == 'DropDownTerminalWindow')
-            return true;
 
         var wtype = metaWindow.get_window_type();
         for (var i = 0; i < handledWindowTypes.length; i++) {
