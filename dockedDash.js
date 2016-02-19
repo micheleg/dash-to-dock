@@ -205,7 +205,6 @@ const dockedDash = new Lang.Class({
 
         // Load settings
         this._settings = settings;
-        this._bindSettingsChanges();
 
         this._position = getPosition(settings);
         this._isHorizontal = ( this._position == St.Side.TOP ||
@@ -465,6 +464,8 @@ const dockedDash = new Lang.Class({
         let index = Main.layoutManager._findActor(this._slider.actor);
         Main.layoutManager._trackedActors[index].isToplevel = true ;
 
+        this._bindSettingsChanges();
+
         // Set initial position
         this._resetPosition();
 
@@ -603,9 +604,9 @@ const dockedDash = new Lang.Class({
 
         this._settings.connect('changed::intellihide', Lang.bind(this, this._updateVisibilityMode));
 
-        this._settings.connect('changed::intellihide-mode', Lang.bind(this, function(){
-            this._intellihide.forceUpdate();
-        }));
+        this._settings.connect('changed::intellihide-mode', Lang.bind(this, function(){this._intellihide.forceUpdate()}));
+        this._settings.connect('changed::per-app-intellihide-independent-monitors', Lang.bind(this, function(){this._intellihide.forceUpdate()}));
+        this._settings.connect('changed::per-app-intellihide-always-maximized-windows', Lang.bind(this, function(){this._intellihide.forceUpdate()}));
 
         this._settings.connect('changed::autohide', Lang.bind(this, function(){
             this._updateVisibilityMode();
