@@ -317,12 +317,28 @@ const intellihide = new Lang.Class({
             case IntellihideMode.FOCUS_APPLICATION_WINDOWS:
                 if (this._focusApp ) {
 
+                    let INDEPENDENT_MONITORS = true;
+                    let ALWAYS_MAXIMIZED = false;
+
                     let currentApp = this._tracker.get_window_app(meta_win);
                     let focusWindow = global.display.get_focus_window()
 
-                    // Consider if belonging either to the focus app or the topApp
-                    if (currentApp == this._focusApp || currentApp == this._topApp)
-                        return true
+                    // Alwasy consider if belonging to the topApp (i.e. the top app in
+                    // the monitor where the dock is placed.
+                    if (currentApp == this._topApp)
+                        return true;
+
+                    // Also consider if belonging to the focus app but only if the INDEPENDENT_MONITORS option is not set
+                    if ( !INDEPENDENT_MONITORS
+                         && currentApp == this._focusApp
+                       )
+                        return true;
+
+                    // Optionally consider maximized windows
+                    if ( ALWAYS_MAXIMIZED
+                         && ( meta_win.maximized_vertically || meta_win.maximized_horizontally)
+                       )
+                        return true;
 
                     // Additionally consider half maximized windows side by side,
                     // when one of the two is the focus window
