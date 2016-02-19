@@ -280,6 +280,17 @@ const intellihide = new Lang.Class({
             return false;
         }
 
+        if ( !this._handledWindow(meta_win) )
+            return false;
+
+        // Ad-hoc cases:
+        //
+        // The DropDownTerminal extension is not an application per se,
+        // is to be considered regardless of its maximised status and the
+        // current focus application. We match its window by wm class instead
+        if (meta_win.get_wm_class() == 'DropDownTerminalWindow')
+            return true;
+
         let currentWorkspace = global.screen.get_active_workspace_index();
         let wksp = meta_win.get_workspace();
         let wksp_index = wksp.index();
@@ -293,10 +304,6 @@ const intellihide = new Lang.Class({
             case IntellihideMode.FOCUS_APPLICATION_WINDOWS:
                 // Skip windows of other apps
                 if (this._focusApp ) {
-                    // The DropDownTerminal extension is not an application per se
-                    // so we match its window by wm class instead
-                    if (meta_win.get_wm_class() == 'DropDownTerminalWindow')
-                        return true;
 
                     let currentApp = this._tracker.get_window_app(meta_win);
                     let focusWindow = global.display.get_focus_window()
