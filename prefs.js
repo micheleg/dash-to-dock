@@ -132,10 +132,45 @@ const Settings = new Lang.Class({
                             this._builder.get_object('require_pressure_checkbutton'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('require-pressure-to-show',
+                            this._builder.get_object('show_timeout_spinbutton'),
+                            'sensitive',
+                            Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this._settings.bind('require-pressure-to-show',
+                            this._builder.get_object('show_timeout_label'),
+                            'sensitive',
+                            Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this._settings.bind('require-pressure-to-show',
+                            this._builder.get_object('pressure_threshold_spinbutton'),
+                            'sensitive',
+                            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('require-pressure-to-show',
+                            this._builder.get_object('pressure_threshold_label'),
+                            'sensitive',
+                            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('intellihide',
                             this._builder.get_object('intellihide_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('intellihide',
+                        this._builder.get_object('intellihide_mode_box'),
+                        'sensitive',
+                        Gio.SettingsBindFlags.GET);
+/*
+        this._settings.bind('',
+                        this._builder.get_object('focus_application_options_box'),
+                        'sensitive',
+                        Gio.SettingsBindFlags.GET);*/
+
+        this._settings.bind('per-app-intellihide-always-maximized-windows',
+                            this._builder.get_object('maximized_windows_always_button'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('per-app-intellihide-independent-monitors',
+                            this._builder.get_object('independent_monitors_button'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
+
         this._settings.bind('animation-time',
                             this._builder.get_object('animation_duration_spinbutton'),
                             'value',
@@ -152,8 +187,10 @@ const Settings = new Lang.Class({
                             this._builder.get_object('pressure_threshold_spinbutton'),
                             'value',
                             Gio.SettingsBindFlags.DEFAULT);
-
-        //this._builder.get_object('animation_duration_spinbutton').set_value(this._settings.get_double('animation-time'));
+        this._settings.bind('autohide',
+                        this._builder.get_object('require_pressure_checkbutton'),
+                        'sensitive',
+                        Gio.SettingsBindFlags.GET);
 
         // Create dialog for intelligent autohide advanced settings
         this._builder.get_object('intelligent_autohide_button').connect('clicked', Lang.bind(this, function() {
@@ -170,11 +207,6 @@ const Settings = new Lang.Class({
             let box = this._builder.get_object('intelligent_autohide_advanced_settings_box');
             dialog.get_content_area().add(box);
 
-            this._settings.bind('intellihide',
-                            this._builder.get_object('intellihide_mode_box'),
-                            'sensitive',
-                            Gio.SettingsBindFlags.GET);
-
             // intellihide mode
 
             let intellihideModeRadioButtons = [
@@ -185,32 +217,21 @@ const Settings = new Lang.Class({
 
             intellihideModeRadioButtons[this._settings.get_enum('intellihide-mode')].set_active(true);
 
-            this._settings.bind('autohide',
-                            this._builder.get_object('require_pressure_checkbutton'),
-                            'sensitive',
-                            Gio.SettingsBindFlags.GET);
+            this._builder.get_object('focus_application_options_box').set_sensitive(
+                this._builder.get_object('focus_application_windows_radio_button').get_active()
+            );
 
-            this._settings.bind('require-pressure-to-show',
-                                this._builder.get_object('show_timeout_spinbutton'),
-                                'sensitive',
-                                Gio.SettingsBindFlags.INVERT_BOOLEAN);
-            this._settings.bind('require-pressure-to-show',
-                                this._builder.get_object('show_timeout_label'),
-                                'sensitive',
-                                Gio.SettingsBindFlags.INVERT_BOOLEAN);
-            this._settings.bind('require-pressure-to-show',
-                                this._builder.get_object('pressure_threshold_spinbutton'),
-                                'sensitive',
-                                Gio.SettingsBindFlags.DEFAULT);
-            this._settings.bind('require-pressure-to-show',
-                                this._builder.get_object('pressure_threshold_label'),
-                                'sensitive',
-                                Gio.SettingsBindFlags.DEFAULT);
+            this._builder.get_object('focus_application_windows_radio_button').connect('toggled', 
+                Lang.bind (this, function(widget) {
+                    this._builder.get_object('focus_application_options_box').set_sensitive(widget.get_active());
+            }));
 
             dialog.connect('response', Lang.bind(this, function(dialog, id) {
                 if (id == 1) {
                     // restore default settings for the relevant keys
-                    let keys = ['intellihide', 'autohide', 'intellihide-mode', 'require-pressure-to-show',
+                    let keys = ['intellihide', 'autohide', 'intellihide-mode',
+                                'per-app-intellihide-always-maximized-windows',
+                                'per-app-intellihide-independent-monitors','require-pressure-to-show',
                                 'animation-time', 'show-delay', 'hide-delay', 'pressure-threshold'];
                     keys.forEach(function(val){
                         this._settings.set_value(val, this._settings.get_default_value(val));
