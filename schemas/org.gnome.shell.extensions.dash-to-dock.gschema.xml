@@ -60,6 +60,16 @@
       <summary>Define which windows are considered for intellihide.</summary>
       <description></description>
     </key>
+    <key type="b" name="per-app-intellihide-always-maximized-windows">
+      <default>false</default>
+      <summary>Also consider maximized windows regardless of the focused application in application based intellihide.</summary>
+      <description></description>
+    </key>
+    <key type="b" name="per-app-intellihide-independent-monitors">
+      <default>false</default>
+      <summary>Ignore focused application in the secondary monitor.</summary>
+      <description></description>
+    </key>
     <key type="b" name="autohide">
       <default>true</default>
       <summary>Dock shown on mouse over</summary>

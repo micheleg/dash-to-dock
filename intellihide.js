@@ -317,9 +317,6 @@ const intellihide = new Lang.Class({
             case IntellihideMode.FOCUS_APPLICATION_WINDOWS:
                 if (this._focusApp ) {
 
-                    let INDEPENDENT_MONITORS = true;
-                    let ALWAYS_MAXIMIZED = false;
-
                     let currentApp = this._tracker.get_window_app(meta_win);
                     let focusWindow = global.display.get_focus_window()
 
@@ -329,13 +326,13 @@ const intellihide = new Lang.Class({
                         return true;
 
                     // Also consider if belonging to the focus app but only if the INDEPENDENT_MONITORS option is not set
-                    if ( !INDEPENDENT_MONITORS
+                    if ( !this._settings.get_boolean('per-app-intellihide-independent-monitors')
                          && currentApp == this._focusApp
                        )
                         return true;
 
                     // Optionally consider maximized windows
-                    if ( ALWAYS_MAXIMIZED
+                    if ( this._settings.get_boolean('per-app-intellihide-always-maximized-windows')
                          && ( meta_win.maximized_vertically || meta_win.maximized_horizontally)
                        )
                         return true;
