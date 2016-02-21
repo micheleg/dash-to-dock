@@ -272,18 +272,14 @@ const intellihide = new Lang.Class({
     // Optionally skip windows of other applications
     _intellihideFilterInteresting: function(wa){
 
-        var currentWorkspace = global.screen.get_active_workspace_index();
-
-        var meta_win = wa.get_meta_window();
-        if (!meta_win) {
+        let meta_win = wa.get_meta_window();
+        if (!meta_win || !this._handledWindow(meta_win)) {
             return false;
         }
 
-        if ( !this._handledWindow(meta_win) )
-            return false;
-
-        var wksp = meta_win.get_workspace();
-        var wksp_index = wksp.index();
+        let currentWorkspace = global.screen.get_active_workspace_index();
+        let wksp = meta_win.get_workspace();
+        let wksp_index = wksp.index();
 
         // Depending on the intellihide mode, exclude non-relevent windows
         switch (this._settings.get_enum('intellihide-mode')) {
