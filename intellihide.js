@@ -63,6 +63,9 @@ const intellihide = new Lang.Class({
         this.status = OverlapStatus.UNDEFINED;
         this._targetBox = null;
 
+        this._checkOverlapTimeoutContinue = false;
+        this._checkOverlapTimeoutId = 0;
+
         // Connect global signals
         this._signalsHandler.add (
             // Add signals on windows created from now on
@@ -117,6 +120,11 @@ const intellihide = new Lang.Class({
         global.get_window_actors().forEach(function(win){
                 this._removeWindowSignals(win.get_meta_window())
             }, this);
+
+        if(this._checkOverlapTimeoutId>0) {
+            Mainloop.source_remove(this._checkOverlapTimeoutId);
+            this._checkOverlapTimeoutId = 0;
+        }
     },
 
     _windowCreated: function(display, meta_win) {
@@ -169,6 +177,31 @@ const intellihide = new Lang.Class({
 
         if( !this._isEnabled || this._targetBox == null)
             return;
+
+        /* Limit the number of calls to the doCheckOverlap function */
+        if(this._checkOverlapTimeoutId){
+            this._checkOverlapTimeoutContinue = true;
+            return
+        }
+
+        this._doCheckOverlap();
+
+        this._checkOverlapTimeoutId =
+                    Mainloop.timeout_add(INTELLIHIDE_CHECK_INTERVAL,
+                        Lang.bind(this, function() {
+                            this._doCheckOverlap();
+                            if (this._checkOverlapTimeoutContinue){
+                                this._checkOverlapTimeoutContinue = false;
+                                return GLib.SOURCE_CONTINUE;
+                            } else {
+                                this._checkOverlapTimeoutId = 0;
+                                return GLib.SOURCE_REMOVE;
+                            }
+                        }
+            ));
+    },
+
+    _doCheckOverlap: function() {
 
         let overlaps = OverlapStatus.FALSE;
         let windows = global.get_window_actors();
