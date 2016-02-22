@@ -204,6 +204,9 @@ const intellihide = new Lang.Class({
 
     _doCheckOverlap: function() {
 
+        if( !this._isEnabled || this._targetBox == null)
+            return;
+
         let overlaps = OverlapStatus.FALSE;
         let windows = global.get_window_actors();
 
