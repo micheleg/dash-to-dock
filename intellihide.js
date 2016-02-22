@@ -113,7 +113,7 @@ const intellihide = new Lang.Class({
       global.get_window_actors().forEach(function(win){
                 this._addWindowSignals(win.get_meta_window())
             }, this);
-      this._checkOverlap();
+      this._doCheckOverlap();
     },
 
     disable: function() {
@@ -164,7 +164,7 @@ const intellihide = new Lang.Class({
 
     forceUpdate: function() {
         this._status = OverlapStatus.UNDEFINED;
-        this._checkOverlap();
+        this._doCheckOverlap();
     },
 
     getOverlapStatus: function(){
