@@ -893,6 +893,11 @@ const dockedDash = new Lang.Class({
             this._pressureBarrier = null;
         }
 
+        if (this._barrier){
+            this._barrier.destroy();
+            this._barrier = null;
+        }
+
         // Create new pressure barrier based on pressure threshold setting
         if (this._canUsePressure) {
             this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, this._settings.get_double('show-delay')*1000,
