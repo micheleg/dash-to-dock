@@ -469,6 +469,13 @@ const dockedDash = new Lang.Class({
 
         this._updateVisibilityMode();
 
+        // In case we are already inside the overview when the extension is loaded,
+        // for instance on unlocking the screen if it was locked with the overview open.
+        if (Main.overview.visibleTarget){
+            this._onOverviewShowing();
+            this._pageChanged();
+        }
+
         // Setup pressure barrier (GS38+ only)
         this._updatePressureBarrier();
         this._updateBarrier();
