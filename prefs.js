@@ -157,6 +157,10 @@ const Settings = new Lang.Class({
                             this._builder.get_object('autohide_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('autohide-in-fullscreen',
+                            this._builder.get_object('autohide_enable_in_fullscreen_checkbutton'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('require-pressure-to-show',
                             this._builder.get_object('require_pressure_checkbutton'),
                             'active',
