@@ -157,6 +157,10 @@ const Settings = new Lang.Class({
                             this._builder.get_object('autohide_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('autohide-in-fullscreen',
+                            this._builder.get_object('autohide_enable_in_fullscreen_checkbutton'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('require-pressure-to-show',
                             this._builder.get_object('require_pressure_checkbutton'),
                             'active',
@@ -219,6 +223,11 @@ const Settings = new Lang.Class({
                             'sensitive',
                             Gio.SettingsBindFlags.GET);
 
+            this._settings.bind('autohide',
+                            this._builder.get_object('autohide_enable_in_fullscreen_checkbutton'),
+                            'sensitive',
+                            Gio.SettingsBindFlags.GET);
+
             this._settings.bind('require-pressure-to-show',
                                 this._builder.get_object('show_timeout_spinbutton'),
                                 'sensitive',
@@ -239,7 +248,7 @@ const Settings = new Lang.Class({
             dialog.connect('response', Lang.bind(this, function(dialog, id) {
                 if (id == 1) {
                     // restore default settings for the relevant keys
-                    let keys = ['intellihide', 'autohide', 'intellihide-mode', 'require-pressure-to-show',
+                    let keys = ['intellihide', 'autohide', 'intellihide-mode', 'autohide-in-fullscreen', 'require-pressure-to-show',
                                 'animation-time', 'show-delay', 'hide-delay', 'pressure-threshold'];
                     keys.forEach(function(val){
                         this._settings.set_value(val, this._settings.get_default_value(val));

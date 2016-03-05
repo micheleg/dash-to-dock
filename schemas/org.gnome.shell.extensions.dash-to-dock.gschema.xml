@@ -75,6 +75,11 @@
       <summary>Pressure threshold</summary>
       <description>Sets how much pressure is needed to show the dash.</description>
     </key>
+    <key type="b" name="autohide-in-fullscreen">
+      <default>false</default>
+      <summary>Enable autohide in fullscreen mode.</summary>
+      <description>Enable autohide in fullscreen mode.</description>
+    </key>
     <key type="b" name="dock-fixed">
       <default>false</default>
       <summary>Dock always visible</summary>
