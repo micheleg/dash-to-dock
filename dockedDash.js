@@ -459,7 +459,7 @@ const dockedDash = new Lang.Class({
         Main.layoutManager.uiGroup.set_child_below_sibling(this.actor,Main.layoutManager.modalDialogGroup);
 
         if ( this._settings.get_boolean('dock-fixed') )
-          Main.layoutManager._trackActor(this.dash.actor, {affectsStruts: true, trackFullscreen: true});
+          Main.layoutManager._trackActor(this._box, {affectsStruts: true, trackFullscreen: true});
 
         // pretend this._slider is isToplevel child so that fullscreen is actually tracked
         let index = Main.layoutManager._findActor(this._slider.actor);
@@ -588,9 +588,9 @@ const dockedDash = new Lang.Class({
         this._settings.connect('changed::dock-fixed', Lang.bind(this, function(){
 
             if(this._settings.get_boolean('dock-fixed')) {
-                Main.layoutManager._trackActor(this.dash.actor, {affectsStruts: true, trackFullscreen: true});
+                Main.layoutManager._trackActor(this._box, {affectsStruts: true, trackFullscreen: true});
             } else {
-                Main.layoutManager._untrackActor(this.dash.actor);
+                Main.layoutManager._untrackActor(this._box);
             }
 
             this._resetPosition();
