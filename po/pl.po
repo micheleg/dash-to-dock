@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-02 19:31+0100\n"
+"POT-Creation-Date: 2016-03-19 13:09+0000\n"
 "PO-Revision-Date: 2016-01-03 10:40+0100\n"
 "Last-Translator: Piotr Sokół <psokol.l10n@gmail.com>\n"
 "Language-Team: polski <>\n"
@@ -36,15 +36,15 @@ msgstr "Prawo"
 msgid "Left"
 msgstr "Lewo"
 
-#: prefs.js:190
+#: prefs.js:194
 msgid "Intelligent autohide customization"
 msgstr "Dostosowanie automatycznego ukrywania"
 
-#: prefs.js:197
+#: prefs.js:201
 msgid "Reset to defaults"
 msgstr "Przywróć domyślne"
 
-#: prefs.js:350
+#: prefs.js:359
 msgid "Customize running indicators"
 msgstr "Dostosowanie wskaźników okien"
 
@@ -287,42 +287,46 @@ msgid "Push to show: require pressure to show the dock"
 msgstr "Wymagany nacisk do wyświetlenia doku"
 
 #: Settings.ui.h:56
+msgid "Enable in fullscreen mode"
+msgstr ""
+
+#: Settings.ui.h:57
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Wyświetla dok jeśli nie zakrywa okien programu"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:58
 msgid "Dodge windows"
 msgstr "Ukrywanie przed oknami"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:59
 msgid "All windows"
 msgstr "Wszystkie okna"
 
-#: Settings.ui.h:59
+#: Settings.ui.h:60
 msgid "Only focused application's windows"
 msgstr "Tylko aktywne okna programu"
 
-#: Settings.ui.h:60
+#: Settings.ui.h:61
 msgid "Only maximized windows"
 msgstr "Tylko zmaksymalizowane okna"
 
-#: Settings.ui.h:61
+#: Settings.ui.h:62
 msgid "Animation duration (s)"
 msgstr "Czas animacji (s)"
 
-#: Settings.ui.h:62
+#: Settings.ui.h:63
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:63
+#: Settings.ui.h:64
 msgid "Hide timeout (s)"
 msgstr "Czas ukrywania (s)"
 
-#: Settings.ui.h:64
+#: Settings.ui.h:65
 msgid "Show timeout (s)"
 msgstr "Czas wyświetlania (s)"
 
-#: Settings.ui.h:65
+#: Settings.ui.h:66
 msgid "Pressure threshold"
 msgstr "Próg nacisku"
 

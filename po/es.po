@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-23 17:05+0000\n"
+"POT-Creation-Date: 2016-03-19 13:09+0000\n"
 "PO-Revision-Date: 2015-12-23 10:19+0100\n"
 "Last-Translator: Hugo Olabera <hugolabe@gmail.com>\n"
 "Language-Team: \n"
@@ -33,15 +33,15 @@ msgstr "Derecha"
 msgid "Left"
 msgstr "Izquierda"
 
-#: prefs.js:190
+#: prefs.js:194
 msgid "Intelligent autohide customization"
 msgstr "Opciones de auto ocultado"
 
-#: prefs.js:197
+#: prefs.js:201
 msgid "Reset to defaults"
 msgstr "Restaurar"
 
-#: prefs.js:350
+#: prefs.js:359
 msgid "Customize running indicators"
 msgstr "Personalizar indicadores de ejecución"
 
@@ -178,9 +178,10 @@ msgid "Minimize window"
 msgstr "Minimizar ventana"
 
 #: Settings.ui.h:33
+#, fuzzy
 msgid ""
-"If icons overflow the dock, only  the <i>Show Applications</i> icon is "
-"active."
+"With fixed icon size, only the edge of the dock and the <i>Show "
+"Applications</i> icon are active."
 msgstr ""
 "Si los iconos rebosan el dock, sólo está activo en el icono <i>Mostrar "
 "aplicaciones</i>."
@@ -282,41 +283,45 @@ msgid "Push to show: require pressure to show the dock"
 msgstr "Empujar para mostrar: requiere hacer presión para mostrar el dock"
 
 #: Settings.ui.h:56
+msgid "Enable in fullscreen mode"
+msgstr ""
+
+#: Settings.ui.h:57
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Mostrar el dock cuando no cubra otras ventanas de aplicaciones"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:58
 msgid "Dodge windows"
 msgstr "Auto ocultado inteligente"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:59
 msgid "All windows"
 msgstr "Todas las ventanas"
 
-#: Settings.ui.h:59
+#: Settings.ui.h:60
 msgid "Only focused application's windows"
 msgstr "Sólo las ventanas de la aplicación activa"
 
-#: Settings.ui.h:60
+#: Settings.ui.h:61
 msgid "Only maximized windows"
 msgstr "Sólo las ventanas maximizadas"
 
-#: Settings.ui.h:61
+#: Settings.ui.h:62
 msgid "Animation duration (s)"
 msgstr "Duración de la animación"
 
-#: Settings.ui.h:62
+#: Settings.ui.h:63
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:63
+#: Settings.ui.h:64
 msgid "Hide timeout (s)"
 msgstr "Tiempo de ocultación"
 
-#: Settings.ui.h:64
+#: Settings.ui.h:65
 msgid "Show timeout (s)"
 msgstr "Tiempo de aparición"
 
-#: Settings.ui.h:65
+#: Settings.ui.h:66
 msgid "Pressure threshold"
 msgstr "Nivel de presión"

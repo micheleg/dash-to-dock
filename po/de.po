@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-09-20 14:04+0100\n"
+"POT-Creation-Date: 2016-03-19 13:09+0000\n"
 "PO-Revision-Date: 2015-10-29 14:54-0300\n"
 "Last-Translator: Jonatan Zeidler <jonatan_zeidler@gmx.de>\n"
 "Language-Team: jonius <jonatan_zeidler@gmx.de>\n"
@@ -20,49 +20,71 @@ msgstr ""
 "X-Generator: Poedit 1.7.7\n"
 
 # Konjugation wegen Stellung im Satz
-#: prefs.js:69
+#: prefs.js:102
 msgid "Primary monitor"
 msgstr "Primärer Anzeige"
 
 # Konjugation wegen Stellung im Satz
-#: prefs.js:78 prefs.js:85
+#: prefs.js:111 prefs.js:118
 msgid "Secondary monitor "
 msgstr "Sekundärer Anzeige"
 
-#: prefs.js:110 Settings.ui.h:6
+#: prefs.js:143 Settings.ui.h:10
 msgid "Right"
 msgstr "Rechts"
 
-#: prefs.js:111 Settings.ui.h:3
+#: prefs.js:144 Settings.ui.h:7
 msgid "Left"
 msgstr "Links"
 
-#: prefs.js:157
+#: prefs.js:194
 msgid "Intelligent autohide customization"
 msgstr "Automatisches Ausblenden anpassen"
 
 # Verwende Übersetzung aus Nautilus
-#: prefs.js:164
+#: prefs.js:201
 msgid "Reset to defaults"
 msgstr "Auf Vorgaben zurücksetzen"
 
+#: prefs.js:359
+#, fuzzy
+msgid "Customize running indicators"
+msgstr "Laufende Anwendungen anzeigen"
+
 #: Settings.ui.h:1
+#, fuzzy
+msgid "Customize indicator style"
+msgstr "Transparenz anpassen"
+
+#: Settings.ui.h:2
+msgid "Color"
+msgstr ""
+
+#: Settings.ui.h:3
+msgid "Border color"
+msgstr ""
+
+#: Settings.ui.h:4
+msgid "Border width"
+msgstr ""
+
+#: Settings.ui.h:5
 msgid "Show the dock on"
 msgstr "Dock anzeigen auf"
 
-#: Settings.ui.h:2
+#: Settings.ui.h:6
 msgid "Position on screen"
 msgstr "Position auf Bildschirm"
 
-#: Settings.ui.h:4
+#: Settings.ui.h:8
 msgid "Bottom"
 msgstr "Unten"
 
-#: Settings.ui.h:5
+#: Settings.ui.h:9
 msgid "Top"
 msgstr "Oben"
 
-#: Settings.ui.h:7
+#: Settings.ui.h:11
 msgid ""
 "Hide the dock when it obstructs a window of the the current application. "
 "More refined settings are available."
@@ -70,39 +92,39 @@ msgstr ""
 "Das Dock automatisch ausblenden, falls es ein Fenster der laufenden "
 "Anwendung überlagert. Einstellungen können weiter verfeinert werden."
 
-#: Settings.ui.h:8
+#: Settings.ui.h:12
 msgid "Intelligent autohide"
 msgstr "Automatisch ausblenden"
 
-#: Settings.ui.h:9
+#: Settings.ui.h:13
 msgid "Dock size limit"
 msgstr "Maximale Dockgröße"
 
-#: Settings.ui.h:10
+#: Settings.ui.h:14
 msgid "Panel mode: extend to the screen edge"
 msgstr "Panelmodus: bis zu Bildschirmkanten ausdehnen"
 
-#: Settings.ui.h:11
+#: Settings.ui.h:15
 msgid "Icon size limit"
 msgstr "Maximale Icongröße"
 
-#: Settings.ui.h:12
+#: Settings.ui.h:16
 msgid "Fixed icon size: scroll to reveal other icons"
 msgstr "Feste Icongröße: andere Icons durch Scrollen sichtbar machen"
 
-#: Settings.ui.h:13
+#: Settings.ui.h:17
 msgid "Position and size"
 msgstr "Position und Größe"
 
-#: Settings.ui.h:14
+#: Settings.ui.h:18
 msgid "Show favorite applications"
 msgstr "Favoriten anzeigen"
 
-#: Settings.ui.h:15
+#: Settings.ui.h:19
 msgid "Show running applications"
 msgstr "Laufende Anwendungen anzeigen"
 
-#: Settings.ui.h:16
+#: Settings.ui.h:20
 msgid ""
 "If disabled, these settings are acccessible from gnome-tweak-tool or the "
 "extension website."
@@ -111,40 +133,46 @@ msgstr ""
 "oder die Erweiterungsseite erreichbar."
 
 # Durchkopplung von Kompositum
-#: Settings.ui.h:17
+#: Settings.ui.h:21
 msgid "Show <i>Show Applications</i> icon"
 msgstr "Symbol <i>Anwendungen anzeigen</i> anzeigen"
 
-#: Settings.ui.h:18
+#: Settings.ui.h:22
 msgid "Move the applications button at the beginning of the dock."
 msgstr "Anwendungen-anzeigen-Button an den Anfang verschieben."
 
-#: Settings.ui.h:19
+# Durchkopplung von Kompositum
+#: Settings.ui.h:23
+#, fuzzy
+msgid "Animate <i>Show Applications</i>."
+msgstr "Symbol <i>Anwendungen anzeigen</i> anzeigen"
+
+#: Settings.ui.h:24
 msgid "Behaviour when clicking on the icon of a running application."
 msgstr "Verhalten bei Mausklick auf das Icon einer laufenden Anwendung."
 
-#: Settings.ui.h:20
+#: Settings.ui.h:25
 msgid "Click action"
 msgstr "Wirkung bei Mausklick"
 
-#: Settings.ui.h:21
+#: Settings.ui.h:26
 msgid "Do nothing"
 msgstr "Nichts tun"
 
-#: Settings.ui.h:22
+#: Settings.ui.h:27
 msgid "Minimize"
 msgstr "Minimieren"
 
-#: Settings.ui.h:23
+#: Settings.ui.h:28
 msgid "Launch new instance"
 msgstr "Neues Fenster"
 
 # Vielleicht einen Tick besser als „umschalten“?
-#: Settings.ui.h:24
+#: Settings.ui.h:29
 msgid "Cycle through windows"
 msgstr "Zwischen den Fenstern der Anwendung wechseln"
 
-#: Settings.ui.h:25
+#: Settings.ui.h:30
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
@@ -152,93 +180,95 @@ msgstr ""
 "Wenn auf »Minimieren« eingestellt, können durch Doppelklick alle Fenster der "
 "Anwendung gleichzeitig minimiert werden."
 
-#: Settings.ui.h:26
+#: Settings.ui.h:31
 msgid "Shift+Click action"
 msgstr "Wirkung bei Umschalttaste + Mausklick"
 
-#: Settings.ui.h:27
+#: Settings.ui.h:32
 msgid "Minimize window"
 msgstr "Minimieren"
 
-#: Settings.ui.h:28
+#: Settings.ui.h:33
+#, fuzzy
 msgid ""
-"If icons overflow the dock, only  the <i>Show Applications</i> icon is "
-"active."
+"With fixed icon size, only the edge of the dock and the <i>Show "
+"Applications</i> icon are active."
 msgstr ""
 "Falls es zu viele Symbole auf dem Dock werden, dann bleibt nur "
 "<i>Anwendungen anzeigen</i> aktiv."
 
-#: Settings.ui.h:29
+#: Settings.ui.h:34
 msgid "Switch workspace by scrolling on the dock"
 msgstr "Arbeitsfläche durch Scrollen wechseln"
 
 # Verwende Übersetzung aus Nautilus
-#: Settings.ui.h:30
+#: Settings.ui.h:35
 msgid "Behavior"
 msgstr "Verhalten"
 
-#: Settings.ui.h:31
+#: Settings.ui.h:36
+#, fuzzy
 msgid ""
-"Few customizations meant to integrate the dock wih the default GNOME theme. "
+"Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
 "Einige Anpassungen, durch die das Dock besser in das standardmäßige GNOME-"
 "Thema eingepasst werden soll. Alternativ können im Folgenden besondere "
 "Einstellungen vorgenommen werden."
 
-#: Settings.ui.h:32
+#: Settings.ui.h:37
 msgid "Use built-in theme"
 msgstr "Angepasstes Thema dieser Erweiterung nutzen"
 
-#: Settings.ui.h:33
+#: Settings.ui.h:38
 msgid "Save space reducing padding and border radius."
 msgstr "Platz sparen, indem Innenabstand und Eckenradius verkleinert werden."
 
-#: Settings.ui.h:34
+#: Settings.ui.h:39
 msgid "Shrink the dash"
 msgstr "Dash verkleinern"
 
-#: Settings.ui.h:35
+#: Settings.ui.h:40
 msgid "Show a dot for each windows of the application."
 msgstr "Für jedes Fenster einer Anwendung einen kleinen Indikator einblenden."
 
-#: Settings.ui.h:36
+#: Settings.ui.h:41
 msgid "Show windows counter indicators"
 msgstr "Indikatoren für Fensterzahl"
 
-#: Settings.ui.h:37
+#: Settings.ui.h:42
 msgid "Tune the dash background opacity."
 msgstr "Die Hintergrundtransparenz des Docks einstellen."
 
-#: Settings.ui.h:38
+#: Settings.ui.h:43
 msgid "Customize opacity"
 msgstr "Transparenz anpassen"
 
-#: Settings.ui.h:39
+#: Settings.ui.h:44
 msgid "Opacity"
 msgstr "Transparenz"
 
-#: Settings.ui.h:40
+#: Settings.ui.h:45
 msgid "Appearance"
 msgstr "Erscheinungsbild"
 
-#: Settings.ui.h:41
+#: Settings.ui.h:46
 msgid "version: "
 msgstr "Version: "
 
-#: Settings.ui.h:42
+#: Settings.ui.h:47
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "Verwandelt das Dash aus dem Übersichtsmodus in ein Dock"
 
-#: Settings.ui.h:43
+#: Settings.ui.h:48
 msgid "Created by"
 msgstr "Erstellt von"
 
-#: Settings.ui.h:44
+#: Settings.ui.h:49
 msgid "Webpage"
 msgstr "Internetseite"
 
-#: Settings.ui.h:45
+#: Settings.ui.h:50
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -250,62 +280,66 @@ msgstr ""
 "a>.</span>"
 
 # Verwende Übersetzung aus Nautilus
-#: Settings.ui.h:47
+#: Settings.ui.h:52
 msgid "About"
 msgstr "Info"
 
-#: Settings.ui.h:48
+#: Settings.ui.h:53
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "Dock einblenden, wenn Mauszeiger an Bildschirmkante anliegt."
 
-#: Settings.ui.h:49
+#: Settings.ui.h:54
 msgid "Autohide"
 msgstr "Automatisch verstecken"
 
-#: Settings.ui.h:50
+#: Settings.ui.h:55
 msgid "Push to show: require pressure to show the dock"
 msgstr ""
 "Anstoßen erforderlich: Dock nur einblenden, wenn Mauszeiger schnell gegen "
 "Bildschirmkante stößt"
 
-#: Settings.ui.h:51
+#: Settings.ui.h:56
+msgid "Enable in fullscreen mode"
+msgstr ""
+
+#: Settings.ui.h:57
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Dock einblenden, falls es keine Anwendungsfenster überlagert."
 
-#: Settings.ui.h:52
+#: Settings.ui.h:58
 msgid "Dodge windows"
 msgstr "Fenstern ausweichen"
 
-#: Settings.ui.h:53
+#: Settings.ui.h:59
 msgid "All windows"
 msgstr "Alle Fenstern"
 
-#: Settings.ui.h:54
+#: Settings.ui.h:60
 msgid "Only focused application's windows"
 msgstr "Nur Anwendungsfenster mit Fokus"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:61
 msgid "Only maximized windows"
 msgstr "Nur maximierte Fenster"
 
 # Nach DIN 1313 werden Einheiten nicht in Klammern gesetzt
-#: Settings.ui.h:56
+#: Settings.ui.h:62
 msgid "Animation duration (s)"
 msgstr "Animationsdauer in s"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:63
 msgid "0.000"
 msgstr "0,000"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:64
 msgid "Hide timeout (s)"
 msgstr "Ausblende-Verzögerung in s"
 
-#: Settings.ui.h:59
+#: Settings.ui.h:65
 msgid "Show timeout (s)"
 msgstr "Einblende-Verzögerung in s"
 
-#: Settings.ui.h:60
+#: Settings.ui.h:66
 msgid "Pressure threshold"
 msgstr "Stoßschwellwert"
 
