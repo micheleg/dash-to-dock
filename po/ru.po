@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-06 12:20+0300\n"
-"PO-Revision-Date: 2016-01-06 12:26+0300\n"
+"POT-Creation-Date: 2016-03-20 15:36+0900\n"
+"PO-Revision-Date: 2016-03-20 15:41+0900\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -32,15 +32,15 @@ msgstr "Справа"
 msgid "Left"
 msgstr "Слева"
 
-#: prefs.js:190
+#: prefs.js:194
 msgid "Intelligent autohide customization"
 msgstr "Настройка автоскрытия"
 
-#: prefs.js:197
+#: prefs.js:201
 msgid "Reset to defaults"
 msgstr "Сбросить настройки"
 
-#: prefs.js:350
+#: prefs.js:359
 msgid "Customize running indicators"
 msgstr "Настройка индикаторов запуска"
 
@@ -285,42 +285,46 @@ msgid "Push to show: require pressure to show the dock"
 msgstr "Давление для появления: требуется давление для открытия Дока"
 
 #: Settings.ui.h:56
+msgid "Enable in fullscreen mode"
+msgstr "Включить для полноэкранного режима"
+
+#: Settings.ui.h:57
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Скрывать Док, когда он перекрыт окнами приложений"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:58
 msgid "Dodge windows"
 msgstr "Перекрытие окнами"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:59
 msgid "All windows"
 msgstr "Все окна"
 
-#: Settings.ui.h:59
+#: Settings.ui.h:60
 msgid "Only focused application's windows"
 msgstr "Только активное окно приложения"
 
-#: Settings.ui.h:60
+#: Settings.ui.h:61
 msgid "Only maximized windows"
 msgstr "Только развёрнутые окна"
 
-#: Settings.ui.h:61
+#: Settings.ui.h:62
 msgid "Animation duration (s)"
 msgstr "Время анимации (сек.)"
 
-#: Settings.ui.h:62
+#: Settings.ui.h:63
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:63
+#: Settings.ui.h:64
 msgid "Hide timeout (s)"
 msgstr "Задержка скрытия (сек.)"
 
-#: Settings.ui.h:64
+#: Settings.ui.h:65
 msgid "Show timeout (s)"
 msgstr "Задержка открытия (сек.)"
 
-#: Settings.ui.h:65
+#: Settings.ui.h:66
 msgid "Pressure threshold"
 msgstr "Порог давления"
 
