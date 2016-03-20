@@ -1,3 +1,16 @@
+- version: 53
+  date: 19-03-2016
+  shell_version: ["3.18", "3.20"]
+  notes:
+   - Introduce GNOME Shell 3.20 support [69c0527]
+   - Improvements to the intellihide [23d8463, 23d8463, 3989272, 8bd833f, 033a81b]
+   - Fix dock visibility on start with open overview [28978cf]
+   - Fix bug on pressure-threshold settings change [7a547d4]
+   - Add option to enable autohide in fullscreen [9161851, 63c6f9f]
+   - Fix dock input region tracking [700a4d0]
+   - Update Russian, Polish, Brazilian Portuguese, and French translations [b368801, 95cfd6f, 59bbb94, 12f319f]
+  zip_url: https://extensions.gnome.org/review/download/5670.shell-extension.zip
+
 - version: 52
   date: 30-01-2016
   shell_version: ["3.16"]
