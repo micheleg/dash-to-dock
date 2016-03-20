@@ -33,6 +33,8 @@ const LauncherAPI = Me.imports.launcherAPI;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 
+const AUTOHIDE_IN_OVERVIEW = true;
+
 var State = {
     HIDDEN:  0,
     SHOWING: 1,
@@ -671,16 +673,24 @@ const DockedDash = new Lang.Class({
     },
 
     _onOverviewShowing: function() {
-        this._ignoreHover = true;
         this._intellihide.disable();
-        this._removeAnimations();
-        this._animateIn(this._settings.get_double('animation-time'), 0);
+        if(!AUTOHIDE_IN_OVERVIEW) {
+            this._ignoreHover = true;
+            this._removeAnimations();
+            this._animateIn(this._settings.get_double('animation-time'), 0);
+        } else {
+            this._autohideIsEnabled = true;
+            this._ignoreHover = false;
+            if (!this._box.hover || !this._autohideIsEnabled) {
+                this._animateOut(this._settings.get_double('animation-time'), 0);
+            }
+        }
     },
 
     _onOverviewHiding: function() {
         this._ignoreHover = false;
         this._intellihide.enable();
-        this._updateDashVisibility();
+        this._updateVisibilityMode();
     },
 
     _hoverChanged: function() {
@@ -881,8 +891,8 @@ const DockedDash = new Lang.Class({
      * handler for mouse pressure sensed
      */
     _onPressureSensed: function() {
-        if (Main.overview.visibleTarget)
-            return;
+        if (!AUTOHIDE_IN_OVERVIEW && Main.overview.visibleTarget)
+            return
 
         // In case the mouse move away from the dock area before hovering it, in such case the leave event
         // would never be triggered and the dock would stay visible forever.
@@ -1036,7 +1046,7 @@ const DockedDash = new Lang.Class({
 
         // Reserve space for the dash on the overview
         // if the dock is on the primary monitor
-        if (this._isPrimaryMonitor())
+        if (this._isPrimaryMonitor() && !AUTOHIDE_IN_OVERVIEW)
             this._dashSpacer.show();
         else
             // No space is required in the overview of the dash
@@ -1216,7 +1226,7 @@ const DockedDash = new Lang.Class({
          */
 
         let activePage = Main.overview.viewSelector.getActivePage();
-        this._dashSpacer.visible = (this._isHorizontal || activePage == ViewSelector.ViewPage.WINDOWS);
+        this._dashSpacer.visible = (this._isPrimaryMonitor() && !AUTOHIDE_IN_OVERVIEW ) && (this._isHorizontal || activePage == ViewSelector.ViewPage.WINDOWS);
     },
 
     /**
