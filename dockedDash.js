@@ -680,6 +680,8 @@ const dockedDash = new Lang.Class({
             this._removeAnimations();
             this._animateIn(this._settings.get_double('animation-time'), 0);
         } else {
+            this._autohideIsEnabled = true;
+            this._ignoreHover = false;
             if (!this._box.hover || !this._autohideIsEnabled) {
                 this._animateOut(this._settings.get_double('animation-time'), 0);
             }
