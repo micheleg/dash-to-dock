@@ -415,7 +415,7 @@ const dockedDash = new Lang.Class({
         // Add and additional dashSpacer positioned according to the dash positioning.
         // It gets restored on extension unload.
         this._dashSpacer = new OverviewControls.DashSpacer();
-        this._dashSpacer.setDashActor(this._box);
+        this._dashSpacer.setDashActor(this._slider.actor);
 
         if (this._position ==  St.Side.LEFT)
           Main.overview._controls._group.insert_child_at_index(this._dashSpacer, this._rtl?-1:0); // insert on first
@@ -1007,7 +1007,7 @@ const dockedDash = new Lang.Class({
 
         // Reserve space for the dash on the overview
         // if the dock is on the primary monitor
-        if (this._isPrimaryMonitor() && !AUTOHIDE_IN_OVERVIEW){
+        if (this._isPrimaryMonitor()){
             this._dashSpacer.show();
         } else {
             // No space is required in the overview of the dash
@@ -1189,7 +1189,7 @@ const dockedDash = new Lang.Class({
          */
 
         let activePage = Main.overview.viewSelector.getActivePage();
-        this._dashSpacer.visible = (this._isPrimaryMonitor() && !AUTOHIDE_IN_OVERVIEW ) && (this._isHorizontal || activePage == ViewSelector.ViewPage.WINDOWS);
+        this._dashSpacer.visible = (this._isHorizontal || activePage == ViewSelector.ViewPage.WINDOWS);
     },
 
     // Show dock and give key focus to it
