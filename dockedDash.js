@@ -691,7 +691,7 @@ const dockedDash = new Lang.Class({
     _onOverviewHiding: function() {
         this._ignoreHover = false;
         this._intellihide.enable();
-        this._updateDashVisibility();
+        this._updateVisibilityMode();
     },
 
     _hoverChanged: function() {
