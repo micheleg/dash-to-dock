@@ -1189,7 +1189,7 @@ const dockedDash = new Lang.Class({
          */
 
         let activePage = Main.overview.viewSelector.getActivePage();
-        this._dashSpacer.visible = (this._isHorizontal || activePage == ViewSelector.ViewPage.WINDOWS);
+        this._dashSpacer.visible = (this._isPrimaryMonitor() && !AUTOHIDE_IN_OVERVIEW ) && (this._isHorizontal || activePage == ViewSelector.ViewPage.WINDOWS);
     },
 
     // Show dock and give key focus to it
