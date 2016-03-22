@@ -42,6 +42,22 @@ msgid "Reset to defaults"
 msgstr "Restaurer la configuration par défaut"
 
 #: Settings.ui.h:1
+msgid "Customize indicator style"
+msgstr "Régler l'opacité du dock"
+
+#: Settings.ui.h:2
+msgid "Color"
+msgstr "Couleur"
+
+#: Settings.ui.h:3
+msgid "Border color"
+msgstr "Couleur de la bordure"
+
+#: Settings.ui.h:4
+msgid "Border width"
+msgstr "Épaisseur de la bordure"
+
+#: Settings.ui.h:5
 msgid "Show the dock on"
 msgstr "Afficher le dock sur le"
 
@@ -268,6 +284,10 @@ msgid "Push to show: require pressure to show the dock"
 msgstr "Pousser pour Afficher: requiert une pression pour afficher le dock"
 
 #: Settings.ui.h:53
+msgid "Enable in fullscreen mode"
+msgstr "Activer en mode plein-écran"
+
+#: Settings.ui.h:57
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Afficher le dock quand il ne gêne pas les fenêtres."
 
