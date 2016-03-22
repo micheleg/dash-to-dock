@@ -3,21 +3,21 @@
 # This file is distributed under the same license as the dash-to-dock package.
 # 
 # Piotr Sokół <psokol.l10n@gmail.com>, 2012, 2013, 2015, 2016.
-#
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: 53\n"
+"Project-Id-Version: 55\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-09 23:29+0100\n"
-"PO-Revision-Date: 2016-03-22 17:25+0100\n"
+"POT-Creation-Date: 2016-10-03 20:39+0100\n"
+"PO-Revision-Date: 2016-10-02 14:43+0200\n"
 "Last-Translator: Piotr Sokół <psokol.l10n@gmail.com>\n"
 "Language-Team: polski <>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bits\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2;\n"
 "X-Generator: Gtranslator 2.91.7\n"
 
 #: prefs.js:98
@@ -45,9 +45,8 @@ msgid "Reset to defaults"
 msgstr "Przywróć domyślne"
 
 #: prefs.js:346
-#, fuzzy
 msgid "Customize middle-click behavior"
-msgstr "Dostosowanie stylu wskaźników"
+msgstr "Dostosowanie działania przycisków myszy"
 
 #: prefs.js:419
 msgid "Customize running indicators"
@@ -74,17 +73,16 @@ msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
-"Wybranie zminimalizowania okna, umożliwia zminimalizowanie wszystkich okien "
+"Wybranie zminimalizowania okna, umożliwia minimalizowanie wszystkich okien "
 "programu dwukrotnym kliknięciem"
 
 #: Settings.ui.h:6
 msgid "Shift+Click action"
-msgstr "Działanie kliknięcia+Shift"
+msgstr "Kliknięcia lewym przyciskiem + Shift"
 
 #: Settings.ui.h:7
-#, fuzzy
 msgid "Raise window"
-msgstr "Zminimalizowanie okna"
+msgstr "Przywrócenie okna"
 
 #: Settings.ui.h:8
 msgid "Minimize window"
@@ -100,25 +98,25 @@ msgstr "Przełączenie pomiędzy oknami"
 
 #: Settings.ui.h:11
 msgid "Quit"
-msgstr ""
+msgstr "Zakończenie działania"
 
 #: Settings.ui.h:12
 msgid "Behavior for Middle-Click."
-msgstr ""
+msgstr "Konfiguruje działanie kliknięcia środkowym przyciskiem myszy"
 
 #: Settings.ui.h:13
-#, fuzzy
 msgid "Middle-Click action"
-msgstr "Działanie kliknięcia"
+msgstr "Kliknięcie środkowym przyciskiem"
 
 #: Settings.ui.h:14
 msgid "Behavior for Shift+Middle-Click."
 msgstr ""
+"Konfiguruje działanie kliknięcia środkowym przyciskiem myszy z przytrzymanym "
+"klawiszem Shift"
 
 #: Settings.ui.h:15
-#, fuzzy
 msgid "Shift+Middle-Click action"
-msgstr "Działanie kliknięcia+Shift"
+msgstr "Kliknięcie środkowym przyciskiem + Shift"
 
 #: Settings.ui.h:16
 msgid "Show the dock on"
@@ -178,18 +176,17 @@ msgstr "Uruchomione programy"
 
 #: Settings.ui.h:31
 msgid "Isolate workspaces."
-msgstr ""
+msgstr "Izolowanie obszarów roboczych"
 
 #: Settings.ui.h:32
 msgid ""
 "If disabled, these settings are acccessible from gnome-tweak-tool or the "
 "extension website."
 msgstr ""
-"Zmiana tego ustawienia możliwa jest również za pomocą narzędzia dostrajania "
-"lub innego rozszerzenia. "
+"Przełącza widoczność przycisku programów. Można też skonfigurować za pomocą "
+"narzędzia dostrajania lub innego rozszerzenia."
 
 #: Settings.ui.h:33
-#, fuzzy
 msgid "Show <i>Applications</i> icon"
 msgstr "Przycisk <i>Wyświetl programy</i>"
 
@@ -261,11 +258,11 @@ msgstr "Wskaźniki ilości okien"
 
 #: Settings.ui.h:48
 msgid "Set the background color for the dash."
-msgstr ""
+msgstr "Ustala wybrany kolor tła kokpitu"
 
 #: Settings.ui.h:49
 msgid "Customize the dash color"
-msgstr ""
+msgstr "Kolor kokpitu"
 
 #: Settings.ui.h:50
 msgid "Tune the dash background opacity."
