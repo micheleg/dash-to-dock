@@ -53,15 +53,15 @@ msgstr "Régler l'opacité du dock"
 
 #: Settings.ui.h:2
 msgid "Color"
-msgstr ""
+msgstr "Couleur"
 
 #: Settings.ui.h:3
 msgid "Border color"
-msgstr ""
+msgstr "Couleur de la bordure"
 
 #: Settings.ui.h:4
 msgid "Border width"
-msgstr ""
+msgstr "Épaisseur de la bordure"
 
 #: Settings.ui.h:5
 msgid "Show the dock on"
@@ -287,7 +287,7 @@ msgstr "Pousser pour Afficher: requiert une pression pour afficher le dock"
 
 #: Settings.ui.h:56
 msgid "Enable in fullscreen mode"
-msgstr ""
+msgstr "Activer en mode plein-écran"
 
 #: Settings.ui.h:57
 msgid "Show the dock when it doesn't obstruct application windows."
