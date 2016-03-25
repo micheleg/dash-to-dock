@@ -30,25 +30,24 @@ const IntellihideMode = {
 // List of windows type taken into account. Order is important (keep the original
 // enum order).
 const handledWindowTypes = [
-  Meta.WindowType.NORMAL,
-  Meta.WindowType.DOCK,
-  Meta.WindowType.DIALOG,
-  Meta.WindowType.MODAL_DIALOG,
-  Meta.WindowType.TOOLBAR,
-  Meta.WindowType.MENU,
-  Meta.WindowType.UTILITY,
-  Meta.WindowType.SPLASHSCREEN
+	Meta.WindowType.NORMAL,
+	Meta.WindowType.DOCK,
+	Meta.WindowType.DIALOG,
+	Meta.WindowType.MODAL_DIALOG,
+	Meta.WindowType.TOOLBAR,
+	Meta.WindowType.MENU,
+	Meta.WindowType.UTILITY,
+	Meta.WindowType.SPLASHSCREEN
 ];
 
-/*
+/**
  * A rough and ugly implementation of the intellihide behaviour.
  * Intallihide object: emit 'status-changed' signal when the overlap of windows
  * with the provided targetBoxClutter.ActorBox changes;
  * 
 */
-
-const intellihide = new Lang.Class({
-    Name: 'Intellihide',
+const Intellihide = new Lang.Class({
+    Name: 'DashToDock.Intellihide',
 
     _init: function(settings) {
 
@@ -110,7 +109,7 @@ const intellihide = new Lang.Class({
     enable: function() {
       this._isEnabled = true;
       this._status = OverlapStatus.UNDEFINED;
-      global.get_window_actors().forEach(function(win){
+      global.get_window_actors().forEach(function(win) {
                 this._addWindowSignals(win.get_meta_window())
             }, this);
       this._doCheckOverlap();
@@ -118,7 +117,7 @@ const intellihide = new Lang.Class({
 
     disable: function() {
         this._isEnabled = false;
-        global.get_window_actors().forEach(function(win){
+        global.get_window_actors().forEach(function(win) {
                 this._removeWindowSignals(win.get_meta_window())
             }, this);
 
@@ -167,7 +166,7 @@ const intellihide = new Lang.Class({
         this._doCheckOverlap();
     },
 
-    getOverlapStatus: function(){
+    getOverlapStatus: function() {
         if(this._status == OverlapStatus.TRUE)
             return true;
         else
@@ -180,7 +179,7 @@ const intellihide = new Lang.Class({
             return;
 
         /* Limit the number of calls to the doCheckOverlap function */
-        if(this._checkOverlapTimeoutId){
+        if(this._checkOverlapTimeoutId) {
             this._checkOverlapTimeoutContinue = true;
             return
         }
@@ -191,7 +190,7 @@ const intellihide = new Lang.Class({
                     Mainloop.timeout_add(INTELLIHIDE_CHECK_INTERVAL,
                         Lang.bind(this, function() {
                             this._doCheckOverlap();
-                            if (this._checkOverlapTimeoutContinue){
+                            if (this._checkOverlapTimeoutContinue) {
                                 this._checkOverlapTimeoutContinue = false;
                                 return GLib.SOURCE_CONTINUE;
                             } else {
@@ -210,7 +209,7 @@ const intellihide = new Lang.Class({
         let overlaps = OverlapStatus.FALSE;
         let windows = global.get_window_actors();
 
-        if (windows.length>0){
+        if (windows.length>0) {
 
 
             /*
@@ -243,10 +242,10 @@ const intellihide = new Lang.Class({
 
                 windows = windows.filter(this._intellihideFilterInteresting, this);
 
-                for(let i=0; i< windows.length; i++){
+                for(let i=0; i< windows.length; i++) {
 
                     let win = windows[i].get_meta_window();
-                    if(win){
+                    if(win) {
                         let rect = win.get_frame_rect();
 
                         let test = ( rect.x < this._targetBox.x2) &&
@@ -254,7 +253,7 @@ const intellihide = new Lang.Class({
                                    ( rect.y < this._targetBox.y2 ) &&
                                    ( rect.y +rect.height > this._targetBox.y1 );
 
-                        if(test){
+                        if(test) {
                             overlaps = OverlapStatus.TRUE;
                             break;
                         }
@@ -273,7 +272,7 @@ const intellihide = new Lang.Class({
     // Filter interesting windows to be considered for intellihide.
     // Consider all windows visible on the current workspace.
     // Optionally skip windows of other applications
-    _intellihideFilterInteresting: function(wa){
+    _intellihideFilterInteresting: function(wa) {
 
         let meta_win = wa.get_meta_window();
         if (!meta_win || !this._handledWindow(meta_win)) {
@@ -365,4 +364,4 @@ const intellihide = new Lang.Class({
 
 });
 
-Signals.addSignalMethods(intellihide.prototype);
+Signals.addSignalMethods(Intellihide.prototype);

@@ -1,4 +1,4 @@
-// -*- mode: js2; indent-tabs-mode: nil; js2-basic-offset: 4 -*-
+// -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
@@ -7,7 +7,6 @@ const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
-
 
 const Gettext = imports.gettext.domain('dashtodock');
 const _ = Gettext.gettext;
@@ -20,11 +19,11 @@ const Convenience = Me.imports.convenience;
 const SCALE_UPDATE_TIMEOUT = 500;
 const DEFAULT_ICONS_SIZES = [ 128, 96, 64, 48, 32, 24, 16 ];
 
-/*
-This function was copied from the activities-config extension
-https://github.com/nls1729/acme-code/tree/master/activities-config
-by Norman L. Smith.
-*/
+/**
+ * This function was copied from the activities-config extension
+ * https://github.com/nls1729/acme-code/tree/master/activities-config
+ * by Norman L. Smith.
+ */
 function cssHexString(css) {
     let rrggbb = '#';
     let start;
@@ -52,10 +51,8 @@ function cssHexString(css) {
     return rrggbb;
 }
 
-
 const Settings = new Lang.Class({
-    Name: 'DashToDockSettings',
-
+    Name: 'DashToDock.Settings',
 
     _init: function() {
 
@@ -105,7 +102,7 @@ const Settings = new Lang.Class({
         // Add connected monitors
         let ctr = 0;
         for (let i = 0; i < n_monitors; i++) {
-            if (i !== primary_monitor){
+            if (i !== primary_monitor) {
                 ctr++;
                 this._monitors.push(ctr);
                 this._builder.get_object('dock_monitor_combo').append_text(_("Secondary monitor ") + ctr);
@@ -250,7 +247,7 @@ const Settings = new Lang.Class({
                     // restore default settings for the relevant keys
                     let keys = ['intellihide', 'autohide', 'intellihide-mode', 'autohide-in-fullscreen', 'require-pressure-to-show',
                                 'animation-time', 'show-delay', 'hide-delay', 'pressure-threshold'];
-                    keys.forEach(function(val){
+                    keys.forEach(function(val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);
                     intellihideModeRadioButtons[this._settings.get_enum('intellihide-mode')].set_active(true);
@@ -272,7 +269,7 @@ const Settings = new Lang.Class({
         let icon_size_scale = this._builder.get_object('icon_size_scale');
         icon_size_scale.set_range(DEFAULT_ICONS_SIZES[DEFAULT_ICONS_SIZES.length -1], DEFAULT_ICONS_SIZES[0]);
         icon_size_scale.set_value(this._settings.get_int('dash-max-icon-size'));
-        DEFAULT_ICONS_SIZES.forEach(function(val){
+        DEFAULT_ICONS_SIZES.forEach(function(val) {
                 icon_size_scale.add_mark(val, Gtk.PositionType.TOP, val.toString());
         });
 
@@ -420,7 +417,6 @@ const Settings = new Lang.Class({
 
     },
 
-
     // Object containing all signals defined in the glade file
     _SignalHandler: {
 
@@ -428,7 +424,7 @@ const Settings = new Lang.Class({
                 this._settings.set_int('preferred-monitor', this._monitors[combo.get_active()]);
             },
 
-            position_top_button_toggled_cb: function (button){
+            position_top_button_toggled_cb: function (button) {
                 if (button.get_active()) 
                     this._settings.set_enum('dock-position', 0);
             },
@@ -456,12 +452,12 @@ const Settings = new Lang.Class({
                 return Math.round(value*100)+ ' %';
             },
 
-            dock_size_scale_value_changed_cb: function(scale){
+            dock_size_scale_value_changed_cb: function(scale) {
                 // Avoid settings the size consinuosly
                 if (this._dock_size_timeout >0)
                     Mainloop.source_remove(this._dock_size_timeout);
 
-                this._dock_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function(){
+                this._dock_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
                     this._settings.set_double('height-fraction', scale.get_value());
                     this._dock_size_timeout = 0;
                     return GLib.SOURCE_REMOVE;
@@ -472,24 +468,24 @@ const Settings = new Lang.Class({
                 return value+ ' px';
             },
 
-            icon_size_scale_value_changed_cb: function(scale){
+            icon_size_scale_value_changed_cb: function(scale) {
                 // Avoid settings the size consinuosly
                 if (this._icon_size_timeout >0)
                     Mainloop.source_remove(this._icon_size_timeout);
 
-                this._icon_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function(){
+                this._icon_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
                     this._settings.set_int('dash-max-icon-size', scale.get_value());
                     this._icon_size_timeout = 0;
                     return GLib.SOURCE_REMOVE;
                 }));       
             },
 
-            custom_opacity_scale_value_changed_cb: function(scale){
+            custom_opacity_scale_value_changed_cb: function(scale) {
                 // Avoid settings the opacity consinuosly as it's change is animated
                 if (this._opacity_timeout >0)
                     Mainloop.source_remove(this._opacity_timeout);
 
-                this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function(){
+                this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
                     this._settings.set_double('background-opacity', scale.get_value());
                     this._opacity_timeout = 0;
                     return GLib.SOURCE_REMOVE;
@@ -500,17 +496,17 @@ const Settings = new Lang.Class({
                 return Math.round(value*100) + ' %';
             },
 
-            all_windows_radio_button_toggled_cb: function (button){
+            all_windows_radio_button_toggled_cb: function (button) {
                 if (button.get_active())
                     this._settings.set_enum('intellihide-mode', 0);
             },
 
-            focus_application_windows_radio_button_toggled_cb: function (button){
+            focus_application_windows_radio_button_toggled_cb: function (button) {
                 if (button.get_active())
                     this._settings.set_enum('intellihide-mode', 1);
             },
 
-            maximized_windows_radio_button_toggled_cb: function (button){
+            maximized_windows_radio_button_toggled_cb: function (button) {
                 if (button.get_active())
                     this._settings.set_enum('intellihide-mode', 2);
             }

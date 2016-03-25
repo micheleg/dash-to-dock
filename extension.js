@@ -2,7 +2,7 @@
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
-const DockedDash = Me.imports.dockedDash;
+const Docking = Me.imports.docking;
 
 const Main = imports.ui.main;
 
@@ -12,13 +12,12 @@ let dock;
 let oldDash;
 
 function init() {
-
 }
 
 function enable() {
 
     settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
-    dock = new DockedDash.dockedDash(settings);
+    dock = new Docking.DockedDash(settings);
 
     /* Pretend I'm the dash: meant to make appgrd swarm animation come from the
      * right position of the appShowButton.
@@ -45,7 +44,7 @@ function bindSettingsChanges() {
     /* It's easier to just reload the extension when the dock position changes
      * rather than working out all changes to the differen containers.
      */
-    settings.connect('changed::dock-position', function(){
+    settings.connect('changed::dock-position', function() {
         disable();
         enable();
     });

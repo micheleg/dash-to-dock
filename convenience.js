@@ -3,17 +3,15 @@
 /*
  * Part of this file comes from gnome-shell-extensions:
  * http://git.gnome.org/browse/gnome-shell-extensions/
- * 
  */
-
 
 const Gettext = imports.gettext;
 const Gio = imports.gi.Gio;
+const Clutter = imports.gi.Clutter;
 const Lang = imports.lang;
 
 const Config = imports.misc.config;
 const ExtensionUtils = imports.misc.extensionUtils;
-
 
 /**
  * initTranslations:
@@ -27,7 +25,7 @@ function initTranslations(domain) {
 
     domain = domain || extension.metadata['gettext-domain'];
 
-    // check if this extension was built with "make zip-file", and thus
+    // Check if this extension was built with "make zip-file", and thus
     // has the locale files in a subfolder
     // otherwise assume that extension has been installed in the
     // same prefix as gnome-shell
@@ -53,7 +51,7 @@ function getSettings(schema) {
 
     const GioSSS = Gio.SettingsSchemaSource;
 
-    // check if this extension was built with "make zip-file", and thus
+    // Check if this extension was built with "make zip-file", and thus
     // has the schema files in a subfolder
     // otherwise assume that extension has been installed in the
     // same prefix as gnome-shell (and therefore schemas are available
@@ -75,16 +73,18 @@ function getSettings(schema) {
     return new Gio.Settings({ settings_schema: schemaObj });
 }
 
-// simplify global signals and function injections handling
-// abstract class
+/**
+ * Simplify global signals and function injections handling
+ * abstract class
+ */
 const BasicHandler = new Lang.Class({
-    Name: 'dashToDock.BasicHandler',
+    Name: 'DashToDock.BasicHandler',
 
-    _init: function(){
+    _init: function() {
         this._storage = new Object();
     },
 
-    add: function(/*unlimited 3-long array arguments*/){
+    add: function(/*unlimited 3-long array arguments*/) {
 
         // convert arguments object to array, concatenate with generic
         let args = Array.concat('generic', Array.slice(arguments));
@@ -109,7 +109,7 @@ const BasicHandler = new Lang.Class({
 
     },
 
-    removeWithLabel: function(label){
+    removeWithLabel: function(label) {
 
         if(this._storage[label]) {
             for( let i = 0; i < this._storage[label].length; i++ ) {
@@ -122,17 +122,19 @@ const BasicHandler = new Lang.Class({
 
     /* Virtual methods to be implemented by subclass */
     // create single element to be stored in the storage structure
-    _create: function(item){
+    _create: function(item) {
       throw new Error('no implementation of _create in ' + this);
     },
 
     // correctly delete single element
-    _remove: function(item){
+    _remove: function(item) {
       throw new Error('no implementation of _remove in ' + this);
     }
 });
 
-// Manage global signals
+/**
+ * Manage global signals
+ */
 const GlobalSignalsHandler = new Lang.Class({
     Name: 'DashToDock.GlobalSignalHandler',
     Extends: BasicHandler,
@@ -147,13 +149,15 @@ const GlobalSignalsHandler = new Lang.Class({
       return [object, id];
     },
 
-    _remove: function(item){
+    _remove: function(item) {
        item[0].disconnect(item[1]);
     }
 });
 
-// Manage function injection: both instances and prototype can be overridden
-// and restored
+/**
+ * Manage function injection: both instances and prototype can be overridden
+ * and restored
+ */
 const InjectionsHandler = new Lang.Class({
     Name: 'DashToDock.InjectionsHandler',
     Extends: BasicHandler,
@@ -176,3 +180,17 @@ const InjectionsHandler = new Lang.Class({
         object[name] = original;
     }
 });
+
+/**
+ * Return the actual position reverseing left and right in rtl
+ */
+function getPosition(settings) {
+    let position = settings.get_enum('dock-position');
+    if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL) {
+        if (position == St.Side.LEFT)
+            position = St.Side.RIGHT;
+        else if (position == St.Side.RIGHT)
+            position = St.Side.LEFT;
+    }
+    return position;
+}
