@@ -1,104 +1,132 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 const Shell = imports.gi.Shell;
+const Gio = imports.gi.Gio;
 
-let SETTINGS = {
-	'sapir-claws-mail.desktop': ['Claws-mail'],
-	'sapir-pidgin.desktop': ['Pidgin']
-};
+// Example settings:
+let exampleSettings = [
+    'sapir-claws-mail.desktop Claws-mail',
+    'sapir-pidgin.desktop Pidgin'
+];
 
-function isWindowStealer(app) {
-	return SETTINGS[app.id] != null;
+function getSettings(settings) {
+    let table = {};
+    if (!settings.get_strv('window-stealing').length) {
+        settings.set_strv('window-stealing', exampleSettings);
+        Gio.Settings.sync();
+    }
+    let array = settings.get_strv('window-stealing');
+    for (let a in array) {
+        let entry = array[a].split(' ');
+        if (entry.length) {
+            let key = entry[0];
+            entry.splice(0, 1);
+            table[key] = entry;
+        }
+    }
+    return table;
 }
 
-function isStolen(app) {
-	return hasStolenWindows(app) && !getNonStolenWindows(app).length;
+function isWindowStealer(app, settings) {
+    settings = getSettings(settings);
+    return settings[app.id] != null;
 }
 
-function isStealingFrom(app, stolenApp) {
-	if (stolenApp !== null) {
-		let windows = stolenApp.get_windows();
-		for (let w in windows) {
-			if (isStealingWindow(app, windows[w])) {
-				return true;
-			}
-		}
-	}
-	return false;
+function isStolen(app, settings) {
+    return hasStolenWindows(app, settings) && !getNonStolenWindows(app, settings).length;
 }
 
-function isStolenWindow(window) {
-	let clazz = window.wm_class;
-	for (let id in SETTINGS) {
-		let classesToSteal = SETTINGS[id];
-		for (let i in classesToSteal) {
-			if (clazz == classesToSteal[i]) {
-				return true;
-			}
-		}
-	}
-	return false;
+function isStealingFrom(app, stolenApp, settings) {
+    if (stolenApp !== null) {
+        let windows = stolenApp.get_windows();
+        for (let w in windows) {
+            if (isStealingWindow(app, windows[w], settings)) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
-function isStealingWindow(app, window) {
-	let classesToSteal = SETTINGS[app.id];
-	if (classesToSteal) {
-		let clazz = window.wm_class;
-		for (let c in classesToSteal) {
-			if (classesToSteal[c] == clazz) {
-				return true;
-			}
-		}
-	}
-	return false;
+function isStolenWindow(window, settings) {
+    settings = getSettings(settings);
+    let clazz = window.wm_class;
+    for (let id in settings) {
+        let classesToSteal = settings[id];
+        for (let i in classesToSteal) {
+            if (clazz == classesToSteal[i]) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
-function hasStolenWindows(app) {
-	let windows = app.get_windows();
-	for (let w in windows) {
-		if (isStolenWindow(windows[w])) {
-			return true;
-		}
-	}
-	return false;
+function isStealingWindow(app, window, settings) {
+    settings = getSettings(settings);
+    let classesToSteal = settings[app.id];
+    if (classesToSteal) {
+        let clazz = window.wm_class;
+        for (let c in classesToSteal) {
+            if (classesToSteal[c] == clazz) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
-function getStolenWindows(app) {
-	return app.get_windows().filter(function(w) {
-		return isStolenWindow(w);
-	});
+function hasStolenWindows(app, settings) {
+    let windows = app.get_windows();
+    for (let w in windows) {
+        if (isStolenWindow(windows[w], settings)) {
+            return true;
+        }
+    }
+    return false;
 }
 
-function getNonStolenWindows(app) {
-	return app.get_windows().filter(function(w) {
-		return !isStolenWindow(w);
-	});
+function getStolenWindows(app, settings) {
+    return app.get_windows().filter(function(w) {
+        return isStolenWindow(w, settings);
+    });
 }
 
-// Includes stolen windows
-function getAllWindows(app) {
-	let windows = app.get_windows();
-	let classesToSteal = SETTINGS[app.id];
-	if (classesToSteal) {
-		let running = Shell.AppSystem.get_default().get_running();
-		running.forEach(function(r) {
-			r.get_windows().forEach(function(window) {
-				let clazz = window.wm_class;
-				for (let c in classesToSteal) {
-					if (classesToSteal[c] == clazz) {
-						windows.push(window);
-					}
-				}
-			});
-		});
-	}
-	return windows;
+function getNonStolenWindows(app, settings) {
+    return app.get_windows().filter(function(w) {
+        return !isStolenWindow(w, settings);
+    });
 }
 
-// Filter out unnecessary windows, for instance
-// nautilus desktop window.
-function getInterestingWindows(app) {
-    return getAllWindows(app).filter(function(w) {
+/**
+ * Includes stolen windows
+ */
+function getAllWindows(app, settings) {
+    settings = getSettings(settings);
+    let windows = app.get_windows();
+    let classesToSteal = settings[app.id];
+    if (classesToSteal) {
+        let running = Shell.AppSystem.get_default().get_running();
+        running.forEach(function(r) {
+            r.get_windows().forEach(function(window) {
+                let clazz = window.wm_class;
+                for (let c in classesToSteal) {
+                    if (classesToSteal[c] == clazz) {
+                        windows.push(window);
+                    }
+                }
+            });
+        });
+    }
+    return windows;
+}
+
+/**
+ * Filter out unnecessary windows, for instance
+ * nautilus desktop window.
+ */
+function getInterestingWindows(app, settings) {
+    return getAllWindows(app, settings).filter(function(w) {
         return !w.skip_taskbar;
     });
 }

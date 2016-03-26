@@ -28,7 +28,6 @@ const Icons = Me.imports.icons;
 const Windows = Me.imports.windows;
 
 let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
-let DASH_ITEM_LABEL_SHOW_TIME = Dash.DASH_ITEM_LABEL_SHOW_TIME;
 let DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME;
 let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
 
@@ -41,102 +40,13 @@ let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
  *  I can't subclass the original object because of this: https://bugzilla.gnome.org/show_bug.cgi?id=688973.
  *  thus use this ugly pattern.
  */
-
-
-/*
- * A menu for the showAppsIcon
-*/
-const myShowAppsIconMenu = new Lang.Class({
-    Name: 'DashToDock.ShowAppsIconMenu',
-    Extends: Icons.MyAppIconMenu,
-
-    _redisplay: function() {
-        this.removeAll();
-
-        let item = this._appendMenuItem("Dash to Dock " + _("Settings"));
-
-        item.connect('activate', function () {
-            Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
-        });
-    }
-});
-
-/**
- * Extend ShowAppsIcon
- *
- * - Pass settings to the constructor
- * - set label position based on dash orientation
- * - implement a popupMenu based on the AppIcon code
- *
- *  I can't subclass the original object because of this: https://bugzilla.gnome.org/show_bug.cgi?id=688973.
- *  thus use this ugly pattern.
- */
-function extendShowAppsIcon(showAppsIcon, settings) {
-
-      showAppsIcon._dtdSettings = settings;
-      /* the variable equivalent to toggleButton has a different name in the appIcon class
-       (actor): duplicate reference to easily reuse appIcon methods */
-      showAppsIcon.actor =  showAppsIcon.toggleButton;
-
-      // Re-use appIcon methods
-      showAppsIcon._removeMenuTimeout = AppDisplay.AppIcon.prototype._removeMenuTimeout;
-      showAppsIcon._setPopupTimeout = AppDisplay.AppIcon.prototype._setPopupTimeout;
-      showAppsIcon._onButtonPress = AppDisplay.AppIcon.prototype._onButtonPress;
-      showAppsIcon._onKeyboardPopupMenu = AppDisplay.AppIcon.prototype._onKeyboardPopupMenu;
-      showAppsIcon._onLeaveEvent = AppDisplay.AppIcon.prototype._onLeaveEvent;
-      showAppsIcon._onTouchEvent = AppDisplay.AppIcon.prototype._onTouchEvent;
-      showAppsIcon._onMenuPoppedDown = AppDisplay.AppIcon.prototype._onMenuPoppedDown;
-
-
-      // No action on clicked (showing of the appsview is controlled elsewhere)
-      showAppsIcon._onClicked = function(actor, button) {
-          showAppsIcon._removeMenuTimeout();
-      };
-
-      showAppsIcon.actor.connect('leave-event', Lang.bind( showAppsIcon, showAppsIcon._onLeaveEvent));
-      showAppsIcon.actor.connect('button-press-event', Lang.bind( showAppsIcon, showAppsIcon._onButtonPress));
-      showAppsIcon.actor.connect('touch-event', Lang.bind( showAppsIcon,  showAppsIcon._onTouchEvent));
-      showAppsIcon.actor.connect('clicked', Lang.bind( showAppsIcon, showAppsIcon._onClicked));
-      showAppsIcon.actor.connect('popup-menu', Lang.bind( showAppsIcon, showAppsIcon._onKeyboardPopupMenu));
-
-      showAppsIcon._menu = null;
-      showAppsIcon._menuManager = new PopupMenu.PopupMenuManager(showAppsIcon);
-      showAppsIcon._menuTimeoutId = 0;
-  
-      showAppsIcon.showLabel = itemShowLabel;
-
-      showAppsIcon.popupMenu = function() {
-
-          showAppsIcon._removeMenuTimeout();
-          showAppsIcon.actor.fake_release();
-
-          if (!showAppsIcon._menu) {
-              showAppsIcon._menu = new myShowAppsIconMenu(showAppsIcon, showAppsIcon._dtdSettings);
-              showAppsIcon._menu.connect('open-state-changed', Lang.bind(showAppsIcon, function (menu, isPoppedUp) {
-              if (!isPoppedUp)
-                  showAppsIcon._onMenuPoppedDown();
-              }));
-              let id = Main.overview.connect('hiding', Lang.bind(showAppsIcon, function () { showAppsIcon._menu.close(); }));
-              showAppsIcon._menu.actor.connect('destroy', function() {
-                  Main.overview.disconnect(id);
-              });
-              showAppsIcon._menuManager.addMenu(showAppsIcon._menu);
-          }
-
-          showAppsIcon.emit('menu-state-changed', true);
-
-          showAppsIcon.actor.set_hover(true);
-          showAppsIcon._menu.popup();
-          showAppsIcon._menuManager.ignoreRelease();
-          showAppsIcon.emit('sync-tooltip');
-
-          return false;
-      };
-
-      Signals.addSignalMethods(showAppsIcon);
+function extendDashItemContainer(dashItemContainer, settings) {
+    dashItemContainer._dtdSettings = settings;
+    dashItemContainer.showLabel = Icons.itemShowLabel;
 }
 
-/* This class is a fork of the upstream DashActor class (ui.dash.js)
+/**
+ * This class is a fork of the upstream DashActor class (ui.dash.js)
  *
  * Summary of changes:
  * - passed settings to class as parameter
@@ -148,48 +58,51 @@ const MyDashActor = new Lang.Class({
 
     _init: function(settings) {
         this._dtdSettings = settings;
-        this._rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
+        this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
         this._position = Convenience.getPosition(settings);
-        this._isHorizontal = ( this._position == St.Side.TOP ||
-                               this._position == St.Side.BOTTOM );
+        this._isHorizontal = ((this._position == St.Side.TOP) ||
+                               (this._position == St.Side.BOTTOM));
 
-        let layout = new Clutter.BoxLayout({ orientation:
-          this._isHorizontal?Clutter.Orientation.HORIZONTAL:Clutter.Orientation.VERTICAL });
+        let layout = new Clutter.BoxLayout({
+            orientation: this._isHorizontal?Clutter.Orientation.HORIZONTAL:Clutter.Orientation.VERTICAL
+        });
 
-        this.actor = new Shell.GenericContainer({ name: 'dash',
-                      layout_manager: layout,
-                      clip_to_allocation: true });
+        this.actor = new Shell.GenericContainer({
+            name: 'dash',
+            layout_manager: layout,
+            clip_to_allocation: true
+        });
         this.actor.connect('get-preferred-width', Lang.bind(this, this._getPreferredWidth));
         this.actor.connect('get-preferred-height', Lang.bind(this, this._getPreferredHeight));
         this.actor.connect('allocate', Lang.bind(this, this._allocate));
 
         this.actor._delegate = this;
-        
-        // Popup menu
-        
-		this.menu = new PopupMenu.PopupMenu(this.actor, 0.0, St.Side.RIGHT, 0);
-		this.menu.actor.hide();
-		this.menu.actor.add_style_class_name('panel-menu');
-		let settingsMenuItem = new PopupMenu.PopupMenuItem('Dash to Dock ' + _('Settings'));
-		settingsMenuItem.connect('activate', Lang.bind(this, function() {
-			Util.spawn(['gnome-shell-extension-prefs', Me.metadata.uuid]);
-		}));
-		this.menu.addMenuItem(settingsMenuItem);
-		
-		Main.uiGroup.add_actor(this.menu.actor);
-		this.menu.close();
 
+        // Popup menu
+        let side = Convenience.getPosition(settings);
+        this.menu = new PopupMenu.PopupMenu(this.actor, 0.0, side, 0);
+        this.menu.actor.add_style_class_name('panel-menu');
+        let settingsMenuItem = new PopupMenu.PopupMenuItem('Dash to Dock ' + _('Settings'));
+        settingsMenuItem.connect('activate', Lang.bind(this, function() {
+            Util.spawn(['gnome-shell-extension-prefs', Me.metadata.uuid]);
+        }));
+        this.menu.addMenuItem(settingsMenuItem);
+
+        Main.uiGroup.add_actor(this.menu.actor);
+        this.menu.close();
+
+        // Menu manager is required
         this._menuManager = new PopupMenu.PopupMenuManager(this);
         this._menuManager.addMenu(this.menu);
 
-		this.actor.reactive = true;
+        // Right-click on dash to toggle popup menu
+        this.actor.reactive = true;
         this.actor.connect('button-press-event', Lang.bind(this, function(actor, event) {
-			if (event.get_state() & Clutter.ModifierType.BUTTON3_MASK) {
-				this.menu.toggle();
-			}
-		}));
-
+            if (event.get_state() & Clutter.ModifierType.BUTTON3_MASK) {
+                this.menu.toggle();
+            }
+        }));
     },
 
     _allocate: function(actor, box, flags) {
@@ -205,10 +118,9 @@ const MyDashActor = new Lang.Class({
         let offset_y = this._isHorizontal?0:showAppsNatHeight;
 
         let childBox = new Clutter.ActorBox();
-        if( (this._dtdSettings.get_boolean('show-apps-at-top') && !this._isHorizontal)
+        if ((this._dtdSettings.get_boolean('show-apps-at-top') && !this._isHorizontal)
             || (this._dtdSettings.get_boolean('show-apps-at-top') && !this._rtl)
-            || (!this._dtdSettings.get_boolean('show-apps-at-top') && this._isHorizontal && this._rtl)
-          ) {
+            || (!this._dtdSettings.get_boolean('show-apps-at-top') && this._isHorizontal && this._rtl)) {
             childBox.x1 = contentBox.x1 + offset_x;
             childBox.y1 = contentBox.y1 + offset_y;
             childBox.x2 = contentBox.x2;
@@ -220,7 +132,8 @@ const MyDashActor = new Lang.Class({
             childBox.x2 = contentBox.x1 + showAppsNatWidth;
             childBox.y2 = contentBox.y1 + showAppsNatHeight;
             showAppsButton.allocate(childBox, flags);
-        } else {
+        }
+        else {
             childBox.x1 = contentBox.x1;
             childBox.y1 = contentBox.y1;
             childBox.x2 = contentBox.x2 - offset_x;
@@ -269,7 +182,7 @@ const MyDashActor = new Lang.Class({
     }
 });
 
-const baseIconSizes = [ 16, 22, 24, 32, 48, 64, 96, 128 ];
+const baseIconSizes = [16, 22, 24, 32, 48, 64, 96, 128];
 
 /**
  * This class is a fork of the upstream dash class (ui.dash.js)
@@ -290,7 +203,7 @@ const baseIconSizes = [ 16, 22, 24, 32, 48, 64, 96, 128 ];
 const MyDash = new Lang.Class({
     Name: 'DashToDock.MyDash',
 
-    _init : function(settings) {
+    _init: function(settings) {
         this._maxHeight = -1;
         this.iconSize = 64;
         this._availableIconSizes = baseIconSizes;
@@ -298,8 +211,8 @@ const MyDash = new Lang.Class({
 
         this._dtdSettings = settings;
         this._position = Convenience.getPosition(settings);
-        this._isHorizontal = ( this._position == St.Side.TOP ||
-                               this._position == St.Side.BOTTOM );
+        this._isHorizontal = ((this._position == St.Side.TOP) ||
+                               (this._position == St.Side.BOTTOM));
         this._signalsHandler = new Convenience.GlobalSignalsHandler();
 
         this._dragPlaceholder = null;
@@ -312,108 +225,105 @@ const MyDash = new Lang.Class({
 
         this._containerObject = new MyDashActor(settings);
         this._container = this._containerObject.actor;
-        this._scrollView = new St.ScrollView({ name: 'dashtodockDashScrollview',
-                                               hscrollbar_policy: Gtk.PolicyType.NEVER,
-                                               vscrollbar_policy: Gtk.PolicyType.NEVER,
-                                               enable_mouse_scrolling: false });
+        this._scrollView = new St.ScrollView({
+            name: 'dashtodockDashScrollview',
+            hscrollbar_policy: Gtk.PolicyType.NEVER,
+            vscrollbar_policy: Gtk.PolicyType.NEVER,
+            enable_mouse_scrolling: false
+        });
 
-        this._scrollView.connect('scroll-event', Lang.bind(this, this._onScrollEvent ));
+        this._scrollView.connect('scroll-event', Lang.bind(this, this._onScrollEvent));
 
-        this._box = new St.BoxLayout({ vertical: !this._isHorizontal,
-                                       clip_to_allocation: false,
-                                       x_align: Clutter.ActorAlign.START,
-                                       y_align: Clutter.ActorAlign.START });
+        this._box = new St.BoxLayout({
+            vertical: !this._isHorizontal,
+            clip_to_allocation: false,
+            x_align: Clutter.ActorAlign.START,
+            y_align: Clutter.ActorAlign.START
+        });
         this._box._delegate = this;
         this._container.add_actor(this._scrollView);
         this._scrollView.add_actor(this._box);
 
         this._showAppsIcon = new Dash.ShowAppsIcon();
-        extendShowAppsIcon(this._showAppsIcon, this._dtdSettings);
+        Icons.extendShowAppsIcon(this._showAppsIcon, this._dtdSettings);
         this._showAppsIcon.childScale = 1;
         this._showAppsIcon.childOpacity = 255;
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._hookUpLabel(this._showAppsIcon);
 
-
         let appsIcon = this._showAppsIcon;
-        appsIcon.connect('menu-state-changed',
-            Lang.bind(this, function(appsIcon, opened) {
-                this._itemMenuStateChanged(appsIcon, opened);
-            }));
+        appsIcon.connect('menu-state-changed', Lang.bind(this, function(appsIcon, opened) {
+            this._itemMenuStateChanged(appsIcon, opened);
+        }));
 
         this.showAppsButton = this._showAppsIcon.toggleButton;
 
         this._container.add_actor(this._showAppsIcon);
 
         let rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
-        this.actor = new St.Bin({ child: this._container,
-            y_align: St.Align.START, x_align:rtl?St.Align.END:St.Align.START
+        this.actor = new St.Bin({
+            child: this._container,
+            y_align: St.Align.START,
+            x_align: rtl ? St.Align.END : St.Align.START
         });
 
-        if(this._isHorizontal) {
-            this.actor.connect('notify::width', Lang.bind(this,
-                function() {
-                    if (this._maxHeight != this.actor.width)
-                        this._queueRedisplay();
-                    this._maxHeight = this.actor.width;
-                }));
-        } else {
-            this.actor.connect('notify::height', Lang.bind(this,
-                function() {
-                    if (this._maxHeight != this.actor.height)
-                        this._queueRedisplay();
-                    this._maxHeight = this.actor.height;
-                }));
+        if (this._isHorizontal) {
+            this.actor.connect('notify::width', Lang.bind(this, function() {
+                if (this._maxHeight != this.actor.width)
+                    this._queueRedisplay();
+                this._maxHeight = this.actor.width;
+            }));
+        }
+        else {
+            this.actor.connect('notify::height', Lang.bind(this, function() {
+                if (this._maxHeight != this.actor.height)
+                    this._queueRedisplay();
+                this._maxHeight = this.actor.height;
+            }));
         }
 
         // Update minimization animation target position on allocation of the
         // container and on scrollview change.
         this._box.connect('notify::allocation', Lang.bind(this, this._updateAppIcons));
-        let scrollViewAdjustment = this._isHorizontal?this._scrollView.hscroll.adjustment:this._scrollView.vscroll.adjustment;
+        let scrollViewAdjustment = this._isHorizontal ? this._scrollView.hscroll.adjustment : this._scrollView.vscroll.adjustment;
         scrollViewAdjustment.connect('notify::value', Lang.bind(this, this._updateAppIcons));
 
         this._workId = Main.initializeDeferredWork(this._box, Lang.bind(this, this._redisplay));
 
-        this._settings = new Gio.Settings({ schema_id: 'org.gnome.shell' });
+        this._settings = new Gio.Settings({
+            schema_id: 'org.gnome.shell'
+        });
 
         this._appSystem = Shell.AppSystem.get_default();
 
-        this._signalsHandler.add(
-            [
-                this._appSystem,
-                'installed-changed',
-                Lang.bind(this, function() {
-                    AppFavorites.getAppFavorites().reload();
-                    this._queueRedisplay();
-                })
-            ],
-            [
-                AppFavorites.getAppFavorites(),
-                'changed',
-                Lang.bind(this, this._queueRedisplay)
-            ],
-            [
-                this._appSystem,
-                'app-state-changed',
-                Lang.bind(this, this._queueRedisplay)
-            ],
-            [
-                Main.overview,
-                'item-drag-begin',
-                Lang.bind(this, this._onDragBegin)
-            ],
-            [
-                Main.overview,
-                'item-drag-end',
-                Lang.bind(this, this._onDragEnd)
-            ],
-            [
-                Main.overview,
-                'item-drag-cancelled',
-                Lang.bind(this, this._onDragCancelled)
-            ]
-        );
-
+        this._signalsHandler.add([
+            this._appSystem,
+            'installed-changed',
+            Lang.bind(this, function() {
+                AppFavorites.getAppFavorites().reload();
+                this._queueRedisplay();
+            })
+        ], [
+            AppFavorites.getAppFavorites(),
+            'changed',
+            Lang.bind(this, this._queueRedisplay)
+        ], [
+            this._appSystem,
+            'app-state-changed',
+            Lang.bind(this, this._queueRedisplay)
+        ], [
+            Main.overview,
+            'item-drag-begin',
+            Lang.bind(this, this._onDragBegin)
+        ], [
+            Main.overview,
+            'item-drag-end',
+            Lang.bind(this, this._onDragEnd)
+        ], [
+            Main.overview,
+            'item-drag-cancelled',
+            Lang.bind(this, this._onDragCancelled)
+        ]);
     },
 
     destroy: function() {
@@ -421,10 +331,9 @@ const MyDash = new Lang.Class({
     },
 
     _onScrollEvent: function(actor, event) {
-
         // If scroll is not used because the icon is resized, let the scroll event propagate.
         if (!this._dtdSettings.get_boolean('icon-size-fixed'))
-          return Clutter.EVENT_PROPAGATE;
+            return Clutter.EVENT_PROPAGATE;
 
         // Event coordinates are relative to the stage but can be transformed
         // as the actor will only receive events within his bounds.
@@ -440,9 +349,9 @@ const MyDash = new Lang.Class({
             || (this._position == St.Side.TOP && event_y <= 1)
             || (this._position == St.Side.BOTTOM && event_y >= actor_h - 2))
             return Clutter.EVENT_PROPAGATE;
-            
+
         // reset timeout to avid conflicts with the mousehover event
-        if (this._ensureAppIconVisibilityTimeoutId>0) {
+        if (this._ensureAppIconVisibilityTimeoutId > 0) {
             Mainloop.source_remove(this._ensureAppIconVisibilityTimeoutId);
             this._ensureAppIconVisibilityTimeoutId = 0;
         }
@@ -460,7 +369,7 @@ const MyDash = new Lang.Class({
 
         let increment = adjustment.step_increment;
 
-        switch ( event.get_scroll_direction() ) {
+        switch (event.get_scroll_direction()) {
         case Clutter.ScrollDirection.UP:
             delta = -increment;
             break;
@@ -469,18 +378,16 @@ const MyDash = new Lang.Class({
             break;
         case Clutter.ScrollDirection.SMOOTH:
             let [dx, dy] = event.get_scroll_delta();
-            delta = dy*increment;
+            delta = dy * increment;
             // Also consider horizontal component, for instance touchpad
             if (this._isHorizontal)
-                delta += dx*increment;
+                delta += dx * increment;
             break;
-
         }
 
         adjustment.set_value(adjustment.get_value() + delta);
 
         return Clutter.EVENT_STOP;
-
     },
 
     _onDragBegin: function() {
@@ -521,8 +428,7 @@ const MyDash = new Lang.Class({
         if (app == null)
             return DND.DragMotionResult.CONTINUE;
 
-        let showAppsHovered =
-                this._showAppsIcon.contains(dragEvent.targetActor);
+        let showAppsHovered = this._showAppsIcon.contains(dragEvent.targetActor);
 
         if (!this._box.contains(dragEvent.targetActor) || showAppsHovered)
             this._clearDragPlaceholder();
@@ -542,7 +448,7 @@ const MyDash = new Lang.Class({
         return ids;
     },
 
-    _queueRedisplay: function () {
+    _queueRedisplay: function() {
         Main.queueDeferredWork(this._workId);
     },
 
@@ -571,26 +477,22 @@ const MyDash = new Lang.Class({
                                              { setSizeManually: true,
                                                showLabel: false });
         if (appIcon._draggable) {
-            appIcon._draggable.connect('drag-begin',
-                                       Lang.bind(this, function() {
-                                           appIcon.actor.opacity = 50;
-                                       }));
-            appIcon._draggable.connect('drag-end',
-                                       Lang.bind(this, function() {
-                                           appIcon.actor.opacity = 255;
-                                       }));
+            appIcon._draggable.connect('drag-begin', Lang.bind(this, function() {
+                appIcon.actor.opacity = 50;
+            }));
+            appIcon._draggable.connect('drag-end', Lang.bind(this, function() {
+                appIcon.actor.opacity = 255;
+            }));
         }
 
-        appIcon.connect('menu-state-changed',
-                        Lang.bind(this, function(appIcon, opened) {
-                            this._itemMenuStateChanged(item, opened);
-                        }));
+        appIcon.connect('menu-state-changed', Lang.bind(this, function(appIcon, opened) {
+            this._itemMenuStateChanged(item, opened);
+        }));
 
         let item = new Dash.DashItemContainer();
 
         extendDashItemContainer(item, this._dtdSettings);
         item.setChild(appIcon.actor);
-
 
         item.setChild(appIcon.actor);
         appIcon.actor.connect('notify::hover', Lang.bind(this, function() {
@@ -600,30 +502,28 @@ const MyDash = new Lang.Class({
                     this._ensureAppIconVisibilityTimeoutId = 0;
                     return GLib.SOURCE_REMOVE;
                 }));
-            } else {
-                if (this._ensureAppIconVisibilityTimeoutId>0) {
+            }
+            else {
+                if (this._ensureAppIconVisibilityTimeoutId > 0) {
                     Mainloop.source_remove(this._ensureAppIconVisibilityTimeoutId);
                     this._ensureAppIconVisibilityTimeoutId = 0;
                 }
             }
         }));
 
-        appIcon.actor.connect('clicked',
-            Lang.bind(this, function(actor) {
-                ensureActorVisibleInScrollView(this._scrollView, actor);
+        appIcon.actor.connect('clicked', Lang.bind(this, function(actor) {
+            ensureActorVisibleInScrollView(this._scrollView, actor);
         }));
 
-        appIcon.actor.connect('key-focus-in',
-            Lang.bind(this, function(actor) {
+        appIcon.actor.connect('key-focus-in', Lang.bind(this, function(actor) {
+            let [x_shift, y_shift] = ensureActorVisibleInScrollView(this._scrollView, actor);
 
-                let [x_shift, y_shift] = ensureActorVisibleInScrollView(this._scrollView, actor);
-
-                // This signal is triggered also by mouse click. The popup menu is opened at the original
-                // coordinates. Thus correct for the shift which is going to be applied to the scrollview.
-                if (appIcon._menu) {
-                    appIcon._menu._boxPointer.xOffset = -x_shift;
-                    appIcon._menu._boxPointer.yOffset = -y_shift;
-                }
+            // This signal is triggered also by mouse click. The popup menu is opened at the original
+            // coordinates. Thus correct for the shift which is going to be applied to the scrollview.
+            if (appIcon._menu) {
+                appIcon._menu._boxPointer.xOffset = -x_shift;
+                appIcon._menu._boxPointer.yOffset = -y_shift;
+            }
         }));
 
         // Override default AppIcon label_actor, now the
@@ -636,8 +536,10 @@ const MyDash = new Lang.Class({
 
         return item;
     },
-    
-    // Return an array with the "proper" appIcons currently in the dash
+
+    /**
+     * Return an array with the "proper" appIcons currently in the dash
+     */
     _getAppIcons: function() {
         // Only consider children which are "proper"
         // icons (i.e. ignoring drag placeholders) and which are not
@@ -674,7 +576,8 @@ const MyDash = new Lang.Class({
             }
 
             item.hideLabel();
-        } else {
+        }
+        else {
             // I want to listen from outside when a menu is closed. I used to
             // add a custom signal to the appIcon, since gnome 3.8 the signal
             // calling this callback was added upstream.
@@ -682,37 +585,36 @@ const MyDash = new Lang.Class({
         }
     },
 
-    _syncLabel: function (item, appIcon) {
+    _syncLabel: function(item, appIcon) {
         let shouldShow = appIcon ? appIcon.shouldShowTooltip() : item.child.get_hover();
 
         if (shouldShow) {
             if (this._showLabelTimeoutId == 0) {
                 let timeout = this._labelShowing ? 0 : DASH_ITEM_HOVER_TIMEOUT;
-                this._showLabelTimeoutId = Mainloop.timeout_add(timeout,
-                    Lang.bind(this, function() {
-                        this._labelShowing = true;
-                        item.showLabel();
-                        this._showLabelTimeoutId = 0;
-                        return GLib.SOURCE_REMOVE;
-                    }));
+                this._showLabelTimeoutId = Mainloop.timeout_add(timeout, Lang.bind(this, function() {
+                    this._labelShowing = true;
+                    item.showLabel();
+                    this._showLabelTimeoutId = 0;
+                    return GLib.SOURCE_REMOVE;
+                }));
                 GLib.Source.set_name_by_id(this._showLabelTimeoutId, '[gnome-shell] item.showLabel');
                 if (this._resetHoverTimeoutId > 0) {
                     Mainloop.source_remove(this._resetHoverTimeoutId);
                     this._resetHoverTimeoutId = 0;
                 }
             }
-        } else {
+        }
+        else {
             if (this._showLabelTimeoutId > 0)
                 Mainloop.source_remove(this._showLabelTimeoutId);
             this._showLabelTimeoutId = 0;
             item.hideLabel();
             if (this._labelShowing) {
-                this._resetHoverTimeoutId = Mainloop.timeout_add(DASH_ITEM_HOVER_TIMEOUT,
-                    Lang.bind(this, function() {
-                        this._labelShowing = false;
-                        this._resetHoverTimeoutId = 0;
-                        return GLib.SOURCE_REMOVE;
-                    }));
+                this._resetHoverTimeoutId = Mainloop.timeout_add(DASH_ITEM_HOVER_TIMEOUT, Lang.bind(this, function() {
+                    this._labelShowing = false;
+                    this._resetHoverTimeoutId = 0;
+                    return GLib.SOURCE_REMOVE;
+                }));
                 GLib.Source.set_name_by_id(this._resetHoverTimeoutId, '[gnome-shell] this._labelShowing');
             }
         }
@@ -736,9 +638,12 @@ const MyDash = new Lang.Class({
             return;
 
         let themeNode = this._container.get_theme_node();
-        let maxAllocation = new Clutter.ActorBox({ x1: 0, y1: 0,
-                                                   x2: this._isHorizontal?this._maxHeight:42 /* whatever */,
-                                                   y2: this._isHorizontal?42:this._maxHeight });
+        let maxAllocation = new Clutter.ActorBox({
+            x1: 0,
+            y1: 0,
+            x2: this._isHorizontal ? this._maxHeight : 42 /* whatever */,
+            y2: this._isHorizontal ? 42 : this._maxHeight
+        });
         let maxContent = themeNode.get_content_box(maxAllocation);
         let availHeight;
         if (this._isHorizontal)
@@ -763,13 +668,12 @@ const MyDash = new Lang.Class({
         });
 
         // Subtract icon padding and box spacing from the available height
-        if(this._isHorizontal) {
+        if (this._isHorizontal)
             availHeight -= iconChildren.length * (natWidth - this.iconSize * scaleFactor) +
                            (iconChildren.length - 1) * spacing;
-        } else {
+        else
             availHeight -= iconChildren.length * (natHeight - this.iconSize * scaleFactor) +
                            (iconChildren.length - 1) * spacing;
-        }
 
         let availSize = availHeight / iconChildren.length;
 
@@ -818,32 +722,32 @@ const MyDash = new Lang.Class({
         }
     },
 
-    _redisplay: function () {
+    _redisplay: function() {
         let favorites = AppFavorites.getAppFavorites().getFavoriteMap();
 
         let running = this._appSystem.get_running();
 
         let children = this._box.get_children().filter(function(actor) {
-                return actor.child &&
-                       actor.child._delegate &&
-                       actor.child._delegate.app;
-            });
+            return actor.child &&
+                   actor.child._delegate &&
+                   actor.child._delegate.app;
+        });
         // Apps currently in the dash
         let oldApps = children.map(function(actor) {
-                return actor.child._delegate.app;
-            });
+            return actor.child._delegate.app;
+        });
         // Apps supposed to be in the dash
         let newApps = [];
 
-        if( this._dtdSettings.get_boolean('show-favorites') ) {
+        if (this._dtdSettings.get_boolean('show-favorites')) {
             for (let id in favorites)
                 newApps.push(favorites[id]);
         }
 
-        if( this._dtdSettings.get_boolean('show-running') ) {
+        if (this._dtdSettings.get_boolean('show-running')) {
             for (let i = 0; i < running.length; i++) {
                 let app = running[i];
-                if (this._dtdSettings.get_boolean('show-favorites') && (app.get_id() in favorites) )
+                if (this._dtdSettings.get_boolean('show-favorites') && (app.get_id() in favorites))
                     continue;
                 newApps.push(app);
             }
@@ -865,12 +769,13 @@ const MyDash = new Lang.Class({
         // If above assumptions turns out to be a problem, we might need
         // to use a more sophisticated algorithm, e.g. Longest Common
         // Subsequence as used by diff.
+
         let addedItems = [];
         let removedActors = [];
 
         let newIndex = 0;
         let oldIndex = 0;
-        while (newIndex < newApps.length || oldIndex < oldApps.length) {
+        while ((newIndex < newApps.length) || (oldIndex < oldApps.length)) {
             // No change at oldIndex/newIndex
             if (oldApps[oldIndex] == newApps[newIndex]) {
                 oldIndex++;
@@ -879,27 +784,24 @@ const MyDash = new Lang.Class({
             }
 
             // App removed at oldIndex
-            if (oldApps[oldIndex] &&
-                newApps.indexOf(oldApps[oldIndex]) == -1) {
+            if (oldApps[oldIndex] && (newApps.indexOf(oldApps[oldIndex]) == -1)) {
                 removedActors.push(children[oldIndex]);
                 oldIndex++;
                 continue;
             }
 
             // App added at newIndex
-            if (newApps[newIndex] &&
-                oldApps.indexOf(newApps[newIndex]) == -1) {
+            if (newApps[newIndex] && (oldApps.indexOf(newApps[newIndex]) == -1)) {
                 let newItem = this._createAppItem(newApps[newIndex]);
-				addedItems.push({ app: newApps[newIndex],
-								  item: newItem,
-								  pos: newIndex });
-				newIndex++;
+                addedItems.push({ app: newApps[newIndex],
+                                  item: newItem,
+                                  pos: newIndex });
+                newIndex++;
                 continue;
             }
 
             // App moved
-            let insertHere = newApps[newIndex + 1] &&
-                             newApps[newIndex + 1] == oldApps[oldIndex];
+            let insertHere = newApps[newIndex + 1] && (newApps[newIndex + 1] == oldApps[oldIndex]);
             let alreadyRemoved = removedActors.reduce(function(result, actor) {
                 let removedApp = actor.child._delegate.app;
                 return result || removedApp == newApps[newIndex];
@@ -907,16 +809,19 @@ const MyDash = new Lang.Class({
 
             if (insertHere || alreadyRemoved) {
                 let newItem = this._createAppItem(newApps[newIndex]);
-				addedItems.push({ app: newApps[newIndex],
-								  item: newItem,
-								  pos: newIndex + removedActors.length });
-				newIndex++;
-            } else {
+                addedItems.push({
+                    app: newApps[newIndex],
+                    item: newItem,
+                    pos: newIndex + removedActors.length
+                });
+                newIndex++;
+            }
+            else {
                 removedActors.push(children[oldIndex]);
                 oldIndex++;
             }
         }
-        
+
         for (let i = 0; i < addedItems.length; i++)
             this._box.insert_child_at_index(addedItems[i].item,
                                             addedItems[i].pos);
@@ -933,10 +838,9 @@ const MyDash = new Lang.Class({
 
         this._adjustIconSize();
 
-        for (let i = 0; i < addedItems.length; i++) {
+        for (let i = 0; i < addedItems.length; i++)
             // Emit a custom signal notifying that a new item has been added
             this.emit('item-added', addedItems[i]);
-        }
 
         // Skip animations on first run when adding the initial set
         // of items, to avoid all items zooming in at once
@@ -947,9 +851,8 @@ const MyDash = new Lang.Class({
         if (!this._shownInitially)
             this._shownInitially = true;
 
-        for (let i = 0; i < addedItems.length; i++) {
+        for (let i = 0; i < addedItems.length; i++)
             addedItems[i].item.show(animate);
-        }
 
         // Workaround for https://bugzilla.gnome.org/show_bug.cgi?id=692744
         // Without it, StBoxLayout may use a stale size cache
@@ -959,19 +862,16 @@ const MyDash = new Lang.Class({
         this._updateAppIcons();
     },
 
-    setIconSize: function (max_size, doNotAnimate) {
-
+    setIconSize: function(max_size, doNotAnimate) {
         let max_allowed = baseIconSizes[baseIconSizes.length-1];
         max_size = Math.min(max_size, max_allowed);
 
-        if (this._dtdSettings.get_boolean('icon-size-fixed')) {
-            this._availableIconSizes = [ max_size ];
-        } else {
-            this._availableIconSizes = baseIconSizes.filter(
-                function(val) {
-                    return (val<max_size);
-                }
-            );
+        if (this._dtdSettings.get_boolean('icon-size-fixed'))
+            this._availableIconSizes = [max_size];
+        else {
+            this._availableIconSizes = baseIconSizes.filter(function(val) {
+                return (val<max_size);
+            });
             this._availableIconSizes.push(max_size);
         }
 
@@ -979,13 +879,13 @@ const MyDash = new Lang.Class({
             this._shownInitially = false;
 
         this._queueRedisplay();
-
     },
 
-    // Reset the displayed apps icon to mantain the correct order when changing
-    // show favorites/show running settings
-    resetAppIcons : function() {
-
+    /**
+     * Reset the displayed apps icon to mantain the correct order when changing
+     * show favorites/show running settings
+     */
+    resetAppIcons: function() {
         let children = this._box.get_children().filter(function(actor) {
             return actor.child &&
                 actor.child._delegate &&
@@ -1006,10 +906,9 @@ const MyDash = new Lang.Class({
         if (this._dragPlaceholder) {
             this._animatingPlaceholdersCount++;
             this._dragPlaceholder.animateOutAndDestroy();
-            this._dragPlaceholder.connect('destroy',
-                Lang.bind(this, function() {
-                    this._animatingPlaceholdersCount--;
-                }));
+            this._dragPlaceholder.connect('destroy', Lang.bind(this, function() {
+                this._animatingPlaceholdersCount--;
+            }));
             this._dragPlaceholder = null;
         }
         this._dragPlaceholderPos = -1;
@@ -1022,8 +921,7 @@ const MyDash = new Lang.Class({
         }
     },
 
-    handleDragOver : function(source, actor, x, y, time) {
-
+    handleDragOver: function(source, actor, x, y, time) {
         let app = Dash.getAppFromSource(source);
 
         // Don't allow favoriting of transient apps
@@ -1041,9 +939,8 @@ const MyDash = new Lang.Class({
         let children = this._box.get_children();
         let numChildren = children.length;
         let boxHeight = 0;
-        for (let i = 0; i < numChildren; i++) {
+        for (let i = 0; i < numChildren; i++)
             boxHeight += this._isHorizontal?children[i].width:children[i].height;
-        }
 
         // Keep the placeholder out of the index calculation; assuming that
         // the remove target has the same size as "normal" items, we don't
@@ -1058,20 +955,19 @@ const MyDash = new Lang.Class({
             pos = Math.floor((this._isHorizontal?x:y) * numChildren / boxHeight);
             if (pos >  numChildren)
                 pos = numChildren;
-        } else
+        }
+        else
             pos = 0; // always insert at the top when dash is empty
 
-        /* Take into account childredn position in rtl*/
-        if (this._isHorizontal &&
-          Clutter.get_default_text_direction() == Clutter.TextDirection.RTL
-          )
+        // Take into account childredn position in rtl
+        if (this._isHorizontal && (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL))
             pos = numChildren - pos;
 
-        if (pos != this._dragPlaceholderPos && pos <= numFavorites && this._animatingPlaceholdersCount == 0) {
+        if ((pos != this._dragPlaceholderPos) && (pos <= numFavorites) && (this._animatingPlaceholdersCount == 0)) {
             this._dragPlaceholderPos = pos;
 
             // Don't allow positioning before or after self
-            if (favPos != -1 && (pos == favPos || pos == favPos + 1)) {
+            if ((favPos != -1) && (pos == favPos || pos == favPos + 1)) {
                 this._clearDragPlaceholder();
                 return DND.DragMotionResult.CONTINUE;
             }
@@ -1083,9 +979,9 @@ const MyDash = new Lang.Class({
             if (this._dragPlaceholder) {
                 this._dragPlaceholder.destroy();
                 fadeIn = false;
-            } else {
-                fadeIn = true;
             }
+            else
+                fadeIn = true;
 
             this._dragPlaceholder = new Dash.DragPlaceholderItem();
             this._dragPlaceholder.child.set_width (this.iconSize);
@@ -1117,15 +1013,15 @@ const MyDash = new Lang.Class({
         return DND.DragMotionResult.COPY_DROP;
     },
 
-    // Draggable target interface
-    acceptDrop : function(source, actor, x, y, time) {
-
+    /**
+     * Draggable target interface
+     */
+    acceptDrop: function(source, actor, x, y, time) {
         let app = Dash.getAppFromSource(source);
 
         // Don't allow favoriting of transient apps
-        if (app == null || app.is_window_backed()) {
+        if (app == null || app.is_window_backed())
             return false;
-        }
 
         if (!this._settings.is_writable('favorite-apps') || !this._dtdSettings.get_boolean('show-favorites'))
             return false;
@@ -1139,8 +1035,7 @@ const MyDash = new Lang.Class({
         let favPos = 0;
         let children = this._box.get_children();
         for (let i = 0; i < this._dragPlaceholderPos; i++) {
-            if (this._dragPlaceholder &&
-                children[i] == this._dragPlaceholder)
+            if (this._dragPlaceholder && (children[i] == this._dragPlaceholder))
                 continue;
 
             let childId = children[i].child._delegate.app.get_id();
@@ -1155,15 +1050,14 @@ const MyDash = new Lang.Class({
         if (!this._dragPlaceholder)
             return true;
 
-        Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this,
-            function () {
-                let appFavorites = AppFavorites.getAppFavorites();
-                if (srcIsFavorite)
-                    appFavorites.moveFavoriteToPos(id, favPos);
-                else
-                    appFavorites.addFavoriteAtPos(id, favPos);
-                return false;
-            }));
+        Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
+            let appFavorites = AppFavorites.getAppFavorites();
+            if (srcIsFavorite)
+                appFavorites.moveFavoriteToPos(id, favPos);
+            else
+                appFavorites.addFavoriteAtPos(id, favPos);
+            return false;
+        }));
 
         return true;
     },
@@ -1183,14 +1077,13 @@ const MyDash = new Lang.Class({
 
 Signals.addSignalMethods(MyDash.prototype);
 
-/*
+/**
  * This is a copy of the same function in utils.js, but also adjust horizontal scrolling
  * and perform few further cheks on the current value to avoid changing the values when
  * it would be clamp to the current one in any case.
  * Return the amount of shift applied
-*/
+ */
 function ensureActorVisibleInScrollView(scrollView, actor) {
-
     let adjust_v = true;
     let adjust_h = true;
 
@@ -1203,7 +1096,7 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
 
     let voffset = 0;
     let hoffset = 0;
-    let fade = scrollView.get_effect("fade");
+    let fade = scrollView.get_effect('fade');
     if (fade) {
         voffset = fade.vfade_offset;
         hoffset = fade.hfade_offset;
@@ -1215,7 +1108,7 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
     let parent = actor.get_parent();
     while (parent != scrollView) {
         if (!parent)
-            throw new Error("actor not in scroll view");
+            throw new Error('Actor not in scroll view');
 
         let box = parent.get_allocation_box();
         y1 += box.y1;
@@ -1236,10 +1129,10 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
         hvalue = Math.min(hupper - hpageSize, x2 + hoffset - hpageSize);
 
     if (vvalue !== vvalue0) {
-        Tweener.addTween(vadjustment,
-                         { value: vvalue,
-                           time: Util.SCROLL_TIME,
-                           transition: 'easeOutQuad' });
+        Tweener.addTween(vadjustment, { value: vvalue,
+            time: Util.SCROLL_TIME,
+            transition: 'easeOutQuad'
+        });
     }
 
     if (hvalue !== hvalue0) {
@@ -1250,81 +1143,4 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
     }
 
     return [hvalue- hvalue0, vvalue - vvalue0];
-}
-
-// This function is used for both extendShowAppsIcon and extendDashItemContainer
-function itemShowLabel()  {
-    if (!this._labelText) {
-      return;
-    }
-
-    this.label.set_text(this._labelText);
-    this.label.opacity = 0;
-    this.label.show();
-
-    let [stageX, stageY] = this.get_transformed_position();
-    let node = this.label.get_theme_node();
-
-    let itemWidth  = this.allocation.x2 - this.allocation.x1;
-    let itemHeight = this.allocation.y2 - this.allocation.y1;
-
-
-    let labelWidth = this.label.get_width();
-    let labelHeight = this.label.get_height();
-
-    let x, y, xOffset, yOffset;
-
-    let position = Convenience.getPosition(this._dtdSettings);
-      this._isHorizontal = ( position == St.Side.TOP ||
-                             position == St.Side.BOTTOM);
-    let labelOffset = node.get_length('-x-offset');
-
-    switch(position) {
-      case St.Side.LEFT:
-          yOffset = Math.floor((itemHeight - labelHeight) / 2);
-          y = stageY + yOffset;
-          xOffset = labelOffset;
-          x = stageX + this.get_width() + xOffset;
-          break;
-      case St.Side.RIGHT:
-          yOffset = Math.floor((itemHeight - labelHeight) / 2);
-          y = stageY + yOffset;
-          xOffset = labelOffset;
-          x = Math.round(stageX) - labelWidth - xOffset;
-          break;
-      case St.Side.TOP:
-          y = stageY + labelOffset + itemHeight;
-          xOffset = Math.floor((itemWidth - labelWidth) / 2);
-          x = stageX + xOffset;
-          break;
-      case St.Side.BOTTOM:
-          yOffset = labelOffset;
-          y = stageY - labelHeight - yOffset;
-          xOffset = Math.floor((itemWidth - labelWidth) / 2);
-          x = stageX + xOffset;
-          break;
-    }
-
-    // keep the label inside the screen border
-    // Only needed fot the x coordinate.
-
-    // Leave a few pixel gap
-    let gap = 5;
-    let monitor = Main.layoutManager.findMonitorForActor(this);
-    if ( x - monitor.x<gap)
-        x+= monitor.x - x + labelOffset;
-    else if ( x + labelWidth > monitor.x + monitor.width - gap)
-        x-= x + labelWidth -( monitor.x + monitor.width) + gap;
-
-    this.label.set_position(x, y);
-    Tweener.addTween(this.label,
-      { opacity: 255,
-        time: DASH_ITEM_LABEL_SHOW_TIME,
-        transition: 'easeOutQuad',
-      });
-}
-
-function extendDashItemContainer(dashItemContainer, settings) {
-    dashItemContainer._dtdSettings = settings;
-    dashItemContainer.showLabel = itemShowLabel;
 }

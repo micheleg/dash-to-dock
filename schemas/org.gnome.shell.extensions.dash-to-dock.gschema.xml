@@ -191,6 +191,11 @@
       <default>true</default>
       <summary>Activate only one window</summary>
     </key>
+    <key type="as" name="window-stealing">
+	  <default>[]</default>
+      <summary>Window stealing</summary>
+      <description>Each string is a space-separated list, where the first item in the list is the app ID and the subsequent items are WM_CLASS names</description>
+    </key>
     <key name="click-action" enum="org.gnome.shell.extensions.dash-to-dock.clickAction">
       <default>'cycle-windows'</default>
       <summary>Action when clicking on a running app</summary>
