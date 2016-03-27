@@ -1,26 +1,21 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const Clutter = imports.gi.Clutter;
-const Gio = imports.gi.Gio;
-const GLib = imports.gi.GLib;
-const Gtk = imports.gi.Gtk;
-const Signals = imports.signals;
 const Lang = imports.lang;
+const Mainloop = imports.mainloop;
+const Signals = imports.signals;
+
+const Clutter = imports.gi.Clutter;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-const Mainloop = imports.mainloop;
 
 const AppDisplay = imports.ui.appDisplay;
-const AppFavorites = imports.ui.appFavorites;
 const Dash = imports.ui.dash;
-const DND = imports.ui.dnd;
-const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
 const PopupMenu = imports.ui.popupMenu;
 const Tweener = imports.ui.tweener;
+
 const Util = imports.misc.util;
-const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
@@ -30,7 +25,7 @@ let tracker = Shell.WindowTracker.get_default();
 
 let DASH_ITEM_LABEL_SHOW_TIME = Dash.DASH_ITEM_LABEL_SHOW_TIME;
 
-const clickAction = {
+const ClickAction = {
     SKIP: 0,
     MINIMIZE: 1,
     LAUNCH: 2,
@@ -53,12 +48,15 @@ let recentlyClickedAppIndex = 0;
  * - Add a .focused style to the focused app
  * - Customize click actions.
  * - Update minimization animation target
+ * - Support configurable "window stealing"
  */
 const MyAppIcon = new Lang.Class({
     Name: 'DashToDock.AppIcon',
     Extends: AppDisplay.AppIcon,
 
-    // settings are required inside.
+    /**
+     * Settings are required inside.
+     */
     _init: function(settings, app, iconParams, onActivateOverride) {
         this._dtdSettings = settings;
         this._nWindows = 0;
@@ -72,12 +70,8 @@ const MyAppIcon = new Lang.Class({
             this._stateChangedId = 0;
         }
 
-        this._stateChangedId = this.app.connect('windows-changed',
-                                                Lang.bind(this,
-                                                          this.onWindowsChanged));
-        this._focuseAppChangeId = tracker.connect('notify::focus-app',
-                                                Lang.bind(this,
-                                                          this._onFocusAppChanged));
+        this._stateChangedId = this.app.connect('windows-changed', Lang.bind(this, this.onWindowsChanged));
+        this._focusAppChangeId = tracker.connect('notify::focus-app', Lang.bind(this, this._onFocusAppChanged));
 
         this._dots = null;
 
@@ -99,9 +93,9 @@ const MyAppIcon = new Lang.Class({
         this.parent();
 
         // Disconect global signals
-        // stateChangedId is already handled by parent)
-        if (this._focusAppId > 0)
-            tracker.disconnect(this._focusAppId);
+        // (stateChangedId is already handled by parent)
+        if (this._focusAppChangeId > 0)
+            tracker.disconnect(this._focusAppChangeId);
     },
 
     onWindowsChanged: function() {
@@ -125,6 +119,7 @@ const MyAppIcon = new Lang.Class({
         if (Windows.isStolen(this.app, this._dtdSettings)) {
             // Hide stolen app icon
             if (this.actor.child) {
+                // TODO: if settings changed, how do we recreate the child?
                 this.actor.child.destroy();
                 this.actor.child = null;
             }
@@ -260,24 +255,24 @@ const MyAppIcon = new Lang.Class({
                 minimizeWindow(this.app, event.get_click_count() > 1, this._dtdSettings);
             }
             else if (isFocused && !Main.overview._shown) {
-                if (this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS)
+                if (this._dtdSettings.get_enum('click-action') == ClickAction.CYCLE_WINDOWS)
                     cycleThroughWindows(this.app, this._dtdSettings);
-                else if (this._dtdSettings.get_enum('click-action') == clickAction.MINIMIZE)
+                else if (this._dtdSettings.get_enum('click-action') == ClickAction.MINIMIZE)
                     minimizeWindow(this.app, true, this._dtdSettings);
-                else if (this._dtdSettings.get_enum('click-action') == clickAction.LAUNCH)
+                else if (this._dtdSettings.get_enum('click-action') == ClickAction.LAUNCH)
                     this.app.open_new_window(-1);
             }
             else {
                 // Activate all window of the app or only le last used
-                if (this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS && !Main.overview._shown) {
+                if (this._dtdSettings.get_enum('click-action') == ClickAction.CYCLE_WINDOWS && !Main.overview._shown) {
                     // If click cycles through windows I can activate one windows at a time
                     let windows = Windows.getInterestingWindows(this.app, this._dtdSettings);
                     let w = windows[0];
                     Main.activateWindow(w);
                 }
-                else if (this._dtdSettings.get_enum('click-action') == clickAction.LAUNCH)
+                else if (this._dtdSettings.get_enum('click-action') == ClickAction.LAUNCH)
                     this.app.open_new_window(-1);
-                else if (this._dtdSettings.get_enum('click-action') == clickAction.MINIMIZE) {
+                else if (this._dtdSettings.get_enum('click-action') == ClickAction.MINIMIZE) {
                     // If click minimizes all, then one expects all windows to be reshown
                     activateAllWindows(this.app, this._dtdSettings);
                 }
@@ -396,7 +391,7 @@ function minimizeWindow(app, param, settings) {
             w.minimize();
             // Just minimize one window. By specification it should be the
             // focused window on the current workspace.
-            if(!param)
+            if (!param)
                 break;
         }
     }
@@ -431,7 +426,7 @@ function activateAllWindows(app, settings) {
 function cycleThroughWindows(app, settings) {
     // Store for a little amount of time last clicked app and its windows
     // since the order changes upon window interaction
-    let MEMORY_TIME=3000;
+    const MEMORY_TIME = 3000;
 
     let app_windows = Windows.getInterestingWindows(app, settings);
 
@@ -459,8 +454,8 @@ function cycleThroughWindows(app, settings) {
 function resetRecentlyClickedApp() {
     if (recentlyClickedAppLoopId > 0)
         Mainloop.source_remove(recentlyClickedAppLoopId);
-    recentlyClickedAppLoopId=0;
-    recentlyClickedApp =null;
+    recentlyClickedAppLoopId = 0;
+    recentlyClickedApp = null;
     recentlyClickedAppWindows = null;
     recentlyClickedAppIndex = 0;
 
@@ -509,7 +504,8 @@ const MyAppIconMenu = new Lang.Class({
         this._appendSeparator();
         this._stealWindowsMenuItem = this._appendMenuItem(_('Steal Windows'));
         this._stealWindowsMenuItem.connect('activate', Lang.bind(this, function() {
-            //global.log('>>>>>>>>>>>> ' + r);
+            let dialog = new Windows.WindowStealingSettings(this._source.app, this._dtdSettings);
+            dialog.open();
         }));
 
         // quit menu

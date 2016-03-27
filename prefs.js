@@ -1,12 +1,13 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+const Lang = imports.lang;
+const Mainloop = imports.mainloop;
+
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
-const Lang = imports.lang;
-const Mainloop = imports.mainloop;
 
 const Gettext = imports.gettext.domain('dashtodock');
 const _ = Gettext.gettext;
@@ -17,7 +18,7 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 
 const SCALE_UPDATE_TIMEOUT = 500;
-const DEFAULT_ICONS_SIZES = [ 128, 96, 64, 48, 32, 24, 16 ];
+const DEFAULT_ICONS_SIZES = [128, 96, 64, 48, 32, 24, 16];
 
 /**
  * This function was copied from the activities-config extension

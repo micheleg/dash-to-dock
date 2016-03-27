@@ -1,10 +1,10 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+const Main = imports.ui.main;
+
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Docking = Me.imports.docking;
-
-const Main = imports.ui.main;
 
 let settings;
 let dock;

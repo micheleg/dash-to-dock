@@ -1,31 +1,13 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const Clutter = imports.gi.Clutter;
-const Gio = imports.gi.Gio;
-const GLib = imports.gi.GLib;
-const Gtk = imports.gi.Gtk;
-const Signals = imports.signals;
 const Lang = imports.lang;
-const Meta = imports.gi.Meta;
-const Shell = imports.gi.Shell;
-const St = imports.gi.St;
-const Mainloop = imports.mainloop;
 
-const AppDisplay = imports.ui.appDisplay;
-const AppFavorites = imports.ui.appFavorites;
-const Dash = imports.ui.dash;
-const DND = imports.ui.dnd;
-const IconGrid = imports.ui.iconGrid;
+const St = imports.gi.St;
+
 const Main = imports.ui.main;
-const PopupMenu = imports.ui.popupMenu;
-const Tweener = imports.ui.tweener;
-const Util = imports.misc.util;
-const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
-const Icons = Me.imports.icons;
-const Windows = Me.imports.windows;
 
 /**
  * Manage theme customization and custom theme support

@@ -6,12 +6,13 @@
  */
 
 const Gettext = imports.gettext;
-const Gio = imports.gi.Gio;
-const Clutter = imports.gi.Clutter;
 const Lang = imports.lang;
 
 const Config = imports.misc.config;
 const ExtensionUtils = imports.misc.extensionUtils;
+
+const Clutter = imports.gi.Clutter;
+const Gio = imports.gi.Gio;
 
 /**
  * initTranslations:

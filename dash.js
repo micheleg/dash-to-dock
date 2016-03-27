@@ -1,26 +1,25 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+const Lang = imports.lang;
+const Mainloop = imports.mainloop;
+const Signals = imports.signals;
+
 const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
-const Signals = imports.signals;
-const Lang = imports.lang;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-const Mainloop = imports.mainloop;
 
-const AppDisplay = imports.ui.appDisplay;
 const AppFavorites = imports.ui.appFavorites;
 const Dash = imports.ui.dash;
 const DND = imports.ui.dnd;
-const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
 const PopupMenu = imports.ui.popupMenu;
 const Tweener = imports.ui.tweener;
+
 const Util = imports.misc.util;
-const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
@@ -324,6 +323,8 @@ const MyDash = new Lang.Class({
             'item-drag-cancelled',
             Lang.bind(this, this._onDragCancelled)
         ]);
+        
+        this._windowStealingChangedId = this._dtdSettings.connect('changed::window-stealing', Lang.bind(this, this._redisplay));
     },
 
     destroy: function() {
@@ -702,8 +703,7 @@ const MyDash = new Lang.Class({
             // Don't animate the icon size change when the overview
             // is transitioning, or when initially filling
             // the dash
-            if (Main.overview.animationInProgress ||
-                !this._shownInitially)
+            if (Main.overview.animationInProgress || !this._shownInitially)
                 continue;
 
             let [targetWidth, targetHeight] = icon.icon.get_size();
@@ -713,12 +713,12 @@ const MyDash = new Lang.Class({
             icon.icon.set_size(icon.icon.width * scale,
                                icon.icon.height * scale);
 
-            Tweener.addTween(icon.icon,
-                             { width: targetWidth,
-                               height: targetHeight,
-                               time: DASH_ANIMATION_TIME,
-                               transition: 'easeOutQuad',
-                             });
+            Tweener.addTween(icon.icon, {
+                width: targetWidth,
+                height: targetHeight,
+                time: DASH_ANIMATION_TIME,
+                transition: 'easeOutQuad',
+             });
         }
     },
 

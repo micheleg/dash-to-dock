@@ -1,13 +1,14 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
+const Signals = imports.signals;
+
+const GLib = imports.gi.GLib;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 
 const Main = imports.ui.main;
-const Signals = imports.signals;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;

@@ -1,27 +1,26 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+const Lang = imports.lang;
+const Mainloop = imports.mainloop;
+const Signals = imports.signals;
+
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
-const Lang = imports.lang;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-const Mainloop = imports.mainloop;
-const Params = imports.misc.params;
 
 const Main = imports.ui.main;
-const Dash = imports.ui.dash;
 const IconGrid = imports.ui.iconGrid;
-const Overview = imports.ui.overview;
 const OverviewControls = imports.ui.overviewControls;
 const PointerWatcher = imports.ui.pointerWatcher;
 const Tweener = imports.ui.tweener;
-const Signals = imports.signals;
 const ViewSelector = imports.ui.viewSelector;
-const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
+const WorkspaceSwitcherPopup = imports.ui.workspaceSwitcherPopup;
 const Layout = imports.ui.layout;
-const LayoutManager = imports.ui.main.layoutManager;
+
+const Params = imports.misc.params;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
