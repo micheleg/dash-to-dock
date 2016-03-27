@@ -191,6 +191,10 @@
       <default>true</default>
       <summary>Activate only one window</summary>
     </key>
+    <key type="b" name="support-window-stealing">
+      <default>false</default>
+      <summary>Support window stealing</summary>
+    </key>
     <key type="as" name="window-stealing">
 	  <default>[]</default>
       <summary>Window stealing</summary>

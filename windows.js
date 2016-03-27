@@ -16,8 +16,11 @@ let exampleSettings = [
 ];
 
 function getSettings(settings) {
-    let table = {};
+    if (!settings.get_boolean('support-window-stealing'))
+        return {};
     
+    let table = {};
+
     let array = settings.get_strv('window-stealing') || [];
     
     if ((array == null) || !array.length) {

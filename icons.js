@@ -501,12 +501,14 @@ const MyAppIconMenu = new Lang.Class({
         this.parent();
 
         // steal windows menu
-        this._appendSeparator();
-        this._stealWindowsMenuItem = this._appendMenuItem(_('Steal Windows'));
-        this._stealWindowsMenuItem.connect('activate', Lang.bind(this, function() {
-            let dialog = new Windows.WindowStealingSettings(this._source.app, this._dtdSettings);
-            dialog.open();
-        }));
+        if (this._dtdSettings.get_boolean('support-window-stealing')) {
+            this._appendSeparator();
+            this._stealWindowsMenuItem = this._appendMenuItem(_('Steal Windows'));
+            this._stealWindowsMenuItem.connect('activate', Lang.bind(this, function() {
+                let dialog = new Windows.WindowStealingSettings(this._source.app, this._dtdSettings);
+                dialog.open();
+            }));
+        }
 
         // quit menu
         let app = this._source.app;

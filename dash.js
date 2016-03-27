@@ -324,6 +324,7 @@ const MyDash = new Lang.Class({
             Lang.bind(this, this._onDragCancelled)
         ]);
         
+        this._supportWindowStealingChangedId = this._dtdSettings.connect('changed::support-window-stealing', Lang.bind(this, this._redisplay));
         this._windowStealingChangedId = this._dtdSettings.connect('changed::window-stealing', Lang.bind(this, this._redisplay));
     },
 

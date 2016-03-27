@@ -320,13 +320,17 @@ const Settings = new Lang.Class({
                             this._builder.get_object('application_button_animation_button'),
                             'sensitive',
                             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('support-window-stealing',
+                            this._builder.get_object('support_window_stealing_switch'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
 
         this._builder.get_object('click_action_combo').set_active(this._settings.get_enum('click-action'));
         this._builder.get_object('click_action_combo').connect('changed', Lang.bind (this, function(widget) {
             this._settings.set_enum('click-action', widget.get_active());
         }));
 
-        this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_boolean('minimize-shift')?1:0);
+        this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_boolean('minimize-shift') ? 1 : 0);
 
         this._builder.get_object('shift_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
             this._settings.set_boolean('minimize-shift', widget.get_active()==1);
