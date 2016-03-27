@@ -64,7 +64,7 @@ const MyDashActor = new Lang.Class({
                                (this._position == St.Side.BOTTOM));
 
         let layout = new Clutter.BoxLayout({
-            orientation: this._isHorizontal?Clutter.Orientation.HORIZONTAL:Clutter.Orientation.VERTICAL
+            orientation: this._isHorizontal ? Clutter.Orientation.HORIZONTAL : Clutter.Orientation.VERTICAL
         });
 
         this.actor = new Shell.GenericContainer({
