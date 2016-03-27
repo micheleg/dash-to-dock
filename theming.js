@@ -16,7 +16,7 @@ const ThemeManager = new Lang.Class({
     Name: 'DashToDock.ThemeManager',
 
     _init: function(settings, actor, dash) {
-        this._settings = settings;
+        this._dtdSettings = settings;
         this._bindSettingsChanges();
         this._actor = actor;
         this._dash = dash;
@@ -60,7 +60,7 @@ const ThemeManager = new Lang.Class({
     },
 
     _updateBackgroundOpacity: function() {
-        let newAlpha = this._settings.get_double('background-opacity');
+        let newAlpha = this._dtdSettings.get_double('background-opacity');
 
         this._defaultBackground = 'rgba(' +
             this._defaultBackgroundColor.red + ',' +
@@ -92,12 +92,12 @@ const ThemeManager = new Lang.Class({
     },
 
     _updateCustomStyleClasses: function() {
-        if (this._settings.get_boolean('apply-custom-theme'))
+        if (this._dtdSettings.get_boolean('apply-custom-theme'))
             this._actor.add_style_class_name('dashtodock');
         else
             this._actor.remove_style_class_name('dashtodock');
 
-        if (this._settings.get_boolean('custom-theme-shrink'))
+        if (this._dtdSettings.get_boolean('custom-theme-shrink'))
             this._actor.add_style_class_name('shrink');
         else
             this._actor.remove_style_class_name('shrink');
@@ -124,13 +124,13 @@ const ThemeManager = new Lang.Class({
         this._dash._container.set_style(null);
 
         // If built-in theme is enabled do nothing else
-        if (this._settings.get_boolean('apply-custom-theme'))
+        if (this._dtdSettings.get_boolean('apply-custom-theme'))
             return;
 
         let newStyle = '';
-        let position = Convenience.getPosition(this._settings);
+        let position = Convenience.getPosition(this._dtdSettings);
 
-        if (!this._settings.get_boolean('custom-theme-shrink')) {
+        if (!this._dtdSettings.get_boolean('custom-theme-shrink')) {
             // obtain theme border settings
             let themeNode = this._dash._container.get_theme_node();
             let borderColor = themeNode.get_border_color(St.Side.TOP);
@@ -179,7 +179,7 @@ const ThemeManager = new Lang.Class({
         }
 
         // Customize background
-        if (this._settings.get_boolean('opaque-background')) {
+        if (this._dtdSettings.get_boolean('opaque-background')) {
             newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
                        'transition-delay: 0s; transition-duration: 0.250s;';
             this._dash._container.set_style(newStyle);
@@ -194,7 +194,7 @@ const ThemeManager = new Lang.Class({
                     'extend-height'];
 
         keys.forEach(function(key) {
-            this._settings.connect('changed::' + key, Lang.bind(this, this.updateCustomTheme));
+            this._dtdSettings.connect('changed::' + key, Lang.bind(this, this.updateCustomTheme));
         }, this);
     }
 });

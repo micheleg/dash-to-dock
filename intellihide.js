@@ -51,7 +51,7 @@ const Intellihide = new Lang.Class({
 
     _init: function(settings) {
         // Load settings
-        this._settings = settings;
+        this._dtdSettings = settings;
 
         this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._tracker = Shell.WindowTracker.get_default();
@@ -199,7 +199,7 @@ const Intellihide = new Lang.Class({
              * select a window in the secondary monitor.
              */
 
-            let monitorIndex = this._settings.get_int('preferred-monitor');
+            let monitorIndex = this._dtdSettings.get_int('preferred-monitor');
 
             if ((monitorIndex < 0) || (monitorIndex > Main.layoutManager.monitors.length))
                 monitorIndex = Main.layoutManager.primaryIndex;
@@ -259,7 +259,7 @@ const Intellihide = new Lang.Class({
         let wksp_index = wksp.index();
 
         // Depending on the intellihide mode, exclude non-relevent windows
-        switch (this._settings.get_enum('intellihide-mode')) {
+        switch (this._dtdSettings.get_enum('intellihide-mode')) {
             case IntellihideMode.ALL_WINDOWS:
                 // Do nothing
                 break;

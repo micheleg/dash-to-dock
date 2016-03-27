@@ -187,7 +187,7 @@ const DockedDash = new Lang.Class({
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
         // Load settings
-        this._settings = settings;
+        this._dtdSettings = settings;
         this._bindSettingsChanges();
 
         this._position = Convenience.getPosition(settings);
@@ -203,7 +203,7 @@ const DockedDash = new Lang.Class({
         this._fixedIsEnabled = null;
 
         // Create intellihide object to monitor windows overlapping
-        this._intellihide = new Intellihide.Intellihide(this._settings);
+        this._intellihide = new Intellihide.Intellihide(this._dtdSettings);
 
         // initialize dock state
         this._dockState = State.HIDDEN;
@@ -233,7 +233,7 @@ const DockedDash = new Lang.Class({
         this._dockDwellTimeoutId = 0
 
         // Create a new dash object
-        this.dash = new MyDash.MyDash(this._settings);
+        this.dash = new MyDash.MyDash(this._dtdSettings);
 
         // set stored icon size  to the new dash
         Main.overview.dashIconSize = this.dash.iconSize;
@@ -241,7 +241,7 @@ const DockedDash = new Lang.Class({
         // connect app icon into the view selector
         this.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
 
-        if (!this._settings.get_boolean('show-show-apps-button'))
+        if (!this._dtdSettings.get_boolean('show-show-apps-button'))
             this.dash.hideShowAppsButton();
 
         // Create the main actor and the containers for sliding in and out and
@@ -352,7 +352,7 @@ const DockedDash = new Lang.Class({
         ]);
 
         this._injectionsHandler = new Convenience.InjectionsHandler();
-        this._themeManager = new Theming.ThemeManager(this._settings, this.actor, this.dash);
+        this._themeManager = new Theming.ThemeManager(this._dtdSettings, this.actor, this.dash);
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
@@ -421,7 +421,7 @@ const DockedDash = new Lang.Class({
         // Keep the dash below the modalDialogGroup
         Main.layoutManager.uiGroup.set_child_below_sibling(this.actor,Main.layoutManager.modalDialogGroup);
 
-        if (this._settings.get_boolean('dock-fixed'))
+        if (this._dtdSettings.get_boolean('dock-fixed'))
             Main.layoutManager._trackActor(this._box, {affectsStruts: true, trackFullscreen: true});
 
         // pretend this._slider is isToplevel child so that fullscreen is actually tracked
@@ -438,7 +438,7 @@ const DockedDash = new Lang.Class({
             this._paintId=0;
         }
 
-        this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'), true);
+        this.dash.setIconSize(this._dtdSettings.get_int('dash-max-icon-size'), true);
 
         // Apply custome css class according to the settings
         this._themeManager.updateCustomTheme();
@@ -508,40 +508,40 @@ const DockedDash = new Lang.Class({
     },
 
     _bindSettingsChanges: function() {
-        this._settings.connect('changed::scroll-switch-workspace', Lang.bind(this, function() {
-            this._optionalScrollWorkspaceSwitch(this._settings.get_boolean('scroll-switch-workspace'));
+        this._dtdSettings.connect('changed::scroll-switch-workspace', Lang.bind(this, function() {
+            this._optionalScrollWorkspaceSwitch(this._dtdSettings.get_boolean('scroll-switch-workspace'));
         }));
 
-        this._settings.connect('changed::dash-max-icon-size', Lang.bind(this, function() {
-            this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'));
+        this._dtdSettings.connect('changed::dash-max-icon-size', Lang.bind(this, function() {
+            this.dash.setIconSize(this._dtdSettings.get_int('dash-max-icon-size'));
         }));
 
-        this._settings.connect('changed::icon-size-fixed', Lang.bind(this, function() {
-            this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'));
+        this._dtdSettings.connect('changed::icon-size-fixed', Lang.bind(this, function() {
+            this.dash.setIconSize(this._dtdSettings.get_int('dash-max-icon-size'));
         }));
 
-        this._settings.connect('changed::show-favorites', Lang.bind(this, function() {
+        this._dtdSettings.connect('changed::show-favorites', Lang.bind(this, function() {
             this.dash.resetAppIcons();
         }));
 
-        this._settings.connect('changed::show-running', Lang.bind(this, function() {
+        this._dtdSettings.connect('changed::show-running', Lang.bind(this, function() {
             this.dash.resetAppIcons();
         }));
 
-        this._settings.connect('changed::show-apps-at-top', Lang.bind(this, function() {
+        this._dtdSettings.connect('changed::show-apps-at-top', Lang.bind(this, function() {
             this.dash.resetAppIcons();
         }));
 
-        this._settings.connect('changed::show-show-apps-button', Lang.bind(this, function() {
-            if (this._settings.get_boolean('show-show-apps-button'))
+        this._dtdSettings.connect('changed::show-show-apps-button', Lang.bind(this, function() {
+            if (this._dtdSettings.get_boolean('show-show-apps-button'))
                 this.dash.showShowAppsButton();
             else
                 this.dash.hideShowAppsButton();
         }));
 
-        this._settings.connect('changed::dock-fixed', Lang.bind(this, function() {
+        this._dtdSettings.connect('changed::dock-fixed', Lang.bind(this, function() {
 
-            if (this._settings.get_boolean('dock-fixed'))
+            if (this._dtdSettings.get_boolean('dock-fixed'))
                 Main.layoutManager._trackActor(this._box, {affectsStruts: true, trackFullscreen: true});
             else
                 Main.layoutManager._untrackActor(this._box);
@@ -554,20 +554,20 @@ const DockedDash = new Lang.Class({
             this._updateVisibilityMode();
         }));
 
-        this._settings.connect('changed::intellihide', Lang.bind(this, this._updateVisibilityMode));
+        this._dtdSettings.connect('changed::intellihide', Lang.bind(this, this._updateVisibilityMode));
 
-        this._settings.connect('changed::intellihide-mode', Lang.bind(this, function() {
+        this._dtdSettings.connect('changed::intellihide-mode', Lang.bind(this, function() {
             this._intellihide.forceUpdate();
         }));
 
-        this._settings.connect('changed::autohide', Lang.bind(this, function() {
+        this._dtdSettings.connect('changed::autohide', Lang.bind(this, function() {
             this._updateVisibilityMode();
             this._updateBarrier();
         }));
-        this._settings.connect('changed::extend-height', Lang.bind(this,this._resetPosition));
-        this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
-        this._settings.connect('changed::height-fraction', Lang.bind(this,this._resetPosition));
-        this._settings.connect('changed::require-pressure-to-show', Lang.bind(this,function() {
+        this._dtdSettings.connect('changed::extend-height', Lang.bind(this,this._resetPosition));
+        this._dtdSettings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
+        this._dtdSettings.connect('changed::height-fraction', Lang.bind(this,this._resetPosition));
+        this._dtdSettings.connect('changed::require-pressure-to-show', Lang.bind(this,function() {
             // Remove pointer watcher
             if (this._dockWatch) {
                 PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
@@ -576,7 +576,7 @@ const DockedDash = new Lang.Class({
             this._setupDockDwellIfNeeded();
             this._updateBarrier();
         }));
-        this._settings.connect('changed::pressure-threshold', Lang.bind(this,function() {
+        this._dtdSettings.connect('changed::pressure-threshold', Lang.bind(this,function() {
             this._updatePressureBarrier();
             this._updateBarrier();
         }));
@@ -587,15 +587,15 @@ const DockedDash = new Lang.Class({
      * This is call when visibility settings change
      */
     _updateVisibilityMode: function() {
-        if (this._settings.get_boolean('dock-fixed')) {
+        if (this._dtdSettings.get_boolean('dock-fixed')) {
             this._fixedIsEnabled = true;
             this._autohideIsEnabled = false;
             this._intellihideIsEnabled = false;
         }
         else {
             this._fixedIsEnabled = false;
-            this._autohideIsEnabled = this._settings.get_boolean('autohide')
-            this._intellihideIsEnabled = this._settings.get_boolean('intellihide')
+            this._autohideIsEnabled = this._dtdSettings.get_boolean('autohide')
+            this._intellihideIsEnabled = this._dtdSettings.get_boolean('intellihide')
         }
 
         if (this._intellihideIsEnabled)
@@ -620,19 +620,19 @@ const DockedDash = new Lang.Class({
 
         if (this._fixedIsEnabled) {
             this._removeAnimations();
-            this._animateIn(this._settings.get_double('animation-time'), 0);
+            this._animateIn(this._dtdSettings.get_double('animation-time'), 0);
         }
         else if (this._intellihideIsEnabled) {
             if (this._intellihide.getOverlapStatus()) {
                 this._ignoreHover = false;
                 // Do not hide if autohide is enabled and mouse is hover
                 if (!this._box.hover || !this._autohideIsEnabled)
-                    this._animateOut(this._settings.get_double('animation-time'), 0);
+                    this._animateOut(this._dtdSettings.get_double('animation-time'), 0);
             }
             else {
                 this._ignoreHover = true;
                 this._removeAnimations();
-                this._animateIn(this._settings.get_double('animation-time'), 0);
+                this._animateIn(this._dtdSettings.get_double('animation-time'), 0);
             }
         }
         else {
@@ -641,12 +641,12 @@ const DockedDash = new Lang.Class({
                 global.sync_pointer();
 
                 if (this._box.hover)
-                    this._animateIn(this._settings.get_double('animation-time'), 0);
+                    this._animateIn(this._dtdSettings.get_double('animation-time'), 0);
                 else
-                    this._animateOut(this._settings.get_double('animation-time'), 0);
+                    this._animateOut(this._dtdSettings.get_double('animation-time'), 0);
             }
             else
-                this._animateOut(this._settings.get_double('animation-time'), 0);
+                this._animateOut(this._dtdSettings.get_double('animation-time'), 0);
         }
     },
 
@@ -654,7 +654,7 @@ const DockedDash = new Lang.Class({
         this._ignoreHover = true;
         this._intellihide.disable();
         this._removeAnimations();
-        this._animateIn(this._settings.get_double('animation-time'), 0);
+        this._animateIn(this._dtdSettings.get_double('animation-time'), 0);
     },
 
     _onOverviewHiding: function() {
@@ -684,7 +684,7 @@ const DockedDash = new Lang.Class({
                 this._removeAnimations();
 
             this.emit('showing');
-            this._animateIn(this._settings.get_double('animation-time'), 0);
+            this._animateIn(this._dtdSettings.get_double('animation-time'), 0);
         }
     },
 
@@ -697,12 +697,12 @@ const DockedDash = new Lang.Class({
                 //if a show already started, let it finish; queue hide without removing the show.
                 // to obtain this I increase the delay to avoid the overlap and interference
                 // between the animations
-                delay = this._settings.get_double('hide-delay') + this._settings.get_double('animation-time');
+                delay = this._dtdSettings.get_double('hide-delay') + this._dtdSettings.get_double('animation-time');
             else
-                delay = this._settings.get_double('hide-delay');
+                delay = this._dtdSettings.get_double('hide-delay');
 
             this.emit('hiding');
-            this._animateOut(this._settings.get_double('animation-time'), delay);
+            this._animateOut(this._dtdSettings.get_double('animation-time'), delay);
         }
     },
 
@@ -746,7 +746,7 @@ const DockedDash = new Lang.Class({
     _setupDockDwellIfNeeded: function() {
         // If we don't have extended barrier features, then we need
         // to support the old tray dwelling mechanism.
-        if (!global.display.supports_extended_barriers() || !this._settings.get_boolean('require-pressure-to-show')) {
+        if (!global.display.supports_extended_barriers() || !this._dtdSettings.get_boolean('require-pressure-to-show')) {
             let pointerWatcher = PointerWatcher.getPointerWatcher();
             this._dockWatch = pointerWatcher.addWatch(DOCK_DWELL_CHECK_INTERVAL, Lang.bind(this, this._checkDockDwell));
             this._dockDwelling = false;
@@ -783,7 +783,7 @@ const DockedDash = new Lang.Class({
                 let focusWindow = global.display.focus_window;
                 this._dockDwellUserTime = focusWindow ? focusWindow.user_time : 0;
 
-                this._dockDwellTimeoutId = Mainloop.timeout_add(this._settings.get_double('show-delay') * 1000,
+                this._dockDwellTimeoutId = Mainloop.timeout_add(this._dtdSettings.get_double('show-delay') * 1000,
                                                                 Lang.bind(this, this._dockDwellTimeout));
                 GLib.Source.set_name_by_id(this._dockDwellTimeoutId, '[dash-to-dock] this._dockDwellTimeout');
             }
@@ -805,7 +805,7 @@ const DockedDash = new Lang.Class({
     _dockDwellTimeout: function() {
         this._dockDwellTimeoutId = 0;
 
-        if (!this._settings.get_boolean('autohide-in-fullscreen') && this._monitor.inFullscreen)
+        if (!this._dtdSettings.get_boolean('autohide-in-fullscreen') && this._monitor.inFullscreen)
             return GLib.SOURCE_REMOVE;
 
         // We don't want to open the tray when a modal dialog
@@ -828,7 +828,7 @@ const DockedDash = new Lang.Class({
 
     _updatePressureBarrier: function() {
         this._canUsePressure = global.display.supports_extended_barriers();
-        let pressureThreshold = this._settings.get_double('pressure-threshold');
+        let pressureThreshold = this._dtdSettings.get_double('pressure-threshold');
 
         // Remove existing pressure barrier
         if (this._pressureBarrier) {
@@ -843,10 +843,10 @@ const DockedDash = new Lang.Class({
 
         // Create new pressure barrier based on pressure threshold setting
         if (this._canUsePressure) {
-            this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, this._settings.get_double('show-delay')*1000,
+            this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, this._dtdSettings.get_double('show-delay')*1000,
                                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
             this._pressureBarrier.connect('trigger', Lang.bind(this, function(barrier) {
-                if (!this._settings.get_boolean('autohide-in-fullscreen') && this._monitor.inFullscreen)
+                if (!this._dtdSettings.get_boolean('autohide-in-fullscreen') && this._monitor.inFullscreen)
                     return;
                 this._onPressureSensed();
             }));
@@ -901,7 +901,7 @@ const DockedDash = new Lang.Class({
 
         // Create new barrier
         // Note: dash in fixed position doesn't use pressure barrier
-        if (this._canUsePressure && this._autohideIsEnabled && this._settings.get_boolean('require-pressure-to-show')) {
+        if (this._canUsePressure && this._autohideIsEnabled && this._dtdSettings.get_boolean('require-pressure-to-show')) {
             let x1, x2, y1, y2, direction;
 
             if (this._position == St.Side.LEFT) {
@@ -955,8 +955,8 @@ const DockedDash = new Lang.Class({
         // Ensure variables linked to settings are updated.
         this._updateVisibilityMode();
 
-        let monitorIndex = this._settings.get_int('preferred-monitor');
-        let extendHeight = this._settings.get_boolean('extend-height');
+        let monitorIndex = this._dtdSettings.get_int('preferred-monitor');
+        let extendHeight = this._dtdSettings.get_boolean('extend-height');
 
         if ((monitorIndex > 0) && (monitorIndex < Main.layoutManager.monitors.length))
             this._monitor = Main.layoutManager.monitors[monitorIndex];
@@ -978,7 +978,7 @@ const DockedDash = new Lang.Class({
             // No space is required in the overview of the dash
             this._dashSpacer.hide();
 
-        let fraction = this._settings.get_double('height-fraction');
+        let fraction = this._dtdSettings.get_double('height-fraction');
 
         if (extendHeight)
             fraction = 1;
@@ -1050,7 +1050,7 @@ const DockedDash = new Lang.Class({
     _adjustLegacyTray: function() {
         let use_work_area = true;
 
-        if (this._fixedIsEnabled && !this._settings.get_boolean('extend-height')
+        if (this._fixedIsEnabled && !this._dtdSettings.get_boolean('extend-height')
             && this._isPrimaryMonitor()
             && ((this._position == St.Side.BOTTOM) || (this._position == St.Side.LEFT)))
             use_work_area = false;
@@ -1087,7 +1087,7 @@ const DockedDash = new Lang.Class({
      * Adjust Panel corners
      */
     _adjustPanelCorners: function() {
-        let extendHeight = this._settings.get_boolean('extend-height');
+        let extendHeight = this._dtdSettings.get_boolean('extend-height');
         if (!this._isHorizontal && this._isPrimaryMonitor() && extendHeight && this._fixedIsEnabled) {
             Main.panel._rightCorner.actor.hide();
             Main.panel._leftCorner.actor.hide();
@@ -1111,7 +1111,7 @@ const DockedDash = new Lang.Class({
         Main.layoutManager.uiGroup.set_child_above_sibling(this.actor, global.top_window_group);
         this._oldignoreHover = this._ignoreHover;
         this._ignoreHover = true;
-        this._animateIn(this._settings.get_double('animation-time'), 0);
+        this._animateIn(this._dtdSettings.get_double('animation-time'), 0);
     },
 
     _onDragEnd: function() {
@@ -1131,9 +1131,9 @@ const DockedDash = new Lang.Class({
                            activePage == ViewSelector.ViewPage.APPS);
 
         if (dashVisible)
-            this._animateIn(this._settings.get_double('animation-time'), 0);
+            this._animateIn(this._dtdSettings.get_double('animation-time'), 0);
         else
-            this._animateOut(this._settings.get_double('animation-time'), 0);
+            this._animateOut(this._dtdSettings.get_double('animation-time'), 0);
     },
 
     _onPageEmpty: function() {
@@ -1162,7 +1162,7 @@ const DockedDash = new Lang.Class({
      */
     _onAccessibilityFocus: function() {
         this._box.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
-        this._animateIn(this._settings.get_double('animation-time'), 0);
+        this._animateIn(this._dtdSettings.get_double('animation-time'), 0);
     },
 
     _onShowAppsButtonToggled: function() {
@@ -1172,7 +1172,7 @@ const DockedDash = new Lang.Class({
         // status (due to the _syncShowAppsButtonToggled function below) and it
         // has already performed the desired action.
 
-        let animate = this._settings.get_boolean('animate-show-apps');
+        let animate = this._dtdSettings.get_boolean('animate-show-apps');
         let selector = Main.overview.viewSelector;
 
         if (selector._showAppsButton.checked !== this.dash.showAppsButton.checked) {
@@ -1277,14 +1277,14 @@ const DockedDash = new Lang.Class({
     _optionalScrollWorkspaceSwitch: function() {
         let label = 'optionalScrollWorkspaceSwitch';
 
-        this._settings.connect('changed::scroll-switch-workspace', Lang.bind(this, function() {
-            if (this._settings.get_boolean('scroll-switch-workspace'))
+        this._dtdSettings.connect('changed::scroll-switch-workspace', Lang.bind(this, function() {
+            if (this._dtdSettings.get_boolean('scroll-switch-workspace'))
                 Lang.bind(this, enable)();
             else
                 Lang.bind(this, disable)();
         }));
 
-        if (this._settings.get_boolean('scroll-switch-workspace'))
+        if (this._dtdSettings.get_boolean('scroll-switch-workspace'))
             Lang.bind(this, enable)();
 
         function enable() {

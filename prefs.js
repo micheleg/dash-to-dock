@@ -56,7 +56,7 @@ const Settings = new Lang.Class({
     Name: 'DashToDock.Settings',
 
     _init: function() {
-        this._settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
+        this._dtdSettings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
 
         this._rtl = (Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL);
 
@@ -93,7 +93,7 @@ const Settings = new Lang.Class({
         let n_monitors = Gdk.Screen.get_default().get_n_monitors();
         let primary_monitor = Gdk.Screen.get_default().get_primary_monitor();
 
-        let monitor = this._settings.get_int('preferred-monitor');
+        let monitor = this._dtdSettings.get_int('preferred-monitor');
 
         // Add primary monitor with index 0, because in GNOME Shell the primary monitor is always 0
         this._builder.get_object('dock_monitor_combo').append_text(_('Primary monitor'));
@@ -118,7 +118,7 @@ const Settings = new Lang.Class({
         this._builder.get_object('dock_monitor_combo').set_active(this._monitors.indexOf(monitor));
 
         // Position option
-        let position = this._settings.get_enum('dock-position');
+        let position = this._dtdSettings.get_enum('dock-position');
 
         switch (position) {
             case 0:
@@ -142,56 +142,58 @@ const Settings = new Lang.Class({
         }
 
         // Intelligent autohide options
-        this._settings.bind('dock-fixed',
+        this._dtdSettings.bind('dock-fixed',
                             this._builder.get_object('intelligent_autohide_switch'),
                             'active',
                             Gio.SettingsBindFlags.INVERT_BOOLEAN);
-        this._settings.bind('dock-fixed',
+        this._dtdSettings.bind('dock-fixed',
                             this._builder.get_object('intelligent_autohide_button'),
                             'sensitive',
                             Gio.SettingsBindFlags.INVERT_BOOLEAN);
-        this._settings.bind('autohide',
+        this._dtdSettings.bind('autohide',
                             this._builder.get_object('autohide_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('autohide-in-fullscreen',
+        this._dtdSettings.bind('autohide-in-fullscreen',
                             this._builder.get_object('autohide_enable_in_fullscreen_checkbutton'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('require-pressure-to-show',
+        this._dtdSettings.bind('require-pressure-to-show',
                             this._builder.get_object('require_pressure_checkbutton'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('intellihide',
+        this._dtdSettings.bind('intellihide',
                             this._builder.get_object('intellihide_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('animation-time',
+        this._dtdSettings.bind('animation-time',
                             this._builder.get_object('animation_duration_spinbutton'),
                             'value',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('hide-delay',
+        this._dtdSettings.bind('hide-delay',
                             this._builder.get_object('hide_timeout_spinbutton'),
                             'value',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('show-delay',
+        this._dtdSettings.bind('show-delay',
                             this._builder.get_object('show_timeout_spinbutton'),
                             'value',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('pressure-threshold',
+        this._dtdSettings.bind('pressure-threshold',
                             this._builder.get_object('pressure_threshold_spinbutton'),
                             'value',
                             Gio.SettingsBindFlags.DEFAULT);
 
-        //this._builder.get_object('animation_duration_spinbutton').set_value(this._settings.get_double('animation-time'));
+        //this._builder.get_object('animation_duration_spinbutton').set_value(this._dtdSettings.get_double('animation-time'));
 
         // Create dialog for intelligent autohide advanced settings
         this._builder.get_object('intelligent_autohide_button').connect('clicked', Lang.bind(this, function() {
 
-            let dialog = new Gtk.Dialog({ title: _('Intelligent autohide customization'),
-                                          transient_for: this.widget.get_toplevel(),
-                                          use_header_bar: true,
-                                          modal: true });
+            let dialog = new Gtk.Dialog({
+                title: _('Intelligent autohide customization'),
+                transient_for: this.widget.get_toplevel(),
+                use_header_bar: true,
+                modal: true
+            });
 
             // GTK+ leaves positive values for application-defined response ids.
             // Use +1 for the reset action
@@ -200,7 +202,7 @@ const Settings = new Lang.Class({
             let box = this._builder.get_object('intelligent_autohide_advanced_settings_box');
             dialog.get_content_area().add(box);
 
-            this._settings.bind('intellihide',
+            this._dtdSettings.bind('intellihide',
                             this._builder.get_object('intellihide_mode_box'),
                             'sensitive',
                             Gio.SettingsBindFlags.GET);
@@ -213,31 +215,31 @@ const Settings = new Lang.Class({
                 this._builder.get_object('maximized_windows_radio_button')
             ];
 
-            intellihideModeRadioButtons[this._settings.get_enum('intellihide-mode')].set_active(true);
+            intellihideModeRadioButtons[this._dtdSettings.get_enum('intellihide-mode')].set_active(true);
 
-            this._settings.bind('autohide',
+            this._dtdSettings.bind('autohide',
                             this._builder.get_object('require_pressure_checkbutton'),
                             'sensitive',
                             Gio.SettingsBindFlags.GET);
 
-            this._settings.bind('autohide',
+            this._dtdSettings.bind('autohide',
                             this._builder.get_object('autohide_enable_in_fullscreen_checkbutton'),
                             'sensitive',
                             Gio.SettingsBindFlags.GET);
 
-            this._settings.bind('require-pressure-to-show',
+            this._dtdSettings.bind('require-pressure-to-show',
                                 this._builder.get_object('show_timeout_spinbutton'),
                                 'sensitive',
                                 Gio.SettingsBindFlags.INVERT_BOOLEAN);
-            this._settings.bind('require-pressure-to-show',
+            this._dtdSettings.bind('require-pressure-to-show',
                                 this._builder.get_object('show_timeout_label'),
                                 'sensitive',
                                 Gio.SettingsBindFlags.INVERT_BOOLEAN);
-            this._settings.bind('require-pressure-to-show',
+            this._dtdSettings.bind('require-pressure-to-show',
                                 this._builder.get_object('pressure_threshold_spinbutton'),
                                 'sensitive',
                                 Gio.SettingsBindFlags.DEFAULT);
-            this._settings.bind('require-pressure-to-show',
+            this._dtdSettings.bind('require-pressure-to-show',
                                 this._builder.get_object('pressure_threshold_label'),
                                 'sensitive',
                                 Gio.SettingsBindFlags.DEFAULT);
@@ -248,10 +250,11 @@ const Settings = new Lang.Class({
                     let keys = ['intellihide', 'autohide', 'intellihide-mode', 'autohide-in-fullscreen', 'require-pressure-to-show',
                                 'animation-time', 'show-delay', 'hide-delay', 'pressure-threshold'];
                     keys.forEach(function(val) {
-                        this._settings.set_value(val, this._settings.get_default_value(val));
+                        this._dtdSettings.set_value(val, this._dtdSettings.get_default_value(val));
                     }, this);
-                    intellihideModeRadioButtons[this._settings.get_enum('intellihide-mode')].set_active(true);
-                } else {
+                    intellihideModeRadioButtons[this._dtdSettings.get_enum('intellihide-mode')].set_active(true);
+                }
+                else {
                     // remove the settings box so it doesn't get destroyed;
                     dialog.get_content_area().remove(box);
                     dialog.destroy();
@@ -264,11 +267,11 @@ const Settings = new Lang.Class({
         }));
 
         // size options
-        this._builder.get_object('dock_size_scale').set_value(this._settings.get_double('height-fraction'));
+        this._builder.get_object('dock_size_scale').set_value(this._dtdSettings.get_double('height-fraction'));
         this._builder.get_object('dock_size_scale').add_mark(0.9, Gtk.PositionType.TOP, null);
         let icon_size_scale = this._builder.get_object('icon_size_scale');
-        icon_size_scale.set_range(DEFAULT_ICONS_SIZES[DEFAULT_ICONS_SIZES.length -1], DEFAULT_ICONS_SIZES[0]);
-        icon_size_scale.set_value(this._settings.get_int('dash-max-icon-size'));
+        icon_size_scale.set_range(DEFAULT_ICONS_SIZES[DEFAULT_ICONS_SIZES.length - 1], DEFAULT_ICONS_SIZES[0]);
+        icon_size_scale.set_value(this._dtdSettings.get_int('dash-max-icon-size'));
         DEFAULT_ICONS_SIZES.forEach(function(val) {
              icon_size_scale.add_mark(val, Gtk.PositionType.TOP, val.toString());
         });
@@ -285,70 +288,70 @@ const Settings = new Lang.Class({
             icon_size_scale.set_inverted(true);
         }
 
-        this._settings.bind('icon-size-fixed', this._builder.get_object('icon_size_fixed_checkbutton'), 'active', Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('extend-height', this._builder.get_object('dock_size_extend_checkbutton'), 'active', Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('extend-height', this._builder.get_object('dock_size_scale'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this._dtdSettings.bind('icon-size-fixed', this._builder.get_object('icon_size_fixed_checkbutton'), 'active', Gio.SettingsBindFlags.DEFAULT);
+        this._dtdSettings.bind('extend-height', this._builder.get_object('dock_size_extend_checkbutton'), 'active', Gio.SettingsBindFlags.DEFAULT);
+        this._dtdSettings.bind('extend-height', this._builder.get_object('dock_size_scale'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
 
         // Behavior panel
 
-        this._settings.bind('show-running',
+        this._dtdSettings.bind('show-running',
                             this._builder.get_object('show_running_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('show-favorites',
+        this._dtdSettings.bind('show-favorites',
                             this._builder.get_object('show_favorite_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('show-show-apps-button',
+        this._dtdSettings.bind('show-show-apps-button',
                             this._builder.get_object('show_applications_button_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('show-apps-at-top',
+        this._dtdSettings.bind('show-apps-at-top',
                             this._builder.get_object('application_button_first_button'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('show-show-apps-button',
+        this._dtdSettings.bind('show-show-apps-button',
                             this._builder.get_object('application_button_first_button'),
                             'sensitive',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('animate-show-apps',
+        this._dtdSettings.bind('animate-show-apps',
                             this._builder.get_object('application_button_animation_button'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('show-show-apps-button',
+        this._dtdSettings.bind('show-show-apps-button',
                             this._builder.get_object('application_button_animation_button'),
                             'sensitive',
                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('support-window-stealing',
+        this._dtdSettings.bind('support-window-stealing',
                             this._builder.get_object('support_window_stealing_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
 
-        this._builder.get_object('click_action_combo').set_active(this._settings.get_enum('click-action'));
+        this._builder.get_object('click_action_combo').set_active(this._dtdSettings.get_enum('click-action'));
         this._builder.get_object('click_action_combo').connect('changed', Lang.bind (this, function(widget) {
-            this._settings.set_enum('click-action', widget.get_active());
+            this._dtdSettings.set_enum('click-action', widget.get_active());
         }));
 
-        this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_boolean('minimize-shift') ? 1 : 0);
+        this._builder.get_object('shift_click_action_combo').set_active(this._dtdSettings.get_boolean('minimize-shift') ? 1 : 0);
 
         this._builder.get_object('shift_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
-            this._settings.set_boolean('minimize-shift', widget.get_active()==1);
+            this._dtdSettings.set_boolean('minimize-shift', widget.get_active() == 1);
         }));
 
-        this._settings.bind('scroll-switch-workspace', this._builder.get_object('switch_workspace_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
+        this._dtdSettings.bind('scroll-switch-workspace', this._builder.get_object('switch_workspace_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
 
         // Appearance Panel
 
-        this._settings.bind('apply-custom-theme', this._builder.get_object('customize_theme'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN | Gio.SettingsBindFlags.GET);
-        this._settings.bind('apply-custom-theme', this._builder.get_object('builtin_theme_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('custom-theme-shrink', this._builder.get_object('shrink_dash_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
+        this._dtdSettings.bind('apply-custom-theme', this._builder.get_object('customize_theme'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN | Gio.SettingsBindFlags.GET);
+        this._dtdSettings.bind('apply-custom-theme', this._builder.get_object('builtin_theme_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
+        this._dtdSettings.bind('custom-theme-shrink', this._builder.get_object('shrink_dash_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
 
-        this._settings.bind('custom-theme-running-dots',
+        this._dtdSettings.bind('custom-theme-running-dots',
                              this._builder.get_object('running_dots_switch'),
                              'active',
                              Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('custom-theme-running-dots',
+        this._dtdSettings.bind('custom-theme-running-dots',
                             this._builder.get_object('running_dots_advance_settings_button'),
                             'sensitive',
                             Gio.SettingsBindFlags.DEFAULT);
@@ -364,36 +367,36 @@ const Settings = new Lang.Class({
             let box = this._builder.get_object('running_dots_advance_settings_box');
             dialog.get_content_area().add(box);
 
-            this._settings.bind('custom-theme-customize-running-dots',
+            this._dtdSettings.bind('custom-theme-customize-running-dots',
                                 this._builder.get_object('dot_style_switch'),
                                 'active',
                                 Gio.SettingsBindFlags.DEFAULT);
-            this._settings.bind('custom-theme-customize-running-dots',
+            this._dtdSettings.bind('custom-theme-customize-running-dots',
                                 this._builder.get_object('dot_style_settings_box'),
                                 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
             let rgba = new Gdk.RGBA();
-            rgba.parse(this._settings.get_string('custom-theme-running-dots-color'));
+            rgba.parse(this._dtdSettings.get_string('custom-theme-running-dots-color'));
             this._builder.get_object('dot_color_colorbutton').set_rgba(rgba);
 
             this._builder.get_object('dot_color_colorbutton').connect('notify::color', Lang.bind(this, function(button) {
                 let rgba = button.get_rgba();
                 let css = rgba.to_string();
                 let hexString = cssHexString(css);
-                this._settings.set_string('custom-theme-running-dots-color', hexString);
+                this._dtdSettings.set_string('custom-theme-running-dots-color', hexString);
             }));
 
-            rgba.parse(this._settings.get_string('custom-theme-running-dots-border-color'));
+            rgba.parse(this._dtdSettings.get_string('custom-theme-running-dots-border-color'));
             this._builder.get_object('dot_border_color_colorbutton').set_rgba(rgba);
 
             this._builder.get_object('dot_border_color_colorbutton').connect('notify::color', Lang.bind(this, function(button) {
                 let rgba = button.get_rgba();
                 let css = rgba.to_string();
                 let hexString = cssHexString(css);
-                this._settings.set_string('custom-theme-running-dots-border-color', hexString);
+                this._dtdSettings.set_string('custom-theme-running-dots-border-color', hexString);
             }));
 
-            this._settings.bind('custom-theme-running-dots-border-width',
+            this._dtdSettings.bind('custom-theme-running-dots-border-width',
                                 this._builder.get_object('dot_border_width_spin_button'),
                                 'value',
                                 Gio.SettingsBindFlags.DEFAULT);
@@ -410,9 +413,9 @@ const Settings = new Lang.Class({
 
         }));
 
-        this._settings.bind('opaque-background', this._builder.get_object('customize_opacity_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
-        this._builder.get_object('custom_opacity_scale').set_value(this._settings.get_double('background-opacity'));
-        this._settings.bind('opaque-background', this._builder.get_object('custom_opacity'), 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+        this._dtdSettings.bind('opaque-background', this._builder.get_object('customize_opacity_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
+        this._builder.get_object('custom_opacity_scale').set_value(this._dtdSettings.get_double('background-opacity'));
+        this._dtdSettings.bind('opaque-background', this._builder.get_object('custom_opacity'), 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
         // About Panel
 
@@ -424,31 +427,31 @@ const Settings = new Lang.Class({
      */
     _SignalHandler: {
         dock_display_combo_changed_cb: function(combo) {
-            this._settings.set_int('preferred-monitor', this._monitors[combo.get_active()]);
+            this._dtdSettings.set_int('preferred-monitor', this._monitors[combo.get_active()]);
         },
 
         position_top_button_toggled_cb: function(button) {
             if (button.get_active())
-                this._settings.set_enum('dock-position', 0);
+                this._dtdSettings.set_enum('dock-position', 0);
         },
 
         position_right_button_toggled_cb: function(button) {
             if (button.get_active())
-                this._settings.set_enum('dock-position', 1);
+                this._dtdSettings.set_enum('dock-position', 1);
         },
 
         position_bottom_button_toggled_cb: function(button) {
             if (button.get_active())
-                this._settings.set_enum('dock-position', 2);
+                this._dtdSettings.set_enum('dock-position', 2);
         },
 
         position_left_button_toggled_cb: function(button) {
             if (button.get_active())
-                this._settings.set_enum('dock-position', 3);
+                this._dtdSettings.set_enum('dock-position', 3);
         },
 
         icon_size_combo_changed_cb: function(combo) {
-            this._settings.set_int('dash-max-icon-size', this._allIconSizes[combo.get_active()]);
+            this._dtdSettings.set_int('dash-max-icon-size', this._allIconSizes[combo.get_active()]);
         },
 
         dock_size_scale_format_value_cb: function(scale, value) {
@@ -461,7 +464,7 @@ const Settings = new Lang.Class({
                 Mainloop.source_remove(this._dock_size_timeout);
 
             this._dock_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_double('height-fraction', scale.get_value());
+                this._dtdSettings.set_double('height-fraction', scale.get_value());
                 this._dock_size_timeout = 0;
                 return GLib.SOURCE_REMOVE;
             }));
@@ -477,7 +480,7 @@ const Settings = new Lang.Class({
                 Mainloop.source_remove(this._icon_size_timeout);
 
             this._icon_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_int('dash-max-icon-size', scale.get_value());
+                this._dtdSettings.set_int('dash-max-icon-size', scale.get_value());
                 this._icon_size_timeout = 0;
                 return GLib.SOURCE_REMOVE;
             }));
@@ -489,7 +492,7 @@ const Settings = new Lang.Class({
                 Mainloop.source_remove(this._opacity_timeout);
 
             this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_double('background-opacity', scale.get_value());
+                this._dtdSettings.set_double('background-opacity', scale.get_value());
                 this._opacity_timeout = 0;
                 return GLib.SOURCE_REMOVE;
             }));
@@ -501,17 +504,17 @@ const Settings = new Lang.Class({
 
         all_windows_radio_button_toggled_cb: function(button) {
             if (button.get_active())
-                this._settings.set_enum('intellihide-mode', 0);
+                this._dtdSettings.set_enum('intellihide-mode', 0);
         },
 
         focus_application_windows_radio_button_toggled_cb: function(button) {
             if (button.get_active())
-                this._settings.set_enum('intellihide-mode', 1);
+                this._dtdSettings.set_enum('intellihide-mode', 1);
         },
 
         maximized_windows_radio_button_toggled_cb: function(button) {
             if (button.get_active())
-                this._settings.set_enum('intellihide-mode', 2);
+                this._dtdSettings.set_enum('intellihide-mode', 2);
         }
     }
 });
