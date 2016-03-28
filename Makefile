@@ -2,9 +2,9 @@
 
 UUID = dash-to-dock@micxgx.gmail.com
 BASE_MODULES = extension.js stylesheet.css metadata.json COPYING README.md
-EXTRA_MODULES = dockedDash.js intellihide.js myDash.js convenience.js prefs.js Settings.ui
+EXTRA_MODULES = convenience.js dash.js docking.js icons.js intellihide.js prefs.js theming.js windows.js
 EXTRA_MEDIA = logo.svg
-TOLOCALIZE =  prefs.js
+TOLOCALIZE = prefs.js
 MSGSRC = $(wildcard po/*.po)
 INSTALLBASE = ~/.local/share/gnome-shell/extensions
 INSTALLNAME = dash-to-dock@micxgx.gmail.com
