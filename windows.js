@@ -180,7 +180,7 @@ const WindowStealingSettings = new Lang.Class({
         // Title
         let appIdLabel = new St.Label({
             style_class: 'run-dialog-label',
-            text: _('Application ID: ') + app.id
+            text: _("Application ID") + ': ' + app.id
         });
         mainContentBox.add(appIdLabel, {
             x_fill: true,
@@ -190,7 +190,7 @@ const WindowStealingSettings = new Lang.Class({
         // Instructions
         let wmClassLabel = new St.Label({
             style_class: 'run-dialog-label',
-            text: _('Enter space-separated list of WM_CLASS names to steal')
+            text: _("Enter space-separated list of WM_CLASS names to steal")
         });
         mainContentBox.add(wmClassLabel, {
             x_fill: false,
@@ -220,11 +220,11 @@ const WindowStealingSettings = new Lang.Class({
         
         // Buttons
         this.setButtons([{
-            label: _('Cancel'),
+            label: _("Cancel"),
             action: Lang.bind(this, this._onCancel),
             key: Clutter.Escape
         }, {
-            label: _('Save'),
+            label: _("Save"),
             action: Lang.bind(this, this._onSave),
             default: true
         }]);

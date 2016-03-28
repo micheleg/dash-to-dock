@@ -96,7 +96,7 @@ const Settings = new Lang.Class({
         let monitor = this._dtdSettings.get_int('preferred-monitor');
 
         // Add primary monitor with index 0, because in GNOME Shell the primary monitor is always 0
-        this._builder.get_object('dock_monitor_combo').append_text(_('Primary monitor'));
+        this._builder.get_object('dock_monitor_combo').append_text(_("Primary monitor"));
         this._monitors.push(0);
 
         // Add connected monitors
@@ -105,14 +105,14 @@ const Settings = new Lang.Class({
             if (i !== primary_monitor) {
                 ctr++;
                 this._monitors.push(ctr);
-                this._builder.get_object('dock_monitor_combo').append_text(_('Secondary monitor ') + ctr);
+                this._builder.get_object('dock_monitor_combo').append_text(_("Secondary monitor") + ' ' + ctr);
             }
         }
 
         // If one of the external monitor is set as preferred, show it even if not attached
         if ((monitor >= n_monitors) && (monitor !== primary_monitor)) {
             this._monitors.push(monitor)
-            this._builder.get_object('dock_monitor_combo').append_text(_('Secondary monitor ') + ++ctr);
+            this._builder.get_object('dock_monitor_combo').append_text(_("Secondary monitor") + ' ' + ++ctr);
         }
 
         this._builder.get_object('dock_monitor_combo').set_active(this._monitors.indexOf(monitor));
@@ -137,8 +137,8 @@ const Settings = new Lang.Class({
 
         if (this._rtl) {
             /* Left is Right in rtl as a setting */
-            this._builder.get_object('position_left_button').set_label(_('Right'));
-            this._builder.get_object('position_right_button').set_label(_('Left'));
+            this._builder.get_object('position_left_button').set_label(_("Right"));
+            this._builder.get_object('position_right_button').set_label(_("Left"));
         }
 
         // Intelligent autohide options
@@ -189,7 +189,7 @@ const Settings = new Lang.Class({
         this._builder.get_object('intelligent_autohide_button').connect('clicked', Lang.bind(this, function() {
 
             let dialog = new Gtk.Dialog({
-                title: _('Intelligent autohide customization'),
+                title: _("Intelligent autohide customization"),
                 transient_for: this.widget.get_toplevel(),
                 use_header_bar: true,
                 modal: true
@@ -197,7 +197,7 @@ const Settings = new Lang.Class({
 
             // GTK+ leaves positive values for application-defined response ids.
             // Use +1 for the reset action
-            dialog.add_button(_('Reset to defaults'), 1);
+            dialog.add_button(_("Reset to defaults"), 1);
 
             let box = this._builder.get_object('intelligent_autohide_advanced_settings_box');
             dialog.get_content_area().add(box);
@@ -359,10 +359,12 @@ const Settings = new Lang.Class({
         // Create dialog for running dots advanced settings
         this._builder.get_object('running_dots_advance_settings_button').connect('clicked', Lang.bind(this, function() {
 
-            let dialog = new Gtk.Dialog({ title: _('Customize running indicators'),
-                                          transient_for: this.widget.get_toplevel(),
-                                          use_header_bar: true,
-                                          modal: true });
+            let dialog = new Gtk.Dialog({
+                title: _("Customize running indicators"),
+                transient_for: this.widget.get_toplevel(),
+                use_header_bar: true,
+                modal: true
+            });
 
             let box = this._builder.get_object('running_dots_advance_settings_box');
             dialog.get_content_area().add(box);

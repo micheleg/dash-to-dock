@@ -82,7 +82,7 @@ const MyDashActor = new Lang.Class({
         let side = Convenience.getPosition(settings);
         this.menu = new PopupMenu.PopupMenu(this.actor, 0.0, side, 0);
         this.menu.actor.add_style_class_name('panel-menu');
-        let settingsMenuItem = new PopupMenu.PopupMenuItem('Dash to Dock ' + _('Settings'));
+        let settingsMenuItem = new PopupMenu.PopupMenuItem('Dash to Dock ' + _("Settings"));
         settingsMenuItem.connect('activate', Lang.bind(this, function() {
             Util.spawn(['gnome-shell-extension-prefs', Me.metadata.uuid]);
         }));

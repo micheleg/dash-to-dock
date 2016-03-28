@@ -503,7 +503,7 @@ const MyAppIconMenu = new Lang.Class({
         // steal windows menu
         if (this._dtdSettings.get_boolean('support-window-stealing')) {
             this._appendSeparator();
-            this._stealWindowsMenuItem = this._appendMenuItem(_('Steal Windows'));
+            this._stealWindowsMenuItem = this._appendMenuItem(_("Steal Windows"));
             this._stealWindowsMenuItem.connect('activate', Lang.bind(this, function() {
                 let dialog = new Windows.WindowStealingSettings(this._source.app, this._dtdSettings);
                 dialog.open();
@@ -517,9 +517,9 @@ const MyAppIconMenu = new Lang.Class({
             this._appendSeparator();
             let quitFromDashMenuText = '';
             if (count == 1)
-                quitFromDashMenuText = _('Quit');
+                quitFromDashMenuText = _("Quit");
             else
-                quitFromDashMenuText = _('Quit') + ' ' + count + ' ' + _('Windows');
+                quitFromDashMenuText = _("Quit") + ' ' + count + ' ' + _("Windows");
 
             this._quitfromDashMenuItem = this._appendMenuItem(quitFromDashMenuText);
             this._quitfromDashMenuItem.connect('activate', Lang.bind(this, function() {
@@ -618,7 +618,7 @@ const MyShowAppsIconMenu = new Lang.Class({
     _redisplay: function() {
         this.removeAll();
 
-        let item = this._appendMenuItem('Dash to Dock ' + _('Settings'));
+        let item = this._appendMenuItem('Dash to Dock ' + _("Settings"));
 
         item.connect('activate', function () {
             Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
