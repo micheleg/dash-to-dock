@@ -31,7 +31,7 @@ function getSettings(settings) {
     }
     
     for (let a in array) {
-        let entry = array[a].split(' ');
+        let entry = array[a].split('|');
         if (entry.length) {
             let key = entry[0];
             entry.splice(0, 1);
@@ -162,7 +162,7 @@ const WindowStealingSettings = new Lang.Class({
         
         let array = this._dtdSettings.get_strv('window-stealing') || [];
         for (let a in array) {
-            let c = array[a].indexOf(' ');
+            let c = array[a].indexOf('|');
             if (c != -1) {
                 if (this._app.id == array[a].substring(0, c)) {
                     value = array[a].substring(c + 1);
@@ -190,7 +190,7 @@ const WindowStealingSettings = new Lang.Class({
         // Instructions
         let wmClassLabel = new St.Label({
             style_class: 'run-dialog-label',
-            text: _("Enter space-separated list of WM_CLASS names to steal")
+            text: _("Enter pipe-separated list of WM_CLASS names to steal")
         });
         mainContentBox.add(wmClassLabel, {
             x_fill: false,
@@ -238,20 +238,20 @@ const WindowStealingSettings = new Lang.Class({
         let value = this._entry.get_text();
 
         // Cleanup
-        value = value.split(' ');
+        value = value.split('|');
         for (let v in value)
             value[v] = value[v].trim();
-        value = value.join(' ');
+        value = value.join('|');
 
         let array = this._dtdSettings.get_strv('window-stealing') || [];
         
         if (value.length) {
-            value = this._app.id + ' ' + value;
+            value = this._app.id + '|' + value;
 
             // Change
             let found = false;
             for (let a in array) {
-                let entry = array[a].split(' ', 2);
+                let entry = array[a].split('|', 2);
                 if (entry.length == 2) {
                     if (this._app.id == entry[0]) {
                         array[a] = value;
@@ -271,7 +271,7 @@ const WindowStealingSettings = new Lang.Class({
         else {
             // Remove
             for (let a in array) {
-                let entry = array[a].split(' ', 2);
+                let entry = array[a].split('|', 2);
                 if (entry.length == 2) {
                     if (this._app.id == entry[0]) {
                         array.splice(a, 1);
