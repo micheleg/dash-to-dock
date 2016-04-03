@@ -112,7 +112,7 @@ const MyAppIcon = new Lang.Class({
         // resulting in an error when assigned to the a rect. This is a more like
         // a workaround to prevent flooding the system with errors.
         if (this.actor.get_stage() == null)
-            return
+            return;
 
         let rect = new Meta.Rectangle();
 

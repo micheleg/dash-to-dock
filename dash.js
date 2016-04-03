@@ -23,7 +23,7 @@ const Util = imports.misc.util;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
-const Icons = Me.imports.icons;
+const AppIcons = Me.imports.appIcons;
 const Windows = Me.imports.windows;
 
 let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
@@ -41,7 +41,7 @@ let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
  */
 function extendDashItemContainer(dashItemContainer, settings) {
     dashItemContainer._dtdSettings = settings;
-    dashItemContainer.showLabel = Icons.itemShowLabel;
+    dashItemContainer.showLabel = AppIcons.itemShowLabel;
 }
 
 /**
@@ -244,7 +244,7 @@ const MyDash = new Lang.Class({
         this._scrollView.add_actor(this._box);
 
         this._showAppsIcon = new Dash.ShowAppsIcon();
-        Icons.extendShowAppsIcon(this._showAppsIcon, this._dtdSettings);
+        AppIcons.extendShowAppsIcon(this._showAppsIcon, this._dtdSettings);
         this._showAppsIcon.childScale = 1;
         this._showAppsIcon.childOpacity = 255;
         this._showAppsIcon.icon.setIconSize(this.iconSize);
@@ -475,7 +475,7 @@ const MyDash = new Lang.Class({
     },
 
     _createAppItem: function(app) {
-        let appIcon = new Icons.MyAppIcon(this._dtdSettings, app,
+        let appIcon = new AppIcons.MyAppIcon(this._dtdSettings, app,
                                              { setSizeManually: true,
                                                showLabel: false });
         if (appIcon._draggable) {
