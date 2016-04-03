@@ -1,4 +1,4 @@
-// -*- mode: js2; indent-tabs-mode: nil; js2-basic-offset: 4 -*-
+// -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
@@ -7,7 +7,6 @@ const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
-
 
 const Gettext = imports.gettext.domain('dashtodock');
 const _ = Gettext.gettext;
@@ -20,48 +19,45 @@ const Convenience = Me.imports.convenience;
 const SCALE_UPDATE_TIMEOUT = 500;
 const DEFAULT_ICONS_SIZES = [ 128, 96, 64, 48, 32, 24, 16 ];
 
-/*
-This function was copied from the activities-config extension
-https://github.com/nls1729/acme-code/tree/master/activities-config
-by Norman L. Smith.
-*/
+/**
+ * This function was copied from the activities-config extension
+ * https://github.com/nls1729/acme-code/tree/master/activities-config
+ * by Norman L. Smith.
+ */
 function cssHexString(css) {
     let rrggbb = '#';
     let start;
-    for(let loop = 0; loop < 3; loop++) {
+    for (let loop = 0; loop < 3; loop++) {
         let end = 0;
         let xx = '';
-        for(let loop = 0; loop < 2; loop++) {
-            while(true) {
+        for (let loop = 0; loop < 2; loop++) {
+            while (true) {
                 let x = css.slice(end, end + 1);
-                if(x == '(' || x == ',' || x == ')')
+                if ((x == '(') || (x == ',') || (x == ')'))
                     break;
-                end = end + 1;
+                end++;
             }
-            if(loop == 0) {
-                end = end + 1;
+            if (loop == 0) {
+                end++;
                 start = end;
             }
         }
         xx = parseInt(css.slice(start, end)).toString(16);
-        if(xx.length == 1)
+        if (xx.length == 1)
             xx = '0' + xx;
-        rrggbb = rrggbb + xx;
+        rrggbb += xx;
         css = css.slice(end);
     }
     return rrggbb;
 }
 
-
 const Settings = new Lang.Class({
-    Name: 'DashToDockSettings',
-
+    Name: 'DashToDock.Settings',
 
     _init: function() {
-
         this._settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
 
-        this._rtl = Gtk.Widget.get_default_direction()==Gtk.TextDirection.RTL;
+        this._rtl = (Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL);
 
         this._builder = new Gtk.Builder();
         this._builder.set_translation_domain(Me.metadata['gettext-domain']);
@@ -77,17 +73,17 @@ const Settings = new Lang.Class({
         this._bindSettings();
 
         this._builder.connect_signals_full(Lang.bind(this, this._connector));
-
     },
 
-    // Connect signals
+    /**
+     * Connect signals
+     */
     _connector: function(builder, object, signal, handler) {
         object.connect(signal, Lang.bind(this, this._SignalHandler[handler]));
     },
 
     _bindSettings: function() {
-
-        /* Position and size panel */
+        // Position and size panel
 
         // Monitor options
 
@@ -99,23 +95,23 @@ const Settings = new Lang.Class({
         let monitor = this._settings.get_int('preferred-monitor');
 
         // Add primary monitor with index 0, because in GNOME Shell the primary monitor is always 0
-        this._builder.get_object('dock_monitor_combo').append_text(_("Primary monitor"));
+        this._builder.get_object('dock_monitor_combo').append_text(_('Primary monitor'));
         this._monitors.push(0);
 
         // Add connected monitors
         let ctr = 0;
         for (let i = 0; i < n_monitors; i++) {
-            if (i !== primary_monitor){
+            if (i !== primary_monitor) {
                 ctr++;
                 this._monitors.push(ctr);
-                this._builder.get_object('dock_monitor_combo').append_text(_("Secondary monitor ") + ctr);
+                this._builder.get_object('dock_monitor_combo').append_text(_('Secondary monitor ') + ctr);
             }
         }
 
         // If one of the external monitor is set as preferred, show it even if not attached
-        if ( monitor >= n_monitors && monitor !== primary_monitor) {
+        if ((monitor >= n_monitors) && (monitor !== primary_monitor)) {
             this._monitors.push(monitor)
-            this._builder.get_object('dock_monitor_combo').append_text(_("Secondary monitor ") + ++ctr);
+            this._builder.get_object('dock_monitor_combo').append_text(_('Secondary monitor ') + ++ctr);
         }
 
         this._builder.get_object('dock_monitor_combo').set_active(this._monitors.indexOf(monitor));
@@ -140,8 +136,8 @@ const Settings = new Lang.Class({
 
         if (this._rtl) {
             /* Left is Right in rtl as a setting */
-            this._builder.get_object('position_left_button').set_label(_("Right"));
-            this._builder.get_object('position_right_button').set_label(_("Left"));
+            this._builder.get_object('position_left_button').set_label(_('Right'));
+            this._builder.get_object('position_right_button').set_label(_('Left'));
         }
 
         // Intelligent autohide options
@@ -191,14 +187,14 @@ const Settings = new Lang.Class({
         // Create dialog for intelligent autohide advanced settings
         this._builder.get_object('intelligent_autohide_button').connect('clicked', Lang.bind(this, function() {
 
-            let dialog = new Gtk.Dialog({ title: _("Intelligent autohide customization"),
+            let dialog = new Gtk.Dialog({ title: _('Intelligent autohide customization'),
                                           transient_for: this.widget.get_toplevel(),
                                           use_header_bar: true,
                                           modal: true });
 
             // GTK+ leaves positive values for application-defined response ids.
-            // Use +1 for the reset action 
-            dialog.add_button(_("Reset to defaults"), 1);
+            // Use +1 for the reset action
+            dialog.add_button(_('Reset to defaults'), 1);
 
             let box = this._builder.get_object('intelligent_autohide_advanced_settings_box');
             dialog.get_content_area().add(box);
@@ -250,7 +246,7 @@ const Settings = new Lang.Class({
                     // restore default settings for the relevant keys
                     let keys = ['intellihide', 'autohide', 'intellihide-mode', 'autohide-in-fullscreen', 'require-pressure-to-show',
                                 'animation-time', 'show-delay', 'hide-delay', 'pressure-threshold'];
-                    keys.forEach(function(val){
+                    keys.forEach(function(val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);
                     intellihideModeRadioButtons[this._settings.get_enum('intellihide-mode')].set_active(true);
@@ -272,8 +268,8 @@ const Settings = new Lang.Class({
         let icon_size_scale = this._builder.get_object('icon_size_scale');
         icon_size_scale.set_range(DEFAULT_ICONS_SIZES[DEFAULT_ICONS_SIZES.length -1], DEFAULT_ICONS_SIZES[0]);
         icon_size_scale.set_value(this._settings.get_int('dash-max-icon-size'));
-        DEFAULT_ICONS_SIZES.forEach(function(val){
-                icon_size_scale.add_mark(val, Gtk.PositionType.TOP, val.toString());
+        DEFAULT_ICONS_SIZES.forEach(function(val) {
+             icon_size_scale.add_mark(val, Gtk.PositionType.TOP, val.toString());
         });
 
         // Corrent for rtl languages
@@ -281,10 +277,9 @@ const Settings = new Lang.Class({
             // Flip value position: this is not done automatically
             this._builder.get_object('dock_size_scale').set_value_pos(Gtk.PositionType.LEFT);
             icon_size_scale.set_value_pos(Gtk.PositionType.LEFT);
-            /* I suppose due to a bug, having a more than one mark and one above a value of 100
-             * makes the rendering of the marks wrong in rtl. This doesn't happen setting the scale as not flippable
-             * and then manually inverting it
-             */
+            // I suppose due to a bug, having a more than one mark and one above a value of 100
+            // makes the rendering of the marks wrong in rtl. This doesn't happen setting the scale as not flippable
+            // and then manually inverting it
             icon_size_scale.set_flippable(false);
             icon_size_scale.set_inverted(true);
         }
@@ -294,7 +289,7 @@ const Settings = new Lang.Class({
         this._settings.bind('extend-height', this._builder.get_object('dock_size_scale'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
 
-        /* Behavior panel */
+        // Behavior panel
 
         this._settings.bind('show-running',
                             this._builder.get_object('show_running_switch'),
@@ -327,18 +322,18 @@ const Settings = new Lang.Class({
 
         this._builder.get_object('click_action_combo').set_active(this._settings.get_enum('click-action'));
         this._builder.get_object('click_action_combo').connect('changed', Lang.bind (this, function(widget) {
-                this._settings.set_enum('click-action', widget.get_active());
+            this._settings.set_enum('click-action', widget.get_active());
         }));
 
         this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_boolean('minimize-shift')?1:0);
 
         this._builder.get_object('shift_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
-                this._settings.set_boolean('minimize-shift', widget.get_active()==1);
+            this._settings.set_boolean('minimize-shift', widget.get_active()==1);
         }));
 
         this._settings.bind('scroll-switch-workspace', this._builder.get_object('switch_workspace_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
 
-        /* Appearance Panel */
+        // Appearance Panel
 
         this._settings.bind('apply-custom-theme', this._builder.get_object('customize_theme'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN | Gio.SettingsBindFlags.GET);
         this._settings.bind('apply-custom-theme', this._builder.get_object('builtin_theme_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
@@ -356,7 +351,7 @@ const Settings = new Lang.Class({
         // Create dialog for running dots advanced settings
         this._builder.get_object('running_dots_advance_settings_button').connect('clicked', Lang.bind(this, function() {
 
-            let dialog = new Gtk.Dialog({ title: _("Customize running indicators"),
+            let dialog = new Gtk.Dialog({ title: _('Customize running indicators'),
                                           transient_for: this.widget.get_toplevel(),
                                           use_header_bar: true,
                                           modal: true });
@@ -414,106 +409,105 @@ const Settings = new Lang.Class({
         this._builder.get_object('custom_opacity_scale').set_value(this._settings.get_double('background-opacity'));
         this._settings.bind('opaque-background', this._builder.get_object('custom_opacity'), 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
-        /* About Panel */
+        // About Panel
 
         this._builder.get_object('extension_version').set_label(Me.metadata.version.toString());
-
     },
 
-
-    // Object containing all signals defined in the glade file
+    /**
+     * Object containing all signals defined in the glade file
+     */
     _SignalHandler: {
+        dock_display_combo_changed_cb: function(combo) {
+            this._settings.set_int('preferred-monitor', this._monitors[combo.get_active()]);
+        },
 
-            dock_display_combo_changed_cb: function (combo) {
-                this._settings.set_int('preferred-monitor', this._monitors[combo.get_active()]);
-            },
+        position_top_button_toggled_cb: function(button) {
+            if (button.get_active())
+                this._settings.set_enum('dock-position', 0);
+        },
 
-            position_top_button_toggled_cb: function (button){
-                if (button.get_active()) 
-                    this._settings.set_enum('dock-position', 0);
-            },
+        position_right_button_toggled_cb: function(button) {
+            if (button.get_active())
+                this._settings.set_enum('dock-position', 1);
+        },
 
-            position_right_button_toggled_cb: function (button) {
-                if (button.get_active()) 
-                    this._settings.set_enum('dock-position', 1);
-            },
+        position_bottom_button_toggled_cb: function(button) {
+            if (button.get_active())
+                this._settings.set_enum('dock-position', 2);
+        },
 
-            position_bottom_button_toggled_cb: function (button) {
-                if (button.get_active()) 
-                    this._settings.set_enum('dock-position', 2);
-            },
+        position_left_button_toggled_cb: function(button) {
+            if (button.get_active())
+                this._settings.set_enum('dock-position', 3);
+        },
 
-            position_left_button_toggled_cb: function (button) {
-                if (button.get_active()) 
-                    this._settings.set_enum('dock-position', 3);
-            },
+        icon_size_combo_changed_cb: function(combo) {
+            this._settings.set_int('dash-max-icon-size', this._allIconSizes[combo.get_active()]);
+        },
 
-            icon_size_combo_changed_cb: function(combo) {
-                this._settings.set_int('dash-max-icon-size', this._allIconSizes[combo.get_active()]);
-            },
+        dock_size_scale_format_value_cb: function(scale, value) {
+            return Math.round(value*100)+ ' %';
+        },
 
-            dock_size_scale_format_value_cb: function(scale, value) {
-                return Math.round(value*100)+ ' %';
-            },
+        dock_size_scale_value_changed_cb: function(scale) {
+            // Avoid settings the size consinuosly
+            if (this._dock_size_timeout > 0)
+                Mainloop.source_remove(this._dock_size_timeout);
 
-            dock_size_scale_value_changed_cb: function(scale){
-                // Avoid settings the size consinuosly
-                if (this._dock_size_timeout >0)
-                    Mainloop.source_remove(this._dock_size_timeout);
+            this._dock_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
+                this._settings.set_double('height-fraction', scale.get_value());
+                this._dock_size_timeout = 0;
+                return GLib.SOURCE_REMOVE;
+            }));
+        },
 
-                this._dock_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function(){
-                    this._settings.set_double('height-fraction', scale.get_value());
-                    this._dock_size_timeout = 0;
-                    return GLib.SOURCE_REMOVE;
-                }));       
-            },
+        icon_size_scale_format_value_cb: function(scale, value) {
+            return value+ ' px';
+        },
 
-            icon_size_scale_format_value_cb: function(scale, value) {
-                return value+ ' px';
-            },
+        icon_size_scale_value_changed_cb: function(scale) {
+            // Avoid settings the size consinuosly
+            if (this._icon_size_timeout > 0)
+                Mainloop.source_remove(this._icon_size_timeout);
 
-            icon_size_scale_value_changed_cb: function(scale){
-                // Avoid settings the size consinuosly
-                if (this._icon_size_timeout >0)
-                    Mainloop.source_remove(this._icon_size_timeout);
+            this._icon_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
+                this._settings.set_int('dash-max-icon-size', scale.get_value());
+                this._icon_size_timeout = 0;
+                return GLib.SOURCE_REMOVE;
+            }));
+        },
 
-                this._icon_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function(){
-                    this._settings.set_int('dash-max-icon-size', scale.get_value());
-                    this._icon_size_timeout = 0;
-                    return GLib.SOURCE_REMOVE;
-                }));       
-            },
+        custom_opacity_scale_value_changed_cb: function(scale) {
+            // Avoid settings the opacity consinuosly as it's change is animated
+            if (this._opacity_timeout > 0)
+                Mainloop.source_remove(this._opacity_timeout);
 
-            custom_opacity_scale_value_changed_cb: function(scale){
-                // Avoid settings the opacity consinuosly as it's change is animated
-                if (this._opacity_timeout >0)
-                    Mainloop.source_remove(this._opacity_timeout);
+            this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
+                this._settings.set_double('background-opacity', scale.get_value());
+                this._opacity_timeout = 0;
+                return GLib.SOURCE_REMOVE;
+            }));
+        },
 
-                this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function(){
-                    this._settings.set_double('background-opacity', scale.get_value());
-                    this._opacity_timeout = 0;
-                    return GLib.SOURCE_REMOVE;
-                }));
-            },
+        custom_opacity_scale_format_value_cb: function(scale, value) {
+            return Math.round(value*100) + ' %';
+        },
 
-            custom_opacity_scale_format_value_cb: function(scale, value) {
-                return Math.round(value*100) + ' %';
-            },
+        all_windows_radio_button_toggled_cb: function(button) {
+            if (button.get_active())
+                this._settings.set_enum('intellihide-mode', 0);
+        },
 
-            all_windows_radio_button_toggled_cb: function (button){
-                if (button.get_active())
-                    this._settings.set_enum('intellihide-mode', 0);
-            },
+        focus_application_windows_radio_button_toggled_cb: function(button) {
+            if (button.get_active())
+                this._settings.set_enum('intellihide-mode', 1);
+        },
 
-            focus_application_windows_radio_button_toggled_cb: function (button){
-                if (button.get_active())
-                    this._settings.set_enum('intellihide-mode', 1);
-            },
-
-            maximized_windows_radio_button_toggled_cb: function (button){
-                if (button.get_active())
-                    this._settings.set_enum('intellihide-mode', 2);
-            }
+        maximized_windows_radio_button_toggled_cb: function(button) {
+            if (button.get_active())
+                this._settings.set_enum('intellihide-mode', 2);
+        }
     }
 });
 
@@ -527,4 +521,3 @@ function buildPrefsWidget() {
     widget.show_all();
     return widget;
 }
-
