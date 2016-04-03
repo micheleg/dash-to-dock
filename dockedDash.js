@@ -453,13 +453,14 @@ const dockedDash = new Lang.Class({
         // The public method trackChrome requires the actor to be child of a tracked actor. Since I don't want the parent
         // to be tracked I use the private internal _trackActor instead.
         Main.uiGroup.add_child(this.actor);
-        Main.layoutManager._trackActor(this._slider.actor);
+        if ( this._settings.get_boolean('dock-fixed') )
+            Main.layoutManager._trackActor(this._slider.actor, {affectsStruts: true, trackFullscreen: true});
+        else
+            Main.layoutManager._trackActor(this._slider.actor);
+
 
         // Keep the dash below the modalDialogGroup
         Main.layoutManager.uiGroup.set_child_below_sibling(this.actor,Main.layoutManager.modalDialogGroup);
-
-        if ( this._settings.get_boolean('dock-fixed') )
-          Main.layoutManager._trackActor(this._box, {affectsStruts: true, trackFullscreen: true});
 
         // pretend this._slider is isToplevel child so that fullscreen is actually tracked
         let index = Main.layoutManager._findActor(this._slider.actor);
@@ -588,9 +589,11 @@ const dockedDash = new Lang.Class({
         this._settings.connect('changed::dock-fixed', Lang.bind(this, function(){
 
             if(this._settings.get_boolean('dock-fixed')) {
-                Main.layoutManager._trackActor(this._box, {affectsStruts: true, trackFullscreen: true});
+                Main.layoutManager._untrackActor(this._slider.actor);
+                Main.layoutManager._trackActor(this._slider.actor, {affectsStruts: true, trackFullscreen: true});
             } else {
-                Main.layoutManager._untrackActor(this._box);
+                Main.layoutManager._untrackActor(this._slider.actor);
+                Main.layoutManager._trackActor(this._slider.actor);
             }
 
             this._resetPosition();
