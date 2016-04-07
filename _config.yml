@@ -1,5 +1,4 @@
 safe:       true
-markdown:   redcarpet
 highlighter: rouge
 name: "Dash to Dock GNOME Shell extension"
 description: "A dock for the GNOME Shell. This extension moves the dash out of the overview transforming it in a dock for an easier launching of applications and a faster switching between windows and workspaces."
