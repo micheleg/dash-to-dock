@@ -53,7 +53,7 @@ function isStolen(app, settings) {
 function isStealingFrom(app, stolenApp, settings) {
     if (stolenApp !== null) {
         let windows = stolenApp.get_windows();
-        for (let w in windows) {
+        for (let w = windows.length - 1; w >= 0; w--)  {
             if (isStealingWindow(app, windows[w], settings)) {
                 return true;
             }
@@ -92,7 +92,7 @@ function isStealingWindow(app, window, settings) {
 
 function hasStolenWindows(app, settings) {
     let windows = app.get_windows();
-    for (let w in windows) {
+    for (let w = windows.length - 1; w >= 0; w--)  {
         if (isStolenWindow(windows[w], settings)) {
             return true;
         }

@@ -385,7 +385,7 @@ function minimizeWindow(app, param, settings) {
     // Param true make all app windows minimize
     let windows = Windows.getInterestingWindows(app, settings);
     let current_workspace = global.screen.get_active_workspace();
-    for (let i = 0; i < windows.length; i++) {
+    for (let i = windows.length - 1; i >= 0; i--) {
         let w = windows[i];
         if (w.get_workspace() == current_workspace && w.showing_on_its_workspace()) {
             w.minimize();

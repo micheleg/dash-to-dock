@@ -220,7 +220,7 @@ const Intellihide = new Lang.Class({
 
                 windows = windows.filter(this._intellihideFilterInteresting, this);
 
-                for (let i in windows.length) {
+                for (let i = 0; i < windows.length; i++) {
                     let win = windows[i].get_meta_window();
                     if (win) {
                         let rect = win.get_frame_rect();
