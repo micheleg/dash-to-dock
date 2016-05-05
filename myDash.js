@@ -1333,7 +1333,8 @@ const clickAction = {
     SKIP: 0,
     MINIMIZE: 1,
     LAUNCH: 2,
-    CYCLE_WINDOWS: 3
+    CYCLE_WINDOWS: 3,
+    CYCLE_WINDOWS_CURRENT_WS: 4
 };
 
 let recentlyClickedAppLoopId = 0;
@@ -1538,6 +1539,8 @@ const myAppIcon = new Lang.Class({
 
                 if(this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS)
                     cycleThroughWindows(this.app);
+                else if(this._settings.get_enum('click-action') == clickAction.CYCLE_WINDOWS_CURRENT_WS)
+                    cycleThroughWindowsCurrentWS(this.app);
                 else if(this._dtdSettings.get_enum('click-action') == clickAction.MINIMIZE)
                     minimizeWindow(this.app, true);
                 else if(this._dtdSettings.get_enum('click-action') == clickAction.LAUNCH)
@@ -1550,6 +1553,17 @@ const myAppIcon = new Lang.Class({
                     let windows = getAppInterestingWindows(this.app);
                     let w = windows[0];
                     Main.activateWindow(w);
+                } else if (this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS_CURRENT_WS && !Main.overview._shown){
+                    // If click cycles through windows, I can activate one windows at a time
+                    let windows = getAppInterestingWindowsCurrentWS(this.app);
+                    // If there are no windows in the current WS, launch a new one
+                    if (windows.length == 0)
+                        this.app.open_new_window(-1);
+                    else{
+                        let w = windows[0];
+                        if (w.get_workspace().index() == global.screen.get_active_workspace_index())
+                            Main.activateWindow(w);
+                    }
                 } else if(this._dtdSettings.get_enum('click-action') == clickAction.LAUNCH)
                     this.app.open_new_window(-1);
                 else if(this._dtdSettings.get_enum('click-action') == clickAction.MINIMIZE){
@@ -1734,6 +1748,37 @@ function cycleThroughWindows(app) {
     Main.activateWindow(window);
 }
 
+function cycleThroughWindowsCurrentWS(app) {
+
+    // Store for a little amount of time last clicked app and its windows
+    // since the order changes upon window interaction
+    let MEMORY_TIME=3000;
+
+    let app_windows = getAppInterestingWindowsCurrentWS(app);
+
+    if(recentlyClickedAppLoopId>0)
+        Mainloop.source_remove(recentlyClickedAppLoopId);
+    recentlyClickedAppLoopId = Mainloop.timeout_add(MEMORY_TIME, resetRecentlyClickedApp);
+
+    // If there isn't already a list of windows for the current app,
+    // or the stored list is outdated, use the current windows list.
+    if( !recentlyClickedApp ||
+        recentlyClickedApp.get_id() != app.get_id() ||
+        recentlyClickedAppWindows.length != app_windows.length
+      ){
+
+        recentlyClickedApp = app;
+        recentlyClickedAppWindows = app_windows;
+        recentlyClickedAppIndex = 0;
+    }
+
+    recentlyClickedAppIndex++;
+    let index = recentlyClickedAppIndex % recentlyClickedAppWindows.length;
+    let window = recentlyClickedAppWindows[index];
+
+    Main.activateWindow(window);
+}
+
 function resetRecentlyClickedApp() {
 
     if(recentlyClickedAppLoopId>0)
@@ -1751,6 +1796,16 @@ function getAppInterestingWindows(app) {
     // nautilus desktop window.
     let windows = app.get_windows().filter(function(w) {
         return !w.skip_taskbar;
+    });
+
+    return windows;
+}
+
+function getAppInterestingWindowsCurrentWS(app) {
+    // Filter out unnecessary windows, for instance
+    // nautilus desktop window.
+    let windows = app.get_windows().filter(function(w) {
+      return w.get_workspace().index() == global.screen.get_active_workspace_index();
     });
 
     return windows;

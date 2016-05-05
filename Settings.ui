@@ -1013,6 +1013,7 @@
                               <item translatable="yes">Minimize</item>
                               <item translatable="yes">Launch new instance</item>
                               <item translatable="yes">Cycle through windows</item>
+                              <item translatable="yes">Cycle through windows in current WS</item>
                             </items>
                           </object>
                           <packing>
