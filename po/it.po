@@ -40,7 +40,7 @@ msgstr "Opzioni Intelligent autohide "
 
 #: prefs.js:168
 msgid "Reset to defaults"
-msgstr "rpredefiniti"
+msgstr "Predefiniti"
 
 #: Settings.ui.h:1
 msgid "Show the dock on"
