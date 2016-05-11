@@ -293,19 +293,7 @@ const Intellihide = new Lang.Class({
                 break;
         }
 
-        /* Finally checking fot the window visibility.
-
-           Checking for the mapped state when not in the overview (in overview
-           the real windows actor are always not mapped) allows to skip
-           spurious window position when first created: the window might be put
-           at the top left corner of the workarea, before being positioned
-           according to the mutter windows system. Although the window is never
-           shown in such position, the intellihide retrieve such position and
-           start hiding the dock, which is readily reshown as soon as the window
-           position is updated.
-        */
-        if (wksp_index == currentWorkspace && meta_win.showing_on_its_workspace()
-            && (Main.overview.visible || wa.mapped))
+        if ( wksp_index == currentWorkspace && meta_win.showing_on_its_workspace() )
             return true;
         else
             return false;
