@@ -543,7 +543,7 @@ const DockedDash = new Lang.Class({
 
         this._settings.connect('changed::dock-fixed', Lang.bind(this, function() {
 
-            if (this._dtdSettings.get_boolean('dock-fixed')) {
+            if (this._settings.get_boolean('dock-fixed')) {
                 Main.layoutManager._untrackActor(this._slider.actor);
                 Main.layoutManager._trackActor(this._slider.actor, {affectsStruts: true, trackFullscreen: true});
             } else {
