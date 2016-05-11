@@ -13,6 +13,7 @@ This page contains zip archives for all released versions of Dash to Dock. The p
 
 {% for sv in page.shell_versions %}
 <a name="{{sv}}"></a>
+
 ### GNOME Shell {{ sv }}
 {% for release in site.data.releases %}
 {% if release.shell_version contains sv %}

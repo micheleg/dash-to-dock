@@ -20,6 +20,7 @@ The source code can be obtained from Github
 Here are the [Installation instructions](./download.html#installfromsource).
 
 <a name="roadmap"></a>
+
 ### Roadmap
 
 1. Keep the extension updated with new upstream versions.
@@ -31,6 +32,7 @@ Here are the [Installation instructions](./download.html#installfromsource).
 There aren't mayor features planned altough consider new ideas and suggestions.
 
 <a name="bugreporting"></a>
+
 ### Bug Reporting
 If you experienced a bug please report it by opening an [isssue on github]({{ site.github_project_url }}/issues). You can also send a bug report message in the [extension website]({{ site.extension_page_url }}). Your help is very appreciated.
 
@@ -51,6 +53,7 @@ Before reporting a bug:
 
 
 <a name="license"></a>
+
 ### License
 Dash to Dock Gnome Shell extension is distributed under the terms of the GNU General Public License,
 version 2 or later. See the COPYING file for details.
