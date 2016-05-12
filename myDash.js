@@ -1466,7 +1466,7 @@ const myAppIcon = new Lang.Class({
     _updateRunningStyle: function() {
         this.parent();
         if (!this.app.is_on_workspace(global.screen.get_active_workspace())) {
-            this.actor.remove_style_class_name('running');
+            this._dot.hide();
         }
         this._updateCounterClass();
         Shell.AppSystem.get_default().emit('installed-changed');
