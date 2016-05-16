@@ -166,7 +166,13 @@ const MyAppIcon = new Lang.Class({
 
     _updateRunningStyle: function() {
         this.parent();
+        if (this._dtdSettings.get_boolean('isolate-workspaces')) {
+          if (!this.app.is_on_workspace(global.screen.get_active_workspace())) { //changed
+              this._dot.hide();
+          }
+        }
         this._updateCounterClass();
+        Shell.AppSystem.get_default().emit('installed-changed');
     },
 
     popupMenu: function() {

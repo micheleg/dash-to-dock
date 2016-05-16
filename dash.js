@@ -699,7 +699,13 @@ const MyDash = new Lang.Class({
     _redisplay: function() {
         let favorites = AppFavorites.getAppFavorites().getFavoriteMap();
 
-        let running = this._appSystem.get_running();
+        let running;
+        if (this._dtdSettings.get_boolean('isolate-workspaces')) {
+            running = this._appSystem.get_running().filter(function(_app) {//changed
+                return _app.is_on_workspace(global.screen.get_active_workspace());
+            });
+        } else
+          running = this._appSystem.get_running();
 
         let children = this._box.get_children().filter(function(actor) {
             return actor.child &&
