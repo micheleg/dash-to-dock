@@ -950,9 +950,7 @@ const myDash = new Lang.Class({
     _redisplay: function () {
         let favorites = AppFavorites.getAppFavorites().getFavoriteMap();
 
-        let running = this._appSystem.get_running().filter(function(_app) {
-            return _app.is_on_workspace(global.screen.get_active_workspace());
-        });
+        let running = this._appSystem.get_running();
 
         let children = this._box.get_children().filter(function(actor) {
                 return actor.child &&
@@ -1465,11 +1463,7 @@ const myAppIcon = new Lang.Class({
 
     _updateRunningStyle: function() {
         this.parent();
-        if (!this.app.is_on_workspace(global.screen.get_active_workspace())) {
-            this.actor.remove_style_class_name('running');
-        }
         this._updateCounterClass();
-        Shell.AppSystem.get_default().emit('installed-changed');
     },
 
     popupMenu: function() {
