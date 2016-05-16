@@ -702,6 +702,12 @@ const MyDash = new Lang.Class({
         let running;
         if (this._dtdSettings.get_boolean('isolate-workspaces')) {
             running = this._appSystem.get_running().filter(function(_app) {
+                let windows = _app.get_windows().filter(function(w) {
+                    return w.get_workspace().index() == global.screen.get_active_workspace_index();
+                });
+                if (windows.length == 1)
+                    if (windows[0].skip_taskbar)
+                        return false;
                 return _app.is_on_workspace(global.screen.get_active_workspace());
             });
         }
