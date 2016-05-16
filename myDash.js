@@ -1539,7 +1539,7 @@ const myAppIcon = new Lang.Class({
 
                 if(this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS)
                     cycleThroughWindows(this.app);
-                else if(this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS_CURRENT_WS)
+                else if(this._settings.get_enum('click-action') == clickAction.CYCLE_WINDOWS_CURRENT_WS)
                     cycleThroughWindowsCurrentWS(this.app);
                 else if(this._dtdSettings.get_enum('click-action') == clickAction.MINIMIZE)
                     minimizeWindow(this.app, true);
@@ -1805,7 +1805,7 @@ function getAppInterestingWindowsCurrentWS(app) {
     // Filter out unnecessary windows, for instance
     // nautilus desktop window.
     let windows = app.get_windows().filter(function(w) {
-        return w.get_workspace().index() == global.screen.get_active_workspace_index();
+      return w.get_workspace().index() == global.screen.get_active_workspace_index();
     });
 
     return windows;
