@@ -40,7 +40,7 @@ msgstr "Opzioni Intelligent autohide "
 
 #: prefs.js:201
 msgid "Reset to defaults"
-msgstr "rpredefiniti"
+msgstr "Predefiniti"
 
 #: prefs.js:359
 #, fuzzy
