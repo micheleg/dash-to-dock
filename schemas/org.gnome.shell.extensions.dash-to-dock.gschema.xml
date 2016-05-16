@@ -5,7 +5,6 @@
     <value value='1' nick='minimize'/>
     <value value='2' nick='launch'/>
     <value value='3' nick='cycle-windows'/>
-    <value value='4' nick='cycle-windows-current-ws'/>
   </enum>
   <!-- this is mean to Match StSide. LEFT and RIGHT actual position in reversed in
        rtl languages -->
