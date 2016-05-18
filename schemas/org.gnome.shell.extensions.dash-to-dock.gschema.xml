@@ -141,7 +141,7 @@
       <description>Show or hide running appplications icons in the dash</description>
     </key>
     <key type="b" name="isolate-workspaces">
-      <default>true</default>
+      <default>false</default>
       <summary>Provide workspace isolation</summary>
       <description>Dash shows only windows from the currentworkspace</description>
     </key>
