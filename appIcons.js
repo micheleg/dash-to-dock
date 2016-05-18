@@ -259,8 +259,12 @@ const MyAppIcon = new Lang.Class({
                 if (this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS && !Main.overview._shown) {
                     // If click cycles through windows I can activate one windows at a time
                     let windows = getInterestingWindows(this.app, this._dtdSettings);
-                    let w = windows[0];
-                    Main.activateWindow(w);
+                    if (windows.length == 0)
+                        this.app.open_new_window(-1);
+                    else {
+                        let w = windows[0];
+                        Main.activateWindow(w);
+                    }
                 }
                 else if (this._dtdSettings.get_enum('click-action') == clickAction.LAUNCH)
                     this.app.open_new_window(-1);
