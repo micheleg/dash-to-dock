@@ -683,7 +683,7 @@
                             <property name="can_focus">False</property>
                             <property name="hexpand">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Show &lt;i&gt;Show Applications&lt;/i&gt; icon</property>
+                            <property name="label" translatable="yes">Show &lt;i&gt;Applications&lt;/i&gt; icon</property>
                             <property name="use_markup">True</property>
                           </object>
                           <packing>
