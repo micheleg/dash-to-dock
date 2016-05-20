@@ -41,6 +41,9 @@ const ThemeManager = new Lang.Class({
         this._defaultBackground = {red: 0, green: 0, blue: 0, alpha: 0};
         this._defaultBackgroundColor = {red: 0, green: 0, blue: 0, alpha: 0};
         this._customizedBackground = {red: 0, green: 0, blue: 0, alpha: 0};
+        this._defaultBorder = {red: 0, green: 0, blue: 0, alpha: 0};
+        this._defaultBorderColor = {red: 0, green: 0, blue: 0, alpha: 0};
+        this._customizedBorder = {red: 0, green: 0, blue: 0, alpha: 0};
 
         this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._signalsHandler.add([
@@ -77,6 +80,11 @@ const ThemeManager = new Lang.Class({
 
     _updateBackgroundOpacity: function() {
         let newAlpha = this._settings.get_double('background-opacity');
+        let backgroundAlpha = Math.round(this._defaultBackgroundColor.alpha/2.55)/100;
+        let borderAlpha = Math.round(this._defaultBorderColor.alpha/2.55)/100;
+
+        // The border and background alphas should remain in sync
+        borderAlpha = (borderAlpha/backgroundAlpha) * newAlpha;
 
         this._defaultBackground = 'rgba(' +
             this._defaultBackgroundColor.red + ',' +
@@ -89,6 +97,19 @@ const ThemeManager = new Lang.Class({
             this._defaultBackgroundColor.green + ',' +
             this._defaultBackgroundColor.blue + ',' +
             newAlpha + ')';
+
+        this._defaultBorder = 'rgba(' +
+            this._defaultBorderColor.red + ',' +
+            this._defaultBorderColor.green + ',' +
+            this._defaultBorderColor.blue + ',' +
+            Math.round(this._defaultBorderColor.alpha/2.55)/100 + ')';
+
+        this._customizedBorder = 'rgba(' +
+            this._defaultBorderColor.red + ',' +
+            this._defaultBorderColor.green + ',' +
+            this._defaultBorderColor.blue + ',' +
+            borderAlpha + ')';
+
     },
 
     _getBackgroundColor: function() {
@@ -105,6 +126,17 @@ const ThemeManager = new Lang.Class({
         this._dash._container.set_style(oldStyle);
 
         this._defaultBackgroundColor = themeNode.get_background_color();
+
+        // Just in case the theme has different border colors ..
+        // We want to find the inside border-color of the dock because it is
+        // the side most visible to the user. We do this by finding the side
+        // opposite the position
+        let position = Convenience.getPosition(this._settings);
+        let side = position + 2;
+        if (side > 3)
+            side = Math.abs(side - 4);
+
+        this._defaultBorderColor = themeNode.get_border_color(side);
     },
 
     _updateCustomStyleClasses: function() {
@@ -203,6 +235,7 @@ const ThemeManager = new Lang.Class({
         // Customize background
         if (this._settings.get_boolean('opaque-background')) {
             newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
+                       'border-color:'+ this._customizedBorder + '; ' +
                        'transition-delay: 0s; transition-duration: 0.250s;';
             this._dash._container.set_style(newStyle);
         }
