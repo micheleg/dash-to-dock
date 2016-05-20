@@ -80,11 +80,15 @@ const ThemeManager = new Lang.Class({
 
     _updateBackgroundOpacity: function() {
         let newAlpha = this._settings.get_double('background-opacity');
-        let backgroundAlpha = Math.round(this._defaultBackgroundColor.alpha/2.55)/100;
+
+        // Get the background and border alphas. We check the background alpha
+        // for a minimum of .001 to prevent division by 0 errors
+        let backgroundAlpha = Math.max(Math.round(this._defaultBackgroundColor.alpha/2.55)/100, .001);
         let borderAlpha = Math.round(this._defaultBorderColor.alpha/2.55)/100;
 
         // The border and background alphas should remain in sync
-        borderAlpha = (borderAlpha/backgroundAlpha) * newAlpha;
+        // We also limit the borderAlpha to a maximum of 1 (full opacity)
+        borderAlpha = Math.min((borderAlpha/backgroundAlpha)*newAlpha, 1);
 
         this._defaultBackground = 'rgba(' +
             this._defaultBackgroundColor.red + ',' +
