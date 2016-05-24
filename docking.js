@@ -376,6 +376,7 @@ const DockedDash = new Lang.Class({
 
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
+        this._optionalWorkspaceIsolation();
 
          // Delay operations that require the shell to be fully loaded and with
          // user theme applied.
@@ -1374,6 +1375,44 @@ const DockedDash = new Lang.Class({
             }
             else
                 return false;
+        }
+    },
+
+    /**
+     * Isolate overview to open new windows for inactive apps
+     */
+    _optionalWorkspaceIsolation: function() {
+        if (this._settings.get_boolean('isolate-workspaces'))
+            enable();
+        this._settings.connect('changed::isolate-workspaces', Lang.bind(this, function() {
+            this.dash.resetAppIcons();
+            if (this._settings.get_boolean('isolate-workspaces'))
+                Lang.bind(this, enable)();
+            else
+                Lang.bind(this, disable)();
+        }));
+
+
+        function enable() {
+            Shell.App.prototype._oldOverviewActivate = Shell.App.prototype.activate;
+            Shell.App.prototype.activate = function() {
+                // These lines take care of Nautilus for icons on Desktop
+                let windows = this.get_windows().filter(function(w) {
+                    return w.get_workspace().index() == global.screen.get_active_workspace_index();
+                });
+                if (windows.length == 1)
+                    if (windows[0].skip_taskbar)
+                        return this.open_new_window(-1);
+
+                if (this.is_on_workspace(global.screen.get_active_workspace()))
+                    return Shell.App.prototype._oldOverviewActivate;
+                return this.open_new_window(-1);
+            };
+        }
+
+        function disable() {
+            Shell.App.prototype.activate = Shell.App.prototype._oldOverviewActivate;
+            delete Shell.App.prototype._oldOverviewActivate;
         }
     }
 });
