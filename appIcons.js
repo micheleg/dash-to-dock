@@ -510,7 +510,7 @@ const MyAppIconMenu = new Lang.Class({
             this._quitfromDashMenuItem = this._appendMenuItem(quitFromDashMenuText);
             this._quitfromDashMenuItem.connect('activate', Lang.bind(this, function() {
                 let app = this._source.app;
-                let windows = app.get_windows();
+                let windows = getInterestingWindows(app, this._dtdSettings);
                 for (let i = 0; i < windows.length; i++) {
                     this._closeWindowInstance(windows[i])
                 }
