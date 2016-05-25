@@ -2,14 +2,14 @@
 # Copyright (C) 2013 tuhaihe
 # This file is distributed under the same license as the dash-to-dock package.
 # tuhaihe <1132321739qq@gmail.com>, 2013.
-# 绿色圣光 <lishaohui.qd@163.com>, 2015.
+# 绿色圣光 <lishaohui.qd@163.com>, 2015, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-03-19 13:09+0000\n"
-"PO-Revision-Date: 2015-12-13 23:21+0800\n"
+"PO-Revision-Date: 2016-05-25 22:35+0800\n"
 "Last-Translator: 绿色圣光 <lishaohui.qd@163.com>\n"
 "Language-Team: Chinese (Simplified) <>\n"
 "Language: zh_CN\n"
@@ -176,11 +176,11 @@ msgid "Minimize window"
 msgstr "最小化窗口"
 
 #: Settings.ui.h:33
-#, fuzzy
 msgid ""
 "With fixed icon size, only the edge of the dock and the <i>Show "
 "Applications</i> icon are active."
-msgstr "如果图标溢出了 dock，只有“<i>显示应用程序</i>”图标会激活该功能。"
+msgstr ""
+"如果固定了图标大小，只有 dock 边缘和“<i>显示应用程序</i>”图标会激活该功能。"
 
 #: Settings.ui.h:34
 msgid "Switch workspace by scrolling on the dock"
@@ -278,7 +278,7 @@ msgstr "推压以显示：需要一定压力来显示 dock"
 
 #: Settings.ui.h:56
 msgid "Enable in fullscreen mode"
-msgstr ""
+msgstr "在全屏模式下启用"
 
 #: Settings.ui.h:57
 msgid "Show the dock when it doesn't obstruct application windows."
