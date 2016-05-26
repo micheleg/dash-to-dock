@@ -1392,7 +1392,6 @@ const DockedDash = new Lang.Class({
                 Lang.bind(this, disable)();
         }));
 
-
         function enable() {
             Shell.App.prototype._oldOverviewActivate = Shell.App.prototype.activate;
             Shell.App.prototype.activate = function() {
@@ -1405,8 +1404,11 @@ const DockedDash = new Lang.Class({
                         return this.open_new_window(-1);
 
                 if (this.is_on_workspace(global.screen.get_active_workspace()))
-                    return Shell.App.prototype._oldOverviewActivate;
-                return this.open_new_window(-1);
+                    return this._oldOverviewActivate();
+                this.open_new_window(-1);
+                global.screen.connect('restacked', function() {
+                    Shell.AppSystem.get_default().emit('installed-changed');
+                });
             };
         }
 
@@ -1414,6 +1416,7 @@ const DockedDash = new Lang.Class({
             Shell.App.prototype.activate = Shell.App.prototype._oldOverviewActivate;
             delete Shell.App.prototype._oldOverviewActivate;
         }
+
     }
 });
 
