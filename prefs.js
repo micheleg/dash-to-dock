@@ -409,20 +409,6 @@ const Settings = new Lang.Class({
         this._builder.get_object('custom_opacity_scale').set_value(this._settings.get_double('background-opacity'));
         this._settings.bind('opaque-background', this._builder.get_object('custom_opacity'), 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
-        this._settings.bind('custom-background-color', this._builder.get_object('custom_background_color_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('custom-background-color', this._builder.get_object('custom_background_color'), 'sensitive', Gio.SettingsBindFlags.DEFAULT);
-
-        let rgba = new Gdk.RGBA();
-        rgba.parse(this._settings.get_string('background-color'));
-        this._builder.get_object('custom_background_color').set_rgba(rgba);
-
-        this._builder.get_object('custom_background_color').connect('notify::color', Lang.bind(this, function(button) {
-            let rgba = button.get_rgba();
-            let css = rgba.to_string();
-            let hexString = cssHexString(css);
-            this._settings.set_string('background-color', hexString);
-        }));
-
         // About Panel
 
         this._builder.get_object('extension_version').set_label(Me.metadata.version.toString());

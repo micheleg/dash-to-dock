@@ -89,22 +89,6 @@ const ThemeManager = new Lang.Class({
             this._defaultBackgroundColor.green + ',' +
             this._defaultBackgroundColor.blue + ',' +
             newAlpha + ')';
-
-    },
-
-    _updateBackgroundColor: function() {
-        if (this._settings.get_boolean('custom-background-color')) {
-            let newAlpha = Math.round(this._defaultBackgroundColor.alpha/2.55)/100;
-            if (this._settings.get_boolean('opaque-background'))
-                newAlpha = this._settings.get_double('background-opacity');
-
-            let backgroundColor = Clutter.color_from_string(this._settings.get_string('background-color'))[1];
-            this._customizedBackground = 'rgba(' +
-                backgroundColor.red + ',' +
-                backgroundColor.green + ',' +
-                backgroundColor.blue + ',' +
-                newAlpha + ')';
-        }
     },
 
     _getBackgroundColor: function() {
@@ -139,7 +123,6 @@ const ThemeManager = new Lang.Class({
         this._updateCustomStyleClasses();
         this._getBackgroundColor();
         this._updateBackgroundOpacity();
-        this._updateBackgroundColor();
         this._adjustTheme();
         this._dash._redisplay();
     },
@@ -212,7 +195,7 @@ const ThemeManager = new Lang.Class({
         }
 
         // Customize background
-        if (this._settings.get_boolean('opaque-background') || this._settings.get_boolean('custom-background-color')) {
+        if (this._settings.get_boolean('opaque-background')) {
             newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
                        'transition-delay: 0s; transition-duration: 0.250s;';
             this._dash._container.set_style(newStyle);
@@ -222,8 +205,6 @@ const ThemeManager = new Lang.Class({
     _bindSettingsChanges: function() {
         let keys = ['opaque-background',
                     'background-opacity',
-                    'custom-background-color',
-                    'background-color',
                     'apply-custom-theme',
                     'custom-theme-shrink',
                     'extend-height'];

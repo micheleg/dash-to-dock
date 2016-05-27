@@ -50,16 +50,6 @@
       <summary>Opacity of the dash background</summary>
       <description>Sets the opacity of the dash background  when in autohide mode.</description>
     </key>
-    <key type="b" name="custom-background-color">
-      <default>false</default>
-      <summary>Set a custom dash background background color</summary>
-      <description>Sets the color for the dash background.</description>
-    </key>
-    <key type="s" name="background-color">
-      <default>"#ffffff"</default>
-      <summary>Dash background color.</summary>
-      <description>Customize the background color of the dash.</description>
-    </key>
     <key type="b" name="intellihide">
       <default>true</default>
       <summary>Dock dodges windows</summary>
