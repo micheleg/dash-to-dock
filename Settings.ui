@@ -1463,8 +1463,6 @@
                 </child>
                 <child>
                   <object class="GtkListBoxRow" id="custom_background_color_listboxrow">
-                    <property name="width_request">100</property>
-                    <property name="height_request">80</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <child>
