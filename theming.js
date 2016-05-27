@@ -38,9 +38,8 @@ const ThemeManager = new Lang.Class({
         this._dash = dash;
 
         // initialize colors with generic values
-        this._defaultBackground = {red: 0, green: 0, blue: 0, alpha: 0};
-        this._defaultBackgroundColor = {red: 0, green: 0, blue: 0, alpha: 0};
         this._customizedBackground = {red: 0, green: 0, blue: 0, alpha: 0};
+        this._customizedBorder = {red: 0, green: 0, blue: 0, alpha: 0};
 
         this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._signalsHandler.add([
@@ -75,27 +74,42 @@ const ThemeManager = new Lang.Class({
         this._actor.remove_style_pseudo_class('overview');
     },
 
-    _updateBackgroundOpacity: function() {
+    _updateDashOpacity: function() {
         let newAlpha = this._settings.get_double('background-opacity');
 
-        this._defaultBackground = 'rgba(' +
-            this._defaultBackgroundColor.red + ',' +
-            this._defaultBackgroundColor.green + ',' +
-            this._defaultBackgroundColor.blue + ',' +
-            Math.round(this._defaultBackgroundColor.alpha/2.55)/100 + ')';
+        let [backgroundColor, borderColor] = this._getDefaultColors();
+
+        if (backgroundColor==null)
+            return
+
+        // Get the background and border alphas. We check the background alpha
+        // for a minimum of .001 to prevent division by 0 errors
+        let backgroundAlpha = Math.max(Math.round(backgroundColor.alpha/2.55)/100, .001);
+        let borderAlpha = Math.round(borderColor.alpha/2.55)/100;
+
+        // The border and background alphas should remain in sync
+        // We also limit the borderAlpha to a maximum of 1 (full opacity)
+        borderAlpha = Math.min((borderAlpha/backgroundAlpha)*newAlpha, 1);
 
         this._customizedBackground = 'rgba(' +
-            this._defaultBackgroundColor.red + ',' +
-            this._defaultBackgroundColor.green + ',' +
-            this._defaultBackgroundColor.blue + ',' +
+            backgroundColor.red + ',' +
+            backgroundColor.green + ',' +
+            backgroundColor.blue + ',' +
             newAlpha + ')';
+
+        this._customizedBorder = 'rgba(' +
+            borderColor.red + ',' +
+            borderColor.green + ',' +
+            borderColor.blue + ',' +
+            borderAlpha + ')';
+
     },
 
-    _getBackgroundColor: function() {
+    _getDefaultColors: function() {
         // Prevent shell crash if the actor is not on the stage.
         // It happens enabling/disabling repeatedly the extension
         if (!this._dash._container.get_stage())
-            return;
+            return [null, null];
 
         // Remove custom style
         let oldStyle = this._dash._container.get_style();
@@ -104,7 +118,20 @@ const ThemeManager = new Lang.Class({
         let themeNode = this._dash._container.get_theme_node();
         this._dash._container.set_style(oldStyle);
 
-        this._defaultBackgroundColor = themeNode.get_background_color();
+        let backgroundColor = themeNode.get_background_color();
+
+        // Just in case the theme has different border colors ..
+        // We want to find the inside border-color of the dock because it is
+        // the side most visible to the user. We do this by finding the side
+        // opposite the position
+        let position = Convenience.getPosition(this._settings);
+        let side = position + 2;
+        if (side > 3)
+            side = Math.abs(side - 4);
+
+        let borderColor = themeNode.get_border_color(side);
+
+        return [backgroundColor, borderColor];
     },
 
     _updateCustomStyleClasses: function() {
@@ -121,8 +148,7 @@ const ThemeManager = new Lang.Class({
 
     updateCustomTheme: function() {
         this._updateCustomStyleClasses();
-        this._getBackgroundColor();
-        this._updateBackgroundOpacity();
+        this._updateDashOpacity();
         this._adjustTheme();
         this._dash._redisplay();
     },
@@ -197,6 +223,7 @@ const ThemeManager = new Lang.Class({
         // Customize background
         if (this._settings.get_boolean('opaque-background')) {
             newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
+                       'border-color:'+ this._customizedBorder + '; ' +
                        'transition-delay: 0s; transition-duration: 0.250s;';
             this._dash._container.set_style(newStyle);
         }
