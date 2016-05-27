@@ -80,7 +80,7 @@ const ThemeManager = new Lang.Class({
         let [backgroundColor, borderColor] = this._getDefaultColors();
 
         if (backgroundColor==null)
-            return
+            return;
 
         // Get the background and border alphas. We check the background alpha
         // for a minimum of .001 to prevent division by 0 errors
@@ -134,6 +134,28 @@ const ThemeManager = new Lang.Class({
         return [backgroundColor, borderColor];
     },
 
+    _updateDashColor: function() {
+        if (this._settings.get_boolean('custom-background-color')) {
+            let [backgroundColor, borderColor] = this._getDefaultColors();
+
+            if (backgroundColor==null)
+              return;
+
+            let newAlpha = Math.round(backgroundColor.alpha/2.55)/100;
+            if (this._settings.get_boolean('opaque-background'))
+                newAlpha = this._settings.get_double('background-opacity');
+
+            let newColor = Clutter.color_from_string(this._settings.get_string('background-color'))[1];
+            this._customizedBackground = 'rgba(' +
+                newColor.red + ',' +
+                newColor.green + ',' +
+                newColor.blue + ',' +
+                newAlpha + ')';
+
+            this._customizedBorder = this._customizedBackground;
+        }
+    },
+
     _updateCustomStyleClasses: function() {
         if (this._settings.get_boolean('apply-custom-theme'))
             this._actor.add_style_class_name('dashtodock');
@@ -155,6 +177,7 @@ const ThemeManager = new Lang.Class({
     updateCustomTheme: function() {
         this._updateCustomStyleClasses();
         this._updateDashOpacity();
+        this._updateDashColor();
         this._adjustTheme();
         this._dash._redisplay();
     },
@@ -227,7 +250,7 @@ const ThemeManager = new Lang.Class({
         }
 
         // Customize background
-        if (this._settings.get_boolean('opaque-background')) {
+        if (this._settings.get_boolean('opaque-background') || this._settings.get_boolean('custom-background-color')) {
             newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
                        'border-color:'+ this._customizedBorder + '; ' +
                        'transition-delay: 0s; transition-duration: 0.250s;';
@@ -238,6 +261,8 @@ const ThemeManager = new Lang.Class({
     _bindSettingsChanges: function() {
         let keys = ['opaque-background',
                     'background-opacity',
+                    'custom-background-color',
+                    'background-color',
                     'apply-custom-theme',
                     'custom-theme-shrink',
                     'custom-theme-running-dots',
