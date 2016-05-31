@@ -1382,8 +1382,9 @@ const DockedDash = new Lang.Class({
      * Isolate overview to open new windows for inactive apps
      */
     _optionalWorkspaceIsolation: function() {
-        if (this._settings.get_boolean('isolate-workspaces'))
-            enable();
+
+        let label = 'optionalWorkspaceIsolation';
+
         this._settings.connect('changed::isolate-workspaces', Lang.bind(this, function() {
             this.dash.resetAppIcons();
             if (this._settings.get_boolean('isolate-workspaces'))
@@ -1392,31 +1393,39 @@ const DockedDash = new Lang.Class({
                 Lang.bind(this, disable)();
         }));
 
-        function enable() {
-            Shell.App.prototype._oldOverviewActivate = Shell.App.prototype.activate;
-            Shell.App.prototype.activate = function() {
-                // These lines take care of Nautilus for icons on Desktop
-                let windows = this.get_windows().filter(function(w) {
-                    return w.get_workspace().index() == global.screen.get_active_workspace_index();
-                });
-                if (windows.length == 1)
-                    if (windows[0].skip_taskbar)
-                        return this.open_new_window(-1);
+        if (this._settings.get_boolean('isolate-workspaces'))
+            Lang.bind(this, enable)();
 
-                if (this.is_on_workspace(global.screen.get_active_workspace()))
-                    return this._oldOverviewActivate();
-                this.open_new_window(-1);
-                global.screen.connect('restacked', function() {
-                    Shell.AppSystem.get_default().emit('installed-changed');
-                });
-            };
+        function enable() {
+            this._injectionsHandler.removeWithLabel(label);
+
+            this._injectionsHandler.addWithLabel(label, [
+                Shell.App.prototype,
+                'activate',
+                IsolatedOverview
+            ]);
         }
 
         function disable() {
-            Shell.App.prototype.activate = Shell.App.prototype._oldOverviewActivate;
-            delete Shell.App.prototype._oldOverviewActivate;
+            this._injectionsHandler.removeWithLabel(label);
         }
 
+        function IsolatedOverview() {
+            // These lines take care of Nautilus for icons on Desktop
+            let windows = this.get_windows().filter(function(w) {
+                return w.get_workspace().index() == global.screen.get_active_workspace_index();
+            });
+            if (windows.length == 1)
+                if (windows[0].skip_taskbar)
+                    return this.open_new_window(-1);
+
+            if (this.is_on_workspace(global.screen.get_active_workspace()))
+                return Main.activateWindow(windows[0]);
+            this.open_new_window(-1);
+            global.screen.connect('restacked', function() {
+                Shell.AppSystem.get_default().emit('installed-changed');
+            });
+        }
     }
 });
 
