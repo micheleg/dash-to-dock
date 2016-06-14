@@ -1383,7 +1383,8 @@ const DockedDash = new Lang.Class({
      */
     _optionalWorkspaceIsolation: function() {
 
-        let label = 'optionalWorkspaceIsolation';
+        let OverviewLabel = 'optionalWorkspaceIsolation';
+        let RestackingLabel = 'restackingWorkspaceIsolation';
 
         this._settings.connect('changed::isolate-workspaces', Lang.bind(this, function() {
             this.dash.resetAppIcons();
@@ -1397,17 +1398,30 @@ const DockedDash = new Lang.Class({
             Lang.bind(this, enable)();
 
         function enable() {
-            this._injectionsHandler.removeWithLabel(label);
+            this._injectionsHandler.removeWithLabel(OverviewLabel);
 
-            this._injectionsHandler.addWithLabel(label, [
+            this._injectionsHandler.addWithLabel(OverviewLabel, [
                 Shell.App.prototype,
                 'activate',
                 IsolatedOverview
             ]);
+
+            this._signalsHandler.removeWithLabel(RestackingLabel);
+
+            this._signalsHandler.addWithLabel(RestackingLabel, [
+                global.screen,
+                'restacked',
+                Lang.bind(this, RestackAction)
+            ]);
         }
 
         function disable() {
-            this._injectionsHandler.removeWithLabel(label);
+            this._injectionsHandler.removeWithLabel(OverviewLabel);
+            this._signalsHandler.removeWithLabel(RestackingLabel);
+        }
+
+        function RestackAction() {
+            Shell.AppSystem.get_default().emit('installed-changed');
         }
 
         function IsolatedOverview() {
@@ -1421,10 +1435,7 @@ const DockedDash = new Lang.Class({
 
             if (this.is_on_workspace(global.screen.get_active_workspace()))
                 return Main.activateWindow(windows[0]);
-            this.open_new_window(-1);
-            global.screen.connect('restacked', function() {
-                Shell.AppSystem.get_default().emit('installed-changed');
-            });
+            return this.open_new_window(-1);
         }
     }
 });
