@@ -198,7 +198,7 @@ msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
-"Quelques réglages pour intégrer le dock avec le thème par défaut de GNOME. Sinon, vous pouvez personnaliser "
+"Assortir le dock avec le thème par défaut. Sinon, vous pouvez personnaliser "
 "quelques paramètres ci-dessous."
 
 #: Settings.ui.h:37
@@ -219,7 +219,7 @@ msgstr "Afficher un point pour chaque fenêtre ouverte de l'application."
 
 #: Settings.ui.h:41
 msgid "Show windows counter indicators"
-msgstr "Utiliser un compteur de fenêtres"
+msgstr "Afficher un compteur de fenêtres"
 
 #: Settings.ui.h:42
 msgid "Customize the dash color"
