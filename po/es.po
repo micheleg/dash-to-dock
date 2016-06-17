@@ -122,11 +122,11 @@ msgid ""
 "If disabled, these settings are acccessible from gnome-tweak-tool or the "
 "extension website."
 msgstr ""
-"Si está deshabilitado, estás opciones están accesibles desde gnome-tweak-"
+"Si está deshabilitado, estas opciones están accesibles desde gnome-tweak-"
 "tool o desde el sitio web de extensiones."
 
 #: Settings.ui.h:21
-msgid "Show <i>Show Applications</i> icon"
+msgid "Show <i>Applications</i> icon"
 msgstr "Mostrar el icono <i>Mostrar aplicaciones</i>"
 
 #: Settings.ui.h:22
@@ -178,13 +178,12 @@ msgid "Minimize window"
 msgstr "Minimizar ventana"
 
 #: Settings.ui.h:33
-#, fuzzy
 msgid ""
 "With fixed icon size, only the edge of the dock and the <i>Show "
 "Applications</i> icon are active."
 msgstr ""
-"Si los iconos rebosan el dock, sólo está activo en el icono <i>Mostrar "
-"aplicaciones</i>."
+"Con iconos de tamaño fijo, sólo el borde del dock y del icono "
+"<i>Mostrar aplicaciones</i> están activos."
 
 #: Settings.ui.h:34
 msgid "Switch workspace by scrolling on the dock"
@@ -223,39 +222,47 @@ msgid "Show windows counter indicators"
 msgstr "Mostrar contador de ventanas"
 
 #: Settings.ui.h:42
+msgid "Customize the dash color"
+msgstr "Personalizar el color del dock"
+
+#: Settings.ui.h:43
+msgid "Set the background color for the dash."
+msgstr "Escoger el color de fondo del dock."
+
+#: Settings.ui.h:44
 msgid "Tune the dash background opacity."
 msgstr "Ajustar la opacidad del fondo del dock."
 
-#: Settings.ui.h:43
+#: Settings.ui.h:45
 msgid "Customize opacity"
 msgstr "Personalizar opacidad"
 
-#: Settings.ui.h:44
+#: Settings.ui.h:46
 msgid "Opacity"
 msgstr "Opacidad"
 
-#: Settings.ui.h:45
+#: Settings.ui.h:47
 msgid "Appearance"
 msgstr "Apariencia"
 
-#: Settings.ui.h:46
+#: Settings.ui.h:48
 msgid "version: "
 msgstr "versión: "
 
-#: Settings.ui.h:47
+#: Settings.ui.h:49
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr ""
 "Mueve el panel fuera de la vista de actividades trasformándolo en un dock"
 
-#: Settings.ui.h:48
+#: Settings.ui.h:50
 msgid "Created by"
 msgstr "Creado por"
 
-#: Settings.ui.h:49
+#: Settings.ui.h:51
 msgid "Webpage"
 msgstr "Sitio web"
 
-#: Settings.ui.h:50
+#: Settings.ui.h:52
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -263,65 +270,71 @@ msgid ""
 msgstr ""
 "<span size=\"small\">Este programa viene SIN NINGUNA GARANTÍA.\n"
 "Consulte la <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
-"\">Licencia Publica General de GNU, versión 2 o posterior</a> para obtener "
+"\">Licencia Pública General de GNU, versión 2 o posterior</a> para obtener "
 "más detalles.</span>"
 
-#: Settings.ui.h:52
+#: Settings.ui.h:54
 msgid "About"
 msgstr "Acerca de"
 
-#: Settings.ui.h:53
+#: Settings.ui.h:55
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "Mostrar el dock al mover el puntero al borde de la pantalla"
 
-#: Settings.ui.h:54
+#: Settings.ui.h:56
 msgid "Autohide"
 msgstr "Auto ocultar"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:57
 msgid "Push to show: require pressure to show the dock"
 msgstr "Empujar para mostrar: requiere hacer presión para mostrar el dock"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:58
 msgid "Enable in fullscreen mode"
 msgstr ""
 
-#: Settings.ui.h:57
+#: Settings.ui.h:59
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Mostrar el dock cuando no cubra otras ventanas de aplicaciones"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:60
 msgid "Dodge windows"
 msgstr "Auto ocultado inteligente"
 
-#: Settings.ui.h:59
+#: Settings.ui.h:61
 msgid "All windows"
 msgstr "Todas las ventanas"
 
-#: Settings.ui.h:60
+#: Settings.ui.h:62
 msgid "Only focused application's windows"
 msgstr "Sólo las ventanas de la aplicación activa"
 
-#: Settings.ui.h:61
+#: Settings.ui.h:63
 msgid "Only maximized windows"
 msgstr "Sólo las ventanas maximizadas"
 
-#: Settings.ui.h:62
+#: Settings.ui.h:64
 msgid "Animation duration (s)"
 msgstr "Duración de la animación"
 
-#: Settings.ui.h:63
+#: Settings.ui.h:65
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:64
+#: Settings.ui.h:66
 msgid "Hide timeout (s)"
 msgstr "Tiempo de ocultación"
 
-#: Settings.ui.h:65
+#: Settings.ui.h:67
 msgid "Show timeout (s)"
 msgstr "Tiempo de aparición"
 
-#: Settings.ui.h:66
+#: Settings.ui.h:68
 msgid "Pressure threshold"
 msgstr "Nivel de presión"
+
+#: Settings.ui.h:69
+msgid "Isolate workspaces."
+msgstr "Aislar los epacios de trabajo."
+
+
