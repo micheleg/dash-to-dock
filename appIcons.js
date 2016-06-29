@@ -521,15 +521,15 @@ const MyAppIconMenu = new Lang.Class({
 // Filter out unnecessary windows, for instance
 // nautilus desktop window.
 function getInterestingWindows(app, settings) {
-    let windows;
+    let windows = app.get_windows().filter(function(w) {
+        return !w.skip_taskbar;
+    });
+
     if (settings.get_boolean('isolate-workspaces'))
-        windows = app.get_windows().filter(function(w) {
-            return !w.skip_taskbar && w.get_workspace().index() == global.screen.get_active_workspace_index();
+        windows = windows.filter(function(w) {
+            return w.get_workspace().index() == global.screen.get_active_workspace_index();
         });
-    else
-        windows = app.get_windows().filter(function(w) {
-            return !w.skip_taskbar;
-        });
+
     return windows;
 }
 

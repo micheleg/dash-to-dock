@@ -699,9 +699,9 @@ const MyDash = new Lang.Class({
     _redisplay: function() {
         let favorites = AppFavorites.getAppFavorites().getFavoriteMap();
 
-        let running;
+        let running = this._appSystem.get_running();;
         if (this._dtdSettings.get_boolean('isolate-workspaces')) {
-            running = this._appSystem.get_running().filter(function(_app) {
+            running = running.filter(function(_app) {
                 let windows = _app.get_windows().filter(function(w) {
                     return w.get_workspace().index() == global.screen.get_active_workspace_index();
                 });
@@ -711,8 +711,6 @@ const MyDash = new Lang.Class({
                 return _app.is_on_workspace(global.screen.get_active_workspace());
             });
         }
-        else
-            running = this._appSystem.get_running();
 
         let children = this._box.get_children().filter(function(actor) {
             return actor.child &&
