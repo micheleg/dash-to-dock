@@ -1383,8 +1383,7 @@ const DockedDash = new Lang.Class({
      */
     _optionalWorkspaceIsolation: function() {
 
-        let OverviewLabel = 'optionalWorkspaceIsolation';
-        let RestackingLabel = 'restackingWorkspaceIsolation';
+        let label = 'optionalWorkspaceIsolation';
 
         this._settings.connect('changed::isolate-workspaces', Lang.bind(this, function() {
             this.dash.resetAppIcons();
@@ -1398,17 +1397,17 @@ const DockedDash = new Lang.Class({
             Lang.bind(this, enable)();
 
         function enable() {
-            this._injectionsHandler.removeWithLabel(OverviewLabel);
+            this._injectionsHandler.removeWithLabel(label);
 
-            this._injectionsHandler.addWithLabel(OverviewLabel, [
+            this._injectionsHandler.addWithLabel(label, [
                 Shell.App.prototype,
                 'activate',
                 IsolatedOverview
             ]);
 
-            this._signalsHandler.removeWithLabel(RestackingLabel);
+            this._signalsHandler.removeWithLabel(label);
 
-            this._signalsHandler.addWithLabel(RestackingLabel, [
+            this._signalsHandler.addWithLabel(label, [
                 global.screen,
                 'restacked',
                 Lang.bind(this, RestackAction)
@@ -1416,8 +1415,8 @@ const DockedDash = new Lang.Class({
         }
 
         function disable() {
-            this._injectionsHandler.removeWithLabel(OverviewLabel);
-            this._signalsHandler.removeWithLabel(RestackingLabel);
+            this._injectionsHandler.removeWithLabel(label);
+            this._signalsHandler.removeWithLabel(label);
         }
 
         function RestackAction() {
