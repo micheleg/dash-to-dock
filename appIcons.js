@@ -165,6 +165,8 @@ const MyAppIcon = new Lang.Class({
     },
 
     _updateRunningStyle: function() {
+        // When using workspace isolation, we need to hide the dots of apps with
+        // no windows in the current workspace
         if (this._dtdSettings.get_boolean('isolate-workspaces')) {
             if (this.app.state != Shell.AppState.STOPPED
                 && getInterestingWindows(this.app, this._dtdSettings).length != 0)
@@ -261,6 +263,8 @@ const MyAppIcon = new Lang.Class({
                 // Activate all window of the app or only le last used
                 if (this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS && !Main.overview._shown) {
                     // If click cycles through windows I can activate one windows at a time
+                    // However, when using isolation, we need to open a new
+                    // window if there are no windows in the current WS
                     let windows = getInterestingWindows(this.app, this._dtdSettings);
                     if (windows.length == 0)
                         this.app.open_new_window(-1);
@@ -529,6 +533,8 @@ function getInterestingWindows(app, settings) {
         return !w.skip_taskbar;
     });
 
+    // When using workspace isolation, we filter out windows
+    // that are not in the current workspace
     if (settings.get_boolean('isolate-workspaces'))
         windows = windows.filter(function(w) {
             return w.get_workspace().index() == global.screen.get_active_workspace_index();
