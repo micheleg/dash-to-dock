@@ -150,6 +150,11 @@
       <summary>Show running apps</summary>
       <description>Show or hide running appplications icons in the dash</description>
     </key>
+    <key type="b" name="isolate-workspaces">
+      <default>false</default>
+      <summary>Provide workspace isolation</summary>
+      <description>Dash shows only windows from the currentworkspace</description>
+    </key>
     <key type="b" name="show-favorites">
       <default>true</default>
       <summary>Show favorites apps</summary>
