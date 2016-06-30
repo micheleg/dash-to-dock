@@ -165,12 +165,16 @@ const MyAppIcon = new Lang.Class({
     },
 
     _updateRunningStyle: function() {
-        this.parent();
         if (this._dtdSettings.get_boolean('isolate-workspaces')) {
-            if (!this.app.is_on_workspace(global.screen.get_active_workspace()))
+            if (this.app.state != Shell.AppState.STOPPED
+                && getInterestingWindows(this.app, this._dtdSettings).length != 0)
+                this._dot.show();
+            else
                 this._dot.hide();
-            this._onFocusAppChanged();
         }
+        else
+            this.parent();
+        this._onFocusAppChanged();
         this._updateCounterClass();
     },
 
