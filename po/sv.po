@@ -1,266 +1,266 @@
-# Dash to Dock spanish translation.
-# This file is distributed under the same license as the Dash to Dock package.
-# Hugo Olabera <hugolabe@gmail.com>, 2015.
-# 
+# Swedish translation for dash-to-dock.
+# Copyright © 2016 dash-to-dock's COPYRIGHT HOLDER
+# This file is distributed under the same license as the dash-to-dock package.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2016.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-19 13:09+0000\n"
-"PO-Revision-Date: 2015-12-23 10:19+0100\n"
-"Last-Translator: Hugo Olabera <hugolabe@gmail.com>\n"
-"Language-Team: \n"
-"Language: es\n"
+"POT-Creation-Date: 2016-07-01 13:17+0200\n"
+"PO-Revision-Date: 2016-07-01 18:37+0200\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.5\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"X-Generator: Poedit 1.8.8\n"
 
-#: prefs.js:102
+#: prefs.js:98
 msgid "Primary monitor"
-msgstr "Pantalla principal"
+msgstr "Primär skärm"
 
-#: prefs.js:111 prefs.js:118
+#: prefs.js:107 prefs.js:114
 msgid "Secondary monitor "
-msgstr "Pantalla secundaria"
+msgstr "Sekundär skärm "
 
-#: prefs.js:143 Settings.ui.h:10
+#: prefs.js:139 Settings.ui.h:10
 msgid "Right"
-msgstr "Derecha"
+msgstr "Höger"
 
-#: prefs.js:144 Settings.ui.h:7
+#: prefs.js:140 Settings.ui.h:7
 msgid "Left"
-msgstr "Izquierda"
+msgstr "Vänster"
 
-#: prefs.js:194
+#: prefs.js:190
 msgid "Intelligent autohide customization"
-msgstr "Opciones de auto ocultado"
+msgstr "Anpassning av intelligent automatiskt döljande"
 
-#: prefs.js:201
+#: prefs.js:197
 msgid "Reset to defaults"
-msgstr "Restaurar"
+msgstr "Återställ till standardvärden"
 
-#: prefs.js:359
+#: prefs.js:354
 msgid "Customize running indicators"
-msgstr "Personalizar indicadores de ejecución"
+msgstr "Anpassa körningsindikatorer"
 
 #: Settings.ui.h:1
 msgid "Customize indicator style"
-msgstr "Personalizar estilo del indicador"
+msgstr "Anpassa indikatorstil"
 
 #: Settings.ui.h:2
 msgid "Color"
-msgstr "Color"
+msgstr "Färg"
 
 #: Settings.ui.h:3
 msgid "Border color"
-msgstr "Color del borde"
+msgstr "Kantfärg"
 
 #: Settings.ui.h:4
 msgid "Border width"
-msgstr "Grosor del borde"
+msgstr "Kantbredd"
 
 #: Settings.ui.h:5
 msgid "Show the dock on"
-msgstr "Mostrar el dock en"
+msgstr "Visa dockan på"
 
 #: Settings.ui.h:6
 msgid "Position on screen"
-msgstr "Posición en pantalla"
+msgstr "Position på skärmen"
 
 #: Settings.ui.h:8
 msgid "Bottom"
-msgstr "Abajo"
+msgstr "Nederkant"
 
 #: Settings.ui.h:9
 msgid "Top"
-msgstr "Arriba"
+msgstr "Överkant"
 
 #: Settings.ui.h:11
 msgid ""
 "Hide the dock when it obstructs a window of the the current application. "
 "More refined settings are available."
 msgstr ""
-"Ocultar el dock cuando cubre una ventana de la aplicación activa. Otras "
-"opciones disponibles."
+"Dölj dockan då den är i vägen för ett fönster för det aktuella programmet. "
+"Mer förfinade inställningar finns tillgängliga."
 
 #: Settings.ui.h:12
 msgid "Intelligent autohide"
-msgstr "Auto ocultado inteligente"
+msgstr "Intelligent automatiskt döljande"
 
 #: Settings.ui.h:13
 msgid "Dock size limit"
-msgstr "Tamaño máximo del dock"
+msgstr "Storleksgräns för docka"
 
 #: Settings.ui.h:14
 msgid "Panel mode: extend to the screen edge"
-msgstr "Modo panel: extender hasta los bordes de la pantalla"
+msgstr "Panelläge: sträck ut till skärmkanten"
 
 #: Settings.ui.h:15
 msgid "Icon size limit"
-msgstr "Tamaño máximo de los iconos"
+msgstr "Storleksgräns för ikoner"
 
 #: Settings.ui.h:16
 msgid "Fixed icon size: scroll to reveal other icons"
-msgstr "Tamaño fijo de los iconos: desplazarse para mostrar otros"
+msgstr "Fast ikonstorlek: rulla för att avslöja andra ikoner"
 
 #: Settings.ui.h:17
 msgid "Position and size"
-msgstr "Posición y tamaño"
+msgstr "Position och storlek"
 
 #: Settings.ui.h:18
 msgid "Show favorite applications"
-msgstr "Mostrar aplicaciones favoritas"
+msgstr "Visa favoritprogram"
 
 #: Settings.ui.h:19
 msgid "Show running applications"
-msgstr "Mostrar aplicaciones en ejecución"
+msgstr "Visa körande program"
 
 #: Settings.ui.h:20
 msgid ""
 "If disabled, these settings are acccessible from gnome-tweak-tool or the "
 "extension website."
 msgstr ""
-"Si está deshabilitado, estas opciones están accesibles desde gnome-tweak-"
-"tool o desde el sitio web de extensiones."
+"Om inaktiverad är dessa inställningar tillgängliga från gnome-tweak-tool "
+"eller webbplatsen för utökningar."
 
 #: Settings.ui.h:21
 msgid "Show <i>Applications</i> icon"
-msgstr "Mostrar el icono <i>Mostrar aplicaciones</i>"
+msgstr "Visa <i>Program</i>-ikon"
 
 #: Settings.ui.h:22
 msgid "Move the applications button at the beginning of the dock."
-msgstr "Mover el botón de aplicaciones al comienzo del dock"
+msgstr "Flytta programknappen till början på dockan."
 
 #: Settings.ui.h:23
 msgid "Animate <i>Show Applications</i>."
-msgstr "Animar <i>Mostrar aplicaciones</i>"
+msgstr "Animera <i>Visa program</i>."
 
 #: Settings.ui.h:24
 msgid "Behaviour when clicking on the icon of a running application."
-msgstr "Comportamiento al pulsar el icono de una aplicación en ejecución"
+msgstr "Beteende då ikonen för ett körande program klickas på."
 
 #: Settings.ui.h:25
 msgid "Click action"
-msgstr "Acción del Click"
+msgstr "Klickåtgärd"
 
 #: Settings.ui.h:26
 msgid "Do nothing"
-msgstr "No hacer nada"
+msgstr "Gör ingenting"
 
 #: Settings.ui.h:27
 msgid "Minimize"
-msgstr "Minimizar"
+msgstr "Minimera"
 
 #: Settings.ui.h:28
 msgid "Launch new instance"
-msgstr "Lanzar una nueva instancia"
+msgstr "Starta ny instans"
 
 #: Settings.ui.h:29
 msgid "Cycle through windows"
-msgstr "Alternar entre ventanas"
+msgstr "Växla mellan fönster"
 
 #: Settings.ui.h:30
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
-"Cuando está seleccionado minimizar, doble click minimiza todas las ventanas "
-"de la aplicación."
+"Då inställd till minimera så minimerar dubbelklick alla fönster för "
+"programmet."
 
 #: Settings.ui.h:31
 msgid "Shift+Click action"
-msgstr "Acción de Mayúsculas+Click"
+msgstr "Skift+klick-åtgärd"
 
 #: Settings.ui.h:32
 msgid "Minimize window"
-msgstr "Minimizar ventana"
+msgstr "Minimera fönster"
 
 #: Settings.ui.h:33
 msgid ""
 "With fixed icon size, only the edge of the dock and the <i>Show "
 "Applications</i> icon are active."
 msgstr ""
-"Con iconos de tamaño fijo, sólo el borde del dock y del icono "
-"<i>Mostrar aplicaciones</i> están activos."
+"Med fast ikonstorlek är endast kanten på dockan och <i>Visa program</i>-"
+"ikonen aktiva."
 
 #: Settings.ui.h:34
 msgid "Switch workspace by scrolling on the dock"
-msgstr "Cambiar de espacio de trabajo haciendo scroll en el dock"
+msgstr "Växla arbetsyta genom att rulla på dockan"
 
 #: Settings.ui.h:35
 msgid "Behavior"
-msgstr "Comportamiento"
+msgstr "Beteende"
 
 #: Settings.ui.h:36
 msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
-"Utilizar el tema predeterminado de GNOME. Alternativamente, pueden elegirse "
-"ciertas opciones más abajo."
+"Några anpassningar för att integrera dockan med GNOME:s standardtema. "
+"Alternativt kan specifika alternativ aktiveras nedan."
 
 #: Settings.ui.h:37
 msgid "Use built-in theme"
-msgstr "Utilizar el tema por defecto"
+msgstr "Använd inbyggt tema"
 
 #: Settings.ui.h:38
 msgid "Save space reducing padding and border radius."
-msgstr "Reducir los márgenes para ganar espacio"
+msgstr "Spara utrymme genom att minska utfyllnad och kantradie."
 
 #: Settings.ui.h:39
 msgid "Shrink the dash"
-msgstr "Encoger el dock"
+msgstr "Krymp snabbstartspanelen"
 
 #: Settings.ui.h:40
 msgid "Show a dot for each windows of the application."
-msgstr "Mostrar un punto por cada ventana de la aplicación."
+msgstr "Visa en punkt för varje fönster för programmet."
 
 #: Settings.ui.h:41
 msgid "Show windows counter indicators"
-msgstr "Mostrar contador de ventanas"
+msgstr "Visa fönsterräknarindikatorer"
 
 #: Settings.ui.h:42
-msgid "Customize the dash color"
-msgstr "Personalizar el color del dock"
+msgid "Set the background color for the dash."
+msgstr "Ställ in bakgrundsfärg för snabbstartspanelen."
 
 #: Settings.ui.h:43
-msgid "Set the background color for the dash."
-msgstr "Escoger el color de fondo del dock."
+msgid "Customize the dash color"
+msgstr "Anpassa färgen för snabbstartspanelen"
 
 #: Settings.ui.h:44
 msgid "Tune the dash background opacity."
-msgstr "Ajustar la opacidad del fondo del dock."
+msgstr "Justera opacitet för bakgrunden till snabbstartspanelen."
 
 #: Settings.ui.h:45
 msgid "Customize opacity"
-msgstr "Personalizar opacidad"
+msgstr "Anpassa opacitet"
 
 #: Settings.ui.h:46
 msgid "Opacity"
-msgstr "Opacidad"
+msgstr "Opacitet"
 
 #: Settings.ui.h:47
 msgid "Appearance"
-msgstr "Apariencia"
+msgstr "Utseende"
 
 #: Settings.ui.h:48
 msgid "version: "
-msgstr "versión: "
+msgstr "version: "
 
 #: Settings.ui.h:49
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr ""
-"Mueve el panel fuera de la vista de actividades trasformándolo en un dock"
+"Flyttar snabbstartspanelen från översiktsvyn och förvandlar den till en docka"
 
 #: Settings.ui.h:50
 msgid "Created by"
-msgstr "Creado por"
+msgstr "Skapat av"
 
 #: Settings.ui.h:51
 msgid "Webpage"
-msgstr "Sitio web"
+msgstr "Webbsida"
 
 #: Settings.ui.h:52
 msgid ""
@@ -268,54 +268,53 @@ msgid ""
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
 "\">GNU General Public License, version 2 or later</a> for details.</span>"
 msgstr ""
-"<span size=\"small\">Este programa viene SIN NINGUNA GARANTÍA.\n"
-"Consulte la <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
-"\">Licencia Pública General de GNU, versión 2 o posterior</a> para obtener "
-"más detalles.</span>"
+"<span size=\"small\">Detta program kommer HELT UTAN GARANTI.\n"
+"Se <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU "
+"General Public License, version 2 eller senare</a> för detaljer.</span>"
 
 #: Settings.ui.h:54
 msgid "About"
-msgstr "Acerca de"
+msgstr "Om"
 
 #: Settings.ui.h:55
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr "Mostrar el dock al mover el puntero al borde de la pantalla"
+msgstr "Visa dockan genom att hovra musen över skärmkanten."
 
 #: Settings.ui.h:56
 msgid "Autohide"
-msgstr "Auto ocultar"
+msgstr "Dölj automatiskt"
 
 #: Settings.ui.h:57
 msgid "Push to show: require pressure to show the dock"
-msgstr "Empujar para mostrar: requiere hacer presión para mostrar el dock"
+msgstr "Tryck för att visa: kräv tryck för att visa dockan"
 
 #: Settings.ui.h:58
 msgid "Enable in fullscreen mode"
-msgstr ""
+msgstr "Aktivera i helskärmsläge"
 
 #: Settings.ui.h:59
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr "Mostrar el dock cuando no cubra otras ventanas de aplicaciones"
+msgstr "Visa dockan då den inte är i vägen för programfönster."
 
 #: Settings.ui.h:60
 msgid "Dodge windows"
-msgstr "Auto ocultado inteligente"
+msgstr "Undvik fönster"
 
 #: Settings.ui.h:61
 msgid "All windows"
-msgstr "Todas las ventanas"
+msgstr "Alla fönster"
 
 #: Settings.ui.h:62
 msgid "Only focused application's windows"
-msgstr "Sólo las ventanas de la aplicación activa"
+msgstr "Endast fokuserade programs fönster"
 
 #: Settings.ui.h:63
 msgid "Only maximized windows"
-msgstr "Sólo las ventanas maximizadas"
+msgstr "Endast maximerade fönster"
 
 #: Settings.ui.h:64
 msgid "Animation duration (s)"
-msgstr "Duración de la animación"
+msgstr "Längd på animering (s)"
 
 #: Settings.ui.h:65
 msgid "0.000"
@@ -323,18 +322,12 @@ msgstr "0.000"
 
 #: Settings.ui.h:66
 msgid "Hide timeout (s)"
-msgstr "Tiempo de ocultación"
+msgstr "Tidsgräns för att dölja (s)"
 
 #: Settings.ui.h:67
 msgid "Show timeout (s)"
-msgstr "Tiempo de aparición"
+msgstr "Tidsgräns för att visa (s)"
 
 #: Settings.ui.h:68
 msgid "Pressure threshold"
-msgstr "Nivel de presión"
-
-#: Settings.ui.h:69
-msgid "Isolate workspaces."
-msgstr "Aislar los epacios de trabajo."
-
-
+msgstr "Tröskelvärde för tryck"
