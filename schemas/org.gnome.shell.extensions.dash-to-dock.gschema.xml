@@ -5,6 +5,7 @@
     <value value='1' nick='minimize'/>
     <value value='2' nick='launch'/>
     <value value='3' nick='cycle-windows'/>
+    <value value='4' nick='quit'/>
   </enum>
   <!-- this is mean to Match StSide. LEFT and RIGHT actual position in reversed in
        rtl languages -->
@@ -194,6 +195,21 @@
     <key type="b" name="insensitive-message-tray">
       <default>false</default>
       <summary>Make message tray not show on mouse-over.</summary>
+    </key>
+    <key name="shift-click-action" enum="org.gnome.shell.extensions.dash-to-dock.clickAction">
+      <default>'minimize'</default>
+      <summary>Action when shit+clicking on a running app</summary>
+      <description>Set the action that is executed when shift+clicking on the icon of a running application</description>
+    </key>
+    <key name="middle-click-action" enum="org.gnome.shell.extensions.dash-to-dock.clickAction">
+      <default>'launch'</default>
+      <summary>Action when clicking on a running app</summary>
+      <description>Set the action that is executed when middle-clicking on the icon of a running application</description>
+    </key>
+    <key name="shift-middle-click-action" enum="org.gnome.shell.extensions.dash-to-dock.clickAction">
+      <default>'launch'</default>
+      <summary>Action when clicking on a running app</summary>
+      <description>Set the action that is executed when shift+middle-clicking on the icon of a running application</description>
     </key>
   </schema>
 </schemalist>
