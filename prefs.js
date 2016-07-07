@@ -329,10 +329,71 @@ const Settings = new Lang.Class({
             this._settings.set_enum('click-action', widget.get_active());
         }));
 
-        this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_boolean('minimize-shift')?1:0);
-
         this._builder.get_object('shift_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
-            this._settings.set_boolean('minimize-shift', widget.get_active()==1);
+            this._settings.set_enum('shift-click-action', widget.get_active());
+        }));
+
+        this._builder.get_object('middle_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
+            this._settings.set_enum('middle-click-action', widget.get_active());
+        }));
+        this._builder.get_object('shift_middle_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
+            this._settings.set_enum('shift-middle-click-action', widget.get_active());
+        }));
+
+        // Create dialog for middle-click options
+        this._builder.get_object('middle_click_options_button').connect('clicked', Lang.bind(this, function() {
+
+            let dialog = new Gtk.Dialog({ title: _('Customize middle-click behavior'),
+                                          transient_for: this.widget.get_toplevel(),
+                                          use_header_bar: true,
+                                          modal: true });
+
+            // GTK+ leaves positive values for application-defined response ids.
+            // Use +1 for the reset action
+            dialog.add_button(_('Reset to defaults'), 1);
+
+            let box = this._builder.get_object('box_middle_click_options');
+            dialog.get_content_area().add(box);
+
+            this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_enum('shift-click-action'));
+
+            this._builder.get_object('middle_click_action_combo').set_active(this._settings.get_enum('middle-click-action'));
+
+            this._builder.get_object('shift_middle_click_action_combo').set_active(this._settings.get_enum('shift-middle-click-action'));
+
+            this._settings.bind('shift-click-action',
+                                this._builder.get_object('shift_click_action_combo'),
+                                'active-id',
+                                Gio.SettingsBindFlags.DEFAULT);
+            this._settings.bind('middle-click-action',
+                                this._builder.get_object('middle_click_action_combo'),
+                                'active-id',
+                                Gio.SettingsBindFlags.DEFAULT);
+            this._settings.bind('shift-middle-click-action',
+                                this._builder.get_object('shift_middle_click_action_combo'),
+                                'active-id',
+                                Gio.SettingsBindFlags.DEFAULT);
+
+            dialog.connect('response', Lang.bind(this, function(dialog, id) {
+                if (id == 1) {
+                    // restore default settings for the relevant keys
+                    let keys = ['shift-click-action', 'middle-click-action', 'shift-middle-click-action'];
+                    keys.forEach(function(val) {
+                        this._settings.set_value(val, this._settings.get_default_value(val));
+                    }, this);
+                    this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_enum('shift-click-action'));
+                    this._builder.get_object('middle_click_action_combo').set_active(this._settings.get_enum('middle-click-action'));
+                    this._builder.get_object('shift_middle_click_action_combo').set_active(this._settings.get_enum('shift-middle-click-action'));
+                } else {
+                    // remove the settings box so it doesn't get destroyed;
+                    dialog.get_content_area().remove(box);
+                    dialog.destroy();
+                }
+                return;
+            }));
+
+            dialog.show_all();
+
         }));
 
         this._settings.bind('scroll-switch-workspace', this._builder.get_object('switch_workspace_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
