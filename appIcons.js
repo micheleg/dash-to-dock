@@ -436,15 +436,17 @@ function activateAllWindows(app, settings) {
     if (windows.length <= 0)
         return;
 
-    let activatedWindows = 0;
-
-
-    for (let i = windows.length - 1; i >= 0; i--) {
-        if (windows[i].get_workspace().index() == activeWorkspace) {
+    // We need to cycle twice through the list of windows to get the order
+    // right. No need to activate windows[0] on first loop
+    for (let i = 1; i < windows.length; i++)
+        if (windows[i].get_workspace().index() == activeWorkspace)
             Main.activateWindow(windows[i]);
-            activatedWindows++;
-        }
-    }
+
+    // Note the inverse order for "i"
+    for (let i = windows.length - 1; i >= 0; i--)
+        if (windows[i].get_workspace().index() == activeWorkspace)
+            Main.activateWindow(windows[i]);
+
 }
 
 /**
