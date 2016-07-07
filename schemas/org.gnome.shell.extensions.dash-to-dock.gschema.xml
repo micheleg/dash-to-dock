@@ -6,6 +6,27 @@
     <value value='2' nick='launch'/>
     <value value='3' nick='cycle-windows'/>
   </enum>
+  <enum id='org.gnome.shell.extensions.dash-to-dock.shiftClickAction'>
+    <value value='0' nick='skip'/>
+    <value value='1' nick='minimize'/>
+    <value value='2' nick='launch'/>
+    <value value='3' nick='cycle-windows'/>
+    <value value='4' nick='quit'/>
+  </enum>
+  <enum id='org.gnome.shell.extensions.dash-to-dock.middleClickAction'>
+    <value value='0' nick='skip'/>
+    <value value='1' nick='minimize'/>
+    <value value='2' nick='launch'/>
+    <value value='3' nick='cycle-windows'/>
+    <value value='4' nick='quit'/>
+  </enum>
+  <enum id='org.gnome.shell.extensions.dash-to-dock.shiftMiddleClickAction'>
+    <value value='0' nick='skip'/>
+    <value value='1' nick='minimize'/>
+    <value value='2' nick='launch'/>
+    <value value='3' nick='cycle-windows'/>
+    <value value='4' nick='quit'/>
+  </enum>
   <!-- this is mean to Match StSide. LEFT and RIGHT actual position in reversed in
        rtl languages -->
   <enum id='org.gnome.shell.extensions.dash-to-dock.position'>
@@ -210,6 +231,21 @@
       <default>'cycle-windows'</default>
       <summary>Action when clicking on a running app</summary>
       <description>Set the action that is executed when clicking on the icon of a running application</description>
+    </key>
+    <key name="shift-click-action" enum="org.gnome.shell.extensions.dash-to-dock.shiftClickAction">
+      <default>'minimize'</default>
+      <summary>Action when shit+clicking on a running app</summary>
+      <description>Set the action that is executed when shift+clicking on the icon of a running application</description>
+    </key>
+    <key name="middle-click-action" enum="org.gnome.shell.extensions.dash-to-dock.middleClickAction">
+      <default>'launch'</default>
+      <summary>Action when clicking on a running app</summary>
+      <description>Set the action that is executed when middle-clicking on the icon of a running application</description>
+    </key>
+    <key name="shift-middle-click-action" enum="org.gnome.shell.extensions.dash-to-dock.shiftMiddleClickAction">
+      <default>'launch'</default>
+      <summary>Action when clicking on a running app</summary>
+      <description>Set the action that is executed when shift+middle-clicking on the icon of a running application</description>
     </key>
   </schema>
 </schemalist>

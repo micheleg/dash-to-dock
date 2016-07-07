@@ -33,7 +33,8 @@ const clickAction = {
     SKIP: 0,
     MINIMIZE: 1,
     LAUNCH: 2,
-    CYCLE_WINDOWS: 3
+    CYCLE_WINDOWS: 3,
+    QUIT: 4
 };
 
 let recentlyClickedAppLoopId = 0;
@@ -231,14 +232,28 @@ const MyAppIcon = new Lang.Class({
         let event = Clutter.get_current_event();
         let modifiers = event ? event.get_state() : 0;
         let openNewWindow = modifiers & Clutter.ModifierType.CONTROL_MASK &&
-                            this.app.state == Shell.AppState.RUNNING ||
-                            button && button == 2;
+                            this.app.state == Shell.AppState.RUNNING;
         let focusedApp = tracker.focus_app;
 
         if (this.app.state == Shell.AppState.STOPPED || openNewWindow)
             this.animateLaunch();
 
-        if(button && button == 1 && this.app.state == Shell.AppState.RUNNING) {
+        let _clickAction = 0;
+        if (button && button == 2 ) {//&& this._dtdSettings.get_bool('custom-middle-click')) {
+            if (modifiers & Clutter.ModifierType.SHIFT_MASK)
+                _clickAction = this._dtdSettings.get_enum('shift-middle-click-action');
+            else
+                _clickAction = this._dtdSettings.get_enum('middle-click-action');
+        }
+        else if (button && button == 1) {
+            if (modifiers & Clutter.ModifierType.SHIFT_MASK)
+                _clickAction = this._dtdSettings.get_enum('shift-click-action');
+            else
+                _clickAction = this._dtdSettings.get_enum('click-action');
+        }
+
+        if (button && this.app.state == Shell.AppState.RUNNING
+            && getInterestingWindows(this.app, this._dtdSettings).length > 0) {
             if (modifiers & Clutter.ModifierType.CONTROL_MASK) {
                 // Keep default behaviour: launch new window
                 // By calling the parent method I make it compatible
@@ -247,21 +262,24 @@ const MyAppIcon = new Lang.Class({
                 return;
 
             }
-            else if (this._dtdSettings.get_boolean('minimize-shift') && modifiers & Clutter.ModifierType.SHIFT_MASK) {
+            else if (_clickAction == clickAction.MINIMIZE
+                     && (modifiers & Clutter.ModifierType.SHIFT_MASK || button == 2)) {
                 // On double click, minimize all windows in the current workspace
                 minimizeWindow(this.app, event.get_click_count() > 1, this._dtdSettings);
             }
             else if (this.app == focusedApp && !Main.overview._shown) {
-                if (this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS)
+                if (_clickAction == clickAction.CYCLE_WINDOWS)
                     cycleThroughWindows(this.app, this._dtdSettings);
-                else if (this._dtdSettings.get_enum('click-action') == clickAction.MINIMIZE)
+                else if (_clickAction == clickAction.MINIMIZE)
                     minimizeWindow(this.app, true, this._dtdSettings);
-                else if (this._dtdSettings.get_enum('click-action') == clickAction.LAUNCH)
+                else if (_clickAction == clickAction.LAUNCH)
                     this.app.open_new_window(-1);
+                else if (_clickAction == clickAction.QUIT)
+                    closeAllWindows(this.app, this._dtdSettings);
             }
             else {
                 // Activate all window of the app or only le last used
-                if (this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS && !Main.overview._shown) {
+                if (_clickAction == clickAction.CYCLE_WINDOWS && !Main.overview._shown) {
                     // If click cycles through windows I can activate one windows at a time
                     // However, when using isolation, we need to open a new
                     // window if there are no windows in the current WS
@@ -273,11 +291,14 @@ const MyAppIcon = new Lang.Class({
                         Main.activateWindow(w);
                     }
                 }
-                else if (this._dtdSettings.get_enum('click-action') == clickAction.LAUNCH)
+                else if (_clickAction == clickAction.LAUNCH)
                     this.app.open_new_window(-1);
-                else if (this._dtdSettings.get_enum('click-action') == clickAction.MINIMIZE) {
+                else if (_clickAction == clickAction.MINIMIZE) {
                     // If click minimizes all, then one expects all windows to be reshown
                     activateAllWindows(this.app, this._dtdSettings);
+                }
+                else if (_clickAction == clickAction.QUIT) {
+                    closeAllWindows(this.app, this._dtdSettings);
                 }
                 else
                     this.app.activate();
@@ -424,6 +445,15 @@ function activateAllWindows(app, settings) {
             activatedWindows++;
         }
     }
+}
+
+/**
+ * This closes all windows of the app.
+ */
+function closeAllWindows(app, settings) {
+    let windows = getInterestingWindows(app, settings);
+    for (let i = 0; i < windows.length; i++)
+        windows[i].delete(global.get_current_time());
 }
 
 function cycleThroughWindows(app, settings) {
