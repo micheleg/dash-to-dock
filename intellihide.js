@@ -200,7 +200,8 @@ const Intellihide = new Lang.Class({
 
             let monitorIndex = this._settings.get_int('preferred-monitor');
 
-            if ((monitorIndex < 0) || (monitorIndex > Main.layoutManager.monitors.length))
+            if ((monitorIndex < 0) || (monitorIndex > Main.layoutManager.monitors.length -1))
+
                 monitorIndex = Main.layoutManager.primaryIndex;
 
             let topWindow = null;
