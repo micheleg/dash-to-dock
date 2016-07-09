@@ -333,8 +333,7 @@ const MyAppIcon = new Lang.Class({
         let cr = area.get_context();
 
         // Draw the required numbers of dots
-        let radius = width/22 - borderWidth/2;
-        radius = Math.max(radius, borderWidth/4+1);
+        let radius = width/22; // arbitrary size
         let padding = 0; // distance from the margin
         let spacing = radius + borderWidth; // separation between the dots
         let n = this._nWindows;
@@ -352,10 +351,10 @@ const MyAppIcon = new Lang.Class({
             break;
 
         case St.Side.BOTTOM:
-            cr.translate((width - (2*n)*radius - (n-1)*spacing)/2, height- padding- 2*radius);
+            cr.translate((width - (2*n)*radius - (n-1)*spacing)/2, height - padding);
             for (let i = 0; i < n; i++) {
                 cr.newSubPath();
-                cr.arc((2*i+1)*radius + i*spacing, radius + borderWidth/2, radius, 0, 2*Math.PI);
+                cr.arc((2*i+1)*radius + i*spacing, -radius - borderWidth/2, radius, 0, 2*Math.PI);
             }
             break;
 
@@ -368,10 +367,10 @@ const MyAppIcon = new Lang.Class({
             break;
 
         case St.Side.RIGHT:
-            cr.translate(width - padding- 2*radius, (height - (2*n)*radius - (n-1)*spacing)/2);
+            cr.translate(width - padding , (height - (2*n)*radius - (n-1)*spacing)/2);
             for (let i = 0; i < n; i++) {
                 cr.newSubPath();
-                cr.arc(radius + borderWidth/2, (2*i+1)*radius + i*spacing, radius, 0, 2*Math.PI);
+                cr.arc(-radius - borderWidth/2, (2*i+1)*radius + i*spacing, radius, 0, 2*Math.PI);
             }
             break;
         }
