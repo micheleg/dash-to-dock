@@ -333,7 +333,9 @@ const MyAppIcon = new Lang.Class({
         let cr = area.get_context();
 
         // Draw the required numbers of dots
-        let radius = width/22; // arbitrary size
+        // Define the radius as an arbitrary size, but keep large enough to account
+        // for the drawing of the border.
+        let radius = Math.max(width/22, borderWidth/2);
         let padding = 0; // distance from the margin
         let spacing = radius + borderWidth; // separation between the dots
         let n = this._nWindows;
