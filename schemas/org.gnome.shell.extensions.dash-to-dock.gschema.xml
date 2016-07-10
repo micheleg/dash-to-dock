@@ -100,6 +100,11 @@
       <summary>Switch workspace by scrolling over the dock</summary>
       <description>Add the possibility to switch workspace by mouse scrolling over the dock.</description>
     </key>
+    <key type="b" name="switch-workspace-horizontal">
+      <default>false</default>
+      <summary>Switch workspace in horizontal direction</summary>
+      <description>Some extensions can lay workspaces in horizontal direction. In this case, this option should be turned on.</description>
+    </key>
     <key type="i" name="dash-max-icon-size">
       <default>48</default>
       <summary>Maximum dash icon size</summary>
