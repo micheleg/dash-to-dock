@@ -306,7 +306,7 @@
                         <property name="can_focus">False</property>
                         <property name="valign">center</property>
                         <items>
-                          <item translatable="yes">Do nothing</item>
+                          <item translatable="yes">Raise window</item>
                           <item translatable="yes">Minimize window</item>
                           <item translatable="yes">Launch new instance</item>
                           <item translatable="yes">Cycle through windows</item>
@@ -374,7 +374,7 @@
                         <property name="can_focus">False</property>
                         <property name="valign">center</property>
                         <items>
-                          <item translatable="yes">Do nothing</item>
+                          <item translatable="yes">Raise window</item>
                           <item translatable="yes">Minimize window</item>
                           <item translatable="yes">Launch new instance</item>
                           <item translatable="yes">Cycle through windows</item>
@@ -1215,7 +1215,7 @@
                             <property name="can_focus">False</property>
                             <property name="valign">center</property>
                             <items>
-                              <item translatable="yes">Do nothing</item>
+                              <item translatable="yes">Raise window</item>
                               <item translatable="yes">Minimize</item>
                               <item translatable="yes">Launch new instance</item>
                               <item translatable="yes">Cycle through windows</item>
@@ -1282,7 +1282,7 @@
                             <property name="can_focus">False</property>
                             <property name="valign">center</property>
                             <items>
-                              <item translatable="yes">Do nothing</item>
+                              <item translatable="yes">Raise window</item>
                               <item translatable="yes">Minimize window</item>
                               <item translatable="yes">Launch new instance</item>
                               <item translatable="yes">Cycle through windows</item>
