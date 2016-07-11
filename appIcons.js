@@ -288,12 +288,8 @@ const MyAppIcon = new Lang.Class({
                     // However, when using isolation, we need to open a new
                     // window if there are no windows in the current WS
                     let windows = getInterestingWindows(this.app, this._dtdSettings);
-                    if (windows.length == 0)
-                        this.app.open_new_window(-1);
-                    else {
-                        let w = windows[0];
-                        Main.activateWindow(w);
-                    }
+                    let w = windows[0];
+                    Main.activateWindow(w);
                 }
                 else if (_clickAction == clickAction.LAUNCH)
                     this.app.open_new_window(-1);
