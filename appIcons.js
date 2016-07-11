@@ -238,8 +238,11 @@ const MyAppIcon = new Lang.Class({
         if (this.app.state == Shell.AppState.STOPPED || openNewWindow)
             this.animateLaunch();
 
+        // We check what type of click we have and if the modifier SHIFT is
+        // being used. We then define what _clickAction should be for this
+        // event.
         let _clickAction = 0;
-        if (button && button == 2 ) {//&& this._dtdSettings.get_bool('custom-middle-click')) {
+        if (button && button == 2 ) {
             if (modifiers & Clutter.ModifierType.SHIFT_MASK)
                 _clickAction = this._dtdSettings.get_enum('shift-middle-click-action');
             else
@@ -252,6 +255,7 @@ const MyAppIcon = new Lang.Class({
                 _clickAction = this._dtdSettings.get_enum('click-action');
         }
 
+        // We check that the # of windows is > 0 in case we use workspace isolation
         if (button && this.app.state == Shell.AppState.RUNNING
             && getInterestingWindows(this.app, this._dtdSettings).length > 0) {
             if (modifiers & Clutter.ModifierType.CONTROL_MASK) {
@@ -297,9 +301,8 @@ const MyAppIcon = new Lang.Class({
                     // If click minimizes all, then one expects all windows to be reshown
                     activateAllWindows(this.app, this._dtdSettings);
                 }
-                else if (_clickAction == clickAction.QUIT) {
+                else if (_clickAction == clickAction.QUIT)
                     closeAllWindows(this.app, this._dtdSettings);
-                }
                 else
                     this.app.activate();
             }
