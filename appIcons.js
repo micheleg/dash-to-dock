@@ -239,20 +239,20 @@ const MyAppIcon = new Lang.Class({
             this.animateLaunch();
 
         // We check what type of click we have and if the modifier SHIFT is
-        // being used. We then define what _clickAction should be for this
+        // being used. We then define what buttonAction should be for this
         // event.
-        let _clickAction = 0;
+        let buttonAction = 0;
         if (button && button == 2 ) {
             if (modifiers & Clutter.ModifierType.SHIFT_MASK)
-                _clickAction = this._dtdSettings.get_enum('shift-middle-click-action');
+                buttonAction = this._dtdSettings.get_enum('shift-middle-click-action');
             else
-                _clickAction = this._dtdSettings.get_enum('middle-click-action');
+                buttonAction = this._dtdSettings.get_enum('middle-click-action');
         }
         else if (button && button == 1) {
             if (modifiers & Clutter.ModifierType.SHIFT_MASK)
-                _clickAction = this._dtdSettings.get_enum('shift-click-action');
+                buttonAction = this._dtdSettings.get_enum('shift-click-action');
             else
-                _clickAction = this._dtdSettings.get_enum('click-action');
+                buttonAction = this._dtdSettings.get_enum('click-action');
         }
 
         // We check that the # of windows is > 0 in case we use workspace isolation
@@ -266,24 +266,24 @@ const MyAppIcon = new Lang.Class({
                 return;
 
             }
-            else if (_clickAction == clickAction.MINIMIZE
+            else if (buttonAction == clickAction.MINIMIZE
                      && (modifiers & Clutter.ModifierType.SHIFT_MASK || button == 2)) {
                 // On double click, minimize all windows in the current workspace
                 minimizeWindow(this.app, event.get_click_count() > 1, this._dtdSettings);
             }
             else if (this.app == focusedApp && !Main.overview._shown) {
-                if (_clickAction == clickAction.CYCLE_WINDOWS)
+                if (buttonAction == clickAction.CYCLE_WINDOWS)
                     cycleThroughWindows(this.app, this._dtdSettings);
-                else if (_clickAction == clickAction.MINIMIZE)
+                else if (buttonAction == clickAction.MINIMIZE)
                     minimizeWindow(this.app, true, this._dtdSettings);
-                else if (_clickAction == clickAction.LAUNCH)
+                else if (buttonAction == clickAction.LAUNCH)
                     this.app.open_new_window(-1);
-                else if (_clickAction == clickAction.QUIT)
+                else if (buttonAction == clickAction.QUIT)
                     closeAllWindows(this.app, this._dtdSettings);
             }
             else {
                 // Activate all window of the app or only le last used
-                if (_clickAction == clickAction.CYCLE_WINDOWS && !Main.overview._shown) {
+                if (buttonAction == clickAction.CYCLE_WINDOWS && !Main.overview._shown) {
                     // If click cycles through windows I can activate one windows at a time
                     // However, when using isolation, we need to open a new
                     // window if there are no windows in the current WS
@@ -291,13 +291,13 @@ const MyAppIcon = new Lang.Class({
                     let w = windows[0];
                     Main.activateWindow(w);
                 }
-                else if (_clickAction == clickAction.LAUNCH)
+                else if (buttonAction == clickAction.LAUNCH)
                     this.app.open_new_window(-1);
-                else if (_clickAction == clickAction.MINIMIZE) {
+                else if (buttonAction == clickAction.MINIMIZE) {
                     // If click minimizes all, then one expects all windows to be reshown
                     activateAllWindows(this.app, this._dtdSettings);
                 }
-                else if (_clickAction == clickAction.QUIT)
+                else if (buttonAction == clickAction.QUIT)
                     closeAllWindows(this.app, this._dtdSettings);
                 else
                     this.app.activate();
