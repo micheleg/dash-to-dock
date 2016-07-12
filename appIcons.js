@@ -523,13 +523,6 @@ const MyAppIconMenu = new Lang.Class({
         this._dtdSettings = settings;
     },
 
-    /**
-     * Helper function for the quit windows abilities
-     */
-    _closeWindowInstance: function(metaWindow) {
-        metaWindow.delete(global.get_current_time());
-    },
-
     _redisplay: function() {
         this.parent();
 
@@ -546,11 +539,7 @@ const MyAppIconMenu = new Lang.Class({
 
             this._quitfromDashMenuItem = this._appendMenuItem(quitFromDashMenuText);
             this._quitfromDashMenuItem.connect('activate', Lang.bind(this, function() {
-                let app = this._source.app;
-                let windows = getInterestingWindows(app, this._dtdSettings);
-                for (let i = 0; i < windows.length; i++) {
-                    this._closeWindowInstance(windows[i])
-                }
+                closeAllWindows(this._source.app, this._dtdSettings);
             }));
         }
     }
