@@ -271,15 +271,18 @@ const MyAppIcon = new Lang.Class({
             case clickAction.MINIMIZE:
                 // In overview just activate the app, unless the acion is explicitely
                 // requested with a keyboard modifier
-                if (!Main.overview._shown || !modifiers){
-                    if (this.app == focusedApp)
+                if (!Main.overview._shown || modifiers){
+                    // If we have button=2 or Shift, allow minimization even if
+                    // the app is not focused
+                    if (this.app == focusedApp || button == 2
+                        || modifiers & Clutter.ModifierType.SHIFT_MASK)
                         minimizeWindow(this.app, event.get_click_count() > 1, this._dtdSettings);
                     else
                         activateAllWindows(this.app, this._dtdSettings);
                 }
                 else
                     this.app.activate();
-            break;
+                break;
 
             case clickAction.CYCLE_WINDOWS:
                 if (!Main.overview._shown){
@@ -294,20 +297,20 @@ const MyAppIcon = new Lang.Class({
                 }
                 else
                     this.app.activate();
-            break;
+                break;
 
             case clickAction.LAUNCH:
                 this.animateLaunch();
                 this.app.open_new_window(-1);
-            break;
+                break;
 
             case clickAction.QUIT:
                 closeAllWindows(this.app, this._dtdSettings);
-            break;
+                break;
 
             case clickAction.SKIP:
                 this.app.activate();
-            break;
+                break;
             }
         }
         else {
