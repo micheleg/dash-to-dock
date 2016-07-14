@@ -1259,42 +1259,52 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="middle_click_options_button">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">True</property>
-                            <property name="valign">center</property>
-                            <child>
-                              <object class="GtkImage" id="middle_click_image">
-                                <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="icon_name">emblem-system-symbolic</property>
-                              </object>
-                            </child>
-                            <style>
-                              <class name="circular"/>
-                            </style>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="height">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkComboBoxText" id="click_action_combo">
+                          <object class="GtkBox" id="click_box">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="valign">center</property>
-                            <items>
-                              <item translatable="yes">Raise window</item>
-                              <item translatable="yes">Minimize</item>
-                              <item translatable="yes">Launch new instance</item>
-                              <item translatable="yes">Cycle through windows</item>
-                            </items>
+                            <property name="spacing">6</property>
+                            <child>
+                              <object class="GtkButton" id="middle_click_options_button">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="valign">center</property>
+                                <child>
+                                  <object class="GtkImage" id="middle_click_image">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="icon_name">emblem-system-symbolic</property>
+                                  </object>
+                                </child>
+                                <style>
+                                  <class name="circular"/>
+                                </style>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">0</property>
+                            <property name="height">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="click_action_combo">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="valign">center</property>
+                                <items>
+                                  <item translatable="yes">Raise window</item>
+                                  <item translatable="yes">Minimize</item>
+                                  <item translatable="yes">Launch new instance</item>
+                                  <item translatable="yes">Cycle through windows</item>
+                                </items>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="left_attach">2</property>
-                            <property name="top_attach">0</property>
                             <property name="height">2</property>
                           </packing>
                         </child>
