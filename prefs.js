@@ -329,7 +329,6 @@ const Settings = new Lang.Class({
             this._settings.set_enum('click-action', widget.get_active());
         }));
 
-        this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_enum('shift-click-action'));
         this._builder.get_object('shift_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
             this._settings.set_enum('shift-click-action', widget.get_active());
         }));
@@ -356,10 +355,16 @@ const Settings = new Lang.Class({
             let box = this._builder.get_object('box_middle_click_options');
             dialog.get_content_area().add(box);
 
+            this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_enum('shift-click-action'));
+
             this._builder.get_object('middle_click_action_combo').set_active(this._settings.get_enum('middle-click-action'));
 
             this._builder.get_object('shift_middle_click_action_combo').set_active(this._settings.get_enum('shift-middle-click-action'));
 
+            this._settings.bind('shift-click-action',
+                                this._builder.get_object('shift_click_action_combo'),
+                                'value',
+                                Gio.SettingsBindFlags.DEFAULT);
             this._settings.bind('middle-click-action',
                                 this._builder.get_object('middle_click_action_combo'),
                                 'value',
@@ -371,10 +376,11 @@ const Settings = new Lang.Class({
             dialog.connect('response', Lang.bind(this, function(dialog, id) {
                 if (id == 1) {
                     // restore default settings for the relevant keys
-                    let keys = ['middle-click-action', 'shift-middle-click-action'];
+                    let keys = ['shift-click-action', 'middle-click-action', 'shift-middle-click-action'];
                     keys.forEach(function(val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);
+                    this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_enum('shift-click-action'));
                     this._builder.get_object('middle_click_action_combo').set_active(this._settings.get_enum('middle-click-action'));
                     this._builder.get_object('shift_middle_click_action_combo').set_active(this._settings.get_enum('shift-middle-click-action'));
                 } else {
