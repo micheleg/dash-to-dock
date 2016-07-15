@@ -1,44 +1,44 @@
 # Slovak translation of dash-to-dock.
-# Copyright (C) 2015 Dušan Kazik
+# Copyright (C) 2016 Dušan Kazik
 # This file is distributed under the same license as the PACKAGE package.
-# Dušan Kazik <prescott66@gmail.com>, 2015.
+# Dušan Kazik <prescott66@gmail.com>, 2015, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-30 23:45+0000\n"
-"PO-Revision-Date: 2015-04-25 12:50+0100\n"
+"POT-Creation-Date: 2016-08-19 14:15+0100\n"
+"PO-Revision-Date: 2016-07-15 12:48+0200\n"
 "Last-Translator: Dušan Kazik <prescott66@gmail.com>\n"
 "Language-Team: \n"
 "Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 1.8.7.1\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: prefs.js:69
+#: prefs.js:98
 msgid "Primary monitor"
 msgstr "Hlavnom monitore"
 
-#: prefs.js:78 prefs.js:85
+#: prefs.js:107 prefs.js:114
 msgid "Secondary monitor "
 msgstr "Vedľajšom monitore"
 
-#: prefs.js:110 Settings.ui.h:6
+#: prefs.js:139 Settings.ui.h:6
 msgid "Right"
 msgstr "Vpravo"
 
-#: prefs.js:111 Settings.ui.h:3
+#: prefs.js:140 Settings.ui.h:3
 msgid "Left"
 msgstr "Vľavo"
 
-#: prefs.js:161
+#: prefs.js:194
 msgid "Intelligent autohide customization"
 msgstr "Prispôsobenie inteligentného automatického skrývania"
 
-#: prefs.js:168
+#: prefs.js:201
 msgid "Reset to defaults"
 msgstr "Obnoviť pôvodné"
 
@@ -80,7 +80,7 @@ msgstr "Limit veľkosti doku"
 
 #: Settings.ui.h:11
 msgid "Panel mode: extend to the screen edge"
-msgstr ""
+msgstr "Režim panelu: roztiahnutie k hranám obrazovky"
 
 #: Settings.ui.h:12
 msgid "Icon size limit"
@@ -103,51 +103,54 @@ msgid "Show running applications"
 msgstr "Zobraziť spustené aplikácie"
 
 #: Settings.ui.h:17
+msgid "Isolate workspaces."
+msgstr "Oddelené pracovné priestory."
+
+#: Settings.ui.h:18
 msgid ""
 "If disabled, these settings are acccessible from gnome-tweak-tool or the "
 "extension website."
 msgstr ""
-
-#: Settings.ui.h:18
-#, fuzzy
-msgid "Show <i>Show Applications</i> icon"
-msgstr "<i>Zobraziť ikonu Aplikácie</i> ako prvú"
+"Ak je voľba zakázaná, nastavenia sú dostupné z nástroja na vyladenie "
+"nastavení prostredia Gnome alebo webovej stránky rozšírenia."
 
 #: Settings.ui.h:19
+msgid "Show <i>Applications</i> icon"
+msgstr "Zobraziť ikonu <i>Aplikácie</i>"
+
+#: Settings.ui.h:20
 msgid "Move the applications button at the beginning of the dock."
 msgstr "Premiestni tlačidlo aplikácií na začiatok doku."
 
-#: Settings.ui.h:20
-#, fuzzy
-msgid "Animate <i>Show Applications</i>."
-msgstr "<i>Zobraziť ikonu Aplikácie</i> ako prvú"
-
 #: Settings.ui.h:21
-#, fuzzy
+msgid "Animate <i>Show Applications</i>."
+msgstr "Animovať položku <i>Zobraziť aplikácie</i>."
+
+#: Settings.ui.h:22
 msgid "Behaviour when clicking on the icon of a running application."
 msgstr "Správanie pri kliknutí na ikonu spustenej aplikácie."
 
-#: Settings.ui.h:22
+#: Settings.ui.h:23
 msgid "Click action"
 msgstr "Akcia po kliknutí"
 
-#: Settings.ui.h:23
+#: Settings.ui.h:24
 msgid "Do nothing"
 msgstr "Nevykonať nič"
 
-#: Settings.ui.h:24
+#: Settings.ui.h:25
 msgid "Minimize"
 msgstr "Minimalizovať"
 
-#: Settings.ui.h:25
+#: Settings.ui.h:26
 msgid "Launch new instance"
 msgstr "Spustiť novú inštanciu"
 
-#: Settings.ui.h:26
+#: Settings.ui.h:27
 msgid "Cycle through windows"
 msgstr "Striedať okná"
 
-#: Settings.ui.h:27
+#: Settings.ui.h:28
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
@@ -155,89 +158,99 @@ msgstr ""
 "Keď je nastavené na minimalizovanie, dvojklik minimalizuje všetky okná "
 "aplikácie."
 
-#: Settings.ui.h:28
+#: Settings.ui.h:29
 msgid "Shift+Click action"
 msgstr "Akcia Shift+Kliknutie"
 
-#: Settings.ui.h:29
+#: Settings.ui.h:30
 msgid "Minimize window"
 msgstr "Minimalizovať okno"
 
-#: Settings.ui.h:30
+#: Settings.ui.h:31
 msgid ""
 "With fixed icon size, only the edge of the dock and the <i>Show "
 "Applications</i> icon are active."
 msgstr ""
+"S pevnou veľkosťou ikon je aktívna iba hrana doku a ikona <i>Zobraziť "
+"aplikácie</i>."
 
-#: Settings.ui.h:31
+#: Settings.ui.h:32
 msgid "Switch workspace by scrolling on the dock"
 msgstr "Prepínať pracovné priestory rolovaním na doku"
 
-#: Settings.ui.h:32
+#: Settings.ui.h:33
 msgid "Behavior"
 msgstr "Správanie"
 
-#: Settings.ui.h:33
-#, fuzzy
+#: Settings.ui.h:34
 msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
 "Niekoľko úprav na integrovanie doku s predvolenou témou prostredia GNOME. "
+"Alternatívne môžu byť povolené špecifické voľby nižšie."
 
-#: Settings.ui.h:34
+#: Settings.ui.h:35
 msgid "Use built-in theme"
 msgstr "Použiť zabudovanú tému"
 
-#: Settings.ui.h:35
+#: Settings.ui.h:36
 msgid "Save space reducing padding and border radius."
 msgstr "Ušetrí miesto zmenšením rádiusu odsadenia a okrajov."
 
-#: Settings.ui.h:36
-msgid "Shrink the dash"
-msgstr "Zmenšiť dok"
-
 #: Settings.ui.h:37
+msgid "Shrink the dash"
+msgstr "Zmenšiť panel"
+
+#: Settings.ui.h:38
 msgid "Show a dot for each windows of the application."
 msgstr "Zobrazí bodku za každé okno aplikácie."
 
-#: Settings.ui.h:38
+#: Settings.ui.h:39
 msgid "Show windows counter indicators"
 msgstr "Zobraziť indikátory počítadiel okien"
 
-#: Settings.ui.h:39
-msgid "Tune the dash background opacity."
-msgstr "Vyladí krytie pozadia doku."
-
 #: Settings.ui.h:40
+msgid "Set the background color for the dash."
+msgstr "Nastaví farbu pozadia panelu."
+
+#: Settings.ui.h:41
+msgid "Customize the dash color"
+msgstr "Prispôsobenie farby panelu"
+
+#: Settings.ui.h:42
+msgid "Tune the dash background opacity."
+msgstr "Vyladí krytie pozadia panelu."
+
+#: Settings.ui.h:43
 msgid "Customize opacity"
 msgstr "Prispôsobenie krytia"
 
-#: Settings.ui.h:41
+#: Settings.ui.h:44
 msgid "Opacity"
 msgstr "Krytie"
 
-#: Settings.ui.h:42
+#: Settings.ui.h:45
 msgid "Appearance"
 msgstr "Vzhľad"
 
-#: Settings.ui.h:43
+#: Settings.ui.h:46
 msgid "version: "
-msgstr "Verzia: "
+msgstr "Verzia: c"
 
-#: Settings.ui.h:44
+#: Settings.ui.h:47
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr ""
+msgstr "Presunie panel z prehľadu transformovaním do doku"
 
-#: Settings.ui.h:45
+#: Settings.ui.h:48
 msgid "Created by"
 msgstr "Vytvoril"
 
-#: Settings.ui.h:46
+#: Settings.ui.h:49
 msgid "Webpage"
-msgstr ""
+msgstr "Webová stránka"
 
-#: Settings.ui.h:47
+#: Settings.ui.h:50
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -248,62 +261,77 @@ msgstr ""
 "licenses/gpl-2.0.html\">Licenciu GNU General Public, verzie 2 alebo novšiu</"
 "a>.</span>"
 
-#: Settings.ui.h:49
+#: Settings.ui.h:52
 msgid "About"
 msgstr "O rozšírení"
 
-#: Settings.ui.h:50
+#: Settings.ui.h:53
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "Zobrazí dok prejdením myši na hranu obrazovky."
 
-#: Settings.ui.h:51
+#: Settings.ui.h:54
 msgid "Autohide"
 msgstr "Automatické skrytie"
 
-#: Settings.ui.h:52
+#: Settings.ui.h:55
 msgid "Push to show: require pressure to show the dock"
 msgstr "Zobraziť stlačením: vyžaduje tlak na zobrazenie doku"
 
-#: Settings.ui.h:53
+#: Settings.ui.h:56
+msgid "Enable in fullscreen mode"
+msgstr "Povoliť v režime na celú obrazovku"
+
+#: Settings.ui.h:57
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Zobrazí dok, keď nebude zasahovať do okien aplikácií."
 
-#: Settings.ui.h:54
-msgid "Dodge windows"
-msgstr ""
-
-#: Settings.ui.h:55
-msgid "All windows"
-msgstr ""
-
-#: Settings.ui.h:56
-msgid "Only focused application's windows"
-msgstr ""
-
-#: Settings.ui.h:57
-#, fuzzy
-msgid "Only maximized windows"
-msgstr "Minimalizovať okno"
-
 #: Settings.ui.h:58
+msgid "Dodge windows"
+msgstr "Vyhýbať sa oknám"
+
+#: Settings.ui.h:59
+msgid "All windows"
+msgstr "Všetky okná"
+
+#: Settings.ui.h:60
+msgid "Only focused application's windows"
+msgstr "Iba zamerané okná aplikácií"
+
+#: Settings.ui.h:61
+msgid "Only maximized windows"
+msgstr "Iba maximalizované okná"
+
+#: Settings.ui.h:62
 msgid "Animation duration (s)"
 msgstr "Trvanie animácie (s)"
 
-#: Settings.ui.h:59
+#: Settings.ui.h:63
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:60
+#: Settings.ui.h:64
 msgid "Hide timeout (s)"
 msgstr "Časový limit na skrytie (s)"
 
-#: Settings.ui.h:61
+#: Settings.ui.h:65
 msgid "Show timeout (s)"
 msgstr "Zobraziť časový limit (s)"
 
-#: Settings.ui.h:62
+#: Settings.ui.h:66
 msgid "Pressure threshold"
 msgstr "Medza tlaku"
 
-#~ msgid "Only consider windows of the focused application"
-#~ msgstr "Zohľadniť iba okná zameranej aplikácie"
+#~ msgid "Customize running indicators"
+#~ msgstr "Prispôsobenie "
+
+#~ msgid "Customize indicator style"
+#~ msgstr "Prispôsobenie štýlu indikátorov"
+
+#~ msgid "Color"
+#~ msgstr "Farba"
+
+#~ msgid "Border color"
+#~ msgstr "Farba okraja"
+
+#~ msgid "Border width"
+#~ msgstr "Šírka okraja"
