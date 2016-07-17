@@ -4,7 +4,9 @@
     border:1px;
     padding:0px;
 }
-
+.popup-menu {
+    max-width: 250px;
+}
 #dashtodockContainer.shrink.left #dash,
 #dashtodockContainer.dashtodock.left #dash {
     border-left: 0px;
