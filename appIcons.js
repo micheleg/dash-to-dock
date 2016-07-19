@@ -274,8 +274,7 @@ const MyAppIcon = new Lang.Class({
                 if (!Main.overview._shown || modifiers){
                     // If we have button=2 or Shift, allow minimization even if
                     // the app is not focused
-                    if (this.app == focusedApp || button == 2
-                        || modifiers & Clutter.ModifierType.SHIFT_MASK)
+                    if (this.app == focusedApp || button == 2 || modifiers)
                         minimizeWindow(this.app, event.get_click_count() > 1, this._dtdSettings);
                     else
                         activateAllWindows(this.app, this._dtdSettings);
