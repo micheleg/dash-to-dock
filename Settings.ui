@@ -762,7 +762,7 @@
                                   </object>
                                 </child>
                                 <style>
-                                  <class name="prefs-button"/>
+                                  <class name="circular"/>
                                 </style>
                               </object>
                               <packing>
@@ -1650,7 +1650,7 @@
                                   </object>
                                 </child>
                                 <style>
-                                  <class name="prefs-button"/>
+                                  <class name="circular"/>
                                 </style>
                               </object>
                               <packing>

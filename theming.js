@@ -166,6 +166,11 @@ const ThemeManager = new Lang.Class({
             this._actor.add_style_class_name('shrink');
         else
             this._actor.remove_style_class_name('shrink');
+
+        if (this._settings.get_boolean('custom-theme-running-dots'))
+            this._actor.add_style_class_name('running-dots');
+        else
+            this._actor.remove_style_class_name('running-dots');
     },
 
     updateCustomTheme: function() {
@@ -259,6 +264,7 @@ const ThemeManager = new Lang.Class({
                     'background-color',
                     'apply-custom-theme',
                     'custom-theme-shrink',
+                    'custom-theme-running-dots',
                     'extend-height'];
 
         keys.forEach(function(key) {
