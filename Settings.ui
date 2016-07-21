@@ -1280,12 +1280,6 @@
                                   <class name="circular"/>
                                 </style>
                               </object>
-                              <packing>
-                                <property name="left_attach">0</property>
-                            <property name="left_attach">1</property>
-                            <property name="top_attach">0</property>
-                            <property name="height">2</property>
-                              </packing>
                             </child>
                             <child>
                               <object class="GtkComboBoxText" id="click_action_combo">
@@ -1299,9 +1293,6 @@
                                   <item translatable="yes">Cycle through windows</item>
                                 </items>
                               </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                              </packing>
                             </child>
                           </object>
                           <packing>
