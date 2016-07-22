@@ -363,15 +363,16 @@ const Settings = new Lang.Class({
 
             this._settings.bind('shift-click-action',
                                 this._builder.get_object('shift_click_action_combo'),
-                                'value',
+                                'active-id',
                                 Gio.SettingsBindFlags.DEFAULT);
             this._settings.bind('middle-click-action',
                                 this._builder.get_object('middle_click_action_combo'),
-                                'value',
+                                'active-id',
                                 Gio.SettingsBindFlags.DEFAULT);
             this._settings.bind('shift-middle-click-action',
                                 this._builder.get_object('shift_middle_click_action_combo'),
-                                'value', Gio.SettingsBindFlags.DEFAULT);
+                                'active-id',
+                                Gio.SettingsBindFlags.DEFAULT);
 
             dialog.connect('response', Lang.bind(this, function(dialog, id) {
                 if (id == 1) {
