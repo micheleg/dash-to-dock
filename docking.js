@@ -44,6 +44,9 @@ const scrollAction = {
     SWITCH_WORKSPACE: 2
 };
 
+/* Array of all the docks created */
+let allDocks = [];
+
 /**
  * A simple St.Widget with one child whose allocation takes into account the
  * slide out of its child via the _slidex parameter ([0:1]).
@@ -371,16 +374,12 @@ const DockedDash = new Lang.Class({
             this._box.sync_hover();
         }));
 
-        // Restore dash accessibility
-        Main.ctrlAltTabManager.addGroup(
-            this.dash.actor, _('Dash'), 'user-bookmarks-symbolic',
-                {focusCallback: Lang.bind(this, this._onAccessibilityFocus)});
-
-        // Load optional features
+        // Load optional features that need to be activated for one dock only
+        if (this._monitorIndex == this._settings.get_int('preferred-monitor'))
+            this._enableExtraFeatures();
+        // Load optional features that need to be activated once per dock
         this._optionalScrollWorkspaceSwitch();
         this._optionalWorkspaceIsolation();
-        this._optionalHotKeys();
-        this._optionalNumberOverlay();
 
          // Delay operations that require the shell to be fully loaded and with
          // user theme applied.
@@ -1345,7 +1344,17 @@ const DockedDash = new Lang.Class({
             this.dash.showAppsButton.checked = status;
     },
 
-    // Optional features enable/disable
+    // Optional features to be enabled only for the main Dock
+    _enableExtraFeatures: function() {
+        // Restore dash accessibility
+        Main.ctrlAltTabManager.addGroup(
+            this.dash.actor, _('Dash'), 'user-bookmarks-symbolic',
+                {focusCallback: Lang.bind(this, this._onAccessibilityFocus)});
+
+        this._optionalIsolatedOverview();
+        this._optionalHotKeys();
+        this._optionalNumberOverlay();
+    },
 
     /**
      * Switch workspace by scrolling over the dock
@@ -1475,14 +1484,6 @@ const DockedDash = new Lang.Class({
             Lang.bind(this, enable)();
 
         function enable() {
-            this._injectionsHandler.removeWithLabel(label);
-
-            this._injectionsHandler.addWithLabel(label, [
-                Shell.App.prototype,
-                'activate',
-                IsolatedOverview
-            ]);
-
             this._signalsHandler.removeWithLabel(label);
 
             this._signalsHandler.addWithLabel(label, [
@@ -1498,8 +1499,41 @@ const DockedDash = new Lang.Class({
         }
 
         function disable() {
-            this._injectionsHandler.removeWithLabel(label);
             this._signalsHandler.removeWithLabel(label);
+        }
+
+    },
+
+    _optionalIsolatedOverview: function() {
+
+        let label = 'optionalIsolatedOverview';
+
+        this._signalsHandler.add([
+            this._settings,
+            'changed::isolate-workspaces',
+            Lang.bind(this, function() {
+                    if (this._settings.get_boolean('isolate-workspaces'))
+                        Lang.bind(this, enable)();
+                    else
+                        Lang.bind(this, disable)();
+            })
+        ]);
+
+        if (this._settings.get_boolean('isolate-workspaces'))
+            Lang.bind(this, enable)();
+
+        function enable() {
+            this._injectionsHandler.removeWithLabel(label);
+
+            this._injectionsHandler.addWithLabel(label, [
+                Shell.App.prototype,
+                'activate',
+                IsolatedOverview
+            ]);
+        }
+
+        function disable() {
+            this._injectionsHandler.removeWithLabel(label);
         }
 
         function IsolatedOverview() {
@@ -1658,29 +1692,32 @@ const DockedDash = new Lang.Class({
     },
 
     _showOverlay: function() {
-        if (this._settings.get_boolean('hotkeys-overlay'))
-            this.dash.toggleNumberOverlay(true);
+        for (let i = 0; i < allDocks.length; i ++) {
+            let dock = allDocks[i];
+            if (dock._settings.get_boolean('hotkeys-overlay'))
+                dock.dash.toggleNumberOverlay(true);
 
-        // Restart the counting if the shortcut is pressed again
-        if (this._numberOverlayTimeoutId) {
-            Mainloop.source_remove(this._numberOverlayTimeoutId);
-            this._numberOverlayTimeoutId = 0;
-        }
+            // Restart the counting if the shortcut is pressed again
+            if (dock._numberOverlayTimeoutId) {
+                Mainloop.source_remove(dock._numberOverlayTimeoutId);
+                dock._numberOverlayTimeoutId = 0;
+            }
 
-        // Hide the overlay/dock after the timeout
-        let timeout = this._settings.get_double('shortcut-timeout') * 1000;
-        this._numberOverlayTimeoutId = Mainloop.timeout_add(timeout, Lang.bind(this, function() {
-                this._numberOverlayTimeoutId = 0;
-                this.dash.toggleNumberOverlay(false);
-                // Hide the dock again if necessary
-                this._updateDashVisibility();
-        }));
+            // Hide the overlay/dock after the timeout
+            let timeout = dock._settings.get_double('shortcut-timeout') * 1000;
+            dock._numberOverlayTimeoutId = Mainloop.timeout_add(timeout, Lang.bind(dock, function() {
+                    dock._numberOverlayTimeoutId = 0;
+                    dock.dash.toggleNumberOverlay(false);
+                    // Hide the dock again if necessary
+                    dock._updateDashVisibility();
+            }));
 
-        // Show the dock if it is hidden
-        if (this._settings.get_boolean('hotkeys-show-dock')) {
-            let showDock = (this._intellihideIsEnabled || this._autohideIsEnabled);
-            if (showDock)
-                this._show();
+            // Show the dock if it is hidden
+            if (dock._settings.get_boolean('hotkeys-show-dock')) {
+                let showDock = (dock._intellihideIsEnabled || dock._autohideIsEnabled);
+                if (showDock)
+                    dock._show();
+            }
         }
     }
 
@@ -1695,8 +1732,6 @@ const DockManager = new Lang.Class({
         this._settings = settings;
         this._oldDash = Main.overview._dash;
 
-        // Create an array for extra docks on other monitors
-        this._allDocks = [];
         this._createDocks();
 
         // Connect relevant signals to the toggling function
@@ -1745,7 +1780,7 @@ const DockManager = new Lang.Class({
 
         // First we create the main Dock, to get the extra features to bind to this one
         let dock = new DockedDash(this._settings, preferredMonitor);
-        this._allDocks.push(dock);
+        allDocks.push(dock);
 
         // Make the necessary changes to Main.overview._dash
         this._prepareMainDash();
@@ -1756,19 +1791,18 @@ const DockManager = new Lang.Class({
                 if (iMon == preferredMonitor)
                     continue;
                 let dock = new DockedDash(this._settings, iMon);
-                this._allDocks.push(dock);
+                allDocks.push(dock);
             }
         }
-
     },
 
     _prepareMainDash: function() {
         // Pretend I'm the dash: meant to make appgrd swarm animation come from the
         // right position of the appShowButton.
-        Main.overview._dash = this._allDocks[0].dash;
+        Main.overview._dash = allDocks[0].dash;
 
         // set stored icon size  to the new dash
-        Main.overview.dashIconSize = this._allDocks[0].dash.iconSize;
+        Main.overview.dashIconSize = allDocks[0].dash.iconSize;
 
         // Hide usual Dash
         Main.overview._controls.dash.actor.hide();
@@ -1784,11 +1818,11 @@ const DockManager = new Lang.Class({
 
     _deleteDocks: function() {
         // Delete all docks
-        let nDocks = this._allDocks.length;
+        let nDocks = allDocks.length;
         for (let i = nDocks-1; i >= 0; i--) {
-            this._allDocks[i].destroy();
-            this._allDocks[i] = null;
-            this._allDocks.pop();
+            allDocks[i].destroy();
+            allDocks[i] = null;
+            allDocks.pop();
         }
     },
 
