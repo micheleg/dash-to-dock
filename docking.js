@@ -184,6 +184,8 @@ const DashSlideContainer = new Lang.Class({
 const DockedDash = new Lang.Class({
     Name: 'DashToDock.DockedDash',
 
+    _numHotkeys: 10,
+
     _init: function(settings) {
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
@@ -377,6 +379,7 @@ const DockedDash = new Lang.Class({
         // Load optional features
         this._optionalScrollWorkspaceSwitch();
         this._optionalWorkspaceIsolation();
+        this._optionalHotKeys();
 
          // Delay operations that require the shell to be fully loaded and with
          // user theme applied.
@@ -508,6 +511,9 @@ const DockedDash = new Lang.Class({
         // Reshow panel corners
         this._revertPanelCorners();
         this._resetLegacyTray();
+
+        // Remove keybindings
+        this._disableHotKeys();
     },
 
     _bindSettingsChanges: function() {
@@ -1437,7 +1443,77 @@ const DockedDash = new Lang.Class({
                 return Main.activateWindow(windows[0]);
             return this.open_new_window(-1);
         }
+    },
+
+    _activateApp: function(appIndex) {
+        let children = this.dash._box.get_children().filter(function(actor) {
+                return actor.child &&
+                       actor.child._delegate &&
+                       actor.child._delegate.app;
+        });
+
+        // Apps currently in the dash
+        let apps = children.map(function(actor) {
+                return actor.child._delegate;
+            });
+
+        // Activate with button = 1, i.e. same as left click
+        let button = 1;
+        if (appIndex < apps.length)
+            apps[appIndex].activate(button);
+    },
+
+    _optionalHotKeys: function() {
+        this._hotKeysEnabled = false;
+        if (this._settings.get_boolean('hot-keys'))
+            this._enableHotKeys();
+
+        this._signalsHandler.add([
+            this._settings,
+            'changed::hot-keys',
+            Lang.bind(this, function() {
+                    if (this._settings.get_boolean('hot-keys'))
+                        Lang.bind(this, this._enableHotKeys)();
+                    else
+                        Lang.bind(this, this._disableHotKeys)();
+            })
+        ]);
+    },
+
+    _enableHotKeys: function() {
+        if (this._hotKeysEnabled)
+            return;
+
+        // Setup keyboard bindings for dash elements
+        let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-',  // Regular numbers
+                    'app-hotkey-kp-', 'app-shift-hotkey-kp-', 'app-ctrl-hotkey-kp-']; // Key-pad numbers
+        keys.forEach( function(key) {
+            for (let i = 0; i < this._numHotkeys; i++) {
+                let appNum = i;
+                Main.wm.addKeybinding(key + (i + 1), this._settings,
+                                      Meta.KeyBindingFlags.NONE,
+                                      Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
+                                      Lang.bind(this, function() {this._activateApp(appNum);}));
+            }
+        }, this);
+
+        this._hotKeysEnabled = true;
+    },
+
+    _disableHotKeys: function() {
+        if (!this._hotKeysEnabled)
+            return;
+
+        let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-',  // Regular numbers
+                    'app-hotkey-kp-', 'app-shift-hotkey-kp-', 'app-ctrl-hotkey-kp-']; // Key-pad numbers
+        keys.forEach( function(key) {
+            for (let i = 0; i < this._numHotkeys; i++)
+                Main.wm.removeKeybinding(key + (i + 1));
+        }, this);
+
+        this._hotKeysEnabled = false;
     }
+
 });
 
 Signals.addSignalMethods(DockedDash.prototype);
