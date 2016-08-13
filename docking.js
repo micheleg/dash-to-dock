@@ -1412,6 +1412,11 @@ const DockedDash = new Lang.Class({
                 'restacked',
                 Lang.bind(this, RestackAction)
             ]);
+            this._signalsHandler.addWithLabel(label, [
+                global.window_manager,
+                'switch-workspace',
+                Lang.bind(this, RestackAction)
+            ]);
         }
 
         function disable() {
@@ -1420,7 +1425,7 @@ const DockedDash = new Lang.Class({
         }
 
         function RestackAction() {
-            Shell.AppSystem.get_default().emit('installed-changed');
+            this.dash._queueRedisplay();
         }
 
         function IsolatedOverview() {
