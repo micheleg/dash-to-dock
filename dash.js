@@ -468,7 +468,6 @@ const MyDash = new Lang.Class({
         extendDashItemContainer(item, this._dtdSettings);
         item.setChild(appIcon.actor);
 
-        item.setChild(appIcon.actor);
         appIcon.actor.connect('notify::hover', Lang.bind(this, function() {
             if (appIcon.actor.hover) {
                 this._ensureAppIconVisibilityTimeoutId = Mainloop.timeout_add(100, Lang.bind(this, function() {
