@@ -266,7 +266,7 @@ const Settings = new Lang.Class({
         this._builder.get_object('dock_size_scale').set_value(this._settings.get_double('height-fraction'));
         this._builder.get_object('dock_size_scale').add_mark(0.9, Gtk.PositionType.TOP, null);
         let icon_size_scale = this._builder.get_object('icon_size_scale');
-        icon_size_scale.set_range(DEFAULT_ICONS_SIZES[DEFAULT_ICONS_SIZES.length -1], DEFAULT_ICONS_SIZES[0]);
+        icon_size_scale.set_range(8, DEFAULT_ICONS_SIZES[0]);
         icon_size_scale.set_value(this._settings.get_int('dash-max-icon-size'));
         DEFAULT_ICONS_SIZES.forEach(function(val) {
              icon_size_scale.add_mark(val, Gtk.PositionType.TOP, val.toString());
