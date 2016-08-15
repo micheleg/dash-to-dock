@@ -610,6 +610,11 @@ const MyDash = new Lang.Class({
         if (this._maxHeight == -1)
             return;
 
+        // Check if the container is present in the stage. This avoids critical
+        // errors when unlocking the screen
+        if (!this._container.get_stage())
+            return;
+
         let themeNode = this._container.get_theme_node();
         let maxAllocation = new Clutter.ActorBox({
             x1: 0,
