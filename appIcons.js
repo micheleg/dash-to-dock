@@ -272,10 +272,14 @@ const MyAppIcon = new Lang.Class({
                 // In overview just activate the app, unless the acion is explicitely
                 // requested with a keyboard modifier
                 if (!Main.overview._shown || modifiers){
-                    // If we have button=2 or Shift, allow minimization even if
+                    // If we have button=2 or a modifier, allow minimization even if
                     // the app is not focused
-                    if (this.app == focusedApp || button == 2 || modifiers)
-                        minimizeWindow(this.app, event.get_click_count() > 1, this._dtdSettings);
+                    if (this.app == focusedApp || button == 2 || modifiers & Clutter.ModifierType.SHIFT_MASK) {
+                        // minimize all windows on double click and always in the case of primary click without
+                        // additional modifiers
+                        let all_windows = (button == 1 && ! modifiers) || event.get_click_count() > 1
+                        minimizeWindow(this.app, all_windows, this._dtdSettings);
+                    }
                     else
                         activateAllWindows(this.app, this._dtdSettings);
                 }
