@@ -246,14 +246,18 @@ const MyAppIcon = new Lang.Class({
                 if (!Main.overview._shown || modifiers) {
                     // If we have button=2 or Shift, allow minimization even if
                     // the app is not focused
-                    if (this.app == focusedApp || button == 2 || modifiers) {
+                    if (this.app == focusedApp || button == 2 || modifiers & Clutter.ModifierType.SHIFT_MASK) {
                         // We need to check that the focused app is actually showing,
                         // this fixes problems with minimizing with Super+d shortcut  in Gnome Shell <=3.16
                         if (global.display.get_focus_window() !== null
                             && !global.display.get_focus_window().showing_on_its_workspace())
                                 activateAllWindows(this.app);
-                            else
-                                minimizeWindow(this.app, event.get_click_count() > 1, this._dtdSettings);
+                            else {
+                                // minimize all windows on double click and always in the case of primary click without
+                                // additional modifiers
+                                let all_windows = (button == 1 && ! modifiers) || event.get_click_count() > 1
+                                minimizeWindow(this.app, all_windows, this._dtdSettings);
+                            }
                     }
                     else
                         activateAllWindows(this.app, this._dtdSettings);
