@@ -1728,8 +1728,8 @@ Signals.addSignalMethods(DockedDash.prototype);
 const DockManager = new Lang.Class({
     Name: 'DashToDock.DockManager',
 
-    _init: function(settings) {
-        this._settings = settings;
+    _init: function() {
+        this._settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview._dash;
 
         this._createDocks();
@@ -1757,6 +1757,10 @@ const DockManager = new Lang.Class({
         ], [
             this._settings,
             'changed::preferred-monitor',
+            Lang.bind(this, this._toggle)
+        ], [
+            this._settings,
+            'changed::dock-position',
             Lang.bind(this, this._toggle)
         ]);
     },
@@ -1842,6 +1846,8 @@ const DockManager = new Lang.Class({
     destroy: function() {
         this._signalsHandler.destroy();
         this._deleteDocks();
+        this._settings.run_dispose();
+        this._settings = null;
 
         this._restoreDash();
     }
