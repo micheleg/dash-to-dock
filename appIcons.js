@@ -243,11 +243,18 @@ const MyAppIcon = new Lang.Class({
             case clickAction.MINIMIZE:
                 // In overview just activate the app, unless the acion is explicitely
                 // requested with a keyboard modifier
-                if (!Main.overview._shown || modifiers){
+                if (!Main.overview._shown || modifiers) {
                     // If we have button=2 or Shift, allow minimization even if
                     // the app is not focused
-                    if (this.app == focusedApp || button == 2 || modifiers)
-                        minimizeWindow(this.app, event.get_click_count() > 1, this._dtdSettings);
+                    if (this.app == focusedApp || button == 2 || modifiers) {
+                        // We need to check that the focused app is actually showing,
+                        // this fixes problems with minimizing with Super+d shortcut  in Gnome Shell <=3.16
+                        if (global.display.get_focus_window() !== null
+                            && !global.display.get_focus_window().showing_on_its_workspace())
+                                activateAllWindows(this.app);
+                            else
+                                minimizeWindow(this.app, event.get_click_count() > 1, this._dtdSettings);
+                    }
                     else
                         activateAllWindows(this.app, this._dtdSettings);
                 }
