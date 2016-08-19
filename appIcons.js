@@ -224,18 +224,11 @@ const MyAppIcon = new Lang.Class({
                 minimizeWindow(this.app, event.get_click_count() > 1, this._dtdSettings);
             }
             else if (this.app == focusedApp && !Main.overview._shown) {
-                if(this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS)
-                    cycleThroughWindows(this.app);
-                else if(this._dtdSettings.get_enum('click-action') == clickAction.MINIMIZE) {
-                    // We need to check that the focused app is actually showing,
-                    // this fixes problems with minimizing with Super+d shortcut  in Gnome Shell <=3.16
-                    if (global.display.get_focus_window() !== null
-                        && !global.display.get_focus_window().showing_on_its_workspace())
-                            activateAllWindows(this.app);
-                        else
-                            minimizeWindow(this.app, true);
-                }
-                else if(this._dtdSettings.get_enum('click-action') == clickAction.LAUNCH)
+                if (this._dtdSettings.get_enum('click-action') == clickAction.CYCLE_WINDOWS)
+                    cycleThroughWindows(this.app, this._dtdSettings);
+                else if (this._dtdSettings.get_enum('click-action') == clickAction.MINIMIZE)
+                    minimizeWindow(this.app, true, this._dtdSettings);
+                else if (this._dtdSettings.get_enum('click-action') == clickAction.LAUNCH)
                     this.app.open_new_window(-1);
             }
             else {
