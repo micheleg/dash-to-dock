@@ -305,7 +305,10 @@ const MyAppIcon = new Lang.Class({
                     if (this.app == focusedApp || button == 2 || modifiers & Clutter.ModifierType.SHIFT_MASK) {
                         // minimize all windows on double click and always in the case of primary click without
                         // additional modifiers
-                        let all_windows = (button == 1 && ! modifiers) || event.get_click_count() > 1
+                        let click_count = 0;
+                        if (Clutter.EventType.CLUTTER_BUTTON_PRESS)
+                            click_count = event.get_click_count();
+                        let all_windows = (button == 1 && ! modifiers) || click_count > 1;
                         minimizeWindow(this.app, all_windows, this._dtdSettings);
                     }
                     else
