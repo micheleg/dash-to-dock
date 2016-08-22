@@ -1410,22 +1410,18 @@ const DockedDash = new Lang.Class({
             this._signalsHandler.addWithLabel(label, [
                 global.screen,
                 'restacked',
-                Lang.bind(this, RestackAction)
+                Lang.bind(this.dash, this.dash._queueRedisplay)
             ]);
             this._signalsHandler.addWithLabel(label, [
                 global.window_manager,
                 'switch-workspace',
-                Lang.bind(this, RestackAction)
+                Lang.bind(this.dash, this.dash._queueRedisplay)
             ]);
         }
 
         function disable() {
             this._injectionsHandler.removeWithLabel(label);
             this._signalsHandler.removeWithLabel(label);
-        }
-
-        function RestackAction() {
-            this.dash._queueRedisplay();
         }
 
         function IsolatedOverview() {
