@@ -33,6 +33,7 @@ const ThemeManager = new Lang.Class({
 
     _init: function(settings, actor, dash) {
         this._settings = settings;
+        this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._bindSettingsChanges();
         this._actor = actor;
         this._dash = dash;
@@ -41,7 +42,6 @@ const ThemeManager = new Lang.Class({
         this._customizedBackground = {red: 0, green: 0, blue: 0, alpha: 0};
         this._customizedBorder = {red: 0, green: 0, blue: 0, alpha: 0};
 
-        this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._signalsHandler.add([
             // When theme changes re-obtain default background color
             St.ThemeContext.get_for_stage (global.stage),
@@ -283,7 +283,11 @@ const ThemeManager = new Lang.Class({
                     'force-straight-corner'];
 
         keys.forEach(function(key) {
-            this._settings.connect('changed::' + key, Lang.bind(this, this.updateCustomTheme));
+            this._signalsHandler.add([
+                this._settings,
+                'changed::' + key,
+                Lang.bind(this, this.updateCustomTheme)
+           ]);
         }, this);
     }
 });

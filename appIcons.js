@@ -70,6 +70,7 @@ const MyAppIcon = new Lang.Class({
     _init: function(settings, app, iconParams) {
         // a prefix is required to avoid conflicting with the parent class variable
         this._dtdSettings = settings;
+        this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._nWindows = 0;
 
         this.parent(app, iconParams);
@@ -97,7 +98,11 @@ const MyAppIcon = new Lang.Class({
                    'custom-theme-running-dots-border-width'];
 
         keys.forEach(function(key) {
-            this._dtdSettings.connect('changed::' + key, Lang.bind(this, this._toggleDots));
+            this._signalsHandler.add([
+                this._dtdSettings,
+                'changed::' + key,
+                Lang.bind(this, this._toggleDots)
+            ]);
         }, this);
 
         this._toggleDots();
@@ -123,6 +128,8 @@ const MyAppIcon = new Lang.Class({
         // stateChangedId is already handled by parent)
         if (this._focusAppId > 0)
             tracker.disconnect(this._focusAppId);
+
+        this._signalsHandler.destroy();
 
         if (this._scrollEventHandler)
             this.actor.disconnect(this._scrollEventHandler);

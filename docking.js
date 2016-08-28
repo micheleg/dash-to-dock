@@ -197,6 +197,9 @@ const DockedDash = new Lang.Class({
 
         // Load settings
         this._settings = settings;
+        // Connect global signals
+        this._signalsHandler = new Convenience.GlobalSignalsHandler();
+
         this._bindSettingsChanges();
 
         this._position = Convenience.getPosition(settings);
@@ -288,8 +291,6 @@ const DockedDash = new Lang.Class({
         });
         this.dash.actor.add_constraint(this.constrainSize);
 
-        // Connect global signals
-        this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._signalsHandler.add([
             Main.overview,
             'item-drag-begin',
@@ -477,9 +478,10 @@ const DockedDash = new Lang.Class({
     destroy: function() {
         // Disconnect global signals
         this._signalsHandler.destroy();
-        // The dash and intellihide have global signals as well internally
+        // The dash, intellihide and themeManager have global signals as well internally
         this.dash.destroy();
         this._intellihide.destroy();
+        this._themeManager.destroy();
 
         this._injectionsHandler.destroy();
 
@@ -521,84 +523,122 @@ const DockedDash = new Lang.Class({
     },
 
     _bindSettingsChanges: function() {
-        this._settings.connect('changed::scroll-action', Lang.bind(this, function() {
-            this._optionalScrollWorkspaceSwitch();
-        }));
+        this._signalsHandler.add([
+            this._settings,
+            'changed::scroll-action',
+            Lang.bind(this, function() {
+                    this._optionalScrollWorkspaceSwitch();
+            })
+        ], [
+            this._settings,
+            'changed::dash-max-icon-size',
+            Lang.bind(this, function() {
+                    this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'));
+            })
+        ], [
+            this._settings,
+            'changed::icon-size-fixed',
+            Lang.bind(this, function() {
+                    this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'));
+            })
+        ], [
+            this._settings,
+            'changed::show-favorites',
+            Lang.bind(this, function() {
+                    this.dash.resetAppIcons();
+            })
+        ], [
+            this._settings,
+            'changed::show-running',
+            Lang.bind(this, function() {
+                    this.dash.resetAppIcons();
+            })
+        ], [
+            this._settings,
+            'changed::show-apps-at-top',
+            Lang.bind(this, function() {
+                    this.dash.resetAppIcons();
+            })
+        ], [
+            this._settings,
+            'changed::show-show-apps-button',
+            Lang.bind(this, function() {
+                    if (this._settings.get_boolean('show-show-apps-button'))
+                        this.dash.showShowAppsButton();
+                    else
+                        this.dash.hideShowAppsButton();
+            })
+        ], [
+            this._settings,
+            'changed::dock-fixed',
+            Lang.bind(this, function() {
+                    if (this._settings.get_boolean('dock-fixed')) {
+                        Main.layoutManager._untrackActor(this.actor);
+                        Main.layoutManager._trackActor(this.actor, {affectsInputRegion: false, trackFullscreen: true});
+                        Main.layoutManager._untrackActor(this._slider.actor);
+                        Main.layoutManager._trackActor(this._slider.actor, {affectsStruts: true});
+                    } else {
+                        Main.layoutManager._untrackActor(this.actor);
+                        Main.layoutManager._untrackActor(this._slider.actor);
+                        Main.layoutManager._trackActor(this._slider.actor);
+                    }
 
-        this._settings.connect('changed::dash-max-icon-size', Lang.bind(this, function() {
-            this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'));
-        }));
+                    this._resetPosition();
 
-        this._settings.connect('changed::icon-size-fixed', Lang.bind(this, function() {
-            this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'));
-        }));
+                    // Add or remove barrier depending on if dock-fixed
+                    this._updateBarrier();
 
-        this._settings.connect('changed::show-favorites', Lang.bind(this, function() {
-            this.dash.resetAppIcons();
-        }));
-
-        this._settings.connect('changed::show-running', Lang.bind(this, function() {
-            this.dash.resetAppIcons();
-        }));
-
-        this._settings.connect('changed::show-apps-at-top', Lang.bind(this, function() {
-            this.dash.resetAppIcons();
-        }));
-
-        this._settings.connect('changed::show-show-apps-button', Lang.bind(this, function() {
-            if (this._settings.get_boolean('show-show-apps-button'))
-                this.dash.showShowAppsButton();
-            else
-                this.dash.hideShowAppsButton();
-        }));
-
-        this._settings.connect('changed::dock-fixed', Lang.bind(this, function() {
-
-            if (this._settings.get_boolean('dock-fixed')) {
-                Main.layoutManager._untrackActor(this.actor);
-                Main.layoutManager._trackActor(this.actor, {affectsInputRegion: false, trackFullscreen: true});
-                Main.layoutManager._untrackActor(this._slider.actor);
-                Main.layoutManager._trackActor(this._slider.actor, {affectsStruts: true});
-            } else {
-                Main.layoutManager._untrackActor(this.actor);
-                Main.layoutManager._untrackActor(this._slider.actor);
-                Main.layoutManager._trackActor(this._slider.actor);
-             }
-
-            this._resetPosition();
-
-            // Add or remove barrier depending on if dock-fixed
-            this._updateBarrier();
-
-            this._updateVisibilityMode();
-        }));
-
-        this._settings.connect('changed::intellihide', Lang.bind(this, this._updateVisibilityMode));
-
-        this._settings.connect('changed::intellihide-mode', Lang.bind(this, function() {
-            this._intellihide.forceUpdate();
-        }));
-
-        this._settings.connect('changed::autohide', Lang.bind(this, function() {
-            this._updateVisibilityMode();
-            this._updateBarrier();
-        }));
-        this._settings.connect('changed::extend-height', Lang.bind(this,this._resetPosition));
-        this._settings.connect('changed::preferred-monitor', Lang.bind(this,this._resetPosition));
-        this._settings.connect('changed::height-fraction', Lang.bind(this,this._resetPosition));
-        this._settings.connect('changed::require-pressure-to-show', Lang.bind(this,function() {
-            // Remove pointer watcher
-            if (this._dockWatch) {
-                PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
-                this._dockWatch = null;
-            }
-            this._setupDockDwellIfNeeded();
-            this._updateBarrier();
-        }));
-        this._settings.connect('changed::pressure-threshold', Lang.bind(this,function() {
-            this._updatePressureBarrier();
-            this._updateBarrier();
-        }));
+                    this._updateVisibilityMode();
+            })
+        ], [
+            this._settings,
+            'changed::intellihide',
+            Lang.bind(this, this._updateVisibilityMode)
+        ], [
+            this._settings,
+            'changed::intellihide-mode',
+            Lang.bind(this, function() {
+                    this._intellihide.forceUpdate();
+            })
+        ], [
+            this._settings,
+            'changed::autohide',
+            Lang.bind(this, function() {
+                    this._updateVisibilityMode();
+                    this._updateBarrier();
+            })
+        ], [
+            this._settings,
+            'changed::extend-height',
+            Lang.bind(this, this._resetPosition)
+        ], [
+            this._settings,
+            'changed::preferred-monitor',
+            Lang.bind(this,this._resetPosition)
+        ], [
+            this._settings,
+            'changed::height-fraction',
+            Lang.bind(this, this._resetPosition)
+        ], [
+            this._settings,
+            'changed::require-pressure-to-show',
+            Lang.bind(this, function() {
+                    // Remove pointer watcher
+                    if (this._dockWatch) {
+                        PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
+                        this._dockWatch = null;
+                    }
+                    this._setupDockDwellIfNeeded();
+                    this._updateBarrier();
+            })
+        ], [
+            this._settings,
+            'changed::pressure-threshold',
+            Lang.bind(this, function() {
+                    this._updatePressureBarrier();
+                    this._updateBarrier();
+            })
+        ]);
 
     },
 
@@ -1464,13 +1504,17 @@ const DockedDash = new Lang.Class({
 
         let label = 'optionalWorkspaceIsolation';
 
-        this._settings.connect('changed::isolate-workspaces', Lang.bind(this, function() {
-            this.dash.resetAppIcons();
-            if (this._settings.get_boolean('isolate-workspaces'))
-                Lang.bind(this, enable)();
-            else
-                Lang.bind(this, disable)();
-        }));
+        this._signalsHandler.add([
+            this._settings,
+            'changed::isolate-workspaces',
+            Lang.bind(this, function() {
+                    this.dash.resetAppIcons();
+                    if (this._settings.get_boolean('isolate-workspaces'))
+                        Lang.bind(this, enable)();
+                    else
+                        Lang.bind(this, disable)();
+            })
+        ]);
 
         if (this._settings.get_boolean('isolate-workspaces'))
             Lang.bind(this, enable)();
