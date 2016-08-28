@@ -48,9 +48,10 @@ const handledWindowTypes = [
 const Intellihide = new Lang.Class({
     Name: 'DashToDock.Intellihide',
 
-    _init: function(settings) {
+    _init: function(settings, monitorIndex) {
         // Load settings
         this._settings = settings;
+        this._monitorIndex = monitorIndex;
 
         this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._tracker = Shell.WindowTracker.get_default();
@@ -198,7 +199,7 @@ const Intellihide = new Lang.Class({
              * select a window in the secondary monitor.
              */
 
-            let monitorIndex = this._settings.get_int('preferred-monitor');
+            let monitorIndex = this._monitorIndex;
 
             // The dock goes on the primary monitor if requested (monitorIndex==0) or if the setting
             // is incosistent (e.g. desired monitor not connected).
