@@ -192,11 +192,12 @@ const DockedDash = new Lang.Class({
 
     _numHotkeys: 10,
 
-    _init: function(settings) {
+    _init: function(settings, monitorIndex) {
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
         // Load settings
         this._settings = settings;
+        this._monitorIndex = monitorIndex;
         // Connect global signals
         this._signalsHandler = new Convenience.GlobalSignalsHandler();
 
@@ -246,9 +247,6 @@ const DockedDash = new Lang.Class({
 
         // Create a new dash object
         this.dash = new MyDash.MyDash(this._settings);
-
-        // set stored icon size  to the new dash
-        Main.overview.dashIconSize = this.dash.iconSize;
 
         // connect app icon into the view selector
         this.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
@@ -303,11 +301,6 @@ const DockedDash = new Lang.Class({
             Main.overview,
             'item-drag-cancelled',
             Lang.bind(this, this._onDragEnd)
-        ], [
-            // update when monitor changes, for instance in multimonitor when monitor are attached
-            global.screen,
-            'monitors-changed',
-            Lang.bind(this, this._resetPosition )
         ], [
             // update when workarea changes, for instance if  other extensions modify the struts
             //(like moving th panel at the bottom)
@@ -393,17 +386,6 @@ const DockedDash = new Lang.Class({
          // user theme applied.
 
         this._paintId = this.actor.connect('paint', Lang.bind(this, this._initialize));
-
-        // Hide usual Dash
-        Main.overview._controls.dash.actor.hide();
-
-        // Also set dash width to 1, so it's almost not taken into account by code
-        // calculaing the reserved space in the overview. The reason to keep it at 1 is
-        // to allow its visibility change to trigger an allocaion of the appGrid which
-        // in turn is triggergin the appsIcon spring animation, required when no other
-        // actors has this effect, i.e in horizontal mode and without the workspaceThumnails
-        // 1 static workspace only)
-        Main.overview._controls.dash.actor.set_width(1);
 
         // Manage the  which is used to reserve space in the overview for the dock
         // Add and additional dashSpacer positioned according to the dash positioning.
@@ -505,14 +487,6 @@ const DockedDash = new Lang.Class({
         // Remove the dashSpacer
         this._dashSpacer.destroy();
 
-        // Reshow normal dash previously hidden, restore panel position if changed.
-        Main.overview._controls.dash.actor.show();
-        Main.overview._controls.dash.actor.set_width(-1); //reset default dash size
-        // This force the recalculation of the icon size
-        Main.overview._controls.dash._maxHeight = -1;
-
-        // reset stored icon size  to the default dash
-        Main.overview.dashIconSize = Main.overview._controls.dash.iconSize;
         // Reshow panel corners
         this._revertPanelCorners();
         this._resetLegacyTray();
@@ -611,10 +585,6 @@ const DockedDash = new Lang.Class({
             this._settings,
             'changed::extend-height',
             Lang.bind(this, this._resetPosition)
-        ], [
-            this._settings,
-            'changed::preferred-monitor',
-            Lang.bind(this,this._resetPosition)
         ], [
             this._settings,
             'changed::height-fraction',
@@ -1055,7 +1025,7 @@ const DockedDash = new Lang.Class({
         // Ensure variables linked to settings are updated.
         this._updateVisibilityMode();
 
-        let monitorIndex = this._settings.get_int('preferred-monitor');
+        let monitorIndex = this._monitorIndex;
         let extendHeight = this._settings.get_boolean('extend-height');
 
         // The dock goes on the primary monitor if requested (monitorIndex==0) or if the setting
@@ -1204,7 +1174,8 @@ const DockedDash = new Lang.Class({
      */
     _adjustPanelCorners: function() {
         let extendHeight = this._settings.get_boolean('extend-height');
-        if (!this._isHorizontal && this._isPrimaryMonitor() && extendHeight && this._fixedIsEnabled) {
+        if (!this._isHorizontal && (this._isPrimaryMonitor() || this._settings.get_boolean('multi-monitor'))
+            && extendHeight && this._fixedIsEnabled) {
             Main.panel._rightCorner.actor.hide();
             Main.panel._leftCorner.actor.hide();
         }
@@ -1732,3 +1703,114 @@ const DockedDash = new Lang.Class({
 });
 
 Signals.addSignalMethods(DockedDash.prototype);
+
+const DockManager = new Lang.Class({
+    Name: 'DashToDock.DockManager',
+
+    _init: function(settings) {
+        this._settings = settings;
+        this._oldDash = Main.overview._dash;
+
+        // Create an array for extra docks on other monitors
+        this._allDocks = [];
+        this._createDocks();
+
+        // Connect relevant signals to the toggling function
+        this._bindSettingsChanges();
+    },
+
+    _toggle: function() {
+        this._deleteDocks();
+        this._createDocks();
+    },
+
+    _bindSettingsChanges: function() {
+        // Connect relevant signals to the toggling function
+        this._signalsHandler = new Convenience.GlobalSignalsHandler();
+        this._signalsHandler.add([
+            global.screen,
+            'monitors-changed',
+            Lang.bind(this, this._toggle)
+        ], [
+            this._settings,
+            'changed::multi-monitor',
+            Lang.bind(this, this._toggle)
+        ], [
+            this._settings,
+            'changed::preferred-monitor',
+            Lang.bind(this, this._toggle)
+        ]);
+    },
+
+    _createDocks: function() {
+        let preferredMonitor = this._settings.get_int('preferred-monitor');
+
+        // First we create the main Dock, to get the extra features to bind to this one
+        let dock = new DockedDash(this._settings, preferredMonitor);
+        this._allDocks.push(dock);
+
+        // Make the necessary changes to Main.overview._dash
+        this._prepareMainDash();
+
+        if (this._settings.get_boolean('multi-monitor')) {
+            let nMon = Main.layoutManager.monitors.length;
+            for (let iMon = 0; iMon < nMon; iMon++) {
+                if (iMon == preferredMonitor)
+                    continue;
+                let dock = new DockedDash(this._settings, iMon);
+                this._allDocks.push(dock);
+            }
+        }
+
+    },
+
+    _prepareMainDash: function() {
+        // Pretend I'm the dash: meant to make appgrd swarm animation come from the
+        // right position of the appShowButton.
+        Main.overview._dash = this._allDocks[0].dash;
+
+        // set stored icon size  to the new dash
+        Main.overview.dashIconSize = this._allDocks[0].dash.iconSize;
+
+        // Hide usual Dash
+        Main.overview._controls.dash.actor.hide();
+
+        // Also set dash width to 1, so it's almost not taken into account by code
+        // calculaing the reserved space in the overview. The reason to keep it at 1 is
+        // to allow its visibility change to trigger an allocaion of the appGrid which
+        // in turn is triggergin the appsIcon spring animation, required when no other
+        // actors has this effect, i.e in horizontal mode and without the workspaceThumnails
+        // 1 static workspace only)
+        Main.overview._controls.dash.actor.set_width(1);
+    },
+
+    _deleteDocks: function() {
+        // Delete all docks
+        let nDocks = this._allDocks.length;
+        for (let i = nDocks-1; i >= 0; i--) {
+            this._allDocks[i].destroy();
+            this._allDocks[i] = null;
+            this._allDocks.pop();
+        }
+    },
+
+    _restoreDash: function() {
+        Main.overview._controls.dash.actor.show();
+        Main.overview._controls.dash.actor.set_width(-1); //reset default dash size
+        // This force the recalculation of the icon size
+        Main.overview._controls.dash._maxHeight = -1;
+
+        // reset stored icon size  to the default dash
+        Main.overview.dashIconSize = Main.overview._controls.dash.iconSize;
+
+        Main.overview._dash = this._oldDash;
+        this._oldDash=null;
+    },
+
+    destroy: function() {
+        this._signalsHandler.destroy();
+        this._deleteDocks();
+
+        this._restoreDash();
+    }
+});

@@ -303,6 +303,10 @@ const Settings = new Lang.Class({
                             this._builder.get_object('windows_preview_button'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('multi-monitor',
+                            this._builder.get_object('multi_monitor_button'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-favorites',
                             this._builder.get_object('show_favorite_switch'),
                             'active',

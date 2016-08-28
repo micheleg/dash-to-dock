@@ -204,6 +204,11 @@
       <summary>Monitor on which putting the dock</summary>
       <description>Set on which monitor to put the dock, use -1 for the primary one</description>
     </key>
+    <key type="b" name="multi-monitor">
+      <default>false</default>
+      <summary>Enable multi-monitor docks</summary>
+      <description>Show a dock on every monitor</description>
+    </key>
     <key type="b" name="customize-click">
       <default>true</default>
       <summary>Customize click behaviour</summary>

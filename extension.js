@@ -4,34 +4,25 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
 const Docking = Me.imports.docking;
 
-const Main = imports.ui.main;
-
 let settings;
-let dock;
-let oldDash;
+let dockManager;
 
 function init() {
 }
 
 function enable() {
     settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
-    dock = new Docking.DockedDash(settings);
+    dockManager = new Docking.DockManager(settings);
 
-    // Pretend I'm the dash: meant to make appgrd swarm animation come from the
-    // right position of the appShowButton.
-    oldDash  = Main.overview._dash;
-    Main.overview._dash = dock.dash;
     bindSettingsChanges();
 }
 
 function disable() {
-    dock.destroy();
+    dockManager.destroy();
     settings.run_dispose();
-    Main.overview._dash = oldDash;
 
-    dock=null;
+    dockManager=null;
     settings = null;
-    oldDash=null;
 }
 
 
