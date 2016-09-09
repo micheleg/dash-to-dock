@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-03 11:16+0900\n"
+"POT-Creation-Date: 2016-09-09 23:29+0100\n"
 "PO-Revision-Date: 2016-04-03 17:02+0900\n"
 "Last-Translator: Debonne Hooties <debonne.hooties@gmail.com>\n"
 "Language-Team: Safranjoepe (an unofficial team of Japanese) <>\n"
@@ -18,31 +18,36 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: prefs.js:102
+#: prefs.js:98
 msgid "Primary monitor"
 msgstr "プライマリーモニター"
 
-#: prefs.js:111 prefs.js:118
+#: prefs.js:107 prefs.js:114
 msgid "Secondary monitor "
 msgstr "セカンダリーモニター"
 
-#: prefs.js:143 Settings.ui.h:10
+#: prefs.js:139 Settings.ui.h:21
 msgid "Right"
 msgstr "右"
 
-#: prefs.js:144 Settings.ui.h:7
+#: prefs.js:140 Settings.ui.h:18
 msgid "Left"
 msgstr "左"
 
-#: prefs.js:194
+#: prefs.js:190
 msgid "Intelligent autohide customization"
 msgstr "インテリジェント表示の設定"
 
-#: prefs.js:201
+#: prefs.js:197 prefs.js:353
 msgid "Reset to defaults"
 msgstr "既定値にリセット"
 
-#: prefs.js:359
+#: prefs.js:346
+#, fuzzy
+msgid "Customize middle-click behavior"
+msgstr "表示スタイルの設定"
+
+#: prefs.js:419
 msgid "Customize running indicators"
 msgstr "インジケーターの表示設定"
 
@@ -63,241 +68,307 @@ msgid "Border width"
 msgstr "縁取り幅"
 
 #: Settings.ui.h:5
-msgid "Show the dock on"
-msgstr "ドックを表示するモニター"
+msgid ""
+"When set to minimize, double clicking minimizes all the windows of the "
+"application."
+msgstr ""
+"[ウィンドウの最小化] に設定したときは、アイコンをダブルクリックするとそのアプ"
+"リケーションのウィンドウをすべて最小化します。"
 
 #: Settings.ui.h:6
-msgid "Position on screen"
-msgstr "表示位置"
-
-#: Settings.ui.h:8
-msgid "Bottom"
-msgstr "下"
-
-#: Settings.ui.h:9
-msgid "Top"
-msgstr "上"
-
-#: Settings.ui.h:11
-msgid "Hide the dock when it obstructs a window of the the current application. More refined settings are available."
-msgstr "開いているウィンドウの邪魔にならないようドックの表示/非表示を自動的に切り替えます。より洗練された表示設定も可能です。"
-
-#: Settings.ui.h:12
-msgid "Intelligent autohide"
-msgstr "インテリジェント表示"
-
-#: Settings.ui.h:13
-msgid "Dock size limit"
-msgstr "ドックサイズの上限"
-
-#: Settings.ui.h:14
-msgid "Panel mode: extend to the screen edge"
-msgstr "パネルモード（画面の端までドックを拡張）"
-
-#: Settings.ui.h:15
-msgid "Icon size limit"
-msgstr "アイコンサイズの上限"
-
-#: Settings.ui.h:16
-msgid "Fixed icon size: scroll to reveal other icons"
-msgstr "アイコンサイズの固定（隠れたアイコンはスクロールで表示）"
-
-#: Settings.ui.h:17
-msgid "Position and size"
-msgstr "位置とサイズ"
-
-#: Settings.ui.h:18
-msgid "Show favorite applications"
-msgstr "お気に入りアプリケーションの表示"
-
-#: Settings.ui.h:19
-msgid "Show running applications"
-msgstr "実行中アプリケーションの表示"
-
-#: Settings.ui.h:20
-msgid "If disabled, these settings are acccessible from gnome-tweak-tool or the extension website."
-msgstr "オフにしたときは、gnome-tweak-tool または拡張機能ウェブサイトを経由してこの設定ダイアログにアクセスします。"
-
-#: Settings.ui.h:21
-msgid "Show <i>Show Applications</i> icon"
-msgstr "[アプリケーションを表示する] アイコンの表示"
-
-#: Settings.ui.h:22
-msgid "Move the applications button at the beginning of the dock."
-msgstr "ドックの先頭（最上段または左端）に表示"
-
-#: Settings.ui.h:23
-msgid "Animate <i>Show Applications</i>."
-msgstr "アニメーションしながらアプリケーション一覧を表示"
-
-#: Settings.ui.h:24
-msgid "Behaviour when clicking on the icon of a running application."
-msgstr "実行中アプリケーションのアイコンをクリックしたときの動作を指定します。"
-
-#: Settings.ui.h:25
-msgid "Click action"
-msgstr "クリック時のアクション"
-
-#: Settings.ui.h:26
-msgid "Do nothing"
-msgstr "何もしない"
-
-#: Settings.ui.h:27
-msgid "Minimize"
-msgstr "ウィンドウの最小化"
-
-#: Settings.ui.h:28
-msgid "Launch new instance"
-msgstr "新しいウィンドウを開く"
-
-#: Settings.ui.h:29
-msgid "Cycle through windows"
-msgstr "ウィンドウの切り替え"
-
-#: Settings.ui.h:30
-msgid "When set to minimize, double clicking minimizes all the windows of the application."
-msgstr "[ウィンドウの最小化] に設定したときは、アイコンをダブルクリックするとそのアプリケーションのウィンドウをすべて最小化します。"
-
-#: Settings.ui.h:31
 msgid "Shift+Click action"
 msgstr "Shift+クリック時のアクション"
 
-#: Settings.ui.h:32
+#: Settings.ui.h:7
+#, fuzzy
+msgid "Raise window"
+msgstr "ウィンドウの最小化"
+
+#: Settings.ui.h:8
 msgid "Minimize window"
 msgstr "ウィンドウの最小化"
 
+#: Settings.ui.h:9
+msgid "Launch new instance"
+msgstr "新しいウィンドウを開く"
+
+#: Settings.ui.h:10
+msgid "Cycle through windows"
+msgstr "ウィンドウの切り替え"
+
+#: Settings.ui.h:11
+msgid "Quit"
+msgstr ""
+
+#: Settings.ui.h:12
+msgid "Behavior for Middle-Click."
+msgstr ""
+
+#: Settings.ui.h:13
+#, fuzzy
+msgid "Middle-Click action"
+msgstr "クリック時のアクション"
+
+#: Settings.ui.h:14
+msgid "Behavior for Shift+Middle-Click."
+msgstr ""
+
+#: Settings.ui.h:15
+#, fuzzy
+msgid "Shift+Middle-Click action"
+msgstr "Shift+クリック時のアクション"
+
+#: Settings.ui.h:16
+msgid "Show the dock on"
+msgstr "ドックを表示するモニター"
+
+#: Settings.ui.h:17
+msgid "Position on screen"
+msgstr "表示位置"
+
+#: Settings.ui.h:19
+msgid "Bottom"
+msgstr "下"
+
+#: Settings.ui.h:20
+msgid "Top"
+msgstr "上"
+
+#: Settings.ui.h:22
+msgid ""
+"Hide the dock when it obstructs a window of the the current application. "
+"More refined settings are available."
+msgstr ""
+"開いているウィンドウの邪魔にならないようドックの表示/非表示を自動的に切り替え"
+"ます。より洗練された表示設定も可能です。"
+
+#: Settings.ui.h:23
+msgid "Intelligent autohide"
+msgstr "インテリジェント表示"
+
+#: Settings.ui.h:24
+msgid "Dock size limit"
+msgstr "ドックサイズの上限"
+
+#: Settings.ui.h:25
+msgid "Panel mode: extend to the screen edge"
+msgstr "パネルモード（画面の端までドックを拡張）"
+
+#: Settings.ui.h:26
+msgid "Icon size limit"
+msgstr "アイコンサイズの上限"
+
+#: Settings.ui.h:27
+msgid "Fixed icon size: scroll to reveal other icons"
+msgstr "アイコンサイズの固定（隠れたアイコンはスクロールで表示）"
+
+#: Settings.ui.h:28
+msgid "Position and size"
+msgstr "位置とサイズ"
+
+#: Settings.ui.h:29
+msgid "Show favorite applications"
+msgstr "お気に入りアプリケーションの表示"
+
+#: Settings.ui.h:30
+msgid "Show running applications"
+msgstr "実行中アプリケーションの表示"
+
+#: Settings.ui.h:31
+msgid "Isolate workspaces."
+msgstr ""
+
+#: Settings.ui.h:32
+msgid ""
+"If disabled, these settings are acccessible from gnome-tweak-tool or the "
+"extension website."
+msgstr ""
+"オフにしたときは、gnome-tweak-tool または拡張機能ウェブサイトを経由してこの設"
+"定ダイアログにアクセスします。"
+
 #: Settings.ui.h:33
-msgid "With fixed icon size, only the edge of the dock and the <i>Show Applications</i> icon are active."
-msgstr "アイコンサイズを固定しているときは、ドックの端または [アプリケーションを表示する] アイコン上でのスクロールのみが有効です。"
+#, fuzzy
+msgid "Show <i>Applications</i> icon"
+msgstr "[アプリケーションを表示する] アイコンの表示"
 
 #: Settings.ui.h:34
+msgid "Move the applications button at the beginning of the dock."
+msgstr "ドックの先頭（最上段または左端）に表示"
+
+#: Settings.ui.h:35
+msgid "Animate <i>Show Applications</i>."
+msgstr "アニメーションしながらアプリケーション一覧を表示"
+
+#: Settings.ui.h:36
+msgid "Behaviour when clicking on the icon of a running application."
+msgstr "実行中アプリケーションのアイコンをクリックしたときの動作を指定します。"
+
+#: Settings.ui.h:37
+msgid "Click action"
+msgstr "クリック時のアクション"
+
+#: Settings.ui.h:38
+msgid "Minimize"
+msgstr "ウィンドウの最小化"
+
+#: Settings.ui.h:39
+msgid ""
+"With fixed icon size, only the edge of the dock and the <i>Show "
+"Applications</i> icon are active."
+msgstr ""
+"アイコンサイズを固定しているときは、ドックの端または [アプリケーションを表示"
+"する] アイコン上でのスクロールのみが有効です。"
+
+#: Settings.ui.h:40
 msgid "Switch workspace by scrolling on the dock"
 msgstr "ドック上でスクロールしたらワークスペースを切り替える"
 
-#: Settings.ui.h:35
+#: Settings.ui.h:41
 msgid "Behavior"
 msgstr "動作"
 
-#: Settings.ui.h:36
-msgid "Few customizations meant to integrate the dock with the default GNOME theme. Alternatively, specific options can be enabled below."
-msgstr "この設定がオンのときは、お使いのGNOMEテーマとの調和を図るためカスタマイズは無効になります。オフのときには以下のカスタマイズが可能です。"
+#: Settings.ui.h:42
+msgid ""
+"Few customizations meant to integrate the dock with the default GNOME theme. "
+"Alternatively, specific options can be enabled below."
+msgstr ""
+"この設定がオンのときは、お使いのGNOMEテーマとの調和を図るためカスタマイズは無"
+"効になります。オフのときには以下のカスタマイズが可能です。"
 
-#: Settings.ui.h:37
+#: Settings.ui.h:43
 msgid "Use built-in theme"
 msgstr "ビルトインテーマの使用"
 
-#: Settings.ui.h:38
+#: Settings.ui.h:44
 msgid "Save space reducing padding and border radius."
 msgstr "境界線の太さとパディングを減らして表示域を小さくします。"
 
-#: Settings.ui.h:39
+#: Settings.ui.h:45
 msgid "Shrink the dash"
 msgstr "Dashの縮小表示"
 
-#: Settings.ui.h:40
+#: Settings.ui.h:46
 msgid "Show a dot for each windows of the application."
 msgstr "アプリケーションウィンドウの数をドットで表示します。"
 
-#: Settings.ui.h:41
+#: Settings.ui.h:47
 msgid "Show windows counter indicators"
 msgstr "ウィンドウ数インジケーターの表示"
 
-#: Settings.ui.h:42
+#: Settings.ui.h:48
+msgid "Set the background color for the dash."
+msgstr ""
+
+#: Settings.ui.h:49
+msgid "Customize the dash color"
+msgstr ""
+
+#: Settings.ui.h:50
 msgid "Tune the dash background opacity."
 msgstr "Dash背景の不透明度を調整します。"
 
-#: Settings.ui.h:43
+#: Settings.ui.h:51
 msgid "Customize opacity"
 msgstr "不透明度の調整"
 
-#: Settings.ui.h:44
+#: Settings.ui.h:52
 msgid "Opacity"
 msgstr "不透明度"
 
-#: Settings.ui.h:45
+#: Settings.ui.h:53
 msgid "Appearance"
 msgstr "外観"
 
-#: Settings.ui.h:46
+#: Settings.ui.h:54
 msgid "version: "
 msgstr "バージョン: "
 
-#: Settings.ui.h:47
+#: Settings.ui.h:55
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "Dashをドック化してアクティビティ画面以外でもDash操作を可能にします。"
 
-#: Settings.ui.h:48
+#: Settings.ui.h:56
 msgid "Created by"
 msgstr "作者:"
 
-#: Settings.ui.h:49
+#: Settings.ui.h:57
 msgid "Webpage"
 msgstr "ウェブページ"
 
-#: Settings.ui.h:50
+#: Settings.ui.h:58
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
-"See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License, version 2 or later</a> for details.</span>"
+"See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+"\">GNU General Public License, version 2 or later</a> for details.</span>"
 msgstr ""
 "<span size=\"small\">このプログラムに<b>保証は一切ありません</b>。\n"
-"詳しくは <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU一般公衆ライセンス（GPL）バージョン2</a> またはそれ以降のバージョンをご覧ください。</span>"
+"詳しくは <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+"\">GNU一般公衆ライセンス（GPL）バージョン2</a> またはそれ以降のバージョンをご"
+"覧ください。</span>"
 
-#: Settings.ui.h:52
+#: Settings.ui.h:60
 msgid "About"
 msgstr "情報"
 
-#: Settings.ui.h:53
+#: Settings.ui.h:61
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr "ドックを表示したいとき、ポインターを画面端に移動するとドックが表示されます。"
+msgstr ""
+"ドックを表示したいとき、ポインターを画面端に移動するとドックが表示されます。"
 
-#: Settings.ui.h:54
+#: Settings.ui.h:62
 msgid "Autohide"
 msgstr "オンデマンド表示"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:63
 msgid "Push to show: require pressure to show the dock"
-msgstr "押し込んで表示（画面外にポインターを移動するようにマウスを動かして表示）"
+msgstr ""
+"押し込んで表示（画面外にポインターを移動するようにマウスを動かして表示）"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:64
 msgid "Enable in fullscreen mode"
 msgstr "フルスクリーンモード時でも表示"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:65
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr "ドックを常に表示しますが、アプリケーションウィンドウと重なるときは表示しません。"
+msgstr ""
+"ドックを常に表示しますが、アプリケーションウィンドウと重なるときは表示しませ"
+"ん。"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:66
 msgid "Dodge windows"
 msgstr "ウィンドウ重なり防止"
 
-#: Settings.ui.h:59
+#: Settings.ui.h:67
 msgid "All windows"
 msgstr "すべてのウィンドウが対象"
 
-#: Settings.ui.h:60
+#: Settings.ui.h:68
 msgid "Only focused application's windows"
 msgstr "フォーカスされたアプリケーションのウィンドウが対象"
 
-#: Settings.ui.h:61
+#: Settings.ui.h:69
 msgid "Only maximized windows"
 msgstr "最大化されたウィンドウが対象"
 
-#: Settings.ui.h:62
+#: Settings.ui.h:70
 msgid "Animation duration (s)"
 msgstr "アニメーション表示時間 (秒)"
 
-#: Settings.ui.h:63
+#: Settings.ui.h:71
 msgid "0.000"
 msgstr "0.000"
 
-#: Settings.ui.h:64
+#: Settings.ui.h:72
 msgid "Hide timeout (s)"
 msgstr "非表示までのタイムアウト (秒)"
 
-#: Settings.ui.h:65
+#: Settings.ui.h:73
 msgid "Show timeout (s)"
 msgstr "表示までのタイムアウト (秒)"
 
-#: Settings.ui.h:66
+#: Settings.ui.h:74
 msgid "Pressure threshold"
 msgstr "押し込み量 (ピクセル)"
+
+#~ msgid "Do nothing"
+#~ msgstr "何もしない"
