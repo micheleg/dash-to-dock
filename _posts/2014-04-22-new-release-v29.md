@@ -14,7 +14,7 @@ See also the [alternative installation methods](/download.html)
 <!--more-->
 
 This release includes some important changes, that is a rework of the dock
-[sliding mechanism]({% post_url 2014-04-09-multimonitor-bug-solved %}) and the
+[sliding mechanism]({% post_url 2014-04-08-multimonitor-bug-solved %}) and the
 introduction of [pressure sensitivity]({% post_url 2014-04-08-pressure-sensitivity-implemented %}).
 These changes improve the extension behaviour particularly in multimonitor
 configurations.
