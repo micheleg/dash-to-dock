@@ -1,3 +1,21 @@
+- version: 54
+  date: 09-09-2016
+  shell_version: ["3.18", "3.20", "3.22"]
+  notes:
+    - Add GNOME Shell 3.22 support [6e99713]
+    - Code reorganization and style clean up [f9b4bab, 8619591] 
+    - Implement more options for launcher clicks [08bc362]
+    - Implement option to set the Dash background color [7db860c]
+    - Implement workspace isolation option [7c5aa41]
+    - Allow for smaller minimum icon size [68c9951]
+    - Fix regression with inputRegions in fullscreen and fixed mode [42ee3ec]
+    - Intellihide fixes [f23a7f6, 28f7985]
+    - Improve theming [d23fe71, 19f825f, a0bab41, 87376ee, 067048f]
+    - Fix Wayland compatibility [c25ba27]
+    - Update Russian, Polish, French, Brazilian Portuguese, Japanese, Italian, Spanish, Simplified Chinese, Slovack and Turkish translations [c1e191d, f2b8f94, 4005eac, 4bb3f62, 8ef326f, 113b0ad, 7b76b1a, 0682d13, fb4946b, 70d3abe] Add Swedish translation [cd0d4bc]
+
+  zip_url: https://extensions.gnome.org/review/download/6153.shell-extension.zip
+
 - version: 53
   date: 19-03-2016
   shell_version: ["3.18", "3.20"]
