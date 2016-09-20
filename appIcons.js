@@ -234,7 +234,7 @@ const MyAppIcon = new Lang.Class({
         let focusedApp = tracker.focus_app;
 
         // Only consider SHIFT and CONTROL as modifiers (exclude SUPER, CAPS-LOCK, etc.)
-        modifiers = modifiers & (Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CTRL_MASK);
+        modifiers = modifiers & (Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CONTROL_MASK);
 
         // We don't change the CTRL-click behaviour: in such case we just chain
         // up the parent method and return.
