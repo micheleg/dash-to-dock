@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-09-09 23:29+0100\n"
-"PO-Revision-Date: 2016-03-20 15:41+0900\n"
+"PO-Revision-Date: 2016-09-23 09:30+0300\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -42,9 +42,8 @@ msgid "Reset to defaults"
 msgstr "Сбросить настройки"
 
 #: prefs.js:346
-#, fuzzy
 msgid "Customize middle-click behavior"
-msgstr "Настроить стиль индикатора"
+msgstr "Настройка действий для средней кнопки мыши"
 
 #: prefs.js:419
 msgid "Customize running indicators"
@@ -79,9 +78,8 @@ msgid "Shift+Click action"
 msgstr "Действие по Shift+Click"
 
 #: Settings.ui.h:7
-#, fuzzy
 msgid "Raise window"
-msgstr "Минимизировать окно"
+msgstr "Показать окно"
 
 #: Settings.ui.h:8
 msgid "Minimize window"
@@ -97,25 +95,23 @@ msgstr "Переключить окно приложения"
 
 #: Settings.ui.h:11
 msgid "Quit"
-msgstr ""
+msgstr "Выйти"
 
 #: Settings.ui.h:12
 msgid "Behavior for Middle-Click."
-msgstr ""
+msgstr "Действие по нажатию средней кнопки мыши."
 
 #: Settings.ui.h:13
-#, fuzzy
 msgid "Middle-Click action"
-msgstr "Действие по нажатию"
+msgstr "Действие по Middle-Click"
 
 #: Settings.ui.h:14
 msgid "Behavior for Shift+Middle-Click."
-msgstr ""
+msgstr "Действие по нажатию Shift + средняя кнопка мыши."
 
 #: Settings.ui.h:15
-#, fuzzy
 msgid "Shift+Middle-Click action"
-msgstr "Действие по Shift+Click"
+msgstr "Действие по Shift+Middle-Click"
 
 #: Settings.ui.h:16
 msgid "Show the dock on"
@@ -177,7 +173,7 @@ msgstr "Показывать запущенные приложения"
 
 #: Settings.ui.h:31
 msgid "Isolate workspaces."
-msgstr ""
+msgstr "Для текущего рабочего стола."
 
 #: Settings.ui.h:32
 msgid ""
@@ -188,7 +184,6 @@ msgstr ""
 "дополнений."
 
 #: Settings.ui.h:33
-#, fuzzy
 msgid "Show <i>Applications</i> icon"
 msgstr "Показывать иконку <i>«Приложения»</i>"
 
@@ -260,11 +255,11 @@ msgstr "Показывать индикаторы количества окон"
 
 #: Settings.ui.h:48
 msgid "Set the background color for the dash."
-msgstr ""
+msgstr "Вобор цвета фона для панели."
 
 #: Settings.ui.h:49
 msgid "Customize the dash color"
-msgstr ""
+msgstr "Настроить цвет Дока"
 
 #: Settings.ui.h:50
 msgid "Tune the dash background opacity."
