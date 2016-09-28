@@ -916,7 +916,7 @@ const MyDash = new Lang.Class({
         if (app == null || app.is_window_backed())
             return DND.DragMotionResult.NO_DROP;
 
-        if (!this._settings.is_writable('favorite-apps') || !this._dtdSettings.get_boolean('show-favorites'))
+        if (!this._dtdSettings.is_writable('favorite-apps') || !this._dtdSettings.get_boolean('show-favorites'))
             return DND.DragMotionResult.NO_DROP;
 
         let favorites = AppFavorites.getAppFavorites().getFavorites();
@@ -1011,7 +1011,7 @@ const MyDash = new Lang.Class({
         if (app == null || app.is_window_backed())
             return false;
 
-        if (!this._settings.is_writable('favorite-apps') || !this._dtdSettings.get_boolean('show-favorites'))
+        if (!this._dtdSettings.is_writable('favorite-apps') || !this._dtdSettings.get_boolean('show-favorites'))
             return false;
 
         let id = app.get_id();
