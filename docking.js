@@ -28,6 +28,7 @@ const Convenience = Me.imports.convenience;
 const Intellihide = Me.imports.intellihide;
 const Theming = Me.imports.theming;
 const MyDash = Me.imports.dash;
+const MyWorkspaceSwitcherPopup = Me.imports.myWorkspaceSwitcherPopup;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 
@@ -512,6 +513,10 @@ const DockedDash = new Lang.Class({
 
     _bindSettingsChanges: function() {
         this._settings.connect('changed::scroll-switch-workspace', Lang.bind(this, function() {
+            this._optionalScrollWorkspaceSwitch(this._settings.get_boolean('scroll-switch-workspace'));
+        }));
+
+        this._settings.connect('changed::switch-workspace-horizontal', Lang.bind(this, function() {
             this._optionalScrollWorkspaceSwitch(this._settings.get_boolean('scroll-switch-workspace'));
         }));
 
@@ -1290,6 +1295,13 @@ const DockedDash = new Lang.Class({
                 Lang.bind(this, disable)();
         }));
 
+        this._settings.connect('changed::switch-workspace-horizontal', Lang.bind(this, function() {
+            if (this._settings.get_boolean('switch-workspace-horizontal'))
+                this._horizontalWorkspace = true;
+            else
+                this._horizontalWorkspace = false;
+        }));
+
         if (this._settings.get_boolean('scroll-switch-workspace'))
             Lang.bind(this, enable)();
 
@@ -1303,6 +1315,11 @@ const DockedDash = new Lang.Class({
             ]);
 
             this._optionalScrollWorkspaceSwitchDeadTimeId = 0;
+
+            if (this._settings.get_boolean('switch-workspace-horizontal'))
+                this._horizontalWorkspace = true;
+            else
+                this._horizontalWorkspace = false;
         }
 
         function disable() {
@@ -1325,17 +1342,30 @@ const DockedDash = new Lang.Class({
 
             switch (event.get_scroll_direction()) {
             case Clutter.ScrollDirection.UP:
-                direction = Meta.MotionDirection.UP;
+                if (this._horizontalWorkspace)
+                    direction = Meta.MotionDirection.LEFT;
+                else
+                    direction = Meta.MotionDirection.UP;
                 break;
             case Clutter.ScrollDirection.DOWN:
-                direction = Meta.MotionDirection.DOWN;
+                if (this._horizontalWorkspace)
+                    direction = Meta.MotionDirection.RIGHT;
+                else
+                    direction = Meta.MotionDirection.DOWN;
                 break;
             case Clutter.ScrollDirection.SMOOTH:
                 let [dx, dy] = event.get_scroll_delta();
-                if (dy < 0)
-                    direction = Meta.MotionDirection.UP;
-                else if (dy > 0)
-                    direction = Meta.MotionDirection.DOWN;
+                if (this._horizontalWorkspace) {
+                    if (dx < 0)
+                        direction = Meta.MotionDirection.LEFT;
+                    else if (dx > 0)
+                        direction = Meta.MotionDirection.RIGHT;
+                } else {
+                    if (dy < 0)
+                        direction = Meta.MotionDirection.UP;
+                    else if (dy > 0)
+                        direction = Meta.MotionDirection.DOWN;
+                }
                 break;
             }
 
@@ -1356,16 +1386,20 @@ const DockedDash = new Lang.Class({
 
                 ws = activeWs.get_neighbor(direction)
 
-                if (Main.wm._workspaceSwitcherPopup == null)
-                    Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
-                    // Set the actor non reactive, so that it doesn't prevent the
-                    // clicks events from reaching the dash actor. I can't see a reason
-                    // why it should be reactive.
-                    Main.wm._workspaceSwitcherPopup.actor.reactive = false;
-                    Main.wm._workspaceSwitcherPopup.connect('destroy', function() {
-                        Main.wm._workspaceSwitcherPopup = null;
-                    });
+                if (Main.wm._workspaceSwitcherPopup == null) {
+                    if (this._horizontalWorkspace)
+                        Main.wm._workspaceSwitcherPopup = new MyWorkspaceSwitcherPopup.myWorkspaceSwitcherPopup();
+                    else
+                        Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+                }
 
+                // Set the actor non reactive, so that it doesn't prevent the
+                // clicks events from reaching the dash actor. I can't see a reason
+                // why it should be reactive.
+                Main.wm._workspaceSwitcherPopup.actor.reactive = false;
+                Main.wm._workspaceSwitcherPopup.connect('destroy', function() {
+                  Main.wm._workspaceSwitcherPopup = null;
+                });
                 // Do not show wokspaceSwithcer in overview
                 if (!Main.overview.visible)
                     Main.wm._workspaceSwitcherPopup.display(direction, ws.index());

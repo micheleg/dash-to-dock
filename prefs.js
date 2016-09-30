@@ -398,6 +398,10 @@ const Settings = new Lang.Class({
 
         this._settings.bind('scroll-switch-workspace', this._builder.get_object('switch_workspace_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
 
+        this._settings.bind('switch-workspace-horizontal', this._builder.get_object('switch_workspace_horizontal_button'), 'active', Gio.SettingsBindFlags.DEFAULT);
+
+        this._settings.bind('scroll-switch-workspace', this._builder.get_object('switch_workspace_horizontal_button'), 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+
         // Appearance Panel
 
         this._settings.bind('apply-custom-theme', this._builder.get_object('customize_theme'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN | Gio.SettingsBindFlags.GET);
