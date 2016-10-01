@@ -1,3 +1,11 @@
+- version: 55
+  date: 30-09-2016
+  shell_version: ["3.18", "3.20", "3.22"]
+  notes:
+    - Fix regressions with click actions [d0651a1, f2daf78, ee84503].
+    - Update Turkish and Russian translation [fd7fb5e, 4abde2d]
+  zip_url: https://extensions.gnome.org/review/download/6265.shell-extension.zip
+
 - version: 54
   date: 09-09-2016
   shell_version: ["3.18", "3.20", "3.22"]
@@ -13,7 +21,6 @@
     - Improve theming [d23fe71, 19f825f, a0bab41, 87376ee, 067048f]
     - Fix Wayland compatibility [c25ba27]
     - Update Russian, Polish, French, Brazilian Portuguese, Japanese, Italian, Spanish, Simplified Chinese, Slovack and Turkish translations [c1e191d, f2b8f94, 4005eac, 4bb3f62, 8ef326f, 113b0ad, 7b76b1a, 0682d13, fb4946b, 70d3abe] Add Swedish translation [cd0d4bc]
-
   zip_url: https://extensions.gnome.org/review/download/6153.shell-extension.zip
 
 - version: 53
