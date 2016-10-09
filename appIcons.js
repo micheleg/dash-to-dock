@@ -652,11 +652,7 @@ const MyAppIconMenu = new Lang.Class({
         this._appendSeparator();
         this._quitfromDashMenuItem = this._appendMenuItem(_("Quit"));
         this._quitfromDashMenuItem.connect('activate', Lang.bind(this, function() {
-            let app = this._source.app;
-            let windows = app.get_windows();
-            for (let i = 0; i < windows.length; i++) {
-                this._closeWindowInstance(windows[i])
-            }
+            closeAllWindows(this._source.app, this._dtdSettings);
         }));
 
         this.update();
@@ -668,9 +664,7 @@ const MyAppIconMenu = new Lang.Class({
 
       if(this._dtdSettings.get_boolean('show-windows-preview')){
 
-          let windows = this._source.app.get_windows().filter(function(w) {
-              return !w.skip_taskbar;
-          });
+          let windows = getInterestingWindows(this._source.app, this._dtdSettings);
 
           // update, show or hide the quit menu
           if ( windows.length > 0) {
