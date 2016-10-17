@@ -2,9 +2,6 @@
 <div id="content" class="container" >
   <div id="sidecontent">
   {% include side_navigation.html items="a b c d" %}
-  <div id="sideads">
-    {% include side_ads.html %}
-  </div>
   {% if page.side %}{% include {{ page.side }} %}{% endif %}
 </div>
 
