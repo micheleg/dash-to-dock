@@ -6,10 +6,14 @@ EXTRA_MODULES = convenience.js dash.js docking.js appIcons.js windowPreview.js i
 EXTRA_MEDIA = logo.svg
 TOLOCALIZE =  prefs.js
 MSGSRC = $(wildcard po/*.po)
-INSTALLBASE = ~/.local/share/gnome-shell/extensions
+feq ($(strip $(DESTDIR)),)
+INSTALLBASE = $(HOME)/.local/share/gnome-shell/extensions
+else
+INSTALLBASE = $(DESTDIR)/usr/share/gnome-shell/extensions
+endif
 INSTALLNAME = dash-to-dock@micxgx.gmail.com
 
-# The command line passed variable VERSION is used to set the version string 
+# The command line passed variable VERSION is used to set the version string
 # in the metadata and in the generated zip-file. If no VERSION is passed, the
 # current commit SHA1 is used as version number in the metadata while the
 # generated zip file has no string attached.
