@@ -30,6 +30,8 @@ const Theming = Me.imports.theming;
 const MyDash = Me.imports.dash;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
+const NUMBER_OVERLAY_INTERVAL = 2000;
+const SUPER_KEY_ID = 64;
 
 const State = {
     HIDDEN:  0,
@@ -210,6 +212,7 @@ const DockedDash = new Lang.Class({
         this._autohideIsEnabled = null;
         this._intellihideIsEnabled = null;
         this._fixedIsEnabled = null;
+        this._forceShow = false;
 
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.Intellihide(this._settings);
@@ -386,6 +389,7 @@ const DockedDash = new Lang.Class({
         this._optionalScrollWorkspaceSwitch();
         this._optionalWorkspaceIsolation();
         this._optionalHotKeys();
+        this._optionalNumberOverlay();
 
          // Delay operations that require the shell to be fully loaded and with
          // user theme applied.
@@ -520,6 +524,7 @@ const DockedDash = new Lang.Class({
 
         // Remove keybindings
         this._disableHotKeys();
+        this._disableNumberOverlay();
     },
 
     _bindSettingsChanges: function() {
@@ -633,7 +638,7 @@ const DockedDash = new Lang.Class({
      * overview visibility
      */
     _updateDashVisibility: function() {
-        if (Main.overview.visibleTarget)
+        if (Main.overview.visibleTarget || this._forceShow)
             return;
 
         if (this._fixedIsEnabled) {
@@ -682,7 +687,7 @@ const DockedDash = new Lang.Class({
     },
 
     _hoverChanged: function() {
-        if (!this._ignoreHover) {
+        if (!this._ignoreHover && !this._forceShow) {
             // Skip if dock is not in autohide mode for instance because it is shown
             // by intellihide.
             if (this._autohideIsEnabled) {
@@ -1567,8 +1572,73 @@ const DockedDash = new Lang.Class({
         }, this);
 
         this._hotKeysEnabled = false;
-    }
+    },
 
+    _optionalNumberOverlay: function() {
+        if (this._settings.get_boolean('hot-keys'))
+            this._enableNumberOverlay();
+
+        this._signalsHandler.add([
+            this._settings,
+            'changed::hot-keys',
+            Lang.bind(this, function() {
+                    if (this._settings.get_boolean('hot-keys'))
+                        this._enableNumberOverlay();
+                    else
+                        this._disableNumberOverlay();
+            })
+        ]);
+    },
+
+    _enableNumberOverlay: function() {
+        Main.wm.addKeybinding('number-overlay-key', this._settings,
+                              Meta.KeyBindingFlags.NONE,
+                              Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
+                              Lang.bind(this, this._showOverlay));
+
+    },
+
+    _disableNumberOverlay: function() {
+        Main.wm.removeKeybinding('number-overlay-key');
+    },
+
+    _showOverlay: function() {
+        this.dash.toggleNumberOverlay(true);
+
+        // Restart the counting if the shortcut is pressed again
+        if (this._numberOverlayTimeoutId) {
+            Mainloop.source_remove(this._numberOverlayTimeoutId);
+            this._numberOverlayTimeoutId = 0;
+        }
+
+        // Hide the overlay after the timeout
+        this._numberOverlayTimeoutId = Mainloop.timeout_add(NUMBER_OVERLAY_INTERVAL, Lang.bind(this, function() {
+            this._numberOverlayTimeoutId = 0;
+            this._HideOverlay();
+        }));
+
+        // Show the dock if it is hidden
+        if (this._settings.get_boolean('hotkeys-show-dock')) {
+            this._forceShow = true;
+            let showDock = (this._intellihideIsEnabled || this._autohideIsEnabled) &&
+                           (this._dockState == State.HIDDEN || this._dockState == State.HIDING);
+            if (showDock)
+                this._show();
+        }
+    },
+
+    _HideOverlay: function() {
+        this.dash.toggleNumberOverlay(false);
+
+        // Hide the dock again if necessary
+        if (this._settings.get_boolean('hotkeys-show-dock')) {
+            this._forceShow = false;
+            let hideDock = (this._intellihideIsEnabled || this._autohideIsEnabled) &&
+                           (this._dockState == State.SHOWN || this._dockState == State.SHOWING);
+            if (hideDock)
+                this._updateDashVisibility();
+        }
+    }
 });
 
 Signals.addSignalMethods(DockedDash.prototype);
