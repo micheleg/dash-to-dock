@@ -860,6 +860,37 @@ const MyDash = new Lang.Class({
 
         // This is required for icon reordering when the scrollview is used.
         this._updateAppsIconGeometry();
+
+        // This will update the size, and the corresponding number for each icon
+        this._updateNumberOverlay();
+    },
+
+    _updateNumberOverlay: function() {
+        let appIcons = this._getAppIcons();
+        let counter = 1;
+        appIcons.forEach(function(icon) {
+            if (counter < 10){
+                icon.setNumberOverlay(counter);
+                counter++;
+            }
+            else if (counter == 10) {
+                icon.setNumberOverlay(0);
+                counter++;
+            }
+            else {
+                // No overlay after 10
+                icon.setNumberOverlay(-1);
+            }
+            icon._updateNumberOverlay();
+        });
+
+    },
+
+    toggleNumberOverlay: function(activate) {
+        let appIcons = this._getAppIcons();
+        appIcons.forEach(function(icon) {
+            icon.toggleNumberOverlay(activate);
+        });
     },
 
     setIconSize: function(max_size, doNotAnimate) {
