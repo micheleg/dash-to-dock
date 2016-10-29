@@ -289,7 +289,7 @@ const Settings = new Lang.Class({
         this._settings.bind('extend-height', this._builder.get_object('dock_size_scale'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
 
-        // Behavior panel
+        // Apps panel
 
         this._settings.bind('show-running',
                             this._builder.get_object('show_running_switch'),
@@ -302,18 +302,6 @@ const Settings = new Lang.Class({
         this._settings.bind('show-windows-preview',
                             this._builder.get_object('windows_preview_button'),
                             'active',
-                            Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('hot-keys',
-                            this._builder.get_object('hot_keys_switch'),
-                            'active',
-                            Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('hotkeys-show-dock',
-                            this._builder.get_object('hotkeys_show_dock'),
-                            'active',
-                            Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('hot-keys',
-                            this._builder.get_object('hotkeys_show_dock'),
-                            'sensitive',
                             Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-favorites',
                             this._builder.get_object('show_favorite_switch'),
@@ -337,6 +325,22 @@ const Settings = new Lang.Class({
                             Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-show-apps-button',
                             this._builder.get_object('application_button_animation_button'),
+                            'sensitive',
+                            Gio.SettingsBindFlags.DEFAULT);
+
+
+        // Behavior panel
+
+        this._settings.bind('hot-keys',
+                            this._builder.get_object('hot_keys_switch'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('hotkeys-show-dock',
+                            this._builder.get_object('hotkeys_show_dock'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('hot-keys',
+                            this._builder.get_object('hotkeys_show_dock'),
                             'sensitive',
                             Gio.SettingsBindFlags.DEFAULT);
 
