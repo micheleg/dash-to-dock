@@ -971,7 +971,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkBox" id="behaviour">
+      <object class="GtkBox" id="apps">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="margin_left">24</property>
@@ -1227,6 +1227,32 @@
             <property name="position">0</property>
           </packing>
         </child>
+      </object>
+      <packing>
+        <property name="position">1</property>
+      </packing>
+    </child>
+    <child type="tab">
+      <object class="GtkLabel" id="apps_label">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="label" translatable="yes">Apps</property>
+      </object>
+      <packing>
+        <property name="position">1</property>
+        <property name="tab_fill">False</property>
+      </packing>
+    </child>
+    <child>
+      <object class="GtkBox" id="behaviour">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_left">24</property>
+        <property name="margin_right">24</property>
+        <property name="margin_top">24</property>
+        <property name="margin_bottom">24</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">24</property>
         <child>
           <object class="GtkFrame" id="hot_keys_frame">
             <property name="visible">True</property>
@@ -1539,7 +1565,7 @@
         </child>
       </object>
       <packing>
-        <property name="position">1</property>
+        <property name="position">2</property>
       </packing>
     </child>
     <child type="tab">
@@ -1549,7 +1575,7 @@
         <property name="label" translatable="yes">Behavior</property>
       </object>
       <packing>
-        <property name="position">1</property>
+        <property name="position">2</property>
         <property name="tab_fill">False</property>
       </packing>
     </child>
@@ -2077,7 +2103,7 @@
         </child>
       </object>
       <packing>
-        <property name="position">2</property>
+        <property name="position">3</property>
       </packing>
     </child>
     <child type="tab">
@@ -2087,7 +2113,7 @@
         <property name="label" translatable="yes">Appearance</property>
       </object>
       <packing>
-        <property name="position">2</property>
+        <property name="position">3</property>
         <property name="tab_fill">False</property>
       </packing>
     </child>
@@ -2252,7 +2278,7 @@ See the &lt;a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;G
         </child>
       </object>
       <packing>
-        <property name="position">3</property>
+        <property name="position">4</property>
       </packing>
     </child>
     <child type="tab">
@@ -2262,7 +2288,7 @@ See the &lt;a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;G
         <property name="label" translatable="yes">About</property>
       </object>
       <packing>
-        <property name="position">3</property>
+        <property name="position">4</property>
         <property name="tab_fill">False</property>
       </packing>
     </child>
