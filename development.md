@@ -48,9 +48,10 @@ Before reporting a bug:
 
  * Check if the bug persists disabling all other extensions. If not, try to find the conflicting extension by enabling each extension one at a time.
  * Check if there are any relevant errors in Looking Glass (<code>ALt-F2 lg</code>, error panel).
- * Look for error messages in the logs. Alternatives way to access the log depending on the system log configuration:
-   - Runnning <code>journalctl /usr/bin/gnome-session -f</code>. This might require to be run as root.
+ * Look for error messages in the logs. Possible place to look for the relevant logs depend on the system log configuration:
+   - Runnning <code>journalctl /usr/bin/gnome-session </code> or <code>journalctl /usr/bin/gnome-shell</code>. This might require to be run as root/with sudo. You can add <code>-f</code>, for instance <code>journalctl /usr/bin/gnome-shell -f</code>, to follow the new messages.
    - In the file <code>~/.xsession-errors</code>.
+   - In the file <code>~/var/log/syslog </code>.
    - Reloading the shell by typing in a terminal (as normal user) <code>gnome-shell --replace</code> and looking for relevant output in that terminal when the bug appears. Please note that if running on Wayland this will close your session and all running applications.
  * Try to reset the extension settings to their default values with the command <code>dconf reset /org/gnome/shell/extensions/dash-to-dock/</code>
 
