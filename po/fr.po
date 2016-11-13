@@ -42,9 +42,8 @@ msgid "Reset to defaults"
 msgstr "Restaurer la configuration par défaut"
 
 #: prefs.js:346
-#, fuzzy
 msgid "Customize middle-click behavior"
-msgstr "Régler le style des indicateurs"
+msgstr "Personnaliser le comportement du clique-milieu"
 
 #: prefs.js:419
 msgid "Customize running indicators"
@@ -81,7 +80,7 @@ msgstr "Action Shift+Clic"
 #: Settings.ui.h:7
 #, fuzzy
 msgid "Raise window"
-msgstr "Minimiser la fenêtre"
+msgstr "Faire apparaître la fenêtre"
 
 #: Settings.ui.h:8
 msgid "Minimize window"
@@ -97,11 +96,11 @@ msgstr "Cycler sur les fenêtres"
 
 #: Settings.ui.h:11
 msgid "Quit"
-msgstr ""
+msgstr "Quitter"
 
 #: Settings.ui.h:12
 msgid "Behavior for Middle-Click."
-msgstr ""
+msgstr "Comportement pour le clic-milieu"
 
 #: Settings.ui.h:13
 #, fuzzy
@@ -110,7 +109,7 @@ msgstr "Action du clic"
 
 #: Settings.ui.h:14
 msgid "Behavior for Shift+Middle-Click."
-msgstr ""
+msgstr "Comportement pour Shift+Clic-milieu"
 
 #: Settings.ui.h:15
 #, fuzzy
@@ -138,7 +137,7 @@ msgid ""
 "Hide the dock when it obstructs a window of the the current application. "
 "More refined settings are available."
 msgstr ""
-"Cache le dock quand il gène l'application principale. D'autres paramètres "
+"Cache le dock quand il gêne l'application principale. D'autres paramètres "
 "plus spécifiques sont disponibles."
 
 #: Settings.ui.h:23
