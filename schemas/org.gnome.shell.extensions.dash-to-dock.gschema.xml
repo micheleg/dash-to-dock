@@ -657,5 +657,10 @@
         Keybinding to either show or launch the 10th application in the dash.
       </description>
     </key>
+    <key name="enable-rounded-borders" type="b">
+      <default>false</default>
+      <summary>Rounded borders</summary>
+      <description>Make the borders in the dash rounded</description>
+    </key>
   </schema>
 </schemalist>
