@@ -11,11 +11,13 @@
     border-radius: 0px 9px 9px 0px;
 }
 
+
 #dashtodockContainer.shrink.right #dash,
 #dashtodockContainer.dashtodock.right #dash {
     border-right: 0px;
     border-radius: 9px 0px 0px 9px;
 }
+
 
 #dashtodockContainer.shrink.top #dash,
 #dashtodockContainer.dashtodock.top #dash {
@@ -27,6 +29,11 @@
 #dashtodockContainer.dashtodock.bottom #dash {
     border-bottom: 0px;
     border-radius: 9px 9px 0px 0px;
+}
+
+#dashtodockContainer.straight-corner #dash,
+#dashtodockContainer.shrink.straight-corner #dash {
+    border-radius: 0px;
 }
 
 /* Scrollview style */

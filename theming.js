@@ -171,6 +171,16 @@ const ThemeManager = new Lang.Class({
             this._actor.add_style_class_name('running-dots');
         else
             this._actor.remove_style_class_name('running-dots');
+
+        // If not the built-in theme option is not selected
+        if (!this._settings.get_boolean('apply-custom-theme')) {
+            if (this._settings.get_boolean('force-straight-corner'))
+                this._actor.add_style_class_name('straight-corner');
+            else 
+                this._actor.remove_style_class_name('straight-corner');
+        } else {
+            this._actor.remove_style_class_name('straight-corner');
+        }
     },
 
     updateCustomTheme: function() {
@@ -265,7 +275,8 @@ const ThemeManager = new Lang.Class({
                     'apply-custom-theme',
                     'custom-theme-shrink',
                     'custom-theme-running-dots',
-                    'extend-height'];
+                    'extend-height',
+                    'force-straight-corner'];
 
         keys.forEach(function(key) {
             this._settings.connect('changed::' + key, Lang.bind(this, this.updateCustomTheme));
