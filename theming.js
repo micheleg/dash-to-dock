@@ -172,10 +172,13 @@ const ThemeManager = new Lang.Class({
         else
             this._actor.remove_style_class_name('running-dots');
 
-        if (this._settings.get_boolean('enable-rounded-borders'))
-            this._actor.add_style_class_name('rounded');
-        else 
-            this._actor.remove_style_class_name('rounded');
+        // If not the built-in theme option is not selected    
+        if (this._settings.get_boolean('apply-custom-theme')) {
+            if (this._settings.get_boolean('enable-rounded-borders'))
+                this._actor.add_style_class_name('rounded');
+            else 
+                this._actor.remove_style_class_name('rounded');
+        }
     },
 
     updateCustomTheme: function() {
