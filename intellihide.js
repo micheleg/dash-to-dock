@@ -207,7 +207,7 @@ const Intellihide = new Lang.Class({
             let topWindow = null;
             for (let i = windows.length - 1; i >= 0; i--) {
                 let meta_win = windows[i].get_meta_window();
-                if (this._handledWindow(meta_win) && (meta_win.get_monitor() == monitorIndex)) {
+                if (this._handledWindow(meta_win)) {
                     topWindow = meta_win;
                     break;
                 }
