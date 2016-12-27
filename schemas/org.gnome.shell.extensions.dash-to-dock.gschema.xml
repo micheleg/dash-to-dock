@@ -657,5 +657,10 @@
         Keybinding to either show or launch the 10th application in the dash.
       </description>
     </key>
+    <key name="force-non-rounded-corner" type="b">
+      <default>false</default>
+      <summary>Force non rounded corners in dash</summary>
+      <description>Make the borders in the dash non rounded</description>
+    </key>
   </schema>
 </schemalist>
