@@ -496,8 +496,8 @@ const Settings = new Lang.Class({
         this._builder.get_object('custom_opacity_scale').set_value(this._settings.get_double('background-opacity'));
         this._settings.bind('opaque-background', this._builder.get_object('custom_opacity'), 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
-         this._settings.bind('enable-rounded-borders',
-         this._builder.get_object('enable_rounded_borders_switch'),
+         this._settings.bind('force-non-rounded-corner',
+         this._builder.get_object('force_non_rounded_corner_switch'),
          'active',Gio.SettingsBindFlags.DEFAULT);
 
 
