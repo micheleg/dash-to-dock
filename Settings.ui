@@ -2011,12 +2011,12 @@
                         <property name="can_focus">False</property>
                         <property name="spacing">32</property>
                         <child>
-                          <object class="GtkLabel" id="force_non_rounded_corner_label">
+                          <object class="GtkLabel" id="force_straight_corner_label">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="valign">center</property>
                             <property name="xpad">12</property>
-                            <property name="label" translatable="yes">Force non rounded coner
+                            <property name="label" translatable="yes">Force straight corner
 </property>
                             <property name="xalign">0</property>
                           </object>
@@ -2027,7 +2027,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkSwitch" id="force_non_rounded_corner_switch">
+                          <object class="GtkSwitch" id="force_straight_corner_switch">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="valign">center</property>

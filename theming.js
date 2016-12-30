@@ -174,12 +174,12 @@ const ThemeManager = new Lang.Class({
 
         // If not the built-in theme option is not selected    
         if (!this._settings.get_boolean('apply-custom-theme')) {
-            if (this._settings.get_boolean('force-non-rounded-corner'))
-                this._actor.add_style_class_name('nonrounded');
+            if (this._settings.get_boolean('force-straight-corner'))
+                this._actor.add_style_class_name('straight-corner');
             else 
-                this._actor.remove_style_class_name('nonrounded');
-        } else if (this._settings.get_boolean('force-non-rounded-corner')) {
-            this._actor.remove_style_class_name('nonrounded');
+                this._actor.remove_style_class_name('straight-corner');
+        } else if (this._settings.get_boolean('force-straight-corner')) {
+            this._actor.remove_style_class_name('straight-corner');
         }
     },
 
@@ -276,7 +276,7 @@ const ThemeManager = new Lang.Class({
                     'custom-theme-shrink',
                     'custom-theme-running-dots',
                     'extend-height',
-                    'force-non-rounded-corner'];
+                    'force-straight-corner'];
 
         keys.forEach(function(key) {
             this._settings.connect('changed::' + key, Lang.bind(this, this.updateCustomTheme));
