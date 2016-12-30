@@ -31,8 +31,8 @@
     border-radius: 9px 9px 0px 0px;
 }
 
-#dashtodockContainer.shrink.nonrounded #dash,
-#dashtodockContainer.dashtodock.nonrounded #dash {
+#dashtodockContainer.nonrounded #dash,
+#dashtodockContainer.shrink.nonrounded #dash {
     border-radius: 0px;
 }
 
