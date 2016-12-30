@@ -172,13 +172,13 @@ const ThemeManager = new Lang.Class({
         else
             this._actor.remove_style_class_name('running-dots');
 
-        // If not the built-in theme option is not selected    
+        // If not the built-in theme option is not selected
         if (!this._settings.get_boolean('apply-custom-theme')) {
             if (this._settings.get_boolean('force-straight-corner'))
                 this._actor.add_style_class_name('straight-corner');
             else 
                 this._actor.remove_style_class_name('straight-corner');
-        } else if (this._settings.get_boolean('force-straight-corner')) {
+        } else {
             this._actor.remove_style_class_name('straight-corner');
         }
     },
