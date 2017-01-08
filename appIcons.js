@@ -38,6 +38,12 @@ const clickAction = {
     QUIT: 4
 };
 
+const scrollAction = {
+    DO_NOTHING: 0,
+    CYCLE_WINDOWS: 1,
+    SWITCH_WORKSPACE: 2
+};
+
 let recentlyClickedAppLoopId = 0;
 let recentlyClickedApp = null;
 let recentlyClickedAppWindows = null;
@@ -81,7 +87,6 @@ const MyAppIcon = new Lang.Class({
         this._focuseAppChangeId = tracker.connect('notify::focus-app',
                                                 Lang.bind(this,
                                                           this._onFocusAppChanged));
-
         this._dots = null;
 
         let keys = ['apply-custom-theme',
@@ -96,6 +101,12 @@ const MyAppIcon = new Lang.Class({
         }, this);
 
         this._toggleDots();
+
+        this._dtdSettings.connect('changed::scroll-action', Lang.bind(this, function() {
+            this._optionalScrollCycleWindows();
+        }));
+        this._optionalScrollCycleWindows();
+
     },
 
     _onDestroy: function() {
@@ -111,6 +122,62 @@ const MyAppIcon = new Lang.Class({
         // stateChangedId is already handled by parent)
         if (this._focusAppId > 0)
             tracker.disconnect(this._focusAppId);
+
+        if (this._scrollEventHandler)
+            this.actor.disconnect(this._scrollEventHandler);
+    },
+
+    _optionalScrollCycleWindows: function() {
+        if (this._scrollEventHandler)
+            this.actor.disconnect(this._scrollEventHandler);
+
+        let isEnabled = this._dtdSettings.get_enum('scroll-action') === scrollAction.CYCLE_WINDOWS;
+        if (!isEnabled) return;
+
+        this._scrollEventHandler = this.actor.connect('scroll-event', Lang.bind(this,
+                                                          this.onScrollEvent));
+    },
+
+    onScrollEvent: function(actor, event) {
+        if (this._optionalScrollCycleWindowsDeadTimeId > 0)
+            return false;
+        else
+            this._optionalScrollCycleWindowsDeadTimeId = Mainloop.timeout_add(150, Lang.bind(this, function() {
+                this._optionalScrollCycleWindowsDeadTimeId = 0;
+            }));
+
+        let direction = null;
+
+        switch (event.get_scroll_direction()) {
+        case Clutter.ScrollDirection.UP:
+            direction = Meta.MotionDirection.UP;
+            break;
+        case Clutter.ScrollDirection.DOWN:
+            direction = Meta.MotionDirection.DOWN;
+            break;
+        case Clutter.ScrollDirection.SMOOTH:
+            let [dx, dy] = event.get_scroll_delta();
+            if (dy < 0)
+                direction = Meta.MotionDirection.UP;
+            else if (dy > 0)
+                direction = Meta.MotionDirection.DOWN;
+            break;
+        }
+
+        let focusedApp = tracker.focus_app;
+        if (!Main.overview._shown){
+            let reversed = direction === Meta.MotionDirection.UP;
+            if (this.app == focusedApp)
+                cycleThroughWindows(this.app, this._dtdSettings, reversed);
+            else {
+                // Activate the first window
+                let windows = getInterestingWindows(this.app, this._dtdSettings);
+                let w = windows[0];
+                Main.activateWindow(w);
+            }
+        }
+        else
+            this.app.activate();
     },
 
     onWindowsChanged: function() {
@@ -497,7 +564,7 @@ function closeAllWindows(app, settings) {
         windows[i].delete(global.get_current_time());
 }
 
-function cycleThroughWindows(app, settings) {
+function cycleThroughWindows(app, settings, reversed) {
     // Store for a little amount of time last clicked app and its windows
     // since the order changes upon window interaction
     let MEMORY_TIME=3000;
@@ -518,7 +585,12 @@ function cycleThroughWindows(app, settings) {
         recentlyClickedAppIndex = 0;
     }
 
-    recentlyClickedAppIndex++;
+    if (reversed) {
+        recentlyClickedAppIndex--;
+        if (recentlyClickedAppIndex < 0) recentlyClickedAppIndex = recentlyClickedAppWindows.length - 1; 
+    } else {
+        recentlyClickedAppIndex++;
+    }
     let index = recentlyClickedAppIndex % recentlyClickedAppWindows.length;
     let window = recentlyClickedAppWindows[index];
 
