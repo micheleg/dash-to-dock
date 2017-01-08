@@ -337,6 +337,11 @@ const Settings = new Lang.Class({
             this._settings.set_enum('click-action', widget.get_active());
         }));
 
+        this._builder.get_object('scroll_action_combo').set_active(this._settings.get_enum('scroll-action'));
+        this._builder.get_object('scroll_action_combo').connect('changed', Lang.bind (this, function(widget) {
+            this._settings.set_enum('scroll-action', widget.get_active());
+        }));
+
         this._builder.get_object('shift_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
             this._settings.set_enum('shift-click-action', widget.get_active());
         }));
@@ -403,8 +408,6 @@ const Settings = new Lang.Class({
             dialog.show_all();
 
         }));
-
-        this._settings.bind('scroll-switch-workspace', this._builder.get_object('switch_workspace_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
 
         // Appearance Panel
 
