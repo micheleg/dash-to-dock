@@ -774,21 +774,17 @@ const DockedDash = new Lang.Class({
 
     _checkDockDwell: function(x, y) {
         let monitor = this._monitor;
-
-        // Check for the dock area
-        let shouldDwell = (x >= this.staticBox.x1 && x <= this.staticBox.x2 &&
-                           y >= this.staticBox.y1  && y <= this.staticBox.y2);
-
+        let shouldDwell;
         // Check for the correct screen edge
         // Position is approximated to the lower integer
         if (this._position == St.Side.LEFT)
-            shouldDwell = shouldDwell && (x == this._monitor.x);
+            shouldDwell = (x == this._monitor.x);
         else if (this._position == St.Side.RIGHT)
-            shouldDwell = shouldDwell && (x == this._monitor.x + this._monitor.width - 1);
+            shouldDwell = (x == this._monitor.x + this._monitor.width - 1);
         else if (this._position == St.Side.TOP)
-            shouldDwell = shouldDwell && (y == this._monitor.y);
+            shouldDwell = (y == this._monitor.y);
         else if (this._position == St.Side.BOTTOM)
-            shouldDwell = shouldDwell && (y == this._monitor.y + this._monitor.height - 1);
+            shouldDwell = (y == this._monitor.y + this._monitor.height - 1);
 
         if (shouldDwell) {
             // We only set up dwell timeout when the user is not hovering over the dock
@@ -882,8 +878,50 @@ const DockedDash = new Lang.Class({
         // would never be triggered and the dock would stay visible forever.
         let triggerTimeoutId =  Mainloop.timeout_add(250, Lang.bind(this, function() {
             triggerTimeoutId = 0;
-            this._hoverChanged();
-            return GLib.SOURCE_REMOVE;
+
+            let [x, y, mods] = global.get_pointer();
+            let shouldHide = true;
+            switch (this._position) {
+            case St.Side.LEFT:
+                if (x <= this.staticBox.x2 &&
+                    x >= this._monitor.x &&
+                    y >= this._monitor.y &&
+                    y <= this._monitor.y + this._monitor.height) {
+                    shouldHide = false;
+                }
+                break;
+            case St.Side.RIGHT:
+                if (x >= this.staticBox.x1 &&
+                    x <= this._monitor.x + this._monitor.width &&
+                    y >= this._monitor.y &&
+                    y <= this._monitor.y + this._monitor.height) {
+                    shouldHide = false;
+                }
+                break;
+            case St.Side.TOP:
+                if (x >= this._monitor.x &&
+                    x <= this._monitor.x + this._monitor.width &&
+                    y <= this.staticBox.y2 &&
+                    y >= this._monitor.y) {
+                    shouldHide = false;
+                }
+                break;
+            case St.Side.BOTTOM:
+                if (x >= this._monitor.x &&
+                    x <= this._monitor.x + this._monitor.width &&
+                    y >= this.staticBox.y1 &&
+                    y <= this._monitor.y + this._monitor.height) {
+                    shouldHide = false;
+                }
+            }
+            if (shouldHide) {
+                this._hoverChanged();
+                return GLib.SOURCE_REMOVE;
+            }
+            else {
+                return GLib.SOURCE_CONTINUE;
+            }
+
         }));
 
         this._show();
@@ -923,31 +961,31 @@ const DockedDash = new Lang.Class({
             let x1, x2, y1, y2, direction;
 
             if (this._position == St.Side.LEFT) {
-                x1 = this.staticBox.x1;
-                x2 = this.staticBox.x1;
-                y1 = this.staticBox.y1;
-                y2 = this.staticBox.y2;
+                x1 = this._monitor.x;
+                x2 = this._monitor.x;
+                y1 = this._monitor.y;
+                y2 = this._monitor.y + this._monitor.height;
                 direction = Meta.BarrierDirection.POSITIVE_X;
             }
             else if (this._position == St.Side.RIGHT) {
-                x1 = this.staticBox.x2;
-                x2 = this.staticBox.x2;
-                y1 = this.staticBox.y1;
-                y2 = this.staticBox.y2;
+                x1 = this._monitor.x + this._monitor.width;
+                x2 = this._monitor.x + this._monitor.width;
+                y1 = this._monitor.y;
+                y2 = this._monitor.y + this._monitor.height;
                 direction = Meta.BarrierDirection.NEGATIVE_X;
             }
             else if (this._position == St.Side.TOP) {
-                x1 = this.staticBox.x1;
-                x2 = this.staticBox.x2;
-                y1 = this.staticBox.y1;
-                y2 = this.staticBox.y1;
+                x1 = this._monitor.x;
+                x2 = this._monitor.x + this._monitor.width;
+                y1 = this._monitor.y;
+                y2 = this._monitor.y;
                 direction = Meta.BarrierDirection.POSITIVE_Y;
             }
             else if (this._position == St.Side.BOTTOM) {
-                x1 = this.staticBox.x1;
-                x2 = this.staticBox.x2;
-                y1 = this.staticBox.y2;
-                y2 = this.staticBox.y2;
+                x1 = this._monitor.x;
+                x2 = this._monitor.x + this._monitor.width;
+                y1 = this._monitor.y + this._monitor.height;
+                y2 = this._monitor.y + this._monitor.height;
                 direction = Meta.BarrierDirection.NEGATIVE_Y;
             }
 
