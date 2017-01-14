@@ -970,12 +970,20 @@ const DockedDash = new Lang.Class({
         let monitorIndex = this._settings.get_int('preferred-monitor');
         let extendHeight = this._settings.get_boolean('extend-height');
 
-        if ((monitorIndex > 0) && (monitorIndex < Main.layoutManager.monitors.length))
-            this._monitor = Main.layoutManager.monitors[monitorIndex];
+        // The dock goes on the primary monitor if requested (monitorIndex==0) or if the setting
+        // is incosistent (e.g. desired monitor not connected).
+        if ((monitorIndex <= 0) || (monitorIndex > Main.layoutManager.monitors.length -1))
+            monitorIndex = Main.layoutManager.primaryIndex;
         else {
-            monitorIndex = Main.layoutManager.primaryIndex
-            this._monitor = Main.layoutManager.primaryMonitor;
+            // Gdk and shell monitors numbering differ at least under wayland:
+            // While the primary monitor appears to be always index 0 in Gdk,
+            // the shell can assign a different number (Main.layoutManager.primaryMonitor)
+            // remap monitors numbering from settings (Gdk) to shell
+            if (monitorIndex <= Main.layoutManager.primaryIndex)
+                monitorIndex = (monitorIndex + 1) % Main.layoutManager.monitors.length;
         }
+
+        this._monitor = Main.layoutManager.monitors[monitorIndex];
 
         // Note: do not use the workarea coordinates in the direction on which the dock is placed,
         // to avoid a loop [position change -> workArea change -> position change] with

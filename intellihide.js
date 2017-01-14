@@ -200,9 +200,18 @@ const Intellihide = new Lang.Class({
 
             let monitorIndex = this._settings.get_int('preferred-monitor');
 
-            if ((monitorIndex < 0) || (monitorIndex > Main.layoutManager.monitors.length -1))
-
+            // The dock goes on the primary monitor if requested (monitorIndex==0) or if the setting
+            // is incosistent (e.g. desired monitor not connected).
+            if ((monitorIndex <= 0) || (monitorIndex > Main.layoutManager.monitors.length -1))
                 monitorIndex = Main.layoutManager.primaryIndex;
+            else {
+                // Gdk and shell monitors numbering differ at least under wayland:
+                // While the primary monitor appears to be always index 0 in Gdk,
+                // the shell can assign a different number (Main.layoutManager.primaryMonitor)
+                // remap monitors numbering from settings (Gdk) to shell
+                if (monitorIndex <= Main.layoutManager.primaryIndex)
+                    monitorIndex = (monitorIndex + 1) % Main.layoutManager.monitors.length;
+            }
 
             let topWindow = null;
             for (let i = windows.length - 1; i >= 0; i--) {
