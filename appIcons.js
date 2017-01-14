@@ -178,6 +178,7 @@ const MyAppIcon = new Lang.Class({
         }
         else
             this.app.activate();
+        return true;
     },
 
     onWindowsChanged: function() {
