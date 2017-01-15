@@ -1064,7 +1064,6 @@ const DockedDash = new Lang.Class({
         this._adjustPanelCorners();
 
         this._adjustLegacyTray();
-        this._updateStaticBox();
     },
 
     _adjustLegacyTray: function() {
