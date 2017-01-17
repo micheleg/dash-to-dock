@@ -38,6 +38,12 @@ const State = {
     HIDING:  3
 };
 
+const scrollAction = {
+    DO_NOTHING: 0,
+    CYCLE_WINDOWS: 1,
+    SWITCH_WORKSPACE: 2
+};
+
 /**
  * A simple St.Widget with one child whose allocation takes into account the
  * slide out of its child via the _slidex parameter ([0:1]).
@@ -517,8 +523,8 @@ const DockedDash = new Lang.Class({
     },
 
     _bindSettingsChanges: function() {
-        this._settings.connect('changed::scroll-switch-workspace', Lang.bind(this, function() {
-            this._optionalScrollWorkspaceSwitch(this._settings.get_boolean('scroll-switch-workspace'));
+        this._settings.connect('changed::scroll-action', Lang.bind(this, function() {
+            this._optionalScrollWorkspaceSwitch();
         }));
 
         this._settings.connect('changed::dash-max-icon-size', Lang.bind(this, function() {
@@ -1296,14 +1302,18 @@ const DockedDash = new Lang.Class({
     _optionalScrollWorkspaceSwitch: function() {
         let label = 'optionalScrollWorkspaceSwitch';
 
-        this._settings.connect('changed::scroll-switch-workspace', Lang.bind(this, function() {
-            if (this._settings.get_boolean('scroll-switch-workspace'))
+        function isEnabled() {
+            return this._settings.get_enum('scroll-action') === scrollAction.SWITCH_WORKSPACE;
+        }
+
+        this._settings.connect('changed::scroll-action', Lang.bind(this, function() {
+            if (Lang.bind(this, isEnabled)())
                 Lang.bind(this, enable)();
             else
                 Lang.bind(this, disable)();
         }));
 
-        if (this._settings.get_boolean('scroll-switch-workspace'))
+        if (Lang.bind(this, isEnabled)())
             Lang.bind(this, enable)();
 
         function enable() {

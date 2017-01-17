@@ -1423,7 +1423,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkFrame" id="built_in_theme_frame1">
+          <object class="GtkFrame" id="built_in_theme_frame_scroll">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label_xalign">0</property>
@@ -1434,11 +1434,11 @@
                 <property name="can_focus">False</property>
                 <property name="selection_mode">none</property>
                 <child>
-                  <object class="GtkListBoxRow" id="listboxrow7">
+                  <object class="GtkListBoxRow" id="listboxrow_scroll">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <child>
-                      <object class="GtkGrid" id="switch_workspace_grid">
+                      <object class="GtkGrid" id="buitin_theme_scroll">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="margin_left">12</property>
@@ -1447,14 +1447,13 @@
                         <property name="margin_bottom">12</property>
                         <property name="column_spacing">32</property>
                         <child>
-                          <object class="GtkLabel" id="switch_workspace_description">
+                          <object class="GtkLabel" id="builtin_theme_description_scroll">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="hexpand">True</property>
-                            <property name="xalign">0</property>
-                            <property name="label" translatable="yes">With fixed icon size, only the edge of the dock and the &lt;i&gt;Show Applications&lt;/i&gt; icon are active.</property>
-                            <property name="use_markup">True</property>
+                            <property name="label" translatable="yes">Behaviour when scrolling on the icon of an application.</property>
                             <property name="wrap">True</property>
+                            <property name="xalign">0</property>
                             <style>
                               <class name="dim-label"/>
                             </style>
@@ -1465,12 +1464,12 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="switch_workspace_label">
+                          <object class="GtkLabel" id="builtin_theme_label_scroll">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="hexpand">True</property>
+                            <property name="label" translatable="yes">Scroll action</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Switch workspace by scrolling on the dock</property>
                           </object>
                           <packing>
                             <property name="left_attach">0</property>
@@ -1478,11 +1477,27 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkSwitch" id="switch_workspace_switch">
+                          <object class="GtkBox" id="click_box_scroll">
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="halign">end</property>
-                            <property name="valign">center</property>
+                            <property name="can_focus">False</property>
+                            <property name="spacing">6</property>
+                            <child>
+                              <object class="GtkComboBoxText" id="scroll_action_combo">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="valign">center</property>
+                                <items>
+                                  <item translatable="yes">Do nothing</item>
+                                  <item translatable="yes">Cycle through windows</item>
+                                  <item translatable="yes">Switch workspace</item>
+                                </items>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
