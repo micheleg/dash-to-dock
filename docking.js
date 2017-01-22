@@ -1447,7 +1447,7 @@ const DockedDash = new Lang.Class({
         let label = 'optionalWorkspaceIsolation';
 
         this._settings.connect('changed::isolate-workspaces', Lang.bind(this, function() {
-            this.dash._queueRedisplay();
+            this.dash.resetAppIcons();
             if (this._settings.get_boolean('isolate-workspaces'))
                 Lang.bind(this, enable)();
             else
