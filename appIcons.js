@@ -474,34 +474,34 @@ const MyAppIcon = new Lang.Class({
 
         switch (side) {
         case St.Side.TOP:
-            cr.translate((width - (2*n)*radius - (n-1)*spacing)/2, padding);
+            cr.translate((width - n * (2 * radius + spacing) + spacing)/2, padding);
             for (let i = 0; i < n; i++) {
                 cr.newSubPath();
-                cr.arc((2*i+1)*radius + i*spacing, radius + borderWidth/2, radius, 0, 2*Math.PI);
+                cr.arc(i * (2 * radius + spacing) + radius, radius + borderWidth/2, radius, 0, 2*Math.PI);
             }
             break;
 
         case St.Side.BOTTOM:
-            cr.translate((width - (2*n)*radius - (n-1)*spacing)/2, height - padding);
+            cr.translate((width - n * (2 * radius + spacing) + spacing)/2, height - padding);
             for (let i = 0; i < n; i++) {
                 cr.newSubPath();
-                cr.arc((2*i+1)*radius + i*spacing, -radius - borderWidth/2, radius, 0, 2*Math.PI);
+                cr.arc(i * (2 * radius + spacing) + radius, -radius - borderWidth/2, radius, 0, 2*Math.PI);
             }
             break;
 
         case St.Side.LEFT:
-            cr.translate(padding, (height - (2*n)*radius - (n-1)*spacing)/2);
+            cr.translate(padding, (height - n * (2 * radius + spacing) + spacing)/2);
             for (let i = 0; i < n; i++) {
                 cr.newSubPath();
-                cr.arc(radius + borderWidth/2, (2*i+1)*radius + i*spacing, radius, 0, 2*Math.PI);
+                cr.arc(radius + borderWidth/2, i * (2 * radius + spacing) + radius, radius, 0, 2*Math.PI);
             }
             break;
 
         case St.Side.RIGHT:
-            cr.translate(width - padding , (height - (2*n)*radius - (n-1)*spacing)/2);
+            cr.translate(width - padding , (height - n * (2 * radius + spacing) + spacing)/2);
             for (let i = 0; i < n; i++) {
                 cr.newSubPath();
-                cr.arc(-radius - borderWidth/2, (2*i+1)*radius + i*spacing, radius, 0, 2*Math.PI);
+                cr.arc(-radius - borderWidth/2, i * (2 * radius + spacing) + radius, radius, 0, 2*Math.PI);
             }
             break;
         }
