@@ -285,7 +285,9 @@ const MyAppIcon = new Lang.Class({
                     // If horizontal also remove the height of the dash
                     let additional_margin = this._isHorizontal && !this._dtdSettings.get_boolean('dock-fixed') ? Main.overview._dash.actor.height : 0;
                     let verticalMargins = this._menu.actor.margin_top + this._menu.actor.margin_bottom;
-                    this._menu.actor.style = ('max-height: ' + Math.round(workArea.height - additional_margin - verticalMargins) + 'px;');
+                    // Also set a max width to the menu, so long labels (long windows title) get truncated
+                    this._menu.actor.style = ('max-height: ' + Math.round(workArea.height - additional_margin - verticalMargins) + 'px;' +
+                                              'max-width: 400px');
                 }
             }));
             let id = Main.overview.connect('hiding', Lang.bind(this, function() {
