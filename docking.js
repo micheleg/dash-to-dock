@@ -30,8 +30,6 @@ const Theming = Me.imports.theming;
 const MyDash = Me.imports.dash;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
-const NUMBER_OVERLAY_INTERVAL = 2000;
-const SUPER_KEY_ID = 64;
 
 const State = {
     HIDDEN:  0,
@@ -1575,35 +1573,76 @@ const DockedDash = new Lang.Class({
     },
 
     _optionalNumberOverlay: function() {
-        if (this._settings.get_boolean('hot-keys'))
-            this._enableNumberOverlay();
+        this._shortcutIsSet = false;
+        // Enable extra shortcut if either 'overlay' or 'show-dock' are true
+        if (this._settings.get_boolean('hot-keys') &&
+           (this._settings.get_boolean('hotkeys-overlay') || this._settings.get_boolean('hotkeys-show-dock')))
+            this._enableExtraShortcut();
 
         this._signalsHandler.add([
             this._settings,
             'changed::hot-keys',
-            Lang.bind(this, function() {
-                    if (this._settings.get_boolean('hot-keys'))
-                        this._enableNumberOverlay();
-                    else
-                        this._disableNumberOverlay();
-            })
+            Lang.bind(this, this._checkHotkeysOptions)
+        ], [
+            this._settings,
+            'changed::hotkeys-overlay',
+            Lang.bind(this, this._checkHotkeysOptions)
+        ], [
+            this._settings,
+            'changed::hotkeys-show-dock',
+            Lang.bind(this, this._checkHotkeysOptions)
+        ], [
+            this._settings,
+            'changed::shortcut-text',
+            Lang.bind(this, this._setShortcut)
         ]);
     },
 
-    _enableNumberOverlay: function() {
-        Main.wm.addKeybinding('number-overlay-key', this._settings,
-                              Meta.KeyBindingFlags.NONE,
-                              Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
-                              Lang.bind(this, this._showOverlay));
-
+    _checkHotkeysOptions: function() {
+        if (this._settings.get_boolean('hot-keys') &&
+           (this._settings.get_boolean('hotkeys-overlay') || this._settings.get_boolean('hotkeys-show-dock')))
+            this._enableExtraShortcut();
+        else
+            this._disableExtraShortcut();
     },
 
-    _disableNumberOverlay: function() {
-        Main.wm.removeKeybinding('number-overlay-key');
+    _enableExtraShortcut: function() {
+        let shortcut_is_valid = this._setShortcut();
+
+        if (shortcut_is_valid && !this._shortcutIsSet) {
+            Main.wm.addKeybinding('shortcut', this._settings,
+                                  Meta.KeyBindingFlags.NONE,
+                                  Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
+                                  Lang.bind(this, this._showOverlay));
+            this._shortcutIsSet = true;
+        }
+    },
+
+    _setShortcut: function() {
+        let shortcut_text = this._settings.get_string('shortcut-text');
+        let [key, mods] = Gtk.accelerator_parse(shortcut_text);
+
+        if (Gtk.accelerator_valid(key, mods)) {
+            let shortcut = Gtk.accelerator_name(key, mods);
+            this._settings.set_strv('shortcut', [shortcut]);
+            return true;
+        }
+        else {
+            this._settings.set_strv('shortcut', []);
+            return false;
+        }
+    },
+
+    _disableExtraShortcut: function() {
+        if (this._shortcutIsSet) {
+            Main.wm.removeKeybinding('shortcut');
+            this._shortcutIsSet = false;
+        }
     },
 
     _showOverlay: function() {
-        this.dash.toggleNumberOverlay(true);
+        if (this._settings.get_boolean('hotkeys-overlay'))
+            this.dash.toggleNumberOverlay(true);
 
         // Restart the counting if the shortcut is pressed again
         if (this._numberOverlayTimeoutId) {
@@ -1611,10 +1650,12 @@ const DockedDash = new Lang.Class({
             this._numberOverlayTimeoutId = 0;
         }
 
-        // Hide the overlay after the timeout
-        this._numberOverlayTimeoutId = Mainloop.timeout_add(NUMBER_OVERLAY_INTERVAL, Lang.bind(this, function() {
-            this._numberOverlayTimeoutId = 0;
-            this._HideOverlay();
+        // Hide the overlay/dock after the timeout
+        let timeout = this._settings.get_double('shortcut-timeout') * 1000;
+        this._numberOverlayTimeoutId = Mainloop.timeout_add(timeout, Lang.bind(this, function() {
+                this._numberOverlayTimeoutId = 0;
+                this.dash.toggleNumberOverlay(false);
+                this._hideDock();
         }));
 
         // Show the dock if it is hidden
@@ -1627,9 +1668,7 @@ const DockedDash = new Lang.Class({
         }
     },
 
-    _HideOverlay: function() {
-        this.dash.toggleNumberOverlay(false);
-
+    _hideDock: function() {
         // Hide the dock again if necessary
         if (this._settings.get_boolean('hotkeys-show-dock')) {
             this._forceShow = false;
