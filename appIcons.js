@@ -107,6 +107,7 @@ const MyAppIcon = new Lang.Class({
         }));
         this._optionalScrollCycleWindows();
 
+        this._numberOverlay();
     },
 
     _onDestroy: function() {
@@ -513,6 +514,61 @@ const MyAppIcon = new Lang.Class({
         Clutter.cairo_set_source_color(cr, bodyColor);
         cr.fill();
         cr.$dispose();
+    },
+
+    _numberOverlay: function() {
+        // Add label for a Hot-Key visual aid
+        this._numberOverlayLabel = new St.Label();
+        this._numberOverlayBin = new St.Bin({child: this._numberOverlayLabel });
+        this._numberOverlayStyle = 'background-color: rgba(0,0,0,0.8);'
+        this._numberOverlayOrder = -1;
+        this._numberOverlayBin.hide();
+
+        // genericContainer is a Shell.GenericContainer from IconGrid.BaseIcon
+        let genericContainer = new Shell.GenericContainer();
+        this._iconContainer.add_child(genericContainer);
+        // We have to add allocation of counterBin.
+        genericContainer.connect('allocate', Lang.bind(this, this._allocateIconBox));
+
+        genericContainer.add_actor(this._numberOverlayBin);
+
+        this.updateNumberOverlay();
+    },
+
+    _allocateIconBox: function(actor, box, flags) {
+        let childBox = new Clutter.ActorBox();
+        let naturalHeight = this.icon.iconSize;
+        // Partial size for the overlay:
+        naturalHeight *= 0.6;
+
+        childBox.x1 = box.x2 - naturalHeight/2;
+        childBox.x2 = box.x2 + naturalHeight/2;
+        childBox.y1 = box.y2 - naturalHeight/2;
+        childBox.y2 = box.y2 + naturalHeight/2;
+
+        this._numberOverlayBin.allocate(childBox, flags);
+    },
+
+    updateNumberOverlay: function() {
+        let size = this.icon.iconSize;
+        // Set the font size to something smaller than the whole icon so it is
+        // still visible. The border radius is large to make the shape circular
+        let font_size = Math.round(0.4 * size);
+        this._numberOverlayBin.set_style(this._numberOverlayStyle +
+                                         'font-size: ' + font_size + 'px;' +
+                                         'border-radius: ' + size + 'px;');
+    },
+
+    setNumberOverlay: function(number) {
+        this._numberOverlayOrder = number;
+        this._numberOverlayBin.get_child().set_text(number.toString());
+    },
+
+    toggleNumberOverlay: function(activate) {
+        if (activate && this._numberOverlayOrder > -1)
+           this._numberOverlayBin.show();
+        else
+           this._numberOverlayBin.hide();
     }
 });
 

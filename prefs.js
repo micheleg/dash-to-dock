@@ -289,7 +289,7 @@ const Settings = new Lang.Class({
         this._settings.bind('extend-height', this._builder.get_object('dock_size_scale'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
 
-        // Behavior panel
+        // Apps panel
 
         this._settings.bind('show-running',
                             this._builder.get_object('show_running_switch'),
@@ -301,10 +301,6 @@ const Settings = new Lang.Class({
                             Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-windows-preview',
                             this._builder.get_object('windows_preview_button'),
-                            'active',
-                            Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('hot-keys',
-                            this._builder.get_object('hot_keys_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-favorites',
@@ -332,6 +328,18 @@ const Settings = new Lang.Class({
                             'sensitive',
                             Gio.SettingsBindFlags.DEFAULT);
 
+
+        // Behavior panel
+
+        this._settings.bind('hot-keys',
+                            this._builder.get_object('hot_keys_switch'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('hot-keys',
+                            this._builder.get_object('overlay_button'),
+                            'sensitive',
+                            Gio.SettingsBindFlags.DEFAULT);
+
         this._builder.get_object('click_action_combo').set_active(this._settings.get_enum('click-action'));
         this._builder.get_object('click_action_combo').connect('changed', Lang.bind (this, function(widget) {
             this._settings.set_enum('click-action', widget.get_active());
@@ -351,6 +359,60 @@ const Settings = new Lang.Class({
         }));
         this._builder.get_object('shift_middle_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
             this._settings.set_enum('shift-middle-click-action', widget.get_active());
+        }));
+
+        // Create dialog for number overlay options
+        this._builder.get_object('overlay_button').connect('clicked', Lang.bind(this, function() {
+
+            let dialog = new Gtk.Dialog({ title: _('Show dock and application numbers'),
+                                          transient_for: this.widget.get_toplevel(),
+                                          use_header_bar: true,
+                                          modal: true });
+
+            // GTK+ leaves positive values for application-defined response ids.
+            // Use +1 for the reset action
+            dialog.add_button(_('Reset to defaults'), 1);
+
+            let box = this._builder.get_object('box_overlay_shortcut');
+            dialog.get_content_area().add(box);
+
+            this._builder.get_object('overlay_switch').set_active(this._settings.get_boolean('hotkeys-overlay'));
+            this._builder.get_object('show_dock_switch').set_active(this._settings.get_boolean('hotkeys-show-dock'));
+
+            this._settings.bind('shortcut-text',
+                                this._builder.get_object('shortcut_entry'),
+                                'text',
+                                Gio.SettingsBindFlags.DEFAULT);
+            this._settings.bind('hotkeys-overlay',
+                                this._builder.get_object('overlay_switch'),
+                                'active',
+                                Gio.SettingsBindFlags.DEFAULT);
+            this._settings.bind('hotkeys-show-dock',
+                                this._builder.get_object('show_dock_switch'),
+                                'active',
+                                Gio.SettingsBindFlags.DEFAULT);
+            this._settings.bind('shortcut-timeout',
+                                this._builder.get_object('timeout_spinbutton'),
+                                'value',
+                                Gio.SettingsBindFlags.DEFAULT);
+
+            dialog.connect('response', Lang.bind(this, function(dialog, id) {
+                if (id == 1) {
+                    // restore default settings for the relevant keys
+                    let keys = ['shortcut-text', 'hotkeys-overlay', 'hotkeys-show-dock', 'shortcut-timeout'];
+                    keys.forEach(function(val) {
+                        this._settings.set_value(val, this._settings.get_default_value(val));
+                    }, this);
+                } else {
+                    // remove the settings box so it doesn't get destroyed;
+                    dialog.get_content_area().remove(box);
+                    dialog.destroy();
+                }
+                return;
+            }));
+
+            dialog.show_all();
+
         }));
 
         // Create dialog for middle-click options

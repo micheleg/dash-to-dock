@@ -210,6 +210,7 @@ const DockedDash = new Lang.Class({
         this._autohideIsEnabled = null;
         this._intellihideIsEnabled = null;
         this._fixedIsEnabled = null;
+        this._forceShow = false;
 
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.Intellihide(this._settings);
@@ -386,6 +387,7 @@ const DockedDash = new Lang.Class({
         this._optionalScrollWorkspaceSwitch();
         this._optionalWorkspaceIsolation();
         this._optionalHotKeys();
+        this._optionalNumberOverlay();
 
          // Delay operations that require the shell to be fully loaded and with
          // user theme applied.
@@ -520,6 +522,7 @@ const DockedDash = new Lang.Class({
 
         // Remove keybindings
         this._disableHotKeys();
+        this._disableExtraShortcut();
     },
 
     _bindSettingsChanges: function() {
@@ -633,7 +636,7 @@ const DockedDash = new Lang.Class({
      * overview visibility
      */
     _updateDashVisibility: function() {
-        if (Main.overview.visibleTarget)
+        if (Main.overview.visibleTarget || this._forceShow)
             return;
 
         if (this._fixedIsEnabled) {
@@ -682,7 +685,7 @@ const DockedDash = new Lang.Class({
     },
 
     _hoverChanged: function() {
-        if (!this._ignoreHover) {
+        if (!this._ignoreHover && !this._forceShow) {
             // Skip if dock is not in autohide mode for instance because it is shown
             // by intellihide.
             if (this._autohideIsEnabled) {
@@ -1567,8 +1570,114 @@ const DockedDash = new Lang.Class({
         }, this);
 
         this._hotKeysEnabled = false;
-    }
+    },
 
+    _optionalNumberOverlay: function() {
+        this._shortcutIsSet = false;
+        // Enable extra shortcut if either 'overlay' or 'show-dock' are true
+        if (this._settings.get_boolean('hot-keys') &&
+           (this._settings.get_boolean('hotkeys-overlay') || this._settings.get_boolean('hotkeys-show-dock')))
+            this._enableExtraShortcut();
+
+        this._signalsHandler.add([
+            this._settings,
+            'changed::hot-keys',
+            Lang.bind(this, this._checkHotkeysOptions)
+        ], [
+            this._settings,
+            'changed::hotkeys-overlay',
+            Lang.bind(this, this._checkHotkeysOptions)
+        ], [
+            this._settings,
+            'changed::hotkeys-show-dock',
+            Lang.bind(this, this._checkHotkeysOptions)
+        ], [
+            this._settings,
+            'changed::shortcut-text',
+            Lang.bind(this, this._setShortcut)
+        ]);
+    },
+
+    _checkHotkeysOptions: function() {
+        if (this._settings.get_boolean('hot-keys') &&
+           (this._settings.get_boolean('hotkeys-overlay') || this._settings.get_boolean('hotkeys-show-dock')))
+            this._enableExtraShortcut();
+        else
+            this._disableExtraShortcut();
+    },
+
+    _enableExtraShortcut: function() {
+        let shortcut_is_valid = this._setShortcut();
+
+        if (shortcut_is_valid && !this._shortcutIsSet) {
+            Main.wm.addKeybinding('shortcut', this._settings,
+                                  Meta.KeyBindingFlags.NONE,
+                                  Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
+                                  Lang.bind(this, this._showOverlay));
+            this._shortcutIsSet = true;
+        }
+    },
+
+    _setShortcut: function() {
+        let shortcut_text = this._settings.get_string('shortcut-text');
+        let [key, mods] = Gtk.accelerator_parse(shortcut_text);
+
+        if (Gtk.accelerator_valid(key, mods)) {
+            let shortcut = Gtk.accelerator_name(key, mods);
+            this._settings.set_strv('shortcut', [shortcut]);
+            return true;
+        }
+        else {
+            this._settings.set_strv('shortcut', []);
+            return false;
+        }
+    },
+
+    _disableExtraShortcut: function() {
+        if (this._shortcutIsSet) {
+            Main.wm.removeKeybinding('shortcut');
+            this._shortcutIsSet = false;
+        }
+    },
+
+    _showOverlay: function() {
+        if (this._settings.get_boolean('hotkeys-overlay'))
+            this.dash.toggleNumberOverlay(true);
+
+        // Restart the counting if the shortcut is pressed again
+        if (this._numberOverlayTimeoutId) {
+            Mainloop.source_remove(this._numberOverlayTimeoutId);
+            this._numberOverlayTimeoutId = 0;
+        }
+
+        // Hide the overlay/dock after the timeout
+        let timeout = this._settings.get_double('shortcut-timeout') * 1000;
+        this._numberOverlayTimeoutId = Mainloop.timeout_add(timeout, Lang.bind(this, function() {
+                this._numberOverlayTimeoutId = 0;
+                this.dash.toggleNumberOverlay(false);
+                this._hideDock();
+        }));
+
+        // Show the dock if it is hidden
+        if (this._settings.get_boolean('hotkeys-show-dock')) {
+            this._forceShow = true;
+            let showDock = (this._intellihideIsEnabled || this._autohideIsEnabled) &&
+                           (this._dockState == State.HIDDEN || this._dockState == State.HIDING);
+            if (showDock)
+                this._show();
+        }
+    },
+
+    _hideDock: function() {
+        // Hide the dock again if necessary
+        if (this._settings.get_boolean('hotkeys-show-dock')) {
+            this._forceShow = false;
+            let hideDock = (this._intellihideIsEnabled || this._autohideIsEnabled) &&
+                           (this._dockState == State.SHOWN || this._dockState == State.SHOWING);
+            if (hideDock)
+                this._updateDashVisibility();
+        }
+    }
 });
 
 Signals.addSignalMethods(DockedDash.prototype);
