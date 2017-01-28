@@ -524,15 +524,15 @@ const MyAppIcon = new Lang.Class({
         this._numberOverlayOrder = -1;
         this._numberOverlayBin.hide();
 
-        // iconBox is a Shell.GenericContainer from IconGrid.BaseIcon
-        this.iconBox = new Shell.GenericContainer();
-        this._iconContainer.add_child(this.iconBox);
+        // genericContainer is a Shell.GenericContainer from IconGrid.BaseIcon
+        let genericContainer = new Shell.GenericContainer();
+        this._iconContainer.add_child(genericContainer);
         // We have to add allocation of counterBin.
-        this.iconBox.connect('allocate', Lang.bind(this, this._allocateIconBox));
+        genericContainer.connect('allocate', Lang.bind(this, this._allocateIconBox));
 
-        this.iconBox.add_actor(this._numberOverlayBin);
+        genericContainer.add_actor(this._numberOverlayBin);
 
-        this._updateNumberOverlay();
+        this.updateNumberOverlay();
     },
 
     _allocateIconBox: function(actor, box, flags) {
@@ -549,7 +549,7 @@ const MyAppIcon = new Lang.Class({
         this._numberOverlayBin.allocate(childBox, flags);
     },
 
-    _updateNumberOverlay: function() {
+    updateNumberOverlay: function() {
         let size = this.icon.iconSize;
         // Set the font size to something smaller than the whole icon so it is
         // still visible. The border radius is large to make the shape circular

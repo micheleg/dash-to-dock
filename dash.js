@@ -881,7 +881,7 @@ const MyDash = new Lang.Class({
                 // No overlay after 10
                 icon.setNumberOverlay(-1);
             }
-            icon._updateNumberOverlay();
+            icon.updateNumberOverlay();
         });
 
     },
