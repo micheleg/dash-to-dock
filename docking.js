@@ -522,7 +522,7 @@ const DockedDash = new Lang.Class({
 
         // Remove keybindings
         this._disableHotKeys();
-        this._disableNumberOverlay();
+        this._disableExtraShortcut();
     },
 
     _bindSettingsChanges: function() {
