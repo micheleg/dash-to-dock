@@ -497,7 +497,7 @@
       <packing>
         <property name="expand">False</property>
         <property name="fill">True</property>
-        <property name="position">1</property>
+        <property name="position">0</property>
       </packing>
     </child>
   </object>
@@ -1610,11 +1610,6 @@
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
                               </object>
-                              <packing>
-                                <property name="left_attach">1</property>
-                                <property name="top_attach">0</property>
-                                <property name="height">2</property>
-                              </packing>
                             </child>
                           </object>
                           <packing>
