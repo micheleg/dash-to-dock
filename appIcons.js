@@ -551,7 +551,7 @@ const MyAppIcon = new Lang.Class({
 
     setNumberOverlay: function(number) {
         this._numberOverlayOrder = number;
-        this._numberOverlayBin.get_child().set_text(number.toString());
+        this._numberOverlayLabel.set_text(number.toString());
     },
 
     toggleNumberOverlay: function(activate) {
