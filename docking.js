@@ -1550,7 +1550,10 @@ const DockedDash = new Lang.Class({
                 Main.wm.addKeybinding(key + (i + 1), this._settings,
                                       Meta.KeyBindingFlags.NONE,
                                       Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
-                                      Lang.bind(this, function() {this._activateApp(appNum);}));
+                                      Lang.bind(this, function() {
+                                          this._activateApp(appNum);
+                                          this._showOverlay();
+                                      }));
             }
         }, this);
 
