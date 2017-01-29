@@ -544,7 +544,6 @@ const MyAppIcon = new Lang.Class({
            'font-size: ' + font_size + 'px;' +
            'text-align: center;' +
            'border-radius: ' + this.icon.iconSize + 'px;' +
-           'spadding: 2px 8px;' +
            'width: ' + size + 'px; height: ' + size +'px;'
         );
     },
