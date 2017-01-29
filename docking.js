@@ -1660,8 +1660,7 @@ const DockedDash = new Lang.Class({
 
         // Show the dock if it is hidden
         if (this._settings.get_boolean('hotkeys-show-dock')) {
-            let showDock = (this._intellihideIsEnabled || this._autohideIsEnabled) &&
-                           (this._dockState == State.HIDDEN || this._dockState == State.HIDING);
+            let showDock = (this._intellihideIsEnabled || this._autohideIsEnabled);
             if (showDock)
                 this._show();
         }
