@@ -210,7 +210,6 @@ const DockedDash = new Lang.Class({
         this._autohideIsEnabled = null;
         this._intellihideIsEnabled = null;
         this._fixedIsEnabled = null;
-        this._forceShow = false;
 
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.Intellihide(this._settings);
@@ -531,6 +530,7 @@ const DockedDash = new Lang.Class({
         }));
 
         this._settings.connect('changed::dash-max-icon-size', Lang.bind(this, function() {
+             global.log('ICON SIZE')
             this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'));
         }));
 
@@ -636,7 +636,7 @@ const DockedDash = new Lang.Class({
      * overview visibility
      */
     _updateDashVisibility: function() {
-        if (Main.overview.visibleTarget || this._forceShow)
+        if (Main.overview.visibleTarget)
             return;
 
         if (this._fixedIsEnabled) {
@@ -685,7 +685,7 @@ const DockedDash = new Lang.Class({
     },
 
     _hoverChanged: function() {
-        if (!this._ignoreHover && !this._forceShow) {
+        if (!this._ignoreHover) {
             // Skip if dock is not in autohide mode for instance because it is shown
             // by intellihide.
             if (this._autohideIsEnabled) {
@@ -1660,7 +1660,6 @@ const DockedDash = new Lang.Class({
 
         // Show the dock if it is hidden
         if (this._settings.get_boolean('hotkeys-show-dock')) {
-            this._forceShow = true;
             let showDock = (this._intellihideIsEnabled || this._autohideIsEnabled) &&
                            (this._dockState == State.HIDDEN || this._dockState == State.HIDING);
             if (showDock)
@@ -1671,7 +1670,6 @@ const DockedDash = new Lang.Class({
     _hideDock: function() {
         // Hide the dock again if necessary
         if (this._settings.get_boolean('hotkeys-show-dock')) {
-            this._forceShow = false;
             let hideDock = (this._intellihideIsEnabled || this._autohideIsEnabled) &&
                            (this._dockState == State.SHOWN || this._dockState == State.SHOWING);
             if (hideDock)
