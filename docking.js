@@ -1654,7 +1654,8 @@ const DockedDash = new Lang.Class({
         this._numberOverlayTimeoutId = Mainloop.timeout_add(timeout, Lang.bind(this, function() {
                 this._numberOverlayTimeoutId = 0;
                 this.dash.toggleNumberOverlay(false);
-                this._hideDock();
+                // Hide the dock again if necessary
+                this._updateDashVisibility();
         }));
 
         // Show the dock if it is hidden
@@ -1663,17 +1664,8 @@ const DockedDash = new Lang.Class({
             if (showDock)
                 this._show();
         }
-    },
-
-    _hideDock: function() {
-        // Hide the dock again if necessary
-        if (this._settings.get_boolean('hotkeys-show-dock')) {
-            let hideDock = (this._intellihideIsEnabled || this._autohideIsEnabled) &&
-                           (this._dockState == State.SHOWN || this._dockState == State.SHOWING);
-            if (hideDock)
-                this._updateDashVisibility();
-        }
     }
+
 });
 
 Signals.addSignalMethods(DockedDash.prototype);
