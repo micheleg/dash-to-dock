@@ -306,7 +306,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="xalign">0</property>
-                        <property name="label" translatable="yes">Temporarily show the application numbers over the icons, corresponding to the hotkeys.</property>
+                        <property name="label" translatable="yes">Temporarily show the application numbers over the icons, corresponding to the shortcut.</property>
                         <property name="wrap">True</property>
                         <property name="max-width-chars">40</property>
                         <style>
@@ -1498,10 +1498,10 @@
       </packing>
     </child>
     <child type="tab">
-      <object class="GtkLabel" id="apps_label">
+      <object class="GtkLabel" id="launchers_label">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="label" translatable="yes">Apps</property>
+        <property name="label" translatable="yes">Launchers</property>
       </object>
       <packing>
         <property name="position">1</property>
@@ -1566,7 +1566,7 @@
                             <property name="can_focus">False</property>
                             <property name="hexpand">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Use hotkeys to activate apps</property>
+                            <property name="label" translatable="yes">Use keyboard shortcuts to activate apps</property>
                           </object>
                           <packing>
                             <property name="left_attach">0</property>
