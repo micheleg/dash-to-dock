@@ -530,7 +530,6 @@ const MyAppIcon = new Lang.Class({
 
         this._iconContainer.add_child(this._numberOverlayBin);
 
-        this.updateNumberOverlay();
     },
 
     updateNumberOverlay: function() {
