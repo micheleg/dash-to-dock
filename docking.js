@@ -530,7 +530,6 @@ const DockedDash = new Lang.Class({
         }));
 
         this._settings.connect('changed::dash-max-icon-size', Lang.bind(this, function() {
-             global.log('ICON SIZE')
             this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'));
         }));
 
