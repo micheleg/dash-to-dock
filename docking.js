@@ -775,18 +775,19 @@ const DockedDash = new Lang.Class({
     },
 
     _checkDockDwell: function(x, y) {
-        let monitor = this._monitor;
+
+        let workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index)
         let shouldDwell;
         // Check for the correct screen edge
         // Position is approximated to the lower integer
         if (this._position == St.Side.LEFT)
-            shouldDwell = (x == this._monitor.x);
+            shouldDwell = (x == this._monitor.x) && (y >= workArea.y) && (y <= workArea.y + workArea.height);
         else if (this._position == St.Side.RIGHT)
-            shouldDwell = (x == this._monitor.x + this._monitor.width - 1);
+            shouldDwell = (x == this._monitor.x + this._monitor.width - 1) && (y >= workArea.y) && (y <= workArea.y + workArea.height);
         else if (this._position == St.Side.TOP)
-            shouldDwell = (y == this._monitor.y);
+            shouldDwell = (y == this._monitor.y) && (x >= workArea.x) && (x <= workArea.x + workArea.width);
         else if (this._position == St.Side.BOTTOM)
-            shouldDwell = (y == this._monitor.y + this._monitor.height - 1);
+            shouldDwell = (y == this._monitor.y + this._monitor.height - 1) && (x >= workArea.x) && (x <= workArea.x + workArea.width);
 
         if (shouldDwell) {
             // We only set up dwell timeout when the user is not hovering over the dock
@@ -961,31 +962,32 @@ const DockedDash = new Lang.Class({
         // Note: dash in fixed position doesn't use pressure barrier
         if (this._canUsePressure && this._autohideIsEnabled && this._settings.get_boolean('require-pressure-to-show')) {
             let x1, x2, y1, y2, direction;
+            let workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index)
 
             if (this._position == St.Side.LEFT) {
                 x1 = this._monitor.x;
                 x2 = this._monitor.x;
-                y1 = this._monitor.y;
-                y2 = this._monitor.y + this._monitor.height;
+                y1 = workArea.y;
+                y2 = workArea.y + workArea.height;
                 direction = Meta.BarrierDirection.POSITIVE_X;
             }
             else if (this._position == St.Side.RIGHT) {
                 x1 = this._monitor.x + this._monitor.width;
                 x2 = this._monitor.x + this._monitor.width;
-                y1 = this._monitor.y;
-                y2 = this._monitor.y + this._monitor.height;
+                y1 = workArea.y;
+                y2 = workArea.y + workArea.height;
                 direction = Meta.BarrierDirection.NEGATIVE_X;
             }
             else if (this._position == St.Side.TOP) {
-                x1 = this._monitor.x;
-                x2 = this._monitor.x + this._monitor.width;
+                x1 = workArea.x;
+                x2 = workArea.x + workArea.width;
                 y1 = this._monitor.y;
                 y2 = this._monitor.y;
                 direction = Meta.BarrierDirection.POSITIVE_Y;
             }
             else if (this._position == St.Side.BOTTOM) {
-                x1 = this._monitor.x;
-                x2 = this._monitor.x + this._monitor.width;
+                x1 = workArea.x;
+                x2 = workArea.x + workArea.width;
                 y1 = this._monitor.y + this._monitor.height;
                 y2 = this._monitor.y + this._monitor.height;
                 direction = Meta.BarrierDirection.NEGATIVE_Y;
