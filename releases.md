@@ -9,7 +9,10 @@ shell_versions: ["3.22", "3.20", "3.18", "3.16", "3.14", "3.12", "3.10", "3.8", 
 
 ## Releases
 
-This page contains zip archives for all released versions of Dash to Dock. The preferred way to install Dash to Dock is through the extension websites. These zip archives are provided for manual installation. See [installation instructions](./download.html). Choose a release suitable for your GNOME Shell version. 
+This page contains zip archives for all released versions of Dash to Dock. The preferred way to install Dash to Dock is through the extension websites. These zip archives are provided for manual installation. See [installation instructions](./download.html).
+
+### Note about the version numbering
+This project does not follow any sane version numbering! This is for reasons of laziness and to follow the versioning scheme of the [extension website]({{ site.extension_page_url }}). The releases are numbered with an integer progressive number according to the upload order to the [extension website]({{ site.extension_page_url }}). This means for instance that the latest release (higher number) might not be the supporting the latest GNOME Shell version. One day the project will embrace a reasonable versioning scheme. In the meantime, ensure you choose a release suitable for your GNOME Shell version.
 
 {% for sv in page.shell_versions %}
 <a name="{{sv}}"></a>
