@@ -553,10 +553,12 @@ const MyAppIcon = new Lang.Class({
     },
 
     toggleNumberOverlay: function(activate) {
-        if (activate && this._numberOverlayOrder > -1)
-           this._numberOverlayBin.show();
+        if (activate && this._numberOverlayOrder > -1) {
+            this.updateNumberOverlay();
+            this._numberOverlayBin.show();
+        }
         else
-           this._numberOverlayBin.hide();
+            this._numberOverlayBin.hide();
     }
 });
 
