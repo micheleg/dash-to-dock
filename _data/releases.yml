@@ -1,3 +1,18 @@
+- version: 56
+  date: 05-02-2017
+  shell_version: ["3.18", "3.20", "3.22"]
+  notes:
+    - Implement windows previews in the apps menu [446c8efe, e6598572, ce277ec6, a2132cf0, 4f1fb1af, 3a214e7f, 28cb2778, f6becc9c, 9e76b4bc]
+    - "Add hotkeys option [franglais125: 938702ee]."
+    - Add border style customization [71daa570].
+    - "Autohide: the whole screen edge sensitive [39041f4f]."
+    - Improve Wayland support [d553004e, 28c932d6]."
+    - "Add cycle through windows on scroll option [Gabriel Moreria: 0040c2af]."
+    - "Fix: set popup menu max width [f6bad6135c]."
+    - "Make INSTALLBASE a bit more flexible, remove trailing whitespace [Jonathan Carter: e97640ad]"
+    - "Update Simplified Chinese, Polish, French, and Brazilian translations [shlinux: 570882aa, Piotr Sokół: fec97e24, Léo Andrès:  d18f2d6c, Fábio Nogueira: e2ec48f5]."
+  zip_url: https://extensions.gnome.org/review/download/6553.shell-extension.zip
+
 - version: 55
   date: 30-09-2016
   shell_version: ["3.18", "3.20", "3.22"]
