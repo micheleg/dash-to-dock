@@ -7,365 +7,426 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-09 23:29+0100\n"
-"PO-Revision-Date: 2012-12-22 22:04+0100\n"
+"POT-Creation-Date: 2017-02-17 18:29+0100\n"
+"PO-Revision-Date: 2017-02-17 19:24+0100\n"
 "Last-Translator: giroresh <giroresh@gmail.com>\n"
 "Language-Team: giroresh <giroresh@gmail.com>\n"
-"Language: zh_CN\n"
+"Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: prefs.js:98
 msgid "Primary monitor"
-msgstr ""
+msgstr "Elsődleges képernyő"
 
 #: prefs.js:107 prefs.js:114
 msgid "Secondary monitor "
-msgstr ""
+msgstr "Masodlagos képernyő"
 
-#: prefs.js:139 Settings.ui.h:21
+#: prefs.js:139 Settings.ui.h:28
 msgid "Right"
-msgstr ""
+msgstr "Jobb"
 
-#: prefs.js:140 Settings.ui.h:18
+#: prefs.js:140 Settings.ui.h:25
 msgid "Left"
-msgstr ""
+msgstr "Bal"
 
 #: prefs.js:190
 msgid "Intelligent autohide customization"
-msgstr ""
+msgstr "Okos elrejtésnek testreszabása"
 
-#: prefs.js:197 prefs.js:353
+#: prefs.js:197 prefs.js:374 prefs.js:428
 msgid "Reset to defaults"
-msgstr ""
+msgstr "Visszaállítás"
 
-#: prefs.js:346
-#, fuzzy
+#: prefs.js:367
+msgid "Show dock and application numbers"
+msgstr "Dock és az alkalmazások mennyisége mutatása"
+
+#: prefs.js:421
 msgid "Customize middle-click behavior"
-msgstr "A Dock háttér átláthatósága testre szabható"
+msgstr "Középső-Kattintás viselkedésének testreszabása"
 
-#: prefs.js:419
-#, fuzzy
+#: prefs.js:492
 msgid "Customize running indicators"
-msgstr "Mutasd a futtatott alkalmazások ikonjait"
+msgstr "Futó alkalmazások mutatójának testreszabása"
 
 #: Settings.ui.h:1
-#, fuzzy
 msgid "Customize indicator style"
-msgstr "A Dock háttér átláthatósága testre szabható"
+msgstr "Mutató stílusának testreszabása"
 
 #: Settings.ui.h:2
 msgid "Color"
-msgstr ""
+msgstr "Szín"
 
 #: Settings.ui.h:3
 msgid "Border color"
-msgstr ""
+msgstr "Szegélyszíne"
 
 #: Settings.ui.h:4
 msgid "Border width"
-msgstr ""
+msgstr "Szegély szélessége"
 
 #: Settings.ui.h:5
+msgid "Number overlay"
+msgstr "Réteg száma"
+
+#: Settings.ui.h:6
+msgid ""
+"Temporarily show the application numbers over the icons, corresponding to "
+"the shortcut."
+msgstr ""
+"Ideiglenesen mutasd az alkalmazás számat az ikon felett a hozzá illő "
+"billentyűparancs-hoz."
+
+#: Settings.ui.h:7
+msgid "Show the dock if it is hidden"
+msgstr "Mutasd a dock-ot ha el van rejtve"
+
+#: Settings.ui.h:8
+msgid ""
+"If using autohide, the dock will appear for a short time when triggering the "
+"shortcut."
+msgstr ""
+"Egy rövid ideig látható a dock, ha egy billentyűparancsot aktiváltak - "
+"automatikus elrejtés használata kor is."
+
+#: Settings.ui.h:9
+msgid "Shortcut for the options above"
+msgstr "Billentyűparancs a fenti opciókhoz"
+
+#: Settings.ui.h:10
+msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
+msgstr "Szintaxis: <Shift>, <Ctrl>, <Alt>, <Szuper>"
+
+#: Settings.ui.h:11
+msgid "Hide timeout (s)"
+msgstr "Elrejtés időzítője (mp)"
+
+#: Settings.ui.h:12
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
+"Ha minimalizálásra állított, akkor dupla kattintáskor minden ablak "
+"minimalizálódik."
 
-#: Settings.ui.h:6
+#: Settings.ui.h:13
 msgid "Shift+Click action"
-msgstr ""
+msgstr "Shift+Kattintás művelete"
 
-#: Settings.ui.h:7
-#, fuzzy
+#: Settings.ui.h:14
 msgid "Raise window"
-msgstr "Kicsinyítés"
+msgstr "Ablak nagyitása"
 
-#: Settings.ui.h:8
-#, fuzzy
+#: Settings.ui.h:15
 msgid "Minimize window"
-msgstr "Kicsinyítés"
+msgstr "Ablak kicsinyítés"
 
-#: Settings.ui.h:9
-#, fuzzy
+#: Settings.ui.h:16
 msgid "Launch new instance"
-msgstr "Új ablak nyitása"
+msgstr "Új folyamat inditása"
 
-#: Settings.ui.h:10
-#, fuzzy
+#: Settings.ui.h:17
 msgid "Cycle through windows"
 msgstr "Körözzön az alkalmazások ablakai közt"
 
-#: Settings.ui.h:11
+#: Settings.ui.h:18
 msgid "Quit"
-msgstr ""
-
-#: Settings.ui.h:12
-msgid "Behavior for Middle-Click."
-msgstr ""
-
-#: Settings.ui.h:13
-msgid "Middle-Click action"
-msgstr ""
-
-#: Settings.ui.h:14
-msgid "Behavior for Shift+Middle-Click."
-msgstr ""
-
-#: Settings.ui.h:15
-msgid "Shift+Middle-Click action"
-msgstr ""
-
-#: Settings.ui.h:16
-msgid "Show the dock on"
-msgstr ""
-
-#: Settings.ui.h:17
-msgid "Position on screen"
-msgstr ""
+msgstr "Bezárás"
 
 #: Settings.ui.h:19
-msgid "Bottom"
-msgstr ""
+msgid "Behavior for Middle-Click."
+msgstr "Középső-Kattintás viselkedése"
 
 #: Settings.ui.h:20
-msgid "Top"
-msgstr ""
+msgid "Middle-Click action"
+msgstr "Középső-Kattintás művelete"
+
+#: Settings.ui.h:21
+msgid "Behavior for Shift+Middle-Click."
+msgstr "Shift+Középső-Kattintás viselkedése"
 
 #: Settings.ui.h:22
+msgid "Shift+Middle-Click action"
+msgstr "Shift+Középső-Kattintás művelete"
+
+#: Settings.ui.h:23
+msgid "Show the dock on"
+msgstr "Mutasd a dock-ot"
+
+#: Settings.ui.h:24
+msgid "Position on screen"
+msgstr "Elhelyezkedése a képernyőn"
+
+#: Settings.ui.h:26
+msgid "Bottom"
+msgstr "Lent"
+
+#: Settings.ui.h:27
+msgid "Top"
+msgstr "Fent"
+
+#: Settings.ui.h:29
 msgid ""
 "Hide the dock when it obstructs a window of the the current application. "
 "More refined settings are available."
 msgstr ""
+"A dock elrejtése ha a futó alkalmazás ablakát akadályozza. További "
+"beállítások lehetségesek."
 
-#: Settings.ui.h:23
-#, fuzzy
+#: Settings.ui.h:30
 msgid "Intelligent autohide"
-msgstr "okos elrejtés"
+msgstr "Okos elrejtés"
 
-#: Settings.ui.h:24
+#: Settings.ui.h:31
 msgid "Dock size limit"
-msgstr ""
+msgstr "Dock maximális mérete"
 
-#: Settings.ui.h:25
+#: Settings.ui.h:32
 msgid "Panel mode: extend to the screen edge"
-msgstr ""
+msgstr "Panel mód: a képernyő sarkokig kiterjesztése"
 
-#: Settings.ui.h:26
+#: Settings.ui.h:33
 msgid "Icon size limit"
-msgstr ""
+msgstr "Maximális ikon méret"
 
-#: Settings.ui.h:27
+#: Settings.ui.h:34
 msgid "Fixed icon size: scroll to reveal other icons"
-msgstr ""
+msgstr "Fix ikon méret: görgetéssel láthatóvá válnak az ikonok"
 
-#: Settings.ui.h:28
+#: Settings.ui.h:35
 msgid "Position and size"
-msgstr ""
+msgstr "Elhelyezkedés és méret"
 
-#: Settings.ui.h:29
-#, fuzzy
+#: Settings.ui.h:36
 msgid "Show favorite applications"
 msgstr "Mutasd a kedvenc alkalmazások ikonjait"
 
-#: Settings.ui.h:30
-#, fuzzy
+#: Settings.ui.h:37
 msgid "Show running applications"
 msgstr "Mutasd a futtatott alkalmazások ikonjait"
 
-#: Settings.ui.h:31
+#: Settings.ui.h:38
 msgid "Isolate workspaces."
-msgstr ""
+msgstr "munkaterület izolálása."
 
-#: Settings.ui.h:32
+#: Settings.ui.h:39
+msgid "Show open windows previews."
+msgstr "Mutasd előnézetet megnyitott ablakokhoz."
+
+#: Settings.ui.h:40
 msgid ""
-"If disabled, these settings are acccessible from gnome-tweak-tool or the "
+"If disabled, these settings are accessible from gnome-tweak-tool or the "
 "extension website."
 msgstr ""
+"Ha kikapcsolt, akkor ezek a beállítások elérhetők a gnome-tweak-tool vagy a "
+"honlap-ról."
 
-#: Settings.ui.h:33
-#, fuzzy
+#: Settings.ui.h:41
 msgid "Show <i>Applications</i> icon"
-msgstr "Mutasd a futtatott alkalmazások ikonjait"
+msgstr "Mutasd az <i>Alkalmazás</i> ikont"
 
-#: Settings.ui.h:34
+#: Settings.ui.h:42
 msgid "Move the applications button at the beginning of the dock."
-msgstr ""
+msgstr "Alkalmazás gombját a dock elejére tolása."
 
-#: Settings.ui.h:35
-#, fuzzy
+#: Settings.ui.h:43
 msgid "Animate <i>Show Applications</i>."
-msgstr "Mutasd a futtatott alkalmazások ikonjait"
+msgstr "Animáld a <i>Mutasd Alkalmazásokat</i>"
 
-#: Settings.ui.h:36
+#: Settings.ui.h:44
+msgid "Launchers"
+msgstr "Indítok"
+
+#: Settings.ui.h:45
+msgid ""
+"Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
+"together with Shift and Ctrl."
+msgstr ""
+"Aktiváld a Szuper+(0-9) mint billentyűparancsot. Shift és Ctrl is "
+"használható."
+
+#: Settings.ui.h:46
+msgid "Use keyboard shortcuts to activate apps"
+msgstr "Billentyűparancsok használata az alkalmazások aktiválásához."
+
+#: Settings.ui.h:47
 msgid "Behaviour when clicking on the icon of a running application."
-msgstr ""
+msgstr "Futó alkalmazások ikonjának megnyomása kori viselkedés."
 
-#: Settings.ui.h:37
+#: Settings.ui.h:48
 msgid "Click action"
-msgstr ""
+msgstr "Kattintás művelete"
 
-#: Settings.ui.h:38
+#: Settings.ui.h:49
 msgid "Minimize"
 msgstr "Kicsinyítés"
 
-#: Settings.ui.h:39
-msgid ""
-"With fixed icon size, only the edge of the dock and the <i>Show "
-"Applications</i> icon are active."
-msgstr ""
+#: Settings.ui.h:50
+msgid "Behaviour when scrolling on the icon of an application."
+msgstr "Alkalmazás ikonja feletti görgetés kori viselkedés."
 
-#: Settings.ui.h:40
-#, fuzzy
-msgid "Switch workspace by scrolling on the dock"
-msgstr "Dock feletti görgetéskor válts munkahelyet"
+#: Settings.ui.h:51
+msgid "Scroll action"
+msgstr "Görgetési művelet"
 
-#: Settings.ui.h:41
+#: Settings.ui.h:52
+msgid "Do nothing"
+msgstr "Ne tegyen semmit"
+
+#: Settings.ui.h:53
+msgid "Switch workspace"
+msgstr "Válts munkahelyenként"
+
+#: Settings.ui.h:54
 msgid "Behavior"
-msgstr ""
+msgstr "Viselkedés"
 
-#: Settings.ui.h:42
+#: Settings.ui.h:55
 msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
+"A GNOME témájához való alkalmazkodásért kevés testre szabások aktiváltak. "
+"Viszont lejjebb lehetőség nyílik a testra szabásra."
 
-#: Settings.ui.h:43
+#: Settings.ui.h:56
 msgid "Use built-in theme"
-msgstr ""
+msgstr "Használd a beépített témát."
 
-#: Settings.ui.h:44
+#: Settings.ui.h:57
 msgid "Save space reducing padding and border radius."
-msgstr ""
+msgstr "Helymegtakarítás a párnázás és szegély rádiusza csökkentésével"
 
-#: Settings.ui.h:45
+#: Settings.ui.h:58
 msgid "Shrink the dash"
-msgstr ""
+msgstr "A dash zsugoritása"
 
-#: Settings.ui.h:46
+#: Settings.ui.h:59
 msgid "Show a dot for each windows of the application."
-msgstr ""
+msgstr "Mutasd egy pontot minden egyes ablaknak."
 
-#: Settings.ui.h:47
+#: Settings.ui.h:60
 msgid "Show windows counter indicators"
-msgstr ""
+msgstr "Mutasd ablak számlálót"
 
-#: Settings.ui.h:48
+#: Settings.ui.h:61
 msgid "Set the background color for the dash."
-msgstr ""
+msgstr "A dash hátterének beállítása."
 
-#: Settings.ui.h:49
+#: Settings.ui.h:62
 msgid "Customize the dash color"
-msgstr ""
+msgstr "A Dash színének testreszabása"
 
-#: Settings.ui.h:50
-#, fuzzy
+#: Settings.ui.h:63
 msgid "Tune the dash background opacity."
-msgstr "A Dock háttér átláthatósága testre szabható"
+msgstr "A dash háttérének átláthatóságának testreszabása."
 
-#: Settings.ui.h:51
-#, fuzzy
+#: Settings.ui.h:64
 msgid "Customize opacity"
-msgstr "A Dock háttér átláthatósága testre szabható"
+msgstr "Átláthatóságnak testreszabása"
 
-#: Settings.ui.h:52
+#: Settings.ui.h:65
 msgid "Opacity"
 msgstr "Átláthatóság"
 
-#: Settings.ui.h:53
+#: Settings.ui.h:66
+msgid "Force straight corner\n"
+msgstr "Egyenes sarkok kényszerítése\n"
+
+#: Settings.ui.h:68
 msgid "Appearance"
-msgstr ""
+msgstr "Megjelenés"
 
-#: Settings.ui.h:54
+#: Settings.ui.h:69
 msgid "version: "
-msgstr ""
+msgstr "verzió: "
 
-#: Settings.ui.h:55
+#: Settings.ui.h:70
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr ""
+msgstr "A dash átformázása dock-ká"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:71
 msgid "Created by"
-msgstr ""
+msgstr "Létrehozta"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:72
 msgid "Webpage"
-msgstr ""
+msgstr "Honlap"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:73
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
 "\">GNU General Public License, version 2 or later</a> for details.</span>"
 msgstr ""
+"<span size=\"small\">Ez a program GARANCIA NÉLKÜL-i.\n"
+"További részletekért lásd <a href=\"https://www.gnu.org/licenses/old-"
+"licenses/gpl-2.0.html\">GNU General Public License, version 2 or later</a></"
+"span>"
 
-#: Settings.ui.h:60
+#: Settings.ui.h:75
 msgid "About"
-msgstr ""
+msgstr "Névjegy"
 
-#: Settings.ui.h:61
+#: Settings.ui.h:76
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr ""
+msgstr "Mutasd a dock-ot ha az egér mutató a képernyő sarkához ér."
 
-#: Settings.ui.h:62
+#: Settings.ui.h:77
 msgid "Autohide"
 msgstr "Automatikus elrejtés"
 
-#: Settings.ui.h:63
+#: Settings.ui.h:78
 msgid "Push to show: require pressure to show the dock"
-msgstr ""
+msgstr "Nyomásra mutatkozás: a dock láthatóvá válik nyomás alkamazása után."
 
-#: Settings.ui.h:64
+#: Settings.ui.h:79
 msgid "Enable in fullscreen mode"
-msgstr ""
+msgstr "Teljes képernyő módban aktiv"
 
-#: Settings.ui.h:65
+#: Settings.ui.h:80
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr ""
+msgstr "Mutasd a dock-ot ha nem akadályozz ablakokat."
 
-#: Settings.ui.h:66
+#: Settings.ui.h:81
 msgid "Dodge windows"
-msgstr ""
+msgstr "Ablakok kikerülése"
 
-#: Settings.ui.h:67
+#: Settings.ui.h:82
 msgid "All windows"
-msgstr ""
+msgstr "Összes ablak"
 
-#: Settings.ui.h:68
+#: Settings.ui.h:83
 msgid "Only focused application's windows"
-msgstr ""
+msgstr "Csak fókuszált alkalmazások ablakai"
 
-#: Settings.ui.h:69
-#, fuzzy
+#: Settings.ui.h:84
 msgid "Only maximized windows"
-msgstr "Kicsinyítés"
+msgstr "Csak maximalizált ablakok"
 
-#: Settings.ui.h:70
-#, fuzzy
+#: Settings.ui.h:85
 msgid "Animation duration (s)"
-msgstr "Animáció időtartalma [ezredmásodperc]"
+msgstr "Animáció időtartalma (mp)"
 
-#: Settings.ui.h:71
+#: Settings.ui.h:86
 msgid "0.000"
-msgstr ""
+msgstr "0.000"
 
-#: Settings.ui.h:72
-msgid "Hide timeout (s)"
-msgstr ""
-
-#: Settings.ui.h:73
+#: Settings.ui.h:87
 msgid "Show timeout (s)"
-msgstr ""
+msgstr "Láthatóság időkorlátja (mp)"
 
-#: Settings.ui.h:74
+#: Settings.ui.h:88
 msgid "Pressure threshold"
-msgstr ""
+msgstr "Nyomás küszöb"
 
 #, fuzzy
-#~ msgid "Do nothing"
-#~ msgstr "Ne tegyen semmit (előre beállított)"
+#~ msgid "Switch workspace by scrolling on the dock"
+#~ msgstr "Dock feletti görgetéskor válts munkahelyet"
 
 #~ msgid "Main Settings"
 #~ msgstr "Fő beállítások "
@@ -426,9 +487,6 @@ msgstr ""
 
 #~ msgid "Optional features"
 #~ msgstr "Tetszőleges beállítások"
-
-#~ msgid "Switch one workspace at a time"
-#~ msgstr "Válts munkahelyenként"
 
 #~ msgid "Only a 1px wide area close to the screen edge is active"
 #~ msgstr "A kijelző szélén csak egy 1px széles hely aktív "
