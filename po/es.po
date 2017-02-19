@@ -1,20 +1,20 @@
 # Dash to Dock spanish translation.
 # This file is distributed under the same license as the Dash to Dock package.
 # Hugo Olabera <hugolabe@gmail.com>, 2015.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-09-09 23:29+0100\n"
-"PO-Revision-Date: 2015-12-23 10:19+0100\n"
+"PO-Revision-Date: 2017-02-17 12:11+0100\n"
 "Last-Translator: Hugo Olabera <hugolabe@gmail.com>\n"
 "Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.5\n"
+"X-Generator: Poedit 1.8.11\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: prefs.js:98
@@ -42,9 +42,8 @@ msgid "Reset to defaults"
 msgstr "Restaurar"
 
 #: prefs.js:346
-#, fuzzy
 msgid "Customize middle-click behavior"
-msgstr "Personalizar estilo del indicador"
+msgstr "Personalizar comportamiento del botón central"
 
 #: prefs.js:419
 msgid "Customize running indicators"
@@ -79,9 +78,8 @@ msgid "Shift+Click action"
 msgstr "Acción de Mayúsculas+Click"
 
 #: Settings.ui.h:7
-#, fuzzy
 msgid "Raise window"
-msgstr "Minimizar ventana"
+msgstr "Elevar ventana"
 
 #: Settings.ui.h:8
 msgid "Minimize window"
@@ -97,25 +95,23 @@ msgstr "Alternar entre ventanas"
 
 #: Settings.ui.h:11
 msgid "Quit"
-msgstr ""
+msgstr "Salir"
 
 #: Settings.ui.h:12
 msgid "Behavior for Middle-Click."
-msgstr ""
+msgstr "Comportamiento del botón central"
 
 #: Settings.ui.h:13
-#, fuzzy
 msgid "Middle-Click action"
-msgstr "Acción del Click"
+msgstr "Acción del botón central"
 
 #: Settings.ui.h:14
 msgid "Behavior for Shift+Middle-Click."
-msgstr ""
+msgstr "Comportamiento para Mayúsculas+Botón-Central"
 
 #: Settings.ui.h:15
-#, fuzzy
 msgid "Shift+Middle-Click action"
-msgstr "Acción de Mayúsculas+Click"
+msgstr "Acción de Mayúsculas+Botón-Central"
 
 #: Settings.ui.h:16
 msgid "Show the dock on"
@@ -175,7 +171,7 @@ msgstr "Mostrar aplicaciones en ejecución"
 
 #: Settings.ui.h:31
 msgid "Isolate workspaces."
-msgstr "Aislar los epacios de trabajo."
+msgstr "Aislar los espacios de trabajo."
 
 #: Settings.ui.h:32
 msgid ""
@@ -323,7 +319,7 @@ msgstr "Empujar para mostrar: requiere hacer presión para mostrar el dock"
 
 #: Settings.ui.h:64
 msgid "Enable in fullscreen mode"
-msgstr ""
+msgstr "Habilitar en modo pantalla completa"
 
 #: Settings.ui.h:65
 msgid "Show the dock when it doesn't obstruct application windows."
