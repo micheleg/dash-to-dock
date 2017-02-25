@@ -716,6 +716,20 @@ const MyAppIconMenu = new Lang.Class({
                     this._appendSeparator();
                 }
 
+
+                if (AppDisplay.discreteGpuAvailable &&
+                    this._source.app.state == Shell.AppState.STOPPED &&
+                    actions.indexOf('activate-discrete-gpu') == -1) {
+                    this._onDiscreteGpuMenuItem = this._appendMenuItem(_("Launch using Dedicated Graphics Card"));
+                    this._onDiscreteGpuMenuItem.connect('activate', Lang.bind(this, function() {
+                        if (this._source.app.state == Shell.AppState.STOPPED)
+                            this._source.animateLaunch();
+
+                        this._source.app.launch(0, -1, true);
+                        this.emit('activate-window', null);
+                    }));
+                }
+
                 for (let i = 0; i < actions.length; i++) {
                     let action = actions[i];
                     let item = this._appendMenuItem(appInfo.get_action_name(action));
