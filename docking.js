@@ -437,10 +437,6 @@ const DockedDash = new Lang.Class({
         // Keep the dash below the modalDialogGroup
         Main.layoutManager.uiGroup.set_child_below_sibling(this.actor,Main.layoutManager.modalDialogGroup);
 
-        // pretend this._slider is isToplevel child so that fullscreen is actually tracked
-        let index = Main.layoutManager._findActor(this._slider.actor);
-        Main.layoutManager._trackedActors[index].isToplevel = true;
-
         // Set initial position
         this._resetPosition();
     },
