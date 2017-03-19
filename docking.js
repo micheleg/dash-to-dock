@@ -424,13 +424,15 @@ const DockedDash = new Lang.Class({
         this._slider.add_child(this._box);
         this._box.add_actor(this.dash.actor);
 
-        // Add aligning container without tracking it for input region (old affectsinputRegion: false that was removed).
-        // The public method trackChrome requires the actor to be child of a tracked actor. Since I don't want the parent
-        // to be tracked I use the private internal _trackActor instead.
+        // Add aligning container without tracking it for input region
         Main.uiGroup.add_child(this.actor);
 
-        if (this._settings.get_boolean('dock-fixed'))
-            Main.layoutManager._trackActor(this._slider.actor, {affectsStruts: true, trackFullscreen: true});
+        if (this._settings.get_boolean('dock-fixed')) {
+            // Note: tracking the fullscreen directly on the slider actor causes some hiccups when fullscreening
+            // windows of certain applications
+            Main.layoutManager._trackActor(this.actor, {affectsInputRegion: false, trackFullscreen: true});
+            Main.layoutManager._trackActor(this._slider.actor, {affectsStruts: true});
+        }
         else
             Main.layoutManager._trackActor(this._slider.actor);
 
@@ -555,9 +557,12 @@ const DockedDash = new Lang.Class({
         this._settings.connect('changed::dock-fixed', Lang.bind(this, function() {
 
             if (this._settings.get_boolean('dock-fixed')) {
+                Main.layoutManager._untrackActor(this.actor);
+                Main.layoutManager._trackActor(this.actor, {affectsInputRegion: false, trackFullscreen: true});
                 Main.layoutManager._untrackActor(this._slider.actor);
-                Main.layoutManager._trackActor(this._slider.actor, {affectsStruts: true, trackFullscreen: true});
+                Main.layoutManager._trackActor(this._slider.actor, {affectsStruts: true});
             } else {
+                Main.layoutManager._untrackActor(this.actor);
                 Main.layoutManager._untrackActor(this._slider.actor);
                 Main.layoutManager._trackActor(this._slider.actor);
              }
