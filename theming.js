@@ -60,6 +60,10 @@ const ThemeManager = new Lang.Class({
 
         this._updateCustomStyleClasses();
 
+        // destroy themeManager when the managed actor is destroyed (e.g. extension unload)
+        // in order to disconnect signals
+        this._actor.connect('destroy', Lang.bind(this, this.destroy));
+
     },
 
     destroy: function() {
