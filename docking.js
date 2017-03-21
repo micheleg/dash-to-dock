@@ -436,10 +436,8 @@ const DockedDash = new Lang.Class({
         else
             Main.layoutManager._trackActor(this._slider.actor);
 
-        // Keep the dash below the modalDialogGroup
-        Main.layoutManager.uiGroup.set_child_below_sibling(this.actor,Main.layoutManager.modalDialogGroup);
-
         // Set initial position
+        this._resetDepth();
         this._resetPosition();
     },
 
@@ -1116,6 +1114,15 @@ const DockedDash = new Lang.Class({
         this._adjustLegacyTray();
     },
 
+    // Set the dash at the correct depth in z
+    _resetDepth: function() {
+        // Keep the dash below the modalDialogGroup and the legacyTray
+        if (Main.legacyTray && Main.legacyTray.actor)
+            Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.legacyTray.actor);
+        else
+            Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
+    },
+
     _adjustLegacyTray: function() {
         let use_work_area = true;
 
@@ -1185,7 +1192,7 @@ const DockedDash = new Lang.Class({
 
     _onDragEnd: function() {
         // Restore drag default dash stack order
-        Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
+        this._resetDepth();
         if (this._oldignoreHover !== null)
             this._ignoreHover  = this._oldignoreHover;
         this._oldignoreHover = null;
