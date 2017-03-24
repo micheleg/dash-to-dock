@@ -140,6 +140,16 @@ const MyAppIcon = new Lang.Class({
     },
 
     onScrollEvent: function(actor, event) {
+
+        // We only activate windows of running applications, i.e. we never open new windows
+        // We check if the app is running, and that the # of windows is > 0 in
+        // case we use workspace isolation,
+        let appIsRunning = this.app.state == Shell.AppState.RUNNING
+            && getInterestingWindows(this.app, this._dtdSettings).length > 0;
+
+        if (!appIsRunning)
+            return false
+
         if (this._optionalScrollCycleWindowsDeadTimeId > 0)
             return false;
         else
