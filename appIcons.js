@@ -406,7 +406,7 @@ const MyAppIcon = new Lang.Class({
 
             case clickAction.LAUNCH:
                 this.animateLaunch();
-                this.app.open_new_window(-1);
+                appLaunchNewWindow(this.app);
                 break;
 
             case clickAction.QUIT:
@@ -420,7 +420,7 @@ const MyAppIcon = new Lang.Class({
         }
         else {
             this.animateLaunch();
-            this.app.open_new_window(-1);
+            appLaunchNewWindow(this.app);
         }
 
         Main.overview.hide();
@@ -611,6 +611,30 @@ function closeAllWindows(app, settings) {
     let windows = getInterestingWindows(app, settings);
     for (let i = 0; i < windows.length; i++)
         windows[i].delete(global.get_current_time());
+}
+
+/*
+* This is used as a workaround for a bug resulting in no new windows being opened
+* for certain running applications when calling open_new_window().
+*
+* https://bugzilla.gnome.org/show_bug.cgi?id=756844
+*
+* Similar to what done when generating the popupMenu entries, if the application provides
+*  a "New Window" action, use it instead of direclt requesting a new window with
+* open_new_window(), which fails for certain application, notably Nautilus.
+*/
+function appLaunchNewWindow(app) {
+    let appInfo = app.get_app_info();
+    let actions = appInfo.list_actions();
+    if (actions.indexOf('new-window') == -1) {
+        app.open_new_window(-1);
+    }
+    else {
+        i = actions.indexOf('new-window');
+        if (i !== -1)
+            app.launch_action(actions[i], global.get_current_time(), -1);
+
+    }
 }
 
 function cycleThroughWindows(app, settings, reversed) {
