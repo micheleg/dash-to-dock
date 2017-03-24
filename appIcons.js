@@ -166,15 +166,17 @@ const MyAppIcon = new Lang.Class({
         }
 
         let focusedApp = tracker.focus_app;
-        if (!Main.overview._shown){
+        if (!Main.overview._shown) {
             let reversed = direction === Meta.MotionDirection.UP;
             if (this.app == focusedApp)
                 cycleThroughWindows(this.app, this._dtdSettings, reversed);
             else {
                 // Activate the first window
                 let windows = getInterestingWindows(this.app, this._dtdSettings);
-                let w = windows[0];
-                Main.activateWindow(w);
+                if (windows.length > 0) {
+                    let w = windows[0];
+                    Main.activateWindow(w);
+                }
             }
         }
         else
@@ -643,6 +645,9 @@ function cycleThroughWindows(app, settings, reversed) {
     let MEMORY_TIME=3000;
 
     let app_windows = getInterestingWindows(app, settings);
+
+    if (app_windows.length <1)
+        return
 
     if (recentlyClickedAppLoopId > 0)
         Mainloop.source_remove(recentlyClickedAppLoopId);
