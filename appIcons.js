@@ -625,27 +625,40 @@ function closeAllWindows(app, settings) {
         windows[i].delete(global.get_current_time());
 }
 
-/*
-* This is used as a workaround for a bug resulting in no new windows being opened
-* for certain running applications when calling open_new_window().
-*
-* https://bugzilla.gnome.org/show_bug.cgi?id=756844
-*
-* Similar to what done when generating the popupMenu entries, if the application provides
-*  a "New Window" action, use it instead of direclt requesting a new window with
-* open_new_window(), which fails for certain application, notably Nautilus.
-*/
+/* Try to do the right thing when attempting to launch a new window of an app. In
+ * particular, if the application doens't allow to launch a new window, activate
+ * the existing window instead.
+ */
 function appLaunchNewWindow(app) {
     let appInfo = app.get_app_info();
     let actions = appInfo.list_actions();
-    if (actions.indexOf('new-window') == -1) {
-        app.open_new_window(-1);
+    if (app.can_open_new_window()) {
+        // This is used as a workaround for a bug resulting in no new windows being opened
+        // for certain running applications when calling open_new_window().
+        //
+        // https://bugzilla.gnome.org/show_bug.cgi?id=756844
+        //
+        // Similar to what done when generating the popupMenu entries, if the application provides
+        // a "New Window" action, use it instead of directly requesting a new window with
+        // open_new_window(), which fails for certain application, notably Nautilus.
+        if (actions.indexOf('new-window') == -1) {
+            app.open_new_window(-1);
+        }
+        else {
+            i = actions.indexOf('new-window');
+            if (i !== -1)
+                app.launch_action(actions[i], global.get_current_time(), -1);
+        }
     }
     else {
-        i = actions.indexOf('new-window');
-        if (i !== -1)
-            app.launch_action(actions[i], global.get_current_time(), -1);
-
+        // Try to manually activate the first window. Otherwise, when the app is activated by
+        // switching to a different workspace, a launch spinning icon is shown and disappers only
+        // after a timeout.
+        let windows = app.get_windows();
+        if (windows.length > 0)
+            Main.activateWindow(windows[0])
+        else
+            app.activate();
     }
 }
 
