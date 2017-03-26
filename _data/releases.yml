@@ -1,3 +1,18 @@
+- version: 57
+  date: 26-03-2017
+  shell_version: ["3.18", "3.20", "3.22", "3.24"]
+  notes:
+    - "Add GNOME Shell 3.125 support [Janez Troha: 97f6a0bb]"
+    - "Implement number overlay for the icons for hotkeys [franglais125: 578481c1, 73f5c147, 1781a3f7, def86c47, 04e64ca5, 0aa48a1a, 578481c1]"
+    - "Fix bug with autohide sensitive area interfering with the Activities hotcorner [393c4acc, 0f2fa2fd, bb271989]"
+    - "Update Hungarian, Spanish,[Romhányi Viktor: 9c232f3d, Hugo Olabera: 0cbea131]"
+    - "Fix bug with certain fullscreen application [a1f63c70, 1af73c03]"
+    - "Fix bug with application overview panel when  show-apps animation is disabled [franglais125, jderose9: 51b709cb]"
+    - "Add discrete GPU launch menu item [8c981726]"
+    - "Improve new window opening actions for single-window application (activate applicatoin instead) and certain applications (e.g. Nautilus) [168e7eb4, f415fa86, a69c77cf, 85b89b4b]"
+    - "ScrollCycleWindows: never open new windows [a168e2f5]"
+  zip_url: https://extensions.gnome.org/review/download/6696.shell-extension.zip
+
 - version: 56
   date: 05-02-2017
   shell_version: ["3.18", "3.20", "3.22"]
