@@ -975,7 +975,7 @@ const DockedDash = new Lang.Class({
             }
             else if (this._position == St.Side.RIGHT) {
                 x1 = this._monitor.x + this._monitor.width - 1;
-                x2 = x2;
+                x2 = x1;
                 y1 = workArea.y + 1;
                 y2 = workArea.y + workArea.height - 1;
                 direction = Meta.BarrierDirection.NEGATIVE_X;
