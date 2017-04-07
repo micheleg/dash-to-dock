@@ -1,16 +1,291 @@
+/*
+ * Credits:
+ * This file is based on code from the Dash to Panel extension by Jason DeRose
+ * and code from the Taskbar extension by Zorin OS
+ * Some code was also adapted from the upstream Gnome Shell source code.
+ */
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const St = imports.gi.St;
 const Mainloop = imports.mainloop;
+const Main = imports.ui.main;
+const Gtk = imports.gi.Gtk;
 
 const Params = imports.misc.params;
 const PopupMenu = imports.ui.popupMenu;
 const Tweener = imports.ui.tweener;
 const Workspace = imports.ui.workspace;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Utils = Me.imports.utils;
+const AppIcons = Me.imports.appIcons;
+
 const PREVIEW_MAX_WIDTH = 250;
 const PREVIEW_MAX_HEIGHT = 150;
+
+const WindowPreviewMenu = new Lang.Class({
+    Name: 'WindowPreviewMenu',
+    Extends: PopupMenu.PopupMenu,
+
+    _init: function(source, settings, monitorIndex) {
+        this._dtdSettings = settings;
+
+        let side = Utils.getPosition(settings);
+
+        this.parent(source.actor, 0.5, side);
+
+        // We want to keep the item hovered while the menu is up
+        this.blockSourceEvents = true;
+
+        this._source = source;
+        this._app = this._source.app;
+
+        this.actor.add_style_class_name('app-well-menu');
+        this.actor.set_style('max-width: '  + (Main.layoutManager.monitors[monitorIndex].width  - 22) + 'px; ' +
+                             'max-height: ' + (Main.layoutManager.monitors[monitorIndex].height - 22) + 'px;');
+        this.actor.hide();
+
+        // Chain our visibility and lifecycle to that of the source
+        this._mappedId = this._source.actor.connect('notify::mapped', Lang.bind(this, function () {
+            if (!this._source.actor.mapped)
+                this.close();
+        }));
+        this._destroyId = this._source.actor.connect('destroy', Lang.bind(this, this.destroy));
+
+        Main.uiGroup.add_actor(this.actor);
+
+        // Change the initialized side where required.
+        this._arrowSide = side;
+        this._boxPointer._arrowSide = side;
+        this._boxPointer._userArrowSide = side;
+
+        this._previewBox = new WindowPreviewList(this._app, this._dtdSettings);
+        this.addMenuItem(this._previewBox);
+    },
+
+    _redisplay: function() {
+        this._previewBox._shownInitially = false;
+        this._previewBox._redisplay();
+    },
+
+    popup: function() {
+        let windows = AppIcons.getInterestingWindows(this._app, this._dtdSettings);
+        if (windows.length > 0) {
+            this._redisplay();
+            this.open();
+            this._source.emit('sync-tooltip');
+        }
+    },
+
+    destroy: function () {
+        if (this._mappedId)
+            this._source.actor.disconnect(this._mappedId);
+
+        if (this._destroyId)
+            this._source.actor.disconnect(this._destroyId);
+
+        this.parent();
+    }
+
+});
+
+const WindowPreviewList = new Lang.Class({
+    Name: 'WindowPreviewMenuSection',
+    Extends: PopupMenu.PopupMenuSection,
+
+    _init: function(app, settings) {
+        this._dtdSettings = settings;
+
+        this.parent();
+
+        this.actor = new St.ScrollView({ name: 'dashtodockWindowScrollview',
+                                               hscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
+                                               vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
+                                               enable_mouse_scrolling: true });
+
+        this.actor.connect('scroll-event', Lang.bind(this, this._onScrollEvent ));
+
+        let position = Utils.getPosition(this._dtdSettings);
+        this.isHorizontal = position == St.Side.BOTTOM || position == St.Side.TOP;
+        this.box.set_vertical(!this.isHorizontal);
+        this.box.set_name('dashtodockWindowList');
+        this.actor.add_actor(this.box);
+        this.actor._delegate = this;
+
+        this._shownInitially = false;
+
+        this.app = app;
+
+        this._redisplayId = Main.initializeDeferredWork(this.actor, Lang.bind(this, this._redisplay));
+
+        this.actor.connect('destroy', Lang.bind(this, this._onDestroy));
+        this._stateChangedId = this.app.connect('windows-changed',
+                                                Lang.bind(this,
+                                                          this._queueRedisplay));
+    },
+
+    _queueRedisplay: function () {
+        Main.queueDeferredWork(this._redisplayId);
+    },
+
+    _onScrollEvent: function(actor, event) {
+        // Event coordinates are relative to the stage but can be transformed
+        // as the actor will only receive events within his bounds.
+        let stage_x, stage_y, ok, event_x, event_y, actor_w, actor_h;
+        [stage_x, stage_y] = event.get_coords();
+        [ok, event_x, event_y] = actor.transform_stage_point(stage_x, stage_y);
+        [actor_w, actor_h] = actor.get_size();
+
+        // If the scroll event is within a 1px margin from
+        // the relevant edge of the actor, let the event propagate.
+        if (event_y >= actor_h - 2)
+            return Clutter.EVENT_PROPAGATE;
+
+        // Skip to avoid double events mouse
+        if (event.is_pointer_emulated())
+            return Clutter.EVENT_STOP;
+
+        let adjustment, delta;
+
+        if (this.isHorizontal)
+            adjustment = this.actor.get_hscroll_bar().get_adjustment();
+        else
+            adjustment = this.actor.get_vscroll_bar().get_adjustment();
+
+        let increment = adjustment.step_increment;
+
+        switch ( event.get_scroll_direction() ) {
+        case Clutter.ScrollDirection.UP:
+            delta = -increment;
+            break;
+        case Clutter.ScrollDirection.DOWN:
+            delta = +increment;
+            break;
+        case Clutter.ScrollDirection.SMOOTH:
+            let [dx, dy] = event.get_scroll_delta();
+            delta = dy*increment;
+            delta += dx*increment;
+            break;
+
+        }
+
+        adjustment.set_value(adjustment.get_value() + delta);
+
+        return Clutter.EVENT_STOP;
+    },
+
+    _onDestroy: function() {
+        this.app.disconnect(this._stateChangedId);
+        this._stateChangedId = 0;
+    },
+
+    _createPreviewItem: function(window) {
+        let preview = new WindowPreviewMenuItem(window);
+        return preview;
+    },
+
+    _redisplay: function () {
+        let children = this._getMenuItems().filter(function(actor) {
+                return actor._window;
+            });
+
+        // Windows currently on the menu
+        let oldWin = this._getMenuItems().map(function(actor) {
+                return actor._window;
+            });
+
+        // All app windows
+        let newWin = AppIcons.getInterestingWindows(this.app, this._dtdSettings).sort(this.sortWindowsCompareFunction);
+
+        let addedItems = [];
+        let removedActors = [];
+
+        let newIndex = 0;
+        let oldIndex = 0;
+
+        while (newIndex < newWin.length || oldIndex < oldWin.length) {
+            // No change at oldIndex/newIndex
+            if (oldWin[oldIndex] &&
+                oldWin[oldIndex] == newWin[newIndex]) {
+                oldIndex++;
+                newIndex++;
+                continue;
+            }
+
+            // Window removed at oldIndex
+            if (oldWin[oldIndex] &&
+                newWin.indexOf(oldWin[oldIndex]) == -1) {
+                removedActors.push(children[oldIndex]);
+                oldIndex++;
+                continue;
+            }
+
+            // Window added at newIndex
+            if (newWin[newIndex] &&
+                oldWin.indexOf(newWin[newIndex]) == -1) {
+                addedItems.push({ item: this._createPreviewItem(newWin[newIndex]),
+                                  pos: newIndex });
+                newIndex++;
+                continue;
+            }
+
+            // Window moved
+            let insertHere = newWin[newIndex + 1] &&
+                             newWin[newIndex + 1] == oldWin[oldIndex];
+            let alreadyRemoved = removedActors.reduce(function(result, actor) {
+                let removedWin = actor.window;
+                return result || removedWin == newWin[newIndex];
+            }, false);
+
+            if (insertHere || alreadyRemoved) {
+                addedItems.push({ item: this._createPreviewItem(newWin[newIndex]),
+                                  pos: newIndex + removedActors.length });
+                newIndex++;
+            } else {
+                removedActors.push(children[oldIndex]);
+                oldIndex++;
+            }
+        }
+
+        for (let i = 0; i < addedItems.length; i++)
+            this.addMenuItem(addedItems[i].item,
+                             addedItems[i].pos);
+
+        for (let i = 0; i < removedActors.length; i++) {
+            let item = removedActors[i];
+            item._animateOutAndDestroy();
+        }
+
+        // Skip animations on first run when adding the initial set
+        // of items, to avoid all items zooming in at once
+        let animate = this._shownInitially;
+
+        if (!this._shownInitially)
+            this._shownInitially = true;
+
+        for (let i = 0; i < addedItems.length; i++)
+            addedItems[i].item.show(animate);
+
+        // Workaround for https://bugzilla.gnome.org/show_bug.cgi?id=692744
+        // Without it, StBoxLayout may use a stale size cache
+        this.box.queue_relayout();
+
+        if (newWin.length < 1)
+            this._getTopMenu().close(~0);
+    },
+
+    isAnimatingOut: function() {
+        return this.actor.get_children().reduce(function(result, actor) {
+                   return result || actor.animatingOut;
+               }, false);
+    },
+
+    sortWindowsCompareFunction: function(windowA, windowB) {
+        return windowA.get_stable_sequence() > windowB.get_stable_sequence();
+    }
+});
+
 const WindowPreviewMenuItem = new Lang.Class({
     Name: 'WindowPreviewMenuItem',
     Extends: PopupMenu.PopupBaseMenuItem,
@@ -212,6 +487,21 @@ const WindowPreviewMenuItem = new Lang.Class({
                            transition: 'easeInQuad' });
     },
 
+    show: function(animate) {
+        let fullWidth = this.actor.get_width();
+
+        this.actor.opacity = 0;
+        this.actor.set_width(0);
+
+        let time = animate ? 0.25 : 0;
+        Tweener.addTween(this.actor,
+                         { opacity: 255,
+                           width: fullWidth,
+                           time: time,
+                           transition: 'easeInOutQuad'
+                         });
+    },
+
     _animateOutAndDestroy: function() {
         Tweener.addTween(this.actor,
                          { opacity: 0,
@@ -220,6 +510,7 @@ const WindowPreviewMenuItem = new Lang.Class({
 
         Tweener.addTween(this.actor,
                          { height: 0,
+                           width: 0,
                            time: 0.25,
                            delay: 0.25,
                            onCompleteScope: this,
@@ -227,6 +518,11 @@ const WindowPreviewMenuItem = new Lang.Class({
                               this.actor.destroy();
                            }
                          });
+    },
+
+    activate: function() {
+        this._getTopMenu().close();
+        Main.activateWindow(this._window);
     },
 
     _onDestroy: function() {
