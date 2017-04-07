@@ -177,7 +177,7 @@
       <description>Show appplications button in the dash</description>
     </key>
     <key type="b" name="show-apps-at-top">
-      <default>false</default>
+      <default>true</default>
       <summary>Show application button at top</summary>
       <description>Show appplication button at top of the dash</description>
     </key>
