@@ -456,7 +456,7 @@ const MyAppIcon = new Lang.Class({
                 this.app.open_new_window(-1);
             }
             else {
-                i = actions.indexOf('new-window');
+                let i = actions.indexOf('new-window');
                 if (i !== -1)
                     this.app.launch_action(actions[i], global.get_current_time(), -1);
             }
