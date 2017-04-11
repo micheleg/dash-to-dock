@@ -590,6 +590,10 @@ var MyDash = new Lang.Class({
             }
 
             item.hideLabel();
+
+            // We need to close the dash menu if it's open
+            if (this._containerObject.menu.isOpen)
+                this._containerObject.menu.toggle();
         }
         else {
             // I want to listen from outside when a menu is closed. I used to
