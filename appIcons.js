@@ -872,9 +872,8 @@ const MyAppIconMenu = new Lang.Class({
           // Check if there are new windows not already displayed. In such case, repopulate the allWindows
           // menu. Windows removal is already handled by each preview being connected to the destroy signal
           let old_windows = this._allWindowsMenuItem.menu._getMenuItems().map(function(item){
-              if (item._window)
-                  return item._window;
-          })
+              return item._window;
+          });
 
           let new_windows = windows.filter(function(w) {return old_windows.indexOf(w) < 0;});
           if (new_windows.length > 0) {
