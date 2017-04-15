@@ -873,7 +873,7 @@ const MyAppIconMenu = new Lang.Class({
           // menu. Windows removal is already handled by each preview being connected to the destroy signal
           let old_windows = this._allWindowsMenuItem.menu._getMenuItems().map(function(item){
               if (item._window)
-                  return;
+                  return item._window;
           })
 
           let new_windows = windows.filter(function(w) {return old_windows.indexOf(w) < 0;});
