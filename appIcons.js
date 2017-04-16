@@ -35,7 +35,8 @@ const clickAction = {
     MINIMIZE: 1,
     LAUNCH: 2,
     CYCLE_WINDOWS: 3,
-    QUIT: 4
+    MINIMIZE_OR_OVERVIEW: 4,
+    QUIT: 5
 };
 
 const scrollAction = {
@@ -390,6 +391,10 @@ const MyAppIcon = new Lang.Class({
         let appIsRunning = this.app.state == Shell.AppState.RUNNING
             && getInterestingWindows(this.app, this._dtdSettings).length > 0
 
+        // Some action modes (e.g. MINIMIZE_OR_OVERVIEW) require overview to remain open
+        // This variable keeps track of this
+        let shouldHideOverview = true;
+
         // We customize the action only when the application is already running
         if (appIsRunning) {
             switch (buttonAction) {
@@ -413,6 +418,27 @@ const MyAppIcon = new Lang.Class({
                 }
                 else
                     this.app.activate();
+                break;
+
+            case clickAction.MINIMIZE_OR_OVERVIEW:
+                let windows = getInterestingWindows(this.app, this._dtdSettings);
+                let nbWindows = windows.length;
+                // When a single window is present, toggle minimization
+                if (windows && nbWindows && nbWindows <= 1) {
+                    let w = windows[0];
+                    if (this.app == focusedApp) {
+                        // Window is raised, minimize it
+                        minimizeWindow(this.app, w, this._dtdSettings);
+                    } else {
+                        // Window is minimized, raise it
+                        Main.activateWindow(w);
+                    }
+                    // Launch overview when multiple windows are present
+                    // TODO: only show current app windows when gnome shell API will allow it
+                } else {
+                    shouldHideOverview = false;
+                    Main.overview.toggle();
+                }
                 break;
 
             case clickAction.CYCLE_WINDOWS:
@@ -447,7 +473,10 @@ const MyAppIcon = new Lang.Class({
             this.launchNewWindow();
         }
 
-        Main.overview.hide();
+        // Hide overview except when action mode requires it
+        if(shouldHideOverview) {
+            Main.overview.hide();
+        }
     },
 
     // Try to do the right thing when attempting to launch a new window of an app. In

@@ -5,7 +5,8 @@
     <value value='1' nick='minimize'/>
     <value value='2' nick='launch'/>
     <value value='3' nick='cycle-windows'/>
-    <value value='4' nick='quit'/>
+    <value value='4' nick='minimize-or-overview'/>
+    <value value='5' nick='quit'/>
   </enum>
   <enum id='org.gnome.shell.extensions.dash-to-dock.scrollAction'>
     <value value='0' nick='do-nothing'/>
