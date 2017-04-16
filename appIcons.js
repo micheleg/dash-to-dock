@@ -35,7 +35,8 @@ const clickAction = {
     MINIMIZE: 1,
     LAUNCH: 2,
     CYCLE_WINDOWS: 3,
-    QUIT: 4
+    MINIMIZE_OR_OVERVIEW: 4,
+    QUIT: 5
 };
 
 const scrollAction = {
@@ -399,6 +400,29 @@ const MyAppIcon = new Lang.Class({
                 }
                 else
                     this.app.activate();
+                break;
+
+            case clickAction.MINIMIZE_OR_OVERVIEW:
+                let windows = getInterestingWindows(this.app, this._dtdSettings);
+                let nbWindows = windows.length;
+                // When a single window is present, toggle minimization
+                if (windows && nbWindows && nbWindows <= 1) {
+                  let w = windows[0];
+                  if (this.app == focusedApp) {
+                    // Window is raised, minimize it
+                    minimizeWindow(this.app, w, this._dtdSettings);
+                  } else {
+                    // Window is minimized, raise it
+                    Main.activateWindow(w);
+                  }
+                // Launch overview when multiple windows are present
+                // TODO: only show current app windows when gnome shell API will allow it
+                } else {
+                  Main.overview.toggle();
+                  // calling toggle() without another function afterwards fails for me
+                  // adding a log entry as a workaround
+                  console.log('toggled overview');
+                }
                 break;
 
             case clickAction.CYCLE_WINDOWS:
