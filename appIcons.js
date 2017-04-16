@@ -67,12 +67,12 @@ const MyAppIcon = new Lang.Class({
     Extends: AppDisplay.AppIcon,
 
     // settings are required inside.
-    _init: function(settings, app, iconParams, onActivateOverride) {
+    _init: function(settings, app, iconParams) {
         // a prefix is required to avoid conflicting with the parent class variable
         this._dtdSettings = settings;
         this._nWindows = 0;
 
-        this.parent(app, iconParams, onActivateOverride);
+        this.parent(app, iconParams);
 
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
