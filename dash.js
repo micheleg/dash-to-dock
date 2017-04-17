@@ -178,14 +178,13 @@ const baseIconSizes = [16, 22, 24, 32, 48, 64, 96, 128];
 const MyDash = new Lang.Class({
     Name: 'DashToDock.MyDash',
 
-    _init: function(settings, monitorIndex) {
+    _init: function(settings) {
         this._maxHeight = -1;
         this.iconSize = 64;
         this._availableIconSizes = baseIconSizes;
         this._shownInitially = false;
 
         this._dtdSettings = settings;
-        this._monitorIndex = monitorIndex;
         this._position = Convenience.getPosition(settings);
         this._isHorizontal = ((this._position == St.Side.TOP) ||
                                (this._position == St.Side.BOTTOM));
@@ -257,7 +256,6 @@ const MyDash = new Lang.Class({
                 this._maxHeight = this.actor.height;
             }));
         }
-
         // Update minimization animation target position on allocation of the
         // container and on scrollview change.
         this._box.connect('notify::allocation', Lang.bind(this, this._updateAppsIconGeometry));
@@ -449,7 +447,7 @@ const MyDash = new Lang.Class({
     },
 
     _createAppItem: function(app) {
-        let appIcon = new AppIcons.MyAppIcon(this._dtdSettings, app, this._monitorIndex,
+        let appIcon = new AppIcons.MyAppIcon(this._dtdSettings, app,
                                              { setSizeManually: true,
                                                showLabel: false });
         if (appIcon._draggable) {

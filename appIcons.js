@@ -21,6 +21,7 @@ const PopupMenu = imports.ui.popupMenu;
 const Tweener = imports.ui.tweener;
 const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
+const LayoutManager = imports.ui.main.layoutManager;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
@@ -67,10 +68,9 @@ const MyAppIcon = new Lang.Class({
     Extends: AppDisplay.AppIcon,
 
     // settings are required inside.
-    _init: function(settings, app, monitorIndex, iconParams) {
+    _init: function(settings, app, iconParams) {
         // a prefix is required to avoid conflicting with the parent class variable
         this._dtdSettings = settings;
-        this._monitorIndex = monitorIndex;
         this._signalsHandler = new Convenience.GlobalSignalsHandler();
         this._nWindows = 0;
 
@@ -227,9 +227,10 @@ const MyAppIcon = new Lang.Class({
         [rect.x, rect.y] = this.actor.get_transformed_position();
         [rect.width, rect.height] = this.actor.get_transformed_size();
 
+        let monitorIndex = LayoutManager.findIndexForActor(this.actor);
+
         let windows = this.app.get_windows();
         if (this._dtdSettings.get_boolean('multi-monitor')){
-            let monitorIndex = this._monitorIndex;
             windows = windows.filter(function(w) {
                 return w.get_monitor() == monitorIndex;
             });
