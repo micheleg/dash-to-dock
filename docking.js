@@ -249,7 +249,7 @@ const DockedDash = new Lang.Class({
         this._dockDwellTimeoutId = 0
 
         // Create a new dash object
-        this.dash = new MyDash.MyDash(this._settings);
+        this.dash = new MyDash.MyDash(this._settings, this._monitorIndex);
 
         // connect app icon into the view selector
         this.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
