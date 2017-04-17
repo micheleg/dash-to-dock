@@ -226,8 +226,8 @@ const DockedDash = new Lang.Class({
          */
         this.forcedOverview = false;
 
-        // Put dock on the primary monitor
-        this._monitor = Main.layoutManager.primaryMonitor;
+        // Put dock on the required monitor
+        this._monitor = Main.layoutManager.monitors[this._monitorIndex];
 
         // this store size and the position where the dash is shown;
         // used by intellihide module to check window overlap.
@@ -1025,28 +1025,12 @@ const DockedDash = new Lang.Class({
         // Ensure variables linked to settings are updated.
         this._updateVisibilityMode();
 
-        let monitorIndex = this._monitorIndex;
         let extendHeight = this._settings.get_boolean('extend-height');
-
-        // The dock goes on the primary monitor if requested (monitorIndex==0) or if the setting
-        // is incosistent (e.g. desired monitor not connected).
-        if ((monitorIndex <= 0) || (monitorIndex > Main.layoutManager.monitors.length -1))
-            monitorIndex = Main.layoutManager.primaryIndex;
-        else {
-            // Gdk and shell monitors numbering differ at least under wayland:
-            // While the primary monitor appears to be always index 0 in Gdk,
-            // the shell can assign a different number (Main.layoutManager.primaryMonitor)
-            // remap monitors numbering from settings (Gdk) to shell
-            if (monitorIndex <= Main.layoutManager.primaryIndex)
-                monitorIndex = (monitorIndex + 1) % Main.layoutManager.monitors.length;
-        }
-
-        this._monitor = Main.layoutManager.monitors[monitorIndex];
 
         // Note: do not use the workarea coordinates in the direction on which the dock is placed,
         // to avoid a loop [position change -> workArea change -> position change] with
         // fixed dock.
-        let workArea = Main.layoutManager.getWorkAreaForMonitor(monitorIndex);
+        let workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitorIndex);
 
         // Reserve space for the dash on the overview
         // if the dock is on the primary monitor
@@ -1744,6 +1728,20 @@ const DockManager = new Lang.Class({
 
     _createDocks: function() {
         let preferredMonitor = this._settings.get_int('preferred-monitor');
+
+        // The dock goes on the primary monitor if requested (preferredMonitor==0) or if the setting
+        // is incosistent (e.g. desired monitor not connected).
+        if ((preferredMonitor <= 0) || (preferredMonitor > Main.layoutManager.monitors.length -1))
+            preferredMonitor = Main.layoutManager.primaryIndex;
+        else {
+            // Gdk and shell monitors numbering differ at least under wayland:
+            // While the primary monitor appears to be always index 0 in Gdk,
+            // the shell can assign a different number (Main.layoutManager.primaryMonitor)
+            // remap monitors numbering from settings (Gdk) to shell
+            if (preferredMonitor <= Main.layoutManager.primaryIndex)
+                preferredMonitor = (preferredMonitor + 1) % Main.layoutManager.monitors.length;
+        }
+
 
         // First we create the main Dock, to get the extra features to bind to this one
         let dock = new DockedDash(this._settings, preferredMonitor);
