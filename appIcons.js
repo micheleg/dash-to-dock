@@ -377,6 +377,10 @@ const MyAppIcon = new Lang.Class({
         let appIsRunning = this.app.state == Shell.AppState.RUNNING
             && getInterestingWindows(this.app, this._dtdSettings).length > 0
 
+        // Some action modes (e.g. MINIMIZE_OR_OVERVIEW) require overview to remain open
+        // This variable keeps track of this
+        let shouldHideOverview = true;
+
         // We customize the action only when the application is already running
         if (appIsRunning) {
             switch (buttonAction) {
@@ -418,10 +422,8 @@ const MyAppIcon = new Lang.Class({
                 // Launch overview when multiple windows are present
                 // TODO: only show current app windows when gnome shell API will allow it
                 } else {
+                  shouldHideOverview = false;
                   Main.overview.toggle();
-                  // calling toggle() without another function afterwards fails for me
-                  // adding a log entry as a workaround
-                  console.log('toggled overview');
                 }
                 break;
 
@@ -457,7 +459,10 @@ const MyAppIcon = new Lang.Class({
             this.launchNewWindow();
         }
 
-        Main.overview.hide();
+        // Hide overview except when action mode requires it
+        if(shouldHideOverview) {
+          Main.overview.hide();
+        }
     },
 
     // Try to do the right thing when attempting to launch a new window of an app. In
