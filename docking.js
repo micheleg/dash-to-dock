@@ -1839,7 +1839,6 @@ const DockManager = new Lang.Class({
         let nDocks = allDocks.length;
         for (let i = nDocks-1; i >= 0; i--) {
             allDocks[i].destroy();
-            allDocks[i] = null;
             allDocks.pop();
         }
     },
@@ -1854,15 +1853,11 @@ const DockManager = new Lang.Class({
         Main.overview.dashIconSize = Main.overview._controls.dash.iconSize;
 
         Main.overview._dash = this._oldDash;
-        this._oldDash=null;
     },
 
     destroy: function() {
         this._signalsHandler.destroy();
         this._deleteDocks();
-        this._settings.run_dispose();
-        this._settings = null;
-
         this._restoreDash();
     }
 });
