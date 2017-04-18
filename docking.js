@@ -384,7 +384,6 @@ const DockedDash = new Lang.Class({
             this._enableExtraFeatures();
         // Load optional features that need to be activated once per dock
         this._optionalScrollWorkspaceSwitch();
-        this._optionalWorkspaceIsolation();
 
          // Delay operations that require the shell to be fully loaded and with
          // user theme applied.
@@ -1356,7 +1355,6 @@ const DockedDash = new Lang.Class({
             this.dash.actor, _('Dash'), 'user-bookmarks-symbolic',
                 {focusCallback: Lang.bind(this, this._onAccessibilityFocus)});
 
-        this._optionalIsolatedOverview();
         this._optionalHotKeys();
         this._optionalNumberOverlay();
     },
@@ -1463,96 +1461,6 @@ const DockedDash = new Lang.Class({
             }
             else
                 return false;
-        }
-    },
-
-    /**
-     * Isolate overview to open new windows for inactive apps
-     */
-    _optionalWorkspaceIsolation: function() {
-
-        let label = 'optionalWorkspaceIsolation';
-
-        this._signalsHandler.add([
-            this._settings,
-            'changed::isolate-workspaces',
-            Lang.bind(this, function() {
-                    this.dash.resetAppIcons();
-                    if (this._settings.get_boolean('isolate-workspaces'))
-                        Lang.bind(this, enable)();
-                    else
-                        Lang.bind(this, disable)();
-            })
-        ]);
-
-        if (this._settings.get_boolean('isolate-workspaces'))
-            Lang.bind(this, enable)();
-
-        function enable() {
-            this._signalsHandler.removeWithLabel(label);
-
-            this._signalsHandler.addWithLabel(label, [
-                global.screen,
-                'restacked',
-                Lang.bind(this.dash, this.dash._queueRedisplay)
-            ]);
-            this._signalsHandler.addWithLabel(label, [
-                global.window_manager,
-                'switch-workspace',
-                Lang.bind(this.dash, this.dash._queueRedisplay)
-            ]);
-        }
-
-        function disable() {
-            this._signalsHandler.removeWithLabel(label);
-        }
-
-    },
-
-    _optionalIsolatedOverview: function() {
-
-        let label = 'optionalIsolatedOverview';
-
-        this._signalsHandler.add([
-            this._settings,
-            'changed::isolate-workspaces',
-            Lang.bind(this, function() {
-                    if (this._settings.get_boolean('isolate-workspaces'))
-                        Lang.bind(this, enable)();
-                    else
-                        Lang.bind(this, disable)();
-            })
-        ]);
-
-        if (this._settings.get_boolean('isolate-workspaces'))
-            Lang.bind(this, enable)();
-
-        function enable() {
-            this._injectionsHandler.removeWithLabel(label);
-
-            this._injectionsHandler.addWithLabel(label, [
-                Shell.App.prototype,
-                'activate',
-                IsolatedOverview
-            ]);
-        }
-
-        function disable() {
-            this._injectionsHandler.removeWithLabel(label);
-        }
-
-        function IsolatedOverview() {
-            // These lines take care of Nautilus for icons on Desktop
-            let windows = this.get_windows().filter(function(w) {
-                return w.get_workspace().index() == global.screen.get_active_workspace_index();
-            });
-            if (windows.length == 1)
-                if (windows[0].skip_taskbar)
-                    return this.open_new_window(-1);
-
-            if (this.is_on_workspace(global.screen.get_active_workspace()))
-                return Main.activateWindow(windows[0]);
-            return this.open_new_window(-1);
         }
     },
 
@@ -1730,6 +1638,93 @@ const DockedDash = new Lang.Class({
 
 Signals.addSignalMethods(DockedDash.prototype);
 
+/**
+ * Isolate overview to open new windows for inactive apps
+ * Note: the future implementaion is not fully contained here. Some bits are around in other methods of other classes.
+ * This class just take care of enabling/disabling the option.
+ */
+const WorkspaceIsolation = new Lang.Class({
+
+    Name: 'DashToDock.WorkspaceIsolation',
+
+    _init: function(settings, allDocks) {
+
+        this._settings = settings;
+        this._allDocks = allDocks;
+
+        this._signalsHandler = new Convenience.GlobalSignalsHandler();
+        this._injectionsHandler = new Convenience.InjectionsHandler();
+
+        this._signalsHandler.add([
+            this._settings,
+            'changed::isolate-workspaces',
+            Lang.bind(this, function() {
+                    this._allDocks[0].dash.resetAppIcons();
+                    if (this._settings.get_boolean('isolate-workspaces'))
+                        Lang.bind(this, this._enable)();
+                    else
+                        Lang.bind(this, this._disable)();
+            })
+        ]);
+
+        if (this._settings.get_boolean('isolate-workspaces'))
+            this._enable();
+
+    },
+
+    _enable: function() {
+
+        // ensure I never double-register/inject
+        // although it should never happen
+        this._disable();
+
+        this._allDocks.forEach(function(dock) {
+            this._signalsHandler.addWithLabel('isolation', [
+                global.screen,
+                'restacked',
+                Lang.bind(dock.dash, dock.dash._queueRedisplay)
+            ], [
+                global.window_manager,
+                'switch-workspace',
+                Lang.bind(dock.dash, dock.dash._queueRedisplay)
+            ]);
+        }, this);
+
+        // here this is the Shell.App
+        function IsolatedOverview() {
+            // These lines take care of Nautilus for icons on Desktop
+            let windows = this.get_windows().filter(function(w) {
+                return w.get_workspace().index() == global.screen.get_active_workspace_index();
+            });
+            if (windows.length == 1)
+                if (windows[0].skip_taskbar)
+                    return this.open_new_window(-1);
+
+            if (this.is_on_workspace(global.screen.get_active_workspace()))
+                return Main.activateWindow(windows[0]);
+            return this.open_new_window(-1);
+        }
+
+        this._injectionsHandler.addWithLabel('isolation', [
+            Shell.App.prototype,
+            'activate',
+            IsolatedOverview
+        ]);
+    },
+
+    _disable: function () {
+        this._signalsHandler.removeWithLabel('isolation');
+        this._injectionsHandler.removeWithLabel('isolation');
+    },
+
+    destroy: function() {
+        this._signalsHandler.destroy();
+        this._injectionsHandler.destroy();
+    }
+
+});
+
+
 const DockManager = new Lang.Class({
     Name: 'DashToDock.DockManager',
 
@@ -1798,6 +1793,9 @@ const DockManager = new Lang.Class({
         mainShowAppsButton = dock.dash.showAppsButton;
         allDocks.push(dock);
 
+        // Load optional features
+        this._workspaceIsolation = new WorkspaceIsolation(this._settings, allDocks);
+
         // Make the necessary changes to Main.overview._dash
         this._prepareMainDash();
 
@@ -1833,6 +1831,9 @@ const DockManager = new Lang.Class({
     },
 
     _deleteDocks: function() {
+        // Remove extra features
+        this._workspaceIsolation.destroy();
+
         // Delete all docks
         let nDocks = allDocks.length;
         for (let i = nDocks-1; i >= 0; i--) {
