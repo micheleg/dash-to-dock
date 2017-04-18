@@ -51,6 +51,11 @@ let allDocks = [];
  * applications button.
  */
 let forcedOverview = false;
+/*
+ * With multiple docks on all monitors, this is the showAppsButton of the primary one
+ * (the one on the primary monitor if), from which the spring animatoin has to originate.
+*/
+let mainShowAppsButton = null;
 
 /**
  * A simple St.Widget with one child whose allocation takes into account the
@@ -1284,7 +1289,7 @@ const DockedDash = new Lang.Class({
                             Main.overview.disconnect(overviewShownId);
                             Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
                                 grid.actor.opacity = 255;
-                                grid.animateSpring(IconGrid.AnimationDirection.IN, this.dash.showAppsButton);
+                                grid.animateSpring(IconGrid.AnimationDirection.IN, mainShowAppsButton);
                             }));
                         }));
                     }
@@ -1788,9 +1793,9 @@ const DockManager = new Lang.Class({
                 preferredMonitor = (preferredMonitor + 1) % Main.layoutManager.monitors.length;
         }
 
-
         // First we create the main Dock, to get the extra features to bind to this one
         let dock = new DockedDash(this._settings, preferredMonitor);
+        mainShowAppsButton = dock.dash.showAppsButton;
         allDocks.push(dock);
 
         // Make the necessary changes to Main.overview._dash
