@@ -44,16 +44,6 @@ const scrollAction = {
     SWITCH_WORKSPACE: 2
 };
 
-/* status variable: true when the overview is shown through the dash
- * applications button.
- */
-let forcedOverview = false;
-/*
- * With multiple docks on all monitors, this is the showAppsButton of the primary one
- * (the one on the primary monitor if), from which the spring animatoin has to originate.
-*/
-let mainShowAppsButton = null;
-
 /**
  * A simple St.Widget with one child whose allocation takes into account the
  * slide out of its child via the _slidex parameter ([0:1]).
@@ -250,9 +240,6 @@ const DockedDash = new Lang.Class({
 
         // Create a new dash object
         this.dash = new MyDash.MyDash(this._settings, this._monitorIndex);
-
-        // connect app icon into the view selector
-        this.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
 
         if (!this._settings.get_boolean('show-show-apps-button'))
             this.dash.hideShowAppsButton();
@@ -1231,106 +1218,6 @@ const DockedDash = new Lang.Class({
         this._animateIn(this._settings.get_double('animation-time'), 0);
     },
 
-    _onShowAppsButtonToggled: function() {
-        // Sync the status of the default appButtons. Only if the two statuses are
-        // different, that means the user interacted with the extension provided
-        // application button, cutomize the behaviour. Otherwise the shell has changed the
-        // status (due to the _syncShowAppsButtonToggled function below) and it
-        // has already performed the desired action.
-
-        let animate = this._settings.get_boolean('animate-show-apps');
-        let selector = Main.overview.viewSelector;
-
-        if (selector._showAppsButton.checked !== this.dash.showAppsButton.checked) {
-            // find visible view
-            let visibleView;
-            Main.overview.viewSelector.appDisplay._views.every(function(v, index) {
-                if (v.view.actor.visible) {
-                    visibleView = index;
-                    return false;
-                }
-                else
-                    return true;
-            });
-
-            if (this.dash.showAppsButton.checked) {
-                // force spring animation triggering.By default the animation only
-                // runs if we are already inside the overview.
-                if (!Main.overview._shown) {
-                    forcedOverview = true;
-                    let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
-                    let grid = view._grid;
-                    if (animate) {
-                        // Animate in the the appview, hide the appGrid to avoiud flashing
-                        // Go to the appView before entering the overview, skipping the workspaces.
-                        // Do this manually avoiding opacity in transitions so that the setting of the opacity
-                        // to 0 doesn't get overwritten.
-                        Main.overview.viewSelector._activePage.opacity = 0;
-                        Main.overview.viewSelector._activePage.hide();
-                        Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
-                        Main.overview.viewSelector._activePage.show();
-                        grid.actor.opacity = 0;
-
-                        // The animation has to be trigered manually because the AppDisplay.animate
-                        // method is waiting for an allocation not happening, as we skip the workspace view
-                        // and the appgrid could already be allocated from previous shown.
-                        // It has to be triggered after the overview is shown as wrong coordinates are obtained
-                        // otherwise.
-                        let overviewShownId = Main.overview.connect('shown', Lang.bind(this, function() {
-                            Main.overview.disconnect(overviewShownId);
-                            Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
-                                grid.actor.opacity = 255;
-                                grid.animateSpring(IconGrid.AnimationDirection.IN, mainShowAppsButton);
-                            }));
-                        }));
-                    }
-                    else {
-                        Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
-                        Main.overview.viewSelector._activePage.show();
-                        grid.actor.opacity = 255;
-                    }
-
-                }
-
-                // Finally show the overview
-                selector._showAppsButton.checked = true;
-                Main.overview.show();
-            }
-            else {
-                if (forcedOverview) {
-                    // force exiting overview if needed
-
-                    if (animate) {
-                        // Manually trigger springout animation without activating the
-                        // workspaceView to avoid the zoomout animation. Hide the appPage
-                        // onComplete to avoid ugly flashing of original icons.
-                        let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
-                        let grid = view._grid;
-                        view.animate(IconGrid.AnimationDirection.OUT, Lang.bind(this, function() {
-                            Main.overview.viewSelector._appsPage.hide();
-                            Main.overview.hide();
-                            selector._showAppsButton.checked = false;
-                            forcedOverview = false;
-                        }));
-                    }
-                    else {
-                        Main.overview.hide();
-                        forcedOverview = false;
-                    }
-                }
-                else {
-                    selector._showAppsButton.checked = false;
-                    forcedOverview = false;
-                }
-            }
-        }
-
-        // whenever the button is unactivated even if not by the user still reset the
-        // forcedOverview flag
-        if (this.dash.showAppsButton.checked == false)
-            forcedOverview = false;
-    },
-
     /**
      * Keep ShowAppsButton status in sync with the overview status
      */
@@ -1749,6 +1636,10 @@ const DockManager = new Lang.Class({
         this._allDocks = [];
         this._createDocks();
 
+        // status variable: true when the overview is shown through the dash
+        // applications button.
+        this._forcedOverview = false;
+
         // Connect relevant signals to the toggling function
         this._bindSettingsChanges();
     },
@@ -1805,8 +1696,11 @@ const DockManager = new Lang.Class({
 
         // First we create the main Dock, to get the extra features to bind to this one
         let dock = new DockedDash(this._settings, preferredMonitor);
-        mainShowAppsButton = dock.dash.showAppsButton;
+        this._mainShowAppsButton = dock.dash.showAppsButton;
         this._allDocks.push(dock);
+
+        // connect app icon into the view selector
+        dock.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
 
         // Load optional features
         this._workspaceIsolation = new WorkspaceIsolation(this._settings, this._allDocks);
@@ -1822,6 +1716,8 @@ const DockManager = new Lang.Class({
                     continue;
                 let dock = new DockedDash(this._settings, iMon);
                 this._allDocks.push(dock);
+                // connect app icon into the view selector
+                dock.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
             }
         }
     },
@@ -1869,6 +1765,106 @@ const DockManager = new Lang.Class({
         Main.overview.dashIconSize = Main.overview._controls.dash.iconSize;
 
         Main.overview._dash = this._oldDash;
+    },
+
+    _onShowAppsButtonToggled: function(button) {
+        // Sync the status of the default appButtons. Only if the two statuses are
+        // different, that means the user interacted with the extension provided
+        // application button, cutomize the behaviour. Otherwise the shell has changed the
+        // status (due to the _syncShowAppsButtonToggled function below) and it
+        // has already performed the desired action.
+
+        let animate = this._settings.get_boolean('animate-show-apps');
+        let selector = Main.overview.viewSelector;
+
+        if (selector._showAppsButton.checked !== button.checked) {
+            // find visible view
+            let visibleView;
+            Main.overview.viewSelector.appDisplay._views.every(function(v, index) {
+                if (v.view.actor.visible) {
+                    visibleView = index;
+                    return false;
+                }
+                else
+                    return true;
+            });
+
+            if (button.checked) {
+                // force spring animation triggering.By default the animation only
+                // runs if we are already inside the overview.
+                if (!Main.overview._shown) {
+                    this._forcedOverview = true;
+                    let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
+                    let grid = view._grid;
+                    if (animate) {
+                        // Animate in the the appview, hide the appGrid to avoiud flashing
+                        // Go to the appView before entering the overview, skipping the workspaces.
+                        // Do this manually avoiding opacity in transitions so that the setting of the opacity
+                        // to 0 doesn't get overwritten.
+                        Main.overview.viewSelector._activePage.opacity = 0;
+                        Main.overview.viewSelector._activePage.hide();
+                        Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
+                        Main.overview.viewSelector._activePage.show();
+                        grid.actor.opacity = 0;
+
+                        // The animation has to be trigered manually because the AppDisplay.animate
+                        // method is waiting for an allocation not happening, as we skip the workspace view
+                        // and the appgrid could already be allocated from previous shown.
+                        // It has to be triggered after the overview is shown as wrong coordinates are obtained
+                        // otherwise.
+                        let overviewShownId = Main.overview.connect('shown', Lang.bind(this, function() {
+                            Main.overview.disconnect(overviewShownId);
+                            Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
+                                grid.actor.opacity = 255;
+                                grid.animateSpring(IconGrid.AnimationDirection.IN, this._allDocks[0].dash.showAppsButton);
+                            }));
+                        }));
+                    }
+                    else {
+                        Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
+                        Main.overview.viewSelector._activePage.show();
+                        grid.actor.opacity = 255;
+                    }
+
+                }
+
+                // Finally show the overview
+                selector._showAppsButton.checked = true;
+                Main.overview.show();
+            }
+            else {
+                if (this._forcedOverview) {
+                    // force exiting overview if needed
+
+                    if (animate) {
+                        // Manually trigger springout animation without activating the
+                        // workspaceView to avoid the zoomout animation. Hide the appPage
+                        // onComplete to avoid ugly flashing of original icons.
+                        let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
+                        let grid = view._grid;
+                        view.animate(IconGrid.AnimationDirection.OUT, Lang.bind(this, function() {
+                            Main.overview.viewSelector._appsPage.hide();
+                            Main.overview.hide();
+                            selector._showAppsButton.checked = false;
+                            this._forcedOverview = false;
+                        }));
+                    }
+                    else {
+                        Main.overview.hide();
+                        this._forcedOverview = false;
+                    }
+                }
+                else {
+                    selector._showAppsButton.checked = false;
+                    this._forcedOverview = false;
+                }
+            }
+        }
+
+        // whenever the button is unactivated even if not by the user still reset the
+        // forcedOverview flag
+        if (button.checked == false)
+            this._forcedOverview = false;
     },
 
     destroy: function() {
