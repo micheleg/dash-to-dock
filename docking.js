@@ -472,8 +472,7 @@ const DockedDash = new Lang.Class({
         // Remove the dashSpacer
         this._dashSpacer.destroy();
 
-        // Reshow panel corners
-        this._revertPanelCorners();
+        // Restore legacyTray position
         this._resetLegacyTray();
 
     },
@@ -1085,7 +1084,6 @@ const DockedDash = new Lang.Class({
         }
 
         this._y0 = this.actor.y;
-        this._adjustPanelCorners();
 
         this._adjustLegacyTray();
     },
@@ -1133,25 +1131,6 @@ const DockedDash = new Lang.Class({
         );
 
         this._intellihide.updateTargetBox(this.staticBox);
-    },
-
-    /**
-     * Adjust Panel corners
-     */
-    _adjustPanelCorners: function() {
-        let extendHeight = this._settings.get_boolean('extend-height');
-        if (!this._isHorizontal && (this._isPrimaryMonitor() || this._settings.get_boolean('multi-monitor'))
-            && extendHeight && this._fixedIsEnabled) {
-            Main.panel._rightCorner.actor.hide();
-            Main.panel._leftCorner.actor.hide();
-        }
-        else
-            this._revertPanelCorners();
-    },
-
-    _revertPanelCorners: function() {
-        Main.panel._leftCorner.actor.show();
-        Main.panel._rightCorner.actor.show();
     },
 
     _removeAnimations: function() {
@@ -1668,6 +1647,10 @@ const DockManager = new Lang.Class({
             this._settings,
             'changed::dock-position',
             Lang.bind(this, this._toggle)
+        ], [
+            this._settings,
+            'changed::extend-height',
+            Lang.bind(this, this._adjustPanelCorners)
         ]);
     },
 
@@ -1704,6 +1687,9 @@ const DockManager = new Lang.Class({
 
         // Make the necessary changes to Main.overview._dash
         this._prepareMainDash();
+
+        // Adjust corners if necessary
+        this._adjustPanelCorners();
 
         if (this._settings.get_boolean('multi-monitor')) {
             let nMon = Main.layoutManager.monitors.length;
@@ -1866,6 +1852,36 @@ const DockManager = new Lang.Class({
     destroy: function() {
         this._signalsHandler.destroy();
         this._deleteDocks();
+        this._revertPanelCorners();
         this._restoreDash();
+    },
+
+    /**
+     * Adjust Panel corners
+     */
+    _adjustPanelCorners: function() {
+        let position = Convenience.getPosition(this._settings);
+        let isHorizontal = ((position == St.Side.TOP) || (position == St.Side.BOTTOM));
+        let extendHeight   = this._settings.get_boolean('extend-height');
+        let fixedIsEnabled = this._settings.get_boolean('dock-fixed');
+        let dockOnPrimary  = this._settings.get_boolean('multi-monitor') || this._isPrimaryMonitor();
+
+        if (!isHorizontal && dockOnPrimary && extendHeight && fixedIsEnabled) {
+            Main.panel._rightCorner.actor.hide();
+            Main.panel._leftCorner.actor.hide();
+        }
+        else
+            this._revertPanelCorners();
+    },
+
+    _revertPanelCorners: function() {
+        Main.panel._leftCorner.actor.show();
+        Main.panel._rightCorner.actor.show();
+    },
+
+    _isPrimaryMonitor: function() {
+        let monitor = Main.layoutManager.monitors[this._preferredMonitorIndex];
+        return ((monitor.x == Main.layoutManager.primaryMonitor.x) &&
+                (monitor.y == Main.layoutManager.primaryMonitor.y));
     }
 });
