@@ -203,8 +203,6 @@ const DashSlideContainer = new Lang.Class({
 const DockedDash = new Lang.Class({
     Name: 'DashToDock.DockedDash',
 
-    _numHotkeys: 10,
-
     _init: function(settings, monitorIndex) {
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
@@ -494,9 +492,6 @@ const DockedDash = new Lang.Class({
         this._revertPanelCorners();
         this._resetLegacyTray();
 
-        // Remove keybindings
-        this._disableHotKeys();
-        this._disableExtraShortcut();
     },
 
     _bindSettingsChanges: function() {
@@ -1356,9 +1351,6 @@ const DockedDash = new Lang.Class({
         Main.ctrlAltTabManager.addGroup(
             this.dash.actor, _('Dash'), 'user-bookmarks-symbolic',
                 {focusCallback: Lang.bind(this, this._onAccessibilityFocus)});
-
-        this._optionalHotKeys();
-        this._optionalNumberOverlay();
     },
 
     /**
@@ -1482,9 +1474,27 @@ const DockedDash = new Lang.Class({
         let button = 1;
         if (appIndex < apps.length)
             apps[appIndex].activate(button);
-    },
+    }
 
-    _optionalHotKeys: function() {
+});
+
+Signals.addSignalMethods(DockedDash.prototype);
+
+/*
+ * Handle keybaord shortcuts
+ */
+const KeyboardShortcuts = new Lang.Class({
+
+    Name: 'DashToDock.KeyboardShortcuts',
+
+    _numHotkeys: 10,
+
+    _init: function(settings, allDocks){
+
+        this._settings = settings;
+        this._allDocks = allDocks;
+        this._signalsHandler = new Convenience.GlobalSignalsHandler();
+
         this._hotKeysEnabled = false;
         if (this._settings.get_boolean('hot-keys'))
             this._enableHotKeys();
@@ -1499,6 +1509,15 @@ const DockedDash = new Lang.Class({
                         Lang.bind(this, this._disableHotKeys)();
             })
         ]);
+
+        this._optionalNumberOverlay();
+    },
+
+    destroy: function (){
+        // Remove keybindings
+        this._disableHotKeys();
+        this._disableExtraShortcut();
+        this._signalsHandler.destroy();
     },
 
     _enableHotKeys: function() {
@@ -1515,7 +1534,7 @@ const DockedDash = new Lang.Class({
                                       Meta.KeyBindingFlags.NONE,
                                       Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                                       Lang.bind(this, function() {
-                                          this._activateApp(appNum);
+                                          this._allDocks[0]._activateApp(appNum);
                                           this._showOverlay();
                                       }));
             }
@@ -1607,7 +1626,7 @@ const DockedDash = new Lang.Class({
     },
 
     _showOverlay: function() {
-        for (let i = 0; i < allDocks.length; i ++) {
+        for (let i = 0; i < this._allDocks.length; i++) {
             let dock = allDocks[i];
             if (dock._settings.get_boolean('hotkeys-overlay'))
                 dock.dash.toggleNumberOverlay(true);
@@ -1637,8 +1656,6 @@ const DockedDash = new Lang.Class({
     }
 
 });
-
-Signals.addSignalMethods(DockedDash.prototype);
 
 /**
  * Isolate overview to open new windows for inactive apps
@@ -1797,6 +1814,7 @@ const DockManager = new Lang.Class({
 
         // Load optional features
         this._workspaceIsolation = new WorkspaceIsolation(this._settings, allDocks);
+        this._keyboardShortcuts = new KeyboardShortcuts(this._settings, allDocks);
 
         // Make the necessary changes to Main.overview._dash
         this._prepareMainDash();
@@ -1835,6 +1853,7 @@ const DockManager = new Lang.Class({
     _deleteDocks: function() {
         // Remove extra features
         this._workspaceIsolation.destroy();
+        this._keyboardShortcuts.destroy();
 
         // Delete all docks
         let nDocks = allDocks.length;
