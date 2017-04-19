@@ -44,9 +44,6 @@ const scrollAction = {
     SWITCH_WORKSPACE: 2
 };
 
-/* Array of all the docks created */
-let allDocks = [];
-
 /* status variable: true when the overview is shown through the dash
  * applications button.
  */
@@ -1627,7 +1624,7 @@ const KeyboardShortcuts = new Lang.Class({
 
     _showOverlay: function() {
         for (let i = 0; i < this._allDocks.length; i++) {
-            let dock = allDocks[i];
+            let dock = this._allDocks[i];
             if (dock._settings.get_boolean('hotkeys-overlay'))
                 dock.dash.toggleNumberOverlay(true);
 
@@ -1750,7 +1747,8 @@ const DockManager = new Lang.Class({
     _init: function() {
         this._settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview._dash;
-
+        /* Array of all the docks created */
+        this._allDocks = [];
         this._createDocks();
 
         // Connect relevant signals to the toggling function
@@ -1810,11 +1808,11 @@ const DockManager = new Lang.Class({
         // First we create the main Dock, to get the extra features to bind to this one
         let dock = new DockedDash(this._settings, preferredMonitor);
         mainShowAppsButton = dock.dash.showAppsButton;
-        allDocks.push(dock);
+        this._allDocks.push(dock);
 
         // Load optional features
-        this._workspaceIsolation = new WorkspaceIsolation(this._settings, allDocks);
-        this._keyboardShortcuts = new KeyboardShortcuts(this._settings, allDocks);
+        this._workspaceIsolation = new WorkspaceIsolation(this._settings, this._allDocks);
+        this._keyboardShortcuts = new KeyboardShortcuts(this._settings, this._allDocks);
 
         // Make the necessary changes to Main.overview._dash
         this._prepareMainDash();
@@ -1825,7 +1823,7 @@ const DockManager = new Lang.Class({
                 if (iMon == preferredMonitor)
                     continue;
                 let dock = new DockedDash(this._settings, iMon);
-                allDocks.push(dock);
+                this._allDocks.push(dock);
             }
         }
     },
@@ -1833,10 +1831,10 @@ const DockManager = new Lang.Class({
     _prepareMainDash: function() {
         // Pretend I'm the dash: meant to make appgrd swarm animation come from the
         // right position of the appShowButton.
-        Main.overview._dash = allDocks[0].dash;
+        Main.overview._dash = this._allDocks[0].dash;
 
         // set stored icon size  to the new dash
-        Main.overview.dashIconSize = allDocks[0].dash.iconSize;
+        Main.overview.dashIconSize = this._allDocks[0].dash.iconSize;
 
         // Hide usual Dash
         Main.overview._controls.dash.actor.hide();
@@ -1856,10 +1854,10 @@ const DockManager = new Lang.Class({
         this._keyboardShortcuts.destroy();
 
         // Delete all docks
-        let nDocks = allDocks.length;
+        let nDocks = this._allDocks.length;
         for (let i = nDocks-1; i >= 0; i--) {
-            allDocks[i].destroy();
-            allDocks.pop();
+            this._allDocks[i].destroy();
+            this._allDocks.pop();
         }
     },
 
