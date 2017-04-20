@@ -1437,10 +1437,6 @@ const KeyboardShortcuts = new Lang.Class({
             this._settings,
             'changed::hotkeys-show-dock',
             Lang.bind(this, this._checkHotkeysOptions)
-        ], [
-            this._settings,
-            'changed::shortcut-text',
-            Lang.bind(this, this._setShortcut)
         ]);
     },
 
@@ -1453,29 +1449,12 @@ const KeyboardShortcuts = new Lang.Class({
     },
 
     _enableExtraShortcut: function() {
-        let shortcut_is_valid = this._setShortcut();
-
-        if (shortcut_is_valid && !this._shortcutIsSet) {
+        if (!this._shortcutIsSet) {
             Main.wm.addKeybinding('shortcut', this._settings,
                                   Meta.KeyBindingFlags.NONE,
                                   Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                                   Lang.bind(this, this._showOverlay));
             this._shortcutIsSet = true;
-        }
-    },
-
-    _setShortcut: function() {
-        let shortcut_text = this._settings.get_string('shortcut-text');
-        let [key, mods] = Gtk.accelerator_parse(shortcut_text);
-
-        if (Gtk.accelerator_valid(key, mods)) {
-            let shortcut = Gtk.accelerator_name(key, mods);
-            this._settings.set_strv('shortcut', [shortcut]);
-            return true;
-        }
-        else {
-            this._settings.set_strv('shortcut', []);
-            return false;
         }
     },
 
