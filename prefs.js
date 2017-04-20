@@ -51,6 +51,19 @@ function cssHexString(css) {
     return rrggbb;
 }
 
+function setShortcut(settings) {
+    let shortcut_text = settings.get_string('shortcut-text');
+    let [key, mods] = Gtk.accelerator_parse(shortcut_text);
+
+    if (Gtk.accelerator_valid(key, mods)) {
+        let shortcut = Gtk.accelerator_name(key, mods);
+        settings.set_strv('shortcut', [shortcut]);
+    }
+    else {
+        settings.set_strv('shortcut', []);
+    }
+}
+
 const Settings = new Lang.Class({
     Name: 'DashToDock.Settings',
 
@@ -383,10 +396,13 @@ const Settings = new Lang.Class({
             this._builder.get_object('overlay_switch').set_active(this._settings.get_boolean('hotkeys-overlay'));
             this._builder.get_object('show_dock_switch').set_active(this._settings.get_boolean('hotkeys-show-dock'));
 
+            // We need to update the shortcut 'strv' when the text is modified
+            this._settings.connect('changed::shortcut-text', Lang.bind(this, function() {setShortcut(this._settings);}));
             this._settings.bind('shortcut-text',
                                 this._builder.get_object('shortcut_entry'),
                                 'text',
                                 Gio.SettingsBindFlags.DEFAULT);
+
             this._settings.bind('hotkeys-overlay',
                                 this._builder.get_object('overlay_switch'),
                                 'active',
