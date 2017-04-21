@@ -1651,6 +1651,10 @@ const DockManager = new Lang.Class({
             this._settings,
             'changed::extend-height',
             Lang.bind(this, this._adjustPanelCorners)
+        ], [
+            this._settings,
+            'changed::dock-fixed',
+            Lang.bind(this, this._adjustPanelCorners)
         ]);
     },
 
