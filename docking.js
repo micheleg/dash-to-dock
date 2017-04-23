@@ -219,8 +219,8 @@ const DockedDash = new Lang.Class({
         // initialize dock state
         this._dockState = State.HIDDEN;
 
-        // Put dock on the primary monitor
-        this._monitor = Main.layoutManager.primaryMonitor;
+        // Put dock on the required monitor
+        this._monitor = Main.layoutManager.monitors[this._monitorIndex];
 
         // this store size and the position where the dash is shown;
         // used by intellihide module to check window overlap.
@@ -1008,8 +1008,6 @@ const DockedDash = new Lang.Class({
         this._updateVisibilityMode();
 
         let extendHeight = this._settings.get_boolean('extend-height');
-
-        this._monitor = Main.layoutManager.monitors[this._monitorIndex];
 
         // Note: do not use the workarea coordinates in the direction on which the dock is placed,
         // to avoid a loop [position change -> workArea change -> position change] with
