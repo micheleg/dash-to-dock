@@ -998,8 +998,7 @@ const DockedDash = new Lang.Class({
     },
 
     _isPrimaryMonitor: function() {
-        return ((this._monitor.x == Main.layoutManager.primaryMonitor.x) &&
-             (this._monitor.y == Main.layoutManager.primaryMonitor.y));
+        return (this._monitorIndex == Main.layoutManager.primaryIndex);
     },
 
     _resetPosition: function() {
