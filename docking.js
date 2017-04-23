@@ -1673,25 +1673,25 @@ const DockManager = new Lang.Class({
 
     _createDocks: function() {
 
-        this._preferredMonitor = this._settings.get_int('preferred-monitor');
+        this._preferredMonitorIndex = this._settings.get_int('preferred-monitor');
         // In case of multi-monitor, we consider the dock on the primary monitor to be the preferred (main) one
         // regardless of the settings
         // The dock goes on the primary monitor also if the settings are incosistent (e.g. desired monitor not connected).
         if (this._settings.get_boolean('multi-monitor') ||
-            this._preferredMonitor < 0 || this._preferredMonitor > Main.layoutManager.monitors.length - 1
+            this._preferredMonitorIndex < 0 || this._preferredMonitorIndex > Main.layoutManager.monitors.length - 1
             ) {
-            this._preferredMonitor = Main.layoutManager.primaryIndex;
+            this._preferredMonitorIndex = Main.layoutManager.primaryIndex;
         } else {
             // Gdk and shell monitors numbering differ at least under wayland:
             // While the primary monitor appears to be always index 0 in Gdk,
             // the shell can assign a different number (Main.layoutManager.primaryMonitor)
             // This ensure the indexing in the settings (Gdk) and in the shell are matched,
             // i.e. that we start counting from the primaryMonitorIndex
-            this._preferredMonitor = (Main.layoutManager.primaryIndex + this._preferredMonitor) % Main.layoutManager.monitors.length ;
+            this._preferredMonitorIndex = (Main.layoutManager.primaryIndex + this._preferredMonitorIndex) % Main.layoutManager.monitors.length ;
         }
 
         // First we create the main Dock, to get the extra features to bind to this one
-        let dock = new DockedDash(this._settings, this._preferredMonitor);
+        let dock = new DockedDash(this._settings, this._preferredMonitorIndex);
         this._mainShowAppsButton = dock.dash.showAppsButton;
         this._allDocks.push(dock);
 
@@ -1708,7 +1708,7 @@ const DockManager = new Lang.Class({
         if (this._settings.get_boolean('multi-monitor')) {
             let nMon = Main.layoutManager.monitors.length;
             for (let iMon = 0; iMon < nMon; iMon++) {
-                if (iMon == this._preferredMonitor)
+                if (iMon == this._preferredMonitorIndex)
                     continue;
                 let dock = new DockedDash(this._settings, iMon);
                 this._allDocks.push(dock);
