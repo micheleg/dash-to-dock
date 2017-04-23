@@ -1868,7 +1868,8 @@ const DockManager = new Lang.Class({
         let isHorizontal = ((position == St.Side.TOP) || (position == St.Side.BOTTOM));
         let extendHeight   = this._settings.get_boolean('extend-height');
         let fixedIsEnabled = this._settings.get_boolean('dock-fixed');
-        let dockOnPrimary  = this._settings.get_boolean('multi-monitor') || this._isPrimaryMonitor();
+        let dockOnPrimary  = this._settings.get_boolean('multi-monitor') ||
+                             this._preferredMonitorIndex == Main.layoutManager.primaryMonitor;
 
         if (!isHorizontal && dockOnPrimary && extendHeight && fixedIsEnabled) {
             Main.panel._rightCorner.actor.hide();
@@ -1881,11 +1882,5 @@ const DockManager = new Lang.Class({
     _revertPanelCorners: function() {
         Main.panel._leftCorner.actor.show();
         Main.panel._rightCorner.actor.show();
-    },
-
-    _isPrimaryMonitor: function() {
-        let monitor = Main.layoutManager.monitors[this._preferredMonitorIndex];
-        return ((monitor.x == Main.layoutManager.primaryMonitor.x) &&
-                (monitor.y == Main.layoutManager.primaryMonitor.y));
     }
 });
