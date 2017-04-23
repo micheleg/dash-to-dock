@@ -1676,7 +1676,7 @@ const DockManager = new Lang.Class({
         // In case of multi-monitor, we consider the dock on the primary monitor to be the preferred (main) one
         // regardless.
         if (this._settings.get_boolean('multi-monitor')) {
-            this._preferredMonitor = Main.layoutManager.primaryIndex;
+            this._preferredMonitor = 0
         } else {
             this._preferredMonitor = this._settings.get_int('preferred-monitor');
         }
