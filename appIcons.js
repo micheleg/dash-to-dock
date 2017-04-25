@@ -56,6 +56,7 @@ let recentlyClickedAppLoopId = 0;
 let recentlyClickedApp = null;
 let recentlyClickedAppWindows = null;
 let recentlyClickedAppIndex = 0;
+let recentlyClickedAppMonitor = -1;
 
 /**
  * Extend AppIcon
@@ -97,6 +98,9 @@ const MyAppIcon = new Lang.Class({
         this._focusAppChangeId = tracker.connect('notify::focus-app',
                                                  Lang.bind(this,
                                                            this._onFocusAppChanged));
+        this._enteredMonitorId = global.screen.connect('window-entered-monitor',
+                                                       Lang.bind(this,
+                                                                 this.onWindowsChanged));
         this._dots = null;
 
         let keys = ['apply-custom-theme',
@@ -141,6 +145,11 @@ const MyAppIcon = new Lang.Class({
         if (this._focusAppChangeId > 0) {
             tracker.disconnect(this._focusAppChangeId);
             this._focusAppChangeId = 0;
+        }
+
+        if (this._enteredMonitorId > 0) {
+            global.screen.disconnect(this._enteredMonitorId);
+            this._enteredMonitorId = 0;
         }
 
         this._signalsHandler.destroy();
@@ -290,7 +299,8 @@ const MyAppIcon = new Lang.Class({
     _updateRunningStyle: function() {
         // When using workspace isolation, we need to hide the dots of apps with
         // no windows in the current workspace
-        if (this._dtdSettings.get_boolean('isolate-workspaces')) {
+        if (this._dtdSettings.get_boolean('isolate-workspaces') ||
+            this._dtdSettings.get_boolean('isolate-monitors')) {
             if (this.app.state != Shell.AppState.STOPPED
                 && this.getInterestingWindows().length != 0)
                 this._dot.show();
@@ -353,7 +363,9 @@ const MyAppIcon = new Lang.Class({
     },
 
     _onFocusAppChanged: function() {
-        if (tracker.focus_app == this.app)
+        // We need to check the number of windows, as the focus might be
+        // happening on another monitor if using isolation
+        if (tracker.focus_app == this.app && this.getInterestingWindows().length != 0)
             this.actor.add_style_class_name('focused');
         else
             this.actor.remove_style_class_name('focused');
@@ -779,11 +791,14 @@ const MyAppIcon = new Lang.Class({
 
         // If there isn't already a list of windows for the current app,
         // or the stored list is outdated, use the current windows list.
+        let monitorIsolation = this._dtdSettings.get_boolean('isolate-monitors');
         if (!recentlyClickedApp ||
             recentlyClickedApp.get_id() != this.app.get_id() ||
-            recentlyClickedAppWindows.length != app_windows.length) {
+            recentlyClickedAppWindows.length != app_windows.length ||
+            (recentlyClickedAppMonitor != this._monitorIndex && monitorIsolation)) {
             recentlyClickedApp = this.app;
             recentlyClickedAppWindows = app_windows;
+            recentlyClickedAppMonitor = this._monitorIndex;
             recentlyClickedAppIndex = 0;
         }
 
@@ -806,6 +821,7 @@ const MyAppIcon = new Lang.Class({
         recentlyClickedApp =null;
         recentlyClickedAppWindows = null;
         recentlyClickedAppIndex = 0;
+        recentlyClickedAppMonitor = -1;
 
         return false;
     },

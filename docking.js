@@ -1535,14 +1535,29 @@ const WorkspaceIsolation = new Lang.Class({
                     this._allDocks.forEach(function(dock) {
                         dock.dash.resetAppIcons();
                     });
-                    if (this._settings.get_boolean('isolate-workspaces'))
+                    if (this._settings.get_boolean('isolate-workspaces') ||
+                        this._settings.get_boolean('isolate-monitors'))
+                        Lang.bind(this, this._enable)();
+                    else
+                        Lang.bind(this, this._disable)();
+            })
+        ],[
+            this._settings,
+            'changed::isolate-monitors',
+            Lang.bind(this, function() {
+                    this._allDocks.forEach(function(dock) {
+                        dock.dash.resetAppIcons();
+                    });
+                    if (this._settings.get_boolean('isolate-workspaces') ||
+                        this._settings.get_boolean('isolate-monitors'))
                         Lang.bind(this, this._enable)();
                     else
                         Lang.bind(this, this._disable)();
             })
         ]);
 
-        if (this._settings.get_boolean('isolate-workspaces'))
+        if (this._settings.get_boolean('isolate-workspaces') ||
+            this._settings.get_boolean('isolate-monitors'))
             this._enable();
 
     },

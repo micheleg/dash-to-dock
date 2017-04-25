@@ -314,6 +314,10 @@ const Settings = new Lang.Class({
                             this._builder.get_object('application_button_isolation_button'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('isolate-monitors',
+                            this._builder.get_object('application_button_monitor_isolation_button'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-windows-preview',
                             this._builder.get_object('windows_preview_button'),
                             'active',

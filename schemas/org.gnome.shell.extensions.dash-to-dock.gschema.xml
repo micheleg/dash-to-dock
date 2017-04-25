@@ -163,6 +163,11 @@
       <summary>Provide workspace isolation</summary>
       <description>Dash shows only windows from the currentworkspace</description>
     </key>
+    <key type="b" name="isolate-monitors">
+      <default>false</default>
+      <summary>Provide monitor isolation</summary>
+      <description>Dash shows only windows from the monitor</description>
+    </key>
     <key type="b" name="show-windows-preview">
       <default>true</default>
       <summary>Show preview of the open windows</summary>
