@@ -1663,10 +1663,6 @@ const DockManager = new Lang.Class({
         // connect app icon into the view selector
         dock.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
 
-        // Load optional features
-        this._workspaceIsolation = new WorkspaceIsolation(this._settings, this._allDocks);
-        this._keyboardShortcuts = new KeyboardShortcuts(this._settings, this._allDocks);
-
         // Make the necessary changes to Main.overview._dash
         this._prepareMainDash();
 
@@ -1684,6 +1680,11 @@ const DockManager = new Lang.Class({
                 dock.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
             }
         }
+
+        // Load optional features. We load *after* the docks are created, since
+        // we need to connect the signals to all dock instances.
+        this._workspaceIsolation = new WorkspaceIsolation(this._settings, this._allDocks);
+        this._keyboardShortcuts = new KeyboardShortcuts(this._settings, this._allDocks);
     },
 
     _prepareMainDash: function() {
