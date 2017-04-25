@@ -1517,7 +1517,9 @@ const WorkspaceIsolation = new Lang.Class({
             this._settings,
             'changed::isolate-workspaces',
             Lang.bind(this, function() {
-                    this._allDocks[0].dash.resetAppIcons();
+                    this._allDocks.forEach(function(dock) {
+                        dock.dash.resetAppIcons();
+                    });
                     if (this._settings.get_boolean('isolate-workspaces'))
                         Lang.bind(this, this._enable)();
                     else
