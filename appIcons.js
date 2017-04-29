@@ -87,9 +87,9 @@ const MyAppIcon = new Lang.Class({
         this._stateChangedId = this.app.connect('windows-changed',
                                                 Lang.bind(this,
                                                           this.onWindowsChanged));
-        this._focuseAppChangeId = tracker.connect('notify::focus-app',
-                                                Lang.bind(this,
-                                                          this._onFocusAppChanged));
+        this._focusAppChangeId = tracker.connect('notify::focus-app',
+                                                 Lang.bind(this,
+                                                           this._onFocusAppChanged));
         this._dots = null;
 
         let keys = ['apply-custom-theme',
@@ -128,8 +128,10 @@ const MyAppIcon = new Lang.Class({
 
         // Disconect global signals
         // stateChangedId is already handled by parent)
-        if (this._focusAppId > 0)
-            tracker.disconnect(this._focusAppId);
+        if (this._focusAppChangeId > 0) {
+            tracker.disconnect(this._focusAppChangeId);
+            this._focusAppChangeId = 0;
+        }
 
         this._signalsHandler.destroy();
 
