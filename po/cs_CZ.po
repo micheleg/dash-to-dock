@@ -1,0 +1,174 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-12-29 11:40+0100\n"
+"PO-Revision-Date: 2012-12-29 11:40+0100\n"
+"Last-Translator: Petr Marek <contact@petrmarek.eu>\n"
+"Language-Team: Czech <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: prefs.js:34
+msgid "Main Settings"
+msgstr "Hlavní nastavní"
+
+#: prefs.js:43
+msgid "Dock is fixed and always visible"
+msgstr "Dock je zafixovaný aa je vždy vidět"
+
+#: prefs.js:59
+msgid "Animation time [ms]"
+msgstr "Délka animace [ms]"
+
+#: prefs.js:70
+msgid "Show delay [ms]"
+msgstr "Délka prodlení před zobrazením [ms]"
+
+#: prefs.js:81
+msgid "Hide delay [ms]"
+msgstr "Délka prodlení před schováním [ms]"
+
+#: prefs.js:96
+msgid "Autohide"
+msgstr "Automatické schování"
+
+#: prefs.js:103
+msgid "intellihide"
+msgstr "Inteligentní schování"
+
+#: prefs.js:131
+msgid "Application based intellihide"
+msgstr "Inteligentní schování dle aplikací"
+
+#: prefs.js:146
+msgid "Show the dock on following monitor (if attached)"
+msgstr "Ukazovat dock na následující obrazovce (pokud je připojena)"
+
+#: prefs.js:148
+msgid "Primary (default)"
+msgstr "Primární (výchozí)"
+
+#: prefs.js:149
+msgid "1"
+msgstr "1"
+
+#: prefs.js:150
+msgid "2"
+msgstr "2"
+
+#: prefs.js:151
+msgid "3"
+msgstr "3"
+
+#: prefs.js:152
+msgid "4"
+msgstr "4"
+
+#: prefs.js:177
+msgid "Max height"
+msgstr "Maximální výška"
+
+#: prefs.js:195
+msgid "Expand (experimental and buggy)"
+msgstr "Roztáhnout (experimentální a zabugované)"
+
+#: prefs.js:224
+msgid "Maximum icon size"
+msgstr "Maximální velikost ikon"
+
+#: prefs.js:229
+msgid "16"
+msgstr "16"
+
+#: prefs.js:230
+msgid "24"
+msgstr "24"
+
+#: prefs.js:231
+msgid "32"
+msgstr "32"
+
+#: prefs.js:232
+msgid "48"
+msgstr "48"
+
+#: prefs.js:233
+msgid "64"
+msgstr "64"
+
+#: prefs.js:255
+msgid "Show favorite application icons"
+msgstr "Ukazovat ikony oblíbených aplikací"
+
+#: prefs.js:260
+msgid "Show running application icons"
+msgstr "Ukazovat ikony spuštěných aplikací"
+
+#: prefs.js:276
+msgid "Optional features"
+msgstr "Nepovinné funkce"
+
+#: prefs.js:282
+msgid "Customize the dock background opacity"
+msgstr "Nastavit průhlednost pozadí docku"
+
+#: prefs.js:299
+msgid "Opacity"
+msgstr "Průhlednost"
+
+#: prefs.js:315
+msgid "Only when in autohide"
+msgstr "Jen při automatickém schovávání"
+
+#: prefs.js:334
+msgid "Switch workspace when scrolling over the dock"
+msgstr "Měnit workspace při scrollování na docku"
+
+#: prefs.js:345
+msgid "Switch one workspace at a time"
+msgstr "Měnit jen jeden workspace najednou"
+
+#: prefs.js:351
+msgid "Only a 1px wide area close to the screen edge is active"
+msgstr "Aktivní je jen oblast jednoho pixelu u hranice obrazovky"
+
+#: prefs.js:356
+msgid "All the area of the dock is active"
+msgstr "Celá oblast docku je aktivní"
+
+#: prefs.js:378
+msgid "Customize actions on mouse click"
+msgstr "Nastavit akce při kliknutí myši"
+
+#: prefs.js:393
+msgid "Action on clicking on running app"
+msgstr "Akce spuštěná při kliknutí na běžící aplikaci"
+
+#: prefs.js:395
+msgid "Do nothing (default)"
+msgstr "Nedělat nic (výchozí)"
+
+#: prefs.js:396
+msgid "Minimize"
+msgstr "Minimalizovat"
+
+#: prefs.js:397
+msgid "Launch new window"
+msgstr "Spustit nové okno"
+
+#: prefs.js:398
+msgid "Cycle through application windows"
+msgstr "Střídat skrze běžící okna aplikace"
+
+#: prefs.js:409
+msgid "Minimize window on shift+click (double click for all app windows)"
+msgstr "Minimalizovat okno při shift+kliknutí (dvojklik pro všechny okna aplikací)"
