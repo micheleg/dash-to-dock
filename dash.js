@@ -635,7 +635,7 @@ const MyDash = new Lang.Class({
         let firstButton = iconChildren[0].child;
         let firstIcon = firstButton._delegate.icon;
 
-        let minHeight, natHeight, maxWidth, natWidth;
+        let minHeight, natHeight, minWidth, natWidth;
 
         // Enforce the current icon size during the size request
         firstIcon.setIconSize(this.iconSize);
