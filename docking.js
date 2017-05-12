@@ -1850,7 +1850,7 @@ const DockManager = new Lang.Class({
         let extendHeight   = this._settings.get_boolean('extend-height');
         let fixedIsEnabled = this._settings.get_boolean('dock-fixed');
         let dockOnPrimary  = this._settings.get_boolean('multi-monitor') ||
-                             this._preferredMonitorIndex == Main.layoutManager.primaryMonitor;
+                             this._preferredMonitorIndex == Main.layoutManager.primaryIndex;
 
         if (!isHorizontal && dockOnPrimary && extendHeight && fixedIsEnabled) {
             Main.panel._rightCorner.actor.hide();
