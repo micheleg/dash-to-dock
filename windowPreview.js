@@ -197,7 +197,8 @@ const WindowPreviewList = new Lang.Class({
 
         while (newIndex < newWin.length || oldIndex < oldWin.length) {
             // No change at oldIndex/newIndex
-            if (oldWin[oldIndex] == newWin[newIndex]) {
+            if (oldWin[oldIndex] &&
+                oldWin[oldIndex] == newWin[newIndex]) {
                 oldIndex++;
                 newIndex++;
                 continue;
