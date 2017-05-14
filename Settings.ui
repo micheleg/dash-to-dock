@@ -576,6 +576,7 @@
                           <item translatable="yes">Minimize window</item>
                           <item translatable="yes">Launch new instance</item>
                           <item translatable="yes">Cycle through windows</item>
+                          <item translatable="yes">Minimize or overview</item>
                           <item translatable="yes">Quit</item>
                         </items>
                       </object>
@@ -645,6 +646,7 @@
                           <item translatable="yes">Minimize window</item>
                           <item translatable="yes">Launch new instance</item>
                           <item translatable="yes">Cycle through windows</item>
+                          <item translatable="yes">Minimize or overview</item>
                           <item translatable="yes">Quit</item>
                         </items>
                       </object>
@@ -714,6 +716,7 @@
                           <item translatable="yes">Minimize window</item>
                           <item translatable="yes">Launch new instance</item>
                           <item translatable="yes">Cycle through windows</item>
+                          <item translatable="yes">Minimize or overview</item>
                           <item translatable="yes">Quit</item>
                         </items>
                       </object>
