@@ -778,7 +778,7 @@ const MyDash = new Lang.Class({
         let oldIndex = 0;
         while ((newIndex < newApps.length) || (oldIndex < oldApps.length)) {
             // No change at oldIndex/newIndex
-            if (oldApps[oldIndex] == newApps[newIndex]) {
+            if (oldApps[oldIndex] && oldApps[oldIndex] == newApps[newIndex]) {
                 oldIndex++;
                 newIndex++;
                 continue;
