@@ -8,9 +8,11 @@ const Gdk = imports.gi.Gdk;
 const Lang = imports.lang;
 const Mainloop = imports.mainloop;
 
+// Use __ () and N__() for the extension gettext domain, and reuse
+// the shell domain with the default _() and N_()
 const Gettext = imports.gettext.domain('dashtodock');
-const _ = Gettext.gettext;
-const N_ = function(e) { return e };
+const __ = Gettext.gettext;
+const N__ = function(e) { return e };
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -108,7 +110,7 @@ const Settings = new Lang.Class({
         let monitor = this._settings.get_int('preferred-monitor');
 
         // Add primary monitor with index 0, because in GNOME Shell the primary monitor is always 0
-        this._builder.get_object('dock_monitor_combo').append_text(_('Primary monitor'));
+        this._builder.get_object('dock_monitor_combo').append_text(__('Primary monitor'));
         this._monitors.push(0);
 
         // Add connected monitors
@@ -117,14 +119,14 @@ const Settings = new Lang.Class({
             if (i !== primary_monitor) {
                 ctr++;
                 this._monitors.push(ctr);
-                this._builder.get_object('dock_monitor_combo').append_text(_('Secondary monitor ') + ctr);
+                this._builder.get_object('dock_monitor_combo').append_text(__('Secondary monitor ') + ctr);
             }
         }
 
         // If one of the external monitor is set as preferred, show it even if not attached
         if ((monitor >= n_monitors) && (monitor !== primary_monitor)) {
             this._monitors.push(monitor)
-            this._builder.get_object('dock_monitor_combo').append_text(_('Secondary monitor ') + ++ctr);
+            this._builder.get_object('dock_monitor_combo').append_text(__('Secondary monitor ') + ++ctr);
         }
 
         this._builder.get_object('dock_monitor_combo').set_active(this._monitors.indexOf(monitor));
@@ -149,8 +151,8 @@ const Settings = new Lang.Class({
 
         if (this._rtl) {
             /* Left is Right in rtl as a setting */
-            this._builder.get_object('position_left_button').set_label(_('Right'));
-            this._builder.get_object('position_right_button').set_label(_('Left'));
+            this._builder.get_object('position_left_button').set_label(__('Right'));
+            this._builder.get_object('position_right_button').set_label(__('Left'));
         }
 
         // Intelligent autohide options
@@ -200,14 +202,14 @@ const Settings = new Lang.Class({
         // Create dialog for intelligent autohide advanced settings
         this._builder.get_object('intelligent_autohide_button').connect('clicked', Lang.bind(this, function() {
 
-            let dialog = new Gtk.Dialog({ title: _('Intelligent autohide customization'),
+            let dialog = new Gtk.Dialog({ title: __('Intelligent autohide customization'),
                                           transient_for: this.widget.get_toplevel(),
                                           use_header_bar: true,
                                           modal: true });
 
             // GTK+ leaves positive values for application-defined response ids.
             // Use +1 for the reset action
-            dialog.add_button(_('Reset to defaults'), 1);
+            dialog.add_button(__('Reset to defaults'), 1);
 
             let box = this._builder.get_object('intelligent_autohide_advanced_settings_box');
             dialog.get_content_area().add(box);
@@ -381,14 +383,14 @@ const Settings = new Lang.Class({
         // Create dialog for number overlay options
         this._builder.get_object('overlay_button').connect('clicked', Lang.bind(this, function() {
 
-            let dialog = new Gtk.Dialog({ title: _('Show dock and application numbers'),
+            let dialog = new Gtk.Dialog({ title: __('Show dock and application numbers'),
                                           transient_for: this.widget.get_toplevel(),
                                           use_header_bar: true,
                                           modal: true });
 
             // GTK+ leaves positive values for application-defined response ids.
             // Use +1 for the reset action
-            dialog.add_button(_('Reset to defaults'), 1);
+            dialog.add_button(__('Reset to defaults'), 1);
 
             let box = this._builder.get_object('box_overlay_shortcut');
             dialog.get_content_area().add(box);
@@ -438,14 +440,14 @@ const Settings = new Lang.Class({
         // Create dialog for middle-click options
         this._builder.get_object('middle_click_options_button').connect('clicked', Lang.bind(this, function() {
 
-            let dialog = new Gtk.Dialog({ title: _('Customize middle-click behavior'),
+            let dialog = new Gtk.Dialog({ title: __('Customize middle-click behavior'),
                                           transient_for: this.widget.get_toplevel(),
                                           use_header_bar: true,
                                           modal: true });
 
             // GTK+ leaves positive values for application-defined response ids.
             // Use +1 for the reset action
-            dialog.add_button(_('Reset to defaults'), 1);
+            dialog.add_button(__('Reset to defaults'), 1);
 
             let box = this._builder.get_object('box_middle_click_options');
             dialog.get_content_area().add(box);
@@ -509,7 +511,7 @@ const Settings = new Lang.Class({
         // Create dialog for running dots advanced settings
         this._builder.get_object('running_dots_advance_settings_button').connect('clicked', Lang.bind(this, function() {
 
-            let dialog = new Gtk.Dialog({ title: _('Customize running indicators'),
+            let dialog = new Gtk.Dialog({ title: __('Customize running indicators'),
                                           transient_for: this.widget.get_toplevel(),
                                           use_header_bar: true,
                                           modal: true });

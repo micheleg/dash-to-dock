@@ -2,10 +2,12 @@
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
+const Convenience = Me.imports.convenience;
 
 let dockManager;
 
 function init() {
+    Convenience.initTranslations('dashtodock');
 }
 
 function enable() {

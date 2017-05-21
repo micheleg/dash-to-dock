@@ -11,6 +11,12 @@ const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 const Mainloop = imports.mainloop;
 
+// Use __ () and N__() for the extension gettext domain, and reuse
+// the shell domain with the default _() and N_()
+const Gettext = imports.gettext.domain('dashtodock');
+const __ = Gettext.gettext;
+const N__ = function(e) { return e };
+
 const AppDisplay = imports.ui.appDisplay;
 const AppFavorites = imports.ui.appFavorites;
 const Dash = imports.ui.dash;
@@ -795,7 +801,7 @@ const MyAppIconMenu = new Lang.Class({
             // Display the app windows menu items and the separator between windows
             // of the current desktop and other windows.
 
-            this._allWindowsMenuItem = new PopupMenu.PopupSubMenuMenuItem(_('All Windows'), false);
+            this._allWindowsMenuItem = new PopupMenu.PopupSubMenuMenuItem(__('All Windows'), false);
             this._allWindowsMenuItem.actor.hide();
             this.addMenuItem(this._allWindowsMenuItem);
 

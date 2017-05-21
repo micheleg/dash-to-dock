@@ -4,7 +4,7 @@ UUID = dash-to-dock@micxgx.gmail.com
 BASE_MODULES = extension.js stylesheet.css metadata.json COPYING README.md
 EXTRA_MODULES = convenience.js dash.js docking.js appIcons.js windowPreview.js intellihide.js prefs.js theming.js utils.js Settings.ui
 EXTRA_MEDIA = logo.svg
-TOLOCALIZE =  prefs.js
+TOLOCALIZE =  prefs.js appIcons.js
 MSGSRC = $(wildcard po/*.po)
 ifeq ($(strip $(DESTDIR)),)
 	INSTALLBASE = $(HOME)/.local/share/gnome-shell/extensions
@@ -43,9 +43,9 @@ mergepo: potfile
 
 ./po/dashtodock.pot: $(TOLOCALIZE) Settings.ui
 	mkdir -p po
-	xgettext -k_ -kN_ -o po/dashtodock.pot --package-name "Dash to Dock" $(TOLOCALIZE)
+	xgettext -k --keyword=__ --keyword=N__ -o po/dashtodock.pot --package-name "Dash to Dock" $(TOLOCALIZE)
 	intltool-extract --type=gettext/glade Settings.ui
-	xgettext -k_ -kN_ --join-existing -o po/dashtodock.pot Settings.ui.h
+	xgettext -k --keyword=_ --keyword=N_ --join-existing -o po/dashtodock.pot Settings.ui.h
 
 ./po/%.mo: ./po/%.po
 	msgfmt -c $< -o $@
