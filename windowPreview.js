@@ -29,6 +29,9 @@ const WindowPreviewMenu = new Lang.Class({
 
         this.parent(source.actor, 0.5, side);
 
+        // We want to keep the item hovered while the menu is up
+        this.blockSourceEvents = true;
+
         this._source = source;
         this._app = this._source.app;
 
