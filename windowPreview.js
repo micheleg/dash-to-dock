@@ -510,6 +510,7 @@ const WindowPreviewMenuItem = new Lang.Class({
 
         Tweener.addTween(this.actor,
                          { height: 0,
+                           width: 0,
                            time: 0.25,
                            delay: 0.25,
                            onCompleteScope: this,
