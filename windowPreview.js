@@ -1,3 +1,9 @@
+/*
+ * Credits:
+ * This file is based on code from the Dash to Panel extension by Jason DeRose
+ * and code from the Taskbar extension by Zorin OS
+ * Some code was also adapted from the upstream Gnome Shell source code.
+ */
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
