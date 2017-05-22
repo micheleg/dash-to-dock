@@ -506,6 +506,11 @@ const MyAppIcon = new Lang.Class({
         }
     },
 
+    shouldShowTooltip: function() {
+        return this.actor.hover && (!this._menu || !this._menu.isOpen) &&
+                            (!this._previewMenu || !this._previewMenu.isOpen);
+    },
+
     _windowPreviews: function() {
         if (!this._previewMenu) {
             this._previewMenuManager = new PopupMenu.PopupMenuManager(this);
