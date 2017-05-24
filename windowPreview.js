@@ -269,6 +269,26 @@ const WindowPreviewList = new Lang.Class({
                 item.actor.destroy();
         }
 
+        // Separate windows from other workspaces
+        let ws_index = global.screen.get_active_workspace_index();
+        let separator_index = 0;
+        for (let i = 0; i < newWin.length; i++)
+            if (newWin[i].get_workspace().index() == ws_index)
+                separator_index++;
+
+        if (separator_index > 0 && separator_index !== newWin.length) {
+            let separatorItem = new PopupMenu.PopupSeparatorMenuItem();
+            if (this.isHorizontal) {
+                separatorItem._separator.set_x_expand(false);
+                separatorItem._separator.set_y_expand(true);
+                separatorItem._separator.set_name('dashtodockPreviewSeparator');
+                separatorItem._separator.add_style_class_name('popup-separator-menu-item-horizontal');
+                separatorItem._separator.set_x_align(Clutter.ActorAlign.CENTER);
+                separatorItem._separator.set_y_align(Clutter.ActorAlign.FILL);
+            }
+            this.addMenuItem(separatorItem, separator_index);
+        }
+
         // Skip animations on first run when adding the initial set
         // of items, to avoid all items zooming in at once
         let animate = this._shownInitially;
