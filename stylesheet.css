@@ -100,3 +100,12 @@
     background-color: rgba(0,0,0,0.8);
     text-align: center;
 }
+
+.popup-separator-menu-item-horizontal {
+    width: 1px;
+    margin: 32px 6px;
+    background-color: transparent;
+    border-color: #343a3a;
+    border-right-width: 1px;
+    border-right-style: solid;
+}
