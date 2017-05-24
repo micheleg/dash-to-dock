@@ -140,8 +140,10 @@ const MyAppIcon = new Lang.Class({
     },
 
     _optionalScrollCycleWindows: function() {
-        if (this._scrollEventHandler)
+        if (this._scrollEventHandler) {
             this.actor.disconnect(this._scrollEventHandler);
+            this._scrollEventHandler = 0;
+        }
 
         let isEnabled = this._dtdSettings.get_enum('scroll-action') === scrollAction.CYCLE_WINDOWS;
         if (!isEnabled) return;
