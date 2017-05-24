@@ -275,8 +275,17 @@ const WindowPreviewList = new Lang.Class({
         for (let i = 0; i < newWin.length; i++)
             if (newWin[i].get_workspace().index() == ws_index)
                 separator_index++;
+
         if (separator_index > 0 && separator_index !== newWin.length) {
-            this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(), separator_index);
+            let separatorItem = new PopupMenu.PopupSeparatorMenuItem();
+            if (this.isHorizontal) {
+                separatorItem._separator.destroy();
+                separatorItem._separator = new St.Widget({ style_class: 'popup-separator-menu-item-horizontal',
+                                                x_expand: true,
+                                                x_align: Clutter.ActorAlign.CENTER });
+                separatorItem.actor.add(separatorItem._separator);
+            }
+            this.addMenuItem(separatorItem, separator_index);
         }
 
         // Skip animations on first run when adding the initial set
