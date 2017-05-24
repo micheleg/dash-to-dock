@@ -186,12 +186,21 @@ const WindowPreviewList = new Lang.Class({
     },
 
     _redisplay: function () {
+        // Remove separator
+        let nonWinItem = this._getMenuItems().filter(function(actor) {
+                return !actor._window;
+            });
+        for (let i = 0; i < nonWinItem.length; i++) {
+             let item = nonWinItem[i];
+             item.destroy();
+        }
+
         let children = this._getMenuItems().filter(function(actor) {
                 return actor._window;
             });
 
         // Windows currently on the menu
-        let oldWin = this._getMenuItems().map(function(actor) {
+        let oldWin = children.map(function(actor) {
                 return actor._window;
             });
 
@@ -234,7 +243,7 @@ const WindowPreviewList = new Lang.Class({
             let insertHere = newWin[newIndex + 1] &&
                              newWin[newIndex + 1] == oldWin[oldIndex];
             let alreadyRemoved = removedActors.reduce(function(result, actor) {
-                let removedWin = actor.window;
+                let removedWin = actor._window;
                 return result || removedWin == newWin[newIndex];
             }, false);
 
@@ -254,7 +263,10 @@ const WindowPreviewList = new Lang.Class({
 
         for (let i = 0; i < removedActors.length; i++) {
             let item = removedActors[i];
-            item._animateOutAndDestroy();
+            if (this._shownInitially)
+                item._animateOutAndDestroy();
+            else
+                item.actor.destroy();
         }
 
         // Skip animations on first run when adding the initial set
@@ -282,7 +294,15 @@ const WindowPreviewList = new Lang.Class({
     },
 
     sortWindowsCompareFunction: function(windowA, windowB) {
-        return windowA.get_stable_sequence() > windowB.get_stable_sequence();
+        let ws_index = global.screen.get_active_workspace_index();
+        let winA_inActiveWS = windowA.get_workspace().index() == ws_index;
+        let winB_inActiveWS = windowB.get_workspace().index() == ws_index;
+
+        // Only change the order if winA is not in the current WS, while winB is
+        if (!winA_inActiveWS && winB_inActiveWS)
+            return 1;
+
+        return 0;
     }
 });
 
