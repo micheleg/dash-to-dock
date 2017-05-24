@@ -269,6 +269,16 @@ const WindowPreviewList = new Lang.Class({
                 item.actor.destroy();
         }
 
+        // Separate windows from other workspaces
+        let ws_index = global.screen.get_active_workspace_index();
+        let separator_index = 0;
+        for (let i = 0; i < newWin.length; i++)
+            if (newWin[i].get_workspace().index() == ws_index)
+                separator_index++;
+        if (separator_index > 0 && separator_index !== newWin.length) {
+            this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(), separator_index);
+        }
+
         // Skip animations on first run when adding the initial set
         // of items, to avoid all items zooming in at once
         let animate = this._shownInitially;
