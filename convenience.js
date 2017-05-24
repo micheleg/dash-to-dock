@@ -9,6 +9,7 @@ const Clutter = imports.gi.Clutter;
 const Gettext = imports.gettext;
 const Gio = imports.gi.Gio;
 const Lang = imports.lang;
+const St = imports.gi.St;
 
 const Config = imports.misc.config;
 const ExtensionUtils = imports.misc.extensionUtils;
