@@ -74,6 +74,7 @@ const WindowPreviewMenu = new Lang.Class({
         if (windows.length > 0) {
             this._redisplay();
             this.open();
+            this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
             this._source.emit('sync-tooltip');
         }
     },
