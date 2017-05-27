@@ -364,6 +364,10 @@ const WindowPreviewMenuItem = new Lang.Class({
         let labelBin = new St.Bin({ child: label,
                                     x_align: St.Align.MIDDLE});
 
+        this._windowTitleId = this._window.connect('notify::title', Lang.bind(this, function() {
+                                  label.set_text(this._window.get_title());
+                              }));
+
         let box = new St.BoxLayout({ vertical: true,
                                      reactive:true,
                                      x_expand:true });
@@ -574,9 +578,15 @@ const WindowPreviewMenuItem = new Lang.Class({
             this._windowAddedId = 0;
         }
 
-        if (this._destroyId > 0)
+        if (this._destroyId > 0) {
             this._mutterWindow.disconnect(this._destroyId);
             this._destroyId = 0;
+        }
+
+        if (this._windowTitleId > 0) {
+            this._window.disconnect(this._windowTitleId);
+            this._windowTitleId = 0;
+        }
     }
 
 });
