@@ -65,6 +65,8 @@ const Intellihide = new Lang.Class({
         this._checkOverlapTimeoutContinue = false;
         this._checkOverlapTimeoutId = 0;
 
+        this._trackedWindows = new Map();
+
         // Connect global signals
         this._signalsHandler.add([
             // Add signals on windows created from now on
@@ -127,13 +129,14 @@ const Intellihide = new Lang.Class({
     _addWindowSignals: function(wa) {
         if (!this._handledWindow(wa))
             return;
-        wa.onAllocationChangedId = wa.connect('allocation-changed', Lang.bind(this, this._checkOverlap, wa.get_meta_window()));
+        let signalId = wa.connect('allocation-changed', Lang.bind(this, this._checkOverlap, wa.get_meta_window()));
+        this._trackedWindows.set(wa, signalId);
     },
 
     _removeWindowSignals: function(wa) {
-        if (wa.onAllocationChangedId) {
-           wa.disconnect(wa.onAllocationChangedId);
-           delete wa.onAllocationChangedId;
+        if (this._trackedWindows.get(wa)) {
+           wa.disconnect(this._trackedWindows.get(wa));
+           this._trackedWindows.delete(wa);
         }
 
     },
