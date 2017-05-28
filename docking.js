@@ -25,6 +25,7 @@ const LayoutManager = imports.ui.main.layoutManager;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Convenience = Me.imports.convenience;
+const Utils = Me.imports.utils;
 const Intellihide = Me.imports.intellihide;
 const Theming = Me.imports.theming;
 const MyDash = Me.imports.dash;
@@ -197,11 +198,11 @@ const DockedDash = new Lang.Class({
         this._settings = settings;
         this._monitorIndex = monitorIndex;
         // Connect global signals
-        this._signalsHandler = new Convenience.GlobalSignalsHandler();
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._bindSettingsChanges();
 
-        this._position = Convenience.getPosition(settings);
+        this._position = Utils.getPosition(settings);
         this._isHorizontal = ((this._position == St.Side.TOP) || (this._position == St.Side.BOTTOM));
 
         // Temporary ignore hover events linked to autohide for whatever reason
@@ -344,7 +345,7 @@ const DockedDash = new Lang.Class({
             })
         ]);
 
-        this._injectionsHandler = new Convenience.InjectionsHandler();
+        this._injectionsHandler = new Utils.InjectionsHandler();
         this._themeManager = new Theming.ThemeManager(this._settings, this.actor, this.dash);
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
@@ -1353,7 +1354,7 @@ const KeyboardShortcuts = new Lang.Class({
 
         this._settings = settings;
         this._allDocks = allDocks;
-        this._signalsHandler = new Convenience.GlobalSignalsHandler();
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._hotKeysEnabled = false;
         if (this._settings.get_boolean('hot-keys'))
@@ -1510,8 +1511,8 @@ const WorkspaceIsolation = new Lang.Class({
         this._settings = settings;
         this._allDocks = allDocks;
 
-        this._signalsHandler = new Convenience.GlobalSignalsHandler();
-        this._injectionsHandler = new Convenience.InjectionsHandler();
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._injectionsHandler = new Utils.InjectionsHandler();
 
         this._signalsHandler.add([
             this._settings,
@@ -1610,7 +1611,7 @@ const DockManager = new Lang.Class({
 
     _bindSettingsChanges: function() {
         // Connect relevant signals to the toggling function
-        this._signalsHandler = new Convenience.GlobalSignalsHandler();
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._signalsHandler.add([
             global.screen,
             'monitors-changed',
@@ -1845,7 +1846,7 @@ const DockManager = new Lang.Class({
      * Adjust Panel corners
      */
     _adjustPanelCorners: function() {
-        let position = Convenience.getPosition(this._settings);
+        let position = Utils.getPosition(this._settings);
         let isHorizontal = ((position == St.Side.TOP) || (position == St.Side.BOTTOM));
         let extendHeight   = this._settings.get_boolean('extend-height');
         let fixedIsEnabled = this._settings.get_boolean('dock-fixed');

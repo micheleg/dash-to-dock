@@ -23,7 +23,7 @@ const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+const Utils = Me.imports.utils;
 
 /**
  * Manage theme customization and custom theme support
@@ -33,7 +33,7 @@ const ThemeManager = new Lang.Class({
 
     _init: function(settings, actor, dash) {
         this._settings = settings;
-        this._signalsHandler = new Convenience.GlobalSignalsHandler();
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._bindSettingsChanges();
         this._actor = actor;
         this._dash = dash;
@@ -128,7 +128,7 @@ const ThemeManager = new Lang.Class({
         // We want to find the inside border-color of the dock because it is
         // the side most visible to the user. We do this by finding the side
         // opposite the position
-        let position = Convenience.getPosition(this._settings);
+        let position = Utils.getPosition(this._settings);
         let side = position + 2;
         if (side > 3)
             side = Math.abs(side - 4);
@@ -212,7 +212,7 @@ const ThemeManager = new Lang.Class({
             return;
 
         let newStyle = '';
-        let position = Convenience.getPosition(this._settings);
+        let position = Utils.getPosition(this._settings);
 
         if (!this._settings.get_boolean('custom-theme-shrink')) {
             // obtain theme border settings
