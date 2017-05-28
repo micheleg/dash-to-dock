@@ -1,3 +1,25 @@
+- version: 59
+  date: 04-06-2017
+  shell_version: ["3.18", "3.20", "3.22", "3.24"]
+  notes:
+    - "Fix regression preventing the opening og the settings panel [franglais125: 9350417f]"
+    - Fix Translations of appicon popupmenus [51db80ab]
+    - "Update French, Spanish and Italian translations."
+  zip_url: https://extensions.gnome.org/review/download/6948.shell-extension.zip
+
+- version: 58
+  date: 28-05-2017
+  shell_version: ["3.18", "3.20", "3.22", "3.24"]
+  notes:
+    - "New feature: Improve multimonitor support, with an option to show the dock on all monitors [Franglais125]"
+    - "New feature: Add minimize or overview click action [Bertrand Chauvin: 2102c77c]"
+    - "Fix bug in adjustPanelCorners [ef2a53cd]."
+    - "Fix HiDPI sopport for AppIcons shortcuts labels: consider scale factor [1144a398]."
+    - "Keep legacyTray above the dock [b9649137]."
+    - "Add Greek translation [Δημήτριος-Ρωμανός Ησαΐας: c08f1239]. Update Spanish [franglais125: 9eec8d98, 47f27fbd], French [Bertrand Chauvin: abfe5dff, 612b6759, 5f928665], Brazilian Portuguese [Fábio Nogueira: 0dec550c, 0a3b9346], Italian [Giuseppe PIgnataro 387501e9], Hungarian [Balázs Úr, 4407bec6]
+Polish [Piotr Sokół:, bfa646a2], and Russian translations [vantu5z: f140a140, 6a76c7e7]."
+  zip_url: https://extensions.gnome.org/review/download/6927.shell-extension.zip
+
 - version: 57
   date: 26-03-2017
   shell_version: ["3.18", "3.20", "3.22", "3.24"]
