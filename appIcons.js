@@ -23,7 +23,7 @@ const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
 
 let tracker = Shell.WindowTracker.get_default();
@@ -72,7 +72,7 @@ const MyAppIcon = new Lang.Class({
         // a prefix is required to avoid conflicting with the parent class variable
         this._dtdSettings = settings;
         this._monitorIndex = monitorIndex;
-        this._signalsHandler = new Convenience.GlobalSignalsHandler();
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._nWindows = 0;
 
         this.parent(app, iconParams);
@@ -264,7 +264,7 @@ const MyAppIcon = new Lang.Class({
 
         this._dots = new St.DrawingArea({x_expand: true, y_expand: true});
         this._dots.connect('repaint', Lang.bind(this, function() {
-            this._drawCircles(this._dots, Convenience.getPosition(this._dtdSettings));
+            this._drawCircles(this._dots, Utils.getPosition(this._dtdSettings));
         }));
         this._iconContainer.add_child(this._dots);
         this._updateCounterClass();
@@ -311,7 +311,7 @@ const MyAppIcon = new Lang.Class({
                     // scrollable so the minimum height is smaller than the natural height.
                     let monitor_index = Main.layoutManager.findIndexForActor(this.actor);
                     let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor_index);
-                    let position = Convenience.getPosition(this._dtdSettings);
+                    let position = Utils.getPosition(this._dtdSettings);
                     this._isHorizontal = ( position == St.Side.TOP ||
                                            position == St.Side.BOTTOM);
                     // If horizontal also remove the height of the dash
@@ -773,7 +773,7 @@ const MyAppIconMenu = new Lang.Class({
     Extends: AppDisplay.AppIconMenu,
 
     _init: function(source, settings) {
-        let side = Convenience.getPosition(settings);
+        let side = Utils.getPosition(settings);
 
         // Damm it, there has to be a proper way of doing this...
         // As I can't call the parent parent constructor (?) passing the side
@@ -1116,7 +1116,7 @@ function itemShowLabel()  {
 
     let x, y, xOffset, yOffset;
 
-    let position = Convenience.getPosition(this._dtdSettings);
+    let position = Utils.getPosition(this._dtdSettings);
     this._isHorizontal = ((position == St.Side.TOP) || (position == St.Side.BOTTOM));
     let labelOffset = node.get_length('-x-offset');
 

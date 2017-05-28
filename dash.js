@@ -23,7 +23,7 @@ const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+const Utils = Me.imports.utils;
 const AppIcons = Me.imports.appIcons;
 
 let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
@@ -60,7 +60,7 @@ const MyDashActor = new Lang.Class({
         this._dtdSettings = settings;
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
-        this._position = Convenience.getPosition(settings);
+        this._position = Utils.getPosition(settings);
         this._isHorizontal = ((this._position == St.Side.TOP) ||
                                (this._position == St.Side.BOTTOM));
 
@@ -186,10 +186,10 @@ const MyDash = new Lang.Class({
 
         this._dtdSettings = settings;
         this._monitorIndex = monitorIndex;
-        this._position = Convenience.getPosition(settings);
+        this._position = Utils.getPosition(settings);
         this._isHorizontal = ((this._position == St.Side.TOP) ||
                                (this._position == St.Side.BOTTOM));
-        this._signalsHandler = new Convenience.GlobalSignalsHandler();
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._dragPlaceholder = null;
         this._dragPlaceholderPos = -1;
