@@ -1016,8 +1016,8 @@ const MyDash = new Lang.Class({
                 fadeIn = true;
 
             this._dragPlaceholder = new Dash.DragPlaceholderItem();
-            this._dragPlaceholder.child.set_width (this.iconSize);
-            this._dragPlaceholder.child.set_height (this.iconSize / 2);
+            this._dragPlaceholder.child.set_width (this.iconSize / 2);
+            this._dragPlaceholder.child.set_height (this.iconSize / 4);
             this._box.insert_child_at_index(this._dragPlaceholder,
                                             this._dragPlaceholderPos);
             this._dragPlaceholder.show(fadeIn);
