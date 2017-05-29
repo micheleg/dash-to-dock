@@ -18,7 +18,7 @@ const Tweener = imports.ui.tweener;
 const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
+const Utils = Me.imports.utils;
 const AppIcons = Me.imports.appIcons;
 
 const PREVIEW_MAX_WIDTH = 250;
@@ -31,7 +31,7 @@ const WindowPreviewMenu = new Lang.Class({
     _init: function(source, settings, monitorIndex) {
         this._dtdSettings = settings;
 
-        let side = Convenience.getPosition(settings);
+        let side = Utils.getPosition(settings);
 
         this.parent(source.actor, 0.5, side);
 
@@ -107,7 +107,7 @@ const WindowPreviewList = new Lang.Class({
 
         this.actor.connect('scroll-event', Lang.bind(this, this._onScrollEvent ));
 
-        let position = Convenience.getPosition(this._dtdSettings);
+        let position = Utils.getPosition(this._dtdSettings);
         this.isHorizontal = position == St.Side.BOTTOM || position == St.Side.TOP;
         this.box.set_vertical(!this.isHorizontal);
         this.box.set_name('dashtodockWindowList');
