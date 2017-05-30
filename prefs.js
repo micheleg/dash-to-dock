@@ -583,6 +583,11 @@ const Settings = new Lang.Class({
         this._builder.get_object('custom_opacity_scale').set_value(this._settings.get_double('background-opacity'));
         this._settings.bind('opaque-background', this._builder.get_object('custom_opacity'), 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
+        this._settings.bind('unity-backlit-items',
+            this._builder.get_object('unity_backlit_items_switch'),
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+
         this._settings.bind('force-straight-corner',
             this._builder.get_object('force_straight_corner_switch'),
             'active', Gio.SettingsBindFlags.DEFAULT);
