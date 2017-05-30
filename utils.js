@@ -83,6 +83,104 @@ const GlobalSignalsHandler = new Lang.Class({
 });
 
 /**
+ * Color manipulation utilities
+  */
+const ColorUtils = {
+
+    // Darken or brigthen color by a fraction dlum
+    // Each rgb value is modified by the same fraction.
+    // Return "#rrggbb" string
+    ColorLuminance: function(r, g, b, dlum) {
+        let rgbString = '#';
+
+        rgbString += Math.round(Math.min(Math.max(r*(1+dlum), 0), 255)).toString(16);
+        rgbString += Math.round(Math.min(Math.max(g*(1+dlum), 0), 255)).toString(16);
+        rgbString += Math.round(Math.min(Math.max(b*(1+dlum), 0), 255)).toString(16);
+
+        return rgbString;
+    },
+
+    // Convert hsv ([0-1, 0-1, 0-1]) to rgb ([0-255, 0-255, 0-255]).
+    // Following algorithm in https://en.wikipedia.org/wiki/HSL_and_HSV
+    // here with h = [0,1] instead of [0, 360]
+    // Accept either (h,s,v) independently or  {h:h, s:s, v:v} object.
+    // Return {r:r, g:g, b:b} object.
+    HSVtoRGB: function(h, s, v) {
+        if (arguments.length === 1) {
+            s = h.s;
+            v = h.v;
+            h = h.h;
+        }
+
+        let r,g,b;
+        let c = v*s;
+        let h1 = h*6;
+        let x = c*(1 - Math.abs(h1 % 2 - 1));
+        let m = v - c;
+
+        if (h1 <=1)
+            r = c + m, g = x + m, b = m;
+        else if (h1 <=2)
+            r = x + m, g = c + m, b = m;
+        else if (h1 <=3)
+            r = m, g = c + m, b = x + m;
+        else if (h1 <=4)
+            r = m, g = x + m, b = c + m;
+        else if (h1 <=5)
+            r = x + m, g = m, b = c + m;
+        else
+            r = c + m, g = m, b = x + m;
+
+        return {
+            r: Math.round(r * 255),
+            g: Math.round(g * 255),
+            b: Math.round(b * 255)
+        };
+    },
+
+    // Convert rgb ([0-255, 0-255, 0-255]) to hsv ([0-1, 0-1, 0-1]).
+    // Following algorithm in https://en.wikipedia.org/wiki/HSL_and_HSV
+    // here with h = [0,1] instead of [0, 360]
+    // Accept either (r,g,b) independently or {r:r, g:g, b:b} object.
+    // Return {h:h, s:s, v:v} object.
+    RGBtoHSV: function (r, g, b) {
+        if (arguments.length === 1) {
+            r = r.r;
+            g = r.g;
+            b = r.b;
+        }
+
+        let h,s,v;
+
+        let M = Math.max(r, g, b);
+        let m = Math.min(r, g, b);
+        let c = M - m;
+
+        if (c == 0)
+            h = 0;
+        else if (M == r)
+            h = ((g-b)/c) % 6;
+        else if (M == g)
+            h = (b-r)/c + 2;
+        else
+            h = (r-g)/c + 4;
+
+        h = h/6;
+        v = M/255;
+        if (M !== 0)
+            s = c/M;
+        else
+            s = 0;
+
+        return {
+            h: h,
+            s: s,
+            v: v
+        };
+    }
+};
+
+/**
  * Manage function injection: both instances and prototype can be overridden
  * and restored
  */
