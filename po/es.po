@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-29 13:44-0400\n"
+"POT-Creation-Date: 2017-05-30 17:27-0400\n"
 "PO-Revision-Date: 2017-02-17 12:11+0100\n"
 "Last-Translator: Hugo Olabera <hugolabe@gmail.com>\n"
 "Language-Team: \n"
@@ -17,41 +17,45 @@ msgstr ""
 "X-Generator: Poedit 1.8.11\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: prefs.js:111
+#: prefs.js:113
 msgid "Primary monitor"
 msgstr "Pantalla principal"
 
-#: prefs.js:120 prefs.js:127
+#: prefs.js:122 prefs.js:129
 msgid "Secondary monitor "
 msgstr "Pantalla secundaria"
 
-#: prefs.js:152 Settings.ui.h:29
+#: prefs.js:154 Settings.ui.h:29
 msgid "Right"
 msgstr "Derecha"
 
-#: prefs.js:153 Settings.ui.h:26
+#: prefs.js:155 Settings.ui.h:26
 msgid "Left"
 msgstr "Izquierda"
 
-#: prefs.js:203
+#: prefs.js:205
 msgid "Intelligent autohide customization"
 msgstr "Opciones de auto ocultado"
 
-#: prefs.js:210 prefs.js:391 prefs.js:448
+#: prefs.js:212 prefs.js:393 prefs.js:450
 msgid "Reset to defaults"
 msgstr "Restaurar"
 
-#: prefs.js:384
+#: prefs.js:386
 msgid "Show dock and application numbers"
 msgstr "Mostrar el dock y el número de aplicación"
 
-#: prefs.js:441
+#: prefs.js:443
 msgid "Customize middle-click behavior"
 msgstr "Personalizar comportamiento del botón central"
 
-#: prefs.js:512
+#: prefs.js:514
 msgid "Customize running indicators"
 msgstr "Personalizar indicadores de ejecución"
+
+#: appIcons.js:804
+msgid "All Windows"
+msgstr "Todas las ventanas"
 
 #: Settings.ui.h:1
 msgid "Customize indicator style"
