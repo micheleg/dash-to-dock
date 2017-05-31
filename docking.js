@@ -350,7 +350,7 @@ const DockedDash = new Lang.Class({
         ]);
 
         this._injectionsHandler = new Utils.InjectionsHandler();
-        this._themeManager = new Theming.ThemeManager(this._settings, this.actor, this.dash);
+        this._themeManager = new Theming.ThemeManager(this._settings, this);
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
