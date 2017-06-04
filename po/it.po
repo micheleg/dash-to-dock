@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Dash-to-Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-04 12:35+0100\n"
-"PO-Revision-Date: 2017-04-17 10:52+0200\n"
+"PO-Revision-Date: 2017-06-04 12:59+0100\n"
 "Last-Translator: Giuseppe Pignataro (Fastbyte01) <rogepix@gmail.com>\n"
 "Language-Team: Italian <micxgx@gmail.com>\n"
 "Language: it\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: prefs.js:113
 msgid "Primary monitor"
@@ -43,7 +43,6 @@ msgid "Reset to defaults"
 msgstr "Ripristina a predefinito"
 
 #: prefs.js:386
-#, fuzzy
 msgid "Show dock and application numbers"
 msgstr "Mostra applicazioni in esecuzione"
 
@@ -77,32 +76,35 @@ msgstr "Larghezza bordo"
 
 #: Settings.ui.h:5
 msgid "Number overlay"
-msgstr ""
+msgstr "Indicatore numerico in sovraimpressione"
 
 #: Settings.ui.h:6
 msgid ""
 "Temporarily show the application numbers over the icons, corresponding to "
 "the shortcut."
 msgstr ""
+"Mostra brevemente il numero corrispondente alla scorciatoia sull'icona "
+"dell'applicazione."
 
 #: Settings.ui.h:7
-#, fuzzy
 msgid "Show the dock if it is hidden"
-msgstr "Mostra dock sul"
+msgstr "Mostra dock se nascosta"
 
 #: Settings.ui.h:8
 msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
 msgstr ""
+"Con nascondimento automatico intelligente, la dock viene mostrata per un "
+"istante quando la scorciatoia è attivata"
 
 #: Settings.ui.h:9
 msgid "Shortcut for the options above"
-msgstr ""
+msgstr "Scorciatoia"
 
 #: Settings.ui.h:10
 msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
-msgstr ""
+msgstr "Formato: <Shift>, <Ctrl>, <Alt>, <Super>"
 
 #: Settings.ui.h:11
 msgid "Hide timeout (s)"
@@ -138,7 +140,7 @@ msgstr "Passa attraverso le finestre"
 
 #: Settings.ui.h:18
 msgid "Quit"
-msgstr "Esci"
+msgstr "Chiudi"
 
 #: Settings.ui.h:19
 msgid "Behavior for Middle-Click."
@@ -161,9 +163,8 @@ msgid "Show the dock on"
 msgstr "Mostra dock sul"
 
 #: Settings.ui.h:24
-#, fuzzy
 msgid "Show on all monitors."
-msgstr "Monitor secondario"
+msgstr "Mostra su tutti gli schermi"
 
 #: Settings.ui.h:25
 msgid "Position on screen"
@@ -223,10 +224,9 @@ msgstr "Isola spazi di lavoro."
 
 #: Settings.ui.h:40
 msgid "Show open windows previews."
-msgstr ""
+msgstr "Mostra anteprime delle finestre aperte"
 
 #: Settings.ui.h:41
-#, fuzzy
 msgid ""
 "If disabled, these settings are accessible from gnome-tweak-tool or the "
 "extension website."
@@ -248,17 +248,19 @@ msgstr "Anima <i>Mostra Applicazioni</i>."
 
 #: Settings.ui.h:45
 msgid "Launchers"
-msgstr ""
+msgstr "Icone delle applicazoni"
 
 #: Settings.ui.h:46
 msgid ""
 "Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
 "together with Shift and Ctrl."
 msgstr ""
+"Attiva Super+(0-9) come scorciatoie per attivare le applicazioni. Funziona "
+"anche con Shift e Ctrl"
 
 #: Settings.ui.h:47
 msgid "Use keyboard shortcuts to activate apps"
-msgstr ""
+msgstr "Usa scorciatoie da tastiera per attivare le applicazioni."
 
 #: Settings.ui.h:48
 msgid "Behaviour when clicking on the icon of a running application."
@@ -274,29 +276,25 @@ msgid "Minimize"
 msgstr "Minimizza"
 
 #: Settings.ui.h:51
-#, fuzzy
 msgid "Minimize or overview"
-msgstr "Minimizza finestra"
+msgstr "Minimizza o mostra attività"
 
 #: Settings.ui.h:52
-#, fuzzy
 msgid "Behaviour when scrolling on the icon of an application."
 msgstr ""
 "Comportamento quando si fa clic sull'icona di una applicazione in esecuzione."
 
 #: Settings.ui.h:53
-#, fuzzy
 msgid "Scroll action"
 msgstr "Azione clic"
 
 #: Settings.ui.h:54
 msgid "Do nothing"
-msgstr ""
+msgstr "Non fare nulla"
 
 #: Settings.ui.h:55
-#, fuzzy
 msgid "Switch workspace"
-msgstr "Isola spazi di lavoro."
+msgstr "Cambia spazio di lavoro."
 
 #: Settings.ui.h:56
 msgid "Behavior"
