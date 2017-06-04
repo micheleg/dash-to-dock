@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-28 12:46+0100\n"
+"POT-Creation-Date: 2017-06-04 12:35+0100\n"
 "PO-Revision-Date: 2016-04-03 17:02+0900\n"
 "Last-Translator: Debonne Hooties <debonne.hooties@gmail.com>\n"
 "Language-Team: Safranjoepe (an unofficial team of Japanese) <>\n"
@@ -18,43 +18,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: prefs.js:111
+#: prefs.js:113
 msgid "Primary monitor"
 msgstr "プライマリーモニター"
 
-#: prefs.js:120 prefs.js:127
+#: prefs.js:122 prefs.js:129
 msgid "Secondary monitor "
 msgstr "セカンダリーモニター"
 
-#: prefs.js:152 Settings.ui.h:29
+#: prefs.js:154 Settings.ui.h:29
 msgid "Right"
 msgstr "右"
 
-#: prefs.js:153 Settings.ui.h:26
+#: prefs.js:155 Settings.ui.h:26
 msgid "Left"
 msgstr "左"
 
-#: prefs.js:203
+#: prefs.js:205
 msgid "Intelligent autohide customization"
 msgstr "インテリジェント表示の設定"
 
-#: prefs.js:210 prefs.js:391 prefs.js:448
+#: prefs.js:212 prefs.js:393 prefs.js:450
 msgid "Reset to defaults"
 msgstr "既定値にリセット"
 
-#: prefs.js:384
+#: prefs.js:386
 #, fuzzy
 msgid "Show dock and application numbers"
 msgstr "実行中アプリケーションの表示"
 
-#: prefs.js:441
+#: prefs.js:443
 #, fuzzy
 msgid "Customize middle-click behavior"
 msgstr "表示スタイルの設定"
 
-#: prefs.js:512
+#: prefs.js:514
 msgid "Customize running indicators"
 msgstr "インジケーターの表示設定"
+
+#: appIcons.js:804
+msgid "All Windows"
+msgstr "すべてのウィンドウが対象"
 
 #: Settings.ui.h:1
 msgid "Customize indicator style"

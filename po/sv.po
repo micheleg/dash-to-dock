@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-28 12:46+0100\n"
+"POT-Creation-Date: 2017-06-04 12:35+0100\n"
 "PO-Revision-Date: 2016-07-01 18:37+0200\n"
 "Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -17,43 +17,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.8\n"
 
-#: prefs.js:111
+#: prefs.js:113
 msgid "Primary monitor"
 msgstr "Primär skärm"
 
-#: prefs.js:120 prefs.js:127
+#: prefs.js:122 prefs.js:129
 msgid "Secondary monitor "
 msgstr "Sekundär skärm "
 
-#: prefs.js:152 Settings.ui.h:29
+#: prefs.js:154 Settings.ui.h:29
 msgid "Right"
 msgstr "Höger"
 
-#: prefs.js:153 Settings.ui.h:26
+#: prefs.js:155 Settings.ui.h:26
 msgid "Left"
 msgstr "Vänster"
 
-#: prefs.js:203
+#: prefs.js:205
 msgid "Intelligent autohide customization"
 msgstr "Anpassning av intelligent automatiskt döljande"
 
-#: prefs.js:210 prefs.js:391 prefs.js:448
+#: prefs.js:212 prefs.js:393 prefs.js:450
 msgid "Reset to defaults"
 msgstr "Återställ till standardvärden"
 
-#: prefs.js:384
+#: prefs.js:386
 #, fuzzy
 msgid "Show dock and application numbers"
 msgstr "Visa körande program"
 
-#: prefs.js:441
+#: prefs.js:443
 #, fuzzy
 msgid "Customize middle-click behavior"
 msgstr "Anpassa indikatorstil"
 
-#: prefs.js:512
+#: prefs.js:514
 msgid "Customize running indicators"
 msgstr "Anpassa körningsindikatorer"
+
+#: appIcons.js:804
+msgid "All Windows"
+msgstr "Alla fönster"
 
 #: Settings.ui.h:1
 msgid "Customize indicator style"

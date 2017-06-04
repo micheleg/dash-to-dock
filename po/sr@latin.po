@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-28 12:46+0100\n"
+"POT-Creation-Date: 2017-06-04 12:35+0100\n"
 "PO-Revision-Date: 2015-07-29 18:11+0200\n"
 "Last-Translator: Slobodan Terzić <Xabre@archlinux.info>\n"
 "Language-Team: \n"
@@ -19,44 +19,48 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: prefs.js:111
+#: prefs.js:113
 msgid "Primary monitor"
 msgstr "primarnom monitoru"
 
-#: prefs.js:120 prefs.js:127
+#: prefs.js:122 prefs.js:129
 msgid "Secondary monitor "
 msgstr "sekundarnom monitoru"
 
-#: prefs.js:152 Settings.ui.h:29
+#: prefs.js:154 Settings.ui.h:29
 msgid "Right"
 msgstr "desno"
 
-#: prefs.js:153 Settings.ui.h:26
+#: prefs.js:155 Settings.ui.h:26
 msgid "Left"
 msgstr "levo"
 
-#: prefs.js:203
+#: prefs.js:205
 msgid "Intelligent autohide customization"
 msgstr "Postavke inteligentnog samosakrivanja"
 
-#: prefs.js:210 prefs.js:391 prefs.js:448
+#: prefs.js:212 prefs.js:393 prefs.js:450
 msgid "Reset to defaults"
 msgstr "Povrati osnovno"
 
-#: prefs.js:384
+#: prefs.js:386
 #, fuzzy
 msgid "Show dock and application numbers"
 msgstr "Prikaz pokrenutih programa"
 
-#: prefs.js:441
+#: prefs.js:443
 #, fuzzy
 msgid "Customize middle-click behavior"
 msgstr "Prilagoćavanje prozirnosti"
 
-#: prefs.js:512
+#: prefs.js:514
 #, fuzzy
 msgid "Customize running indicators"
 msgstr "Prikaz pokrenutih programa"
+
+#: appIcons.js:804
+msgid "All Windows"
+msgstr "Izbegavanje rozora"
 
 #: Settings.ui.h:1
 #, fuzzy

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-28 12:46+0100\n"
+"POT-Creation-Date: 2017-06-04 12:35+0100\n"
 "PO-Revision-Date: 2017-04-10 22:02+0100\n"
 "Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
 "Language-Team: Hungarian <openscope@googlegroups.com>\n"
@@ -18,41 +18,45 @@ msgstr ""
 "X-Generator: Lokalize 2.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: prefs.js:111
+#: prefs.js:113
 msgid "Primary monitor"
 msgstr "Elsődleges kijelző"
 
-#: prefs.js:120 prefs.js:127
+#: prefs.js:122 prefs.js:129
 msgid "Secondary monitor "
 msgstr "Másodlagos kijelző"
 
-#: prefs.js:152 Settings.ui.h:29
+#: prefs.js:154 Settings.ui.h:29
 msgid "Right"
 msgstr "Jobb"
 
-#: prefs.js:153 Settings.ui.h:26
+#: prefs.js:155 Settings.ui.h:26
 msgid "Left"
 msgstr "Bal"
 
-#: prefs.js:203
+#: prefs.js:205
 msgid "Intelligent autohide customization"
 msgstr "Intelligens automatikus elrejtés személyre szabása"
 
-#: prefs.js:210 prefs.js:391 prefs.js:448
+#: prefs.js:212 prefs.js:393 prefs.js:450
 msgid "Reset to defaults"
 msgstr "Visszaállítás az alapértékekre"
 
-#: prefs.js:384
+#: prefs.js:386
 msgid "Show dock and application numbers"
 msgstr "A dokk és az alkalmazás számainak megjelenítése"
 
-#: prefs.js:441
+#: prefs.js:443
 msgid "Customize middle-click behavior"
 msgstr "Középső kattintás viselkedésének személyre szabása"
 
-#: prefs.js:512
+#: prefs.js:514
 msgid "Customize running indicators"
 msgstr "Futásjelzők személyre szabása"
+
+#: appIcons.js:804
+msgid "All Windows"
+msgstr "Összes Ablak"
 
 #: Settings.ui.h:1
 msgid "Customize indicator style"
