@@ -2908,7 +2908,7 @@ See the &lt;a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;G
                       <object class="GtkSpinButton" id="pressure_threshold_spinbutton">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="text" translatable="yes">0.000</property>
+                        <property name="text">0.000</property>
                         <property name="adjustment">pressure_threshold_adjustment</property>
                       </object>
                       <packing>
