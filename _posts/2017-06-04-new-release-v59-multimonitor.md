@@ -10,7 +10,7 @@ A new version of Dash to Dock (v59) is available, introducing the possibility of
 
 <!--more-->
 
-The most notable feature introduced in this release, thanks to the work of [Franglais125](https://github.com/franglais125), is the possibility of displaying the dock on all available screens. At the moment no strange combinatoins of dock position are supported: the dock is replicated on each available screen. Workspace/monitor isolation is supported.
+The most notable feature introduced in this release, thanks to the work of [Franglais125](https://github.com/franglais125), is the possibility of displaying the dock on all available screens. At the moment no strange combinations of dock positions are supported: the dock is replicated on each available screen. Workspace/monitor isolation is supported.
 
 <a href="/media/v59_multimonitor_settings.png"><img
 src="/media/v59_multimonitor_settings.png" alt="New multimonitor setttings" class="center"></a>
