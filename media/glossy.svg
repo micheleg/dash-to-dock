@@ -15,7 +15,7 @@
    viewBox="0 0 14.674843 14.674842"
    version="1.1"
    id="svg4941"
-   sodipodi:docname="drawing.svg"
+   sodipodi:docname="glossy.svg"
    inkscape:version="0.92.1 r15371">
   <defs
      id="defs4935">
@@ -36,7 +36,7 @@
        xlink:href="#linearGradient18962"
        id="linearGradient35463"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0.26528889,0,0,0.13792641,-48.727743,167.27654)"
+       gradientTransform="matrix(0.29132751,0,0,0.15428114,-54.210829,160.22776)"
        x1="214.71877"
        y1="404.36081"
        x2="214.71877"
@@ -73,7 +73,7 @@
        fx="7.3538475"
        fy="230.28426"
        r="7.2099228"
-       gradientTransform="matrix(5.8641186,-0.04778481,0.01655274,4.2319024,-39.581823,-740.85273)"
+       gradientTransform="matrix(5.9484829,-0.0346444,0.01679088,3.0681664,-40.338609,-476.01412)"
        gradientUnits="userSpaceOnUse" />
   </defs>
   <sodipodi:namedview
@@ -83,16 +83,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.67"
-     inkscape:cx="50.631228"
-     inkscape:cy="50.268973"
+     inkscape:zoom="10.68"
+     inkscape:cx="65.485107"
+     inkscape:cy="29.432163"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="945"
-     inkscape:window-height="704"
-     inkscape:window-x="79"
-     inkscape:window-y="27"
+     inkscape:window-width="2560"
+     inkscape:window-height="1406"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      scale-x="0.8"
      fit-margin-top="0"
@@ -120,20 +120,20 @@
        inkscape:export-ydpi="180"
        inkscape:export-xdpi="180"
        inkscape:export-filename="C:\Arbeit\Blog\Tutorials\glossybutton\Glossy_Button_Tutorial.png"
-       style="color:#000000;display:inline;overflow:visible;visibility:visible;fill:url(#linearGradient35463);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.35863268;marker:none;enable-background:accumulate;opacity:0.351"
+       style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:0.35100002;fill:url(#linearGradient35463);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.39747861;marker:none;enable-background:accumulate"
        id="rect19155"
-       width="13.326818"
-       height="3.3428361"
-       x="0.67401558"
-       y="223.37906"
-       rx="1.4111111"
-       ry="0.73365098" />
+       width="14.634871"
+       height="3.7392156"
+       x="0.039808333"
+       y="222.98268"
+       rx="1.5496143"
+       ry="0.82064426" />
     <rect
-       style="opacity:0.84299999;fill:url(#radialGradient6798);fill-opacity:1;stroke:#ffffff;stroke-width:0.25988582;stroke-opacity:1"
+       style="opacity:0.427;fill:url(#radialGradient6798);fill-opacity:1;stroke:#ffffff;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect6706"
-       width="14.15996"
-       height="19.868254"
-       x="0.27386767"
-       y="223.40225" />
+       width="14.363673"
+       height="14.404656"
+       x="0.090466507"
+       y="223.07919" />
   </g>
 </svg>

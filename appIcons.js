@@ -851,10 +851,13 @@ const MyAppIcon = new Lang.Class({
 
     _glossyBackground: function () {
         let path = imports.misc.extensionUtils.getCurrentExtension().path;
+        let backgroundStyle =
+            'background-image: url(\'' + path + '/media/glossy.svg\');' +
+            'background-size: contain;'
         
         this._iconContainer.get_children()[1].set_style(
             this._dtdSettings.get_boolean('unity-backlit-items') === true ?
-                'background-image: url(\'' + path + '/media/glossy.svg\');' : ''
+                backgroundStyle : ''
         );
     },
 
