@@ -87,6 +87,7 @@ const MyAppIcon = new Lang.Class({
         this._monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._nWindows = 0;
+        this._backgroundColor = null;
 
         this.parent(app, iconParams);
 
@@ -703,7 +704,12 @@ const MyAppIcon = new Lang.Class({
      * Unity7 to javascript, so it more or less works the same way.
      */
     _calculateColorPalette: function (pixBuf) {
-        let colorUtils = new Utils.ColorUtils();
+        if (this._backgroundColor !== null) {
+            // We already know the answer
+            return this._backgroundColor;
+        }
+    
+        let colorUtils = new Utils.ColorUtils();       
         
         let pixels = pixBuf.get_pixels(),
             offset = 0;
@@ -746,11 +752,14 @@ const MyAppIcon = new Lang.Class({
 
         let rgb = colorUtils.HSVtoRGB(hsv.h, hsv.s, hsv.v);
 
-        return {
+        // Cache the result.
+        this._backgroundColors = {
             lighter: colorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, 0.2),
             original: colorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, 0),
             darker: colorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, -0.5)
         };
+
+        return this._backgroundColors
     },
 
     _drawCircles: function(area, side) {
