@@ -95,7 +95,7 @@
     background: #2e3436;
 }
 
-.number-overlay {
+#dashtodockContainer .number-overlay {
     color: rgba(255,255,255,1);
     background-color: rgba(0,0,0,0.8);
     text-align: center;
