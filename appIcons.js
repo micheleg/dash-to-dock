@@ -334,8 +334,13 @@ const MyAppIcon = new Lang.Class({
         // Enable / Disable the backlight of running apps
         if (this.app.state !== Shell.AppState.STOPPED &&
             this._dtdSettings.get_boolean('unity-backlit-items') === true &&
-            this._dtdSettings.get_boolean('apply-custom-theme') === false) {
+            this._dtdSettings.get_boolean('apply-custom-theme') === false &&
+            this.getInterestingWindows().length > 0) {
             this._enableBacklight();
+
+            // Repaint the dots to make sure they have the correct color
+            if (this._dots)
+                this._dots.queue_repaint();
         } else {
             this._disableBacklight();
         }
