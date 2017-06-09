@@ -112,9 +112,11 @@ const Intellihide = new Lang.Class({
 
     disable: function() {
         this._isEnabled = false;
-        global.get_window_actors().forEach(function(wa) {
+
+        for (let wa of this._trackedWindows.keys()) {
             this._removeWindowSignals(wa);
-        }, this);
+        }
+        this._trackedWindows.clear();
 
         if (this._checkOverlapTimeoutId > 0) {
             Mainloop.source_remove(this._checkOverlapTimeoutId);
