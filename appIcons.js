@@ -125,7 +125,6 @@ const MyAppIcon = new Lang.Class({
 
         this._previewMenuManager = null;
         this._previewMenu = null;
-        this._showingPreview = false;
     },
 
     _onDestroy: function() {
@@ -508,10 +507,8 @@ const MyAppIcon = new Lang.Class({
     },
 
     shouldShowTooltip: function() {
-        if (this._showingPreview)
-            return false;
-        else
-            return this.actor.hover && (!this._menu || !this._menu.isOpen);
+        return this.actor.hover && (!this._menu || !this._menu.isOpen) &&
+                            (!this._previewMenu || !this._previewMenu.isOpen);
     },
 
     _windowPreviews: function() {
@@ -537,11 +534,8 @@ const MyAppIcon = new Lang.Class({
 
         if (this._previewMenu.isOpen)
             this._previewMenu.close();
-        else {
-            this._showingPreview = true;
+        else
             this._previewMenu.popup();
-            this._showingPreview = false;
-        }
 
         return false;
     },
