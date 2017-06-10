@@ -100,9 +100,3 @@
     background-color: rgba(0,0,0,0.8);
     text-align: center;
 }
-
-#dashtodockPreviewSeparator.popup-separator-menu-item-horizontal {
-    width: 1px;
-    height: auto;
-    margin: 32px 0px;
-}
