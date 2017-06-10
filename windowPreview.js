@@ -278,9 +278,14 @@ const WindowPreviewList = new Lang.Class({
                 separator_index++;
 
         if (separator_index > 0 && separator_index !== newWin.length) {
-            // Include an empty space to separate windows from other workspaces
             let separatorItem = new PopupMenu.PopupSeparatorMenuItem();
-            separatorItem._separator.destroy();
+            if (this.isHorizontal) {
+                separatorItem._separator.set_x_expand(true);
+                separatorItem._separator.set_y_expand(false);
+                separatorItem._separator.set_name('dashtodockPreviewSeparator');
+                separatorItem._separator.add_style_class_name('popup-separator-menu-item-horizontal');
+                separatorItem._separator.set_x_align(Clutter.ActorAlign.CENTER);
+            }
             this.addMenuItem(separatorItem, separator_index);
         }
 
