@@ -280,7 +280,8 @@ const WindowPreviewList = new Lang.Class({
             let separatorItem = new PopupMenu.PopupSeparatorMenuItem();
             if (this.isHorizontal) {
                 separatorItem._separator.destroy();
-                separatorItem._separator = new St.Widget({ style_class: 'popup-separator-menu-item-horizontal',
+                separatorItem._separator = new St.Widget({ name: 'dashtodockPreviewSeparator',
+                                                style_class: 'popup-separator-menu-item-horizontal',
                                                 x_expand: true,
                                                 x_align: Clutter.ActorAlign.CENTER });
                 separatorItem.actor.add(separatorItem._separator);
