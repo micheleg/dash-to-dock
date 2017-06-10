@@ -104,5 +104,6 @@
 #dashtodockPreviewSeparator.popup-separator-menu-item-horizontal {
     width: 1px;
     height: auto;
+    border-right-width: 1px;
     margin: 32px 0px;
 }
