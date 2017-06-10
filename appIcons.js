@@ -65,6 +65,8 @@ let themeLoader = null;
 
 // Global icon cache. Used for Unity7 styling.
 let iconCacheMap = new Map();
+// The icon size used to extract the dominant color
+const DOMINANT_COLOR_ICON_SIZE = 64;
 
 /**
  * Extend AppIcon
@@ -641,10 +643,10 @@ const MyAppIcon = new Lang.Class({
     },
 
     _enableBacklight: function() {
-        let pixBuf = this._getIconPixBuf();
+        let colorPallete = this._calculateColorPalette();
 
         // Fallback
-        if (pixBuf === null) {
+        if (colorPallete === null) {
             this._iconContainer.set_style(
                 'border-radius: 5px;' +
                 'background-gradient-direction: vertical;' +
@@ -660,8 +662,6 @@ const MyAppIcon = new Lang.Class({
 
             return;
         }
-        
-        let colorPallete = this._calculateColorPalette(pixBuf);
 
         this._iconContainer.set_style(
             'border-radius: 5px;' +
@@ -719,9 +719,9 @@ const MyAppIcon = new Lang.Class({
             // Use GdkPixBuf to load the pixel buffer from the provided file path
             return GdkPixbuf.Pixbuf.new_from_file(iconTexture.get_file().get_path());
         }
-        
+
         // Get the pixel buffer from the icon theme
-        return themeLoader.load_icon(iconTexture.get_names()[0], 64, 0);
+        return themeLoader.load_icon(iconTexture.get_names()[0], DOMINANT_COLOR_ICON_SIZE, 0);
     },
 
     /**
@@ -730,11 +730,15 @@ const MyAppIcon = new Lang.Class({
      * http://bazaar.launchpad.net/~unity-team/unity/trunk/view/head:/launcher/LauncherIcon.cpp
      * so it more or less works the same way.
      */
-    _calculateColorPalette: function(pixBuf) {
+    _calculateColorPalette: function() {
         if (iconCacheMap.get(this.app.get_id())) {
             // We already know the answer
             return iconCacheMap.get(this.app.get_id());
         }
+
+        let pixBuf = this._getIconPixBuf();
+        if (pixBuf == null)
+            return null;
 
         let pixels = pixBuf.get_pixels(),
             offset = 0;
@@ -744,24 +748,44 @@ const MyAppIcon = new Lang.Class({
             gTotal = 0,
             bTotal = 0;
 
-        for (let i = 0; i < pixBuf.get_height(); i++) {
-            for (let x = 0; x < pixBuf.get_width(); x++) {
-                let r = pixels[offset],
-                    g = pixels[offset + 1],
-                    b = pixels[offset + 2], 
-                    a = pixels[offset + 3];
-                
-                offset += 4;
+        let resample_y = 1,
+            resample_x = 1;
 
-                let saturation = (Math.max(r, Math.max(g, b)) - Math.min(r, Math.min(g, b))) / 255;
-                let relevance  = 0.1 + 0.9 * (a / 255.0) * saturation;
+        // Resampling of large icons
+        // We resample icons larger than twice the desired size, as the resampling
+        // to a size s
+        // DOMINANT_COLOR_ICON_SIZE < s < 2*DOMINANT_COLOR_ICON_SIZE,
+        // most of the case exactly DOMINANT_COLOR_ICON_SIZE as the icon size is tipycally
+        // a multiple of it.
+        let width = pixBuf.get_width();
+        let height = pixBuf.get_height();
 
-                rTotal += Math.round(r * relevance);
-                gTotal += Math.round(g * relevance);
-                bTotal += Math.round(b * relevance);
-                
-                total += relevance * 255;
-            }
+        // Resample
+        if (height >= 2* DOMINANT_COLOR_ICON_SIZE)
+            resample_y = Math.floor(height/DOMINANT_COLOR_ICON_SIZE);
+
+        if (width >= 2* DOMINANT_COLOR_ICON_SIZE)
+            resample_x = Math.floor(width/DOMINANT_COLOR_ICON_SIZE);
+
+        if (resample_x !==1 || resample_y !== 1)
+            pixels = this._resamplePixels(pixels, resample_x, resample_y);
+
+        for (let i = 0; i < pixels.length/4; i++) {
+            let r = pixels[offset],
+                g = pixels[offset + 1],
+                b = pixels[offset + 2],
+                a = pixels[offset + 3];
+
+            offset += 4;
+
+            let saturation = (Math.max(r, Math.max(g, b)) - Math.min(r, Math.min(g, b))) / 255;
+            let relevance  = 0.1 + 0.9 * (a / 255.0) * saturation;
+
+            rTotal += Math.round(r * relevance);
+            gTotal += Math.round(g * relevance);
+            bTotal += Math.round(b * relevance);
+
+            total += relevance * 255;
         }
 
         let r = rTotal / total,
@@ -786,6 +810,32 @@ const MyAppIcon = new Lang.Class({
         iconCacheMap.set(this.app.get_id(), backgroundColor);
 
         return backgroundColor;
+    },
+
+    /**
+     * Downsample large icons before scanning for the backlight color to
+     * improve performance.
+     *
+     * @param pixBuf
+     * @param pixels
+     * @param resampleX
+     * @param resampleY
+     *
+     * @return [];
+     */
+    _resamplePixels: function (pixels, resampleX, resampleY) {
+        let resampledPixels = [];
+        let limit = pixels.length / (resampleX * resampleY) / 4;
+        for (let i = 0; i < limit; i++) {
+            let pixel = i * resampleX * resampleY;
+
+            resampledPixels.push(pixels[pixel * 4]);
+            resampledPixels.push(pixels[pixel * 4 + 1]);
+            resampledPixels.push(pixels[pixel * 4 + 2]);
+            resampledPixels.push(pixels[pixel * 4 + 3]);
+        }
+
+        return resampledPixels;
     },
 
     _drawCircles: function(area, side) {
