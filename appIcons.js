@@ -42,7 +42,8 @@ const clickAction = {
     LAUNCH: 2,
     CYCLE_WINDOWS: 3,
     MINIMIZE_OR_OVERVIEW: 4,
-    QUIT: 5
+    PREVIEWS: 5,
+    QUIT: 6
 };
 
 const scrollAction = {
@@ -121,6 +122,10 @@ const MyAppIcon = new Lang.Class({
         this._optionalScrollCycleWindows();
 
         this._numberOverlay();
+
+        this._previewMenuManager = null;
+        this._previewMenu = null;
+        this._showingPreview = false;
     },
 
     _onDestroy: function() {
@@ -470,6 +475,19 @@ const MyAppIcon = new Lang.Class({
                 this.launchNewWindow();
                 break;
 
+            case clickAction.PREVIEWS:
+                if (!Main.overview._shown) {
+                    let windows = getInterestingWindows(this.app, this._dtdSettings);
+                    if (windows.length == 1)
+                        this.app.activate();
+                    else
+                        this._windowPreviews();
+                }
+                else {
+                    this.app.activate();
+                }
+                break;
+
             case clickAction.QUIT:
                 closeAllWindows(this.app, this._dtdSettings);
                 break;
@@ -487,6 +505,45 @@ const MyAppIcon = new Lang.Class({
         if(shouldHideOverview) {
             Main.overview.hide();
         }
+    },
+
+    shouldShowTooltip: function() {
+        if (this._showingPreview)
+            return false;
+        else
+            return this.actor.hover && (!this._menu || !this._menu.isOpen);
+    },
+
+    _windowPreviews: function() {
+        if (!this._previewMenu) {
+            this._previewMenuManager = new PopupMenu.PopupMenuManager(this);
+
+            this._previewMenu = new WindowPreview.WindowPreviewMenu(this, this._dtdSettings, this._monitorIndex);
+
+            this._previewMenuManager.addMenu(this._previewMenu);
+
+            this._previewMenu.connect('open-state-changed', Lang.bind(this, function(menu, isPoppedUp) {
+                if (!isPoppedUp)
+                    this._onMenuPoppedDown();
+            }));
+            let id = Main.overview.connect('hiding', Lang.bind(this, function() {
+                this._previewMenu.close();
+            }));
+            this._previewMenu.actor.connect('destroy', function() {
+                Main.overview.disconnect(id);
+            });
+
+        }
+
+        if (this._previewMenu.isOpen)
+            this._previewMenu.close();
+        else {
+            this._showingPreview = true;
+            this._previewMenu.popup();
+            this._showingPreview = false;
+        }
+
+        return false;
     },
 
     // Try to do the right thing when attempting to launch a new window of an app. In
