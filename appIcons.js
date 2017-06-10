@@ -63,6 +63,9 @@ let recentlyClickedAppMonitor = -1;
 // pixel buffers that can be used for calculating the backlight color
 let themeLoader = null;
 
+// Global icon cache. Used for Unity7 styling.
+let iconCacheMap = new Map();
+
 /**
  * Extend AppIcon
  *
@@ -88,7 +91,6 @@ const MyAppIcon = new Lang.Class({
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._nWindows = 0;
-        this._backgroundColor = null;
 
         this.parent(app, iconParams);
 
@@ -729,9 +731,9 @@ const MyAppIcon = new Lang.Class({
      * so it more or less works the same way.
      */
     _calculateColorPalette: function(pixBuf) {
-        if (this._backgroundColor !== null) {
+        if (iconCacheMap.get(this.app.get_id())) {
             // We already know the answer
-            return this._backgroundColor;
+            return iconCacheMap.get(this.app.get_id());
         }
 
         let pixels = pixBuf.get_pixels(),
@@ -775,13 +777,15 @@ const MyAppIcon = new Lang.Class({
         let rgb = Utils.ColorUtils.HSVtoRGB(hsv.h, hsv.s, hsv.v);
 
         // Cache the result.
-        this._backgroundColors = {
+        let backgroundColor = {
             lighter:  Utils.ColorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, 0.2),
             original: Utils.ColorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, 0),
             darker:   Utils.ColorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, -0.5)
         };
 
-        return this._backgroundColors
+        iconCacheMap.set(this.app.get_id(), backgroundColor);
+
+        return backgroundColor;
     },
 
     _drawCircles: function(area, side) {
