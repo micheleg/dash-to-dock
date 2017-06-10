@@ -27,6 +27,8 @@ const PopupMenu = imports.ui.popupMenu;
 const Tweener = imports.ui.tweener;
 const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
+const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
+const ViewSelector = imports.ui.viewSelector;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
@@ -82,6 +84,7 @@ const MyAppIcon = new Lang.Class({
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._nWindows = 0;
+        this.applicationOverview = new ApplicationOverview();
 
         this.parent(app, iconParams);
 
@@ -148,6 +151,8 @@ const MyAppIcon = new Lang.Class({
 
         if (this._scrollEventHandler)
             this.actor.disconnect(this._scrollEventHandler);
+
+        this.applicationOverview.disconnect();
     },
 
     _optionalScrollCycleWindows: function() {
@@ -181,23 +186,7 @@ const MyAppIcon = new Lang.Class({
                 this._optionalScrollCycleWindowsDeadTimeId = 0;
             }));
 
-        let direction = null;
-
-        switch (event.get_scroll_direction()) {
-        case Clutter.ScrollDirection.UP:
-            direction = Meta.MotionDirection.UP;
-            break;
-        case Clutter.ScrollDirection.DOWN:
-            direction = Meta.MotionDirection.DOWN;
-            break;
-        case Clutter.ScrollDirection.SMOOTH:
-            let [dx, dy] = event.get_scroll_delta();
-            if (dy < 0)
-                direction = Meta.MotionDirection.UP;
-            else if (dy > 0)
-                direction = Meta.MotionDirection.DOWN;
-            break;
-        }
+        let direction = unifyScrollDirection(event);
 
         let focusedApp = tracker.focus_app;
         if (!Main.overview._shown) {
@@ -455,10 +444,16 @@ const MyAppIcon = new Lang.Class({
                         Main.activateWindow(w);
                     }
                     // Launch overview when multiple windows are present
-                    // TODO: only show current app windows when gnome shell API will allow it
                 } else {
                     shouldHideOverview = false;
-                    Main.overview.toggle();
+                    if (this.app == focusedApp) {
+                        // Show overview with selected app windows only
+                        this.applicationOverview.toggleSelectedAppOverview(this.actor, windows);
+                    } else {
+                        // Another app is focused or all app windows are minimized -> show selected app window
+                        let w = windows[0];
+                        Main.activateWindow(w);
+                    }
                 }
                 break;
 
@@ -1152,6 +1147,26 @@ function extendShowAppsIcon(showAppsIcon, settings) {
     Signals.addSignalMethods(showAppsIcon);
 }
 
+function unifyScrollDirection(event) {
+    let direction = null;
+    switch (event.get_scroll_direction()) {
+    case Clutter.ScrollDirection.UP:
+        direction = Meta.MotionDirection.UP;
+        break;
+    case Clutter.ScrollDirection.DOWN:
+        direction = Meta.MotionDirection.DOWN;
+        break;
+    case Clutter.ScrollDirection.SMOOTH:
+        let [dx, dy] = event.get_scroll_delta();
+        if (dy < 0)
+            direction = Meta.MotionDirection.UP;
+        else if (dy > 0)
+            direction = Meta.MotionDirection.DOWN;
+        break;
+    }
+    return direction;
+}
+
 /**
  * A menu for the showAppsIcon
  */
@@ -1242,3 +1257,107 @@ function itemShowLabel()  {
         transition: 'easeOutQuad',
     });
 }
+
+const ApplicationOverview = new Lang.Class({
+    Name: 'DashToDock.ApplicationOverview',
+
+    _init: function() {
+        this.isInAppOverview = false;
+        this.originalTriggerSearchFunction = ViewSelector.ViewSelector.prototype._shouldTriggerSearch;
+        this.originalOverviewFunction = Workspace.Workspace.prototype._isOverviewWindow;
+        this.originalThumbnailFunction = WorkspaceThumbnail.WorkspaceThumbnail.prototype._isOverviewWindow;
+        this.hiddenId = Main.overview.connect('hidden', Lang.bind(this, this._onOverviewHidden));
+    },
+
+    disconnect: function() {
+        Main.overview.disconnect(this.hiddenId);
+    },
+
+    toggleSelectedAppOverview: function (iconActor, appWindows) {
+        if (Main.overview._shown) {
+            // Notice: restoring original overview state is done in overview "hide" event handler
+            Main.overview.hide();
+        } else {
+            // Checked in overview "hide" event handler
+            this.isInAppOverview = true;
+            // Temporary change app icon scroll to switch workspaces
+            this.actor = iconActor;
+            this.appIconScrollId = this.actor.connect('scroll-event', Lang.bind(this, this._onApplicationWorkspaceScroll));
+
+            // Hide and disable search input
+            Main.overview._searchEntryBin.hide();
+            ViewSelector.ViewSelector.prototype._shouldTriggerSearch = function(symbol) {
+              return false;
+            };
+
+            // Only show application windows in workspace
+            this.appWindows = appWindows;
+            const originalOverviewFunction = this.originalOverviewFunction;
+            Workspace.Workspace.prototype._isOverviewWindow = function(win) {
+                const originalResult = originalOverviewFunction(win);
+                const metaWindow = win.get_meta_window();
+                return originalResult && appWindows.indexOf(metaWindow) > -1;
+            };
+
+            // Only show application windows in thumbnails
+            const originalThumbnailFunction = this.originalOverviewFunction;
+            WorkspaceThumbnail.WorkspaceThumbnail.prototype._isOverviewWindow = function(win) {
+                const originalResult = originalThumbnailFunction(win);
+                const metaWindow = win.get_meta_window();
+                return originalResult && appWindows.indexOf(metaWindow) > -1;
+            };
+
+            // If second last app window closed in app overview, activate remaining window (done in hidden event)
+            this.destroyWindowId = global.window_manager.connect('destroy', Lang.bind(this, function (wm, windowActor) {
+                const metaWindow = windowActor.get_meta_window();
+                const index = appWindows.indexOf(metaWindow);
+                if (index > -1) {
+                    appWindows.splice(index, 1);
+                }
+                if (appWindows.length === 1) {
+                    Main.overview.hide();
+                }
+            }));
+
+            Main.overview.show();
+        }
+    },
+
+    _onOverviewHidden: function() {
+        if (this.isInAppOverview) {
+            this.isInAppOverview = false;
+            // Restore original behaviour
+            this.actor.disconnect(this.appIconScrollId);
+            Main.overview._searchEntryBin.show();
+            ViewSelector.ViewSelector.prototype._shouldTriggerSearch = this.originalTriggerSearchFunction;
+            Workspace.Workspace.prototype._isOverviewWindow = this.originalOverviewFunction;
+            WorkspaceThumbnail.WorkspaceThumbnail.prototype._isOverviewWindow = this.originalThumbnailFunction;
+            global.window_manager.disconnect(this.destroyWindowId);
+            // Check reason for leaving app overview was second last window closed
+            if (this.appWindows.length === 1) {
+                Main.activateWindow(this.appWindows[0]);
+            }
+        }
+    },
+
+    _onApplicationWorkspaceScroll: function(actor, event) {
+        if (this.isInAppOverview) {
+            let direction = unifyScrollDirection(event);
+            let activeWs = global.screen.get_active_workspace();
+            let ws;
+            switch (direction) {
+            case Meta.MotionDirection.UP:
+                ws = activeWs.get_neighbor(Meta.MotionDirection.UP);
+                break;
+            case Meta.MotionDirection.DOWN:
+                ws = activeWs.get_neighbor(Meta.MotionDirection.DOWN);
+                break;
+            default:
+                return Clutter.EVENT_PROPAGATE;
+            }
+            Main.wm.actionMoveWorkspace(ws);
+            return Clutter.EVENT_STOP;
+        }
+        return Clutter.EVENT_PROPAGATE;
+    }
+});
