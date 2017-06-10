@@ -671,8 +671,8 @@ const MyAppIcon = new Lang.Class({
     },
 
     _disableBacklight: function() {
-        this._iconContainer.set_style('');
-        this._dot.set_style('');
+        this._iconContainer.set_style(null);
+        this._dot.set_style(null);
     },
     
     /**
@@ -902,7 +902,7 @@ const MyAppIcon = new Lang.Class({
         
         this._iconContainer.get_children()[1].set_style(
             this._dtdSettings.get_boolean('unity-backlit-items') === true ?
-                backgroundStyle : ''
+                backgroundStyle : null
         );
     },
 
