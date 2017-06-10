@@ -133,6 +133,7 @@ const Intellihide = new Lang.Class({
             return;
         let signalId = wa.connect('allocation-changed', Lang.bind(this, this._checkOverlap, wa.get_meta_window()));
         this._trackedWindows.set(wa, signalId);
+        wa.connect('destroy', Lang.bind(this, this._removeWindowSignals));
     },
 
     _removeWindowSignals: function(wa) {
