@@ -103,9 +103,6 @@
 
 #dashtodockPreviewSeparator.popup-separator-menu-item-horizontal {
     width: 1px;
+    height: auto;
     margin: 32px 0px;
-    background-color: transparent;
-    border-color: rgba(52,58,58,1);
-    border-right-width: 2px;
-    border-right-style: solid;
 }
