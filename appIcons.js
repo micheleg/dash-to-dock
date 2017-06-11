@@ -82,7 +82,6 @@ const MyAppIcon = new Lang.Class({
         this._dtdSettings = settings;
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
-        this._nWindows = 0;
 
         this.parent(app, iconParams);
 
@@ -104,10 +103,10 @@ const MyAppIcon = new Lang.Class({
             this._optionalScrollCycleWindows();
         }));
         this._optionalScrollCycleWindows();
+        this._numberOverlay();
 
         this._indicator = new AppIconIndicators.RunningDotsIndicator(this._dtdSettings, this);
-
-        this._numberOverlay();
+        this._indicator.update();
 
         this._previewMenuManager = null;
         this._previewMenu = null;
@@ -254,7 +253,9 @@ const MyAppIcon = new Lang.Class({
         else
             this.parent();
         this._onFocusAppChanged();
-        this._updateCounterClass();
+        //this._updateCounterClass();
+        if (this._indicator != null)
+            this._indicator.update();
     },
 
     popupMenu: function() {
@@ -536,22 +537,6 @@ const MyAppIcon = new Lang.Class({
             else
                 this.app.activate();
         }
-    },
-
-    _updateCounterClass: function() {
-        let maxN = 4;
-        this._nWindows = Math.min(this.getInterestingWindows().length, maxN);
-
-        for (let i = 1; i <= maxN; i++) {
-            let className = 'running' + i;
-            if (i != this._nWindows)
-                this.actor.remove_style_class_name(className);
-            else
-                this.actor.add_style_class_name(className);
-        }
-
-        //if (this._dots)
-        //    this._dots.queue_repaint();
     },
 
     _numberOverlay: function() {
