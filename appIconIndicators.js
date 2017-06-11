@@ -134,7 +134,9 @@ const RunningDotsIndicator = new Lang.Class({
         let radius = Math.max(width/22, borderWidth/2);
         let padding = 0; // distance from the margin
         let spacing = radius + borderWidth; // separation between the dots
-        let n = this._nWindows;
+
+        //TODO. Get n in this class? check on n!==0 ?
+        let n = this._appIcon._nWindows;
 
         cr.setLineWidth(borderWidth);
         Clutter.cairo_set_source_color(cr, borderColor);
