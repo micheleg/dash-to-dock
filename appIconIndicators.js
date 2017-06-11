@@ -38,13 +38,10 @@ const AppIconIndicatorBase = new Lang.Class({
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._nWindows = 0;
-
     },
 
     update:function() {
-
         this._updateCounterClass();
-
     },
 
     _updateCounterClass: function() {
@@ -63,8 +60,19 @@ const AppIconIndicatorBase = new Lang.Class({
         //    this._dots.queue_repaint();
     },
 
+    _hideDefaultDot: function() {
+        // I use opacity to hide the default dot because the show/hide function
+        // are used by the parent class.
+        this._appIcon._dot.opacity = 0;
+    },
+
+    _restoreDefaultDot: function() {
+        this._appIcon._dot.opacity = 255;
+    },
+
 
     destroy: function() {
+        this._restoreDefaultDot();
         this._signalsHandler.destroy();
     }
 
@@ -102,29 +110,24 @@ const RunningDotsIndicator = new Lang.Class({
     },
 
     _toggleDots: function() {
-        if (this._settings.get_boolean('custom-theme-running-dots') || this._settings.get_boolean('apply-custom-theme'))
-            this._showDots();
-        else
-            this._hideDots();
-    },
+        if (this._settings.get_boolean('custom-theme-running-dots') ||
+                this._settings.get_boolean('apply-custom-theme')) {
+            this._hideDefaultDot();
 
-    _showDots: function() {
-        // I use opacity to hide the default dot because the show/hide function
-        // are used by the parent class.
-        this._appIcon._dot.opacity = 0;
+            if (this._dots)
+                this._dots.destroy()
 
-        this._dots = new St.DrawingArea({x_expand: true, y_expand: true});
-        this._dots.connect('repaint', Lang.bind(this, function() {
-            this._drawCircles(this._dots, Utils.getPosition(this._settings));
-        }));
-        this._appIcon._iconContainer.add_child(this._dots);
-    },
-
-    _hideDots: function() {
-        this._appIcon._dot.opacity = 255;
-        if (this._dots)
-            this._dots.destroy()
-        this._dots = null;
+            this._dots = new St.DrawingArea({x_expand: true, y_expand: true});
+            this._dots.connect('repaint', Lang.bind(this, function() {
+                this._drawCircles(this._dots, Utils.getPosition(this._settings));
+            }));
+            this._appIcon._iconContainer.add_child(this._dots);
+        }
+        else {
+            if (this._dots)
+                this._dots.destroy()
+            this._dots = null;
+        }
     },
 
     _drawCircles: function(area, side) {

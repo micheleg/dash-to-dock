@@ -86,13 +86,12 @@ const MyAppIcon = new Lang.Class({
         this.parent(app, iconParams);
 
         // Monitor windows-changes instead of app state.
-        // Keep using the same Id and function callback (that is extended)
         if (this._stateChangedId > 0) {
             this.app.disconnect(this._stateChangedId);
             this._stateChangedId = 0;
         }
 
-        this._stateChangedId = this.app.connect('windows-changed',
+        this._windowsChangedId = this.app.connect('windows-changed',
                                                 Lang.bind(this,
                                                           this.onWindowsChanged));
         this._focusAppChangeId = tracker.connect('notify::focus-app',
@@ -122,16 +121,21 @@ const MyAppIcon = new Lang.Class({
             this._menu.close(false);
 
         // Disconect global signals
-        // stateChangedId is already handled by parent)
         if (this._focusAppChangeId > 0) {
             tracker.disconnect(this._focusAppChangeId);
             this._focusAppChangeId = 0;
         }
 
+        if (this._windowsChangedId > 0)
+            this.app.disconnect(this._windowsChangedId);
+        this._windowsChangedId = 0;
+
         this._signalsHandler.destroy();
 
         if (this._scrollEventHandler)
             this.actor.disconnect(this._scrollEventHandler);
+
+        this._indicator.destroy()
     },
 
     _optionalScrollCycleWindows: function() {
@@ -207,7 +211,7 @@ const MyAppIcon = new Lang.Class({
         if (this._menu && this._menu.isOpen)
             this._menu.update();
 
-        this._updateRunningStyle();
+        this._indicator.update();
         this.updateIconGeometry();
     },
 
@@ -239,7 +243,7 @@ const MyAppIcon = new Lang.Class({
         });
     },
 
-    _updateRunningStyle: function() {
+    _updateRunningStyle: function() { return;
         // When using workspace isolation, we need to hide the dots of apps with
         // no windows in the current workspace
         if (this._dtdSettings.get_boolean('isolate-workspaces') ||
