@@ -31,6 +31,7 @@ const Workspace = imports.ui.workspace;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
+const AppIconIndicators = Me.imports.appIconIndicators;
 
 let tracker = Shell.WindowTracker.get_default();
 
@@ -98,29 +99,13 @@ const MyAppIcon = new Lang.Class({
         this._focusAppChangeId = tracker.connect('notify::focus-app',
                                                  Lang.bind(this,
                                                            this._onFocusAppChanged));
-        this._dots = null;
-
-        let keys = ['apply-custom-theme',
-                   'custom-theme-running-dots',
-                   'custom-theme-customize-running-dots',
-                   'custom-theme-running-dots-color',
-                   'custom-theme-running-dots-border-color',
-                   'custom-theme-running-dots-border-width'];
-
-        keys.forEach(function(key) {
-            this._signalsHandler.add([
-                this._dtdSettings,
-                'changed::' + key,
-                Lang.bind(this, this._toggleDots)
-            ]);
-        }, this);
-
-        this._toggleDots();
 
         this._dtdSettings.connect('changed::scroll-action', Lang.bind(this, function() {
             this._optionalScrollCycleWindows();
         }));
         this._optionalScrollCycleWindows();
+
+        this._indicator = new AppIconIndicators.RunningDotsIndicator(this._dtdSettings, this);
 
         this._numberOverlay();
 
@@ -253,39 +238,6 @@ const MyAppIcon = new Lang.Class({
         windows.forEach(function(w) {
             w.set_icon_geometry(rect);
         });
-    },
-
-    _toggleDots: function() {
-        if (this._dtdSettings.get_boolean('custom-theme-running-dots') || this._dtdSettings.get_boolean('apply-custom-theme'))
-            this._showDots();
-        else
-            this._hideDots();
-    },
-
-    _showDots: function() {
-        // I use opacity to hide the default dot because the show/hide function
-        // are used by the parent class.
-        this._dot.opacity = 0;
-
-        // Just update style if dots already exist
-        if (this._dots) {
-            this._updateCounterClass();
-            return;
-        }
-
-        this._dots = new St.DrawingArea({x_expand: true, y_expand: true});
-        this._dots.connect('repaint', Lang.bind(this, function() {
-            this._drawCircles(this._dots, Utils.getPosition(this._dtdSettings));
-        }));
-        this._iconContainer.add_child(this._dots);
-        this._updateCounterClass();
-    },
-
-    _hideDots: function() {
-        this._dot.opacity = 255;
-        if (this._dots)
-            this._dots.destroy()
-        this._dots = null;
     },
 
     _updateRunningStyle: function() {
@@ -598,82 +550,8 @@ const MyAppIcon = new Lang.Class({
                 this.actor.add_style_class_name(className);
         }
 
-        if (this._dots)
-            this._dots.queue_repaint();
-    },
-
-    _drawCircles: function(area, side) {
-        let borderColor, borderWidth, bodyColor;
-
-        if (!this._dtdSettings.get_boolean('apply-custom-theme')
-            && this._dtdSettings.get_boolean('custom-theme-running-dots')
-            && this._dtdSettings.get_boolean('custom-theme-customize-running-dots')) {
-            borderColor = Clutter.color_from_string(this._dtdSettings.get_string('custom-theme-running-dots-border-color'))[1];
-            borderWidth = this._dtdSettings.get_int('custom-theme-running-dots-border-width');
-            bodyColor =  Clutter.color_from_string(this._dtdSettings.get_string('custom-theme-running-dots-color'))[1];
-        }
-        else {
-            // Re-use the style - background color, and border width and color -
-            // of the default dot
-            let themeNode = this._dot.get_theme_node();
-            borderColor = themeNode.get_border_color(side);
-            borderWidth = themeNode.get_border_width(side);
-            bodyColor = themeNode.get_background_color();
-        }
-
-        let [width, height] = area.get_surface_size();
-        let cr = area.get_context();
-
-        // Draw the required numbers of dots
-        // Define the radius as an arbitrary size, but keep large enough to account
-        // for the drawing of the border.
-        let radius = Math.max(width/22, borderWidth/2);
-        let padding = 0; // distance from the margin
-        let spacing = radius + borderWidth; // separation between the dots
-        let n = this._nWindows;
-
-        cr.setLineWidth(borderWidth);
-        Clutter.cairo_set_source_color(cr, borderColor);
-
-        switch (side) {
-        case St.Side.TOP:
-            cr.translate((width - (2*n)*radius - (n-1)*spacing)/2, padding);
-            for (let i = 0; i < n; i++) {
-                cr.newSubPath();
-                cr.arc((2*i+1)*radius + i*spacing, radius + borderWidth/2, radius, 0, 2*Math.PI);
-            }
-            break;
-
-        case St.Side.BOTTOM:
-            cr.translate((width - (2*n)*radius - (n-1)*spacing)/2, height - padding);
-            for (let i = 0; i < n; i++) {
-                cr.newSubPath();
-                cr.arc((2*i+1)*radius + i*spacing, -radius - borderWidth/2, radius, 0, 2*Math.PI);
-            }
-            break;
-
-        case St.Side.LEFT:
-            cr.translate(padding, (height - (2*n)*radius - (n-1)*spacing)/2);
-            for (let i = 0; i < n; i++) {
-                cr.newSubPath();
-                cr.arc(radius + borderWidth/2, (2*i+1)*radius + i*spacing, radius, 0, 2*Math.PI);
-            }
-            break;
-
-        case St.Side.RIGHT:
-            cr.translate(width - padding , (height - (2*n)*radius - (n-1)*spacing)/2);
-            for (let i = 0; i < n; i++) {
-                cr.newSubPath();
-                cr.arc(-radius - borderWidth/2, (2*i+1)*radius + i*spacing, radius, 0, 2*Math.PI);
-            }
-            break;
-        }
-
-        cr.strokePreserve();
-
-        Clutter.cairo_set_source_color(cr, bodyColor);
-        cr.fill();
-        cr.$dispose();
+        //if (this._dots)
+        //    this._dots.queue_repaint();
     },
 
     _numberOverlay: function() {
