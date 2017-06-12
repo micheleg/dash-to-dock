@@ -706,7 +706,7 @@ const MyAppIcon = new Lang.Class({
         }
         
         // Get the pixel buffer from the icon theme
-        return themeLoader.load_icon(iconTexture.get_names()[0], 24, 0);
+        return themeLoader.load_icon(iconTexture.get_names()[0], 64, 0);
     },
 
     /**
