@@ -803,7 +803,7 @@ const MyAppIcon = new Lang.Class({
      *
      * @return [];
      */
-    _resamplePixels: function (pixBuf, pixels, resampleX, resampleY)
+    _resamplePixels: function (pixBuf, pixels, resampleX, resampleY) {
         let resampledPixels = [];
 
         for (let i = 0; i < pixBuf.get_height() * pixBuf.get_width() / (resampleX * resampleY); i++) {
