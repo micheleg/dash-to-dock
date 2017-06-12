@@ -728,33 +728,27 @@ const MyAppIcon = new Lang.Class({
             rTotal = 0,
             gTotal = 0,
             bTotal = 0;
+            
+        let resample_y = 1,
+            resample_x = 1;
 
-        // Re sampling if necessary
-        let resample_x = 1;
-        let resample_y = 1;
-        if (pixBuf.get_height() == 512)
-            resample_y = 8;
-        else if (pixBuf.get_height() == 256)
-            resample_y = 4;
-        if (pixBuf.get_width() == 512)
-            resample_x = 8;
-        else if (pixBuf.get_width() == 256)
-            resample_x = 4;
+        // Resampling of large icons
+        if (pixBuf.get_height() === 512 || pixBuf.get_height() === 256 || pixBuf.get_width() === 256 || pixBuf.get_width() === 512) {
+            if (pixBuf.get_height() === 512)
+                resample_y = 8;
+            else if (pixBuf.get_height() === 256)
+                resample_y = 4;
 
-        if (resample_x > 1 || resample_y > 1) {
-            let resampledPixels = [];
-            for (let i = 0; i < pixBuf.get_height()*pixBuf.get_width()/(resample_x * resample_y); i++) {
-                let pixel = i * resample_x * resample_y;
-                resampledPixels.push(pixels[pixel*4]);
-                resampledPixels.push(pixels[pixel*4 + 1]);
-                resampledPixels.push(pixels[pixel*4 + 2]);
-                resampledPixels.push(pixels[pixel*4 + 3]);
-            }
-            pixels = resampledPixels;
+            if (pixBuf.get_width() === 512)
+                resample_x = 8;
+            else if (pixBuf.get_width() === 256)
+                resample_x = 4;
+
+            pixels = this._resamplePixels(pixBuf, pixels, resample_x, resample_y);
         }
 
-        for (let i = 0; i < pixBuf.get_height()/resample_y; i++) {
-            for (let x = 0; x < pixBuf.get_width()/resample_x; x++) {
+        for (let i = 0; i < pixBuf.get_height() / resample_y; i++) {
+            for (let x = 0; x < pixBuf.get_width() / resample_x; x++) {
                 let r = pixels[offset],
                     g = pixels[offset + 1],
                     b = pixels[offset + 2], 
@@ -796,6 +790,32 @@ const MyAppIcon = new Lang.Class({
         iconCacheMap.set(this.app.get_id(), backgroundColor);
 
         return backgroundColor;
+    },
+
+    /**
+     * Downsample large icons before scanning for the backlight color to
+     * improve performance.
+     *
+     * @param pixBuf
+     * @param pixels
+     * @param resampleX
+     * @param resampleY
+     *
+     * @return [];
+     */
+    _resamplePixels: function (pixels, pixBuf, resampleX, resampleY) {
+        let resampledPixels = [];
+
+        for (let i = 0; i < pixBuf.get_height() * pixBuf.get_width() / (resampleX * resampleY); i++) {
+            let pixel = i * resampleX * resampleY;
+            
+            resampledPixels.push(pixels[pixel * 4]);
+            resampledPixels.push(pixels[pixel * 4 + 1]);
+            resampledPixels.push(pixels[pixel * 4 + 2]);
+            resampledPixels.push(pixels[pixel * 4 + 3]);
+        }
+
+        return resampledPixels;
     },
 
     _drawCircles: function(area, side) {
