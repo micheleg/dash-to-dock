@@ -104,8 +104,8 @@ const MyAppIcon = new Lang.Class({
         this._optionalScrollCycleWindows();
         this._numberOverlay();
 
-        this._indicator = new AppIconIndicators.RunningDotsIndicator(this._dtdSettings, this);
-        this._indicator.update();
+        this._indicator = null;
+        this._updateIndicatorStyle();
 
         this._previewMenuManager = null;
         this._previewMenu = null;
@@ -136,6 +136,25 @@ const MyAppIcon = new Lang.Class({
             this.actor.disconnect(this._scrollEventHandler);
 
         this._indicator.destroy()
+    },
+
+    _updateIndicatorStyle: function() {
+
+        if (this._indicator !== null)
+            this._indicator.destroy();
+
+        // Todo get from settings
+        let indicator_style = AppIconIndicators.IndicatorStyle.RUNNING_DOTS;
+
+        switch (indicator_style) {
+
+        case AppIconIndicators.IndicatorStyle.RUNNING_DOTS:
+            this._indicator = new AppIconIndicators.RunningDotsIndicator(this._dtdSettings, this);
+            this._indicator.update();
+            break;
+
+        }
+
     },
 
     _optionalScrollCycleWindows: function() {

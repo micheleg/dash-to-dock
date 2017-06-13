@@ -24,6 +24,10 @@ const Workspace = imports.ui.workspace;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 
+const IndicatorStyle = {
+    DEFAULT: 0,
+    RUNNING_DOTS: 1
+};
 
 
 const AppIconIndicatorBase = new Lang.Class({
