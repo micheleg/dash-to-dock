@@ -477,7 +477,9 @@ const MyAppIcon = new Lang.Class({
             case clickAction.PREVIEWS:
                 if (!Main.overview._shown) {
                     let windows = getInterestingWindows(this.app, this._dtdSettings);
-                    if (windows.length == 1)
+                    // If only one windows is present just switch to it, but only when trigggered with the
+                    // simple click action (no modifiers, no middle click).
+                    if (windows.length == 1 && !modifiers && button == 1)
                         this.app.activate();
                     else
                         this._windowPreviews();
