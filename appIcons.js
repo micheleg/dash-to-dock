@@ -436,9 +436,10 @@ const MyAppIcon = new Lang.Class({
 
             case clickAction.MINIMIZE_OR_OVERVIEW:
                 let windows = getInterestingWindows(this.app, this._dtdSettings);
-                let nbWindows = windows.length;
                 // When a single window is present, toggle minimization
-                if (windows && nbWindows && nbWindows <= 1) {
+                // If only one windows is present toggle minimization, but only when trigggered with the
+                // simple click action (no modifiers, no middle click).
+                if (windows.length == 1 && !modifiers && button == 1) {
                     let w = windows[0];
                     if (this.app == focusedApp) {
                         // Window is raised, minimize it
