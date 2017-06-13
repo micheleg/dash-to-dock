@@ -805,10 +805,11 @@ const MyAppIcon = new Lang.Class({
      */
     _resamplePixels: function (pixBuf, pixels, resampleX, resampleY) {
         let resampledPixels = [];
+        let limit = pixBuf.get_height() * pixBuf.get_width() / (resampleX * resampleY);
 
-        for (let i = 0; i < pixBuf.get_height() * pixBuf.get_width() / (resampleX * resampleY); i++) {
+        for (let i = 0; i < limit; i++) {
             let pixel = i * resampleX * resampleY;
-            
+
             resampledPixels.push(pixels[pixel * 4]);
             resampledPixels.push(pixels[pixel * 4 + 1]);
             resampledPixels.push(pixels[pixel * 4 + 2]);
