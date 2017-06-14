@@ -1607,6 +1607,7 @@ const DockManager = new Lang.Class({
     _toggle: function() {
         this._deleteDocks();
         this._createDocks();
+        this.emit('toggled');
     },
 
     _bindSettingsChanges: function() {
@@ -1866,3 +1867,4 @@ const DockManager = new Lang.Class({
         Main.panel._rightCorner.actor.show();
     }
 });
+Signals.addSignalMethods(DockManager.prototype);
