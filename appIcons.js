@@ -110,7 +110,7 @@ const MyAppIcon = new Lang.Class({
         this._windowsChangedId = this.app.connect('windows-changed',
                                                 Lang.bind(this,
                                                           this.onWindowsChanged));
-        this._focusAppChangeId = tracker.connect('notify::focus-app',
+        this._focusAppChangeId = tracker.connect('notify::focus-app',    // TODO TO MOVE IN APPindicATOR?
                                                  Lang.bind(this,
                                                            this._onFocusAppChanged));
 
@@ -299,7 +299,6 @@ const MyAppIcon = new Lang.Class({
         else
             this.parent();
         this._onFocusAppChanged();
-        //this._updateCounterClass();
         if (this._indicator !== null)
             this._indicator.update();
     },

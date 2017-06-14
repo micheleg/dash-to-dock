@@ -106,6 +106,11 @@ const RunningDotsIndicator = new Lang.Class({
         }, this);
     },
 
+    update:function() {
+        this.parent();
+        this._dots.queue_redraw(); //not necessary becuase a redraw occurs triggered by the class style applied I guesss
+    },
+
     _drawCircles: function() {
 
         let area = this._dots;
