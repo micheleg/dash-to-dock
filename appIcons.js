@@ -82,8 +82,24 @@ const MyAppIcon = new Lang.Class({
         this._dtdSettings = settings;
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._indicator = null;
 
         this.parent(app, iconParams);
+
+        this._updateIndicatorStyle();
+
+        let keys = ['apply-custom-theme',
+                   'custom-theme-running-dots',
+                   'custom-theme-customize-running-dots'
+                   ];
+
+        keys.forEach(function(key) {
+            this._signalsHandler.add([
+                this._dtdSettings,
+                'changed::' + key,
+                Lang.bind(this, this._updateIndicatorStyle)
+            ]);
+        }, this);
 
         // Monitor windows-changes instead of app state.
         if (this._stateChangedId > 0) {
@@ -103,9 +119,6 @@ const MyAppIcon = new Lang.Class({
         }));
         this._optionalScrollCycleWindows();
         this._numberOverlay();
-
-        this._indicator = null;
-        this._updateIndicatorStyle();
 
         this._previewMenuManager = null;
         this._previewMenu = null;
@@ -135,25 +148,35 @@ const MyAppIcon = new Lang.Class({
         if (this._scrollEventHandler)
             this.actor.disconnect(this._scrollEventHandler);
 
-        this._indicator.destroy()
+        this._indicator.destroy();
     },
 
+    // TOOD Rename this function
     _updateIndicatorStyle: function() {
 
-        if (this._indicator !== null)
+        if (this._indicator !== null) {
             this._indicator.destroy();
+            this._indicator = null;
+        }
 
-        // Todo get from settings
-        let indicator_style = AppIconIndicators.IndicatorStyle.RUNNING_DOTS;
+        let indicator_style = AppIconIndicators.IndicatorStyle.DEFAULT;
+
+        if (this._dtdSettings.get_boolean('custom-theme-running-dots') ||
+                this._dtdSettings.get_boolean('apply-custom-theme')) {
+            indicator_style = AppIconIndicators.IndicatorStyle.RUNNING_DOTS;
+        }
 
         switch (indicator_style) {
+        case AppIconIndicators.IndicatorStyle.DEFAULT:
+            this._indicator = new AppIconIndicators.AppIconIndicatorBase(this._dtdSettings, this);
+            break;
 
         case AppIconIndicators.IndicatorStyle.RUNNING_DOTS:
             this._indicator = new AppIconIndicators.RunningDotsIndicator(this._dtdSettings, this);
-            this._indicator.update();
             break;
-
         }
+
+        this._indicator.update();
 
     },
 
@@ -262,7 +285,7 @@ const MyAppIcon = new Lang.Class({
         });
     },
 
-    _updateRunningStyle: function() { return;
+    _updateRunningStyle: function() {
         // When using workspace isolation, we need to hide the dots of apps with
         // no windows in the current workspace
         if (this._dtdSettings.get_boolean('isolate-workspaces') ||
@@ -277,7 +300,7 @@ const MyAppIcon = new Lang.Class({
             this.parent();
         this._onFocusAppChanged();
         //this._updateCounterClass();
-        if (this._indicator != null)
+        if (this._indicator !== null)
             this._indicator.update();
     },
 

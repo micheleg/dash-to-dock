@@ -60,8 +60,6 @@ const AppIconIndicatorBase = new Lang.Class({
                 this._appIcon.actor.add_style_class_name(className);
         }
 
-        //if (this._dots)
-        //    this._dots.queue_repaint();
     },
 
     _hideDefaultDot: function() {
@@ -74,13 +72,10 @@ const AppIconIndicatorBase = new Lang.Class({
         this._appIcon._dot.opacity = 255;
     },
 
-
     destroy: function() {
-        this._restoreDefaultDot();
         this._signalsHandler.destroy();
+        this._restoreDefaultDot();
     }
-
-
 });
 
 const RunningDotsIndicator = new Lang.Class({
@@ -92,12 +87,13 @@ const RunningDotsIndicator = new Lang.Class({
 
         this.parent(settings, appIcon)
 
-        this._dots = null;
+        this._hideDefaultDot();
 
-        let keys = ['apply-custom-theme',
-                   'custom-theme-running-dots',
-                   'custom-theme-customize-running-dots',
-                   'custom-theme-running-dots-color',
+        this._dots = new St.DrawingArea({x_expand: true, y_expand: true});
+        this._dots.connect('repaint', Lang.bind(this, this._drawCircles));
+        this._appIcon._iconContainer.add_child(this._dots);
+
+        let keys = ['custom-theme-running-dots-color',
                    'custom-theme-running-dots-border-color',
                    'custom-theme-running-dots-border-width'];
 
@@ -105,36 +101,15 @@ const RunningDotsIndicator = new Lang.Class({
             this._signalsHandler.add([
                 this._settings,
                 'changed::' + key,
-                Lang.bind(this, this._toggleDots)
+                Lang.bind(this, this._drawCircles)
             ]);
         }, this);
-
-        this._toggleDots();
-
     },
 
-    _toggleDots: function() {
-        if (this._settings.get_boolean('custom-theme-running-dots') ||
-                this._settings.get_boolean('apply-custom-theme')) {
-            this._hideDefaultDot();
+    _drawCircles: function() {
 
-            if (this._dots)
-                this._dots.destroy()
-
-            this._dots = new St.DrawingArea({x_expand: true, y_expand: true});
-            this._dots.connect('repaint', Lang.bind(this, function() {
-                this._drawCircles(this._dots, Utils.getPosition(this._settings));
-            }));
-            this._appIcon._iconContainer.add_child(this._dots);
-        }
-        else {
-            if (this._dots)
-                this._dots.destroy()
-            this._dots = null;
-        }
-    },
-
-    _drawCircles: function(area, side) {
+        let area = this._dots;
+        let side =  Utils.getPosition(this._settings);
         let borderColor, borderWidth, bodyColor;
 
         if (!this._settings.get_boolean('apply-custom-theme')
@@ -210,5 +185,10 @@ const RunningDotsIndicator = new Lang.Class({
         cr.fill();
         cr.$dispose();
     },
+
+    destroy: function() {
+        this.parent();
+        this._dots.destroy();
+    }
 
 });
