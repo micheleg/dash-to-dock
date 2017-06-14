@@ -250,6 +250,7 @@ const MyAppIcon = new Lang.Class({
         if (this._menu && this._menu.isOpen)
             this._menu.update();
 
+        this._updateRunningStyle();
         this.updateIconGeometry();
     },
 
