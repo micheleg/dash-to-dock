@@ -1156,7 +1156,9 @@ const MyShowAppsIconMenu = new Lang.Class({
  * This function is used for both extendShowAppsIcon and extendDashItemContainer
  */
 function itemShowLabel()  {
-    if (!this._labelText)
+    // Check if the label is still present at all. When switching workpaces, the
+    // item might have been destroyed in between.
+    if (!this._labelText || this.label.get_stage() == null)
       return;
 
     this.label.set_text(this._labelText);
