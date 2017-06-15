@@ -140,6 +140,10 @@ const MyAppIcon = new Lang.Class({
             this._dtdSettings,
             'changed::unity-backlit-items',
             Lang.bind(this, this._toggleBacklight)
+        ],[
+            this._dtdSettings,
+            'changed::apply-custom-theme',
+            Lang.bind(this, this._toggleBacklight)
         ]);
         this._glossyBackground();
     },
@@ -323,6 +327,7 @@ const MyAppIcon = new Lang.Class({
         if (
             this.app.state !== Shell.AppState.STOPPED &&
             this._dtdSettings.get_boolean('unity-backlit-items') === true &&
+            this._dtdSettings.get_boolean('apply-custom-theme') === false &&
             getInterestingWindows(this.app, this._dtdSettings).length > 0
         ) {
             this._enableBacklight();
@@ -925,10 +930,12 @@ const MyAppIcon = new Lang.Class({
         let backgroundStyle =
             'background-image: url(\'' + path + '/media/glossy.svg\');' +
             'background-size: contain;'
-        
+
+        let applyBacklight = this._dtdSettings.get_boolean('unity-backlit-items') &&
+                            !this._dtdSettings.get_boolean('apply-custom-theme');
+
         this._iconContainer.get_children()[1].set_style(
-            this._dtdSettings.get_boolean('unity-backlit-items') === true ?
-                backgroundStyle : null
+            applyBacklight ? backgroundStyle : null
         );
     },
 
