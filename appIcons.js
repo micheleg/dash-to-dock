@@ -626,10 +626,10 @@ const MyAppIcon = new Lang.Class({
     },
 
     _enableBacklight: function() {
-        let pixBuf = this._getIconPixBuf();
+        let colorPallete = this._calculateColorPalette();
 
         // Fallback
-        if (pixBuf === null) {
+        if (colorPallete === null) {
             this._iconContainer.set_style(
                 'border-radius: 5px;' +
                 'background-gradient-direction: vertical;' +
@@ -645,8 +645,6 @@ const MyAppIcon = new Lang.Class({
 
             return;
         }
-        
-        let colorPallete = this._calculateColorPalette(pixBuf);
 
         this._iconContainer.set_style(
             'border-radius: 5px;' +
@@ -713,11 +711,15 @@ const MyAppIcon = new Lang.Class({
      * The backlight color choosing algorithm was mostly ported from the C++ source of Canonicals
      * Unity7 to javascript, so it more or less works the same way.
      */
-    _calculateColorPalette: function (pixBuf) {
+    _calculateColorPalette: function () {
         if (iconCacheMap.get(this.app.get_id())) {
             // We already know the answer
             return iconCacheMap.get(this.app.get_id());
         }
+
+        let pixBuf = this._getIconPixBuf();
+        if (pixBuf == null)
+            return null;
     
         let colorUtils = new Utils.ColorUtils();       
         
