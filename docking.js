@@ -321,6 +321,10 @@ const DockedDash = new Lang.Class({
             'notify::checked',
             Lang.bind(this, this._syncShowAppsButtonToggled)
         ], [
+            global.screen,
+            'in-fullscreen-changed',
+            Lang.bind(this, this._onFullscreenChanged)
+        ], [
             // Monitor windows overlapping
             this._intellihide,
             'status-changed',
@@ -438,6 +442,8 @@ const DockedDash = new Lang.Class({
         // Setup pressure barrier (GS38+ only)
         this._updatePressureBarrier();
         this._updateBarrier();
+        // In case there's already a window in fullscreen we need to hide the barriers.
+        this._onFullscreenChanged();
 
         // setup dwelling system if pressure barriers are not available
         this._setupDockDwellIfNeeded();
@@ -564,6 +570,11 @@ const DockedDash = new Lang.Class({
                     this._updateBarrier();
             })
         ], [
+            this._settings,
+            'changed::autohide-in-fullscreen',
+            Lang.bind(this, this._onFullscreenChanged)
+        ],
+        [
             this._settings,
             'changed::extend-height',
             Lang.bind(this, this._resetPosition)
@@ -996,6 +1007,13 @@ const DockedDash = new Lang.Class({
             if (this._pressureBarrier)
                 this._pressureBarrier.addBarrier(this._barrier);
         }
+    },
+
+    _onFullscreenChanged: function() {
+        if (this._monitor.inFullscreen && !this._settings.get_boolean('autohide-in-fullscreen'))
+            this._removeBarrier();
+        else
+            this._updateBarrier();
     },
 
     _isPrimaryMonitor: function() {
