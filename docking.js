@@ -321,6 +321,10 @@ const DockedDash = new Lang.Class({
             'notify::checked',
             Lang.bind(this, this._syncShowAppsButtonToggled)
         ], [
+            global.screen,
+            'in-fullscreen-changed',
+            Lang.bind(this, this._updateBarrier)
+        ], [
             // Monitor windows overlapping
             this._intellihide,
             'status-changed',
@@ -564,6 +568,11 @@ const DockedDash = new Lang.Class({
                     this._updateBarrier();
             })
         ], [
+            this._settings,
+            'changed::autohide-in-fullscreen',
+            Lang.bind(this, this._updateBarrier)
+        ],
+        [
             this._settings,
             'changed::extend-height',
             Lang.bind(this, this._resetPosition)
@@ -941,6 +950,11 @@ const DockedDash = new Lang.Class({
     _updateBarrier: function() {
         // Remove existing barrier
         this._removeBarrier();
+
+        // The barrier needs to be removed in fullscreen with autohide disabled, otherwise the mouse can
+        // get trapped on monitor.
+        if (this._monitor.inFullscreen && !this._settings.get_boolean('autohide-in-fullscreen'))
+            return
 
         // Manually reset pressure barrier
         // This is necessary because we remove the pressure barrier when it is triggered to show the dock
