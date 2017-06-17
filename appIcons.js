@@ -168,7 +168,7 @@ const MyAppIcon = new Lang.Class({
         // We check if the app is running, and that the # of windows is > 0 in
         // case we use workspace isolation,
         let appIsRunning = this.app.state == Shell.AppState.RUNNING
-            && getInterestingWindows(this.app, this._dtdSettings).length > 0;
+            && this.getInterestingWindows().length > 0;
 
         if (!appIsRunning)
             return false
@@ -202,10 +202,10 @@ const MyAppIcon = new Lang.Class({
         if (!Main.overview._shown) {
             let reversed = direction === Meta.MotionDirection.UP;
             if (this.app == focusedApp)
-                cycleThroughWindows(this.app, this._dtdSettings, reversed);
+                this._cycleThroughWindows(reversed);
             else {
                 // Activate the first window
-                let windows = getInterestingWindows(this.app, this._dtdSettings);
+                let windows = this.getInterestingWindows();
                 if (windows.length > 0) {
                     let w = windows[0];
                     Main.activateWindow(w);
@@ -292,7 +292,7 @@ const MyAppIcon = new Lang.Class({
         // no windows in the current workspace
         if (this._dtdSettings.get_boolean('isolate-workspaces')) {
             if (this.app.state != Shell.AppState.STOPPED
-                && getInterestingWindows(this.app, this._dtdSettings).length != 0)
+                && this.getInterestingWindows().length != 0)
                 this._dot.show();
             else
                 this._dot.hide();
@@ -403,7 +403,7 @@ const MyAppIcon = new Lang.Class({
         // We check if the app is running, and that the # of windows is > 0 in
         // case we use workspace isolation,
         let appIsRunning = this.app.state == Shell.AppState.RUNNING
-            && getInterestingWindows(this.app, this._dtdSettings).length > 0
+            && this.getInterestingWindows().length > 0
 
         // Some action modes (e.g. MINIMIZE_OR_OVERVIEW) require overview to remain open
         // This variable keeps track of this
@@ -425,17 +425,17 @@ const MyAppIcon = new Lang.Class({
                         if (Clutter.EventType.CLUTTER_BUTTON_PRESS)
                             click_count = event.get_click_count();
                         let all_windows = (button == 1 && ! modifiers) || click_count > 1;
-                        minimizeWindow(this.app, all_windows, this._dtdSettings);
+                        this._minimizeWindow(all_windows);
                     }
                     else
-                        activateAllWindows(this.app, this._dtdSettings);
+                        this._activateAllWindows();
                 }
                 else
                     this.app.activate();
                 break;
 
             case clickAction.MINIMIZE_OR_OVERVIEW:
-                let windows = getInterestingWindows(this.app, this._dtdSettings);
+                let windows = this.getInterestingWindows();
                 // When a single window is present, toggle minimization
                 // If only one windows is present toggle minimization, but only when trigggered with the
                 // simple click action (no modifiers, no middle click).
@@ -443,7 +443,7 @@ const MyAppIcon = new Lang.Class({
                     let w = windows[0];
                     if (this.app == focusedApp) {
                         // Window is raised, minimize it
-                        minimizeWindow(this.app, w, this._dtdSettings);
+                        this._minimizeWindow(w);
                     } else {
                         // Window is minimized, raise it
                         Main.activateWindow(w);
@@ -459,10 +459,10 @@ const MyAppIcon = new Lang.Class({
             case clickAction.CYCLE_WINDOWS:
                 if (!Main.overview._shown){
                     if (this.app == focusedApp)
-                        cycleThroughWindows(this.app, this._dtdSettings);
+                        this._cycleThroughWindows();
                     else {
                         // Activate the first window
-                        let windows = getInterestingWindows(this.app, this._dtdSettings);
+                        let windows = this.getInterestingWindows();
                         let w = windows[0];
                         Main.activateWindow(w);
                     }
@@ -477,7 +477,7 @@ const MyAppIcon = new Lang.Class({
 
             case clickAction.PREVIEWS:
                 if (!Main.overview._shown) {
-                    let windows = getInterestingWindows(this.app, this._dtdSettings);
+                    let windows = this.getInterestingWindows();
                     // If only one windows is present just switch to it, but only when trigggered with the
                     // simple click action (no modifiers, no middle click).
                     if (windows.length == 1 && !modifiers && button == 1)
@@ -491,7 +491,7 @@ const MyAppIcon = new Lang.Class({
                 break;
 
             case clickAction.QUIT:
-                closeAllWindows(this.app, this._dtdSettings);
+                this._closeAllWindows();
                 break;
 
             case clickAction.SKIP:
@@ -582,7 +582,7 @@ const MyAppIcon = new Lang.Class({
 
     _updateCounterClass: function() {
         let maxN = 4;
-        this._nWindows = Math.min(getInterestingWindows(this.app, this._dtdSettings).length, maxN);
+        this._nWindows = Math.min(this.getInterestingWindows().length, maxN);
 
         for (let i = 1; i <= maxN; i++) {
             let className = 'running' + i;
@@ -715,107 +715,118 @@ const MyAppIcon = new Lang.Class({
         }
         else
             this._numberOverlayBin.hide();
+    },
+
+    _minimizeWindow: function(param) {
+        // Param true make all app windows minimize
+        let windows = this.getInterestingWindows();
+        let current_workspace = global.screen.get_active_workspace();
+        for (let i = 0; i < windows.length; i++) {
+            let w = windows[i];
+            if (w.get_workspace() == current_workspace && w.showing_on_its_workspace()) {
+                w.minimize();
+                // Just minimize one window. By specification it should be the
+                // focused window on the current workspace.
+                if(!param)
+                    break;
+            }
+        }
+    },
+
+    // By default only non minimized windows are activated.
+    // This activates all windows in the current workspace.
+    _activateAllWindows: function() {
+        // First activate first window so workspace is switched if needed.
+        this.app.activate();
+
+        // then activate all other app windows in the current workspace
+        let windows = this.getInterestingWindows();
+        let activeWorkspace = global.screen.get_active_workspace_index();
+
+        if (windows.length <= 0)
+            return;
+
+        let activatedWindows = 0;
+
+        for (let i = windows.length - 1; i >= 0; i--) {
+            if (windows[i].get_workspace().index() == activeWorkspace) {
+                Main.activateWindow(windows[i]);
+                activatedWindows++;
+            }
+        }
+    },
+
+    //This closes all windows of the app.
+    _closeAllWindows: function() {
+        let windows = this.getInterestingWindows();
+        for (let i = 0; i < windows.length; i++)
+            windows[i].delete(global.get_current_time());
+    },
+
+    _cycleThroughWindows: function(reversed) {
+        // Store for a little amount of time last clicked app and its windows
+        // since the order changes upon window interaction
+        let MEMORY_TIME=3000;
+
+        let app_windows = this.getInterestingWindows();
+
+        if (app_windows.length <1)
+            return
+
+        if (recentlyClickedAppLoopId > 0)
+            Mainloop.source_remove(recentlyClickedAppLoopId);
+        recentlyClickedAppLoopId = Mainloop.timeout_add(MEMORY_TIME, this._resetRecentlyClickedApp);
+
+        // If there isn't already a list of windows for the current app,
+        // or the stored list is outdated, use the current windows list.
+        if (!recentlyClickedApp ||
+            recentlyClickedApp.get_id() != this.app.get_id() ||
+            recentlyClickedAppWindows.length != app_windows.length) {
+            recentlyClickedApp = this.app;
+            recentlyClickedAppWindows = app_windows;
+            recentlyClickedAppIndex = 0;
+        }
+
+        if (reversed) {
+            recentlyClickedAppIndex--;
+            if (recentlyClickedAppIndex < 0) recentlyClickedAppIndex = recentlyClickedAppWindows.length - 1;
+        } else {
+            recentlyClickedAppIndex++;
+        }
+        let index = recentlyClickedAppIndex % recentlyClickedAppWindows.length;
+        let window = recentlyClickedAppWindows[index];
+
+        Main.activateWindow(window);
+    },
+
+    _resetRecentlyClickedApp: function() {
+        if (recentlyClickedAppLoopId > 0)
+            Mainloop.source_remove(recentlyClickedAppLoopId);
+        recentlyClickedAppLoopId=0;
+        recentlyClickedApp =null;
+        recentlyClickedAppWindows = null;
+        recentlyClickedAppIndex = 0;
+
+        return false;
+    },
+
+    // Filter out unnecessary windows, for instance
+    // nautilus desktop window.
+    getInterestingWindows: function() {
+        let windows = this.app.get_windows().filter(function(w) {
+            return !w.skip_taskbar;
+        });
+
+        // When using workspace isolation, we filter out windows
+        // that are not in the current workspace
+        if (this._dtdSettings.get_boolean('isolate-workspaces'))
+            windows = windows.filter(function(w) {
+                return w.get_workspace().index() == global.screen.get_active_workspace_index();
+            });
+
+        return windows;
     }
 });
-
-function minimizeWindow(app, param, settings) {
-    // Param true make all app windows minimize
-    let windows = getInterestingWindows(app, settings);
-    let current_workspace = global.screen.get_active_workspace();
-    for (let i = 0; i < windows.length; i++) {
-        let w = windows[i];
-        if (w.get_workspace() == current_workspace && w.showing_on_its_workspace()) {
-            w.minimize();
-            // Just minimize one window. By specification it should be the
-            // focused window on the current workspace.
-            if(!param)
-                break;
-        }
-    }
-}
-
-/**
- * By default only non minimized windows are activated.
- * This activates all windows in the current workspace.
- */
-function activateAllWindows(app, settings) {
-    // First activate first window so workspace is switched if needed.
-    app.activate();
-
-    // then activate all other app windows in the current workspace
-    let windows = getInterestingWindows(app, settings);
-    let activeWorkspace = global.screen.get_active_workspace_index();
-
-    if (windows.length <= 0)
-        return;
-
-    let activatedWindows = 0;
-
-
-    for (let i = windows.length - 1; i >= 0; i--) {
-        if (windows[i].get_workspace().index() == activeWorkspace) {
-            Main.activateWindow(windows[i]);
-            activatedWindows++;
-        }
-    }
-}
-
-/**
- * This closes all windows of the app.
- */
-function closeAllWindows(app, settings) {
-    let windows = getInterestingWindows(app, settings);
-    for (let i = 0; i < windows.length; i++)
-        windows[i].delete(global.get_current_time());
-}
-
-function cycleThroughWindows(app, settings, reversed) {
-    // Store for a little amount of time last clicked app and its windows
-    // since the order changes upon window interaction
-    let MEMORY_TIME=3000;
-
-    let app_windows = getInterestingWindows(app, settings);
-
-    if (app_windows.length <1)
-        return
-
-    if (recentlyClickedAppLoopId > 0)
-        Mainloop.source_remove(recentlyClickedAppLoopId);
-    recentlyClickedAppLoopId = Mainloop.timeout_add(MEMORY_TIME, resetRecentlyClickedApp);
-
-    // If there isn't already a list of windows for the current app,
-    // or the stored list is outdated, use the current windows list.
-    if (!recentlyClickedApp ||
-        recentlyClickedApp.get_id() != app.get_id() ||
-        recentlyClickedAppWindows.length != app_windows.length) {
-        recentlyClickedApp = app;
-        recentlyClickedAppWindows = app_windows;
-        recentlyClickedAppIndex = 0;
-    }
-
-    if (reversed) {
-        recentlyClickedAppIndex--;
-        if (recentlyClickedAppIndex < 0) recentlyClickedAppIndex = recentlyClickedAppWindows.length - 1;
-    } else {
-        recentlyClickedAppIndex++;
-    }
-    let index = recentlyClickedAppIndex % recentlyClickedAppWindows.length;
-    let window = recentlyClickedAppWindows[index];
-
-    Main.activateWindow(window);
-}
-
-function resetRecentlyClickedApp() {
-    if (recentlyClickedAppLoopId > 0)
-        Mainloop.source_remove(recentlyClickedAppLoopId);
-    recentlyClickedAppLoopId=0;
-    recentlyClickedApp =null;
-    recentlyClickedAppWindows = null;
-    recentlyClickedAppIndex = 0;
-
-    return false;
-}
-
 /**
  * Extend AppIconMenu
  *
@@ -949,7 +960,7 @@ const MyAppIconMenu = new Lang.Class({
         this._appendSeparator();
         this._quitfromDashMenuItem = this._appendMenuItem(_("Quit"));
         this._quitfromDashMenuItem.connect('activate', Lang.bind(this, function() {
-            closeAllWindows(this._source.app, this._dtdSettings);
+            this.soirce._closeAllWindows();
         }));
 
         this.update();
@@ -961,7 +972,7 @@ const MyAppIconMenu = new Lang.Class({
 
       if(this._dtdSettings.get_boolean('show-windows-preview')){
 
-          let windows = getInterestingWindows(this._source.app, this._dtdSettings);
+          let windows = this.getInterestingWindows();
 
           // update, show or hide the quit menu
           if ( windows.length > 0) {
@@ -1042,22 +1053,6 @@ const MyAppIconMenu = new Lang.Class({
 });
 Signals.addSignalMethods(MyAppIconMenu.prototype);
 
-// Filter out unnecessary windows, for instance
-// nautilus desktop window.
-function getInterestingWindows(app, settings) {
-    let windows = app.get_windows().filter(function(w) {
-        return !w.skip_taskbar;
-    });
-
-    // When using workspace isolation, we filter out windows
-    // that are not in the current workspace
-    if (settings.get_boolean('isolate-workspaces'))
-        windows = windows.filter(function(w) {
-            return w.get_workspace().index() == global.screen.get_active_workspace_index();
-        });
-
-    return windows;
-}
 
 /**
  * Extend ShowAppsIcon

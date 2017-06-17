@@ -70,7 +70,7 @@ const WindowPreviewMenu = new Lang.Class({
     },
 
     popup: function() {
-        let windows = AppIcons.getInterestingWindows(this._app, this._dtdSettings);
+        let windows = this._source.getInterestingWindows();
         if (windows.length > 0) {
             this._redisplay();
             this.open();
@@ -206,7 +206,7 @@ const WindowPreviewList = new Lang.Class({
             });
 
         // All app windows
-        let newWin = AppIcons.getInterestingWindows(this.app, this._dtdSettings).sort(this.sortWindowsCompareFunction);
+        let newWin = this._source.getInterestingWindows().sort(this.sortWindowsCompareFunction);
 
         let addedItems = [];
         let removedActors = [];
