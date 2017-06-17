@@ -435,7 +435,7 @@ msgstr "Fenstern ausweichen"
 
 #: Settings.ui.h:84
 msgid "All windows"
-msgstr "Alle fenstern"
+msgstr "Alle Fenster"
 
 #: Settings.ui.h:85
 msgid "Only focused application's windows"
