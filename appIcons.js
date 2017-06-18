@@ -442,8 +442,11 @@ const MyAppIcon = new Lang.Class({
                     else
                         this._activateAllWindows();
                 }
-                else
-                    this.app.activate();
+                else {
+                    let windows = this.getInterestingWindows();
+                    let w = windows[0];
+                    Main.activateWindow(w);
+                }
                 break;
 
             case clickAction.MINIMIZE_OR_OVERVIEW:
@@ -750,7 +753,10 @@ const MyAppIcon = new Lang.Class({
     // This activates all windows in the current workspace.
     _activateAllWindows: function() {
         // First activate first window so workspace is switched if needed.
-        this.app.activate();
+        // We don't do this if isolation is on!
+        if (!this._dtdSettings.get_boolean('isolate-workspaces') &&
+            !this._dtdSettings.get_boolean('isolate-monitors'))
+            this.app.activate();
 
         // then activate all other app windows in the current workspace
         let windows = this.getInterestingWindows();
