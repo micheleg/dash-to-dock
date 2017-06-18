@@ -710,8 +710,9 @@ const MyDash = new Lang.Class({
             // When using isolation, we filter out apps that have no windows in
             // the current workspace
             let settings = this._dtdSettings;
+            let monitorIndex = this._monitorIndex;
             running = running.filter(function(_app) {
-                return AppIcons.getInterestingWindows(_app, settings).length != 0;
+                return AppIcons.getInterestingWindows(_app, settings, monitorIndex).length != 0;
             });
         }
 

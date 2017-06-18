@@ -19,7 +19,6 @@ const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
-const AppIcons = Me.imports.appIcons;
 
 const PREVIEW_MAX_WIDTH = 250;
 const PREVIEW_MAX_HEIGHT = 150;
@@ -28,7 +27,7 @@ const WindowPreviewMenu = new Lang.Class({
     Name: 'WindowPreviewMenu',
     Extends: PopupMenu.PopupMenu,
 
-    _init: function(source, settings, monitorIndex) {
+    _init: function(source, settings) {
         this._dtdSettings = settings;
 
         let side = Utils.getPosition(settings);
@@ -40,6 +39,7 @@ const WindowPreviewMenu = new Lang.Class({
 
         this._source = source;
         this._app = this._source.app;
+        let monitorIndex = this._source._monitorIndex;
 
         this.actor.add_style_class_name('app-well-menu');
         this.actor.set_style('max-width: '  + (Main.layoutManager.monitors[monitorIndex].width  - 22) + 'px; ' +
@@ -60,7 +60,7 @@ const WindowPreviewMenu = new Lang.Class({
         this._boxPointer._arrowSide = side;
         this._boxPointer._userArrowSide = side;
 
-        this._previewBox = new WindowPreviewList(this._app, this._dtdSettings);
+        this._previewBox = new WindowPreviewList(this._source, this._dtdSettings);
         this.addMenuItem(this._previewBox);
     },
 
@@ -70,7 +70,7 @@ const WindowPreviewMenu = new Lang.Class({
     },
 
     popup: function() {
-        let windows = AppIcons.getInterestingWindows(this._app, this._dtdSettings);
+        let windows = this._source.getInterestingWindows();
         if (windows.length > 0) {
             this._redisplay();
             this.open();
@@ -95,7 +95,7 @@ const WindowPreviewList = new Lang.Class({
     Name: 'WindowPreviewMenuSection',
     Extends: PopupMenu.PopupMenuSection,
 
-    _init: function(app, settings) {
+    _init: function(source, settings) {
         this._dtdSettings = settings;
 
         this.parent();
@@ -116,7 +116,8 @@ const WindowPreviewList = new Lang.Class({
 
         this._shownInitially = false;
 
-        this.app = app;
+        this._source = source;
+        this.app = source.app;
 
         this._redisplayId = Main.initializeDeferredWork(this.actor, Lang.bind(this, this._redisplay));
 
@@ -206,7 +207,7 @@ const WindowPreviewList = new Lang.Class({
             });
 
         // All app windows
-        let newWin = AppIcons.getInterestingWindows(this.app, this._dtdSettings).sort(this.sortWindowsCompareFunction);
+        let newWin = this._source.getInterestingWindows().sort(this.sortWindowsCompareFunction);
 
         let addedItems = [];
         let removedActors = [];
