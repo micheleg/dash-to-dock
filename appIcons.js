@@ -511,7 +511,9 @@ const MyAppIcon = new Lang.Class({
                 break;
 
             case clickAction.SKIP:
-                this.app.activate();
+                let windows = this.getInterestingWindows();
+                let w = windows[0];
+                Main.activateWindow(w);
                 break;
             }
         }
