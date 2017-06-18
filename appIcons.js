@@ -413,9 +413,10 @@ const MyAppIcon = new Lang.Class({
         }
 
         // We check if the app is running, and that the # of windows is > 0 in
-        // case we use workspace isolation,
+        // case we use workspace isolation.
+        let windows = this.getInterestingWindows();
         let appIsRunning = this.app.state == Shell.AppState.RUNNING
-            && this.getInterestingWindows().length > 0;
+            && windows.length > 0;
 
         // Some action modes (e.g. MINIMIZE_OR_OVERVIEW) require overview to remain open
         // This variable keeps track of this
@@ -443,14 +444,12 @@ const MyAppIcon = new Lang.Class({
                         this._activateAllWindows();
                 }
                 else {
-                    let windows = this.getInterestingWindows();
                     let w = windows[0];
                     Main.activateWindow(w);
                 }
                 break;
 
             case clickAction.MINIMIZE_OR_OVERVIEW:
-                let windows = this.getInterestingWindows();
                 // When a single window is present, toggle minimization
                 // If only one windows is present toggle minimization, but only when trigggered with the
                 // simple click action (no modifiers, no middle click).
@@ -477,7 +476,6 @@ const MyAppIcon = new Lang.Class({
                         this._cycleThroughWindows();
                     else {
                         // Activate the first window
-                        let windows = this.getInterestingWindows();
                         let w = windows[0];
                         Main.activateWindow(w);
                     }
@@ -492,7 +490,6 @@ const MyAppIcon = new Lang.Class({
 
             case clickAction.PREVIEWS:
                 if (!Main.overview._shown) {
-                    let windows = this.getInterestingWindows();
                     // If only one windows is present just switch to it, but only when trigggered with the
                     // simple click action (no modifiers, no middle click).
                     if (windows.length == 1 && !modifiers && button == 1) {
@@ -511,7 +508,6 @@ const MyAppIcon = new Lang.Class({
                 break;
 
             case clickAction.SKIP:
-                let windows = this.getInterestingWindows();
                 let w = windows[0];
                 Main.activateWindow(w);
                 break;
