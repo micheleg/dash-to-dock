@@ -79,7 +79,7 @@ const MyAppIcon = new Lang.Class({
     _init: function(settings, app, monitorIndex, iconParams) {
         // a prefix is required to avoid conflicting with the parent class variable
         this._dtdSettings = settings;
-        this._monitorIndex = monitorIndex;
+        this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._nWindows = 0;
 
@@ -253,7 +253,7 @@ const MyAppIcon = new Lang.Class({
 
         let windows = this.app.get_windows();
         if (this._dtdSettings.get_boolean('multi-monitor')){
-            let monitorIndex = this._monitorIndex;
+            let monitorIndex = this.monitorIndex;
             windows = windows.filter(function(w) {
                 return w.get_monitor() == monitorIndex;
             });
@@ -503,7 +503,7 @@ const MyAppIcon = new Lang.Class({
                 break;
 
             case clickAction.QUIT:
-                this._closeAllWindows();
+                this.closeAllWindows();
                 break;
 
             case clickAction.SKIP:
@@ -769,7 +769,7 @@ const MyAppIcon = new Lang.Class({
     },
 
     //This closes all windows of the app.
-    _closeAllWindows: function() {
+    closeAllWindows: function() {
         let windows = this.getInterestingWindows();
         for (let i = 0; i < windows.length; i++)
             windows[i].delete(global.get_current_time());
@@ -795,10 +795,10 @@ const MyAppIcon = new Lang.Class({
         if (!recentlyClickedApp ||
             recentlyClickedApp.get_id() != this.app.get_id() ||
             recentlyClickedAppWindows.length != app_windows.length ||
-            (recentlyClickedAppMonitor != this._monitorIndex && monitorIsolation)) {
+            (recentlyClickedAppMonitor != this.monitorIndex && monitorIsolation)) {
             recentlyClickedApp = this.app;
             recentlyClickedAppWindows = app_windows;
-            recentlyClickedAppMonitor = this._monitorIndex;
+            recentlyClickedAppMonitor = this.monitorIndex;
             recentlyClickedAppIndex = 0;
         }
 
@@ -829,7 +829,7 @@ const MyAppIcon = new Lang.Class({
     // Filter out unnecessary windows, for instance
     // nautilus desktop window.
     getInterestingWindows: function() {
-        return getInterestingWindows(this.app, this._dtdSettings, this._monitorIndex);
+        return getInterestingWindows(this.app, this._dtdSettings, this.monitorIndex);
     }
 });
 /**
@@ -965,7 +965,7 @@ const MyAppIconMenu = new Lang.Class({
         this._appendSeparator();
         this._quitfromDashMenuItem = this._appendMenuItem(_("Quit"));
         this._quitfromDashMenuItem.connect('activate', Lang.bind(this, function() {
-            this._source._closeAllWindows();
+            this._source.closeAllWindows();
         }));
 
         this.update();

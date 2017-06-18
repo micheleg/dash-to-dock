@@ -39,7 +39,7 @@ const WindowPreviewMenu = new Lang.Class({
 
         this._source = source;
         this._app = this._source.app;
-        let monitorIndex = this._source._monitorIndex;
+        let monitorIndex = this._source.monitorIndex;
 
         this.actor.add_style_class_name('app-well-menu');
         this.actor.set_style('max-width: '  + (Main.layoutManager.monitors[monitorIndex].width  - 22) + 'px; ' +
