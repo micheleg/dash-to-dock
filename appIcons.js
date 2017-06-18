@@ -492,9 +492,10 @@ const MyAppIcon = new Lang.Class({
                     let windows = this.getInterestingWindows();
                     // If only one windows is present just switch to it, but only when trigggered with the
                     // simple click action (no modifiers, no middle click).
-                    if (windows.length == 1 && !modifiers && button == 1)
-                        this.app.activate();
-                    else
+                    if (windows.length == 1 && !modifiers && button == 1) {
+                        let w = windows[0];
+                        Main.activateWindow(w);
+                    } else
                         this._windowPreviews();
                 }
                 else {
