@@ -109,7 +109,7 @@ const RunningDotsIndicator = new Lang.Class({
             this._signalsHandler.add([
                 this._settings,
                 'changed::' + key,
-                Lang.bind(this, this._drawCircles)
+                Lang.bind(this, this._update)
             ]);
         }, this);
     },
