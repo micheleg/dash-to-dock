@@ -1578,6 +1578,16 @@ const WorkspaceIsolation = new Lang.Class({
                 'switch-workspace',
                 Lang.bind(dock.dash, dock.dash._queueRedisplay)
             ]);
+
+            // This last signal is only needed for monitor isolation, as windows
+            // might migrate from one monitor to another without triggering 'restacked'
+            if (this._settings.get_boolean('isolate-monitors'))
+                this._signalsHandler.addWithLabel('isolation', [
+                    global.screen,
+                    'window-entered-monitor',
+                    Lang.bind(dock.dash, dock.dash._queueRedisplay)
+                ]);
+
         }, this);
 
         // here this is the Shell.App
