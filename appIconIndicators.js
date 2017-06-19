@@ -34,17 +34,16 @@ const AppIconIndicatorBase = new Lang.Class({
 
     Name: 'DashToDock.AppIconIndicatorBase',
 
-    _init: function(settings, appIcon) {
-        // ? RENAME appIcon to SOURCE?
+    _init: function(source, settings) {
         this._settings = settings;
-        this._appIcon = appIcon;
+        this._source = source;
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._nWindows = 0;
 
         this._signalsHandler.add([
-            this._appIcon.app,
+            this._source.app,
             'windows-changed',
              Lang.bind(this, this._update)
         ]);
@@ -58,14 +57,14 @@ const AppIconIndicatorBase = new Lang.Class({
 
     _updateCounterClass: function() {
         let maxN = 4;
-        this._nWindows = Math.min(this._appIcon.getInterestingWindows().length, maxN);
+        this._nWindows = Math.min(this._source.getInterestingWindows().length, maxN);
 
         for (let i = 1; i <= maxN; i++) {
             let className = 'running' + i;
             if (i != this._nWindows)
-                this._appIcon.actor.remove_style_class_name(className);
+                this._source.actor.remove_style_class_name(className);
             else
-                this._appIcon.actor.add_style_class_name(className);
+                this._source.actor.add_style_class_name(className);
         }
 
     },
@@ -73,11 +72,11 @@ const AppIconIndicatorBase = new Lang.Class({
     _hideDefaultDot: function() {
         // I use opacity to hide the default dot because the show/hide function
         // are used by the parent class.
-        this._appIcon._dot.opacity = 0;
+        this._source._dot.opacity = 0;
     },
 
     _restoreDefaultDot: function() {
-        this._appIcon._dot.opacity = 255;
+        this._source._dot.opacity = 255;
     },
 
     destroy: function() {
@@ -99,7 +98,7 @@ const RunningDotsIndicator = new Lang.Class({
 
         this._dots = new St.DrawingArea({x_expand: true, y_expand: true});
         this._dots.connect('repaint', Lang.bind(this, this._drawCircles));
-        this._appIcon._iconContainer.add_child(this._dots);
+        this._source._iconContainer.add_child(this._dots);
 
         let keys = ['custom-theme-running-dots-color',
                    'custom-theme-running-dots-border-color',
@@ -135,7 +134,7 @@ const RunningDotsIndicator = new Lang.Class({
         else {
             // Re-use the style - background color, and border width and color -
             // of the default dot
-            let themeNode = this._appIcon._dot.get_theme_node();
+            let themeNode = this._source._dot.get_theme_node();
             borderColor = themeNode.get_border_color(side);
             borderWidth = themeNode.get_border_width(side);
             bodyColor = themeNode.get_background_color();
@@ -151,8 +150,6 @@ const RunningDotsIndicator = new Lang.Class({
         let padding = 0; // distance from the margin
         let spacing = radius + borderWidth; // separation between the dots
 
-        //TODO. Get n in this class? check on n!==0 ?
-        //let n = this._appIcon._nWindows;
         let n = this._nWindows;
 
         cr.setLineWidth(borderWidth);

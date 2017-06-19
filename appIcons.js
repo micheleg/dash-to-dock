@@ -168,11 +168,11 @@ const MyAppIcon = new Lang.Class({
 
         switch (indicator_style) {
         case AppIconIndicators.IndicatorStyle.DEFAULT:
-            this._indicator = new AppIconIndicators.AppIconIndicatorBase(this._dtdSettings, this);
+            this._indicator = new AppIconIndicators.AppIconIndicatorBase(this, this._dtdSettings);
             break;
 
         case AppIconIndicators.IndicatorStyle.RUNNING_DOTS:
-            this._indicator = new AppIconIndicators.RunningDotsIndicator(this._dtdSettings, this);
+            this._indicator = new AppIconIndicators.RunningDotsIndicator(this, this._dtdSettings);
             break;
         }
     },
