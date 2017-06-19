@@ -29,6 +29,7 @@ const IndicatorStyle = {
     RUNNING_DOTS: 1
 };
 
+const MAX_WINDOWS_CLASSES = 4;
 
 const AppIconIndicatorBase = new Lang.Class({
 
@@ -48,18 +49,17 @@ const AppIconIndicatorBase = new Lang.Class({
              Lang.bind(this, this._update)
         ]);
 
-        this._updateCounterClass();
+        this._update();
     },
 
     _update: function() {
+        // Limit to 1 to MAX_WINDOWS_CLASSES  windows classes
+        this._nWindows = Math.min(this._source.getInterestingWindows().length, MAX_WINDOWS_CLASSES);
         this._updateCounterClass();
     },
 
     _updateCounterClass: function() {
-        let maxN = 4;
-        this._nWindows = Math.min(this._source.getInterestingWindows().length, maxN);
-
-        for (let i = 1; i <= maxN; i++) {
+        for (let i = 1; i <= MAX_WINDOWS_CLASSES; i++) {
             let className = 'running' + i;
             if (i != this._nWindows)
                 this._source.actor.remove_style_class_name(className);
@@ -115,7 +115,8 @@ const RunningDotsIndicator = new Lang.Class({
 
     _update: function() {
         this.parent();
-        this._dots.queue_redraw(); //not necessary becuase a redraw occurs triggered by the class style applied I guesss
+        if (this._dots)
+            this._dots.queue_redraw(); //not necessary becuase a redraw occurs triggered by the class style applied I guesss
     },
 
     _drawCircles: function() {
