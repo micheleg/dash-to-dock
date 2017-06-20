@@ -47,19 +47,10 @@ const AppIconIndicatorBase = new Lang.Class({
         this._source = source;
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
-
         this._nWindows = 0;
-
-        this._signalsHandler.add([
-            this._source.app,
-            'windows-changed',
-             Lang.bind(this, this._update)
-        ]);
-
-        this._update();
     },
 
-    _update: function() {
+    update: function() {
         // Limit to 1 to MAX_WINDOWS_CLASSES  windows classes
         this._nWindows = Math.min(this._source.getInterestingWindows().length, MAX_WINDOWS_CLASSES);
         this._updateCounterClass();
@@ -124,12 +115,12 @@ const RunningDotsIndicator = new Lang.Class({
             this._signalsHandler.add([
                 this._settings,
                 'changed::' + key,
-                Lang.bind(this, this._update)
+                Lang.bind(this, this.update)
             ]);
         }, this);
     },
 
-    _update: function() {
+    update: function() {
         this.parent();
         if (this._dots)
             this._dots.queue_redraw(); //not necessary becuase a redraw occurs triggered by the class style applied I guesss
