@@ -39,6 +39,7 @@ const AppIconIndicatorBase = new Lang.Class({
         this._nWindows = Math.min(this._source.getInterestingWindows().length, MAX_WINDOWS_CLASSES);
         this._updateCounterClass();
         this._updateFocusClass();
+        this._updateDefaultDot();
     },
 
     _updateCounterClass: function() {
