@@ -76,6 +76,16 @@ const AppIconIndicatorBase = new Lang.Class({
             this._source.actor.remove_style_class_name('focused');
     },
 
+    _updateDefaultDot: function() {
+        // In the case of workspace isolation, we need to hide the dots of apps with
+        // no windows in the current workspace
+        if (this._source.app.state != Shell.AppState.STOPPED
+            && this._source.getInterestingWindows().length != 0)
+            this._source._dot.show();
+        else
+            this._source._dot.hide();
+    },
+
     _hideDefaultDot: function() {
         // I use opacity to hide the default dot because the show/hide function
         // are used by the parent class.

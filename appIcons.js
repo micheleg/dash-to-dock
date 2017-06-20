@@ -110,7 +110,7 @@ const MyAppIcon = new Lang.Class({
         this._windowsChangedId = this.app.connect('windows-changed',
                                                 Lang.bind(this,
                                                           this.onWindowsChanged));
-        this._focusAppChangeId = tracker.connect('notify::focus-app',    // TODO TO MOVE IN APPindicATOR?
+        this._focusAppChangeId = tracker.connect('notify::focus-app',
                                                  Lang.bind(this,
                                                            this._onFocusAppChanged));
 
@@ -251,10 +251,8 @@ const MyAppIcon = new Lang.Class({
 
         if (this._menu && this._menu.isOpen)
             this._menu.update();
-
-        this._indicator.update();
-        this._updateRunningStyle();
         this.updateIconGeometry();
+        this._indicator.update();
     },
 
     /**
@@ -286,18 +284,9 @@ const MyAppIcon = new Lang.Class({
     },
 
     _updateRunningStyle: function() {
-        // When using workspace isolation, we need to hide the dots of apps with
-        // no windows in the current workspace
-        if (this._dtdSettings.get_boolean('isolate-workspaces') ||
-            this._dtdSettings.get_boolean('isolate-monitors')) {
-            if (this.app.state != Shell.AppState.STOPPED
-                && this.getInterestingWindows().length != 0)
-                this._dot.show();
-            else
-                this._dot.hide();
-        }
-        else
-            this.parent();
+        // The logic originally in this function has been moved to
+        // AppIconIndicatorBase._updateDefaultDot(). However it cannot be removed as
+        // it called by the parent constructor.
     },
 
     popupMenu: function() {
@@ -350,8 +339,7 @@ const MyAppIcon = new Lang.Class({
     },
 
     _onFocusAppChanged: function() {
-        if (this._indicator)
-            this._indicator.update();
+        this._indicator.update();
     },
 
     activate: function(button) {
