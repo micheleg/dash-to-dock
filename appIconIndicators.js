@@ -24,6 +24,8 @@ const Workspace = imports.ui.workspace;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 
+let tracker = Shell.WindowTracker.get_default();
+
 const IndicatorStyle = {
     DEFAULT: 0,
     RUNNING_DOTS: 1
@@ -31,6 +33,11 @@ const IndicatorStyle = {
 
 const MAX_WINDOWS_CLASSES = 4;
 
+/*
+ * A base indicator class, from which all other should derive, providing css
+ * style classes handling.
+ *
+ */
 const AppIconIndicatorBase = new Lang.Class({
 
     Name: 'DashToDock.AppIconIndicatorBase',
@@ -56,6 +63,7 @@ const AppIconIndicatorBase = new Lang.Class({
         // Limit to 1 to MAX_WINDOWS_CLASSES  windows classes
         this._nWindows = Math.min(this._source.getInterestingWindows().length, MAX_WINDOWS_CLASSES);
         this._updateCounterClass();
+        this._updateFocusClass();
     },
 
     _updateCounterClass: function() {
@@ -66,7 +74,15 @@ const AppIconIndicatorBase = new Lang.Class({
             else
                 this._source.actor.add_style_class_name(className);
         }
+    },
 
+    _updateFocusClass: function() {
+        // We need to check the number of windows, as the focus might be
+        // happening on another monitor if using isolation
+        if (tracker.focus_app == this._source.app && this._nWindows != 0)
+            this._source.actor.add_style_class_name('focused');
+        else
+            this._source.actor.remove_style_class_name('focused');
     },
 
     _hideDefaultDot: function() {

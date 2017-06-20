@@ -295,7 +295,6 @@ const MyAppIcon = new Lang.Class({
         }
         else
             this.parent();
-        this._onFocusAppChanged();
     },
 
     popupMenu: function() {
@@ -348,12 +347,8 @@ const MyAppIcon = new Lang.Class({
     },
 
     _onFocusAppChanged: function() {
-        // We need to check the number of windows, as the focus might be
-        // happening on another monitor if using isolation
-        if (tracker.focus_app == this.app && this.getInterestingWindows().length != 0)
-            this.actor.add_style_class_name('focused');
-        else
-            this.actor.remove_style_class_name('focused');
+        if (this._indicator)
+            this._indicator._update();
     },
 
     activate: function(button) {
