@@ -43,7 +43,7 @@ mergepo: potfile
 
 ./po/dashtodock.pot: $(TOLOCALIZE) Settings.ui
 	mkdir -p po
-	xgettext -k --keyword=__ --keyword=N__ -o po/dashtodock.pot --package-name "Dash to Dock" $(TOLOCALIZE)
+	xgettext -k --keyword=__ --keyword=N__ --add-comments='Translators:' -o po/dashtodock.pot --package-name "Dash to Dock" $(TOLOCALIZE)
 	intltool-extract --type=gettext/glade Settings.ui
 	xgettext -k --keyword=_ --keyword=N_ --join-existing -o po/dashtodock.pot Settings.ui.h
 
