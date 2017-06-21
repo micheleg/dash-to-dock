@@ -1171,7 +1171,10 @@ const MyShowAppsIconMenu = new Lang.Class({
     _redisplay: function() {
         this.removeAll();
 
-        let item = this._appendMenuItem('Dash to Dock ' + _('Settings'));
+        // We use "__" for the main string, as we localize it ourselves.
+        // We use "_" for Settings, as we take the translation from upstream.
+        let name = __('Dash to Dock %s').format(_('Settings'))
+        let item = this._appendMenuItem(name);
 
         item.connect('activate', function () {
             Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
