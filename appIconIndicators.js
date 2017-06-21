@@ -32,11 +32,29 @@ const AppIconIndicatorBase = new Lang.Class({
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._nWindows = 0;
+        // These statuse take into account the workspace/monitor isolation
+        this._isFocused = false;
+        this._isRunning = false;
     },
 
     update: function() {
         // Limit to 1 to MAX_WINDOWS_CLASSES  windows classes
         this._nWindows = Math.min(this._source.getInterestingWindows().length, MAX_WINDOWS_CLASSES);
+
+        // We need to check the number of windows, as the focus might be
+        // happening on another monitor if using isolation
+        if (tracker.focus_app == this._source.app && this._nWindows > 0)
+            this._isFocused = true;
+        else
+            this._isFocused = false;
+
+        // In the case of workspace isolation, we need to hide the dots of apps with
+        // no windows in the current workspace
+        if (this._source.app.state != Shell.AppState.STOPPED  && this._nWindows > 0)
+            this._isRunning = true;
+        else
+            this._isRunning = false;
+
         this._updateCounterClass();
         this._updateFocusClass();
         this._updateDefaultDot();
@@ -53,19 +71,14 @@ const AppIconIndicatorBase = new Lang.Class({
     },
 
     _updateFocusClass: function() {
-        // We need to check the number of windows, as the focus might be
-        // happening on another monitor if using isolation
-        if (tracker.focus_app == this._source.app && this._nWindows != 0)
+        if (this._isFocused)
             this._source.actor.add_style_class_name('focused');
         else
             this._source.actor.remove_style_class_name('focused');
     },
 
     _updateDefaultDot: function() {
-        // In the case of workspace isolation, we need to hide the dots of apps with
-        // no windows in the current workspace
-        if (this._source.app.state != Shell.AppState.STOPPED
-            && this._source.getInterestingWindows().length != 0)
+        if (this._isRunning)
             this._source._dot.show();
         else
             this._source._dot.hide();
