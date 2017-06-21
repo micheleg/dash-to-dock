@@ -98,6 +98,10 @@ const MyAppIcon = new Lang.Class({
         this._focusAppChangeId = tracker.connect('notify::focus-app',
                                                  Lang.bind(this,
                                                            this._onFocusAppChanged));
+        this._enteredMonitorId = global.screen.connect('window-entered-monitor',
+                                                       Lang.bind(this,
+                                                                 this.onWindowsChanged));
+
         this._dots = null;
 
         let keys = ['apply-custom-theme',
@@ -142,6 +146,11 @@ const MyAppIcon = new Lang.Class({
         if (this._focusAppChangeId > 0) {
             tracker.disconnect(this._focusAppChangeId);
             this._focusAppChangeId = 0;
+        }
+
+        if (this._enteredMonitorId > 0) {
+            global.screen.disconnect(this._enteredMonitorId);
+            this._enteredMonitorId = 0;
         }
 
         this._signalsHandler.destroy();
