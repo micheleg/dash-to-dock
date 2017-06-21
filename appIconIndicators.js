@@ -105,9 +105,9 @@ const RunningDotsIndicator = new Lang.Class({
     Name: 'DashToDock.RunningDotsIndicator',
     Extends: AppIconIndicatorBase,
 
-    _init: function(settings, appIcon) {
+    _init: function(source, settings) {
 
-        this.parent(settings, appIcon)
+        this.parent(source, settings)
 
         this._hideDefaultDot();
 
