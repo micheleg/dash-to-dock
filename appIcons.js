@@ -1171,8 +1171,8 @@ const MyShowAppsIconMenu = new Lang.Class({
     _redisplay: function() {
         this.removeAll();
 
-        // We use "__" for the main string, as we localize it ourselves.
-        // We use "_" for Settings, as we take the translation from upstream.
+        /* Translators: %s is "Settings", which is automatically translated. You
+           can also translate the full message if this fits better your language. */
         let name = __('Dash to Dock %s').format(_('Settings'))
         let item = this._appendMenuItem(name);
 
