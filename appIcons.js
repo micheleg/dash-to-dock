@@ -30,7 +30,7 @@ const Util = imports.misc.util;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
-const ApplicationOverview = Me.imports.applicationOverview;
+const AppExposeOverview = Me.imports.appExposeOverview;
 
 let tracker = Shell.WindowTracker.get_default();
 
@@ -82,7 +82,7 @@ const MyAppIcon = new Lang.Class({
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._nWindows = 0;
-        this.applicationOverview = new ApplicationOverview.ApplicationOverview();
+        this.appExposeOverview = new AppExposeOverview.AppExposeOverview();
 
         this.parent(app, iconParams);
 
@@ -150,7 +150,7 @@ const MyAppIcon = new Lang.Class({
         if (this._scrollEventHandler)
             this.actor.disconnect(this._scrollEventHandler);
 
-        this.applicationOverview.disconnect();
+        this.appExposeOverview.disconnect();
     },
 
     _optionalScrollCycleWindows: function() {
@@ -446,7 +446,7 @@ const MyAppIcon = new Lang.Class({
                     shouldHideOverview = false;
                     if (this.app == focusedApp) {
                         // Show overview with selected app windows only
-                        this.applicationOverview.toggleSelectedAppOverview(this.actor, windows);
+                        this.appExposeOverview.toggleAppExposeOverview(this.actor, windows);
                     } else {
                         // Another app is focused or all app windows are minimized -> show selected app window
                         let w = windows[0];
@@ -1237,7 +1237,7 @@ function itemShowLabel()  {
 }
 
 /**
- * This function is used appIcons and applicationOverview
+ * This function is used appIcons and appExposeOverview
  */
 function unifyScrollDirection(scrollEvent) {
 	let direction = null;

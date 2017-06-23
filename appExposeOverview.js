@@ -10,11 +10,11 @@ const Layout = imports.ui.layout;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const AppIcons = Me.imports.appIcons;
 
-const ApplicationOverview = new Lang.Class({
-	Name: 'DashToDock.ApplicationOverview',
+const AppExposeOverview = new Lang.Class({
+	Name: 'DashToDock.AppExposeOverview',
 
 	_init: function() {
-		this.isInAppOverview = false;
+		this.isInAppExposeOverview = false;
 		this.originalTriggerSearchFunction = ViewSelector.ViewSelector.prototype._shouldTriggerSearch;
 		this.originalOverviewFunction = Workspace.Workspace.prototype._isOverviewWindow;
 		this.originalThumbnailFunction = WorkspaceThumbnail.WorkspaceThumbnail.prototype._isOverviewWindow;
@@ -26,16 +26,16 @@ const ApplicationOverview = new Lang.Class({
 		Main.overview.disconnect(this.hiddenId);
 	},
 
-	toggleSelectedAppOverview: function (iconActor, appWindows) {
+	toggleAppExposeOverview: function (iconActor, appWindows) {
 		if (Main.overview._shown) {
 			// Notice: restoring original overview state is done in overview "hide" event handler
 			Main.overview.hide();
 		} else {
 			// Checked in overview "hide" event handler
-			this.isInAppOverview = true;
+			this.isInAppExposeOverview = true;
 			// Temporary change app icon scroll to switch workspaces
 			this.actor = iconActor;
-			this.appIconScrollId = this.actor.connect('scroll-event', Lang.bind(this, this._onApplicationWorkspaceScroll));
+			this.appIconScrollId = this.actor.connect('scroll-event', Lang.bind(this, this._onAppExposeOverview));
 
 			// Hide and disable search input
 			Main.overview._searchEntryBin.hide();
@@ -60,7 +60,7 @@ const ApplicationOverview = new Lang.Class({
 				return originalResult && appWindows.indexOf(metaWindow) > -1;
 			};
 
-			// If second last app window closed in app overview, activate remaining window (done in hidden event)
+			// If second last app window closed in AppExposeOverview, activate remaining window (done in hidden event)
 			this.destroyWindowId = global.window_manager.connect('destroy', Lang.bind(this, function (wm, windowActor) {
 				const metaWindow = windowActor.get_meta_window();
 				const index = appWindows.indexOf(metaWindow);
@@ -74,7 +74,7 @@ const ApplicationOverview = new Lang.Class({
 
 			Main.overview.show();
 
-			// Change hotcorner to show 'normal' overview, if in app overview
+			// Change hotcorner to show 'normal' overview, if in AppExposeOverview
 			Layout.HotCorner.prototype._toggleOverview = function() {
 				if (this._monitor.inFullscreen)
 					return;
@@ -92,8 +92,8 @@ const ApplicationOverview = new Lang.Class({
 	},
 
 	_onOverviewHidden: function() {
-		if (this.isInAppOverview) {
-			this.isInAppOverview = false;
+		if (this.isInAppExposeOverview) {
+			this.isInAppExposeOverview = false;
 			// Restore original behaviour
 			this.actor.disconnect(this.appIconScrollId);
 			Layout.HotCorner.prototype._toggleOverview = this.originalHotCornerToggleFunction;
@@ -103,15 +103,15 @@ const ApplicationOverview = new Lang.Class({
 			Workspace.Workspace.prototype._isOverviewWindow = this.originalOverviewFunction;
 			WorkspaceThumbnail.WorkspaceThumbnail.prototype._isOverviewWindow = this.originalThumbnailFunction;
 			global.window_manager.disconnect(this.destroyWindowId);
-			// Check reason for leaving app overview was second last window closed
+			// Check reason for leaving AppExposeOverview was second last window closed
 			if (this.appWindows.length === 1) {
 				Main.activateWindow(this.appWindows[0]);
 			}
 		}
 	},
 
-	_onApplicationWorkspaceScroll: function(actor, event) {
-		if (this.isInAppOverview) {
+	_onAppExposeOverview: function(actor, event) {
+		if (this.isInAppExposeOverview) {
 			let direction = AppIcons.unifyScrollDirection(event);
 			let activeWs = global.screen.get_active_workspace();
 			let ws;
