@@ -75,17 +75,15 @@ const ApplicationOverview = new Lang.Class({
 			Main.overview.show();
 
 			// Change hotcorner to show 'normal' overview, if in app overview
-			const onOverviewHidden = this._onOverviewHidden.bind(this);
 			Layout.HotCorner.prototype._toggleOverview = function() {
 				if (this._monitor.inFullscreen)
 					return;
 
 				if (Main.overview.shouldToggleByCornerOrButton()) {
 					this._rippleAnimation();
-					onOverviewHidden();
 					Main.overview._shown = false;
-					Main.overview.visible = false;
-					Main.layoutManager._inOverview = false;
+					Main.overview.emit('hiding');
+					Main.overview._hideDone();
 					Main.overview.show();
 				}
 			};
@@ -133,4 +131,3 @@ const ApplicationOverview = new Lang.Class({
 		return Clutter.EVENT_PROPAGATE;
 	}
 });
-
