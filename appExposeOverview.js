@@ -29,66 +29,85 @@ const AppExposeOverview = new Lang.Class({
 	toggleAppExposeOverview: function (iconActor, appWindows) {
 		if (Main.overview._shown) {
 			// Notice: restoring original overview state is done in overview "hide" event handler
-			Main.overview.hide();
+			if (this.isInAppExposeOverview) {
+				Main.overview.hide();
+				// Switch back from normal overview to AppExpose:
+			} else {
+				Main.overview._shown = false;
+				Main.overview.emit('hiding');
+				Main.overview._hideDone();
+				this.show(iconActor, appWindows);
+			}
 		} else {
-			// Checked in overview "hide" event handler
-			this.isInAppExposeOverview = true;
-			// Temporary change app icon scroll to switch workspaces
-			this.actor = iconActor;
-			this.appIconScrollId = this.actor.connect('scroll-event', Lang.bind(this, this._onAppExposeOverview));
-
-			// Hide and disable search input
-			Main.overview._searchEntryBin.hide();
-			ViewSelector.ViewSelector.prototype._shouldTriggerSearch = function(symbol) {
-				return false;
-			};
-
-			// Only show application windows in workspace
-			this.appWindows = appWindows;
-			const originalOverviewFunction = this.originalOverviewFunction;
-			Workspace.Workspace.prototype._isOverviewWindow = function(win) {
-				const originalResult = originalOverviewFunction(win);
-				const metaWindow = win.get_meta_window();
-				return originalResult && appWindows.indexOf(metaWindow) > -1;
-			};
-
-			// Only show application windows in thumbnails
-			const originalThumbnailFunction = this.originalOverviewFunction;
-			WorkspaceThumbnail.WorkspaceThumbnail.prototype._isOverviewWindow = function(win) {
-				const originalResult = originalThumbnailFunction(win);
-				const metaWindow = win.get_meta_window();
-				return originalResult && appWindows.indexOf(metaWindow) > -1;
-			};
-
-			// If second last app window closed in AppExposeOverview, activate remaining window (done in hidden event)
-			this.destroyWindowId = global.window_manager.connect('destroy', Lang.bind(this, function (wm, windowActor) {
-				const metaWindow = windowActor.get_meta_window();
-				const index = appWindows.indexOf(metaWindow);
-				if (index > -1) {
-					appWindows.splice(index, 1);
-				}
-				if (appWindows.length === 1) {
-					Main.overview.hide();
-				}
-			}));
-
-			Main.overview.show();
-
-			// Change hotcorner to show 'normal' overview, if in AppExposeOverview
-			Layout.HotCorner.prototype._toggleOverview = function() {
-				if (this._monitor.inFullscreen)
-					return;
-
-				if (Main.overview.shouldToggleByCornerOrButton()) {
-					this._rippleAnimation();
-					Main.overview._shown = false;
-					Main.overview.emit('hiding');
-					Main.overview._hideDone();
-					Main.overview.show();
-				}
-			};
-			Main.layoutManager._updateHotCorners();
+			// Switch from desktop to AppExpose:
+			this.show(iconActor, appWindows);
 		}
+	},
+
+	show: function(iconActor, appWindows) {
+		// Checked in overview "hide" event handler
+		this.isInAppExposeOverview = true;
+		// Temporary change app icon scroll to switch workspaces
+		this.actor = iconActor;
+		this.appIconScrollId = this.actor.connect('scroll-event', Lang.bind(this, this._onAppExposeOverview));
+
+		// Hide and disable search input
+		Main.overview._searchEntryBin.hide();
+		ViewSelector.ViewSelector.prototype._shouldTriggerSearch = function(symbol) {
+			return false;
+		};
+
+		// Only show application windows in workspace
+		this.appWindows = appWindows;
+		const originalOverviewFunction = this.originalOverviewFunction;
+		Workspace.Workspace.prototype._isOverviewWindow = function(win) {
+			const originalResult = originalOverviewFunction(win);
+			const metaWindow = win.get_meta_window();
+			return originalResult && appWindows.indexOf(metaWindow) > -1;
+		};
+
+		// Only show application windows in thumbnails
+		const originalThumbnailFunction = this.originalOverviewFunction;
+		WorkspaceThumbnail.WorkspaceThumbnail.prototype._isOverviewWindow = function(win) {
+			const originalResult = originalThumbnailFunction(win);
+			const metaWindow = win.get_meta_window();
+			return originalResult && appWindows.indexOf(metaWindow) > -1;
+		};
+
+		// If second last app window closed in AppExposeOverview, activate remaining window (done in hidden event)
+		this.destroyWindowId = global.window_manager.connect('destroy', Lang.bind(this, function (wm, windowActor) {
+			const metaWindow = windowActor.get_meta_window();
+			const index = appWindows.indexOf(metaWindow);
+			if (index > -1) {
+				appWindows.splice(index, 1);
+			}
+			if (appWindows.length === 1) {
+				Main.overview.hide();
+			}
+		}));
+
+		Main.overview.show();
+
+		// Change hotcorner to show 'normal' overview, if in AppExposeOverview
+		let setInAppExposeOverview = this._setInAppExposeOverview.bind(this);
+		Layout.HotCorner.prototype._toggleOverview = function() {
+			if (this._monitor.inFullscreen)
+				return;
+
+			if (Main.overview.shouldToggleByCornerOrButton()) {
+				this._rippleAnimation();
+				Main.overview._shown = false;
+				Main.overview.emit('hiding');
+				Main.overview._hideDone();
+				Main.overview.show();
+				setInAppExposeOverview(false);
+			}
+		};
+		Main.layoutManager._updateHotCorners();
+	},
+
+	_setInAppExposeOverview: function(bool) {
+		this.isInAppExposeOverview = bool;
 	},
 
 	_onOverviewHidden: function() {
