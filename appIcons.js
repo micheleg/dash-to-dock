@@ -449,11 +449,15 @@ const MyAppIcon = new Lang.Class({
                         this.appExposeOverview.toggleAppExposeOverview(this.actor, windows);
                     } else {
                     	if (Main.overview._shown && !this.appExposeOverview.isInAppExposeOverview) {
-							this.appExposeOverview.show(this.actor, windows);
+							Main.overview._shown = false;
+							Main.overview.emit('hiding');
+							Main.overview._hideDone();
+                    		this.appExposeOverview.show(this.actor, windows);
+						} else {
+							// Another app is focused or all app windows are minimized -> show selected app window
+							let w = windows[0];
+							Main.activateWindow(w);
 						}
-                        // Another app is focused or all app windows are minimized -> show selected app window
-                        let w = windows[0];
-                        Main.activateWindow(w);
                     }
                 }
                 break;
