@@ -29,15 +29,7 @@ const AppExposeOverview = new Lang.Class({
 	toggleAppExposeOverview: function (iconActor, appWindows) {
 		if (Main.overview._shown) {
 			// Notice: restoring original overview state is done in overview "hide" event handler
-			if (this.isInAppExposeOverview) {
-				Main.overview.hide();
-				// Switch back from normal overview to AppExpose:
-			} else {
-				Main.overview._shown = false;
-				Main.overview.emit('hiding');
-				Main.overview._hideDone();
-				this.show(iconActor, appWindows);
-			}
+			Main.overview.hide();
 		} else {
 			// Switch from desktop to AppExpose:
 			this.show(iconActor, appWindows);
@@ -89,7 +81,6 @@ const AppExposeOverview = new Lang.Class({
 		Main.overview.show();
 
 		// Change hotcorner to show 'normal' overview, if in AppExposeOverview
-		let setInAppExposeOverview = this._setInAppExposeOverview.bind(this);
 		Layout.HotCorner.prototype._toggleOverview = function() {
 			if (this._monitor.inFullscreen)
 				return;
@@ -100,14 +91,9 @@ const AppExposeOverview = new Lang.Class({
 				Main.overview.emit('hiding');
 				Main.overview._hideDone();
 				Main.overview.show();
-				setInAppExposeOverview(false);
 			}
 		};
 		Main.layoutManager._updateHotCorners();
-	},
-
-	_setInAppExposeOverview: function(bool) {
-		this.isInAppExposeOverview = bool;
 	},
 
 	_onOverviewHidden: function() {
