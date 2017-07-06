@@ -20,10 +20,12 @@ const AppExposeOverview = new Lang.Class({
 		this.originalThumbnailFunction = WorkspaceThumbnail.WorkspaceThumbnail.prototype._isOverviewWindow;
 		this.originalHotCornerToggleFunction = Layout.HotCorner.prototype._toggleOverview;
 		this.hiddenId = Main.overview.connect('hidden', Lang.bind(this, this._onOverviewHidden));
+		this.pageChangeId = Main.overview.viewSelector.connect('page-changed', Lang.bind(this, this._onPageChanged));
 	},
 
 	disconnect: function() {
 		Main.overview.disconnect(this.hiddenId);
+		Main.overview.viewSelector.disconnect(this.pageChangeId);
 	},
 
 	toggleAppExposeOverview: function (iconActor, appWindows) {
@@ -41,13 +43,10 @@ const AppExposeOverview = new Lang.Class({
 		this.isInAppExposeOverview = true;
 		// Temporary change app icon scroll to switch workspaces
 		this.actor = iconActor;
-		this.appIconScrollId = this.actor.connect('scroll-event', Lang.bind(this, this._onAppExposeOverview));
+		this.appIconScrollId = this.actor.connect('scroll-event', Lang.bind(this, this._onScrollInAppExposeOverview));
 
 		// Hide and disable search input
-		Main.overview._searchEntryBin.hide();
-		ViewSelector.ViewSelector.prototype._shouldTriggerSearch = function(symbol) {
-			return false;
-		};
+		// now done in _onPageChanged
 
 		// Only show application windows in workspace
 		this.appWindows = appWindows;
@@ -115,7 +114,7 @@ const AppExposeOverview = new Lang.Class({
 		}
 	},
 
-	_onAppExposeOverview: function(actor, event) {
+	_onScrollInAppExposeOverview: function(actor, event) {
 		if (this.isInAppExposeOverview) {
 			let direction = AppIcons.unifyScrollDirection(event);
 			let activeWs = global.screen.get_active_workspace();
@@ -134,5 +133,27 @@ const AppExposeOverview = new Lang.Class({
 			return Clutter.EVENT_STOP;
 		}
 		return Clutter.EVENT_PROPAGATE;
+	},
+
+	_onPageChanged: function() {
+		let activePage = Main.overview.viewSelector.getActivePage();
+		let isAppsPage = activePage == ViewSelector.ViewPage.APPS;
+		let isSearchPage = activePage == ViewSelector.ViewPage.SEARCH;
+		let showSearch = (isAppsPage || isSearchPage);
+		if (this.isInAppExposeOverview) {
+			if (showSearch) {
+				Main.overview._searchEntryBin.show();
+				ViewSelector.ViewSelector.prototype._shouldTriggerSearch = this.originalTriggerSearchFunction;
+			} else {
+				this._disableSearch();
+			}
+		}
+	},
+
+	_disableSearch: function() {
+			Main.overview._searchEntryBin.hide();
+			ViewSelector.ViewSelector.prototype._shouldTriggerSearch = function(symbol) {
+				return false;
+			};
 	}
 });
