@@ -1,3 +1,17 @@
+- version: 60
+  date: 07-07-2017
+  shell_version: ["3.18", "3.20", "3.22", "3.24"]
+  notes:
+    - "New feature: implement windows thumbnails popup menu [franglais125: c7108993, 9a4e2f5d, 31fb0597, 3c9f7f3b]."
+    - "New feature: implement monitor isolation for multi-monitor dock [franglais125: 93c5a7a9, 503b0081]."
+    - "Bugfix: Fix mouse trapped in monitor with fullscreen windows [fcbfccf9]."
+    - "Fix regression with click options [franglais125: 877cbd98]."
+    - "Tweak click action behaviour [5003841b, 7bd08718]."
+    - "Improve translations machinery [franglais125: 3fd4bdc9]."
+    - "Improve extension inter-compatibility [passingthru67: 4c9480a4]"
+    - "Update German translation [Christian González: 28d765a2]."
+  zip_url: https://extensions.gnome.org/review/download/7060.shell-extension.zip
+
 - version: 59
   date: 04-06-2017
   shell_version: ["3.18", "3.20", "3.22", "3.24"]
