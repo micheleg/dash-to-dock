@@ -526,26 +526,28 @@ var MyAppIcon = new Lang.Class({
                             (!this._previewMenu || !this._previewMenu.isOpen);
     },
 
+    _createPreviewMenus: function() {
+        this._previewMenuManager = new PopupMenu.PopupMenuManager(this);
+
+        this._previewMenu = new WindowPreview.WindowPreviewMenu(this, this._dtdSettings);
+
+        this._previewMenuManager.addMenu(this._previewMenu);
+        this._previewMenu.connect('open-state-changed', Lang.bind(this, function(menu, isPoppedUp) {
+            if (!isPoppedUp)
+                this._onMenuPoppedDown();
+        }));
+
+        let id = Main.overview.connect('hiding', Lang.bind(this, function() {
+            this._previewMenu.close();
+        }));
+        this._previewMenu.actor.connect('destroy', function() {
+            Main.overview.disconnect(id);
+        });
+    },
+
     _windowPreviews: function() {
-        if (!this._previewMenu) {
-            this._previewMenuManager = new PopupMenu.PopupMenuManager(this);
-
-            this._previewMenu = new WindowPreview.WindowPreviewMenu(this, this._dtdSettings);
-
-            this._previewMenuManager.addMenu(this._previewMenu);
-
-            this._previewMenu.connect('open-state-changed', Lang.bind(this, function(menu, isPoppedUp) {
-                if (!isPoppedUp)
-                    this._onMenuPoppedDown();
-            }));
-            let id = Main.overview.connect('hiding', Lang.bind(this, function() {
-                this._previewMenu.close();
-            }));
-            this._previewMenu.actor.connect('destroy', function() {
-                Main.overview.disconnect(id);
-            });
-
-        }
+        if (!this._previewMenu)
+            this._createPreviewMenus();
 
         if (this._previewMenu.isOpen)
             this._previewMenu.close();
