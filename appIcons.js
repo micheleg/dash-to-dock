@@ -561,10 +561,13 @@ var MyAppIcon = new Lang.Class({
         if (!this._previewMenu)
             this._createPreviewMenus();
 
-        if (this._previewMenu.isOpen)
+        if (this._previewMenu.isOpen) {
             this._previewMenu.close();
-        else
+        }
+        else {
             this._previewMenu.popup();
+            this._previewMenu.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
+        }
 
         return false;
     },
