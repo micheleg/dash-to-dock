@@ -568,6 +568,7 @@ var MyAppIcon = new Lang.Class({
             this._previewMenu.close();
         }
         else {
+            this._previewMenu.fromHover = false;
             this._previewMenu.popup();
             this._previewMenu.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
         }
@@ -612,6 +613,31 @@ var MyAppIcon = new Lang.Class({
                 return GLib.SOURCE_REMOVE;
             }
         ]);
+
+        let windowPreviewMenuData = this._previewMenuManager._menus[this._previewMenuManager._findMenu(this._previewMenu)];
+        this._previewMenu.disconnect(windowPreviewMenuData.openStateChangeId);
+        windowPreviewMenuData.openStateChangeId = this._previewMenu.connect(
+            'open-state-changed',
+            Lang.bind(this._previewMenuManager, function(menu, open) {
+                if (menu.fromHover) {
+                    if (open) {
+                        if (this.activeMenu)
+                            this.activeMenu.close(BoxPointer.PopupAnimation.FADE);
+
+                        // don't grab here, we are grabbing in onLeave in windowPreview.js
+                        // this._grabHelper.grab({
+                        //     actor: menu.actor,
+                        //     focus: menu.sourceActor,
+                        //     onUngrab: Lang.bind(this, this._closeMenu, menu)
+                        // });
+                    } else {
+                        this._grabHelper.ungrab({ actor: menu.actor });
+                    }
+                }
+                else
+                    this._onMenuOpenState(menu, open);
+            })
+        );
 
         this._previewMenu.enableHover();
     },

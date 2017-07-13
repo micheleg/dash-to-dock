@@ -66,6 +66,8 @@ const WindowPreviewMenu = new Lang.Class({
 
         this._previewBox = new WindowPreviewList(this._source, this._dtdSettings);
         this.addMenuItem(this._previewBox);
+
+        this.fromHover = false;
     },
 
     _redisplay: function() {
@@ -173,21 +175,34 @@ const WindowPreviewMenu = new Lang.Class({
 
     hoverOpen: function () {
         this._hoverOpenTimeoutId = null;
-        if (!this.isOpen)
+        if (!this.isOpen) {
+            this.fromHover = true;
             this.popup();
+        }
     },
 
     hoverClose: function () {
         this._hoverCloseTimeoutId = null;
+
+        if (!this.fromHover)
+            return;
+
         if (this.isOpen)
             this.close(~0);
+        this.fromHover = false;
     },
 
     _onMenuEnter: function () {
+        if (!this.fromHover)
+            return;
+
         this.cancelClose();
     },
 
     _onMenuLeave: function () {
+        if (!this.fromHover)
+            return;
+
         this.cancelOpen();
         this.cancelClose();
 
