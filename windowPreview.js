@@ -41,9 +41,6 @@ const WindowPreviewMenu = new Lang.Class({
 
         this.parent(source.actor, 0.5, side);
 
-        // We want to keep the item hovered while the menu is up
-        this.blockSourceEvents = true;
-
         this._source = source;
         this._app = this._source.app;
         let monitorIndex = this._source.monitorIndex;
@@ -148,6 +145,9 @@ const WindowPreviewMenu = new Lang.Class({
             this._source._previewMenuManager._grabHelper.grab({
                 actor: this.actor,
                 focus: this.sourceActor,
+                onUngrab: Lang.bind(this, function() {
+                    this.close(~0);
+                })
             });
         }
 
@@ -168,11 +168,6 @@ const WindowPreviewMenu = new Lang.Class({
         if (this._hoverCloseTimeoutId) {
             Mainloop.source_remove(this._hoverCloseTimeoutId);
             this._hoverCloseTimeoutId = null;
-        }
-
-        if (this._hoverUngrabTimeoutId) {
-            Mainloop.source_remove(this._hoverUngrabTimeoutId);
-            this._hoverUngrabTimeoutId = null;
         }
     },
 
