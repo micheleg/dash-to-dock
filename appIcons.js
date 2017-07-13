@@ -557,6 +557,25 @@ var MyAppIcon = new Lang.Class({
         return false;
     },
 
+    enableHover: function(appIcons) {
+        if (this._hoverIsEnabled)
+            return;
+        this._hoverIsEnabled = true;
+
+        if (!this._previewMenu)
+            this._createPreviewMenus();
+
+        this._previewMenu.enableHover();
+    },
+
+    disableHover: function() {
+        this._hoverIsEnabled = false;
+
+        this._signalsHandler.removeWithLabel('preview-hover');
+        if (this._previewMenu)
+            this._previewMenu.disableHover();
+    },
+
     // Try to do the right thing when attempting to launch a new window of an app. In
     // particular, if the application doens't allow to launch a new window, activate
     // the existing window instead.
