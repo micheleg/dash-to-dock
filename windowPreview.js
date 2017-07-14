@@ -20,9 +20,6 @@ const Workspace = imports.ui.workspace;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 
-const PREVIEW_MAX_WIDTH = 250;
-const PREVIEW_MAX_HEIGHT = 150;
-
 /*
  * Timeouts for the hovering events
  */
@@ -306,7 +303,7 @@ const WindowPreviewList = new Lang.Class({
     },
 
     _createPreviewItem: function(window) {
-        let preview = new WindowPreviewMenuItem(window);
+        let preview = new WindowPreviewMenuItem(window, this._source);
         return preview;
     },
 
@@ -488,7 +485,7 @@ const WindowPreviewMenuItem = new Lang.Class({
     Name: 'WindowPreviewMenuItem',
     Extends: PopupMenu.PopupBaseMenuItem,
 
-    _init: function(window, params) {
+    _init: function(window, source, params) {
         this._window = window;
         this._destroyId = 0;
         this._windowAddedId = 0;
@@ -498,8 +495,13 @@ const WindowPreviewMenuItem = new Lang.Class({
         this.actor.remove_child(this._ornamentLabel);
         this.actor.add_style_class_name('dashtodock-app-well-preview-menu-item');
 
+        let monitorIndex = source.monitorIndex;
+        let monitor = Main.layoutManager.monitors[monitorIndex];
+        this._preview_max_width = Math.round(monitor.width / 5);
+        this._preview_max_height = Math.round(monitor.height / 5);
+
         this._cloneBin = new St.Bin();
-        this._cloneBin.set_size(PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT);
+        this._cloneBin.set_size(this._preview_max_width, this._preview_max_height);
 
         // TODO: improve the way the closebutton is layout. Just use some padding
         // for the moment.
@@ -521,7 +523,7 @@ const WindowPreviewMenuItem = new Lang.Class({
         overlayGroup.add_actor(this.closeButton);
 
         let label = new St.Label({ text: window.get_title()});
-        label.set_style('max-width: '+PREVIEW_MAX_WIDTH +'px');
+        label.set_style('max-width: ' + this._preview_max_width + 'px');
         let labelBin = new St.Bin({ child: label,
                                     x_align: St.Align.MIDDLE});
 
@@ -572,7 +574,7 @@ const WindowPreviewMenuItem = new Lang.Class({
         let windowTexture = mutterWindow.get_texture();
         let [width, height] = windowTexture.get_size();
 
-        let scale = Math.min(1.0, PREVIEW_MAX_WIDTH/width, PREVIEW_MAX_HEIGHT/height);
+        let scale = Math.min(1.0, this._preview_max_width / width, this._preview_max_height / height);
 
         let clone = new Clutter.Clone ({ source: windowTexture,
                                          reactive: true,

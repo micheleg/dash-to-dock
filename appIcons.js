@@ -318,8 +318,7 @@ var MyAppIcon = new Lang.Class({
                 else {
                     // Setting the max-height is s useful if part of the menu is
                     // scrollable so the minimum height is smaller than the natural height.
-                    let monitor_index = Main.layoutManager.findIndexForActor(this.actor);
-                    let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor_index);
+                    let workArea = Main.layoutManager.getWorkAreaForMonitor(this.monitorIndex);
                     let position = Utils.getPosition(this._dtdSettings);
                     this._isHorizontal = ( position == St.Side.TOP ||
                                            position == St.Side.BOTTOM);
@@ -327,8 +326,10 @@ var MyAppIcon = new Lang.Class({
                     let additional_margin = this._isHorizontal && !this._dtdSettings.get_boolean('dock-fixed') ? Main.overview._dash.actor.height : 0;
                     let verticalMargins = this._menu.actor.margin_top + this._menu.actor.margin_bottom;
                     // Also set a max width to the menu, so long labels (long windows title) get truncated
+                    let monitor = Main.layoutManager.monitors[this.monitorIndex];
+                    let max_width = Math.round(monitor.width / 3);
                     this._menu.actor.style = ('max-height: ' + Math.round(workArea.height - additional_margin - verticalMargins) + 'px;' +
-                                              'max-width: 400px');
+                                              'max-width: ' + max_width + 'px');
                 }
 
                 // Close the window previews
@@ -1049,7 +1050,7 @@ const MyAppIconMenu = new Lang.Class({
                         separatorShown = true;
                     }
 
-                    let item = new WindowPreview.WindowPreviewMenuItem(window);
+                    let item = new WindowPreview.WindowPreviewMenuItem(window, this._source);
                     this._allWindowsMenuItem.menu.addMenuItem(item);
                     item.connect('activate', Lang.bind(this, function() {
                         this.emit('activate-window', window);
