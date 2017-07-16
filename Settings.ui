@@ -1004,7 +1004,7 @@
                             <property name="can_focus">False</property>
                             <property name="hexpand">True</property>
                             <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Hide the dock when it obstructs a window of the the current application. More refined settings are available.</property>
+                            <property name="label" translatable="yes">Hide the dock when it obstructs a window of the current application. More refined settings are available.</property>
                             <property name="wrap">True</property>
                             <style>
                               <class name="dim-label"/>
