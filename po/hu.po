@@ -181,8 +181,8 @@ msgstr "Fent"
 
 #: Settings.ui.h:30
 msgid ""
-"Hide the dock when it obstructs a window of the the current application. "
-"More refined settings are available."
+"Hide the dock when it obstructs a window of the current application. More "
+"refined settings are available."
 msgstr ""
 "A dokk elrejtése, amikor az aktuális alkalmazás ablakát akadályozza. További "
 "finombeállítások is elérhetők."

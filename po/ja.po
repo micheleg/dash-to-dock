@@ -183,8 +183,8 @@ msgstr "上"
 
 #: Settings.ui.h:30
 msgid ""
-"Hide the dock when it obstructs a window of the the current application. "
-"More refined settings are available."
+"Hide the dock when it obstructs a window of the current application. More "
+"refined settings are available."
 msgstr ""
 "開いているウィンドウの邪魔にならないようドックの表示/非表示を自動的に切り替え"
 "ます。より洗練された表示設定も可能です。"

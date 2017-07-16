@@ -185,8 +185,8 @@ msgstr "أعلى"
 
 #: Settings.ui.h:30
 msgid ""
-"Hide the dock when it obstructs a window of the the current application. "
-"More refined settings are available."
+"Hide the dock when it obstructs a window of the current application. More "
+"refined settings are available."
 msgstr "إخفاء المرساة عندما تحجب نافذة التطبيق الحالي. تخصيصات أكثر متوفرة."
 
 #: Settings.ui.h:31

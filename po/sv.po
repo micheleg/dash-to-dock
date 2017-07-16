@@ -182,8 +182,8 @@ msgstr "Överkant"
 
 #: Settings.ui.h:30
 msgid ""
-"Hide the dock when it obstructs a window of the the current application. "
-"More refined settings are available."
+"Hide the dock when it obstructs a window of the current application. More "
+"refined settings are available."
 msgstr ""
 "Dölj dockan då den är i vägen för ett fönster för det aktuella programmet. "
 "Mer förfinade inställningar finns tillgängliga."

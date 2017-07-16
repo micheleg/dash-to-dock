@@ -180,8 +180,8 @@ msgstr "Alto"
 
 #: Settings.ui.h:30
 msgid ""
-"Hide the dock when it obstructs a window of the the current application. "
-"More refined settings are available."
+"Hide the dock when it obstructs a window of the current application. More "
+"refined settings are available."
 msgstr ""
 "Nasconde la dock quando questa ostruisce una finestra dell'applicazione "
 "corrente. Sono disponibili maggiori impostazioni."
