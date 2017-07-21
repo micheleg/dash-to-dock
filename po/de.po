@@ -63,7 +63,7 @@ msgstr "Laufende Anwendungen anzeigen"
 
 #: appIcons.js:804
 msgid "All Windows"
-msgstr "Alle Fenstern"
+msgstr "Alle Fenster"
 
 #: Settings.ui.h:1
 #, fuzzy
