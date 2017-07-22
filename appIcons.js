@@ -373,12 +373,6 @@ const MyAppIcon = new Lang.Class({
     },
 
     activate: function(button) {
-
-        if (!this._dtdSettings.get_boolean('customize-click')) {
-            this.parent(button);
-            return;
-        }
-
         let event = Clutter.get_current_event();
         let modifiers = event ? event.get_state() : 0;
         let focusedApp = tracker.focus_app;

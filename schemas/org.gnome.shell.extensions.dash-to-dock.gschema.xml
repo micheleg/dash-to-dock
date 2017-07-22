@@ -216,11 +216,6 @@
       <summary>Enable multi-monitor docks</summary>
       <description>Show a dock on every monitor</description>
     </key>
-    <key type="b" name="customize-click">
-      <default>true</default>
-      <summary>Customize click behaviour</summary>
-      <description>Customize action on various mouse events</description>
-    </key>
     <key type="b" name="minimize-shift">
       <default>true</default>
       <summary>Minimize on shift+click</summary>
