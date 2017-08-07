@@ -11,7 +11,7 @@ side: 'get_involved_button.html'
 
 ## Development
 
-The code of the extension is hosted on [Github] ({{ site.github_project_url }}): get involved in the development, report a bug, contribute!
+The code of the extension is hosted on [Github]({{ site.github_project_url }}): get involved in the development, report a bug, contribute!
 
 The source code can be obtained from Github
 
