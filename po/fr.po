@@ -240,7 +240,7 @@ msgstr "Afficher le raccourci <i>Afficher les Applications</i>"
 #: Settings.ui.h:43
 msgid "Move the applications button at the beginning of the dock."
 msgstr ""
-"Placer le raccourci <i>Afficher les Applications</i> en première position"
+"Placer le bouton des applications en première position"
 
 #: Settings.ui.h:44
 msgid "Animate <i>Show Applications</i>."
