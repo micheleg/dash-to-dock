@@ -1124,6 +1124,8 @@ function extendShowAppsIcon(showAppsIcon, settings) {
     showAppsIcon.showLabel = itemShowLabel;
 
     showAppsIcon.popupMenu = function() {
+        /* disable settings on right-click as only Dash to Dock will display extended settings */
+        return;
         showAppsIcon._removeMenuTimeout();
         showAppsIcon.actor.fake_release();
 
