@@ -1,0 +1,5 @@
+gnome-shell-extension-ubuntu-dock (0.1) UNRELEASED; urgency=medium
+
+  * Initial release of ubuntu tweaked Dash To Dock extension.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 09 Aug 2017 09:47:49 +0200
