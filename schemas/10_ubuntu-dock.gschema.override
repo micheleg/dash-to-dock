@@ -1,0 +1,12 @@
+[org.gnome.shell.extensions.dash-to-dock]
+dock-fixed=true
+intellihide-mode='ALL_WINDOWS'
+icon-size-fixed=true
+custom-theme-shrink=true
+custom-theme-customize-running-dots=true
+custom-theme-running-dots=true
+custom-theme-running-dots-color='#e95420'
+custom-theme-running-dots-border-color='#e95420'
+extend-height=true
+opaque-background=true
+background-opacity=0.70
