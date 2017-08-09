@@ -1,8 +1,8 @@
 {
 "shell-version": ["3.18", "3.20", "3.22", "3.24"],
-"uuid": "dash-to-dock@micxgx.gmail.com",
-"name": "Dash to Dock",
-"description": "A dock for the Gnome Shell. This extension moves the dash out of the overview transforming it in a dock for an easier launching of applications and a faster switching between windows and desktops. Side and bottom placement options are available.",
+"uuid": "ubuntu-dock@ubuntu.com",
+"name": "Ubuntu Dock for GNOME Shell",
+"description": "A dock for the Gnome Shell, default Ubuntu experience. This extension is a modified version of Dash To Dock with different defaults. Dash To Dock can be installed to replace it and give more (but unsupported) configuration options.",
 "original-author": "micxgx@gmail.com",
 "url": "https://micheleg.github.io/dash-to-dock/",
 "gettext-domain": "dashtodock",

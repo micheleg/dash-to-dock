@@ -1,6 +1,6 @@
 # Basic Makefile
 
-UUID = dash-to-dock@micxgx.gmail.com
+UUID = ubuntu-dock@ubuntu.com
 BASE_MODULES = extension.js stylesheet.css metadata.json COPYING README.md
 EXTRA_MODULES = convenience.js dash.js docking.js appIcons.js windowPreview.js intellihide.js prefs.js theming.js utils.js Settings.ui
 EXTRA_MEDIA = logo.svg
@@ -11,7 +11,7 @@ ifeq ($(strip $(DESTDIR)),)
 else
 	INSTALLBASE = $(DESTDIR)/usr/share/gnome-shell/extensions
 endif
-INSTALLNAME = dash-to-dock@micxgx.gmail.com
+INSTALLNAME = ubuntu-dock@ubuntu.com
 
 # The command line passed variable VERSION is used to set the version string
 # in the metadata and in the generated zip-file. If no VERSION is passed, the
