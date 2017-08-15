@@ -10,3 +10,4 @@ custom-theme-running-dots-border-color='#e95420'
 extend-height=true
 opaque-background=true
 background-opacity=0.70
+scroll-action='switch-workspace'
