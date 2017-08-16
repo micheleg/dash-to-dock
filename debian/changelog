@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (0.1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (0.1) artful; urgency=medium
 
   * Initial release of ubuntu tweaked Dash To Dock extension.
 
