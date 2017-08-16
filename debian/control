@@ -8,7 +8,7 @@ Standards-Version: 4.0.0
 Homepage: https://micheleg.github.io/dash-to-dock
 
 Package: gnome-shell-extension-ubuntu-dock
-Architecture: any
+Architecture: all
 Depends: ${shlibs:Depends},
          ${misc:Depends},
 Description: Ubuntu Dock for GNOME Shell
