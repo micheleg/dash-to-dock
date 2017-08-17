@@ -1112,6 +1112,11 @@ const DockedDash = new Lang.Class({
     },
 
     _adjustLegacyTray: function() {
+        // The legacyTray has been removed in GNOME Shell 3.26.
+        // Once we drop support for previous releases this fuction can be dropped too.
+        if (!Main.legacyTray)
+            return;
+
         let use_work_area = true;
 
         if (this._fixedIsEnabled && !this._settings.get_boolean('extend-height')
@@ -1128,6 +1133,10 @@ const DockedDash = new Lang.Class({
     },
 
     _resetLegacyTray: function() {
+        // The legacyTray has been removed in GNOME Shell 3.26.
+        // Once we drop support for previous releases this fuction can be dropped too.
+        if (!Main.legacyTray)
+                return;
         Main.legacyTray.actor.clear_constraints();
         let constraint = new Layout.MonitorConstraint({
             primary: true,
