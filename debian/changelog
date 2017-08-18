@@ -1,3 +1,15 @@
+gnome-shell-extension-ubuntu-dock (0.2) UNRELEASED; urgency=medium
+
+  * Add Replaces temporarly against gnome-shell-extension-dashtodock package
+    which ships the same schema on purpose. This unblock users for the week-end
+    until we decide on the best strategy to keep the schema synced and not
+    diverge (should we conflicts and let people prefers installing dash to dock
+    from the online extensions website local to their users, not being affected
+    by our overrides… or have a separate binary package, common to both, and
+    thus diverge the dash to dock package from debian?)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 18 Aug 2017 15:47:30 +0200
+
 gnome-shell-extension-ubuntu-dock (0.1) artful; urgency=medium
 
   * Initial release of ubuntu tweaked Dash To Dock extension.
