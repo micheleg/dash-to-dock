@@ -11,6 +11,7 @@ Package: gnome-shell-extension-ubuntu-dock
 Architecture: all
 Depends: ${shlibs:Depends},
          ${misc:Depends},
+Replaces: gnome-shell-extension-dashtodock,
 Description: Ubuntu Dock for GNOME Shell
  A dock for the Gnome Shell, default Ubuntu experience.
  .
