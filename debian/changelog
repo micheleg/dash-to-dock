@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (0.2) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (0.2) artful; urgency=medium
 
   * Add Replaces temporarly against gnome-shell-extension-dashtodock package
     which ships the same schema on purpose. This unblock users for the week-end
