@@ -120,17 +120,18 @@ const MyAppIcon = new Lang.Class({
                    'custom-theme-customize-running-dots',
                    'custom-theme-running-dots-color',
                    'custom-theme-running-dots-border-color',
-                   'custom-theme-running-dots-border-width'];
+                   'custom-theme-running-dots-border-width',
+                   'unity-backlit-items'];
 
         keys.forEach(function(key) {
             this._signalsHandler.add([
                 this._dtdSettings,
                 'changed::' + key,
-                Lang.bind(this, this._toggleDots)
+                Lang.bind(this, this._toggleAppIndicators)
             ]);
         }, this);
 
-        this._toggleDots();
+        this._toggleAppIndicators();
 
         this._dtdSettings.connect('changed::scroll-action', Lang.bind(this, function() {
             this._optionalScrollCycleWindows();
@@ -141,18 +142,6 @@ const MyAppIcon = new Lang.Class({
 
         this._previewMenuManager = null;
         this._previewMenu = null;
-
-        // Toggle glossy background
-        this._signalsHandler.add([
-            this._dtdSettings,
-            'changed::unity-backlit-items',
-            Lang.bind(this, this._toggleBacklight)
-        ],[
-            this._dtdSettings,
-            'changed::apply-custom-theme',
-            Lang.bind(this, this._toggleBacklight)
-        ]);
-        this._glossyBackground();
     },
 
     _onDestroy: function() {
@@ -287,11 +276,29 @@ const MyAppIcon = new Lang.Class({
         });
     },
 
-    _toggleDots: function() {
+    _toggleAppIndicators: function() {
         if (this._dtdSettings.get_boolean('custom-theme-running-dots') || this._dtdSettings.get_boolean('apply-custom-theme'))
             this._showDots();
         else
             this._hideDots();
+
+        let applyGlossyBackground = this._dtdSettings.get_boolean('unity-backlit-items') &&
+                                    !this._dtdSettings.get_boolean('apply-custom-theme');
+
+        if (applyGlossyBackground) {
+            let path = imports.misc.extensionUtils.getCurrentExtension().path;
+            let backgroundStyle = 'background-image: url(\'' + path + '/media/glossy.svg\');' +
+                                  'background-size: contain;'
+            this._iconContainer.get_children()[1].set_style(backgroundStyle)
+        } else {
+            this._iconContainer.get_children()[1].set_style(null);
+        }
+
+        this._updateRunningStyle();
+
+        if (this._dots)
+            this._dots.queue_repaint()
+
     },
 
     _showDots: function() {
@@ -677,14 +684,6 @@ const MyAppIcon = new Lang.Class({
         );
     },
 
-    _toggleBacklight: function () {
-        this._glossyBackground();
-        this._updateRunningStyle();
-        
-        if (this._dots)
-            this._dots.queue_repaint();
-    },
-
     _disableBacklight: function() {
         this._iconContainer.set_style(null);
         this._dot.set_style(null);
@@ -937,20 +936,6 @@ const MyAppIcon = new Lang.Class({
 
         this._iconContainer.add_child(this._numberOverlayBin);
 
-    },
-
-    _glossyBackground: function () {
-        let path = imports.misc.extensionUtils.getCurrentExtension().path;
-        let backgroundStyle =
-            'background-image: url(\'' + path + '/media/glossy.svg\');' +
-            'background-size: contain;'
-
-        let applyBacklight = this._dtdSettings.get_boolean('unity-backlit-items') &&
-                            !this._dtdSettings.get_boolean('apply-custom-theme');
-
-        this._iconContainer.get_children()[1].set_style(
-            applyBacklight ? backgroundStyle : null
-        );
     },
 
     updateNumberOverlay: function() {
