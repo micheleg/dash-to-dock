@@ -286,7 +286,7 @@ msgstr ""
 
 #: Settings.ui.h:53
 msgid "Scroll action"
-msgstr "Azione clic"
+msgstr "Azione scroll"
 
 #: Settings.ui.h:54
 msgid "Do nothing"
