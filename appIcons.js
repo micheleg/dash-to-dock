@@ -772,14 +772,12 @@ const MyAppIcon = new Lang.Class({
 
         // computing the limit outside the for (where it would be repeated at each iteration)
         // for performance reasons
-        let limit = pixels.length/4;
-        for (let i = 0; i < limit; i++) {
+        let limit = pixels.length;
+        for (let offset = 0; offset < limit; offset+=4) {
             let r = pixels[offset],
                 g = pixels[offset + 1],
                 b = pixels[offset + 2],
                 a = pixels[offset + 3];
-
-            offset += 4;
 
             let saturation = (Math.max(r, Math.max(g, b)) - Math.min(r, Math.min(g, b))) / 255;
             let relevance  = 0.1 + 0.9 * (a / 255.0) * saturation;
