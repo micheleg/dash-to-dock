@@ -1,6 +1,7 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 const Clutter = imports.gi.Clutter;
+const GdkPixbuf = imports.gi.GdkPixbuf
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
@@ -58,6 +59,13 @@ let recentlyClickedAppWindows = null;
 let recentlyClickedAppIndex = 0;
 let recentlyClickedAppMonitor = -1;
 
+// We need an icons theme object, this is the only way I managed to get
+// pixel buffers that can be used for calculating the backlight color
+let themeLoader = null;
+
+// Global icon cache. Used for Unity7 styling.
+let iconCacheMap = new Map();
+
 /**
  * Extend AppIcon
  *
@@ -70,6 +78,7 @@ let recentlyClickedAppMonitor = -1;
  * - Customize click actions.
  * - Update minimization animation target
  * - Update menu if open on windows change
+ * - Unity7-esk backlit item emulation
  */
 const MyAppIcon = new Lang.Class({
     Name: 'DashToDock.AppIcon',
@@ -130,6 +139,18 @@ const MyAppIcon = new Lang.Class({
 
         this._previewMenuManager = null;
         this._previewMenu = null;
+
+        // Toggle glossy background
+        this._signalsHandler.add([
+            this._dtdSettings,
+            'changed::unity-backlit-items',
+            Lang.bind(this, this._toggleBacklight)
+        ],[
+            this._dtdSettings,
+            'changed::apply-custom-theme',
+            Lang.bind(this, this._toggleBacklight)
+        ]);
+        this._glossyBackground();
     },
 
     _onDestroy: function() {
@@ -312,6 +333,22 @@ const MyAppIcon = new Lang.Class({
             this.parent();
         this._onFocusAppChanged();
         this._updateCounterClass();
+        
+        // Enable / Disable the backlight of running apps
+        if (
+            this.app.state !== Shell.AppState.STOPPED &&
+            this._dtdSettings.get_boolean('unity-backlit-items') === true &&
+            this._dtdSettings.get_boolean('apply-custom-theme') === false &&
+            getInterestingWindows(this.app, this._dtdSettings).length > 0
+        ) {
+            this._enableBacklight();
+            
+            // Repaint the dots to make sure they have the correct color
+            if (this._dots)
+                this._dots.queue_repaint();
+        } else {
+            this._disableBacklight();
+        }
     },
 
     popupMenu: function() {
@@ -605,6 +642,205 @@ const MyAppIcon = new Lang.Class({
             this._dots.queue_repaint();
     },
 
+    _enableBacklight: function() {
+        let colorPallete = this._calculateColorPalette();
+
+        // Fallback
+        if (colorPallete === null) {
+            this._iconContainer.set_style(
+                'border-radius: 5px;' +
+                'background-gradient-direction: vertical;' +
+                'background-gradient-start: #e0e0e0;' +
+                'background-gradient-end: darkgray;'
+            );
+            
+            this._dot.set_style(
+                'height: 0px;' +
+                'border: 0px solid white;' +
+                'background-color: gray;'
+            );
+
+            return;
+        }
+
+        this._iconContainer.set_style(
+            'border-radius: 5px;' +
+            'background-gradient-direction: vertical;' +
+            'background-gradient-start: ' + colorPallete.original + ';' +
+            'background-gradient-end: ' +  colorPallete.darker + ';'
+        );
+
+        this._dot.set_style(
+            'height: 0px;' +
+            'border: 0px solid ' + colorPallete.lighter  + ';' +
+            'background-color: ' + colorPallete.darker + ';'
+        );
+    },
+
+    _toggleBacklight: function () {
+        this._glossyBackground();
+        this._updateRunningStyle();
+        
+        if (this._dots)
+            this._dots.queue_repaint();
+    },
+
+    _disableBacklight: function() {
+        this._iconContainer.set_style(null);
+        this._dot.set_style(null);
+    },
+    
+    /**
+     * Try to get the pixel buffer for the current icon, if not fail gracefully     
+     */
+    _getIconPixBuf: function() {
+        let iconTexture = this.app.create_icon_texture(16);
+
+        if (themeLoader === null) {
+            let ifaceSettings = new Gio.Settings({ schema: "org.gnome.desktop.interface" });
+
+            themeLoader = new Gtk.IconTheme(),
+            themeLoader.set_custom_theme(ifaceSettings.get_string('icon-theme')); // Make sure the correct theme is loaded
+        }        
+
+        // Unable to load the icon texture, use fallback
+        if (iconTexture instanceof St.Icon === false) {
+            return null;
+        }
+
+        iconTexture = iconTexture.get_gicon();       
+
+        // Unable to load the icon texture, use fallback
+        if (iconTexture === null) {
+            return null;
+        }
+
+        if (iconTexture instanceof Gio.FileIcon) {
+            // Use GdkPixBuf to load the pixel buffer from the provided file path
+            return GdkPixbuf.Pixbuf.new_from_file(iconTexture.get_file().get_path());
+        }
+        
+        // Get the pixel buffer from the icon theme
+        return themeLoader.load_icon(iconTexture.get_names()[0], 64, 0);
+    },
+
+    /**
+     * The backlight color choosing algorithm was mostly ported from the C++ source of Canonicals
+     * Unity7 to javascript, so it more or less works the same way.
+     */
+    _calculateColorPalette: function () {
+        if (iconCacheMap.get(this.app.get_id())) {
+            // We already know the answer
+            return iconCacheMap.get(this.app.get_id());
+        }
+
+        let pixBuf = this._getIconPixBuf();
+        if (pixBuf == null)
+            return null;
+    
+        let colorUtils = new Utils.ColorUtils();       
+        
+        let pixels = pixBuf.get_pixels(),
+            offset = 0;
+
+        let total  = 0,
+            rTotal = 0,
+            gTotal = 0,
+            bTotal = 0;
+            
+        let resample_y = 1,
+            resample_x = 1;
+
+        // Resampling of large icons
+        if (pixBuf.get_height() === 512 || pixBuf.get_height() === 256 || pixBuf.get_width() === 256 || pixBuf.get_width() === 512) {
+            if (pixBuf.get_height() === 512)
+                resample_y = 8;
+            else if (pixBuf.get_height() === 256)
+                resample_y = 4;
+
+            if (pixBuf.get_width() === 512)
+                resample_x = 8;
+            else if (pixBuf.get_width() === 256)
+                resample_x = 4;
+
+            pixels = this._resamplePixels(pixBuf, pixels, resample_x, resample_y);
+        }
+
+        let limitY = pixBuf.get_height() / resample_y;
+        let limitX = pixBuf.get_width() / resample_x;
+
+        for (let i = 0; i < limitY; i++) {
+            for (let x = 0; x < limitX; x++) {
+                let r = pixels[offset],
+                    g = pixels[offset + 1],
+                    b = pixels[offset + 2], 
+                    a = pixels[offset + 3];
+                
+                offset += 4;
+
+                let saturation = (Math.max(r, Math.max(g, b)) - Math.min(r, Math.min(g, b))) / 255;
+                let relevance  = 0.1 + 0.9 * (a / 255.0) * saturation;
+
+                rTotal += Math.round(r * relevance);
+                gTotal += Math.round(g * relevance);
+                bTotal += Math.round(b * relevance);
+                
+                total += relevance * 255;
+            }
+        }
+
+        let r = rTotal / total,
+            g = gTotal / total,
+            b = bTotal / total;
+
+        let hsv = colorUtils.RGBtoHSV(r * 255, g * 255, b * 255);
+
+        if (hsv.s > 0.15) {
+          hsv.s = 0.65;
+        }
+        hsv.v = 0.90;
+
+        let rgb = colorUtils.HSVtoRGB(hsv.h, hsv.s, hsv.v);
+
+        // Cache the result.
+        let backgroundColor = {
+            lighter: colorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, 0.2),
+            original: colorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, 0),
+            darker: colorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, -0.5)
+        };
+
+        iconCacheMap.set(this.app.get_id(), backgroundColor);
+
+        return backgroundColor;
+    },
+
+    /**
+     * Downsample large icons before scanning for the backlight color to
+     * improve performance.
+     *
+     * @param pixBuf
+     * @param pixels
+     * @param resampleX
+     * @param resampleY
+     *
+     * @return [];
+     */
+    _resamplePixels: function (pixBuf, pixels, resampleX, resampleY) {
+        let resampledPixels = [];
+        let limit = pixBuf.get_height() * pixBuf.get_width() / (resampleX * resampleY);
+
+        for (let i = 0; i < limit; i++) {
+            let pixel = i * resampleX * resampleY;
+
+            resampledPixels.push(pixels[pixel * 4]);
+            resampledPixels.push(pixels[pixel * 4 + 1]);
+            resampledPixels.push(pixels[pixel * 4 + 2]);
+            resampledPixels.push(pixels[pixel * 4 + 3]);
+        }
+
+        return resampledPixels;
+    },
+
     _drawCircles: function(area, side) {
         let borderColor, borderWidth, bodyColor;
 
@@ -634,6 +870,12 @@ const MyAppIcon = new Lang.Class({
         let padding = 0; // distance from the margin
         let spacing = radius + borderWidth; // separation between the dots
         let n = this._nWindows;
+
+        // Lightly adjust the styling in case of unity7 backlit mode
+        if (this._dtdSettings.get_boolean('unity-backlit-items') === true) {
+            padding = 1.45;
+            borderWidth = 2;
+        }
 
         cr.setLineWidth(borderWidth);
         Clutter.cairo_set_source_color(cr, borderColor);
@@ -693,6 +935,20 @@ const MyAppIcon = new Lang.Class({
 
         this._iconContainer.add_child(this._numberOverlayBin);
 
+    },
+
+    _glossyBackground: function () {
+        let path = imports.misc.extensionUtils.getCurrentExtension().path;
+        let backgroundStyle =
+            'background-image: url(\'' + path + '/media/glossy.svg\');' +
+            'background-size: contain;'
+
+        let applyBacklight = this._dtdSettings.get_boolean('unity-backlit-items') &&
+                            !this._dtdSettings.get_boolean('apply-custom-theme');
+
+        this._iconContainer.get_children()[1].set_style(
+            applyBacklight ? backgroundStyle : null
+        );
     },
 
     updateNumberOverlay: function() {
