@@ -64,7 +64,7 @@ const BasicHandler = new Lang.Class({
 /**
  * Manage global signals
  */
-const GlobalSignalsHandler = new Lang.Class({
+var GlobalSignalsHandler = new Lang.Class({
     Name: 'DashToDock.GlobalSignalHandler',
     Extends: BasicHandler,
 
@@ -85,7 +85,7 @@ const GlobalSignalsHandler = new Lang.Class({
 /**
  * Color manipulation utilities
   */
-const ColorUtils = {
+var ColorUtils = {
 
     // Darken or brigthen color by a fraction dlum
     // Each rgb value is modified by the same fraction.
@@ -184,7 +184,7 @@ const ColorUtils = {
  * Manage function injection: both instances and prototype can be overridden
  * and restored
  */
-const InjectionsHandler = new Lang.Class({
+var InjectionsHandler = new Lang.Class({
     Name: 'DashToDock.InjectionsHandler',
     Extends: BasicHandler,
 

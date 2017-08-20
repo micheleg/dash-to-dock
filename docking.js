@@ -1632,7 +1632,7 @@ const WorkspaceIsolation = new Lang.Class({
 });
 
 
-const DockManager = new Lang.Class({
+var DockManager = new Lang.Class({
     Name: 'DashToDock.DockManager',
 
     _init: function() {
