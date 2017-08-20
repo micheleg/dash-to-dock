@@ -89,7 +89,7 @@ const DOMINANT_COLOR_ICON_SIZE = 64;
  * - Update menu if open on windows change
  * - Unity7-esk backlit item emulation
  */
-const MyAppIcon = new Lang.Class({
+var MyAppIcon = new Lang.Class({
     Name: 'DashToDock.AppIcon',
     Extends: AppDisplay.AppIcon,
 

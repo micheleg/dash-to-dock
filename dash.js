@@ -175,7 +175,7 @@ const baseIconSizes = [16, 22, 24, 32, 48, 64, 96, 128];
  * - sync minimization application target position.
  * - keep running apps ordered.
  */
-const MyDash = new Lang.Class({
+var MyDash = new Lang.Class({
     Name: 'DashToDock.MyDash',
 
     _init: function(settings, remoteModel, monitorIndex) {
