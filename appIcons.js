@@ -770,7 +770,10 @@ const MyAppIcon = new Lang.Class({
         if (resample_x !==1 || resample_y !== 1)
             pixels = this._resamplePixels(pixels, resample_x, resample_y);
 
-        for (let i = 0; i < pixels.length/4; i++) {
+        // computing the limit outside the for (where it would be repeated at each iteration)
+        // for performance reasons
+        let limit = pixels.length/4;
+        for (let i = 0; i < limit; i++) {
             let r = pixels[offset],
                 g = pixels[offset + 1],
                 b = pixels[offset + 2],
@@ -825,6 +828,8 @@ const MyAppIcon = new Lang.Class({
      */
     _resamplePixels: function (pixels, resampleX, resampleY) {
         let resampledPixels = [];
+        // computing the limit outside the for (where it would be repeated at each iteration)
+        // for performance reasons
         let limit = pixels.length / (resampleX * resampleY) / 4;
         for (let i = 0; i < limit; i++) {
             let pixel = i * resampleX * resampleY;
