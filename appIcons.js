@@ -782,9 +782,9 @@ const MyAppIcon = new Lang.Class({
             let saturation = (Math.max(r, Math.max(g, b)) - Math.min(r, Math.min(g, b))) / 255;
             let relevance  = 0.1 + 0.9 * (a / 255.0) * saturation;
 
-            rTotal += Math.round(r * relevance);
-            gTotal += Math.round(g * relevance);
-            bTotal += Math.round(b * relevance);
+            rTotal += r * relevance;
+            gTotal += g * relevance;
+            bTotal += b * relevance;
 
             total += relevance * 255;
         }
