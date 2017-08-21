@@ -115,9 +115,8 @@ var MyAppIcon = new Lang.Class({
         this._focusAppChangeId = tracker.connect('notify::focus-app',
                                                  Lang.bind(this,
                                                            this._onFocusAppChanged));
-        this._enteredMonitorId = global.screen.connect('window-entered-monitor',
-                                                       Lang.bind(this,
-                                                                 this.onWindowsChanged));
+
+        this._optionalIsolateMonitors();
 
         this._dots = null;
 
@@ -166,15 +165,22 @@ var MyAppIcon = new Lang.Class({
             this._focusAppChangeId = 0;
         }
 
-        if (this._enteredMonitorId > 0) {
-            global.screen.disconnect(this._enteredMonitorId);
-            this._enteredMonitorId = 0;
-        }
-
         this._signalsHandler.destroy();
 
         if (this._scrollEventHandler)
             this.actor.disconnect(this._scrollEventHandler);
+    },
+
+    _optionalIsolateMonitors: function() {
+        if (this._dtdSettings.get_boolean('isolate-monitors') &&
+            Main.layoutManager.monitors.length > 1) {
+            this._signalsHandler.removeWithLabel('isolate-monitors');
+            this._signalsHandler.addWithLabel('isolate-monitors', [
+                global.screen,
+                'window-entered-monitor',
+                Lang.bind(this, this.onWindowsChanged)
+            ]);
+        }
     },
 
     _optionalScrollCycleWindows: function() {
