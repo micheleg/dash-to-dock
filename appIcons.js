@@ -65,6 +65,12 @@ let themeLoader = null;
 
 // Global icon cache. Used for Unity7 styling.
 let iconCacheMap = new Map();
+// Max number of items to store
+// We don't expect to ever reach this number, but let's put an hard limit to avoid
+// even the remote possibility of the cached items to grow indefinitely.
+const MAX_CACHED_ITEMS = 1000;
+// When the size exceed it, the oldest 'n' ones are deleted
+const  BATCH_SIZE_TO_DELETE = 50;
 // The icon size used to extract the dominant color
 const DOMINANT_COLOR_ICON_SIZE = 64;
 
@@ -808,6 +814,16 @@ const MyAppIcon = new Lang.Class({
             original: Utils.ColorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, 0),
             darker:   Utils.ColorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, -0.5)
         };
+
+        if (iconCacheMap.size >= MAX_CACHED_ITEMS) {
+            //delete oldest cached values (which are in order of insertions)
+            let ctr=0;
+            for (let key of iconCacheMap.keys()) {
+                if (++ctr > BATCH_SIZE_TO_DELETE)
+                    break;
+                iconCacheMap.delete(key);
+            }
+        }
 
         iconCacheMap.set(this.app.get_id(), backgroundColor);
 
