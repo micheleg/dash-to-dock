@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (0.3) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (0.3) artful; urgency=medium
 
   * Rebase on latest dash to dock master to bring GNOME Shell 3.26 support.
     Thanks Jeremy, Fran and Michele for the warning!
