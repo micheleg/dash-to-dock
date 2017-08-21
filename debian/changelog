@@ -1,3 +1,9 @@
+gnome-shell-extension-ubuntu-dock (0.3) UNRELEASED; urgency=medium
+
+  * debian/copyright: add Michele's name (Gaio).
+
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 21 Aug 2017 08:44:25 +0200
+
 gnome-shell-extension-ubuntu-dock (0.2) artful; urgency=medium
 
   * Add Replaces temporarly against gnome-shell-extension-dashtodock package
