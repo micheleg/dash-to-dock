@@ -4,3 +4,8 @@ gschemas.compiled
 dash-to-dock@micxgx.gmail.com.zip
 *.mo
 po/dashtodock.pot
+
+debian/*debhelper*
+debian/files
+debian/*.substvars
+debian/gnome-shell-extension-ubuntu-dock/
