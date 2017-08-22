@@ -785,7 +785,7 @@ const MyAppIcon = new Lang.Class({
                 a = pixels[offset + 3];
 
             let saturation = (Math.max(r,g, b) - Math.min(r,g, b));
-            let relevance  = 0.1 + 0.9 * a * saturation;
+            let relevance  = 0.1 * 255 * 255 + 0.9 * a * saturation;
 
             rTotal += r * relevance;
             gTotal += g * relevance;
