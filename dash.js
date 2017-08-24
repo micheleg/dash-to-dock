@@ -704,12 +704,15 @@ var MyDash = new Lang.Class({
     },
 
     _redisplay: function() {
-        //let favorites = AppFavorites.getAppFavorites().getFavoriteMap();
+        let favorites = AppFavorites.getAppFavorites().getFavoriteMap();
 
         let used =  Shell.AppUsage.get_default().get_most_used("");
-        let favorites = new Object();
+        let most_used = new Object();
         for (let i=0; i < Math.min(5, used.length); i++) {
-            favorites[used[i].id] = used[i];
+            let id = used[i].id;
+            if (id in favorites)
+                continue
+            favorites[id] = used[i];
         }
 
         let running = this._appSystem.get_running();
