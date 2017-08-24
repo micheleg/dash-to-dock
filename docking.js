@@ -1409,8 +1409,7 @@ const KeyboardShortcuts = new Lang.Class({
             return;
 
         // Setup keyboard bindings for dash elements
-        let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-',  // Regular numbers
-                    'app-hotkey-kp-', 'app-shift-hotkey-kp-', 'app-ctrl-hotkey-kp-']; // Key-pad numbers
+        let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
         keys.forEach( function(key) {
             for (let i = 0; i < this._numHotkeys; i++) {
                 let appNum = i;
@@ -1431,8 +1430,7 @@ const KeyboardShortcuts = new Lang.Class({
         if (!this._hotKeysEnabled)
             return;
 
-        let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-',  // Regular numbers
-                    'app-hotkey-kp-', 'app-shift-hotkey-kp-', 'app-ctrl-hotkey-kp-']; // Key-pad numbers
+        let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
         keys.forEach( function(key) {
             for (let i = 0; i < this._numHotkeys; i++)
                 Main.wm.removeKeybinding(key + (i + 1));
