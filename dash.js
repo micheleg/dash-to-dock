@@ -730,10 +730,18 @@ var MyDash = new Lang.Class({
         // Apps supposed to be in the dash
         let newApps = [];
 
+        let used =  Shell.AppUsage.get_default().get_most_used("")
+
         if (this._dtdSettings.get_boolean('show-favorites')) {
+            for (let i=0; i < Math.min(5, used.length); i++)
+                newApps.push(used[i]);
+        }
+
+
+/*        if (this._dtdSettings.get_boolean('show-favorites')) {
             for (let id in favorites)
                 newApps.push(favorites[id]);
-        }
+        }*/
 
         // We reorder the running apps so that they don't change position on the
         // dash with every redisplay() call
