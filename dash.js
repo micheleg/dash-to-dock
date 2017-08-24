@@ -704,15 +704,24 @@ var MyDash = new Lang.Class({
     },
 
     _redisplay: function() {
-        let favorites = AppFavorites.getAppFavorites().getFavoriteMap();
+        let real_favorites = AppFavorites.getAppFavorites().getFavoriteMap();
+
+        // cannot add directly to the returned favorites because it gets sync as actual favorites!
+        let favorites = new Object();
+
+        for (id in real_favorites)
+            favorites[id] = real_favorites[id];
 
         let used =  Shell.AppUsage.get_default().get_most_used("");
         let most_used = new Object();
-        for (let i=0; i < Math.min(5, used.length); i++) {
+        //for (let i=0; i < Math.min(10, used.length); i++) {
+        let ctr_added = 0;
+        for (let i=0; i < used.length && ctr_added < 3; i++) {
             let id = used[i].id;
             if (id in favorites)
-                continue
-            favorites[id] = used[i];
+                continue;
+              favorites[id] = used[i];
+            ctr_added++;
         }
 
         let running = this._appSystem.get_running();
