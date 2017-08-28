@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-12 08:31+0300\n"
-"PO-Revision-Date: 2017-07-12 08:37+0300\n"
+"POT-Creation-Date: 2017-08-28 10:52+0300\n"
+"PO-Revision-Date: 2017-08-28 10:56+0300\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -53,13 +53,13 @@ msgstr "Настройка действий для средней кнопки �
 msgid "Customize running indicators"
 msgstr "Настройка индикаторов запуска"
 
-#: appIcons.js:878
+#: appIcons.js:1131
 msgid "All Windows"
 msgstr "Все окна"
 
 #. Translators: %s is "Settings", which is automatically translated. You
 #. can also translate the full message if this fits better your language.
-#: appIcons.js:1176
+#: appIcons.js:1429
 #, javascript-format
 msgid "Dash to Dock %s"
 msgstr ""
@@ -365,30 +365,34 @@ msgid "Opacity"
 msgstr "Непрозрачность"
 
 #: Settings.ui.h:70
+msgid "Enable Unity7 like glossy backlit items"
+msgstr "Включить подсветку элементов как в Unity7"
+
+#: Settings.ui.h:71
 msgid "Force straight corner\n"
 msgstr "Не скруглять углы\n"
 
-#: Settings.ui.h:72
+#: Settings.ui.h:73
 msgid "Appearance"
 msgstr "Внешний вид"
 
-#: Settings.ui.h:73
+#: Settings.ui.h:74
 msgid "version: "
 msgstr "версия: "
 
-#: Settings.ui.h:74
+#: Settings.ui.h:75
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "Показывает панель из режима «Обзор» в виде дока"
 
-#: Settings.ui.h:75
+#: Settings.ui.h:76
 msgid "Created by"
 msgstr "Автор"
 
-#: Settings.ui.h:76
+#: Settings.ui.h:77
 msgid "Webpage"
 msgstr "Домашняя страница"
 
-#: Settings.ui.h:77
+#: Settings.ui.h:78
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -400,55 +404,55 @@ msgstr ""
 "\">GNU General Public License, версия 2 или позднее</a> для информации.</"
 "span>"
 
-#: Settings.ui.h:79
+#: Settings.ui.h:80
 msgid "About"
 msgstr "О дополнении"
 
-#: Settings.ui.h:80
+#: Settings.ui.h:81
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "Показывать Док при подведении мыши к стороне экрана."
 
-#: Settings.ui.h:81
+#: Settings.ui.h:82
 msgid "Autohide"
 msgstr "Автоматическое скрытие"
 
-#: Settings.ui.h:82
+#: Settings.ui.h:83
 msgid "Push to show: require pressure to show the dock"
 msgstr "Давление для появления: требуется давление для открытия Дока"
 
-#: Settings.ui.h:83
+#: Settings.ui.h:84
 msgid "Enable in fullscreen mode"
 msgstr "Включить для полноэкранного режима"
 
-#: Settings.ui.h:84
+#: Settings.ui.h:85
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Скрывать Док, когда он перекрыт окнами приложений"
 
-#: Settings.ui.h:85
+#: Settings.ui.h:86
 msgid "Dodge windows"
 msgstr "Перекрытие окнами"
 
-#: Settings.ui.h:86
+#: Settings.ui.h:87
 msgid "All windows"
 msgstr "Все окна"
 
-#: Settings.ui.h:87
+#: Settings.ui.h:88
 msgid "Only focused application's windows"
 msgstr "Только активное окно приложения"
 
-#: Settings.ui.h:88
+#: Settings.ui.h:89
 msgid "Only maximized windows"
 msgstr "Только развёрнутые окна"
 
-#: Settings.ui.h:89
+#: Settings.ui.h:90
 msgid "Animation duration (s)"
 msgstr "Время анимации (сек.)"
 
-#: Settings.ui.h:90
+#: Settings.ui.h:91
 msgid "Show timeout (s)"
 msgstr "Задержка открытия (сек.)"
 
-#: Settings.ui.h:91
+#: Settings.ui.h:92
 msgid "Pressure threshold"
 msgstr "Порог давления"
 
