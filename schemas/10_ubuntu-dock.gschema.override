@@ -11,3 +11,4 @@ extend-height=true
 opaque-background=true
 background-opacity=0.70
 scroll-action='switch-workspace'
+click-action='previews'

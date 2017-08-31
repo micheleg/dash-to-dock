@@ -1,3 +1,10 @@
+gnome-shell-extension-ubuntu-dock (0.4) UNRELEASE; urgency=medium
+
+  * Switch click-action to previews multiple window instances by default.
+    This was discussed and acked in the Fit and Finish sprint.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 31 Aug 2017 11:49:09 +0200
+
 gnome-shell-extension-ubuntu-dock (0.3) artful; urgency=medium
 
   * Rebase on latest dash to dock master to bring GNOME Shell 3.26 support.
