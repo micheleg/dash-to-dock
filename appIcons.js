@@ -145,6 +145,7 @@ const MyAppIcon = new Lang.Class({
         this._optionalScrollCycleWindows();
 
         this._numberOverlay();
+        this._notificationBadge();
 
         this._previewMenuManager = null;
         this._previewMenu = null;
@@ -936,6 +937,45 @@ const MyAppIcon = new Lang.Class({
         Clutter.cairo_set_source_color(cr, bodyColor);
         cr.fill();
         cr.$dispose();
+    },
+
+    _notificationBadge: function() {
+        this._notificationBadgeLabel = new St.Label();
+        this._notificationBadgeBin = new St.Bin({
+            child: this._notificationBadgeLabel,
+            x_align: St.Align.END, y_align: St.Align.START,
+            x_expand: true, y_expand: true
+        });
+        this._notificationBadgeLabel.add_style_class_name('notification-badge');
+        this._notificationBadgeCount = 0;
+        this._notificationBadgeBin.hide();
+
+        this._iconContainer.add_child(this._notificationBadgeBin);
+        this._iconContainer.connect('allocation-changed', Lang.bind(this, this.updateNotificationBadge));
+    },
+
+    updateNotificationBadge: function() {
+        let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+        let [minWidth, natWidth] = this._iconContainer.get_preferred_width(-1);
+        let font_size = Math.max(10, Math.round(natWidth / scaleFactor / 5));
+
+        this._notificationBadgeLabel.set_style(
+           'font-size: ' + font_size + 'px;'
+        );
+    },
+
+    setNotificationBadge: function(count) {
+        this._notificationBadgeCount = count;
+        this._notificationBadgeLabel.set_text(count.toString());
+    },
+
+    toggleNotificationBadge: function(activate) {
+        if (activate && this._notificationBadgeCount > 0) {
+            this.updateNotificationBadge();
+            this._notificationBadgeBin.show();
+        }
+        else
+            this._notificationBadgeBin.hide();
     },
 
     _numberOverlay: function() {
