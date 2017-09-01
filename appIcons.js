@@ -4,6 +4,7 @@ const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
+const Pango = imports.gi.Pango;
 const Signals = imports.signals;
 const Lang = imports.lang;
 const Meta = imports.gi.Meta;
@@ -127,6 +128,7 @@ var MyAppIcon = new Lang.Class({
         this._optionalScrollCycleWindows();
 
         this._numberOverlay();
+        this._notificationBadge();
 
         this._previewMenuManager = null;
         this._previewMenu = null;
@@ -677,6 +679,51 @@ var MyAppIcon = new Lang.Class({
         Clutter.cairo_set_source_color(cr, bodyColor);
         cr.fill();
         cr.$dispose();
+    },
+
+    _notificationBadge: function() {
+        this._notificationBadgeLabel = new St.Label();
+        this._notificationBadgeBin = new St.Bin({
+            child: this._notificationBadgeLabel,
+            x_align: St.Align.END, y_align: St.Align.START,
+            x_expand: true, y_expand: true
+        });
+        this._notificationBadgeLabel.add_style_class_name('notification-badge');
+        this._notificationBadgeCount = 0;
+        this._notificationBadgeBin.hide();
+
+        this._iconContainer.add_child(this._notificationBadgeBin);
+        this._iconContainer.connect('allocation-changed', Lang.bind(this, this.updateNotificationBadge));
+    },
+
+    updateNotificationBadge: function() {
+        let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+        let [minWidth, natWidth] = this._iconContainer.get_preferred_width(-1);
+        let logicalNatWidth = natWidth / scaleFactor;
+        let font_size = Math.max(10, Math.round(logicalNatWidth / 5));
+        let margin_left = Math.round(logicalNatWidth / 4);
+
+        this._notificationBadgeLabel.set_style(
+           'font-size: ' + font_size + 'px;' + 
+           'margin-left: ' + margin_left + 'px;'
+        );
+    
+        this._notificationBadgeBin.width = Math.round(logicalNatWidth - margin_left);
+        this._notificationBadgeLabel.clutter_text.ellipsize = Pango.EllipsizeMode.MIDDLE;
+    },
+
+    setNotificationBadge: function(count) {
+        this._notificationBadgeCount = count;
+        this._notificationBadgeLabel.set_text(count.toString());
+    },
+
+    toggleNotificationBadge: function(activate) {
+        if (activate && this._notificationBadgeCount > 0) {
+            this.updateNotificationBadge();
+            this._notificationBadgeBin.show();
+        }
+        else
+            this._notificationBadgeBin.hide();
     },
 
     _numberOverlay: function() {
