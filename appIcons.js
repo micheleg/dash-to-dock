@@ -5,6 +5,7 @@ const GdkPixbuf = imports.gi.GdkPixbuf
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
+const Pango = imports.gi.Pango;
 const Signals = imports.signals;
 const Lang = imports.lang;
 const Meta = imports.gi.Meta;
@@ -957,11 +958,17 @@ const MyAppIcon = new Lang.Class({
     updateNotificationBadge: function() {
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         let [minWidth, natWidth] = this._iconContainer.get_preferred_width(-1);
-        let font_size = Math.max(10, Math.round(natWidth / scaleFactor / 5));
+        let logicalNatWidth = natWidth / scaleFactor;
+        let font_size = Math.max(10, Math.round(logicalNatWidth / 5));
+        let margin_left = Math.round(logicalNatWidth / 4);
 
         this._notificationBadgeLabel.set_style(
-           'font-size: ' + font_size + 'px;'
+           'font-size: ' + font_size + 'px;' + 
+           'margin-left: ' + margin_left + 'px;'
         );
+    
+        this._notificationBadgeBin.width = Math.round(logicalNatWidth - margin_left);
+        this._notificationBadgeLabel.clutter_text.ellipsize = Pango.EllipsizeMode.MIDDLE;
     },
 
     setNotificationBadge: function(count) {
