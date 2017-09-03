@@ -221,17 +221,18 @@ var MyDash = new Lang.Class({
         this._container.add_actor(this._scrollView);
         this._scrollView.add_actor(this._box);
 
-        this._showAppsIcon = new Dash.ShowAppsIcon();
-        AppIcons.extendShowAppsIcon(this._showAppsIcon, this._dtdSettings);
+        // Create a wrapper around the real showAppsIcon in order to add a popupMenu.
+        let showAppsIconWrapper = new AppIcons.ShowAppsIconWrapper(this._dtdSettings);
+        showAppsIconWrapper.connect('menu-state-changed', Lang.bind(this, function(showAppsIconWrapper, opened) {
+            this._itemMenuStateChanged(showAppsIconWrapper, opened);
+        }));
+        // an instance of the showAppsIcon class is encapsulated in the wrapper
+        this._showAppsIcon = showAppsIconWrapper.realShowAppsIcon;
+
         this._showAppsIcon.childScale = 1;
         this._showAppsIcon.childOpacity = 255;
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._hookUpLabel(this._showAppsIcon);
-
-        let appsIcon = this._showAppsIcon;
-        appsIcon.connect('menu-state-changed', Lang.bind(this, function(appsIcon, opened) {
-            this._itemMenuStateChanged(appsIcon, opened);
-        }));
 
         this.showAppsButton = this._showAppsIcon.toggleButton;
 
