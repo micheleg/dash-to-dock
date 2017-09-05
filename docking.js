@@ -29,6 +29,7 @@ const Utils = Me.imports.utils;
 const Intellihide = Me.imports.intellihide;
 const Theming = Me.imports.theming;
 const MyDash = Me.imports.dash;
+const LauncherAPI = Me.imports.launcherAPI;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 
@@ -191,11 +192,12 @@ const DashSlideContainer = new Lang.Class({
 const DockedDash = new Lang.Class({
     Name: 'DashToDock.DockedDash',
 
-    _init: function(settings, monitorIndex) {
+    _init: function(settings, remoteModel, monitorIndex) {
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
         // Load settings
         this._settings = settings;
+        this._remoteModel = remoteModel;
         this._monitorIndex = monitorIndex;
         // Connect global signals
         this._signalsHandler = new Utils.GlobalSignalsHandler();
@@ -240,7 +242,7 @@ const DockedDash = new Lang.Class({
         this._dockDwellTimeoutId = 0
 
         // Create a new dash object
-        this.dash = new MyDash.MyDash(this._settings, this._monitorIndex);
+        this.dash = new MyDash.MyDash(this._settings, this._remoteModel, this._monitorIndex);
 
         if (!this._settings.get_boolean('show-show-apps-button'))
             this.dash.hideShowAppsButton();
@@ -347,6 +349,14 @@ const DockedDash = new Lang.Class({
             Lang.bind(this, function() {
                 Main.overview.dashIconSize = this.dash.iconSize;
             })
+        ], [
+            this._remoteModel,
+            'entry-added',
+            Lang.bind(this, this._onLauncherEntryRemoteAdded)
+        ], [
+            this._remoteModel,
+            'entry-removed',
+            Lang.bind(this, this._onLauncherEntryRemoteRemoved)
         ]);
 
         this._injectionsHandler = new Utils.InjectionsHandler();
@@ -1342,6 +1352,28 @@ const DockedDash = new Lang.Class({
         }
     },
 
+    _onLauncherEntryRemoteAdded: function(remoteModel, entry) {
+        if (!entry || !entry.appId())
+            return;
+
+        this.dash.getAppIcons().forEach(function(icon) {
+            if (icon && icon.app && icon.app.id == entry.appId()) {
+                icon.insertEntryRemote(entry);
+            }
+        });
+    },
+
+    _onLauncherEntryRemoteRemoved: function(remoteModel, entry) {
+        if (!entry || !entry.appId())
+            return;
+
+        this.dash.getAppIcons().forEach(function(icon) {
+            if (icon && icon.app && icon.app.id == entry.appId()) {
+                icon.removeEntryRemote(entry);
+            }
+        });
+    },
+
     _activateApp: function(appIndex) {
         let children = this.dash._box.get_children().filter(function(actor) {
                 return actor.child &&
@@ -1636,6 +1668,7 @@ const DockManager = new Lang.Class({
     Name: 'DashToDock.DockManager',
 
     _init: function() {
+        this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
         this._settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview._dash;
         /* Array of all the docks created */
@@ -1706,7 +1739,7 @@ const DockManager = new Lang.Class({
         }
 
         // First we create the main Dock, to get the extra features to bind to this one
-        let dock = new DockedDash(this._settings, this._preferredMonitorIndex);
+        let dock = new DockedDash(this._settings, this._remoteModel, this._preferredMonitorIndex);
         this._mainShowAppsButton = dock.dash.showAppsButton;
         this._allDocks.push(dock);
 
@@ -1724,7 +1757,7 @@ const DockManager = new Lang.Class({
             for (let iMon = 0; iMon < nMon; iMon++) {
                 if (iMon == this._preferredMonitorIndex)
                     continue;
-                let dock = new DockedDash(this._settings, iMon);
+                let dock = new DockedDash(this._settings, this._remoteModel, iMon);
                 this._allDocks.push(dock);
                 // connect app icon into the view selector
                 dock.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));

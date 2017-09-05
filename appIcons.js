@@ -100,6 +100,7 @@ const MyAppIcon = new Lang.Class({
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._nWindows = 0;
+        this._remoteEntries = [];
 
         this.parent(app, iconParams);
 
@@ -145,8 +146,8 @@ const MyAppIcon = new Lang.Class({
         }));
         this._optionalScrollCycleWindows();
 
+        this._notificationBadge();        
         this._numberOverlay();
-        this._notificationBadge();
 
         this._previewMenuManager = null;
         this._previewMenu = null;
@@ -971,9 +972,32 @@ const MyAppIcon = new Lang.Class({
         this._notificationBadgeLabel.clutter_text.ellipsize = Pango.EllipsizeMode.MIDDLE;
     },
 
+    _notificationBadgeCountToText: function(count) {
+        if (count <= 9999) {
+            return count.toString();
+        } else if (count < 10**5) {
+            let thousands = count / 10**3;
+            return thousands.toFixed(1).toString() + "k";
+        } else if (count < 10**6) {
+            let thousands = count / 10**3;
+            return thousands.toFixed(0).toString() + "k";
+        } else if (count < 10**8) {
+            let millions = count / 10**6;
+            return millions.toFixed(1).toString() + "M";
+        } else if (count < 10**9) {
+            let millions = count / 10**6;
+            return millions.toFixed(0).toString() + "M";
+        } else {
+            let billions = count / 10**9;
+            return billions.toFixed(1).toString() + "B";
+        }
+    },
+
     setNotificationBadge: function(count) {
+
         this._notificationBadgeCount = count;
-        this._notificationBadgeLabel.set_text(count.toString());
+        let text = this._notificationBadgeCountToText(count);
+        this._notificationBadgeLabel.set_text(text);
     },
 
     toggleNotificationBadge: function(activate) {
@@ -1136,7 +1160,53 @@ const MyAppIcon = new Lang.Class({
     // nautilus desktop window.
     getInterestingWindows: function() {
         return getInterestingWindows(this.app, this._dtdSettings, this.monitorIndex);
-    }
+    },
+
+    insertEntryRemote: function(remote) {
+        if (!remote || this._remoteEntries.includes(remote))
+            return;
+
+        this._remoteEntries.push(remote);
+        this._selectEntryRemote(remote);
+    },
+
+    removeEntryRemote: function(remote) {
+        if (!remote || !this._remoteEntries.includes(remote))
+            return;
+
+        this._remoteEntries.splice(this._remoteEntries.indexOf(remote), 1);
+
+        if (this._remoteEntries.length > 0) {
+            this._selectEntryRemote(this._remoteEntries[this._remoteEntries.length-1]);
+        } else {
+            this.setNotificationBadge(0);
+            this.toggleNotificationBadge(false);
+        }
+    },
+
+    _selectEntryRemote: function(remote) {
+        if (!remote)
+            return;
+
+        this._signalsHandler.removeWithLabel('entry-remotes');
+
+        this._signalsHandler.addWithLabel('entry-remotes', [
+            remote,
+            'count-changed',
+            Lang.bind(this, (remote, value) => {
+                this.setNotificationBadge(value);
+            })
+        ], [
+            remote,
+            'count-visible-changed',
+            Lang.bind(this, (remote, value) => {
+                this.toggleNotificationBadge(value);
+            })
+        ]);
+
+        this.setNotificationBadge(remote.count());
+        this.toggleNotificationBadge(remote.countVisible());
+    },
 });
 /**
  * Extend AppIconMenu
