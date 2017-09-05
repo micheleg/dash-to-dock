@@ -4,7 +4,7 @@ const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Signals = imports.signals;
 
-const LauncherEntryRemoteModel = new Lang.Class({
+var LauncherEntryRemoteModel = new Lang.Class({
     Name: 'DashToDock.LauncherEntryRemoteModel',
 
     _init: function () {
@@ -141,7 +141,7 @@ const LauncherEntryRemoteModel = new Lang.Class({
 
 Signals.addSignalMethods(LauncherEntryRemoteModel.prototype);
 
-const LauncherEntryRemote = new Lang.Class({
+var LauncherEntryRemote = new Lang.Class({
     Name: 'DashToDock.LauncherEntryRemote',
 
     _init: function (dbusName, appId, properties) {
