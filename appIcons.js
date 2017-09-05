@@ -146,7 +146,7 @@ var MyAppIcon = new Lang.Class({
         }));
         this._optionalScrollCycleWindows();
 
-        this._notificationBadge();        
+        this._notificationBadge();
         this._numberOverlay();
 
         this._previewMenuManager = null;
