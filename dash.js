@@ -454,7 +454,7 @@ const MyDash = new Lang.Class({
                                              { setSizeManually: true,
                                                showLabel: false });
         this._remoteModel.lookupById(app.id).forEach(function(entry) {
-            appIcon.insertEntryRemote(entry);            
+            appIcon.insertEntryRemote(entry);
         });
 
         if (appIcon._draggable) {

@@ -146,7 +146,7 @@ const MyAppIcon = new Lang.Class({
         }));
         this._optionalScrollCycleWindows();
 
-        this._notificationBadge();        
+        this._notificationBadge();
         this._numberOverlay();
 
         this._previewMenuManager = null;
@@ -964,10 +964,10 @@ const MyAppIcon = new Lang.Class({
         let margin_left = Math.round(logicalNatWidth / 4);
 
         this._notificationBadgeLabel.set_style(
-           'font-size: ' + font_size + 'px;' + 
+           'font-size: ' + font_size + 'px;' +
            'margin-left: ' + margin_left + 'px;'
         );
-    
+
         this._notificationBadgeBin.width = Math.round(logicalNatWidth - margin_left);
         this._notificationBadgeLabel.clutter_text.ellipsize = Pango.EllipsizeMode.MIDDLE;
     },
@@ -994,7 +994,6 @@ const MyAppIcon = new Lang.Class({
     },
 
     setNotificationBadge: function(count) {
-
         this._notificationBadgeCount = count;
         let text = this._notificationBadgeCountToText(count);
         this._notificationBadgeLabel.set_text(text);
