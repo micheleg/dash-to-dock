@@ -1,5 +1,5 @@
 {
-"shell-version": ["3.18", "3.20", "3.22", "3.24"],
+"shell-version": ["3.18", "3.20", "3.22", "3.24", "3.26"],
 "uuid": "ubuntu-dock@ubuntu.com",
 "name": "Ubuntu Dock",
 "description": "A dock for the Gnome Shell, default Ubuntu experience. This extension is a modified version of Dash To Dock with different defaults. Dash To Dock can be installed to replace it and give more (but unsupported) configuration options.",
