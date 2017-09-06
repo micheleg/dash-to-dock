@@ -696,6 +696,10 @@ const DockedDash = new Lang.Class({
         }
     },
 
+    getDockState: function() {
+        return this._dockState;
+    },
+
     _show: function() {
         if ((this._dockState == State.HIDDEN) || (this._dockState == State.HIDING)) {
             if (this._dockState == State.HIDING)
