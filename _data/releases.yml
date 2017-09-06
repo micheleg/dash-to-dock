@@ -1,3 +1,13 @@
+- version: 61
+  date: 06-09-2017
+  shell_version: ["3.18", "3.20", "3.22", "3.24", "3.26"]
+  notes:
+    - "Introduce GNOME Shell 3.26 support [44ed947e, 1e46e472, b91fa4fc, 87f46c7c]."
+    - "New feature: add glossy coloured (Ubuntu Unity like) launchers [Sven Hagemann: fe6dde50, 5533316b, 829d3982; franglais125: 89861fbb, eb832c34]."
+    - "Tweak shortcuts: remove keypad hotkeys (maintain top row keys shortcuts) [franglais125: 979b443f]."
+    - "Update Russian, Czech, Japanese, French, Simplified Chinese, Italian, Spanish [vantu5z: 8f4d78d6, e254b3d0; Pavel: 5928947b; Debonne Hooties: 2a44c38f; seb128: 184b150e; shlinux: 5d4029b7; Filippo Berto: 04bb0a90; Adolfo Jayme Barrientos: 6fb7327c]."
+  zip_url: https://extensions.gnome.org/review/download/7315.shell-extension.zip
+
 - version: 60
   date: 07-07-2017
   shell_version: ["3.18", "3.20", "3.22", "3.24"]
