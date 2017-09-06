@@ -975,20 +975,20 @@ const MyAppIcon = new Lang.Class({
     _notificationBadgeCountToText: function(count) {
         if (count <= 9999) {
             return count.toString();
-        } else if (count < 10**5) {
-            let thousands = count / 10**3;
+        } else if (count < 1e5) {
+            let thousands = count / 1e3;
             return thousands.toFixed(1).toString() + "k";
-        } else if (count < 10**6) {
-            let thousands = count / 10**3;
+        } else if (count < 1e6) {
+            let thousands = count / 1e3;
             return thousands.toFixed(0).toString() + "k";
-        } else if (count < 10**8) {
-            let millions = count / 10**6;
+        } else if (count < 1e8) {
+            let millions = count / 1e6;
             return millions.toFixed(1).toString() + "M";
-        } else if (count < 10**9) {
-            let millions = count / 10**6;
+        } else if (count < 1e9) {
+            let millions = count / 1e6;
             return millions.toFixed(0).toString() + "M";
         } else {
-            let billions = count / 10**9;
+            let billions = count / 1e9;
             return billions.toFixed(1).toString() + "B";
         }
     },

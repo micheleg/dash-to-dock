@@ -182,7 +182,7 @@ var LauncherEntryRemote = new Lang.Class({
         }
     },
 
-    setDBusName(dbusName) {
+    setDBusName: function (dbusName) {
         if (this._dbusName != dbusName) {
             let oldName = this._dbusName;
             this._dbusName = dbusName;
