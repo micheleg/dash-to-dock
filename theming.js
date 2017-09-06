@@ -23,6 +23,7 @@ const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Dock = Me.imports.docking;
 const Utils = Me.imports.utils;
 
 const TransparencyMode = {
@@ -426,17 +427,24 @@ const Transparency = new Lang.Class({
                    metaWindow.get_window_type() != Meta.WindowType.DESKTOP;
         });
 
-        /* Check if at least one window is near enough to the panel */
+        /* Check if at least one window is near enough to the panel.
+         * If the dock is hidden, we need to account for the space it would take
+         * up when it slides out. This is avoid an ugly transition.
+         * */
+        let factor = 0;
+        if (!this._settings.get_boolean('dock-fixed') &&
+            this._dock.getDockState() == Dock.State.HIDDEN)
+            factor = 1;
         let [leftCoord, topCoord] = this._actor.get_transformed_position();
         let threshold;
         if (this._position === St.Side.LEFT)
-            threshold = leftCoord + this._actor.get_width();
+            threshold = leftCoord + this._actor.get_width() * (factor + 1);
         else if (this._position === St.Side.RIGHT)
-            threshold = leftCoord;
+            threshold = leftCoord - this._actor.get_width() * factor;
         else if (this._position === St.Side.TOP)
-            threshold = topCoord + this._actor.get_height();
+            threshold = topCoord + this._actor.get_height() * (factor + 1);
         else
-            threshold = topCoord;
+            threshold = topCoord - this._actor.get_height() * factor;
 
         let scale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         let isNearEnough = windows.some(Lang.bind(this, function(metaWindow) {
