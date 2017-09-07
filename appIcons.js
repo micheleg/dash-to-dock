@@ -117,9 +117,8 @@ var MyAppIcon = new Lang.Class({
                                                            this._onFocusAppChanged));
 
         // In Wayland sessions, this signal is needed to track the state of windows dragged
-        // from one monitor to another. However, the performance impact is questionable as it
-        // triggers a redraw of all icons' style quite often (whenever a new winow of any application
-        // is opened or moved to a different desktop). Until a better solution is found
+        // from one monitor to another. As this is triggered quite often (whenever a new winow
+        // of any application opened or moved to a different desktop),
         // we restrict this signal to  the case when 'isolate-monitors' is true,
         // and if there are at least 2 monitors.
         if (this._dtdSettings.get_boolean('isolate-monitors') &&
@@ -128,7 +127,7 @@ var MyAppIcon = new Lang.Class({
             this._signalsHandler.addWithLabel('isolate-monitors', [
                 global.screen,
                 'window-entered-monitor',
-                Lang.bind(this, this.onWindowsChanged)
+                Lang.bind(this, this._onWindowEntered)
             ]);
         }
 
@@ -183,6 +182,12 @@ var MyAppIcon = new Lang.Class({
 
         if (this._scrollEventHandler)
             this.actor.disconnect(this._scrollEventHandler);
+    },
+
+    _onWindowEntered: function(metaScreen, monitorIndex, metaWin) {
+        let app = Shell.WindowTracker.get_default().get_window_app(metaWin);
+        if (app && app.get_id() == this.app.get_id())
+            this.onWindowsChanged();
     },
 
     _optionalScrollCycleWindows: function() {
