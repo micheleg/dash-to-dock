@@ -128,7 +128,7 @@ var MyAppIcon = new Lang.Class({
             this._signalsHandler.addWithLabel('isolate-monitors', [
                 global.screen,
                 'window-entered-monitor',
-                Lang.bind(this, this.onWindowsChanged)
+                Lang.bind(this, this._onWindowEntered)
             ]);
         }
 
@@ -183,6 +183,16 @@ var MyAppIcon = new Lang.Class({
 
         if (this._scrollEventHandler)
             this.actor.disconnect(this._scrollEventHandler);
+    },
+
+    _onWindowEntered: function(metaScreen, monitorIndex, metaWin) {
+        let updateStyle = false;
+        let app = tracker.get_window_app(metaWin);
+        if (app.get_id() == this.app.get_id())
+            updateStyle = true;
+
+        if (updateStyle)
+            this.onWindowsChanged();
     },
 
     _optionalScrollCycleWindows: function() {
