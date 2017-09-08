@@ -103,9 +103,6 @@ var ThemeManager = new Lang.Class({
         // We also limit the borderAlpha to a maximum of 1 (full opacity)
         borderAlpha = Math.min((borderAlpha/backgroundAlpha)*newAlpha, 1);
 
-        // We need to send the original border alpha to the transparency class
-        this._transparency.setAlpha(newAlpha, borderAlpha, Math.round(borderColor.alpha/2.55)/100);
-
         this._customizedBackground = 'rgba(' +
             backgroundColor.red + ',' +
             backgroundColor.green + ',' +
@@ -334,9 +331,13 @@ const Transparency = new Lang.Class({
         this._position = Utils.getPosition(this._settings);
 
         this._backgroundColor = '0,0,0';
-        this._alpha = '1';
-        this._borderAlpha = '1';
-        this._originalBorderAlpha = '1';
+        this._transparentAlpha = '0.2';
+        this._opaqueAlpha = '1';
+        this._transparentAlphaBorder = '0.1';
+        this._opaqueAlphaBorder = '0.5';
+        this._transparentTransition = '0ms';
+        this._opaqueTransition = '0ms';
+
         this._updateStyles();
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
@@ -474,16 +475,21 @@ const Transparency = new Lang.Class({
     },
 
     _updateStyles: function() {
-        this._transparent_style = 'background-color: rgba(' +
-                                  this._backgroundColor + ',' + this._alpha + ');' +
-                                  'border-color: rgba(' +
-                                  this._backgroundColor + ',' + this._borderAlpha + ');' +
-                                  'transition-duration: 500ms;';
-        this._opaque_style = 'background-color: rgba(' +
-                             this._backgroundColor + ',' + '1);' +
-                             'border-color: rgba(' +
-                             this._backgroundColor + ',' + this._originalBorderAlpha + ');' +
-                             'transition-duration: 300ms;';
+        this._getAlphas();
+
+        this._transparent_style =
+            'background-color: rgba(' +
+            this._backgroundColor + ', ' + this._transparentAlpha + ');' +
+            'border-color: rgba(' +
+            this._backgroundColor + ', ' + this._transparentAlphaBorder + ');' +
+            'transition-duration: ' + this._transparentTransition + 'ms;';
+
+        this._opaque_style =
+            'background-color: rgba(' +
+            this._backgroundColor + ', ' + this._opaqueAlpha + ');' +
+            'border-color: rgba(' +
+            this._backgroundColor + ',' + this._opaqueAlphaBorder + ');' +
+            'transition-duration: ' + this._opaqueTransition + 'ms;';
     },
 
     setColor: function(color) {
@@ -491,11 +497,25 @@ const Transparency = new Lang.Class({
         this._updateStyles();
     },
 
-    setAlpha: function(alpha, borderAlpha, originalBorderAlpha) {
-        this._alpha = alpha.toString();
-        borderAlpha = Math.round(borderAlpha*100)/100;
-        this._borderAlpha = borderAlpha.toString();
-        this._originalBorderAlpha = originalBorderAlpha.toString();
-        this._updateStyles();
+    _getAlphas: function() {
+        // Create dummy object and add to the uiGroup to get it to the stage
+        let dummyObject = new St.Bin({
+            name: 'dashtodockContainer',
+        });
+        Main.uiGroup.add_child(dummyObject);
+
+        dummyObject.add_style_class_name('opaque');
+        let themeNode = dummyObject.get_theme_node();
+        this._opaqueAlpha = themeNode.get_background_color().alpha / 255;
+        this._opaqueAlphaBorder = themeNode.get_border_color(0).alpha / 255;
+        this._opaqueTransition = themeNode.get_transition_duration();
+
+        dummyObject.add_style_class_name('transparent');
+        themeNode = dummyObject.get_theme_node();
+        this._transparentAlpha = themeNode.get_background_color().alpha / 255;
+        this._transparentAlphaBorder = themeNode.get_border_color(0).alpha / 255;
+        this._transparentTransition = themeNode.get_transition_duration();
+
+        Main.uiGroup.remove_child(dummyObject);
     }
 });

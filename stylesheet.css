@@ -95,6 +95,20 @@
     background: #2e3436;
 }
 
+/* Only alpha value is used */
+#dashtodockContainer.opaque {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-color: rgba(0, 0, 0, 0.4);
+    transition-duration: 300ms;
+}
+
+/* Only alpha value is used */
+#dashtodockContainer.transparent {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-color: rgba(0, 0, 0, 0.1);
+    transition-duration: 500ms;
+}
+
 #dashtodockContainer .number-overlay {
     color: rgba(255,255,255,1);
     background-color: rgba(0,0,0,0.8);
