@@ -188,7 +188,7 @@ var MyAppIcon = new Lang.Class({
     _onWindowEntered: function(metaScreen, monitorIndex, metaWin) {
         let updateStyle = false;
         let app = tracker.get_window_app(metaWin);
-        if (app.get_id() == this.app.get_id())
+        if (app && app.get_id() == this.app.get_id())
             updateStyle = true;
 
         if (updateStyle)
