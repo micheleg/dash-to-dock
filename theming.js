@@ -28,7 +28,7 @@ const Utils = Me.imports.utils;
 /**
  * Manage theme customization and custom theme support
  */
-const ThemeManager = new Lang.Class({
+var ThemeManager = new Lang.Class({
     Name: 'DashToDock.ThemeManager',
 
     _init: function(settings, actor, dash) {

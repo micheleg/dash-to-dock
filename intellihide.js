@@ -45,7 +45,7 @@ const handledWindowTypes = [
  * Intallihide object: emit 'status-changed' signal when the overlap of windows
  * with the provided targetBoxClutter.ActorBox changes;
  */
-const Intellihide = new Lang.Class({
+var Intellihide = new Lang.Class({
     Name: 'DashToDock.Intellihide',
 
     _init: function(settings, monitorIndex) {
