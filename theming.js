@@ -29,6 +29,7 @@ const Utils = Me.imports.utils;
 const TransparencyMode = {
     DEFAULT:  0,
     FIXED:    1,
+    ADAPTIVE: 2
 };
 
 /**
@@ -341,6 +342,7 @@ const Transparency = new Lang.Class({
         this._updateStyles();
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._injectionsHandler = new Utils.InjectionsHandler();
         this._trackedWindows = new Map();
     },
 
@@ -375,11 +377,15 @@ const Transparency = new Lang.Class({
                 this._addWindowSignals(win);
         }, this);
 
+        this._enableAdaptive();
+
         if (this._actor.get_stage())
             this._updateSolidStyle();
     },
 
     disable: function() {
+        this._disableAdaptive();
+
         // ensure I never double-register/inject
         // although it should never happen
         this._signalsHandler.removeWithLabel('transparency');
@@ -394,6 +400,7 @@ const Transparency = new Lang.Class({
     destroy: function() {
         this.disable();
         this._signalsHandler.destroy();
+        this._injectionsHandler.destroy();
     },
 
     _addWindowSignals: function(metaWindowActor) {
@@ -417,8 +424,21 @@ const Transparency = new Lang.Class({
     },
 
     _updateSolidStyle: function() {
+        if (this._dockIsNear() || this._panelIsNear()) {
+            this._actor.set_style(this._opaque_style);
+            if (this._panel._updateSolidStyle)
+                this._panel._addStyleClassName('solid');
+        }
+        else {
+            this._actor.set_style(this._transparent_style);
+            if (this._panel._updateSolidStyle)
+                this._panel._removeStyleClassName('solid');
+        }
+    },
+
+    _dockIsNear: function() {
         if (this._dockActor.has_style_pseudo_class('overview'))
-            return;
+            return false;
         /* Get all the windows in the active workspace that are in the primary monitor and visible */
         let activeWorkspace = global.screen.get_active_workspace();
         let dash = this._dash;
@@ -468,10 +488,37 @@ const Transparency = new Lang.Class({
             }
         }));
 
-        if (isNearEnough)
-            this._actor.set_style(this._opaque_style);
-        else
-            this._actor.set_style(this._transparent_style);
+        return isNearEnough;
+    },
+
+    _panelIsNear: function() {
+        if (!this._panel._updateSolidStyle)
+            return false;
+
+        if (this._panel.actor.has_style_pseudo_class('overview') || !Main.sessionMode.hasWindows) {
+            this._panel._removeStyleClassName('solid');
+            return false;
+        }
+
+        /* Get all the windows in the active workspace that are in the
+         * primary monitor and visible */
+        let activeWorkspace = global.screen.get_active_workspace();
+        let windows = activeWorkspace.list_windows().filter(function(metaWindow) {
+            return metaWindow.is_on_primary_monitor() &&
+                metaWindow.showing_on_its_workspace() &&
+                metaWindow.get_window_type() != Meta.WindowType.DESKTOP;
+        });
+
+        /* Check if at least one window is near enough to the panel */
+        let [, panelTop] = this._panel.actor.get_transformed_position();
+        let panelBottom = panelTop + this._panel.actor.get_height();
+        let scale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+        let isNearEnough = windows.some(Lang.bind(this._panel, function(metaWindow) {
+            let verticalPosition = metaWindow.get_frame_rect().y;
+            return verticalPosition < panelBottom + 5 * scale;
+        }));
+
+        return isNearEnough;
     },
 
     _updateStyles: function() {
@@ -517,5 +564,24 @@ const Transparency = new Lang.Class({
         this._transparentTransition = themeNode.get_transition_duration();
 
         Main.uiGroup.remove_child(dummyObject);
+    },
+
+    _enableAdaptive: function() {
+        if (!this._panel._updateSolidStyle)
+            return;
+
+        function UpdateSolidStyle() {
+            return;
+        }
+
+        this._injectionsHandler.addWithLabel('adaptive', [
+            this._panel,
+            '_updateSolidStyle',
+            UpdateSolidStyle
+        ]);
+    },
+
+    _disableAdaptive: function() {
+        this._injectionsHandler.removeWithLabel('adaptive');
     }
 });

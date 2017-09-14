@@ -24,6 +24,7 @@ const DEFAULT_ICONS_SIZES = [ 128, 96, 64, 48, 32, 24, 16 ];
 const TransparencyMode = {
     DEFAULT:  0,
     FIXED:    1,
+    ADAPTIVE: 2
 };
 
 /**
@@ -609,6 +610,19 @@ const Settings = new Lang.Class({
                this._builder.get_object('custom_opacity_scale').set_sensitive(false);
            else
                this._builder.get_object('custom_opacity_scale').set_sensitive(true);
+        }));
+
+        if (this._settings.get_enum('transparency-mode') !== TransparencyMode.ADAPTIVE) {
+            this._builder.get_object('dynamic_opacity_button').set_sensitive(false);
+        }
+
+        this._settings.connect('changed::transparency-mode', Lang.bind(this, function() {
+            if (this._settings.get_enum('transparency-mode') !== TransparencyMode.ADAPTIVE)
+                this._builder.get_object('dynamic_opacity_button').set_sensitive(false);
+            }
+            else {
+                this._builder.get_object('dynamic_opacity_button').set_sensitive(true);
+            }
         }));
 
         this._settings.bind('unity-backlit-items',

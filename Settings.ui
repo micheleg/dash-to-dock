@@ -2330,6 +2330,7 @@
                                     <items>
                                       <item translatable="yes">Default</item>
                                       <item translatable="yes">Fixed</item>
+                                      <item translatable="yes">Adaptive</item>
                                     </items>
                                   </object>
                                   <packing>
