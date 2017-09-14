@@ -584,6 +584,25 @@ const Transparency = new Lang.Class({
             this._transparentAlpha = this._settings.get_double('min-alpha');
             this._transparentAlphaBorder = this._transparentAlpha / 2;
         }
+
+        if (this._settings.get_enum('transparency-mode') === TransparencyMode.ADAPTIVE &&
+            this._panel._updateSolidStyle) {
+            themeNode = this._panel.actor.get_theme_node();
+            if (this._panel.actor.has_style_class_name('solid')) {
+                this._opaqueTransition = themeNode.get_transition_duration();
+                this._panel._removeStyleClassName('solid');
+                themeNode = this._panel.actor.get_theme_node();
+                this._transparentTransition = themeNode.get_transition_duration();
+                this._panel._addStyleClassName('solid');
+            }
+            else {
+                this._transparentTransition = themeNode.get_transition_duration();
+                this._panel._addStyleClassName('solid');
+                themeNode = this._panel.actor.get_theme_node();
+                this._opaqueTransition = themeNode.get_transition_duration();
+                this._panel._removeStyleClassName('solid');
+            }
+        }
     },
 
     _enableAdaptive: function() {
