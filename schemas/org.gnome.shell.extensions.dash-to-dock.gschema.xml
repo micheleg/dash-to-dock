@@ -27,6 +27,10 @@
     <value value='1' nick='FOCUS_APPLICATION_WINDOWS'/>
     <value value='2' nick='MAXIMIZED_WINDOWS'/>
   </enum>
+  <enum id='org.gnome.shell.extensions.dash-to-dock.transparency-mode'>
+    <value value='0' nick='DEFAULT'/>
+    <value value='1' nick='FIXED'/>
+  </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key name="dock-position" enum="org.gnome.shell.extensions.dash-to-dock.position">
       <default>'LEFT'</default>
@@ -58,10 +62,10 @@
       <summary>Dash background color.</summary>
       <description>Customize the background color of the dash.</description>
     </key>
-    <key type="b" name="opaque-background">
-      <default>false</default>
-      <summary>Dash background is opaque</summary>
-      <description>Makes the background of the dash opaque improving readability when in autohide mode.</description>
+    <key name="transparency-mode" enum="org.gnome.shell.extensions.dash-to-dock.transparency-mode">
+      <default>'DEFAULT'</default>
+      <summary>Transparency mode for the dock</summary>
+      <description>Fixed: constant transparency.</description>
     </key>
     <key type="d" name="background-opacity">
       <default>0.8</default>
