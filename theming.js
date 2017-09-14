@@ -303,6 +303,9 @@ var ThemeManager = new Lang.Class({
 
     _bindSettingsChanges: function() {
         let keys = ['transparency-mode',
+                    'customize-alphas',
+                    'min-alpha',
+                    'max-alpha',
                     'background-opacity',
                     'custom-background-color',
                     'background-color',
@@ -574,6 +577,13 @@ const Transparency = new Lang.Class({
         this._transparentTransition = themeNode.get_transition_duration();
 
         Main.uiGroup.remove_child(dummyObject);
+
+        if (this._settings.get_boolean('customize-alphas')) {
+            this._opaqueAlpha = this._settings.get_double('max-alpha');
+            this._opaqueAlphaBorder = this._opaqueAlpha / 2;
+            this._transparentAlpha = this._settings.get_double('min-alpha');
+            this._transparentAlphaBorder = this._transparentAlpha / 2;
+        }
     },
 
     _enableAdaptive: function() {

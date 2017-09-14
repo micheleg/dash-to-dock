@@ -628,6 +628,54 @@ const Settings = new Lang.Class({
             }
         }));
 
+        // Create dialog for transparency advanced settings
+        this._builder.get_object('dynamic_opacity_button').connect('clicked', Lang.bind(this, function() {
+
+            let dialog = new Gtk.Dialog({ title: __('Cutomize opacity'),
+                                          transient_for: this.widget.get_toplevel(),
+                                          use_header_bar: true,
+                                          modal: true });
+
+            let box = this._builder.get_object('advanced_transparency_dialog');
+            dialog.get_content_area().add(box);
+
+            this._settings.bind(
+                'customize-alphas',
+                this._builder.get_object('customize_alphas_switch'),
+                'active',
+                Gio.SettingsBindFlags.DEFAULT
+            );
+            this._settings.bind(
+                'customize-alphas',
+                this._builder.get_object('min_alpha_scale'),
+                'sensitive',
+                Gio.SettingsBindFlags.DEFAULT
+            );
+            this._settings.bind(
+                'customize-alphas',
+                this._builder.get_object('max_alpha_scale'),
+                'sensitive',
+                Gio.SettingsBindFlags.DEFAULT
+            );
+
+            this._builder.get_object('min_alpha_scale').set_value(
+                this._settings.get_double('min-alpha')
+            );
+            this._builder.get_object('max_alpha_scale').set_value(
+                this._settings.get_double('max-alpha')
+            );
+
+            dialog.connect('response', Lang.bind(this, function(dialog, id) {
+                // remove the settings box so it doesn't get destroyed;
+                dialog.get_content_area().remove(box);
+                dialog.destroy();
+                return;
+            }));
+
+            dialog.show_all();
+        }));
+
+
         this._settings.bind('unity-backlit-items',
             this._builder.get_object('unity_backlit_items_switch'),
             'active', Gio.SettingsBindFlags.DEFAULT
@@ -718,7 +766,39 @@ const Settings = new Lang.Class({
             }));
         },
 
+        min_opacity_scale_value_changed_cb: function(scale) {
+            // Avoid settings the opacity consinuosly as it's change is animated
+            if (this._opacity_timeout > 0)
+                Mainloop.source_remove(this._opacity_timeout);
+
+            this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
+                this._settings.set_double('min-alpha', scale.get_value());
+                this._opacity_timeout = 0;
+                return GLib.SOURCE_REMOVE;
+            }));
+        },
+
+        max_opacity_scale_value_changed_cb: function(scale) {
+            // Avoid settings the opacity consinuosly as it's change is animated
+            if (this._opacity_timeout > 0)
+                Mainloop.source_remove(this._opacity_timeout);
+
+            this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
+                this._settings.set_double('max-alpha', scale.get_value());
+                this._opacity_timeout = 0;
+                return GLib.SOURCE_REMOVE;
+            }));
+        },
+
         custom_opacity_scale_format_value_cb: function(scale, value) {
+            return Math.round(value*100) + ' %';
+        },
+
+        min_opacity_scale_format_value_cb: function(scale, value) {
+            return Math.round(value*100) + ' %';
+        },
+
+        max_opacity_scale_format_value_cb: function(scale, value) {
             return Math.round(value*100) + ' %';
         },
 
