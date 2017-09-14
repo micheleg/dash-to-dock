@@ -25,6 +25,11 @@ const Workspace = imports.ui.workspace;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 
+const TransparencyMode = {
+    DEFAULT:  0,
+    FIXED:    1,
+};
+
 /**
  * Manage theme customization and custom theme support
  */
@@ -146,7 +151,7 @@ var ThemeManager = new Lang.Class({
               return;
 
             let newAlpha = Math.round(backgroundColor.alpha/2.55)/100;
-            if (this._settings.get_boolean('opaque-background'))
+            if (this._settings.get_enum('transparency-mode') == TransparencyMode.FIXED)
                 newAlpha = this._settings.get_double('background-opacity');
 
             let newColor = Clutter.color_from_string(this._settings.get_string('background-color'))[1];
@@ -263,7 +268,12 @@ var ThemeManager = new Lang.Class({
         }
 
         // Customize background
-        if (this._settings.get_boolean('opaque-background') || this._settings.get_boolean('custom-background-color')) {
+        let fixedTransparency = this._settings.get_enum('transparency-mode') == TransparencyMode.FIXED;
+        let defaultTransparency = this._settings.get_enum('transparency-mode') == TransparencyMode.DEFAULT;
+        if (!defaultTransparency && !fixedTransparency) {
+            this._transparency.enable();
+        }
+        else if (!defaultTransparency || this._settings.get_boolean('custom-background-color')) {
             newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
                        'border-color:'+ this._customizedBorder + '; ' +
                        'transition-delay: 0s; transition-duration: 0.250s;';
@@ -272,7 +282,7 @@ var ThemeManager = new Lang.Class({
     },
 
     _bindSettingsChanges: function() {
-        let keys = ['opaque-background',
+        let keys = ['transparency-mode',
                     'background-opacity',
                     'custom-background-color',
                     'background-color',

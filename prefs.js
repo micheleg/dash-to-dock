@@ -21,6 +21,11 @@ const Convenience = Me.imports.convenience;
 const SCALE_UPDATE_TIMEOUT = 500;
 const DEFAULT_ICONS_SIZES = [ 128, 96, 64, 48, 32, 24, 16 ];
 
+const TransparencyMode = {
+    DEFAULT:  0,
+    FIXED:    1,
+};
+
 /**
  * This function was copied from the activities-config extension
  * https://github.com/nls1729/acme-code/tree/master/activities-config
@@ -583,9 +588,28 @@ const Settings = new Lang.Class({
             this._settings.set_string('background-color', hexString);
         }));
 
-        this._settings.bind('opaque-background', this._builder.get_object('customize_opacity_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
+        // Opacity
+        this._builder.get_object('customize_opacity_combo').set_active(
+            this._settings.get_enum('transparency-mode')
+        );
+        this._builder.get_object('customize_opacity_combo').connect(
+            'changed',
+            Lang.bind (this, function(widget) {
+                this._settings.set_enum('transparency-mode', widget.get_active());
+            })
+        );
+
         this._builder.get_object('custom_opacity_scale').set_value(this._settings.get_double('background-opacity'));
-        this._settings.bind('opaque-background', this._builder.get_object('custom_opacity'), 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+
+        if (this._settings.get_enum('transparency-mode') !== TransparencyMode.FIXED)
+            this._builder.get_object('custom_opacity_scale').set_sensitive(false);
+
+        this._settings.connect('changed::transparency-mode', Lang.bind(this, function() {
+           if (this._settings.get_enum('transparency-mode') !== TransparencyMode.FIXED)
+               this._builder.get_object('custom_opacity_scale').set_sensitive(false);
+           else
+               this._builder.get_object('custom_opacity_scale').set_sensitive(true);
+        }));
 
         this._settings.bind('unity-backlit-items',
             this._builder.get_object('unity_backlit_items_switch'),
