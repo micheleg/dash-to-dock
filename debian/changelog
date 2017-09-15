@@ -1,3 +1,15 @@
+gnome-shell-extension-ubuntu-dock (0.5) UNRELEASED; urgency=medium
+
+  * Rationalize some keyboard and key + mouse shortcuts:
+    - Click is focus or showing up window previews. Same than Super + number
+      (was already the default)
+    - Shift + click launch a new instance. Same than Super + Shift + number
+    - Middle click cycles on windows from the selected application.
+    - Shift + middle click minimize the last focused window from the selected
+      application.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 15 Sep 2017 14:29:42 +0200
+
 gnome-shell-extension-ubuntu-dock (0.4) artful; urgency=medium
 
   * Switch click-action to previews multiple window instances by default.
