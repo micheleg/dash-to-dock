@@ -606,7 +606,8 @@ const Transparency = new Lang.Class({
     },
 
     _enableAdaptive: function() {
-        if (!this._panel._updateSolidStyle)
+        if (!this._panel._updateSolidStyle ||
+            this._dash._monitorIndex !== Main.layoutManager.primaryIndex)
             return;
 
         this._adaptiveEnabled = true;
