@@ -71,7 +71,7 @@ let recentlyClickedAppMonitor = -1;
  * - Update minimization animation target
  * - Update menu if open on windows change
  */
-const MyAppIcon = new Lang.Class({
+var MyAppIcon = new Lang.Class({
     Name: 'DashToDock.AppIcon',
     Extends: AppDisplay.AppIcon,
 
