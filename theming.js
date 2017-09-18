@@ -385,7 +385,7 @@ const Transparency = new Lang.Class({
             // An irrelevant window actor ('Gnome-shell') produces an error when the signals are
             // disconnected, therefore do not add signals to it.
             if (win.get_meta_window().get_wm_class() !== 'Gnome-shell')
-                this._addWindowSignals(win);
+                this._onWindowActorAdded(null, win);
         }, this);
 
         if (this._settings.get_enum('transparency-mode') === TransparencyMode.ADAPTIVE)
@@ -415,7 +415,7 @@ const Transparency = new Lang.Class({
         this._injectionsHandler.destroy();
     },
 
-    _addWindowSignals: function(metaWindowActor) {
+    _onWindowActorAdded: function(container, metaWindowActor) {
         let signalIds = [];
         ['allocation-changed', 'notify::visible'].forEach(s => {
             signalIds.push(metaWindowActor.connect(s, Lang.bind(this, this._updateSolidStyle)));
@@ -423,11 +423,10 @@ const Transparency = new Lang.Class({
         this._trackedWindows.set(metaWindowActor, signalIds);
     },
 
-    _onWindowActorAdded: function(container, metaWindowActor) {
-        this._addWindowSignals(metaWindowActor);
-    },
-
     _onWindowActorRemoved: function(container, metaWindowActor) {
+        if (!this._trackedWindows.get(metaWindowActor))
+            return;
+
         this._trackedWindows.get(metaWindowActor).forEach(id => {
             metaWindowActor.disconnect(id);
         });
