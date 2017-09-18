@@ -13,5 +13,5 @@ background-opacity=0.70
 scroll-action='switch-workspace'
 click-action='previews'
 shift-click-action='launch'
-middle-click-action='cycle-windows'
+middle-click-action='launch'
 shift-middle-click-action='minimize'
