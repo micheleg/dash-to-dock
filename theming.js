@@ -551,7 +551,7 @@ const Transparency = new Lang.Class({
 
         // get opacity from the settings to be used if custom alphas are defined
         if ( !this._settings.get_boolean('apply-custom-theme') &&
-             this._settings.get_enum('transparency-mode') != TransparencyMode.DEFAULT) {
+             this._settings.get_enum('transparency-mode') != TransparencyMode.DEFAULT ) {
             this._opaqueAlpha = this._settings.get_double('max-alpha');
             this._opaqueAlphaBorder = this._opaqueAlpha / 2;
             this._transparentAlpha = this._settings.get_double('min-alpha');
@@ -571,6 +571,9 @@ const Transparency = new Lang.Class({
                 this._backgroundColor + ',' + this._opaqueAlphaBorder + ');'
         }
 
+        let transparent_transition = this._transparentTransition;
+        let opaque_transition = this._opaqueTransition;
+
         // In the adaptive case, when both the panel and the dock change transparency at the same time,
         // we retrieve the transition time from the top panel (In GNOME Shell 3.26+) in order to
         // syncronize the transitions
@@ -578,25 +581,26 @@ const Transparency = new Lang.Class({
             this._panel._updateSolidStyle) {
             let themeNode = this._panel.actor.get_theme_node();
             if (this._panel.actor.has_style_class_name('solid')) {
-                this._opaqueTransition = themeNode.get_transition_duration();
+                opaque_transition = themeNode.get_transition_duration();
                 this._panel._removeStyleClassName('solid');
                 themeNode = this._panel.actor.get_theme_node();
-                this._transparentTransition = themeNode.get_transition_duration();
+                transparent_transition = themeNode.get_transition_duration();
                 this._panel._addStyleClassName('solid');
             } else {
-                this._transparentTransition = themeNode.get_transition_duration();
+                transparent_transition = themeNode.get_transition_duration();
                 this._panel._addStyleClassName('solid');
                 themeNode = this._panel.actor.get_theme_node();
-                this._opaqueTransition = themeNode.get_transition_duration();
+                opaque_transition = themeNode.get_transition_duration();
                 this._panel._removeStyleClassName('solid');
             }
 
-            this._transparent_style +=
-                'transition-duration: ' + this._transparentTransition + 'ms;';
+        }
 
-            this._opaque_style +=
-                'transition-duration: ' + this._opaqueTransition + 'ms;';
-            }
+        this._transparent_style +=
+        'transition-duration: ' + transparent_transition + 'ms;';
+
+        this._opaque_style +=
+        'transition-duration: ' + opaque_transition + 'ms;';
 
     },
 
