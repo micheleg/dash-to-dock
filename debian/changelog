@@ -4,7 +4,9 @@ gnome-shell-extension-ubuntu-dock (0.5) UNRELEASED; urgency=medium
     - Click is focus or showing up window previews. Same than Super + number
       (was already the default)
     - Shift + click launch a new instance. Same than Super + Shift + number
-    - Middle click cycles on windows from the selected application.
+    - Middle click cycles launch a new instance as well. This is to be
+      consistent when middle clicking a link in a web browser opening a new
+      tab.
     - Shift + middle click minimize the last focused window from the selected
       application.
 
