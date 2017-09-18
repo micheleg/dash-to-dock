@@ -26,6 +26,13 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Dock = Me.imports.docking;
 const Utils = Me.imports.utils;
 
+/*
+ * DEFAULT:  transparency given by theme
+ * FIXED:    constant transparency chosen by user
+ * ADAPTIVE: apply 'transparent' style to dock AND panel when
+ *           no windows are close to the dock OR panel
+ * DYNAMIC:  apply 'transparent' style when no windows are close to the dock
+ * */
 const TransparencyMode = {
     DEFAULT:  0,
     FIXED:    1,
