@@ -388,7 +388,15 @@ const Transparency = new Lang.Class({
                 this._onWindowActorAdded(null, win);
         }, this);
 
-        if (this._settings.get_enum('transparency-mode') === TransparencyMode.ADAPTIVE)
+        if (this._settings.get_enum('apply-custom-theme')) {
+            if (this._settings.get_enum('extend-height'))
+                this._transparency_mode = TransparencyMode.ADAPTIVE;
+            else
+                this._transparency_mode = TransparencyMode.DYNAMIC;
+        } else
+            this._transparency_mode = this._settings.get_enum('transparency-mode');
+
+        if (this._transparency_mode == TransparencyMode.ADAPTIVE)
             this._enableAdaptive();
 
         if (this._actor.get_stage())
@@ -508,7 +516,7 @@ const Transparency = new Lang.Class({
 
     _panelIsNear: function() {
         if (!this._panel._updateSolidStyle ||
-            this._settings.get_enum('transparency-mode') !== TransparencyMode.ADAPTIVE)
+            this._transparency_mode !== TransparencyMode.ADAPTIVE)
             return false;
 
         if (this._panel.actor.has_style_pseudo_class('overview') || !Main.sessionMode.hasWindows) {
@@ -549,7 +557,7 @@ const Transparency = new Lang.Class({
         // In the adaptive case, when both the panel and the dock change transparency at the same time,
         // we retrieve the transition time from the top panel (In GNOME Shell 3.26+) in order to
         // syncronize the transitions
-        if (this._settings.get_enum('transparency-mode') == TransparencyMode.ADAPTIVE &&
+        if (this._transparency_mode  == TransparencyMode.ADAPTIVE &&
             this._panel._updateSolidStyle) {
             themeNode = this._panel.actor.get_theme_node();
             if (this._panel.actor.has_style_class_name('solid')) {
