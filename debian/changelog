@@ -9,6 +9,11 @@ gnome-shell-extension-ubuntu-dock (0.5) UNRELEASED; urgency=medium
       tab.
     - Shift + middle click minimize the last focused window from the selected
       application.
+  * Cherry-pick some fixes from dash to dock branch (without taking the other
+    new features):
+    - Hotkeys: remove keypad hotkeys
+    - Define externally accessible classes and constants with 'var'
+  * updated translations
 
  -- Didier Roche <didrocks@ubuntu.com>  Fri, 15 Sep 2017 14:29:42 +0200
 
