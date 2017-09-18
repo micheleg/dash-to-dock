@@ -233,8 +233,10 @@ var ThemeManager = new Lang.Class({
         this._transparency.disable();
 
         // If built-in theme is enabled do nothing else
-        if (this._settings.get_boolean('apply-custom-theme'))
+        if (this._settings.get_boolean('apply-custom-theme')) {
+            this._transparency.enable();
             return;
+        }
 
         let newStyle = '';
         let position = Utils.getPosition(this._settings);
@@ -288,12 +290,9 @@ var ThemeManager = new Lang.Class({
         }
 
         // Customize background
-        let fixedTransparency = this._settings.get_enum('transparency-mode') == TransparencyMode.FIXED;
-        let defaultTransparency = this._settings.get_enum('transparency-mode') == TransparencyMode.DEFAULT;
-        if (!defaultTransparency && !fixedTransparency) {
+        if (this._settings.get_enum('transparency-mode') != TransparencyMode.FIXED) {
             this._transparency.enable();
-        }
-        else if (!defaultTransparency || this._settings.get_boolean('custom-background-color')) {
+        } else  {
             newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
                        'border-color:'+ this._customizedBorder + '; ' +
                        'transition-delay: 0s; transition-duration: 0.250s;';
@@ -388,8 +387,8 @@ const Transparency = new Lang.Class({
                 this._onWindowActorAdded(null, win);
         }, this);
 
-        if (this._settings.get_enum('apply-custom-theme')) {
-            if (this._settings.get_enum('extend-height'))
+        if (this._settings.get_boolean('apply-custom-theme')) {
+            if (this._settings.get_boolean('extend-height'))
                 this._transparency_mode = TransparencyMode.ADAPTIVE;
             else
                 this._transparency_mode = TransparencyMode.DYNAMIC;
@@ -444,15 +443,15 @@ const Transparency = new Lang.Class({
 
     _updateSolidStyle: function() {
         if (this._dockIsNear() || this._panelIsNear()) {
-            this._actor.add_style_class_name('solid');
-            if (this._settings.get_boolean('customize-alphas'))
+            this._dock.actor.add_style_class_name('solid');
+            if (!this._settings.get_boolean('apply-custom-theme'))
                 this._actor.set_style(this._opaque_style);
             if (this._panel._updateSolidStyle && this._adaptiveEnabled)
                 this._panel._addStyleClassName('solid');
         }
         else {
-            this._actor.remove_style_class_name('solid');
-            if (this._settings.get_boolean('customize-alphas'))
+            this._dock.actor.remove_style_class_name('solid');
+            if (!this._settings.get_boolean('apply-custom-theme'))
                 this._actor.set_style(this._transparent_style);
             if (this._panel._updateSolidStyle && this._adaptiveEnabled)
                 this._panel._removeStyleClassName('solid');
@@ -546,12 +545,30 @@ const Transparency = new Lang.Class({
     },
 
     _updateStyles: function() {
+
+        this._transparent_style = '';
+        this._opaque_style = '';
+
         // get opacity from the settings to be used if custom alphas are defined
-        if (this._settings.get_boolean('customize-alphas')) {
+        if ( !this._settings.get_boolean('apply-custom-theme') &&
+             this._settings.get_enum('transparency-mode') != TransparencyMode.DEFAULT) {
             this._opaqueAlpha = this._settings.get_double('max-alpha');
             this._opaqueAlphaBorder = this._opaqueAlpha / 2;
             this._transparentAlpha = this._settings.get_double('min-alpha');
             this._transparentAlphaBorder = this._transparentAlpha / 2;
+
+
+            this._transparent_style +=
+                'background-color: rgba(' +
+                this._backgroundColor + ', ' + this._transparentAlpha + ');' +
+                'border-color: rgba(' +
+                this._backgroundColor + ', ' + this._transparentAlphaBorder + ');'
+
+            this._opaque_style +=
+                'background-color: rgba(' +
+                this._backgroundColor + ', ' + this._opaqueAlpha + ');' +
+                'border-color: rgba(' +
+                this._backgroundColor + ',' + this._opaqueAlphaBorder + ');'
         }
 
         // In the adaptive case, when both the panel and the dock change transparency at the same time,
@@ -559,7 +576,7 @@ const Transparency = new Lang.Class({
         // syncronize the transitions
         if (this._transparency_mode  == TransparencyMode.ADAPTIVE &&
             this._panel._updateSolidStyle) {
-            themeNode = this._panel.actor.get_theme_node();
+            let themeNode = this._panel.actor.get_theme_node();
             if (this._panel.actor.has_style_class_name('solid')) {
                 this._opaqueTransition = themeNode.get_transition_duration();
                 this._panel._removeStyleClassName('solid');
@@ -573,21 +590,14 @@ const Transparency = new Lang.Class({
                 this._opaqueTransition = themeNode.get_transition_duration();
                 this._panel._removeStyleClassName('solid');
             }
-        }
 
-        this._transparent_style =
-            'background-color: rgba(' +
-            this._backgroundColor + ', ' + this._transparentAlpha + ');' +
-            'border-color: rgba(' +
-            this._backgroundColor + ', ' + this._transparentAlphaBorder + ');' +
-            'transition-duration: ' + this._transparentTransition + 'ms;';
+            this._transparent_style +=
+                'transition-duration: ' + this._transparentTransition + 'ms;';
 
-        this._opaque_style =
-            'background-color: rgba(' +
-            this._backgroundColor + ', ' + this._opaqueAlpha + ');' +
-            'border-color: rgba(' +
-            this._backgroundColor + ',' + this._opaqueAlphaBorder + ');' +
-            'transition-duration: ' + this._opaqueTransition + 'ms;';
+            this._opaque_style +=
+                'transition-duration: ' + this._opaqueTransition + 'ms;';
+            }
+
     },
 
     setColor: function(color) {

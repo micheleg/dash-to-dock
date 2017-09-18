@@ -91,15 +91,24 @@
     background-color: rgba(238, 238, 236, 0.1);
 }
 
+/*By default we keep the dock opaque*/
 #dashtodockContainer.dashtodock #dash {
-    background-color: rgba(46, 52, 54, 0.2);
-    border-color: rgba(46, 52, 54, 0.2);
+    background-color: rgba(46, 52, 54, 1);
+    border-color: rgba(46, 52, 54, 1);
+}
+
+/*In the extended/vertical case, we match the transparency and color of the panel*/
+#dashtodockContainer.dashtodock.extended.left #dash,
+#dashtodockContainer.dashtodock.extended.right #dash {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-color: rgba(0, 0, 0, 0.2);
     transition-duration: 500ms;
 }
 
-#dashtodockContainer.dashtodock.solid #dash {
-    background-color: rgba(46, 52, 54, 1);
-    border-color: rgba(46, 52, 54, 1);
+#dashtodockContainer.dashtodock.extended.left.solid #dash,
+#dashtodockContainer.dashtodock.extended.right.solid #dash {
+    background-color: rgba(0, 0, 0, 1);
+    border-color: rgba(0, 0, 0, 1);
     transition-duration: 300ms;
 }
 
