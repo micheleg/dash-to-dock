@@ -620,10 +620,33 @@ const Transparency = new Lang.Class({
             '_updateSolidStyle',
             UpdateSolidStyle
         ]);
+
+        // Once we injected the new function, we need to disconnect and
+        // reconnect all window signals.
+        for (let key of this._panel._trackedWindows.keys())
+            this._panel._trackedWindows.get(key).forEach(id => {
+                key.disconnect(id);
+            });
+
+        for (let win of this._panel._trackedWindows.keys())
+            this._panel._onWindowActorAdded(null, win);
     },
 
     _disableAdaptive: function() {
+        if (!this._adaptiveEnabled)
+            return;
+
         this._injectionsHandler.removeWithLabel('adaptive');
         this._adaptiveEnabled = false;
+
+        // Once we removed the injection, we need to disconnect and
+        // reconnect all window signals.
+        for (let key of this._panel._trackedWindows.keys())
+            this._panel._trackedWindows.get(key).forEach(id => {
+                key.disconnect(id);
+            });
+
+        for (let win of this._panel._trackedWindows.keys())
+            this._panel._onWindowActorAdded(null, win);
     }
 });
