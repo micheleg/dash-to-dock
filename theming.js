@@ -347,8 +347,8 @@ const Transparency = new Lang.Class({
         this._opaqueAlpha = '1';
         this._transparentAlphaBorder = '0.1';
         this._opaqueAlphaBorder = '0.5';
-        this._transparentTransition = '0ms';
-        this._opaqueTransition = '0ms';
+        this._transparentTransition = '300ms';
+        this._opaqueTransition = '500ms';
 
         this._updateStyles();
 
@@ -436,12 +436,16 @@ const Transparency = new Lang.Class({
 
     _updateSolidStyle: function() {
         if (this._dockIsNear() || this._panelIsNear()) {
-            this._actor.set_style(this._opaque_style);
+            this._actor.add_style_class_name('solid');
+            if (this._settings.get_boolean('customize-alphas'))
+                this._actor.set_style(this._opaque_style);
             if (this._panel._updateSolidStyle && this._adaptiveEnabled)
                 this._panel._addStyleClassName('solid');
         }
         else {
-            this._actor.set_style(this._transparent_style);
+            this._actor.remove_style_class_name('solid');
+            if (this._settings.get_boolean('customize-alphas'))
+                this._actor.set_style(this._transparent_style);
             if (this._panel._updateSolidStyle && this._adaptiveEnabled)
                 this._panel._removeStyleClassName('solid');
         }
@@ -534,7 +538,34 @@ const Transparency = new Lang.Class({
     },
 
     _updateStyles: function() {
-        this._getAlphas();
+        // get opacity from the settings to be used if custom alphas are defined
+        if (this._settings.get_boolean('customize-alphas')) {
+            this._opaqueAlpha = this._settings.get_double('max-alpha');
+            this._opaqueAlphaBorder = this._opaqueAlpha / 2;
+            this._transparentAlpha = this._settings.get_double('min-alpha');
+            this._transparentAlphaBorder = this._transparentAlpha / 2;
+        }
+
+        // In the adaptive case, when both the panel and the dock change transparency at the same time,
+        // we retrieve the transition time from the top panel (In GNOME Shell 3.26+) in order to
+        // syncronize the transitions
+        if (this._settings.get_enum('transparency-mode') == TransparencyMode.ADAPTIVE &&
+            this._panel._updateSolidStyle) {
+            themeNode = this._panel.actor.get_theme_node();
+            if (this._panel.actor.has_style_class_name('solid')) {
+                this._opaqueTransition = themeNode.get_transition_duration();
+                this._panel._removeStyleClassName('solid');
+                themeNode = this._panel.actor.get_theme_node();
+                this._transparentTransition = themeNode.get_transition_duration();
+                this._panel._addStyleClassName('solid');
+            } else {
+                this._transparentTransition = themeNode.get_transition_duration();
+                this._panel._addStyleClassName('solid');
+                themeNode = this._panel.actor.get_theme_node();
+                this._opaqueTransition = themeNode.get_transition_duration();
+                this._panel._removeStyleClassName('solid');
+            }
+        }
 
         this._transparent_style =
             'background-color: rgba(' +
@@ -554,54 +585,6 @@ const Transparency = new Lang.Class({
     setColor: function(color) {
         this._backgroundColor = color.red + ',' + color.green + ',' + color.blue;
         this._updateStyles();
-    },
-
-    _getAlphas: function() {
-        // Create dummy object and add to the uiGroup to get it to the stage
-        let dummyObject = new St.Bin({
-            name: 'dashtodockContainer',
-        });
-        Main.uiGroup.add_child(dummyObject);
-
-        dummyObject.add_style_class_name('opaque');
-        let themeNode = dummyObject.get_theme_node();
-        this._opaqueAlpha = themeNode.get_background_color().alpha / 255;
-        this._opaqueAlphaBorder = themeNode.get_border_color(0).alpha / 255;
-        this._opaqueTransition = themeNode.get_transition_duration();
-
-        dummyObject.add_style_class_name('transparent');
-        themeNode = dummyObject.get_theme_node();
-        this._transparentAlpha = themeNode.get_background_color().alpha / 255;
-        this._transparentAlphaBorder = themeNode.get_border_color(0).alpha / 255;
-        this._transparentTransition = themeNode.get_transition_duration();
-
-        Main.uiGroup.remove_child(dummyObject);
-
-        if (this._settings.get_boolean('customize-alphas')) {
-            this._opaqueAlpha = this._settings.get_double('max-alpha');
-            this._opaqueAlphaBorder = this._opaqueAlpha / 2;
-            this._transparentAlpha = this._settings.get_double('min-alpha');
-            this._transparentAlphaBorder = this._transparentAlpha / 2;
-        }
-
-        if (this._settings.get_enum('transparency-mode') === TransparencyMode.ADAPTIVE &&
-            this._panel._updateSolidStyle) {
-            themeNode = this._panel.actor.get_theme_node();
-            if (this._panel.actor.has_style_class_name('solid')) {
-                this._opaqueTransition = themeNode.get_transition_duration();
-                this._panel._removeStyleClassName('solid');
-                themeNode = this._panel.actor.get_theme_node();
-                this._transparentTransition = themeNode.get_transition_duration();
-                this._panel._addStyleClassName('solid');
-            }
-            else {
-                this._transparentTransition = themeNode.get_transition_duration();
-                this._panel._addStyleClassName('solid');
-                themeNode = this._panel.actor.get_theme_node();
-                this._opaqueTransition = themeNode.get_transition_duration();
-                this._panel._removeStyleClassName('solid');
-            }
-        }
     },
 
     _enableAdaptive: function() {
