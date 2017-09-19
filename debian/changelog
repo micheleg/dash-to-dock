@@ -20,6 +20,7 @@ gnome-shell-extension-ubuntu-dock (0.5) UNRELEASED; urgency=medium
     (LP: #1712698, #1714219)
   * updated translations
   * Remove prefs.js as deleted from to localize list
+  * Add Vcs-Git reference
 
   [ Sebastien Bacher ]
   * debian/control, debian/rules:
