@@ -3,6 +3,7 @@ Section: gnome
 Priority: optional
 Maintainer: Didier Roche <didrocks@ubuntu.com>
 Build-Depends: debhelper (>= 10),
+               dh-translations,
                libglib2.0-bin,
 Standards-Version: 4.0.0
 Homepage: https://github.com/micheleg/dash-to-dock/tree/ubuntu-dock
