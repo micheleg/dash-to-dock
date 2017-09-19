@@ -31,6 +31,7 @@
     <value value='0' nick='DEFAULT'/>
     <value value='1' nick='FIXED'/>
     <value value='2' nick='ADAPTIVE'/>
+    <value value='3' nick='DYNAMIC'/>
   </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key name="dock-position" enum="org.gnome.shell.extensions.dash-to-dock.position">
@@ -66,7 +67,7 @@
     <key name="transparency-mode" enum="org.gnome.shell.extensions.dash-to-dock.transparency-mode">
       <default>'DEFAULT'</default>
       <summary>Transparency mode for the dock</summary>
-      <description>Fixed: constant transparency. Adaptive: lock state with the top panel.</description>
+      <description>FIXED: constant transparency. ADAPTIVE: lock state with the top panel. DYNAMIC: dock takes the opaque style only when windows are close to it.</description>
     </key>
     <key type="d" name="background-opacity">
       <default>0.8</default>

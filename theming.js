@@ -29,7 +29,8 @@ const Utils = Me.imports.utils;
 const TransparencyMode = {
     DEFAULT:  0,
     FIXED:    1,
-    ADAPTIVE: 2
+    ADAPTIVE: 2,
+    DYNAMIC:  3
 };
 
 /**
@@ -377,7 +378,8 @@ const Transparency = new Lang.Class({
                 this._addWindowSignals(win);
         }, this);
 
-        this._enableAdaptive();
+        if (this._settings.get_enum('transparency-mode') === TransparencyMode.ADAPTIVE)
+            this._enableAdaptive();
 
         if (this._actor.get_stage())
             this._updateSolidStyle();
@@ -426,12 +428,12 @@ const Transparency = new Lang.Class({
     _updateSolidStyle: function() {
         if (this._dockIsNear() || this._panelIsNear()) {
             this._actor.set_style(this._opaque_style);
-            if (this._panel._updateSolidStyle)
+            if (this._panel._updateSolidStyle && this._adaptiveEnabled)
                 this._panel._addStyleClassName('solid');
         }
         else {
             this._actor.set_style(this._transparent_style);
-            if (this._panel._updateSolidStyle)
+            if (this._panel._updateSolidStyle && this._adaptiveEnabled)
                 this._panel._removeStyleClassName('solid');
         }
     },
@@ -492,7 +494,8 @@ const Transparency = new Lang.Class({
     },
 
     _panelIsNear: function() {
-        if (!this._panel._updateSolidStyle)
+        if (!this._panel._updateSolidStyle ||
+            this._settings.get_enum('transparency-mode') !== TransparencyMode.ADAPTIVE)
             return false;
 
         if (this._panel.actor.has_style_pseudo_class('overview') || !Main.sessionMode.hasWindows) {
@@ -570,6 +573,8 @@ const Transparency = new Lang.Class({
         if (!this._panel._updateSolidStyle)
             return;
 
+        this._adaptiveEnabled = true;
+
         function UpdateSolidStyle() {
             return;
         }
@@ -583,5 +588,6 @@ const Transparency = new Lang.Class({
 
     _disableAdaptive: function() {
         this._injectionsHandler.removeWithLabel('adaptive');
+        this._adaptiveEnabled = false;
     }
 });
