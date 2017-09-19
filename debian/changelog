@@ -1,5 +1,8 @@
 gnome-shell-extension-ubuntu-dock (0.5) UNRELEASED; urgency=medium
 
+  * Cherry-pick dynamic and adaptive transparency feature to look and behave
+    better with GNOME Shell 3.26. We only enable adaptive transparency.
+    (LP: #1717509).
   * Rationalize some keyboard and key + mouse shortcuts:
     - Click is focus or showing up window previews. Same than Super + number
       (was already the default)
