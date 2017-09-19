@@ -4,7 +4,7 @@ UUID = ubuntu-dock@ubuntu.com
 BASE_MODULES = extension.js stylesheet.css metadata.json COPYING README.md
 EXTRA_MODULES = convenience.js dash.js docking.js appIcons.js windowPreview.js intellihide.js theming.js utils.js Settings.ui
 EXTRA_MEDIA = logo.svg
-TOLOCALIZE =  prefs.js appIcons.js
+TOLOCALIZE =  appIcons.js
 MSGSRC = $(wildcard po/*.po)
 ifeq ($(strip $(DESTDIR)),)
 	INSTALLTYPE = local
