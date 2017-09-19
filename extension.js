@@ -22,6 +22,7 @@ function enable() {
      * Listen to enabled extension, if Dash to Dock is on the list or become active,
      * we disable this dock.
      */
+    dockManager=null; // even if declared, we need to initialize it to not trigger a referenceError.
     _enabledextensionsettings = new Gio.Settings({ schema_id: 'org.gnome.shell' });
     _extensionlistenerId = _enabledextensionsettings.connect(
         'changed::enabled-extensions',

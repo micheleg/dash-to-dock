@@ -13,6 +13,8 @@ gnome-shell-extension-ubuntu-dock (0.5) UNRELEASED; urgency=medium
     new features):
     - Hotkeys: remove keypad hotkeys
     - Define externally accessible classes and constants with 'var'
+  * Fix uninitialized value for dock disabled by default
+    (LP: #1712698, #1714219)
   * updated translations
 
  -- Didier Roche <didrocks@ubuntu.com>  Fri, 15 Sep 2017 14:29:42 +0200
