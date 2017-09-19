@@ -69,6 +69,21 @@
       <summary>Transparency mode for the dock</summary>
       <description>FIXED: constant transparency. ADAPTIVE: lock state with the top panel. DYNAMIC: dock takes the opaque style only when windows are close to it.</description>
     </key>
+    <key type="b" name="customize-alphas">
+      <default>false</default>
+      <summary>Manually set the min and max opacity</summary>
+      <description>For Adaptive and Dynamic modes, the min/max opacity values will be given by 'min-alpha' and 'max-alpha'.</description>
+    </key>
+    <key type="d" name="min-alpha">
+      <default>0.2</default>
+      <summary>Opacity of the dash background when free-floating</summary>
+      <description>Sets the opacity of the dash background when no windows are close.</description>
+    </key>
+    <key type="d" name="max-alpha">
+      <default>0.8</default>
+      <summary>Opacity of the dash background when windows are close.</summary>
+      <description>Sets the opacity of the dash background when windows are close.</description>
+    </key>
     <key type="d" name="background-opacity">
       <default>0.8</default>
       <summary>Opacity of the dash background</summary>
