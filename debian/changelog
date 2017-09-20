@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (0.5) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (0.5) artful; urgency=medium
 
   [ Didier Roche ]
   * Cherry-pick dynamic and adaptive transparency feature to look and behave
@@ -26,7 +26,7 @@ gnome-shell-extension-ubuntu-dock (0.5) UNRELEASED; urgency=medium
   * debian/control, debian/rules:
     - use dh_translations, update the template during the build
 
- -- Didier Roche <didrocks@ubuntu.com>  Fri, 15 Sep 2017 14:29:42 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 20 Sep 2017 08:01:22 +0200
 
 gnome-shell-extension-ubuntu-dock (0.4) artful; urgency=medium
 
