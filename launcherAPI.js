@@ -149,6 +149,8 @@ var LauncherEntryRemote = new Lang.Class({
         this._appId = appId;
         this._count = 0;
         this._countVisible = false;
+        this._progress = 0.0;
+        this._progressVisible = false;
         this.update(properties);
     },
 
@@ -182,6 +184,28 @@ var LauncherEntryRemote = new Lang.Class({
         }
     },
 
+    progress: function () {
+        return this._progress;
+    },
+
+    setProgress: function (progress) {
+        if (this._progress != progress) {
+            this._progress = progress;
+            this.emit('progress-changed', this._progress);
+        }
+    },
+
+    progressVisible: function () {
+        return this._progressVisible;
+    },
+
+    setProgressVisible: function (progressVisible) {
+        if (this._progressVisible != progressVisible) {
+            this._progressVisible = progressVisible;
+            this.emit('progress-visible-changed', this._progressVisible);
+        }
+    },
+
     setDBusName: function (dbusName) {
         if (this._dbusName != dbusName) {
             let oldName = this._dbusName;
@@ -195,6 +219,8 @@ var LauncherEntryRemote = new Lang.Class({
             this.setDBusName(other.dbusName())
             this.setCount(other.count());
             this.setCountVisible(other.countVisible());
+            this.setProgress(other.progress());
+            this.setProgressVisible(other.progressVisible())
         } else {
             for (let property in other) {
                 if (other.hasOwnProperty(property)) {
@@ -202,6 +228,10 @@ var LauncherEntryRemote = new Lang.Class({
                         this.setCount(other[property].get_int64());
                     } else if (property == 'count-visible') {
                         this.setCountVisible(other[property].get_boolean());
+                    } if (property == 'progress') {
+                        this.setProgress(other[property].get_double());
+                    } else if (property == 'progress-visible') {
+                        this.setProgressVisible(other[property].get_boolean());
                     } else {
                         // Not implemented yet
                     }
