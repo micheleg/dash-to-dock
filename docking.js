@@ -1920,6 +1920,7 @@ var DockManager = new Lang.Class({
         this._deleteDocks();
         this._revertPanelCorners();
         this._restoreDash();
+        this._remoteModel.destroy();
     },
 
     /**

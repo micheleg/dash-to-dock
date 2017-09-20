@@ -1055,7 +1055,7 @@ var MyAppIcon = new Lang.Class({
         let [surfaceWidth, surfaceHeight] = area.get_surface_size();
         let cr = area.get_context();
 
-        iconSize = this.icon.iconSize * scaleFactor;
+        let iconSize = this.icon.iconSize * scaleFactor;
 
         let x = Math.floor((surfaceWidth - iconSize) / 2);
         let y = Math.floor((surfaceHeight - iconSize) / 2);

@@ -36,7 +36,7 @@ var LauncherEntryRemoteModel = new Lang.Class({
             Gio.DBus.session.signal_unsubscribe(this._launcher_entry_dbus_signal_id);
         }
 
-        if (this_._dbus_name_owner_changed_signal_id) {
+        if (this._dbus_name_owner_changed_signal_id) {
             Gio.DBus.session.signal_unsubscribe(this._dbus_name_owner_changed_signal_id);
         }
 
