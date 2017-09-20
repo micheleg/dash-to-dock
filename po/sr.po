@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-09-16 13:45+0200\n"
-"PO-Revision-Date: 2017-09-16 16:57+0200\n"
+"PO-Revision-Date: 2017-09-20 18:59+0200\n"
 "Last-Translator: Слободан Терзић <Xabre@archlinux.info>\n"
 "Language-Team: \n"
 "Language: sr\n"
@@ -37,7 +37,7 @@ msgstr "лево"
 
 #: prefs.js:205
 msgid "Intelligent autohide customization"
-msgstr "Поставке интелигентног самосакривања"
+msgstr "Поставке интелигентног аутоматског сакривања"
 
 #: prefs.js:212 prefs.js:397 prefs.js:454
 msgid "Reset to defaults"
@@ -91,18 +91,19 @@ msgid ""
 "Temporarily show the application numbers over the icons, corresponding to "
 "the shortcut."
 msgstr ""
-"Привремено прикажи бројеве програма изнад икона, према припадајућој пречици."
+"Привремено прикажи бројеве програма изнад иконица, према припадајућој "
+"пречици."
 
 #: Settings.ui.h:7
 msgid "Show the dock if it is hidden"
-msgstr "Прикажи док уколико је скривен"
+msgstr "Прикажи док уколико је сакривен"
 
 #: Settings.ui.h:8
 msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
 msgstr ""
-"Уколико се користи самосакривање, док ће се приказати на тренутак при "
+"Уколико се користи аутоматско сакривање, док ће се приказати на тренутак при "
 "окидању пречице."
 
 #: Settings.ui.h:9
@@ -151,11 +152,11 @@ msgstr "минимиуј или преглед"
 
 #: Settings.ui.h:19
 msgid "Show window previews"
-msgstr "сличица отвореног прозора."
+msgstr "прикажи сличице прозора"
 
 #: Settings.ui.h:20
 msgid "Quit"
-msgstr "Напусти"
+msgstr "напусти"
 
 #: Settings.ui.h:21
 msgid "Behavior for Middle-Click."
@@ -203,7 +204,7 @@ msgstr ""
 
 #: Settings.ui.h:33
 msgid "Intelligent autohide"
-msgstr "Интелигентно самосакривање"
+msgstr "Интелигентно аутоматско сакривање"
 
 #: Settings.ui.h:34
 msgid "Dock size limit"
@@ -215,11 +216,11 @@ msgstr "Режим панела: проширен до ивица екрана"
 
 #: Settings.ui.h:36
 msgid "Icon size limit"
-msgstr "Ограничење величине икона"
+msgstr "Ограничење величине иконица"
 
 #: Settings.ui.h:37
 msgid "Fixed icon size: scroll to reveal other icons"
-msgstr "Устаљена величина икона: клизајте за друге иконе"
+msgstr "Устаљена величина иконица: клизајте за друге иконе"
 
 #: Settings.ui.h:38
 msgid "Position and size"
@@ -243,7 +244,7 @@ msgstr "Изолуј мониторе."
 
 #: Settings.ui.h:43
 msgid "Show open windows previews."
-msgstr "Прикажи преглед отворених прозора."
+msgstr "Прикажи сличице отворених прозора."
 
 #: Settings.ui.h:44
 msgid ""
@@ -255,7 +256,7 @@ msgstr ""
 
 #: Settings.ui.h:45
 msgid "Show <i>Applications</i> icon"
-msgstr "Приказ иконе <i>Прикажи програме</i>"
+msgstr "Приказ иконице <i>Прикажи програме</i>"
 
 #: Settings.ui.h:46
 msgid "Move the applications button at the beginning of the dock."
@@ -295,11 +296,11 @@ msgstr "минимизуј"
 
 #: Settings.ui.h:54
 msgid "Behaviour when scrolling on the icon of an application."
-msgstr "Понашање при клизању на икону покренутог програма."
+msgstr "Понашање при клизању на иконицу покренутог програма."
 
 #: Settings.ui.h:55
 msgid "Scroll action"
-msgstr "Радња кклизања"
+msgstr "Радња клизања на иконицу"
 
 #: Settings.ui.h:56
 msgid "Do nothing"
@@ -307,7 +308,7 @@ msgstr "ништа"
 
 #: Settings.ui.h:57
 msgid "Switch workspace"
-msgstr "Пребаци радни простор"
+msgstr "пребаци радни простор"
 
 #: Settings.ui.h:58
 msgid "Behavior"
@@ -363,11 +364,11 @@ msgstr "Прозирност"
 
 #: Settings.ui.h:70
 msgid "Enable Unity7 like glossy backlit items"
-msgstr "Укључи шљаштеће позадинске ставке попут Unity7"
+msgstr "Укључи позадинске ефекте попут Unity7"
 
 #: Settings.ui.h:71
 msgid "Force straight corner\n"
-msgstr "Приморај равне углове\n"
+msgstr "Наметни равне углове\n"
 
 #: Settings.ui.h:73
 msgid "Appearance"
@@ -409,7 +410,7 @@ msgstr "Прикажи док прелазом миша пеко ивице ек
 
 #: Settings.ui.h:82
 msgid "Autohide"
-msgstr "Самоскривање"
+msgstr "Аутоматско сакривање"
 
 #: Settings.ui.h:83
 msgid "Push to show: require pressure to show the dock"
@@ -437,7 +438,7 @@ msgstr "Само прозор фокусираног програма"
 
 #: Settings.ui.h:89
 msgid "Only maximized windows"
-msgstr "само максимизовани прозори"
+msgstr "Само максимизовани прозори"
 
 #: Settings.ui.h:90
 msgid "Animation duration (s)"
