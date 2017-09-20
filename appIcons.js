@@ -12,6 +12,7 @@ const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 const Mainloop = imports.mainloop;
+const Cairo = imports.cairo;
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
@@ -134,6 +135,8 @@ var MyAppIcon = new Lang.Class({
         }
 
         this._dots = null;
+        this._progressOverlayArea = null;
+        this._progress = 0;
 
         let keys = ['apply-custom-theme',
                    'custom-theme-running-dots',
@@ -1021,6 +1024,102 @@ var MyAppIcon = new Lang.Class({
             this._notificationBadgeBin.hide();
     },
 
+    _showProgressOverlay: function() {
+        if (this._progressOverlayArea) {
+            this._updateProgressOverlay();
+            return;
+        }
+
+        this._progressOverlayArea = new St.DrawingArea({x_expand: true, y_expand: true});
+        this._progressOverlayArea.connect('repaint', Lang.bind(this, function() {
+            this._drawProgressOverlay(this._progressOverlayArea);
+        }));
+
+        this._iconContainer.add_child(this._progressOverlayArea);
+        this._updateProgressOverlay();
+    },
+
+    _hideProgressOverlay: function() {
+        if (this._progressOverlayArea)
+            this._progressOverlayArea.destroy();
+        this._progressOverlayArea = null;
+    },
+
+    _updateProgressOverlay: function() {
+        if (this._progressOverlayArea)
+            this._progressOverlayArea.queue_repaint();
+    },
+
+    _drawProgressOverlay: function(area) {
+        let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+        let [surfaceWidth, surfaceHeight] = area.get_surface_size();
+        let cr = area.get_context();
+
+        iconSize = this.icon.iconSize * scaleFactor;
+
+        let x = Math.floor((surfaceWidth - iconSize) / 2);
+        let y = Math.floor((surfaceHeight - iconSize) / 2);
+
+        let lineWidth = Math.floor(1.0 * scaleFactor);
+        let padding = Math.floor(iconSize * 0.05);
+        let width = iconSize - 2.0*padding;
+        let height = Math.floor(Math.min(18.0*scaleFactor, 0.20*iconSize));
+        x += padding;
+        y += iconSize - height - padding;
+
+        cr.setLineWidth(lineWidth);
+
+        // Draw the outer stroke
+        let stroke = new Cairo.LinearGradient(0, y, 0, y + height);
+        let fill = null;
+        stroke.addColorStopRGBA(0.5, 0.5, 0.5, 0.5, 0.1);
+        stroke.addColorStopRGBA(0.9, 0.8, 0.8, 0.8, 0.4);
+        Utils.drawRoundedLine(cr, x + lineWidth/2.0, y + lineWidth/2.0, width, height, true, true, stroke, fill);
+
+        // Draw the background
+        x += lineWidth;
+        y += lineWidth;
+        width -= 2.0*lineWidth;
+        height -= 2.0*lineWidth;
+
+        stroke = Cairo.SolidPattern.createRGBA(0.20, 0.20, 0.20, 0.9);
+        fill = new Cairo.LinearGradient(0, y, 0, y + height);
+        fill.addColorStopRGBA(0.4, 0.25, 0.25, 0.25, 1.0);
+        fill.addColorStopRGBA(0.9, 0.35, 0.35, 0.35, 1.0);
+        Utils.drawRoundedLine(cr, x + lineWidth/2.0, y + lineWidth/2.0, width, height, true, true, stroke, fill);
+
+        // Draw the finished bar
+        x += lineWidth;
+        y += lineWidth;
+        width -= 2.0*lineWidth;
+        height -= 2.0*lineWidth;
+
+        let finishedWidth = Math.ceil(this._progress * width);
+        stroke = Cairo.SolidPattern.createRGBA(0.8, 0.8, 0.8, 1.0);
+        fill = Cairo.SolidPattern.createRGBA(0.9, 0.9, 0.9, 1.0);
+
+        if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL)
+            Utils.drawRoundedLine(cr, x + lineWidth/2.0 + width - finishedWidth, y + lineWidth/2.0, finishedWidth, height, true, true, stroke, fill);
+        else
+            Utils.drawRoundedLine(cr, x + lineWidth/2.0, y + lineWidth/2.0, finishedWidth, height, true, true, stroke, fill);
+
+        cr.$dispose();
+    },
+
+    setProgress: function(progress) {
+        this._progress = Math.min(Math.max(progress, 0.0), 1.0);
+        this._updateProgressOverlay();
+    },
+
+    toggleProgressOverlay: function(activate) {
+        if (activate) {
+            this._showProgressOverlay();
+        }
+        else {
+            this._hideProgressOverlay();
+        }
+    },
+
     _numberOverlay: function() {
         // Add label for a Hot-Key visual aid
         this._numberOverlayLabel = new St.Label();
@@ -1193,6 +1292,8 @@ var MyAppIcon = new Lang.Class({
         } else {
             this.setNotificationBadge(0);
             this.toggleNotificationBadge(false);
+            this.setProgress(0);
+            this.toggleProgressOverlay(false);
         }
     },
 
@@ -1214,10 +1315,23 @@ var MyAppIcon = new Lang.Class({
             Lang.bind(this, (remote, value) => {
                 this.toggleNotificationBadge(value);
             })
+        ], [remote,
+            'progress-changed',
+            Lang.bind(this, (remote, value) => {
+                this.setProgress(value);
+            })
+        ], [
+            remote,
+            'progress-visible-changed',
+            Lang.bind(this, (remote, value) => {
+                this.toggleProgressOverlay(value);
+            })
         ]);
 
         this.setNotificationBadge(remote.count());
         this.toggleNotificationBadge(remote.countVisible());
+        this.setProgress(remote.progress());
+        this.toggleProgressOverlay(remote.progressVisible());
     },
 });
 /**
