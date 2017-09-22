@@ -393,6 +393,8 @@ const Transparency = new Lang.Class({
 
         if (this._actor.get_stage())
             this._updateSolidStyle();
+
+        this.emit('transparency-enabled');
     },
 
     disable: function() {
@@ -407,6 +409,8 @@ const Transparency = new Lang.Class({
                 key.disconnect(id);
             });
         this._trackedWindows.clear();
+
+        this.emit('transparency-disabled');
     },
 
     destroy: function() {
@@ -435,16 +439,21 @@ const Transparency = new Lang.Class({
     },
 
     _updateSolidStyle: function() {
+        let isNear;
         if (this._dockIsNear() || this._panelIsNear()) {
+            isNear = true;
             this._actor.set_style(this._opaque_style);
             if (this._panel._updateSolidStyle && this._adaptiveEnabled)
                 this._panel._addStyleClassName('solid');
         }
         else {
+            isNear = false;
             this._actor.set_style(this._transparent_style);
             if (this._panel._updateSolidStyle && this._adaptiveEnabled)
                 this._panel._removeStyleClassName('solid');
         }
+
+        this.emit('solid-style-updated', isNear);
     },
 
     _dockIsNear: function() {
@@ -549,6 +558,8 @@ const Transparency = new Lang.Class({
             'border-color: rgba(' +
             this._backgroundColor + ',' + this._opaqueAlphaBorder + ');' +
             'transition-duration: ' + this._opaqueTransition + 'ms;';
+
+        this.emit('styles-updated');
     },
 
     setColor: function(color) {
@@ -650,3 +661,4 @@ const Transparency = new Lang.Class({
             this._panel._onWindowActorAdded(null, win);
     }
 });
+Signals.addSignalMethods(Transparency.prototype);
