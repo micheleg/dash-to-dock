@@ -117,7 +117,7 @@
 
 #dashtodockContainer .notification-badge {
     color: rgba(255,255,255,1);
-    background-color: rgba(255,0,0,1.0);
+    background-color: #e95420;
     padding: 0.2em 0.5em;
     border-radius: 1em;
     font-weight: bold;
