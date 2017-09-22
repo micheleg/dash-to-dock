@@ -115,6 +115,16 @@
     text-align: center;
 }
 
+#dashtodockContainer .notification-badge {
+    color: rgba(255,255,255,1);
+    background-color: #e95420;
+    padding: 0.2em 0.5em;
+    border-radius: 1em;
+    font-weight: bold;
+    text-align: center;
+    margin: 2px;
+}
+
 #dashtodockPreviewSeparator.popup-separator-menu-item-horizontal {
     width: 1px;
     height: auto;
