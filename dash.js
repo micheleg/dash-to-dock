@@ -178,13 +178,14 @@ const baseIconSizes = [16, 22, 24, 32, 48, 64, 96, 128];
 var MyDash = new Lang.Class({
     Name: 'DashToDock.MyDash',
 
-    _init: function(settings, monitorIndex) {
+    _init: function(settings, remoteModel, monitorIndex) {
         this._maxHeight = -1;
         this.iconSize = 64;
         this._availableIconSizes = baseIconSizes;
         this._shownInitially = false;
 
         this._dtdSettings = settings;
+        this._remoteModel = remoteModel;
         this._monitorIndex = monitorIndex;
         this._position = Utils.getPosition(settings);
         this._isHorizontal = ((this._position == St.Side.TOP) ||
@@ -452,6 +453,10 @@ var MyDash = new Lang.Class({
         let appIcon = new AppIcons.MyAppIcon(this._dtdSettings, app, this._monitorIndex,
                                              { setSizeManually: true,
                                                showLabel: false });
+        this._remoteModel.lookupById(app.id).forEach(function(entry) {
+            appIcon.insertEntryRemote(entry);
+        });
+
         if (appIcon._draggable) {
             appIcon._draggable.connect('drag-begin', Lang.bind(this, function() {
                 appIcon.actor.opacity = 50;
@@ -515,7 +520,7 @@ var MyDash = new Lang.Class({
     /**
      * Return an array with the "proper" appIcons currently in the dash
      */
-    _getAppIcons: function() {
+    getAppIcons: function() {
         // Only consider children which are "proper"
         // icons (i.e. ignoring drag placeholders) and which are not
         // animating out (which means they will be destroyed at the end of
@@ -535,7 +540,7 @@ var MyDash = new Lang.Class({
     },
 
     _updateAppsIconGeometry: function() {
-        let appIcons = this._getAppIcons();
+        let appIcons = this.getAppIcons();
         appIcons.forEach(function(icon) {
             icon.updateIconGeometry();
         });
@@ -869,7 +874,7 @@ var MyDash = new Lang.Class({
     },
 
     _updateNumberOverlay: function() {
-        let appIcons = this._getAppIcons();
+        let appIcons = this.getAppIcons();
         let counter = 1;
         appIcons.forEach(function(icon) {
             if (counter < 10){
@@ -890,7 +895,7 @@ var MyDash = new Lang.Class({
     },
 
     toggleNumberOverlay: function(activate) {
-        let appIcons = this._getAppIcons();
+        let appIcons = this.getAppIcons();
         appIcons.forEach(function(icon) {
             icon.toggleNumberOverlay(activate);
         });
