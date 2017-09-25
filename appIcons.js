@@ -1282,7 +1282,7 @@ var MyAppIcon = new Lang.Class({
     },
 
     removeEntryRemote: function(remote) {
-        if (!remote || this._remoteEntries.indexOf(remote) !== -1)
+        if (!remote || this._remoteEntries.indexOf(remote) == -1)
             return;
 
         this._remoteEntries.splice(this._remoteEntries.indexOf(remote), 1);
