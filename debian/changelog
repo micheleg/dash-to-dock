@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (0.6) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (0.6) artful; urgency=medium
 
   * Badges and progress bar on dock. Thanks Andrea (LP: #1713712)
 
