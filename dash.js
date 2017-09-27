@@ -179,12 +179,15 @@ var MyDash = new Lang.Class({
     Name: 'DashToDock.MyDash',
 
     _init: function(settings, remoteModel, monitorIndex) {
+        this._dtdSettings = settings;
+
+        // Initialize icon variables and size
         this._maxHeight = -1;
-        this.iconSize = 64;
+        this.iconSize = this._dtdSettings.get_int('dash-max-icon-size');
         this._availableIconSizes = baseIconSizes;
         this._shownInitially = false;
+        this._initializeIconSize(this.iconSize);
 
-        this._dtdSettings = settings;
         this._remoteModel = remoteModel;
         this._monitorIndex = monitorIndex;
         this._position = Utils.getPosition(settings);
@@ -902,7 +905,7 @@ var MyDash = new Lang.Class({
         });
     },
 
-    setIconSize: function(max_size, doNotAnimate) {
+    _initializeIconSize: function(max_size) {
         let max_allowed = baseIconSizes[baseIconSizes.length-1];
         max_size = Math.min(max_size, max_allowed);
 
@@ -914,6 +917,10 @@ var MyDash = new Lang.Class({
             });
             this._availableIconSizes.push(max_size);
         }
+    },
+
+    setIconSize: function(max_size, doNotAnimate) {
+        this._initializeIconSize(max_size);
 
         if (doNotAnimate)
             this._shownInitially = false;
