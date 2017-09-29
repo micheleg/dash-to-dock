@@ -2,25 +2,27 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+# Δημήτριος-Ρωμανός Ησαΐας <dirosissaias@cosmotemail.gr>, 2017.
+# Vangelis Skarmoutsos <skarmoutsosv@gmail.com>, 2017.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-04 12:35+0100\n"
-"PO-Revision-Date: 2017-05-17 15:40+0300\n"
-"Last-Translator: \n"
-"Language-Team: Δημήτριος-Ρωμανός Ησαΐας <dirosissaias@cosmotemail.gr>\n"
+"PO-Revision-Date: 2017-09-29 21:48+0300\n"
+"Last-Translator: Vangelis Skarmoutsos <skarmoutsosv@gmail.com>\n"
+"Language-Team:\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.0.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: prefs.js:113
 msgid "Primary monitor"
-msgstr "Κυρίως οθόνη"
+msgstr "Κύρια οθόνη"
 
 #: prefs.js:122 prefs.js:129
 msgid "Secondary monitor "
@@ -36,7 +38,7 @@ msgstr "Αριστερά"
 
 #: prefs.js:205
 msgid "Intelligent autohide customization"
-msgstr "Εξατομίκευση έξυπνης απόκρυψης"
+msgstr "Προσαρμογή έξυπνης απόκρυψης"
 
 #: prefs.js:212 prefs.js:393 prefs.js:450
 msgid "Reset to defaults"
@@ -76,15 +78,15 @@ msgstr "Πλάτος περιγράμματος"
 
 #: Settings.ui.h:5
 msgid "Number overlay"
-msgstr "Αρίθμηση εφαρμογών"
+msgstr "Επίστρωση αριθμού"
 
 #: Settings.ui.h:6
 msgid ""
 "Temporarily show the application numbers over the icons, corresponding to "
 "the shortcut."
 msgstr ""
-"Προσωρινή εμφάνιση της αρίθμησης των εφαρμογών πάνω από τα εικονίδια που "
-"αντιστοιχεί στη συντόμευση πληκτρολογίου."
+"Προσωρινή εμφάνιση αριθμών εφαρμογής πάνω από τα εικονίδια, που αντιστοιχούν "
+"στη συντόμευση πληκτρολογίου."
 
 #: Settings.ui.h:7
 msgid "Show the dock if it is hidden"
@@ -95,8 +97,8 @@ msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
 msgstr ""
-"Αν η αυτόματη απόκρυψη είναι σε χρήση, η μπάρα θα εμφανίζεται σύντομα με την "
-"χρήση της συντόμευσης."
+"Αν χρησιμοποιείται η αυτόματη απόκρυψη, η μπάρα θα εμφανίζεται για λίγο "
+"χρόνο όταν πατιέται η συντόμευση."
 
 #: Settings.ui.h:9
 msgid "Shortcut for the options above"
@@ -132,7 +134,7 @@ msgstr "Ελαχιστοποίηση παραθύρου"
 
 #: Settings.ui.h:16
 msgid "Launch new instance"
-msgstr "Νέο παράθυρο"
+msgstr "Εκκίνηση νέου παραθύρου"
 
 #: Settings.ui.h:17
 msgid "Cycle through windows"
@@ -233,11 +235,11 @@ msgid ""
 "extension website."
 msgstr ""
 "Αν είναι απενεργοποιημένο, αυτές οι ρυθμίσεις είναι προσβάσιμες από το "
-"εργαλείο μικρορυθμίσεων του GNOME ή την ιστοσελίδα των επεκτάσεων."
+"εργαλείο μικρορυθμίσεων του GNOME ή τον ιστοτόπο επεκτάσεων."
 
 #: Settings.ui.h:42
 msgid "Show <i>Applications</i> icon"
-msgstr "Εμφάνιση εικονιδίου <i>Εφαρμογών</i>"
+msgstr "Εμφάνιση εικονιδίου <i>Εφαρμογές</i>"
 
 #: Settings.ui.h:43
 msgid "Move the applications button at the beginning of the dock."
@@ -256,7 +258,7 @@ msgid ""
 "Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
 "together with Shift and Ctrl."
 msgstr ""
-"Ενεργοποίηση του Super+(0-9) ως συντόμευση για την ενεργοποίηση εφαρμογών. "
+"Ενεργοποίηση του Super+(0-9) ως συντομεύσεις για την ενεργοποίηση εφαρμογών. "
 "Μπορεί επίσης να χρησιμοποιηθεί με το Shift και το Ctrl."
 
 #: Settings.ui.h:47
@@ -363,7 +365,7 @@ msgstr "έκδοση: "
 #: Settings.ui.h:72
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr ""
-"Μετακινεί το ταμπλώ και εκτός της προεπισκόπησης μετατρέποντάς το σε μπάρα "
+"Μετακινεί το ταμπλό και εκτός της προεπισκόπησης μετατρέποντάς το σε μπάρα "
 "εφαρμογών"
 
 #: Settings.ui.h:73
@@ -403,7 +405,7 @@ msgstr "Πίεση για εμφάνιση: απαιτείται πίεση γι
 
 #: Settings.ui.h:81
 msgid "Enable in fullscreen mode"
-msgstr "Ενεργοποίηση σε λειτουργία πλήρους οθόνης"
+msgstr "Ενεργοποίηση σε κατάσταση πλήρους οθόνης"
 
 #: Settings.ui.h:82
 msgid "Show the dock when it doesn't obstruct application windows."
@@ -427,7 +429,7 @@ msgstr "Μόνο μεγιστοποιημένα παράθυρα"
 
 #: Settings.ui.h:87
 msgid "Animation duration (s)"
-msgstr "Διάρκεια γραφικών"
+msgstr "Διάρκεια κίνησης γραφικών (s)"
 
 #: Settings.ui.h:88
 msgid "0.000"
