@@ -89,7 +89,7 @@ msgstr "Čísla aplikací"
 msgid ""
 "Temporarily show the application numbers over the icons, corresponding to "
 "the shortcut."
-msgstr "Krátce ukázat čísla aplikací odpovídající klávesové zkratce."
+msgstr "Krátce ukázat čísla aplikací odpovídající klávesové zkratce"
 
 #: Settings.ui.h:7
 msgid "Show the dock if it is hidden"
@@ -195,7 +195,7 @@ msgid ""
 "Hide the dock when it obstructs a window of the current application. More "
 "refined settings are available."
 msgstr ""
-"Skrýt dock pokud překáží oknu aktivní aplikace. K dispozici jsou podrobnější "
+"Skrýt dock, pokud překáží oknu aktivní aplikace. K dispozici jsou podrobnější "
 "nastavení."
 
 #: Settings.ui.h:33
@@ -208,7 +208,7 @@ msgstr "Maximální velikost docku"
 
 #: Settings.ui.h:35
 msgid "Panel mode: extend to the screen edge"
-msgstr "Režim panelu: roztáhnout po celé délce obrazovky"
+msgstr "Režim panelu (roztáhnout dock po celé délce obrazovky)"
 
 #: Settings.ui.h:36
 msgid "Icon size limit"
@@ -272,7 +272,7 @@ msgid ""
 "Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
 "together with Shift and Ctrl."
 msgstr ""
-"Povolit klávesovou zkratku Super+[0-9] pro spuštění aplikací. Tuto "
+"Povolit klávesovou zkratku Super+[0-9] pro spuštění aplikací; tuto "
 "klávesovou zkratku lze též použít s klávesami Shift a Ctrl."
 
 #: Settings.ui.h:50
@@ -316,7 +316,7 @@ msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
-"Nastavení kvůli integraci docku s výchozím motivem GNOME. Jinak lze použít "
+"Nastavení kvůli integraci docku s výchozím motivem GNOME; jinak lze použít "
 "samostatné předvolby níže."
 
 #: Settings.ui.h:60
@@ -349,7 +349,7 @@ msgstr "Vlastní barva docku"
 
 #: Settings.ui.h:67
 msgid "Tune the dash background opacity."
-msgstr "Nastavit průhlednost docku."
+msgstr "Nastavit průhlednost docku"
 
 #: Settings.ui.h:68
 msgid "Customize opacity"
@@ -444,6 +444,11 @@ msgstr "Prodleva při zobrazení (s)"
 #: Settings.ui.h:91
 msgid "Pressure threshold"
 msgstr "Míra tlaku (px)"
+
+#: Settings.ui.h:92
+msgid "Enable Unity7 like glossy backlit items"
+msgstr "Podsvícení ikon jako v Unity 7"
+
 
 #~ msgid "0.000"
 #~ msgstr "0.000"
