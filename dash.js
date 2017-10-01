@@ -316,21 +316,6 @@ var MyDash = new Lang.Class({
         if (!this._dtdSettings.get_boolean('icon-size-fixed'))
             return Clutter.EVENT_PROPAGATE;
 
-        // Event coordinates are relative to the stage but can be transformed
-        // as the actor will only receive events within his bounds.
-        let stage_x, stage_y, ok, event_x, event_y, actor_w, actor_h;
-        [stage_x, stage_y] = event.get_coords();
-        [ok, event_x, event_y] = actor.transform_stage_point(stage_x, stage_y);
-        [actor_w, actor_h] = actor.get_size();
-
-        // If the scroll event is within a 1px margin from
-        // the relevant edge of the actor, let the event propagate.
-        if ((this._position == St.Side.LEFT && event_x <= 1)
-            || (this._position == St.Side.RIGHT && event_x >= actor_w - 2)
-            || (this._position == St.Side.TOP && event_y <= 1)
-            || (this._position == St.Side.BOTTOM && event_y >= actor_h - 2))
-            return Clutter.EVENT_PROPAGATE;
-
         // reset timeout to avid conflicts with the mousehover event
         if (this._ensureAppIconVisibilityTimeoutId > 0) {
             Mainloop.source_remove(this._ensureAppIconVisibilityTimeoutId);
