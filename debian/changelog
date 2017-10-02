@@ -1,3 +1,13 @@
+gnome-shell-extension-ubuntu-dock (0.7) UNRELEASED; urgency=medium
+
+  * Cherry-pick 2 upstream fixes:
+    - Maximized windows get resized when returning from screensaver
+      (LP: #1719409)
+    - Mouse scrollwheel switches workspaces when mouse against the left
+      edge of screen (LP: #1719706)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 02 Oct 2017 14:35:15 +0200
+
 gnome-shell-extension-ubuntu-dock (0.6) artful; urgency=medium
 
   * Badges and progress bar on dock. Thanks Andrea (LP: #1713712)
