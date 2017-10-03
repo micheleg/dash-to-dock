@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (0.7) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (0.7) artful; urgency=medium
 
   * Cherry-pick 2 upstream fixes:
     - Maximized windows get resized when returning from screensaver
@@ -6,7 +6,7 @@ gnome-shell-extension-ubuntu-dock (0.7) UNRELEASED; urgency=medium
     - Mouse scrollwheel switches workspaces when mouse against the left
       edge of screen (LP: #1719706)
 
- -- Didier Roche <didrocks@ubuntu.com>  Mon, 02 Oct 2017 14:35:15 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 03 Oct 2017 10:30:10 +0200
 
 gnome-shell-extension-ubuntu-dock (0.6) artful; urgency=medium
 
