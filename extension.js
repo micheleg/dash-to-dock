@@ -7,7 +7,9 @@ const ExtensionSystem = imports.ui.extensionSystem;
 
 const Gio = imports.gi.Gio;
 
-let dockManager;
+// We declare this with var so it can be accessed by other extensions in
+// GNOME Shell 3.26+ (mozjs52+).
+var dockManager;
 
 let _extensionlistenerId;
 
