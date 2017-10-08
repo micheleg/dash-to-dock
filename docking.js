@@ -33,7 +33,7 @@ const LauncherAPI = Me.imports.launcherAPI;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 
-const State = {
+var State = {
     HIDDEN:  0,
     SHOWING: 1,
     SHOWN:   2,
