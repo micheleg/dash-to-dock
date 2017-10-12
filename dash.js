@@ -25,6 +25,7 @@ const Workspace = imports.ui.workspace;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const AppIcons = Me.imports.appIcons;
+const Locations = Me.imports.locations;
 
 let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
 let DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME;
@@ -273,6 +274,9 @@ var MyDash = class DashToDock_MyDash {
 
         this._appSystem = Shell.AppSystem.get_default();
 
+        // Trash Icon
+        this._trash = new Locations.Trash();
+
         this._signalsHandler.add([
             this._appSystem,
             'installed-changed',
@@ -300,6 +304,10 @@ var MyDash = class DashToDock_MyDash {
             Main.overview,
             'item-drag-cancelled',
             this._onDragCancelled.bind(this)
+        ], [
+            this._trash,
+            'changed',
+            this._queueRedisplay.bind(this)
         ]);
     }
 
@@ -742,6 +750,8 @@ var MyDash = class DashToDock_MyDash {
                 newApps.push(app);
             }
         }
+
+        newApps.push(this._trash.getApp());
 
         // Figure out the actual changes to the list of items; we iterate
         // over both the list of items currently in the dash and the list
