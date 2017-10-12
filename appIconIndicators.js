@@ -169,7 +169,7 @@ const RunningIndicatorBase = new Lang.Class({
 
         // In the case of workspace isolation, we need to hide the dots of apps with
         // no windows in the current workspace
-        if (this._source.app.state != Shell.AppState.STOPPED  && this._nWindows > 0)
+        if ((this._source.app.state != Shell.AppState.STOPPED || this._source.isLocation()) && this._nWindows > 0)
             this._isRunning = true;
         else
             this._isRunning = false;
