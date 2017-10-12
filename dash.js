@@ -278,6 +278,9 @@ var MyDash = new Lang.Class({
 
         this._appSystem = Shell.AppSystem.get_default();
 
+        // Remove Drive Icons
+        this._removables = new Locations.Removables();
+
         // Trash Icon
         this._trash = new Locations.Trash();
 
@@ -310,6 +313,10 @@ var MyDash = new Lang.Class({
             Lang.bind(this, this._onDragCancelled)
         ], [
             this._trash,
+            'changed',
+            Lang.bind(this, this._queueRedisplay)
+        ], [
+            this._removables,
             'changed',
             Lang.bind(this, this._queueRedisplay)
         ]);
@@ -755,6 +762,7 @@ var MyDash = new Lang.Class({
             }
         }
 
+        Array.prototype.push.apply(newApps, this._removables.getApps());
         newApps.push(this._trash.getApp());
 
         // Figure out the actual changes to the list of items; we iterate
