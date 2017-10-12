@@ -274,6 +274,9 @@ var MyDash = class DashToDock_MyDash {
 
         this._appSystem = Shell.AppSystem.get_default();
 
+        // Remove Drive Icons
+        this._removables = new Locations.Removables();
+
         // Trash Icon
         this._trash = new Locations.Trash();
 
@@ -306,6 +309,10 @@ var MyDash = class DashToDock_MyDash {
             this._onDragCancelled.bind(this)
         ], [
             this._trash,
+            'changed',
+            this._queueRedisplay.bind(this)
+        ], [
+            this._removables,
             'changed',
             this._queueRedisplay.bind(this)
         ]);
@@ -751,6 +758,7 @@ var MyDash = class DashToDock_MyDash {
             }
         }
 
+        Array.prototype.push.apply(newApps, this._removables.getApps());
         newApps.push(this._trash.getApp());
 
         // Figure out the actual changes to the list of items; we iterate
