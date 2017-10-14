@@ -62,11 +62,17 @@ var FileManager1Client = new Lang.Class({
     },
 
     /**
-     * Return an array of windows that are showing a given location.
+     * Return an array of windows that are showing a location or
+     * sub-directories of that location.
      */
     getWindows: function(location) {
-        let ret = this._locationMap.get(location);
-        return ret ? ret : [];
+        let ret = [];
+        for (let [k,v] of this._locationMap) {
+            if (k.startsWith(location)) {
+                Array.prototype.push.apply(ret, v);
+            }
+        }
+        return ret;
     },
 
     _onPropertyChanged: function(proxy, changed, invalidated) {
