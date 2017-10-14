@@ -4,6 +4,9 @@ const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Signals = imports.signals;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Utils = Me.imports.utils;
+
 const FileManager1Iface = '<node><interface name="org.freedesktop.FileManager1">\
                                <property name="XUbuntuOpenLocationsXids" type="a{uas}" access="read"/>\
                            </interface></node>';
@@ -25,31 +28,37 @@ var FileManager1Client = new Lang.Class({
     Name: 'DashToDock.FileManager1Client',
 
     _init: function() {
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
+
         this._proxy = new FileManager1Proxy(Gio.DBus.session,
                                             "org.freedesktop.FileManager1",
                                             "/org/freedesktop/FileManager1");
-        this._proxy.connect('g-properties-changed',
-                            Lang.bind(this, this._onPropertyChanged));
 
-        // We must additionally listen for Screen events to know when to
-        // rebuild our location map when the set of available windows changes.
-        this._screenSignals = [];
-        this._screenSignals.push(
-            global.screen.connect('workspace-switched',
-                                  Lang.bind(this, this._updateLocationMap)));
-        this._screenSignals.push(
-            global.screen.connect('window-entered-monitor',
-                                  Lang.bind(this, this._updateLocationMap)));
-        this._screenSignals.push(
-            global.screen.connect('window-left-monitor',
-                                  Lang.bind(this, this._updateLocationMap)));
+        this._signalsHandler.add([
+            this._proxy,
+            'g-properties-changed',
+            Lang.bind(this, this._onPropertyChanged)
+        ], [
+            // We must additionally listen for Screen events to know when to
+            // rebuild our location map when the set of available windows changes.
+            global.screen,
+            'workspace-switched',
+            Lang.bind(this, this._updateLocationMap)
+        ], [
+            global.screen,
+            'window-entered-monitor',
+            Lang.bind(this, this._updateLocationMap)
+        ], [
+            global.screen,
+            'window-left-monitor',
+            Lang.bind(this, this._updateLocationMap)
+        ]);
+
         this._updateLocationMap();
     },
 
     destroy: function() {
-        for (let i = 0; i < this._screenSignals.length; i++) {
-            global.screen.disconnect(this._screenSignals[i]);
-        }
+        this._signalsHandler.destroy();
     },
 
     /**
