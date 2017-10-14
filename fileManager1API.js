@@ -30,9 +30,18 @@ var FileManager1Client = new Lang.Class({
     _init: function() {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
+        this._locationMap = new Map();
         this._proxy = new FileManager1Proxy(Gio.DBus.session,
                                             "org.freedesktop.FileManager1",
-                                            "/org/freedesktop/FileManager1");
+                                            "/org/freedesktop/FileManager1",
+                                            Lang.bind(this, function(initable, error) {
+            // Use async construction to avoid blocking on errors.
+            if (error) {
+                global.log(error);
+            } else {
+                this._updateLocationMap();
+            }
+        }));
 
         this._signalsHandler.add([
             this._proxy,
@@ -53,8 +62,6 @@ var FileManager1Client = new Lang.Class({
             'window-left-monitor',
             Lang.bind(this, this._updateLocationMap)
         ]);
-
-        this._updateLocationMap();
     },
 
     destroy: function() {
