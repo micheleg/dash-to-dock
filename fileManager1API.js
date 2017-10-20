@@ -76,7 +76,9 @@ var FileManager1Client = new Lang.Class({
         let ret = [];
         for (let [k,v] of this._locationMap) {
             if (k.startsWith(location)) {
-                Array.prototype.push.apply(ret, v);
+                for (let l of v) {
+                    ret.push(l);
+                }
             }
         }
         return ret;
@@ -98,12 +100,14 @@ var FileManager1Client = new Lang.Class({
             let locations = xidToLocations[xid];
             for (let i = 0; i < locations.length; i++) {
                 let l = locations[i];
+                // Use a set to deduplicate when a window has a
+                // location open in multiple tabs.
                 if (!locationToWindow.has(l)) {
-                    locationToWindow.set(l, []);
+                    locationToWindow.set(l, new Set());
                 }
                 let window = xidToWindow.get(parseInt(xid));
                 if (window != null) {
-                    locationToWindow.get(l).push(window);
+                    locationToWindow.get(l).add(window);
                 }
             }
         }
