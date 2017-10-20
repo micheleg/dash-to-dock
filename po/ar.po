@@ -61,7 +61,7 @@ msgstr "أظهر التطبيقات قيد التشغيل"
 
 #: appIcons.js:804
 msgid "All Windows"
-msgstr ""
+msgstr "جميع النوافذ"
 
 #: Settings.ui.h:1
 #, fuzzy
@@ -70,25 +70,28 @@ msgstr "خصّص الإعتام"
 
 #: Settings.ui.h:2
 msgid "Color"
-msgstr ""
+msgstr "اللون"
 
 #: Settings.ui.h:3
 msgid "Border color"
-msgstr ""
+msgstr "لون الحواف"
 
 #: Settings.ui.h:4
 msgid "Border width"
-msgstr ""
+msgstr "عرض الحواف"
 
 #: Settings.ui.h:5
 msgid "Number overlay"
-msgstr ""
+msgstr "عدد التراكب"
 
 #: Settings.ui.h:6
 msgid ""
 "Temporarily show the application numbers over the icons, corresponding to "
 "the shortcut."
 msgstr ""
+"عرض أرقام التطبيق مؤقتا على الرموز، المقابلة"
+"للاختصار."
+""
 
 #: Settings.ui.h:7
 #, fuzzy
@@ -100,14 +103,17 @@ msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
 msgstr ""
+"إذا اُستخدم الإخفاء التلقائي الشريط سيظهر لوقت قصير عند الضغط"
+"على الإختصار."
+""
 
 #: Settings.ui.h:9
 msgid "Shortcut for the options above"
-msgstr ""
+msgstr "الإختصار للخيارات في الأعلى"
 
 #: Settings.ui.h:10
 msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
-msgstr ""
+msgstr "البنية: <Shift>, <Ctrl>, <Alt>, <Super>"
 
 #: Settings.ui.h:11
 msgid "Hide timeout (s)"
@@ -118,6 +124,10 @@ msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
+"عند التصغير النقر المزدوج سيصغر جميع نوافذ"
+"التطبيق."
+""
+""
 
 #: Settings.ui.h:13
 msgid "Shift+Click action"
@@ -142,11 +152,11 @@ msgstr "التبديل بين النوافذ"
 
 #: Settings.ui.h:18
 msgid "Quit"
-msgstr ""
+msgstr "خروج"
 
 #: Settings.ui.h:19
 msgid "Behavior for Middle-Click."
-msgstr ""
+msgstr "سلوك الزر المتوسط."
 
 #: Settings.ui.h:20
 #, fuzzy
@@ -155,7 +165,7 @@ msgstr "حدث النقر"
 
 #: Settings.ui.h:21
 msgid "Behavior for Shift+Middle-Click."
-msgstr ""
+msgstr "سلوك Shift+Middle-Click."
 
 #: Settings.ui.h:22
 #, fuzzy
@@ -223,17 +233,20 @@ msgstr "أظهر التطبيقات قيد التشغيل"
 
 #: Settings.ui.h:39
 msgid "Isolate workspaces."
-msgstr ""
+msgstr "عزل مساحات العمل."
 
 #: Settings.ui.h:40
 msgid "Show open windows previews."
-msgstr ""
+msgstr "عرض معاينات النوافذ المفتوحة."
 
 #: Settings.ui.h:41
 msgid ""
 "If disabled, these settings are accessible from gnome-tweak-tool or the "
 "extension website."
 msgstr ""
+"إذا تم تعطيله هذه الإعدادت يمكن الوصول إليها من gnome-tweak-tool أو "
+"موقع الإضافات."
+""
 
 #: Settings.ui.h:42
 #, fuzzy
@@ -242,7 +255,7 @@ msgstr "أظهر أيقونة التطبيقات أولا"
 
 #: Settings.ui.h:43
 msgid "Move the applications button at the beginning of the dock."
-msgstr ""
+msgstr "تحريك زر التطبيقات في بداية الشريط."
 
 #: Settings.ui.h:44
 #, fuzzy
@@ -251,17 +264,20 @@ msgstr "أظهر أيقونة التطبيقات أولا"
 
 #: Settings.ui.h:45
 msgid "Launchers"
-msgstr ""
+msgstr "المشغلات"
 
 #: Settings.ui.h:46
 msgid ""
 "Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
 "together with Shift and Ctrl."
 msgstr ""
+"تفعيل Super+(0-9) كاختصار لتمكين التطبيقات. يمكن أيضاً استخدامها "
+"معاً مع Shift و Ctrl"
+""
 
 #: Settings.ui.h:47
 msgid "Use keyboard shortcuts to activate apps"
-msgstr ""
+msgstr "استخدام إختصارات لوحة المفاتيح لتفعيل التطبيقات"
 
 #: Settings.ui.h:48
 #, fuzzy
@@ -309,6 +325,9 @@ msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
+"القليل من التخصيصات يعني إضافة الشريط مع سِمَة غنوم. "
+"بدلاً من هذا, خيارات محددة يُمكن اختيارها من الأسفل."
+""
 
 #: Settings.ui.h:58
 msgid "Use built-in theme"
@@ -316,7 +335,7 @@ msgstr "استعمل السمة المضمّنة"
 
 #: Settings.ui.h:59
 msgid "Save space reducing padding and border radius."
-msgstr ""
+msgstr "حفظ المساحة يقلل من الحشو ونصف قطر الحافة."
 
 #: Settings.ui.h:60
 msgid "Shrink the dash"
@@ -332,11 +351,11 @@ msgstr "أظهر مؤشرات عدد النوافذ"
 
 #: Settings.ui.h:63
 msgid "Set the background color for the dash."
-msgstr ""
+msgstr "تعيين لون الخلفية لشَرِطة"
 
 #: Settings.ui.h:64
 msgid "Customize the dash color"
-msgstr ""
+msgstr "تخصيص لون الشَرِطة"
 
 #: Settings.ui.h:65
 msgid "Tune the dash background opacity."
@@ -352,7 +371,7 @@ msgstr "العتمة"
 
 #: Settings.ui.h:68
 msgid "Force straight corner\n"
-msgstr ""
+msgstr "الزاوي المستقيمة\n"
 
 #: Settings.ui.h:70
 msgid "Appearance"
@@ -364,7 +383,7 @@ msgstr "الإصدار:"
 
 #: Settings.ui.h:72
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr ""
+msgstr "تحريك الشريط خارج النظرة العامة في الشَرِطة"
 
 #: Settings.ui.h:73
 msgid "Created by"
@@ -372,7 +391,7 @@ msgstr "أنشئ من طرف"
 
 #: Settings.ui.h:74
 msgid "Webpage"
-msgstr ""
+msgstr "صفحة الويب"
 
 #: Settings.ui.h:75
 msgid ""
@@ -402,7 +421,7 @@ msgstr "اضغط للإظهار: يتطلب ضغطا لإظهار المرساة
 
 #: Settings.ui.h:81
 msgid "Enable in fullscreen mode"
-msgstr ""
+msgstr "تمكين في وضع ملئ الشاشة"
 
 #: Settings.ui.h:82
 msgid "Show the dock when it doesn't obstruct application windows."
@@ -410,15 +429,15 @@ msgstr "إظهار المرساة عندما لا تحجب نوافذ التطب
 
 #: Settings.ui.h:83
 msgid "Dodge windows"
-msgstr ""
+msgstr "حيلة النوافذ"
 
 #: Settings.ui.h:84
 msgid "All windows"
-msgstr ""
+msgstr "جميع النوافذ"
 
 #: Settings.ui.h:85
 msgid "Only focused application's windows"
-msgstr ""
+msgstr "نوافذ التطبيق المركزة فقط"
 
 #: Settings.ui.h:86
 #, fuzzy
@@ -551,4 +570,4 @@ msgstr "عتبة الضغط"
 #~ msgstr "مساحة المرساة بإنقاص الحشو"
 
 #~ msgid "Only when in autohide"
-#~ msgstr "Seulement en mode masquage intelligent"
+#~ msgstr "فقط عند الإخفاء التلقائي"
