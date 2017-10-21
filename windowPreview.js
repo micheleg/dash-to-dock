@@ -27,7 +27,7 @@ const HOVER_ENTER_TIMEOUT = 100;
 const HOVER_LEAVE_TIMEOUT = 100;
 const HOVER_MENU_LEAVE_TIMEOUT = 500;
 
-const WindowPreviewMenu = new Lang.Class({
+var WindowPreviewMenu = new Lang.Class({
     Name: 'WindowPreviewMenu',
     Extends: PopupMenu.PopupMenu,
 
