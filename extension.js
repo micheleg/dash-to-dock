@@ -3,12 +3,12 @@
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
 const Convenience = Me.imports.convenience;
+const ExtensionSystem = imports.ui.extensionSystem;
 
 const Gio = imports.gi.Gio;
 
 let dockManager;
 
-let _enabledextensionsettings;
 let _extensionlistenerId;
 
 function init() {
@@ -21,10 +21,8 @@ function enable() {
      * we disable this dock.
      */
     dockManager=null; // even if declared, we need to initialize it to not trigger a referenceError.
-    _enabledextensionsettings = new Gio.Settings({ schema_id: 'org.gnome.shell' });
-    _extensionlistenerId = _enabledextensionsettings.connect(
-        'changed::enabled-extensions',
-        conditionallyenabledock);
+    _extensionlistenerId = ExtensionSystem.connect('extension-state-changed',
+                                                   conditionallyenabledock);
     conditionallyenabledock();
 }
 
@@ -34,16 +32,16 @@ function disable() {
     dockManager=null;
 
     if (_extensionlistenerId) {
-        _enabledextensionsettings.disconnect(_extensionlistenerId);
+        ExtensionSystem.disconnect(_extensionlistenerId);
         _extensionlistenerId = 0;
     }
 }
 
 function conditionallyenabledock() {
     let to_enable = true;
-    let extensions = _enabledextensionsettings.get_strv('enabled-extensions');
-    for (let i = 0; i < extensions.length; i++) {
-        if (extensions[i] === "dash-to-dock@micxgx.gmail.com") {
+    runningExtensions = ExtensionSystem.extensionOrder;
+    for (let i = 0; i < runningExtensions.length; i++) {
+        if (runningExtensions[i] === "dash-to-dock@micxgx.gmail.com") {
             to_enable = false;
         }
     }
