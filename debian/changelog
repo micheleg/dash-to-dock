@@ -1,6 +1,9 @@
 gnome-shell-extension-ubuntu-dock (0.7.1) UNRELEASED; urgency=medium
 
   * Fix Ubuntu dock won't start after Dash to dock uninstalled (LP: #1726935)
+  * Cherry-pick couple of upstream Dash to Dock fixes: (LP: #1727242)
+    - warning fix with latest mozjs.
+    - expose the dash to dock main object for other extensions to pick it up.
 
  -- Didier Roche <didrocks@ubuntu.com>  Wed, 25 Oct 2017 10:40:46 +0200
 
