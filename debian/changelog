@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (0.8) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (0.8) bionic; urgency=medium
 
   * Sync with latest dash to dock upstream, bringing glossy and other small
     upstream features.
