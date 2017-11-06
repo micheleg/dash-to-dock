@@ -2,6 +2,7 @@ gnome-shell-extension-ubuntu-dock (0.8) UNRELEASED; urgency=medium
 
   * Sync with latest dash to dock upstream, bringing glossy and other small
     upstream features.
+  * Remove now prefs.js at package install time to minimize upstream diff.
 
  -- Didier Roche <didrocks@ubuntu.com>  Mon, 06 Nov 2017 13:59:21 +0100
 

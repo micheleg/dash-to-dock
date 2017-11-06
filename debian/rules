@@ -7,6 +7,7 @@
 override_dh_install:
 	dh_install --fail-missing
 	rm debian/*/usr/share/gnome-shell/extensions/ubuntu-dock@ubuntu.com/COPYING
+	rm debian/*/usr/share/gnome-shell/extensions/ubuntu-dock@ubuntu.com/prefs.js
 
 override_dh_translations:
 	make ./po/dashtodock.pot
