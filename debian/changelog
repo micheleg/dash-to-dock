@@ -1,3 +1,9 @@
+gnome-shell-extension-ubuntu-dock (0.8.1) UNRELEASED; urgency=medium
+
+  * Readd dynamic transparent override lost during rebase (LP: #1730489)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 07 Nov 2017 09:31:55 +0100
+
 gnome-shell-extension-ubuntu-dock (0.8) bionic; urgency=medium
 
   * Sync with latest dash to dock upstream, bringing glossy and other small
