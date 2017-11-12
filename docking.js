@@ -116,22 +116,22 @@ const DashSlideContainer = new Lang.Class({
         let slideoutSize = this._slideoutSize;
 
         if (this._side == St.Side.LEFT) {
-            childBox.x1 = (this._slidex -1) * (childWidth - slideoutSize);
-            childBox.x2 = slideoutSize + this._slidex*(childWidth - slideoutSize);
+            childBox.x1 = Math.round((this._slidex -1) * (childWidth - slideoutSize));
+            childBox.x2 = Math.round(slideoutSize + this._slidex*(childWidth - slideoutSize));
             childBox.y1 = 0;
-            childBox.y2 = childBox.y1 + childHeight;
+            childBox.y2 = Math.round(childBox.y1 + childHeight);
         }
         else if ((this._side == St.Side.RIGHT) || (this._side == St.Side.BOTTOM)) {
             childBox.x1 = 0;
-            childBox.x2 = childWidth;
+            childBox.x2 = Math.round(childWidth);
             childBox.y1 = 0;
-            childBox.y2 = childBox.y1 + childHeight;
+            childBox.y2 = Math.round(childBox.y1 + childHeight);
         }
         else if (this._side == St.Side.TOP) {
             childBox.x1 = 0;
-            childBox.x2 = childWidth;
-            childBox.y1 = (this._slidex -1) * (childHeight - slideoutSize);
-            childBox.y2 = slideoutSize + this._slidex * (childHeight - slideoutSize);
+            childBox.x2 = Math.round(childWidth);
+            childBox.y1 = Math.round((this._slidex -1) * (childHeight - slideoutSize));
+            childBox.y2 = Math.round(slideoutSize + this._slidex * (childHeight - slideoutSize));
         }
 
         this._child.allocate(childBox, flags);
@@ -149,8 +149,8 @@ const DashSlideContainer = new Lang.Class({
             natWidth = (natWidth - this._slideoutSize) * this._slidex + this._slideoutSize;
         }
 
-        alloc.min_size = minWidth;
-        alloc.natural_size = natWidth;
+        alloc.min_size = Math.round(minWidth);
+        alloc.natural_size = Math.round(natWidth);
     },
 
     /**
@@ -162,8 +162,8 @@ const DashSlideContainer = new Lang.Class({
             minHeight = (minHeight - this._slideoutSize) * this._slidex + this._slideoutSize;
             natHeight = (natHeight - this._slideoutSize) * this._slidex + this._slideoutSize;
         }
-        alloc.min_size = minHeight;
-        alloc.natural_size = natHeight;
+        alloc.min_size = Math.round(minHeight);
+        alloc.natural_size = Math.round(natHeight);
     },
 
     /**
