@@ -67,7 +67,7 @@
     <key name="transparency-mode" enum="org.gnome.shell.extensions.dash-to-dock.transparency-mode">
       <default>'DEFAULT'</default>
       <summary>Transparency mode for the dock</summary>
-      <description>FIXED: constant transparency. ADAPTIVE: lock state with the top panel. DYNAMIC: dock takes the opaque style only when windows are close to it.</description>
+      <description>FIXED: constant transparency. ADAPTIVE: lock state with the top panel when not hidden. DYNAMIC: dock takes the opaque style only when windows are close to it.</description>
     </key>
     <key type="b" name="customize-alphas">
       <default>false</default>
