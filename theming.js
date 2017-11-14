@@ -30,7 +30,9 @@ const Utils = Me.imports.utils;
  * DEFAULT:  transparency given by theme
  * FIXED:    constant transparency chosen by user
  * ADAPTIVE: apply 'transparent' style to dock AND panel when
- *           no windows are close to the dock OR panel
+ *           no windows are close to the dock OR panel.
+ *           When dock is hidden, the dock 'transparent' style only
+ *           apply to itself.
  * DYNAMIC:  apply 'transparent' style when no windows are close to the dock
  * */
 const TransparencyMode = {
@@ -442,8 +444,12 @@ const Transparency = new Lang.Class({
         let isNear = this._dockIsNear() || this._panelIsNear();
         if (isNear) {
             this._actor.set_style(this._opaque_style);
-            if (this._panel._updateSolidStyle && this._adaptiveEnabled)
-                this._panel._addStyleClassName('solid');
+            if (this._panel._updateSolidStyle && this._adaptiveEnabled) {
+                if (this._settings.get_boolean('dock-fixed') || this._panelIsNear())
+                    this._panel._addStyleClassName('solid');
+                else
+                    this._panel._removeStyleClassName('solid');
+            }
         }
         else {
             this._actor.set_style(this._transparent_style);
