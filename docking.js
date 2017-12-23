@@ -349,14 +349,6 @@ const DockedDash = new Lang.Class({
             Lang.bind(this, function() {
                 Main.overview.dashIconSize = this.dash.iconSize;
             })
-        ], [
-            this._remoteModel,
-            'entry-added',
-            Lang.bind(this, this._onLauncherEntryRemoteAdded)
-        ], [
-            this._remoteModel,
-            'entry-removed',
-            Lang.bind(this, this._onLauncherEntryRemoteRemoved)
         ]);
 
         this._injectionsHandler = new Utils.InjectionsHandler();
@@ -1355,28 +1347,6 @@ const DockedDash = new Lang.Class({
             else
                 return false;
         }
-    },
-
-    _onLauncherEntryRemoteAdded: function(remoteModel, entry) {
-        if (!entry || !entry.appId())
-            return;
-
-        this.dash.getAppIcons().forEach(function(icon) {
-            if (icon && icon.app && icon.app.id == entry.appId()) {
-                icon.insertEntryRemote(entry);
-            }
-        });
-    },
-
-    _onLauncherEntryRemoteRemoved: function(remoteModel, entry) {
-        if (!entry || !entry.appId())
-            return;
-
-        this.dash.getAppIcons().forEach(function(icon) {
-            if (icon && icon.app && icon.app.id == entry.appId()) {
-                icon.removeEntryRemote(entry);
-            }
-        });
     },
 
     _activateApp: function(appIndex) {
