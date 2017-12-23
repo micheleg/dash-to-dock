@@ -34,7 +34,7 @@ There aren't mayor features planned altough consider new ideas and suggestions.
 <a name="bugreporting"></a>
 
 ### Bug Reporting
-If you experienced a bug please report it by opening an [isssue on github]({{ site.github_project_url }}/issues). You can also send a bug report message in the [extension website]({{ site.extension_page_url }}). Your help is very appreciated.
+If you experienced a bug please report it by opening an [issue on github]({{ site.github_project_url }}/issues). You can also send a bug report message in the [extension website]({{ site.extension_page_url }}). Your help is very appreciated.
 
 Please provide as many details as possible and all the steps to reproduce the bug. Include the following information:
 
