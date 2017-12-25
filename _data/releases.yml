@@ -1,3 +1,13 @@
+- version: 62
+  date: 24-12-2017
+  shell_version: ["3.18", "3.20", "3.22", "3.24", "3.26"]
+  notes:
+    - "New feature: implement dynamic transparency [franglais125: ef8ee93c, d0533418, 99d8e2d6, 5c81fb38, f9af5893, c1e1b8e3, 132de68d, 88a2c9c4, 81a93aeb, a8872313, 545286e4, de314e21, 4583248c, 225b51dd]."
+    - "New feature: implement Ubuntu Unity Launcher API (notifications and progress bar) [Andrea Azzarone: 5ef239de, 184b26b1, 8111665d, 8d2ee8d1, 8174ef18]"
+    - "Enhancement: make focused app highlight more prominent [68a6ede7]"
+    - "Update Tawainese [zerng07: b8ce545c], Serbian [Xabre: b8562126, 4f430509], Czech [Pavel: 78387686], Greek [Vangelis: 62342f71], French [Peter: 2f9379ef], Arabic [Ahmad: a6afd137], German [0f2c9498] translations."
+  zip_url: https://extensions.gnome.org/review/download/7799.shell-extension.zip
+
 - version: 61
   date: 06-09-2017
   shell_version: ["3.18", "3.20", "3.22", "3.24", "3.26"]
