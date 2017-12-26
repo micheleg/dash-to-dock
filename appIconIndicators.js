@@ -261,57 +261,49 @@ const RunningIndicatorDots = new Lang.Class({
 
         let area = this._dots;
         let side =  Utils.getPosition(this._settings);
-
-        let [borderColor, borderWidth, bodyColor, radius, padding, spacing] = this._getDotsStyle();
-
         let [width, height] = area.get_surface_size();
         let cr = area.get_context();
 
         // Draw the required numbers of dots
-
         let n = this._nWindows;
+
+        // draw for the bottom case, rotate the canvas for other placements
+        switch (side) {
+        case St.Side.TOP:
+            cr.rotate(Math.PI);
+            cr.translate(-width, -height);
+            break;
+
+        case St.Side.BOTTOM:
+            // nothing
+            break;
+
+        case St.Side.LEFT:
+            cr.rotate(Math.PI/2);
+            cr.translate(0, -height);
+            break;
+
+        case St.Side.RIGHT:
+            cr.rotate(-Math.PI/2);
+            cr.translate(-width, 0);
+        }
+
+        let [borderColor, borderWidth, bodyColor, radius, padding, spacing] = this._getDotsStyle();
 
         cr.setLineWidth(borderWidth);
         Clutter.cairo_set_source_color(cr, borderColor);
 
-        switch (side) {
-        case St.Side.TOP:
-            cr.translate((width - (2*n)*radius - (n-1)*spacing)/2, padding);
-            for (let i = 0; i < n; i++) {
-                cr.newSubPath();
-                cr.arc((2*i+1)*radius + i*spacing, radius + borderWidth/2, radius, 0, 2*Math.PI);
-            }
-            break;
-
-        case St.Side.BOTTOM:
-            cr.translate((width - (2*n)*radius - (n-1)*spacing)/2, height - padding);
-            for (let i = 0; i < n; i++) {
-                cr.newSubPath();
-                cr.arc((2*i+1)*radius + i*spacing, -radius - borderWidth/2, radius, 0, 2*Math.PI);
-            }
-            break;
-
-        case St.Side.LEFT:
-            cr.translate(padding, (height - (2*n)*radius - (n-1)*spacing)/2);
-            for (let i = 0; i < n; i++) {
-                cr.newSubPath();
-                cr.arc(radius + borderWidth/2, (2*i+1)*radius + i*spacing, radius, 0, 2*Math.PI);
-            }
-            break;
-
-        case St.Side.RIGHT:
-            cr.translate(width - padding , (height - (2*n)*radius - (n-1)*spacing)/2);
-            for (let i = 0; i < n; i++) {
-                cr.newSubPath();
-                cr.arc(-radius - borderWidth/2, (2*i+1)*radius + i*spacing, radius, 0, 2*Math.PI);
-            }
-            break;
+        // draw for the bottom case:
+        cr.translate((width - (2*n)*radius - (n-1)*spacing)/2, height - padding);
+        for (let i = 0; i < n; i++) {
+            cr.newSubPath();
+            cr.arc((2*i+1)*radius + i*spacing, -radius - borderWidth/2, radius, 0, 2*Math.PI);
         }
 
         cr.strokePreserve();
-
         Clutter.cairo_set_source_color(cr, bodyColor);
         cr.fill();
+
         cr.$dispose();
     },
 
