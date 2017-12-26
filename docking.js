@@ -767,6 +767,9 @@ const DockedDash = new Lang.Class({
             transition: 'easeOutQuad',
             onComplete: Lang.bind(this, function() {
                 this._dockState = State.HIDDEN;
+                // Remove queued barried removal if any
+                if (this._removeBarrierTimeoutId > 0)
+                    Mainloop.source_remove(this._removeBarrierTimeoutId);
                 this._updateBarrier();
             })
         });
