@@ -118,6 +118,7 @@ const RunningIndicatorBase = new Lang.Class({
 
         this.parent(source, settings)
 
+        this._side =  Utils.getPosition(this._settings);
         this._nWindows = 0;
         // These statuse take into account the workspace/monitor isolation
         this._isFocused = false;
@@ -199,9 +200,9 @@ const RunningIndicatorDots = new Lang.Class({
 
         this._hideDefaultDot();
 
-        this._dots = new St.DrawingArea({x_expand: true, y_expand: true});
-        this._dots.connect('repaint', Lang.bind(this, this._drawCircles));
-        this._source._iconContainer.add_child(this._dots);
+        this._area = new St.DrawingArea({x_expand: true, y_expand: true});
+        this._area.connect('repaint', Lang.bind(this, this._updateIndicator));
+        this._source._iconContainer.add_child(this._area);
 
         let keys = ['custom-theme-running-dots-color',
                    'custom-theme-running-dots-border-color',
@@ -218,60 +219,57 @@ const RunningIndicatorDots = new Lang.Class({
 
     update: function() {
         this.parent();
-        if (this._dots)
-            this._dots.queue_redraw(); //not necessary becuase a redraw occurs triggered by the class style applied I guesss
+        if (this._area)
+            this._area.queue_redraw();
     },
 
-    // Return the styles used to draw the dots
-    // This function can be replaced in inheriting classes
-    _getDotsStyle: function() {
-        let borderColor, borderWidth, bodyColor, radius, padding, spacing;
+     _computeStyle: function() {
 
-        // TODO this is a bit duplicated also inside _drawCircles
-        let area = this._dots;
-        let side =  Utils.getPosition(this._settings);
-        let [width, height] = area.get_surface_size();
+        let [width, height] = this._area.get_surface_size();
+        // As the canvas is rotated, invert width and height
+        if (this._side == St.Side.LEFT || this._side == St.Side.RIGHT){
+            this._width = height;
+            this._height = width;
+        } else {
+            this._width = width;
+            this._height = height;
+        }
 
         if (!this._settings.get_boolean('apply-custom-theme')
             && this._settings.get_boolean('custom-theme-running-dots')
             && this._settings.get_boolean('custom-theme-customize-running-dots')) {
-            borderColor = Clutter.color_from_string(this._settings.get_string('custom-theme-running-dots-border-color'))[1];
-            borderWidth = this._settings.get_int('custom-theme-running-dots-border-width');
-            bodyColor =  Clutter.color_from_string(this._settings.get_string('custom-theme-running-dots-color'))[1];
+            this._borderColor = Clutter.color_from_string(this._settings.get_string('custom-theme-running-dots-border-color'))[1];
+            this._borderWidth = this._settings.get_int('custom-theme-running-dots-border-width');
+            this._bodyColor =  Clutter.color_from_string(this._settings.get_string('custom-theme-running-dots-color'))[1];
         }
         else {
             // Re-use the style - background color, and border width and color -
             // of the default dot
             let themeNode = this._source._dot.get_theme_node();
-            borderColor = themeNode.get_border_color(side);
-            borderWidth = themeNode.get_border_width(side);
-            bodyColor = themeNode.get_background_color();
+            this._borderColor = themeNode.get_border_color(this._side);
+            this._borderWidth = themeNode.get_border_width(this._side);
+            this._bodyColor = themeNode.get_background_color();
         }
 
         // Define the radius as an arbitrary size, but keep large enough to account
         // for the drawing of the border.
-        radius = Math.max(width/22, borderWidth/2);
-        padding = 0; // distance from the margin
-        spacing = radius + borderWidth; // separation between the dots
+        this._radius = Math.max(this._width/22, this._borderWidth/2);
+        this._padding = 0; // distance from the margin
+        this._spacing = this._radius + this._borderWidth; // separation between the dots
+     },
 
-        return [borderColor, borderWidth, bodyColor, radius, padding, spacing];
-    },
+    _updateIndicator: function() {
 
-    _drawCircles: function() {
+        let area = this._area;
+        let cr = this._area.get_context();
 
-        let area = this._dots;
-        let side =  Utils.getPosition(this._settings);
-        let [width, height] = area.get_surface_size();
-        let cr = area.get_context();
-
-        // Draw the required numbers of dots
-        let n = this._nWindows;
+        this._computeStyle();
 
         // draw for the bottom case, rotate the canvas for other placements
-        switch (side) {
+        switch (this._side) {
         case St.Side.TOP:
             cr.rotate(Math.PI);
-            cr.translate(-width, -height);
+            cr.translate(-this._width, -this._height);
             break;
 
         case St.Side.BOTTOM:
@@ -280,36 +278,40 @@ const RunningIndicatorDots = new Lang.Class({
 
         case St.Side.LEFT:
             cr.rotate(Math.PI/2);
-            cr.translate(0, -height);
+            cr.translate(0, -this._height);
             break;
 
         case St.Side.RIGHT:
             cr.rotate(-Math.PI/2);
-            cr.translate(-width, 0);
+            cr.translate(-this._width, 0);
         }
 
-        let [borderColor, borderWidth, bodyColor, radius, padding, spacing] = this._getDotsStyle();
+        this._drawIndicator(cr);
+        cr.$dispose();
+    },
 
-        cr.setLineWidth(borderWidth);
-        Clutter.cairo_set_source_color(cr, borderColor);
+    _drawIndicator: function(cr) {
+        // Draw the required numbers of dots
+        let n = this._nWindows;
+
+        cr.setLineWidth(this._borderWidth);
+        Clutter.cairo_set_source_color(cr, this._borderColor);
 
         // draw for the bottom case:
-        cr.translate((width - (2*n)*radius - (n-1)*spacing)/2, height - padding);
+        cr.translate((this._width - (2*n)*this._radius - (n-1)*this._spacing)/2, this._height - this._padding);
         for (let i = 0; i < n; i++) {
             cr.newSubPath();
-            cr.arc((2*i+1)*radius + i*spacing, -radius - borderWidth/2, radius, 0, 2*Math.PI);
+            cr.arc((2*i+1)*this._radius + i*this._spacing, -this._radius - this._borderWidth/2, this._radius, 0, 2*Math.PI);
         }
 
         cr.strokePreserve();
-        Clutter.cairo_set_source_color(cr, bodyColor);
+        Clutter.cairo_set_source_color(cr, this._bodyColor);
         cr.fill();
-
-        cr.$dispose();
     },
 
     destroy: function() {
         this.parent();
-        this._dots.destroy();
+        this._area.destroy();
     }
 
 });
@@ -356,40 +358,38 @@ const RunningIndicatorColoredBacklit = new Lang.Class({
 
         // TODO DO we need this!?
         // Repaint the dots to make sure they have the correct color
-        if (this._dots)
-            this._dots.queue_repaint();
+        if (this._area)
+            this._area.queue_repaint();
         } else {
             this._disableBacklight();
         }
     },
 
-    _getDotsStyle: function() {
+    _computeStyle: function() {
+        this.parent()
 
-        let [borderColor, borderWidth, bodyColor, radius, padding, spacing] =  this.parent()
+        // Use dominant color for dots too
 
-        // TODO: duplicated in enableBacklight but cached...
-        let colorPalette = this._calculateColorPalette();
+
+        let colorPalette = this._getColorPalette();
 
         // SLightly adjust the styling
-        padding = 1.45;
-        borderWidth = 2;
+        this._padding = 1.45;
+        this._borderWidth = 2;
 
         if (colorPalette !== null) {
-            borderColor = Clutter.color_from_string(colorPalette.lighter)[1] ;
-            bodyColor = Clutter.color_from_string(colorPalette.darker)[1];
+            this._borderColor = Clutter.color_from_string(colorPalette.lighter)[1] ;
+            this._bodyColor = Clutter.color_from_string(colorPalette.darker)[1];
         } else {
             // Fallback
-            borderColor = Clutter.color_from_string('white')[1];
-            bodyColor = Clutter.color_from_string('gray')[1];
+            this._borderColor = Clutter.color_from_string('white')[1];
+            this._bodyColor = Clutter.color_from_string('gray')[1];
         }
-
-        return [borderColor, borderWidth, bodyColor, radius, padding, spacing];
-
     },
 
     _enableBacklight: function() {
 
-        let colorPalette = this._calculateColorPalette();
+        let colorPalette = this._getColorPalette();
 
         // Fallback
         if (colorPalette === null) {
@@ -456,7 +456,7 @@ const RunningIndicatorColoredBacklit = new Lang.Class({
      * http://bazaar.launchpad.net/~unity-team/unity/trunk/view/head:/launcher/LauncherIcon.cpp
      * so it more or less works the same way.
      */
-    _calculateColorPalette: function() {
+    _getColorPalette: function() {
         if (iconCacheMap.get(this._source.app.get_id())) {
             // We already know the answer
             return iconCacheMap.get(this._source.app.get_id());
