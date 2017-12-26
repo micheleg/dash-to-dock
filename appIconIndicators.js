@@ -18,7 +18,12 @@ let tracker = Shell.WindowTracker.get_default();
 
 const RunningIndicatorStyle = {
     DEFAULT: 0,
-    RUNNING_DOTS: 1
+    DOTS: 1,
+    SQUARES: 2,
+    DASHES: 3,
+    SEGMENTED: 4,
+    SOLID: 5,
+    CILIORA: 6
 };
 
 const MAX_WINDOWS_CLASSES = 4;
@@ -42,11 +47,12 @@ var AppIconIndicator = new Lang.Class({
 
         // Choose the style for the running indicators
         let runningIndicator = null;
-        let runningIndicatorStyle = RunningIndicatorStyle.DEFAULT;
-        if ( settings.get_enum('running-indicator-style') == RunningIndicatorStyle.RUNNING_DOTS ||
-             settings.get_boolean('apply-custom-theme' )
-            ) {
-            runningIndicatorStyle = RunningIndicatorStyle.RUNNING_DOTS;
+        let runningIndicatorStyle;
+
+        if (settings.get_boolean('apply-custom-theme' )) {
+            runningIndicatorStyle = RunningIndicatorStyle.DOTS;
+        } else {
+            runningIndicatorStyle = settings.get_enum('running-indicator-style');
         }
 
         switch (runningIndicatorStyle) {
@@ -54,10 +60,33 @@ var AppIconIndicator = new Lang.Class({
                 runningIndicator = new RunningIndicatorBase(source, settings);
                 break;
 
-            case RunningIndicatorStyle.RUNNING_DOTS:
+            case RunningIndicatorStyle.DOTS:
                 runningIndicator = new RunningIndicatorDots(source, settings);
                 break;
-            }
+
+            case RunningIndicatorStyle.SQUARES:
+                runningIndicator = new RunningIndicatorSquares(source, settings);
+                break;
+
+            case RunningIndicatorStyle.DASHES:
+                runningIndicator = new RunningIndicatorDashes(source, settings);
+            break;
+
+            case RunningIndicatorStyle.SEGMENTED:
+                runningIndicator = new RunningIndicatorSegmented(source, settings);
+                break;
+
+            case RunningIndicatorStyle.SOLID:
+                runningIndicator = new RunningIndicatorSolid(source, settings);
+                break;
+
+            case RunningIndicatorStyle.CILIORA:
+                runningIndicator = new RunningIndicatorCiliora(source, settings);
+                break;
+
+            default:
+                runningIndicator = new RunningIndicatorBase(source, settings);
+        }
 
         this._indicators.push(runningIndicator);
     },
@@ -395,6 +424,171 @@ const RunningIndicatorDots = new Lang.Class({
     }
 
 });
+
+// Adapted from dash-to-panel by Jason DeRose
+// https://github.com/jderose9/dash-to-panel
+const RunningIndicatorCiliora = new Lang.Class({
+
+    Name: 'DashToDock.RunningIndicatorCiliora',
+    Extends: RunningIndicatorDots,
+
+    _drawIndicator: function(cr) {
+        if (this._isRunning) {
+
+            let size =  Math.max(this._width/20, this._borderWidth);
+            let spacing = size; // separation between the dots
+            let lineLength = this._width - (size*(this._nWindows-1)) - (spacing*(this._nWindows-1));
+            let padding = this._borderWidth;
+            // For the backlit case here we don't want the outer border visible
+            if (this._settings.get_boolean('unity-backlit-items') && !this._settings.get_boolean('custom-theme-customize-running-dots'))
+                padding = 0;
+            let yOffset = this._height - padding - size;
+
+            cr.setLineWidth(this._borderWidth);
+            Clutter.cairo_set_source_color(cr, this._borderColor);
+
+            cr.translate(0, yOffset);
+            cr.newSubPath();
+            cr.rectangle(0, 0, lineLength, size);
+            for (let i = 1; i < this._nWindows; i++) {
+                cr.newSubPath();
+                cr.rectangle(lineLength + (i*spacing) + ((i-1)*size), 0, size, size);
+            }
+
+            cr.strokePreserve();
+            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            cr.fill();
+        }
+    }
+});
+
+// Adapted from dash-to-panel by Jason DeRose
+// https://github.com/jderose9/dash-to-panel
+const RunningIndicatorSegmented = new Lang.Class({
+
+    Name: 'DashToDock.RunningIndicatorSegmented',
+    Extends: RunningIndicatorDots,
+
+    _drawIndicator: function(cr) {
+        if (this._isRunning) {
+            let size =  Math.max(this._width/20, this._borderWidth);
+            let spacing = Math.ceil(this._width/18); // separation between the dots
+            let dashLength = Math.ceil((this._width - ((this._nWindows-1)*spacing))/this._nWindows);
+            let lineLength = this._width - (size*(this._nWindows-1)) - (spacing*(this._nWindows-1));
+            let padding = this._borderWidth;
+            // For the backlit case here we don't want the outer border visible
+            if (this._settings.get_boolean('unity-backlit-items') && !this._settings.get_boolean('custom-theme-customize-running-dots'))
+                padding = 0;
+            let yOffset = this._height - padding - size;
+
+            cr.setLineWidth(this._borderWidth);
+            Clutter.cairo_set_source_color(cr, this._borderColor);
+
+            cr.translate(0, yOffset);
+            for (let i = 0; i < this._nWindows; i++) {
+                cr.newSubPath();
+                cr.rectangle(i*dashLength + i*spacing, 0, dashLength, size);
+            }
+
+            cr.strokePreserve();
+            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            cr.fill()
+        }
+    }
+});
+
+// Adapted from dash-to-panel by Jason DeRose
+// https://github.com/jderose9/dash-to-panel
+const RunningIndicatorSolid = new Lang.Class({
+
+    Name: 'DashToDock.RunningIndicatorSolid',
+    Extends: RunningIndicatorDots,
+
+    _drawIndicator: function(cr) {
+        if (this._isRunning) {
+
+            let size =  Math.max(this._width/20, this._borderWidth);
+            let padding = this._borderWidth;
+            // For the backlit case here we don't want the outer border visible
+            if (this._settings.get_boolean('unity-backlit-items') && !this._settings.get_boolean('custom-theme-customize-running-dots'))
+                padding = 0;
+            let yOffset = this._height - padding - size;
+
+            cr.setLineWidth(this._borderWidth);
+            Clutter.cairo_set_source_color(cr, this._borderColor);
+
+            cr.translate(0, yOffset);
+            cr.newSubPath();
+            cr.rectangle(0, 0, this._width, size);
+
+            cr.strokePreserve();
+            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            cr.fill();
+
+        }
+    }
+});
+
+// Adapted from dash-to-panel by Jason DeRose
+// https://github.com/jderose9/dash-to-panel
+const RunningIndicatorSquares = new Lang.Class({
+
+    Name: 'DashToDock.RunningIndicatorSquares',
+    Extends: RunningIndicatorDots,
+
+    _drawIndicator: function(cr) {
+        if (this._isRunning) {
+            let size =  Math.max(this._width/11, this._borderWidth);
+            let padding = this._borderWidth;
+            let spacing = Math.ceil(this._width/18); // separation between the dots
+            let yOffset = this._height - padding - size;
+
+            cr.setLineWidth(this._borderWidth);
+            Clutter.cairo_set_source_color(cr, this._borderColor);
+
+            cr.translate(Math.floor((this._width - this._nWindows*size - (this._nWindows-1)*spacing)/2), yOffset);
+            for (let i = 0; i < this._nWindows; i++) {
+                cr.newSubPath();
+                cr.rectangle(i*size + i*spacing, 0, size, size);
+            }
+            cr.strokePreserve();
+            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            cr.fill();
+        }
+    }
+});
+
+// Adapted from dash-to-panel by Jason DeRose
+// https://github.com/jderose9/dash-to-panel
+const RunningIndicatorDashes = new Lang.Class({
+
+    Name: 'DashToDock.RunningIndicatorDashes',
+    Extends: RunningIndicatorDots,
+
+    _drawIndicator: function(cr) {
+        if (this._isRunning) {
+            let size =  Math.max(this._width/20, this._borderWidth);
+            let padding = this._borderWidth;
+            let spacing = Math.ceil(this._width/18); // separation between the dots
+            let dashLength = Math.floor(this._width/4) - spacing;
+            let yOffset = this._height - padding - size;
+
+            cr.setLineWidth(this._borderWidth);
+            Clutter.cairo_set_source_color(cr, this._borderColor);
+
+            cr.translate(Math.floor((this._width - this._nWindows*dashLength - (this._nWindows-1)*spacing)/2), yOffset);
+            for (let i = 0; i < this._nWindows; i++) {
+                cr.newSubPath();
+                cr.rectangle(i*dashLength + i*spacing, 0, dashLength, size);
+            }
+
+            cr.strokePreserve();
+            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            cr.fill();
+        }
+    }
+});
+
 
 /*
  * Unity like notification and progress indicators

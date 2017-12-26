@@ -30,7 +30,12 @@ const TransparencyMode = {
 
 const RunningIndicatorStyle = {
     DEFAULT: 0,
-    RUNNING_DOTS: 1
+    DOTS: 1,
+    SQUARES: 2,
+    DASHES: 3,
+    SEGMENTED: 4,
+    SOLID: 5,
+    CILIORA: 6
 };
 
 /**
