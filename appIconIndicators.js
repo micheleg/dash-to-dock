@@ -17,8 +17,7 @@ let tracker = Shell.WindowTracker.get_default();
 
 const RunningIndicatorStyle = {
     DEFAULT: 0,
-    RUNNING_DOTS: 1,
-    GLOSSY_COLORED_BACKLIT: 2
+    RUNNING_DOTS: 1
 };
 
 const MAX_WINDOWS_CLASSES = 4;
@@ -43,11 +42,9 @@ var AppIconIndicator = new Lang.Class({
         // Choose the style for the running indicators
         let runningIndicator = null;
         let runningIndicatorStyle = RunningIndicatorStyle.DEFAULT;
-        if (settings.get_boolean('unity-backlit-items')) {
-            runningIndicatorStyle = RunningIndicatorStyle.GLOSSY_COLORED_BACKLIT;
-        } else if ( settings.get_boolean('custom-theme-running-dots') ||
-                    settings.get_boolean('apply-custom-theme' )
-        ){
+        if ( settings.get_enum('running-indicator-style') == RunningIndicatorStyle.RUNNING_DOTS ||
+             settings.get_boolean('apply-custom-theme' )
+            ) {
             runningIndicatorStyle = RunningIndicatorStyle.RUNNING_DOTS;
         }
 
@@ -58,10 +55,6 @@ var AppIconIndicator = new Lang.Class({
 
             case RunningIndicatorStyle.RUNNING_DOTS:
                 runningIndicator = new RunningIndicatorDots(source, settings);
-                break;
-
-            case RunningIndicatorStyle.GLOSSY_COLORED_BACKLIT:
-                runningIndicator = new RunningIndicatorColoredBacklit(source, settings);
                 break;
             }
 
@@ -120,7 +113,10 @@ const RunningIndicatorBase = new Lang.Class({
 
         this._side =  Utils.getPosition(this._settings);
         this._nWindows = 0;
-        // These statuse take into account the workspace/monitor isolation
+
+        this._dominantColorExtractor = new DominantColorExtractor(this._source.app);
+
+        // These statuses take into account the workspace/monitor isolation
         this._isFocused = false;
         this._isRunning = false;
     },
@@ -182,8 +178,41 @@ const RunningIndicatorBase = new Lang.Class({
         this._source._dot.opacity = 255;
     },
 
+    _enableBacklight: function() {
+
+        let colorPalette = this._dominantColorExtractor._getColorPalette();
+
+        // Fallback
+        if (colorPalette === null) {
+            this._source._iconContainer.set_style(
+                'border-radius: 5px;' +
+                'background-gradient-direction: vertical;' +
+                'background-gradient-start: #e0e0e0;' +
+                'background-gradient-end: darkgray;'
+            );
+
+           return;
+        }
+
+        this._source._iconContainer.set_style(
+            'border-radius: 5px;' +
+            'background-gradient-direction: vertical;' +
+            'background-gradient-start: ' + colorPalette.original + ';' +
+            'background-gradient-end: ' +  colorPalette.darker + ';'
+        );
+
+    },
+
+    _disableBacklight: function() {
+        this._source._iconContainer.set_style(null);
+    },
+
     destroy: function() {
         this.parent();
+        this._disableBacklight();
+        // Remove glossy background if the children still exists
+        if (this._source._iconContainer.get_children().length > 1)
+            this._source._iconContainer.get_children()[1].set_style(null);
         this._restoreDefaultDot();
     }
 });
@@ -215,10 +244,29 @@ const RunningIndicatorDots = new Lang.Class({
                 Lang.bind(this, this.update)
             ]);
         }, this);
+
+        // Apply glossy background
+        // TODO: move to enable/disableBacklit to apply itonly to the running apps?
+        // TODO: move to css class for theming support
+        let path = imports.misc.extensionUtils.getCurrentExtension().path;
+        this._glossyBackgroundStyle = 'background-image: url(\'' + path + '/media/glossy.svg\');' +
+                              'background-size: contain;';
+
     },
 
     update: function() {
         this.parent();
+
+        // Enable / Disable the backlight of running apps
+        if (!this._settings.get_boolean('apply-custom-theme') && this._settings.get_boolean('unity-backlit-items')) {
+            this._source._iconContainer.get_children()[1].set_style(this._glossyBackgroundStyle);
+            if (this._isRunning)
+                this._enableBacklight();
+        } else {
+            this._disableBacklight();
+            this._source._iconContainer.get_children()[1].set_style(null);
+        }
+
         if (this._area)
             this._area.queue_repaint();
     },
@@ -236,13 +284,26 @@ const RunningIndicatorDots = new Lang.Class({
         }
 
         if (!this._settings.get_boolean('apply-custom-theme')
-            && this._settings.get_boolean('custom-theme-running-dots')
             && this._settings.get_boolean('custom-theme-customize-running-dots')) {
             this._borderColor = Clutter.color_from_string(this._settings.get_string('custom-theme-running-dots-border-color'))[1];
             this._borderWidth = this._settings.get_int('custom-theme-running-dots-border-width');
             this._bodyColor =  Clutter.color_from_string(this._settings.get_string('custom-theme-running-dots-color'))[1];
-        }
-        else {
+        } else if (this._settings.get_boolean('unity-backlit-items')) {
+            // Use dominant color for dots too if the backlit is enables
+            let colorPalette = this._dominantColorExtractor._getColorPalette();
+
+            // Slightly adjust the styling
+            this._borderWidth = 2;
+
+            if (colorPalette !== null) {
+                this._borderColor = Clutter.color_from_string(colorPalette.lighter)[1] ;
+                this._bodyColor = Clutter.color_from_string(colorPalette.darker)[1];
+            } else {
+                // Fallback
+                this._borderColor = Clutter.color_from_string('white')[1];
+                this._bodyColor = Clutter.color_from_string('gray')[1];
+            }
+        } else {
             // Re-use the style - background color, and border width and color -
             // of the default dot
             let themeNode = this._source._dot.get_theme_node();
@@ -314,101 +375,6 @@ const RunningIndicatorDots = new Lang.Class({
         this._area.destroy();
     }
 
-});
-
-const RunningIndicatorColoredBacklit = new Lang.Class({
-
-    Name: 'DashToDock.RunningIndicatorColoredBacklit',
-    Extends: RunningIndicatorDots,
-
-    _init: function(source, settings) {
-
-        this.parent(source, settings);
-
-        this._dominantColorExtractor = new DominantColorExtractor(this._source.app);
-
-        // Apply glossy background
-        // TODO: move to enable/disableBacklit to apply itonly to the running apps?
-        // TODO: move to css class for theming support
-        let path = imports.misc.extensionUtils.getCurrentExtension().path;
-        let backgroundStyle = 'background-image: url(\'' + path + '/media/glossy.svg\');' +
-                              'background-size: contain;';
-        this._source._iconContainer.get_children()[1].set_style(backgroundStyle);
-    },
-
-    update: function() {
-        this.parent();
-
-        // Enable / Disable the backlight of running apps
-        if (this._isRunning) {
-            this._enableBacklight();
-
-        // TODO DO we need this!?
-        // Repaint the dots to make sure they have the correct color
-        if (this._area)
-            this._area.queue_repaint();
-        } else {
-            this._disableBacklight();
-        }
-    },
-
-    _computeStyle: function() {
-        this.parent()
-
-        // Use dominant color for dots too
-        let colorPalette = this._dominantColorExtractor._getColorPalette();
-
-        // SLightly adjust the styling
-        this._padding = 1.45;
-        this._borderWidth = 2;
-
-        if (colorPalette !== null) {
-            this._borderColor = Clutter.color_from_string(colorPalette.lighter)[1] ;
-            this._bodyColor = Clutter.color_from_string(colorPalette.darker)[1];
-        } else {
-            // Fallback
-            this._borderColor = Clutter.color_from_string('white')[1];
-            this._bodyColor = Clutter.color_from_string('gray')[1];
-        }
-    },
-
-    _enableBacklight: function() {
-
-        let colorPalette = this._dominantColorExtractor._getColorPalette();
-
-        // Fallback
-        if (colorPalette === null) {
-            this._source._iconContainer.set_style(
-                'border-radius: 5px;' +
-                'background-gradient-direction: vertical;' +
-                'background-gradient-start: #e0e0e0;' +
-                'background-gradient-end: darkgray;'
-            );
-
-           return;
-        }
-
-        this._source._iconContainer.set_style(
-            'border-radius: 5px;' +
-            'background-gradient-direction: vertical;' +
-            'background-gradient-start: ' + colorPalette.original + ';' +
-            'background-gradient-end: ' +  colorPalette.darker + ';'
-        );
-
-    },
-
-    _disableBacklight: function() {
-        this._source._iconContainer.set_style(null);
-    },
-
-    destroy: function() {
-        this._disableBacklight();
-        // Remove glossy background if the children still exists
-        if (this._source._iconContainer.get_children().length > 1)
-            this._source._iconContainer.get_children()[1].set_style(null);
-
-        this.parent();
-    }
 });
 
 /*

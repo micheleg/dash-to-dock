@@ -123,7 +123,7 @@ var MyAppIcon = new Lang.Class({
         this._progress = 0;
 
         let keys = ['apply-custom-theme',
-                   'custom-theme-running-dots',
+                   'running-indicator-style',
                    'custom-theme-customize-running-dots',
                    'custom-theme-running-dots-color',
                    'custom-theme-running-dots-border-color',
