@@ -369,15 +369,18 @@ const WindowPreviewMenuItem = new Lang.Class({
         this._window = window;
         this._destroyId = 0;
         this._windowAddedId = 0;
-        params = Params.parse(params, { style_class: 'app-well-preview-menu-item' });
         this.parent(params);
+
+        // We don't want this: it adds spacing on the left of the item.
+        this.actor.remove_child(this._ornamentLabel);
+        this.actor.add_style_class_name('dashtodock-app-well-preview-menu-item');
 
         this._cloneBin = new St.Bin();
         this._cloneBin.set_size(PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT);
 
         // TODO: improve the way the closebutton is layout. Just use some padding
         // for the moment.
-        this._cloneBin.set_style('padding: 5px');
+        this._cloneBin.set_style('padding-bottom: 0.5em');
 
         this.closeButton = new St.Button({ style_class: 'window-close',
                                           x_expand: true,

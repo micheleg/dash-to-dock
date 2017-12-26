@@ -131,3 +131,7 @@
     border-right-width: 1px;
     margin: 32px 0px;
 }
+
+.dashtodock-app-well-preview-menu-item {
+    padding: 1em 1em 0.5em 1em;
+}
