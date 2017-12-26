@@ -124,11 +124,7 @@ var MyAppIcon = new Lang.Class({
 
         let keys = ['apply-custom-theme',
                    'running-indicator-style',
-                   'custom-theme-customize-running-dots',
-                   'custom-theme-running-dots-color',
-                   'custom-theme-running-dots-border-color',
-                   'custom-theme-running-dots-border-width',
-                   'unity-backlit-items'];
+                    ];
 
         keys.forEach(function(key) {
             this._signalsHandler.add([

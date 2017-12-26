@@ -235,7 +235,9 @@ const RunningIndicatorDots = new Lang.Class({
 
         let keys = ['custom-theme-running-dots-color',
                    'custom-theme-running-dots-border-color',
-                   'custom-theme-running-dots-border-width'];
+                   'custom-theme-running-dots-border-width',
+                   'custom-theme-customize-running-dots',
+                   'unity-backlit-items'];
 
         keys.forEach(function(key) {
             this._signalsHandler.add([
