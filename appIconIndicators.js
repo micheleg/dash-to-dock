@@ -220,7 +220,7 @@ const RunningIndicatorDots = new Lang.Class({
     update: function() {
         this.parent();
         if (this._area)
-            this._area.queue_redraw();
+            this._area.queue_repaint();
     },
 
      _computeStyle: function() {
