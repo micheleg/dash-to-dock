@@ -547,6 +547,11 @@ const Settings = new Lang.Class({
             let box = this._builder.get_object('running_dots_advance_settings_box');
             dialog.get_content_area().add(box);
 
+            this._settings.bind('running-indicator-dominant-color',
+                                this._builder.get_object('dominant_color_switch'),
+                                'active',
+                                Gio.SettingsBindFlags.DEFAULT);
+
             this._settings.bind('custom-theme-customize-running-dots',
                                 this._builder.get_object('dot_style_switch'),
                                 'active',

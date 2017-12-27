@@ -78,6 +78,11 @@
       <summary>...</summary>
       <description>DEFAULT: .... DOTS: ....</description>
     </key>
+    <key type="b" name="running-indicator-dominant-color">
+      <default>false</default>
+      <summary>Use application icon dominant color for the indicator color</summary>
+      <description></description>
+    </key>
     <key type="b" name="customize-alphas">
       <default>false</default>
       <summary>Manually set the min and max opacity</summary>

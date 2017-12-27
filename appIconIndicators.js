@@ -237,7 +237,8 @@ const RunningIndicatorDots = new Lang.Class({
                    'custom-theme-running-dots-border-color',
                    'custom-theme-running-dots-border-width',
                    'custom-theme-customize-running-dots',
-                   'unity-backlit-items'];
+                   'unity-backlit-items',
+                   'running-indicator-dominant-color'];
 
         keys.forEach(function(key) {
             this._signalsHandler.add([
@@ -285,33 +286,46 @@ const RunningIndicatorDots = new Lang.Class({
             this._height = height;
         }
 
-        if (!this._settings.get_boolean('apply-custom-theme')
-            && this._settings.get_boolean('custom-theme-customize-running-dots')) {
-            this._borderColor = Clutter.color_from_string(this._settings.get_string('custom-theme-running-dots-border-color'))[1];
-            this._borderWidth = this._settings.get_int('custom-theme-running-dots-border-width');
-            this._bodyColor =  Clutter.color_from_string(this._settings.get_string('custom-theme-running-dots-color'))[1];
-        } else if (this._settings.get_boolean('unity-backlit-items')) {
-            // Use dominant color for dots too if the backlit is enables
-            let colorPalette = this._dominantColorExtractor._getColorPalette();
+        // By defaut re-use the style - background color, and border width and color -
+        // of the default dot
+        let themeNode = this._source._dot.get_theme_node();
+        this._borderColor = themeNode.get_border_color(this._side);
+        this._borderWidth = themeNode.get_border_width(this._side);
+        this._bodyColor = themeNode.get_background_color();
 
-            // Slightly adjust the styling
-            this._borderWidth = 2;
+        if (!this._settings.get_boolean('apply-custom-theme')) {
+            // Adjust for the backlit case
+            if (this._settings.get_boolean('unity-backlit-items')) {
+                // Use dominant color for dots too if the backlit is enables
+                let colorPalette = this._dominantColorExtractor._getColorPalette();
 
-            if (colorPalette !== null) {
-                this._borderColor = Clutter.color_from_string(colorPalette.lighter)[1] ;
-                this._bodyColor = Clutter.color_from_string(colorPalette.darker)[1];
-            } else {
-                // Fallback
-                this._borderColor = Clutter.color_from_string('white')[1];
-                this._bodyColor = Clutter.color_from_string('gray')[1];
+                // Slightly adjust the styling
+                this._borderWidth = 2;
+
+                if (colorPalette !== null) {
+                    this._borderColor = Clutter.color_from_string(colorPalette.lighter)[1] ;
+                    this._bodyColor = Clutter.color_from_string(colorPalette.darker)[1];
+                } else {
+                    // Fallback
+                    this._borderColor = Clutter.color_from_string('white')[1];
+                    this._bodyColor = Clutter.color_from_string('gray')[1];
+                }
             }
-        } else {
-            // Re-use the style - background color, and border width and color -
-            // of the default dot
-            let themeNode = this._source._dot.get_theme_node();
-            this._borderColor = themeNode.get_border_color(this._side);
-            this._borderWidth = themeNode.get_border_width(this._side);
-            this._bodyColor = themeNode.get_background_color();
+
+            // Apply dominant color if requested
+            if (this._settings.get_boolean('running-indicator-dominant-color')) {
+                let colorPalette = this._dominantColorExtractor._getColorPalette();
+                if (colorPalette !== null) {
+                    this._bodyColor = Clutter.color_from_string(colorPalette.original)[1];
+                }
+            }
+
+            // Finally, use customize style if requested
+            if (this._settings.get_boolean('custom-theme-customize-running-dots')) {
+                this._borderColor = Clutter.color_from_string(this._settings.get_string('custom-theme-running-dots-border-color'))[1];
+                this._borderWidth = this._settings.get_int('custom-theme-running-dots-border-width');
+                this._bodyColor =  Clutter.color_from_string(this._settings.get_string('custom-theme-running-dots-color'))[1];
+            }
         }
 
         // Define the radius as an arbitrary size, but keep large enough to account
