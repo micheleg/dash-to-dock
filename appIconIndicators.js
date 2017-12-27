@@ -1,3 +1,4 @@
+const Cogl = imports.gi.Cogl;
 const Cairo = imports.cairo;
 const Clutter = imports.gi.Clutter;
 const GdkPixbuf = imports.gi.GdkPixbuf
@@ -230,6 +231,36 @@ const RunningIndicatorDots = new Lang.Class({
         this._hideDefaultDot();
 
         this._area = new St.DrawingArea({x_expand: true, y_expand: true});
+
+        // We draw for the bottom case and rotate the canvas for other placements
+        //set center of rotatoins to the center
+        this._area.set_pivot_point(0.5, 0.5);
+        // prepare transformation matrix
+        let m = new Cogl.Matrix();
+        m.init_identity();
+
+        switch (this._side) {
+        case St.Side.TOP:
+            m.xx = -1;
+            m.rotate(180, 0, 0, 1);
+            break
+
+        case St.Side.BOTTOM:
+            // nothing
+            break;
+
+        case St.Side.LEFT:
+            m.yy = -1;
+            m.rotate(90, 0, 0, 1);
+            break;
+
+        case St.Side.RIGHT:
+            m.rotate(-90, 0, 0, 1);
+            break
+        }
+
+        this._area.set_transform(m);
+
         this._area.connect('repaint', Lang.bind(this, this._updateIndicator));
         this._source._iconContainer.add_child(this._area);
 
@@ -277,14 +308,8 @@ const RunningIndicatorDots = new Lang.Class({
      _computeStyle: function() {
 
         let [width, height] = this._area.get_surface_size();
-        // As the canvas is rotated, invert width and height
-        if (this._side == St.Side.LEFT || this._side == St.Side.RIGHT){
-            this._width = height;
-            this._height = width;
-        } else {
-            this._width = width;
-            this._height = height;
-        }
+        this._width = height;
+        this._height = width;
 
         // By defaut re-use the style - background color, and border width and color -
         // of the default dot
@@ -341,28 +366,6 @@ const RunningIndicatorDots = new Lang.Class({
         let cr = this._area.get_context();
 
         this._computeStyle();
-
-        // draw for the bottom case, rotate the canvas for other placements
-        switch (this._side) {
-        case St.Side.TOP:
-            cr.rotate(Math.PI);
-            cr.translate(-this._width, -this._height);
-            break;
-
-        case St.Side.BOTTOM:
-            // nothing
-            break;
-
-        case St.Side.LEFT:
-            cr.rotate(Math.PI/2);
-            cr.translate(0, -this._height);
-            break;
-
-        case St.Side.RIGHT:
-            cr.rotate(-Math.PI/2);
-            cr.translate(-this._width, 0);
-        }
-
         this._drawIndicator(cr);
         cr.$dispose();
     },
