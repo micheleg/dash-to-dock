@@ -315,7 +315,7 @@ const WindowPreviewList = new Lang.Class({
         // when we *don't* need it, so turn off the scrollbar when that's true.
         // Dynamic changes in whether we need it aren't handled properly.
         let needsScrollbar = this._needsScrollbar();
-        scrollbar_policy =  needsScrollbar ? Gtk.PolicyType.AUTOMATIC : Gtk.PolicyType.NEVER;
+        let scrollbar_policy =  needsScrollbar ? Gtk.PolicyType.AUTOMATIC : Gtk.PolicyType.NEVER;
         if (this.isHorizontal)
             this.actor.hscrollbar_policy =  scrollbar_policy;
         else
