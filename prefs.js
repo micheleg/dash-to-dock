@@ -35,7 +35,8 @@ const RunningIndicatorStyle = {
     DASHES: 3,
     SEGMENTED: 4,
     SOLID: 5,
-    CILIORA: 6
+    CILIORA: 6,
+    METRO: 7
 };
 
 /**

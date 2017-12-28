@@ -23,7 +23,8 @@ const RunningIndicatorStyle = {
     DASHES: 3,
     SEGMENTED: 4,
     SOLID: 5,
-    CILIORA: 6
+    CILIORA: 6,
+    METRO: 7
 };
 
 const MAX_WINDOWS_CLASSES = 4;
@@ -83,6 +84,10 @@ var AppIconIndicator = new Lang.Class({
             case RunningIndicatorStyle.CILIORA:
                 runningIndicator = new RunningIndicatorCiliora(source, settings);
                 break;
+
+            case RunningIndicatorStyle.METRO:
+                runningIndicator = new RunningIndicatorMetro(source, settings);
+            break;
 
             default:
                 runningIndicator = new RunningIndicatorBase(source, settings);
@@ -589,6 +594,63 @@ const RunningIndicatorDashes = new Lang.Class({
     }
 });
 
+// Adapted from dash-to-panel by Jason DeRose
+// https://github.com/jderose9/dash-to-panel
+const RunningIndicatorMetro = new Lang.Class({
+
+    Name: 'DashToDock.RunningIndicatorMetro',
+    Extends: RunningIndicatorDots,
+
+    _init: function(source, settings) {
+        this.parent(source, settings);
+        this._source.actor.add_style_class_name('metro');
+    },
+
+    _drawIndicator: function(cr) {
+        if (this._isRunning) {
+            let size =  Math.max(this._width/20, this._borderWidth);
+            let padding = 0;
+            // For the backlit case here we don't want the outer border visible
+            if (this._settings.get_boolean('unity-backlit-items') && !this._settings.get_boolean('custom-theme-customize-running-dots'))
+                padding = 0;
+            let yOffset = this._height - padding - size;
+
+            let n = this._nWindows;
+            if(n <= 1) {
+                cr.translate(0, yOffset);
+                Clutter.cairo_set_source_color(cr, this._bodyColor);
+                cr.newSubPath();
+                cr.rectangle(0, 0, this._width, size);
+                cr.fill();
+            } else {
+                let blackenedLength = (1/48)*this._width; // need to scale with the SVG for the stacked highlight
+                let darkenedLength = this._isFocused ? (2/48)*this._width : (10/48)*this._width;
+                let blackenedColor = this._bodyColor.shade(.3);
+                let darkenedColor = this._bodyColor.shade(.7);
+
+                cr.translate(0, yOffset);
+
+                Clutter.cairo_set_source_color(cr, this._bodyColor);
+                cr.newSubPath();
+                cr.rectangle(0, 0, this._width - darkenedLength - blackenedLength, size);
+                cr.fill();
+                Clutter.cairo_set_source_color(cr, blackenedColor);
+                cr.newSubPath();
+                cr.rectangle(this._width - darkenedLength - blackenedLength, 0, 1, size);
+                cr.fill();
+                Clutter.cairo_set_source_color(cr, darkenedColor);
+                cr.newSubPath();
+                cr.rectangle(this._width - darkenedLength, 0, darkenedLength, size);
+                cr.fill();
+            }
+        }
+    },
+
+    destroy: function() {
+        this.parent();
+        this._source.actor.remove_style_class_name('metro');
+    }
+});
 
 /*
  * Unity like notification and progress indicators

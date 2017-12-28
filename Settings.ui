@@ -1962,6 +1962,7 @@
                                   <item translatable="yes">Segmented</item>
                                   <item translatable="yes">Solid</item>
                                   <item translatable="yes">Ciliora</item>
+                                  <item translatable="yes">Metro</item>
                                 </items>
                               </object>
                               <packing>
