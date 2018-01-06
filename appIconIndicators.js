@@ -330,6 +330,8 @@ const RunningIndicatorDots = new Lang.Class({
             this._source._iconContainer.get_children()[1].set_style(this._glossyBackgroundStyle);
             if (this._isRunning)
                 this._enableBacklight();
+            else
+                this._disableBacklight();
         } else {
             this._disableBacklight();
             this._source._iconContainer.get_children()[1].set_style(null);
