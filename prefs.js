@@ -850,6 +850,15 @@ var Settings = class DashToDock_Settings {
             this._builder.get_object('unity_backlit_items_switch'),
             'active', Gio.SettingsBindFlags.DEFAULT
         );
+        this._settings.bind('apply-glossy-effect',
+            this._builder.get_object('apply_gloss_effect_button'),
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind('unity-backlit-items',
+            this._builder.get_object('apply_gloss_effect_button'),
+            'sensitive',
+            Gio.SettingsBindFlags.DEFAULT
+        );
 
         this._settings.bind('force-straight-corner',
             this._builder.get_object('force_straight_corner_switch'),

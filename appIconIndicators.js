@@ -311,6 +311,7 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
                    'custom-theme-running-dots-border-width',
                    'custom-theme-customize-running-dots',
                    'unity-backlit-items',
+                   'apply-glossy-effect',
                    'running-indicator-dominant-color'];
 
         keys.forEach(function(key) {
@@ -334,7 +335,11 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
         // Enable / Disable the backlight of running apps
         if (!Docking.DockManager.settings.get_boolean('apply-custom-theme') &&
             Docking.DockManager.settings.get_boolean('unity-backlit-items')) {
-            this._source._iconContainer.get_children()[1].set_style(this._glossyBackgroundStyle);
+            if (Docking.DockManager.settings.get_boolean('apply-glossy-effect'))
+                this._source._iconContainer.get_children()[1].set_style(this._glossyBackgroundStyle);
+            else
+                this._source._iconContainer.get_children()[1].set_style(null);
+
             if (this._isRunning)
                 this._enableBacklight();
             else
