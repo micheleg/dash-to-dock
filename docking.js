@@ -483,6 +483,14 @@ var DockedDash = class DashToDock {
             () => { this.dash.resetAppIcons(); }
         ], [
             this._settings,
+            'changed::show-trash',
+            () => { this.dash.resetAppIcons(); }
+        ], [
+            this._settings,
+            'changed::show-mounts',
+            () => { this.dash.resetAppIcons(); }
+        ], [
+            this._settings,
             'changed::show-running',
             () => { this.dash.resetAppIcons(); }
         ], [

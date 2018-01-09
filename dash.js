@@ -274,12 +274,6 @@ var MyDash = class DashToDock_MyDash {
 
         this._appSystem = Shell.AppSystem.get_default();
 
-        // Remove Drive Icons
-        this._removables = new Locations.Removables();
-
-        // Trash Icon
-        this._trash = new Locations.Trash();
-
         this._signalsHandler.add([
             this._appSystem,
             'installed-changed',
@@ -307,14 +301,6 @@ var MyDash = class DashToDock_MyDash {
             Main.overview,
             'item-drag-cancelled',
             this._onDragCancelled.bind(this)
-        ], [
-            this._trash,
-            'changed',
-            this._queueRedisplay.bind(this)
-        ], [
-            this._removables,
-            'changed',
-            this._queueRedisplay.bind(this)
         ]);
     }
 
@@ -758,8 +744,33 @@ var MyDash = class DashToDock_MyDash {
             }
         }
 
-        Array.prototype.push.apply(newApps, this._removables.getApps());
-        newApps.push(this._trash.getApp());
+        if (this._dtdSettings.get_boolean('show-mounts')) {
+            if (!this._removables) {
+                this._removables = new Locations.Removables();
+                this._signalsHandler.addWithLabel('show-mounts',
+                    [ this._removables,
+                      'changed',
+                      this._queueRedisplay.bind(this) ]);
+            }
+            Array.prototype.push.apply(newApps, this._removables.getApps());
+        } else if (this._removables) {
+            this._signalsHandler.removeWithLabel('show-mounts');
+            this._removables = null;
+        }
+
+        if (this._dtdSettings.get_boolean('show-trash')) {
+            if (!this._trash) {
+                this._trash = new Locations.Trash();
+                this._signalsHandler.addWithLabel('show-trash',
+                    [ this._trash,
+                      'changed',
+                      this._queueRedisplay.bind(this) ]);
+            }
+            newApps.push(this._trash.getApp());
+        } else if (this._trash) {
+            this._signalsHandler.removeWithLabel('show-trash');
+            this._trash = null;
+        }
 
         // Figure out the actual changes to the list of items; we iterate
         // over both the list of items currently in the dash and the list
