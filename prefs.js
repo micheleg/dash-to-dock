@@ -481,6 +481,14 @@ var Settings = class DashToDock_Settings {
                             this._builder.get_object('show_favorite_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-trash',
+                            this._builder.get_object('show_trash_switch'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-mounts',
+                            this._builder.get_object('show_mounts_switch'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-show-apps-button',
                             this._builder.get_object('show_applications_button_switch'),
                             'active',
