@@ -509,6 +509,18 @@ const DockedDash = new Lang.Class({
             })
         ], [
             this._settings,
+            'changed::show-trash',
+            Lang.bind(this, function() {
+                    this.dash.resetAppIcons();
+            })
+        ], [
+            this._settings,
+            'changed::show-mounts',
+            Lang.bind(this, function() {
+                    this.dash.resetAppIcons();
+            })
+        ], [
+            this._settings,
             'changed::show-running',
             Lang.bind(this, function() {
                     this.dash.resetAppIcons();

@@ -762,8 +762,13 @@ var MyDash = new Lang.Class({
             }
         }
 
-        Array.prototype.push.apply(newApps, this._removables.getApps());
-        newApps.push(this._trash.getApp());
+        if (this._dtdSettings.get_boolean('show-mounts')) {
+            Array.prototype.push.apply(newApps, this._removables.getApps());
+        }
+
+        if (this._dtdSettings.get_boolean('show-trash')) {
+            newApps.push(this._trash.getApp());
+        }
 
         // Figure out the actual changes to the list of items; we iterate
         // over both the list of items currently in the dash and the list

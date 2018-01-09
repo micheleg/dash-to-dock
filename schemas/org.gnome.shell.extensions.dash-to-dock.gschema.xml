@@ -214,6 +214,16 @@
       <summary>Show favorites apps</summary>
       <description>Show or hide favorite appplications icons in the dash</description>
     </key>
+    <key type="b" name="show-trash">
+      <default>true</default>
+      <summary>Show trash can</summary>
+      <description>Show or hide the trash can icon in the dash</description>
+    </key>
+    <key type="b" name="show-mounts">
+      <default>true</default>
+      <summary>Show mounted volumes and devices</summary>
+      <description>Show or hide mounted volume and device icons in the dash</description>
+    </key>
     <key type="b" name="show-show-apps-button">
       <default>true</default>
       <summary>Show applications button</summary>
