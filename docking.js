@@ -482,6 +482,14 @@ var DockedDash = GObject.registerClass({
             () => { this.dash.resetAppIcons(); }
         ], [
             settings,
+            'changed::show-trash',
+            () => { this.dash.resetAppIcons(); }
+        ], [
+            settings,
+            'changed::show-mounts',
+            () => { this.dash.resetAppIcons(); }
+        ], [
+            settings,
             'changed::show-running',
             () => { this.dash.resetAppIcons(); }
         ], [
