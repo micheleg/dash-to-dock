@@ -44,7 +44,7 @@ msgstr "Obnovit výchozí nastavení"
 
 #: prefs.js:390
 msgid "Show dock and application numbers"
-msgstr "Zobrazování docku a čísel aplikací"
+msgstr "Zobrazování doku a čísel aplikací"
 
 #: prefs.js:447
 msgid "Customize middle-click behavior"
@@ -93,7 +93,7 @@ msgstr "Krátce ukázat čísla aplikací odpovídající klávesové zkratce"
 
 #: Settings.ui.h:7
 msgid "Show the dock if it is hidden"
-msgstr "Zobrazit dock, pokud je skrytý"
+msgstr "Zobrazit dok, pokud je skrytý"
 
 #: Settings.ui.h:8
 msgid ""
@@ -101,7 +101,7 @@ msgid ""
 "shortcut."
 msgstr ""
 "Pokud je nastaveno automatické skrývání, stisknutím klávesové zkratky se "
-"dock krátce zobrazí."
+"dok krátce zobrazí."
 
 #: Settings.ui.h:9
 msgid "Shortcut for the options above"
@@ -172,7 +172,7 @@ msgstr "Shift + prostřední tlačítko"
 
 #: Settings.ui.h:25
 msgid "Show the dock on"
-msgstr "Kde zobrazit dock"
+msgstr "Kde zobrazit dok"
 
 #: Settings.ui.h:26
 msgid "Show on all monitors."
@@ -195,7 +195,7 @@ msgid ""
 "Hide the dock when it obstructs a window of the current application. More "
 "refined settings are available."
 msgstr ""
-"Skrýt dock, pokud překáží oknu aktivní aplikace. K dispozici jsou podrobnější "
+"Skrýt dok, pokud překáží oknu aktivní aplikace. K dispozici jsou podrobnější "
 "nastavení."
 
 #: Settings.ui.h:33
@@ -204,11 +204,11 @@ msgstr "Chytré skrývání"
 
 #: Settings.ui.h:34
 msgid "Dock size limit"
-msgstr "Maximální velikost docku"
+msgstr "Maximální velikost doku"
 
 #: Settings.ui.h:35
 msgid "Panel mode: extend to the screen edge"
-msgstr "Režim panelu (roztáhnout dock po celé délce obrazovky)"
+msgstr "Režim panelu (roztáhnout dok po celé délce obrazovky)"
 
 #: Settings.ui.h:36
 msgid "Icon size limit"
@@ -217,7 +217,7 @@ msgstr "Maximální velikost ikon"
 #: Settings.ui.h:37
 msgid "Fixed icon size: scroll to reveal other icons"
 msgstr ""
-"Neměnná velikost ikon (rolováním na docku je možné zobrazit další ikony)"
+"Neměnná velikost ikon (rolováním na doku je možné zobrazit další ikony)"
 
 #: Settings.ui.h:38
 msgid "Position and size"
@@ -257,7 +257,7 @@ msgstr "Tlačítko přístupu ke všem aplikacím"
 
 #: Settings.ui.h:46
 msgid "Move the applications button at the beginning of the dock."
-msgstr "Přesunout tlačítko přístupu ke všem aplikacím na začátek docku"
+msgstr "Přesunout tlačítko přístupu ke všem aplikacím na začátek doku"
 
 #: Settings.ui.h:47
 msgid "Animate <i>Show Applications</i>."
@@ -316,7 +316,7 @@ msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
-"Nastavení kvůli integraci docku s výchozím motivem GNOME; jinak lze použít "
+"Nastavení kvůli integraci doku s výchozím motivem GNOME; jinak lze použít "
 "samostatné předvolby níže."
 
 #: Settings.ui.h:60
@@ -329,7 +329,7 @@ msgstr "Prostorově méně náročné zobrazení (zmenšení volného místa kol
 
 #: Settings.ui.h:62
 msgid "Shrink the dash"
-msgstr "Zmenšený dock"
+msgstr "Zmenšený dok"
 
 #: Settings.ui.h:63
 msgid "Show a dot for each windows of the application."
@@ -341,19 +341,19 @@ msgstr "Indikátory počtu oken"
 
 #: Settings.ui.h:65
 msgid "Set the background color for the dash."
-msgstr "Nastavit barvu pozadí docku"
+msgstr "Nastavit barvu pozadí doku"
 
 #: Settings.ui.h:66
 msgid "Customize the dash color"
-msgstr "Vlastní barva docku"
+msgstr "Vlastní barva doku"
 
 #: Settings.ui.h:67
 msgid "Tune the dash background opacity."
-msgstr "Nastavit průhlednost docku"
+msgstr "Nastavit průhlednost doku"
 
 #: Settings.ui.h:68
 msgid "Customize opacity"
-msgstr "Volitelná průhlednost"
+msgstr "Přizpůsobení průhlednosti"
 
 #: Settings.ui.h:69
 msgid "Opacity"
@@ -373,7 +373,7 @@ msgstr "verze: "
 
 #: Settings.ui.h:74
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr "Vytvoří dock z přehledu činností a oblíbených aplikací"
+msgstr "Vytvoří dok z přehledu činností a oblíbených aplikací"
 
 #: Settings.ui.h:75
 msgid "Created by"
@@ -399,7 +399,7 @@ msgstr "O tomto doplňku"
 
 #: Settings.ui.h:80
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr "Zobrazit dock najetím myši ke kraji obrazovky"
+msgstr "Zobrazit dok najetím myši ke kraji obrazovky"
 
 #: Settings.ui.h:81
 msgid "Autohide"
@@ -407,7 +407,7 @@ msgstr "Automatické skrývání"
 
 #: Settings.ui.h:82
 msgid "Push to show: require pressure to show the dock"
-msgstr "Zobrazit dock až po zatlačení na kraj obrazovky"
+msgstr "Zobrazit dok až po zatlačení na kraj obrazovky"
 
 #: Settings.ui.h:83
 msgid "Enable in fullscreen mode"
@@ -415,7 +415,7 @@ msgstr "Povolit celoobrazovkový režim"
 
 #: Settings.ui.h:84
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr "Zobrazit dock pokud nepřekáží oknům aplikací"
+msgstr "Zobrazit dok pokud nepřekáží oknům aplikací"
 
 #: Settings.ui.h:85
 msgid "Dodge windows"
@@ -449,19 +449,35 @@ msgstr "Míra tlaku (px)"
 msgid "Enable Unity7 like glossy backlit items"
 msgstr "Podsvícení ikon jako v Unity 7"
 
+#: Settings.ui.h:93
+msgid "Default"
+msgstr "Výchozí"
 
-#~ msgid "0.000"
-#~ msgstr "0.000"
+#: Settings.ui.h:94
+msgid "Fixed"
+msgstr "Neměnná"
 
-#, fuzzy
-#~ msgid ""
-#~ "With fixed icon size, only the edge of the dock and the <i>Show "
-#~ "Applications</i> icon are active."
-#~ msgstr ""
-#~ "Oblast po okrajích doku a tlačítko zobrazení všech aplikací jsou aktivní."
+#: Settings.ui.h:95
+msgid "Adaptive"
+msgstr "Adaptivní"
 
-#~ msgid "Switch workspace by scrolling on the dock"
-#~ msgstr "Přepínat pracovní plochy kolečkem myši nad dokem."
+#: Settings.ui.h:96
+msgid "Dynamic"
+msgstr "Dynamická"
 
-#~ msgid "Only consider windows of the focused application"
-#~ msgstr "Brát v úvahu jen okna aktivní aplikace"
+#: Settings.ui.h:97
+msgid "Customize minimum and maximum opacity values"
+msgstr "Nastavit minimální a maximální hodnoty průhlednosti"
+
+#: Settings.ui.h:98
+msgid "Customize opacity"
+msgstr "Přizpůsobení průhlednosti"
+
+#: Settings.ui.h:99
+msgid "Maximum opacity"
+msgstr "Maximální průhlednost"
+
+#: Settings.ui.h:99
+msgid "Minimum opacity"
+msgstr "Minimální průhlednost"
+
