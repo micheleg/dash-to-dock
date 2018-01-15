@@ -1023,6 +1023,9 @@ function getInterestingWindows(app, settings, monitorIndex) {
     },
 
     popupMenu: function() {
+        /* disable settings on right-click as only Dash to Dock will display extended settings */
+        return;
+
         this._removeMenuTimeout();
         this.actor.fake_release();
 
