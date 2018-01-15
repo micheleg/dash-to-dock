@@ -2,6 +2,9 @@ gnome-shell-extension-ubuntu-dock (0.9) UNRELEASED; urgency=medium
 
   * Rebase on latest master.
   * Disable "parameters" context menu on appIcon right click
+  * schemas/10_ubuntu-dock.gschema.override:
+    Adapt dot overrides to latest master, upstream changed dots
+    gsettings parameters, adapt our default.
 
  -- Didier Roche <didrocks@ubuntu.com>  Wed, 03 Jan 2018 10:59:16 +0100
 
