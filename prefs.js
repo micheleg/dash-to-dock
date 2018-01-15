@@ -28,6 +28,17 @@ const TransparencyMode = {
     DYNAMIC:  3
 };
 
+const RunningIndicatorStyle = {
+    DEFAULT: 0,
+    DOTS: 1,
+    SQUARES: 2,
+    DASHES: 3,
+    SEGMENTED: 4,
+    SOLID: 5,
+    CILIORA: 6,
+    METRO: 7
+};
+
 /**
  * This function was copied from the activities-config extension
  * https://github.com/nls1729/acme-code/tree/master/activities-config
@@ -510,17 +521,29 @@ const Settings = new Lang.Class({
         this._settings.bind('apply-custom-theme', this._builder.get_object('builtin_theme_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('custom-theme-shrink', this._builder.get_object('shrink_dash_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
 
-        this._settings.bind('custom-theme-running-dots',
-                             this._builder.get_object('running_dots_switch'),
-                             'active',
-                             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('custom-theme-running-dots',
-                            this._builder.get_object('running_dots_advance_settings_button'),
-                            'sensitive',
-                            Gio.SettingsBindFlags.DEFAULT);
+        // Running indicators
+        this._builder.get_object('running_indicators_combo').set_active(
+            this._settings.get_enum('running-indicator-style')
+        );
+        this._builder.get_object('running_indicators_combo').connect(
+            'changed',
+            Lang.bind (this, function(widget) {
+                this._settings.set_enum('running-indicator-style', widget.get_active());
+            })
+        );
 
-        // Create dialog for running dots advanced settings
-        this._builder.get_object('running_dots_advance_settings_button').connect('clicked', Lang.bind(this, function() {
+        if (this._settings.get_enum('running-indicator-style') == RunningIndicatorStyle.DEFAULT)
+            this._builder.get_object('running_indicators_advance_settings_button').set_sensitive(false);
+
+        this._settings.connect('changed::running-indicator-style', Lang.bind(this, function() {
+           if (this._settings.get_enum('running-indicator-style') == RunningIndicatorStyle.DEFAULT)
+               this._builder.get_object('running_indicators_advance_settings_button').set_sensitive(false);
+           else
+               this._builder.get_object('running_indicators_advance_settings_button').set_sensitive(true);
+        }));
+
+        // Create dialog for running indicators advanced settings
+        this._builder.get_object('running_indicators_advance_settings_button').connect('clicked', Lang.bind(this, function() {
 
             let dialog = new Gtk.Dialog({ title: __('Customize running indicators'),
                                           transient_for: this.widget.get_toplevel(),
@@ -529,6 +552,11 @@ const Settings = new Lang.Class({
 
             let box = this._builder.get_object('running_dots_advance_settings_box');
             dialog.get_content_area().add(box);
+
+            this._settings.bind('running-indicator-dominant-color',
+                                this._builder.get_object('dominant_color_switch'),
+                                'active',
+                                Gio.SettingsBindFlags.DEFAULT);
 
             this._settings.bind('custom-theme-customize-running-dots',
                                 this._builder.get_object('dot_style_switch'),

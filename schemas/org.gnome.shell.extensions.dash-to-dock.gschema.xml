@@ -33,6 +33,16 @@
     <value value='2' nick='ADAPTIVE'/>
     <value value='3' nick='DYNAMIC'/>
   </enum>
+    <enum id='org.gnome.shell.extensions.dash-to-dock.running-indicator-style'>
+    <value value='0' nick='DEFAULT'/>
+    <value value='1' nick='DOTS'/>
+    <value value='2' nick='SQUARES'/>
+    <value value='3' nick='DASHES'/>
+    <value value='4' nick='SEGMENTED'/>
+    <value value='5' nick='SOLID'/>
+    <value value='6' nick='CILIORA'/>
+    <value value='7' nick='METRO'/>
+  </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key name="dock-position" enum="org.gnome.shell.extensions.dash-to-dock.position">
       <default>'LEFT'</default>
@@ -67,7 +77,17 @@
     <key name="transparency-mode" enum="org.gnome.shell.extensions.dash-to-dock.transparency-mode">
       <default>'DEFAULT'</default>
       <summary>Transparency mode for the dock</summary>
-      <description>FIXED: constant transparency. ADAPTIVE: lock state with the top panel. DYNAMIC: dock takes the opaque style only when windows are close to it.</description>
+      <description>FIXED: constant transparency. ADAPTIVE: lock state with the top panel when not hidden. DYNAMIC: dock takes the opaque style only when windows are close to it.</description>
+    </key>
+    <key name="running-indicator-style" enum="org.gnome.shell.extensions.dash-to-dock.running-indicator-style">
+      <default>'DEFAULT'</default>
+      <summary>...</summary>
+      <description>DEFAULT: .... DOTS: ....</description>
+    </key>
+    <key type="b" name="running-indicator-dominant-color">
+      <default>false</default>
+      <summary>Use application icon dominant color for the indicator color</summary>
+      <description></description>
     </key>
     <key type="b" name="customize-alphas">
       <default>false</default>
@@ -145,11 +165,6 @@
       <description>Apply customization to the dash appearance</description>
     </key>
     <key type="b" name="custom-theme-shrink">
-      <default>false</default>
-      <summary>TODO</summary>
-      <description>TODO</description>
-    </key>
-    <key type="b" name="custom-theme-running-dots">
       <default>false</default>
       <summary>TODO</summary>
       <description>TODO</description>

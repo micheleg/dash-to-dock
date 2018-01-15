@@ -33,7 +33,7 @@ const LauncherAPI = Me.imports.launcherAPI;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 
-const State = {
+var State = {
     HIDDEN:  0,
     SHOWING: 1,
     SHOWN:   2,
@@ -349,14 +349,6 @@ const DockedDash = new Lang.Class({
             Lang.bind(this, function() {
                 Main.overview.dashIconSize = this.dash.iconSize;
             })
-        ], [
-            this._remoteModel,
-            'entry-added',
-            Lang.bind(this, this._onLauncherEntryRemoteAdded)
-        ], [
-            this._remoteModel,
-            'entry-removed',
-            Lang.bind(this, this._onLauncherEntryRemoteRemoved)
         ]);
 
         this._injectionsHandler = new Utils.InjectionsHandler();
@@ -767,6 +759,9 @@ const DockedDash = new Lang.Class({
             transition: 'easeOutQuad',
             onComplete: Lang.bind(this, function() {
                 this._dockState = State.HIDDEN;
+                // Remove queued barried removal if any
+                if (this._removeBarrierTimeoutId > 0)
+                    Mainloop.source_remove(this._removeBarrierTimeoutId);
                 this._updateBarrier();
             })
         });
@@ -1352,28 +1347,6 @@ const DockedDash = new Lang.Class({
             else
                 return false;
         }
-    },
-
-    _onLauncherEntryRemoteAdded: function(remoteModel, entry) {
-        if (!entry || !entry.appId())
-            return;
-
-        this.dash.getAppIcons().forEach(function(icon) {
-            if (icon && icon.app && icon.app.id == entry.appId()) {
-                icon.insertEntryRemote(entry);
-            }
-        });
-    },
-
-    _onLauncherEntryRemoteRemoved: function(remoteModel, entry) {
-        if (!entry || !entry.appId())
-            return;
-
-        this.dash.getAppIcons().forEach(function(icon) {
-            if (icon && icon.app && icon.app.id == entry.appId()) {
-                icon.removeEntryRemote(entry);
-            }
-        });
     },
 
     _activateApp: function(appIndex) {

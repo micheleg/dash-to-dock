@@ -10,14 +10,14 @@ msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-04 12:35+0100\n"
-"PO-Revision-Date: 2015-10-29 14:54-0300\n"
-"Last-Translator: Jonatan Zeidler <jonatan_zeidler@gmx.de>\n"
+"PO-Revision-Date: 2017-12-11 19:21+0100\n"
+"Last-Translator: Klaus Staedtler <staedtler-przyborski@web.de>\n"
 "Language-Team: jonius <jonatan_zeidler@gmx.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.7.7\n"
+"X-Generator: Poedit 2.0.4\n"
 
 # Konjugation wegen Stellung im Satz
 #: prefs.js:113
@@ -47,69 +47,68 @@ msgid "Reset to defaults"
 msgstr "Auf Vorgaben zurücksetzen"
 
 #: prefs.js:386
-#, fuzzy
 msgid "Show dock and application numbers"
-msgstr "Laufende Anwendungen anzeigen"
+msgstr "Zeige Dock und Anwendungsnummern"
 
 #: prefs.js:443
-#, fuzzy
 msgid "Customize middle-click behavior"
-msgstr "Transparenz anpassen"
+msgstr "Verhalten des mittleren Klick anpassen"
 
 #: prefs.js:514
-#, fuzzy
 msgid "Customize running indicators"
-msgstr "Laufende Anwendungen anzeigen"
+msgstr "Laufende Anzeigen anpassen"
 
 #: appIcons.js:804
 msgid "All Windows"
 msgstr "Alle Fenster"
 
 #: Settings.ui.h:1
-#, fuzzy
 msgid "Customize indicator style"
-msgstr "Transparenz anpassen"
+msgstr "Anzeigenstil anpassen"
 
 #: Settings.ui.h:2
 msgid "Color"
-msgstr ""
+msgstr "Farbe"
 
 #: Settings.ui.h:3
 msgid "Border color"
-msgstr ""
+msgstr "Randfarbe"
 
 #: Settings.ui.h:4
 msgid "Border width"
-msgstr ""
+msgstr "Randbreite"
 
 #: Settings.ui.h:5
 msgid "Number overlay"
-msgstr ""
+msgstr "Nummer der Überlagung"
 
 #: Settings.ui.h:6
 msgid ""
 "Temporarily show the application numbers over the icons, corresponding to "
 "the shortcut."
 msgstr ""
+"Zeige vorübergehend die Nummer der Anwendung über den Icons, passend zum "
+"Tastaturkürzel."
 
 #: Settings.ui.h:7
-#, fuzzy
 msgid "Show the dock if it is hidden"
-msgstr "Dock anzeigen auf"
+msgstr "Dock anzeigen wenn es versteckt ist"
 
 #: Settings.ui.h:8
 msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
 msgstr ""
+"Wenn automatisches Ausblenden benutzt wird, erscheint kurzzeitig das Dock "
+"durch drücken des Tastaturkürzels."
 
 #: Settings.ui.h:9
 msgid "Shortcut for the options above"
-msgstr ""
+msgstr "Tastaturkürzel für die obigen Aktionen"
 
 #: Settings.ui.h:10
 msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
-msgstr ""
+msgstr "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
 
 #: Settings.ui.h:11
 msgid "Hide timeout (s)"
@@ -128,9 +127,8 @@ msgid "Shift+Click action"
 msgstr "Wirkung bei Umschalttaste + Mausklick"
 
 #: Settings.ui.h:14
-#, fuzzy
 msgid "Raise window"
-msgstr "Minimieren"
+msgstr "Fenster anheben"
 
 #: Settings.ui.h:15
 msgid "Minimize window"
@@ -147,11 +145,11 @@ msgstr "Zwischen den Fenstern der Anwendung wechseln"
 
 #: Settings.ui.h:18
 msgid "Quit"
-msgstr ""
+msgstr "Beenden"
 
 #: Settings.ui.h:19
 msgid "Behavior for Middle-Click."
-msgstr ""
+msgstr "Verhalten bei Mittel-Klick "
 
 #: Settings.ui.h:20
 #, fuzzy
@@ -160,7 +158,7 @@ msgstr "Wirkung bei Mausklick"
 
 #: Settings.ui.h:21
 msgid "Behavior for Shift+Middle-Click."
-msgstr ""
+msgstr "Verhalten bei Umschalttaste+Mittel-Klick."
 
 #: Settings.ui.h:22
 #, fuzzy
@@ -173,9 +171,8 @@ msgstr "Dock anzeigen auf"
 
 # Konjugation wegen Stellung im Satz
 #: Settings.ui.h:24
-#, fuzzy
 msgid "Show on all monitors."
-msgstr "Sekundärer Anzeige"
+msgstr "Auf allen Bildschirmen anzeigen"
 
 #: Settings.ui.h:25
 msgid "Position on screen"
@@ -231,24 +228,22 @@ msgstr "Laufende Anwendungen anzeigen"
 
 #: Settings.ui.h:39
 msgid "Isolate workspaces."
-msgstr ""
+msgstr "Isoliere Arbeitsflächen."
 
 #: Settings.ui.h:40
 msgid "Show open windows previews."
-msgstr ""
+msgstr "Zeige Vorschau der geöffneten Fenster"
 
 #: Settings.ui.h:41
-#, fuzzy
 msgid ""
 "If disabled, these settings are accessible from gnome-tweak-tool or the "
 "extension website."
 msgstr ""
-"Falls deaktiviert, sind diese Einstellungen über das Optimierungswerkzeug "
-"oder die Erweiterungsseite erreichbar."
+"Falls deaktiviert, sind diese Einstellungen über Gnome-Tweak-Tool oder die "
+"Erweiterungsseite erreichbar."
 
 # Durchkopplung von Kompositum
 #: Settings.ui.h:42
-#, fuzzy
 msgid "Show <i>Applications</i> icon"
 msgstr "Symbol <i>Anwendungen anzeigen</i> anzeigen"
 
@@ -258,23 +253,24 @@ msgstr "Anwendungen-anzeigen-Button an den Anfang verschieben."
 
 # Durchkopplung von Kompositum
 #: Settings.ui.h:44
-#, fuzzy
 msgid "Animate <i>Show Applications</i>."
-msgstr "Symbol <i>Anwendungen anzeigen</i> anzeigen"
+msgstr "Symbol <i>Anwendungen anzeigen</i> animieren"
 
 #: Settings.ui.h:45
 msgid "Launchers"
-msgstr ""
+msgstr "Starter"
 
 #: Settings.ui.h:46
 msgid ""
 "Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
 "together with Shift and Ctrl."
 msgstr ""
+"Benutze Super+(0-9) als Tastaturkürzel um Anwendungen zu aktivieren. Kann "
+"auch zusammen mit Umschalttaste und Strg. genutzt werden."
 
 #: Settings.ui.h:47
 msgid "Use keyboard shortcuts to activate apps"
-msgstr ""
+msgstr "Benutze Tastaturkürzel um Anwendungen zu aktivieren"
 
 #: Settings.ui.h:48
 msgid "Behaviour when clicking on the icon of a running application."
@@ -289,9 +285,8 @@ msgid "Minimize"
 msgstr "Minimieren"
 
 #: Settings.ui.h:51
-#, fuzzy
 msgid "Minimize or overview"
-msgstr "Minimieren"
+msgstr "Minimieren oder Übersicht"
 
 #: Settings.ui.h:52
 #, fuzzy
@@ -308,9 +303,8 @@ msgid "Do nothing"
 msgstr "Nichts tun"
 
 #: Settings.ui.h:55
-#, fuzzy
 msgid "Switch workspace"
-msgstr "Nur eine Arbeitsfläche pro Scrollen weiterschalten"
+msgstr "Arbeitsfläche umschalten"
 
 # Verwende Übersetzung aus Nautilus
 #: Settings.ui.h:56
@@ -318,7 +312,6 @@ msgid "Behavior"
 msgstr "Verhalten"
 
 #: Settings.ui.h:57
-#, fuzzy
 msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
@@ -349,15 +342,15 @@ msgstr "Indikatoren für Fensterzahl"
 
 #: Settings.ui.h:63
 msgid "Set the background color for the dash."
-msgstr ""
+msgstr "Setze Hintergrundfarbe für das Dash"
 
 #: Settings.ui.h:64
 msgid "Customize the dash color"
-msgstr ""
+msgstr "Farbe des Dash anpassen"
 
 #: Settings.ui.h:65
 msgid "Tune the dash background opacity."
-msgstr "Die Hintergrundtransparenz des Docks einstellen."
+msgstr "Die Hintergrundtransparenz des Dash einstellen."
 
 #: Settings.ui.h:66
 msgid "Customize opacity"
@@ -369,7 +362,7 @@ msgstr "Transparenz"
 
 #: Settings.ui.h:68
 msgid "Force straight corner\n"
-msgstr ""
+msgstr "Erzwinge rechte Ecke\n"
 
 #: Settings.ui.h:70
 msgid "Appearance"
@@ -413,7 +406,7 @@ msgstr "Dock einblenden, wenn Mauszeiger an Bildschirmkante anliegt."
 
 #: Settings.ui.h:79
 msgid "Autohide"
-msgstr "Automatisch verstecken"
+msgstr "Automatisch ausblenden"
 
 #: Settings.ui.h:80
 msgid "Push to show: require pressure to show the dock"
@@ -423,7 +416,7 @@ msgstr ""
 
 #: Settings.ui.h:81
 msgid "Enable in fullscreen mode"
-msgstr ""
+msgstr "Im Vollbildmodus einschalten"
 
 #: Settings.ui.h:82
 msgid "Show the dock when it doesn't obstruct application windows."

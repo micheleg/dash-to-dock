@@ -131,3 +131,33 @@
     border-right-width: 1px;
     margin: 32px 0px;
 }
+
+.dashtodock-app-well-preview-menu-item {
+    padding: 1em 1em 0.5em 1em;
+}
+
+#dashtodockContainer .metro .overview-icon{
+    border-radius: 0px;
+}
+
+#dashtodockContainer.bottom .metro.running2.focused,
+#dashtodockContainer.bottom .metro.running3.focused,
+#dashtodockContainer.bottom .metro.running4.focused,
+#dashtodockContainer.top .metro.running2.focused,
+#dashtodockContainer.top .metro.running3.focused,
+#dashtodockContainer.top .metro.running4.focused {
+    background-image: url('./media/highlight_stacked_bg.svg');
+    background-position: 0px 0px;
+    background-size: contain;
+}
+
+#dashtodockContainer.left .metro.running2.focused,
+#dashtodockContainer.left .metro.running3.focused,
+#dashtodockContainer.left .metro.running4.focused,
+#dashtodockContainer.right .metro.running2.focused,
+#dashtodockContainer.right .metro.running3.focused,
+#dashtodockContainer.right .metro.running4.focused {
+    background-image: url('./media/highlight_stacked_bg_h.svg');
+    background-position: 0px 0px;
+    background-size: contain;
+}
