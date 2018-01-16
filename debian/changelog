@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (0.9) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (0.9) bionic; urgency=medium
 
   * Rebase on latest master.
   * Disable "parameters" context menu on appIcon right click
