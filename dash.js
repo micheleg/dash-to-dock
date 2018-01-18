@@ -77,6 +77,11 @@ const MyDashActor = new Lang.Class({
         this.actor.connect('get-preferred-height', Lang.bind(this, this._getPreferredHeight));
         this.actor.connect('allocate', Lang.bind(this, this._allocate));
 
+        // Since we are usually visible but not usually changing, make sure
+        // most repaint requests don't actually require us to repaint anything.
+        // This saves significant CPU when repainting the screen.
+        this.actor.set_offscreen_redirect(Clutter.OffscreenRedirect.ALWAYS);
+
         this.actor._delegate = this;
     },
 
