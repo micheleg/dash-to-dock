@@ -244,11 +244,6 @@ const RunningIndicatorBase = new Lang.Class({
 
     destroy: function() {
         this.parent();
-        this._disableBacklight();
-        // Remove glossy background if the children still exists
-        if (this._source._iconContainer.get_children().length > 1)
-            this._source._iconContainer.get_children()[1].set_style(null);
-        this._restoreDefaultDot();
     }
 });
 
@@ -425,7 +420,6 @@ const RunningIndicatorDots = new Lang.Class({
 
     destroy: function() {
         this.parent();
-        this._area.destroy();
     }
 
 });
