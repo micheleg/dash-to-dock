@@ -40,7 +40,7 @@ function disable() {
 
 function conditionallyenabledock() {
     let to_enable = true;
-    runningExtensions = ExtensionSystem.extensionOrder;
+    let runningExtensions = ExtensionSystem.extensionOrder;
     for (let i = 0; i < runningExtensions.length; i++) {
         if (runningExtensions[i] === "dash-to-dock@micxgx.gmail.com") {
             to_enable = false;
