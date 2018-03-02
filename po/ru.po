@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-28 10:52+0300\n"
-"PO-Revision-Date: 2017-08-28 10:56+0300\n"
+"POT-Creation-Date: 2018-03-02 11:24-0300\n"
+"PO-Revision-Date: 2018-03-02 11:33-0300\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -17,106 +17,58 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
 "X-Generator: Gtranslator 2.91.7\n"
 
-#: prefs.js:113
+#: prefs.js:131
 msgid "Primary monitor"
 msgstr "Основной монитор"
 
-#: prefs.js:122 prefs.js:129
+#: prefs.js:140 prefs.js:147
 msgid "Secondary monitor "
 msgstr "Дополнительный монитор"
 
-#: prefs.js:154 Settings.ui.h:31
+#: prefs.js:172 Settings.ui.h:26
 msgid "Right"
 msgstr "Справа"
 
-#: prefs.js:155 Settings.ui.h:28
+#: prefs.js:173 Settings.ui.h:23
 msgid "Left"
 msgstr "Слева"
 
-#: prefs.js:205
+#: prefs.js:223
 msgid "Intelligent autohide customization"
 msgstr "Настройка автоскрытия"
 
-#: prefs.js:212 prefs.js:397 prefs.js:454
+#: prefs.js:230 prefs.js:415 prefs.js:472
 msgid "Reset to defaults"
 msgstr "Сбросить настройки"
 
-#: prefs.js:390
+#: prefs.js:408
 msgid "Show dock and application numbers"
 msgstr "Показывать количество запущенных приложений"
 
-#: prefs.js:447
+#: prefs.js:465
 msgid "Customize middle-click behavior"
 msgstr "Настройка действий для средней кнопки мыши"
 
-#: prefs.js:518
+#: prefs.js:548
 msgid "Customize running indicators"
 msgstr "Настройка индикаторов запуска"
 
-#: appIcons.js:1131
+#: prefs.js:662
+msgid "Cutomize opacity"
+msgstr "Настроить прозрачность"
+
+#: appIcons.js:763
 msgid "All Windows"
 msgstr "Все окна"
 
 #. Translators: %s is "Settings", which is automatically translated. You
 #. can also translate the full message if this fits better your language.
-#: appIcons.js:1429
+#: appIcons.js:1069
 #, javascript-format
 msgid "Dash to Dock %s"
 msgstr ""
 
 #: Settings.ui.h:1
-msgid "Customize indicator style"
-msgstr "Настроить стиль индикатора"
-
-#: Settings.ui.h:2
-msgid "Color"
-msgstr "Цвет"
-
-#: Settings.ui.h:3
-msgid "Border color"
-msgstr "Цвет границы"
-
-#: Settings.ui.h:4
-msgid "Border width"
-msgstr "Ширина границы"
-
-#: Settings.ui.h:5
-msgid "Number overlay"
-msgstr "Отображение номера"
-
-#: Settings.ui.h:6
-msgid ""
-"Temporarily show the application numbers over the icons, corresponding to "
-"the shortcut."
-msgstr ""
-"Временно показывать номера приложений рядом с иконками, при нажатии "
-"сочетания клавиш."
-
-#: Settings.ui.h:7
-msgid "Show the dock if it is hidden"
-msgstr "Показать Док, если он скрыт"
-
-#: Settings.ui.h:8
-msgid ""
-"If using autohide, the dock will appear for a short time when triggering the "
-"shortcut."
-msgstr ""
-"Если используется автоматическое скрытие, то Док кратковреммено появится при "
-"обработке сочетания клавиш."
-
-#: Settings.ui.h:9
-msgid "Shortcut for the options above"
-msgstr "Сочетания клавиш для указанных параметров"
-
-#: Settings.ui.h:10
-msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
-msgstr "Синтаксис: <Shift>, <Ctrl>, <Alt>, <Super>"
-
-#: Settings.ui.h:11
-msgid "Hide timeout (s)"
-msgstr "Задержка скрытия (сек.)"
-
-#: Settings.ui.h:12
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
@@ -124,75 +76,99 @@ msgstr ""
 "Если установлено на «Минимизировать», то двойной клик минимизирует все окна "
 "данного приложения."
 
-#: Settings.ui.h:13
+#: Settings.ui.h:2
 msgid "Shift+Click action"
 msgstr "Действие по Shift+Click"
 
-#: Settings.ui.h:14
+#: Settings.ui.h:3
 msgid "Raise window"
 msgstr "Показать окно"
 
-#: Settings.ui.h:15
+#: Settings.ui.h:4
 msgid "Minimize window"
 msgstr "Минимизировать окно"
 
-#: Settings.ui.h:16
+#: Settings.ui.h:5
 msgid "Launch new instance"
 msgstr "Открыть новое окно"
 
-#: Settings.ui.h:17
+#: Settings.ui.h:6
 msgid "Cycle through windows"
 msgstr "Переключить окно приложения"
 
-#: Settings.ui.h:18
+#: Settings.ui.h:7
 msgid "Minimize or overview"
 msgstr "Минимизация или обзор"
 
-#: Settings.ui.h:19
+#: Settings.ui.h:8
 msgid "Show window previews"
 msgstr "Показать миниатюры окон"
 
-#: Settings.ui.h:20
+#: Settings.ui.h:9
 msgid "Quit"
 msgstr "Выйти"
 
-#: Settings.ui.h:21
+#: Settings.ui.h:10
 msgid "Behavior for Middle-Click."
 msgstr "Действие по нажатию средней кнопки мыши."
 
-#: Settings.ui.h:22
+#: Settings.ui.h:11
 msgid "Middle-Click action"
 msgstr "Действие по Middle-Click"
 
-#: Settings.ui.h:23
+#: Settings.ui.h:12
 msgid "Behavior for Shift+Middle-Click."
 msgstr "Действие по нажатию Shift + средняя кнопка мыши."
 
-#: Settings.ui.h:24
+#: Settings.ui.h:13
 msgid "Shift+Middle-Click action"
 msgstr "Действие по Shift+Middle-Click"
 
-#: Settings.ui.h:25
+#: Settings.ui.h:14
+msgid "Enable Unity7 like glossy backlit items"
+msgstr "Включить подсветку элементов как в Unity7"
+
+#: Settings.ui.h:15
+msgid "Use dominant color"
+msgstr "Использовать доминирующий цвет"
+
+#: Settings.ui.h:16
+msgid "Customize indicator style"
+msgstr "Настроить стиль индикатора"
+
+#: Settings.ui.h:17
+msgid "Color"
+msgstr "Цвет"
+
+#: Settings.ui.h:18
+msgid "Border color"
+msgstr "Цвет границы"
+
+#: Settings.ui.h:19
+msgid "Border width"
+msgstr "Ширина границы"
+
+#: Settings.ui.h:20
 msgid "Show the dock on"
 msgstr "Показывать Док на"
 
-#: Settings.ui.h:26
+#: Settings.ui.h:21
 msgid "Show on all monitors."
 msgstr "Показывать на всех мониторах."
 
-#: Settings.ui.h:27
+#: Settings.ui.h:22
 msgid "Position on screen"
 msgstr "Расположение на экране"
 
-#: Settings.ui.h:29
+#: Settings.ui.h:24
 msgid "Bottom"
 msgstr "Снизу"
 
-#: Settings.ui.h:30
+#: Settings.ui.h:25
 msgid "Top"
 msgstr "Сверху"
 
-#: Settings.ui.h:32
+#: Settings.ui.h:27
 msgid ""
 "Hide the dock when it obstructs a window of the current application. More "
 "refined settings are available."
@@ -200,53 +176,53 @@ msgstr ""
 "Скрывать Док, если он перекрывается окном активного приложения. Доступны "
 "дополнительные настройки."
 
-#: Settings.ui.h:33
+#: Settings.ui.h:28
 msgid "Intelligent autohide"
 msgstr "Интеллектуальное скрытие"
 
-#: Settings.ui.h:34
+#: Settings.ui.h:29
 msgid "Dock size limit"
 msgstr "Ограничение размера Дока"
 
-#: Settings.ui.h:35
+#: Settings.ui.h:30
 msgid "Panel mode: extend to the screen edge"
 msgstr "Режим панели: Док растянут по всей стороне экрана"
 
-#: Settings.ui.h:36
+#: Settings.ui.h:31
 msgid "Icon size limit"
 msgstr "Ограничение размера иконок"
 
-#: Settings.ui.h:37
+#: Settings.ui.h:32
 msgid "Fixed icon size: scroll to reveal other icons"
 msgstr ""
 "Фиксированный размер иконок: используйте прокрутку для доступа к нужному "
 "приложению"
 
-#: Settings.ui.h:38
+#: Settings.ui.h:33
 msgid "Position and size"
 msgstr "Положение и размер"
 
-#: Settings.ui.h:39
+#: Settings.ui.h:34
 msgid "Show favorite applications"
 msgstr "Показывать избранные приложения"
 
-#: Settings.ui.h:40
+#: Settings.ui.h:35
 msgid "Show running applications"
 msgstr "Показывать запущенные приложения"
 
-#: Settings.ui.h:41
+#: Settings.ui.h:36
 msgid "Isolate workspaces."
 msgstr "Для текущего рабочего стола."
 
-#: Settings.ui.h:42
+#: Settings.ui.h:37
 msgid "Isolate monitors."
 msgstr "Изолировать мониторы."
 
-#: Settings.ui.h:43
+#: Settings.ui.h:38
 msgid "Show open windows previews."
 msgstr "Показывать миниатюры открытых окон."
 
-#: Settings.ui.h:44
+#: Settings.ui.h:39
 msgid ""
 "If disabled, these settings are accessible from gnome-tweak-tool or the "
 "extension website."
@@ -254,23 +230,23 @@ msgstr ""
 "Если отключено, то эти настройки доступны в gnome-tweak-tool или через сайт "
 "дополнений."
 
-#: Settings.ui.h:45
+#: Settings.ui.h:40
 msgid "Show <i>Applications</i> icon"
 msgstr "Показывать иконку <i>«Приложения»</i>"
 
-#: Settings.ui.h:46
+#: Settings.ui.h:41
 msgid "Move the applications button at the beginning of the dock."
 msgstr "Расположить кнопку «Приложения» с другой стороны Дока."
 
-#: Settings.ui.h:47
+#: Settings.ui.h:42
 msgid "Animate <i>Show Applications</i>."
 msgstr "Анимация при показе <i>«Приложений»</i>"
 
-#: Settings.ui.h:48
+#: Settings.ui.h:43
 msgid "Launchers"
 msgstr "Команды"
 
-#: Settings.ui.h:49
+#: Settings.ui.h:44
 msgid ""
 "Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
 "together with Shift and Ctrl."
@@ -278,43 +254,43 @@ msgstr ""
 "Включить сочетания клавиш Super+(0-9) для выбора приложений. Также может "
 "быть использовано совместно с Shift и Ctrl."
 
-#: Settings.ui.h:50
+#: Settings.ui.h:45
 msgid "Use keyboard shortcuts to activate apps"
 msgstr "Использовать сочетания клавиш для выбора приложений"
 
-#: Settings.ui.h:51
+#: Settings.ui.h:46
 msgid "Behaviour when clicking on the icon of a running application."
 msgstr "Поведение при нажатии на иконку запущенного приложения."
 
-#: Settings.ui.h:52
+#: Settings.ui.h:47
 msgid "Click action"
 msgstr "Действие по нажатию"
 
-#: Settings.ui.h:53
+#: Settings.ui.h:48
 msgid "Minimize"
 msgstr "Минимизировать"
 
-#: Settings.ui.h:54
+#: Settings.ui.h:49
 msgid "Behaviour when scrolling on the icon of an application."
 msgstr "Поведение при прокрутке на иконке приложения."
 
-#: Settings.ui.h:55
+#: Settings.ui.h:50
 msgid "Scroll action"
 msgstr "Действие при прокрутке"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:51
 msgid "Do nothing"
 msgstr "Ничего не делать"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:52
 msgid "Switch workspace"
 msgstr "Переключить рабочий стол"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:53
 msgid "Behavior"
 msgstr "Поведение"
 
-#: Settings.ui.h:59
+#: Settings.ui.h:54
 msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
@@ -322,77 +298,113 @@ msgstr ""
 "Сбалансированные настройки для интеграции Дока с темой Gnome по умолчанию. "
 "Ниже можно установить настройки вручную."
 
-#: Settings.ui.h:60
+#: Settings.ui.h:55
 msgid "Use built-in theme"
 msgstr "Использовать встроенную тему"
 
-#: Settings.ui.h:61
+#: Settings.ui.h:56
 msgid "Save space reducing padding and border radius."
 msgstr ""
 "Экономия рабочего пространства за счёт уменьшения промежутков и "
 "использования скругленных углов."
 
-#: Settings.ui.h:62
+#: Settings.ui.h:57
 msgid "Shrink the dash"
 msgstr "Сжать Док"
 
+#: Settings.ui.h:58
+msgid "Customize windows counter indicators"
+msgstr "Настроить индикаторы количества окон"
+
+#: Settings.ui.h:59
+msgid "Default"
+msgstr "По умолчанию"
+
+#: Settings.ui.h:60
+msgid "Dots"
+msgstr "Точки"
+
+#: Settings.ui.h:61
+msgid "Squares"
+msgstr "Квадраты"
+
+#: Settings.ui.h:62
+msgid "Dashes"
+msgstr "Линии"
+
 #: Settings.ui.h:63
-msgid "Show a dot for each windows of the application."
-msgstr "Отображает точку для каждого окна приложения."
+msgid "Segmented"
+msgstr "Сегменты"
 
 #: Settings.ui.h:64
-msgid "Show windows counter indicators"
-msgstr "Показывать индикаторы количества окон"
+msgid "Solid"
+msgstr "Слитно"
 
 #: Settings.ui.h:65
+msgid "Ciliora"
+msgstr ""
+
+#: Settings.ui.h:66
+msgid "Metro"
+msgstr "Метро"
+
+#: Settings.ui.h:67
 msgid "Set the background color for the dash."
 msgstr "Вобор цвета фона для панели."
 
-#: Settings.ui.h:66
+#: Settings.ui.h:68
 msgid "Customize the dash color"
 msgstr "Настроить цвет Дока"
 
-#: Settings.ui.h:67
+#: Settings.ui.h:69
 msgid "Tune the dash background opacity."
 msgstr "Настройка прозрачности фона Дока."
 
-#: Settings.ui.h:68
+#: Settings.ui.h:70
 msgid "Customize opacity"
 msgstr "Настроить прозрачность"
 
-#: Settings.ui.h:69
+#: Settings.ui.h:71
+msgid "Fixed"
+msgstr "Постоянная"
+
+#: Settings.ui.h:72
+msgid "Adaptive"
+msgstr "Адаптивная"
+
+#: Settings.ui.h:73
+msgid "Dynamic"
+msgstr "Динамическая"
+
+#: Settings.ui.h:74
 msgid "Opacity"
 msgstr "Непрозрачность"
 
-#: Settings.ui.h:70
-msgid "Enable Unity7 like glossy backlit items"
-msgstr "Включить подсветку элементов как в Unity7"
-
-#: Settings.ui.h:71
+#: Settings.ui.h:75
 msgid "Force straight corner\n"
 msgstr "Не скруглять углы\n"
 
-#: Settings.ui.h:73
+#: Settings.ui.h:77
 msgid "Appearance"
 msgstr "Внешний вид"
 
-#: Settings.ui.h:74
+#: Settings.ui.h:78
 msgid "version: "
 msgstr "версия: "
 
-#: Settings.ui.h:75
+#: Settings.ui.h:79
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "Показывает панель из режима «Обзор» в виде дока"
 
-#: Settings.ui.h:76
+#: Settings.ui.h:80
 msgid "Created by"
 msgstr "Автор"
 
-#: Settings.ui.h:77
+#: Settings.ui.h:81
 msgid "Webpage"
 msgstr "Домашняя страница"
 
-#: Settings.ui.h:78
+#: Settings.ui.h:82
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -404,57 +416,108 @@ msgstr ""
 "\">GNU General Public License, версия 2 или позднее</a> для информации.</"
 "span>"
 
-#: Settings.ui.h:80
+#: Settings.ui.h:84
 msgid "About"
 msgstr "О дополнении"
 
-#: Settings.ui.h:81
+#: Settings.ui.h:85
+msgid "Customize minimum and maximum opacity values"
+msgstr "Настройка минимального и максимального значения прозрачности"
+
+#: Settings.ui.h:86
+msgid "Minimum opacity"
+msgstr "Минимальная прозрачность"
+
+#: Settings.ui.h:87
+msgid "Maximum opacity"
+msgstr "Максимальная прозрачность"
+
+#: Settings.ui.h:88
+msgid "Number overlay"
+msgstr "Отображение номера"
+
+#: Settings.ui.h:89
+msgid ""
+"Temporarily show the application numbers over the icons, corresponding to "
+"the shortcut."
+msgstr ""
+"Временно показывать номера приложений рядом с иконками, при нажатии "
+"сочетания клавиш."
+
+#: Settings.ui.h:90
+msgid "Show the dock if it is hidden"
+msgstr "Показать Док, если он скрыт"
+
+#: Settings.ui.h:91
+msgid ""
+"If using autohide, the dock will appear for a short time when triggering the "
+"shortcut."
+msgstr ""
+"Если используется автоматическое скрытие, то Док кратковреммено появится при "
+"обработке сочетания клавиш."
+
+#: Settings.ui.h:92
+msgid "Shortcut for the options above"
+msgstr "Сочетания клавиш для указанных параметров"
+
+#: Settings.ui.h:93
+msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
+msgstr "Синтаксис: <Shift>, <Ctrl>, <Alt>, <Super>"
+
+#: Settings.ui.h:94
+msgid "Hide timeout (s)"
+msgstr "Задержка скрытия (сек.)"
+
+#: Settings.ui.h:95
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "Показывать Док при подведении мыши к стороне экрана."
 
-#: Settings.ui.h:82
+#: Settings.ui.h:96
 msgid "Autohide"
 msgstr "Автоматическое скрытие"
 
-#: Settings.ui.h:83
+#: Settings.ui.h:97
 msgid "Push to show: require pressure to show the dock"
 msgstr "Давление для появления: требуется давление для открытия Дока"
 
-#: Settings.ui.h:84
+#: Settings.ui.h:98
 msgid "Enable in fullscreen mode"
 msgstr "Включить для полноэкранного режима"
 
-#: Settings.ui.h:85
+#: Settings.ui.h:99
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Скрывать Док, когда он перекрыт окнами приложений"
 
-#: Settings.ui.h:86
+#: Settings.ui.h:100
 msgid "Dodge windows"
 msgstr "Перекрытие окнами"
 
-#: Settings.ui.h:87
+#: Settings.ui.h:101
 msgid "All windows"
 msgstr "Все окна"
 
-#: Settings.ui.h:88
+#: Settings.ui.h:102
 msgid "Only focused application's windows"
 msgstr "Только активное окно приложения"
 
-#: Settings.ui.h:89
+#: Settings.ui.h:103
 msgid "Only maximized windows"
 msgstr "Только развёрнутые окна"
 
-#: Settings.ui.h:90
+#: Settings.ui.h:104
 msgid "Animation duration (s)"
 msgstr "Время анимации (сек.)"
 
-#: Settings.ui.h:91
+#: Settings.ui.h:105
 msgid "Show timeout (s)"
 msgstr "Задержка открытия (сек.)"
 
-#: Settings.ui.h:92
+#: Settings.ui.h:106
 msgid "Pressure threshold"
 msgstr "Порог давления"
+
+#~ msgid "Show a dot for each windows of the application."
+#~ msgstr "Отображает точку для каждого окна приложения."
 
 #~ msgid ""
 #~ "With fixed icon size, only the edge of the dock and the <i>Show "
