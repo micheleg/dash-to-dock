@@ -78,6 +78,11 @@ const MyDashActor = new Lang.Class({
         this.actor.connect('allocate', Lang.bind(this, this._allocate));
 
         this.actor._delegate = this;
+
+        // Since we are usually visible but not usually changing, make sure
+        // most repaint requests don't actually require us to repaint anything.
+        // This saves significant CPU when repainting the screen.
+        this.actor.set_offscreen_redirect(Clutter.OffscreenRedirect.ALWAYS);
     },
 
     _allocate: function(actor, box, flags) {
