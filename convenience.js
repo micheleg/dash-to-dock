@@ -2,7 +2,7 @@
 
 /*
  * Part of this file comes from gnome-shell-extensions:
- * http://git.gnome.org/browse/gnome-shell-extensions/
+ * https://gitlab.gnome.org/GNOME/gnome-shell-extensions/
  */
 
 const Gettext = imports.gettext;
