@@ -989,7 +989,7 @@ const DominantColorExtractor = new Lang.Class({
     /**
      * The backlight color choosing algorithm was mostly ported to javascript from the
      * Unity7 C++ source of Canonicals:
-     * http://bazaar.launchpad.net/~unity-team/unity/trunk/view/head:/launcher/LauncherIcon.cpp
+     * https://bazaar.launchpad.net/~unity-team/unity/trunk/view/head:/launcher/LauncherIcon.cpp
      * so it more or less works the same way.
      */
     _getColorPalette: function() {
