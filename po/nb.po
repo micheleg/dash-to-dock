@@ -1,0 +1,509 @@
+# Norwegian Bokmål translation for Dash to Dock.
+# Copyright (C) 2018 Michele
+# This file is distributed under the same license as the dash-to-dock package.
+# Harald H. <harald@fsfe.org>, 2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Dash-to-Dock\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-02-28 09:47+0100\n"
+"PO-Revision-Date: 2018-03-02 11:02+0100\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7.1\n"
+"Last-Translator: Harald H. <harald@fsfe.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: nb\n"
+
+#: prefs.js:131
+msgid "Primary monitor"
+msgstr "Primærskjerm"
+
+#: prefs.js:140 prefs.js:147
+msgid "Secondary monitor "
+msgstr "Sekundærskjerm"
+
+#: prefs.js:172 Settings.ui.h:26
+msgid "Right"
+msgstr "Høyre"
+
+#: prefs.js:173 Settings.ui.h:23
+msgid "Left"
+msgstr "Venstre"
+
+#: prefs.js:223
+msgid "Intelligent autohide customization"
+msgstr "Tilpass intelligent autoskjul"
+
+#: prefs.js:230 prefs.js:415 prefs.js:472
+msgid "Reset to defaults"
+msgstr "Tilbakestill til standard"
+
+#: prefs.js:408
+msgid "Show dock and application numbers"
+msgstr "Vis dokk og programnumre"
+
+#: prefs.js:465
+msgid "Customize middle-click behavior"
+msgstr "Tilpass oppførsel for mellomklikk"
+
+#: prefs.js:548
+msgid "Customize running indicators"
+msgstr "Tilpass kjørende indikatorer"
+
+#: prefs.js:662
+msgid "Cutomize opacity"
+msgstr "Tilpass gjennomsiktighet"
+
+#: appIcons.js:763
+msgid "All Windows"
+msgstr "Alle vinduer"
+
+#. Translators: %s is "Settings", which is automatically translated. You
+#. can also translate the full message if this fits better your language.
+#: appIcons.js:1069
+#, javascript-format
+msgid "Dash to Dock %s"
+msgstr "Dash to Dock %s"
+
+#: Settings.ui.h:1
+msgid ""
+"When set to minimize, double clicking minimizes all the windows of the "
+"application."
+msgstr ""
+"Når satt til minimer vil dobbeltklikking minimere alle åpne instanser av "
+"programmet."
+
+#: Settings.ui.h:2
+msgid "Shift+Click action"
+msgstr "Handling for Shift + klikk"
+
+#: Settings.ui.h:3
+msgid "Raise window"
+msgstr "Fremhev vindu"
+
+#: Settings.ui.h:4
+msgid "Minimize window"
+msgstr "Minimer vindu"
+
+#: Settings.ui.h:5
+msgid "Launch new instance"
+msgstr "Åpne ny instans"
+
+#: Settings.ui.h:6
+msgid "Cycle through windows"
+msgstr "Veksle mellom vinduer"
+
+#: Settings.ui.h:7
+msgid "Minimize or overview"
+msgstr "Minimer eller oversikt"
+
+#: Settings.ui.h:8
+msgid "Show window previews"
+msgstr "Vis forhåndsvisning"
+
+#: Settings.ui.h:9
+msgid "Quit"
+msgstr "Avslutt"
+
+#: Settings.ui.h:10
+msgid "Behavior for Middle-Click."
+msgstr "Oppførsel for mellomklikk."
+
+#: Settings.ui.h:11
+msgid "Middle-Click action"
+msgstr "Mellomklikk"
+
+#: Settings.ui.h:12
+msgid "Behavior for Shift+Middle-Click."
+msgstr "Oppførsel for Shift + mellomklikk."
+
+#: Settings.ui.h:13
+msgid "Shift+Middle-Click action"
+msgstr "Shift + mellomklikk"
+
+#: Settings.ui.h:14
+msgid "Enable Unity7 like glossy backlit items"
+msgstr "Aktiver Unity7-lignende bakgrunnsglans"
+
+#: Settings.ui.h:15
+msgid "Use dominant color"
+msgstr "Bruk dominerende farge"
+
+#: Settings.ui.h:16
+msgid "Customize indicator style"
+msgstr "Tilpass indikatorstil"
+
+#: Settings.ui.h:17
+msgid "Color"
+msgstr "Farge"
+
+#: Settings.ui.h:18
+msgid "Border color"
+msgstr "Kantfarge"
+
+#: Settings.ui.h:19
+msgid "Border width"
+msgstr "Kantbredde"
+
+#: Settings.ui.h:20
+msgid "Show the dock on"
+msgstr "Vis dokken på"
+
+#: Settings.ui.h:21
+msgid "Show on all monitors."
+msgstr "Vis på alle skjermer."
+
+#: Settings.ui.h:22
+msgid "Position on screen"
+msgstr "Skjermposisjon"
+
+#: Settings.ui.h:24
+msgid "Bottom"
+msgstr "Bunn"
+
+#: Settings.ui.h:25
+msgid "Top"
+msgstr "Topp"
+
+#: Settings.ui.h:27
+msgid ""
+"Hide the dock when it obstructs a window of the current application. More "
+"refined settings are available."
+msgstr ""
+"Skjul dokken når den forstyrrer et aktivt programvindu. Flere innstillinger "
+"er tilgjengelig."
+
+#: Settings.ui.h:28
+msgid "Intelligent autohide"
+msgstr "Intelligent autoskjul"
+
+#: Settings.ui.h:29
+msgid "Dock size limit"
+msgstr "Maks dokkstørrelse"
+
+#: Settings.ui.h:30
+msgid "Panel mode: extend to the screen edge"
+msgstr "Panelmodus: strekker seg til skjermkanten"
+
+#: Settings.ui.h:31
+msgid "Icon size limit"
+msgstr "Ikonstørrelse"
+
+#: Settings.ui.h:32
+msgid "Fixed icon size: scroll to reveal other icons"
+msgstr "Fast ikonstørrelse: rull for vise andre ikoner"
+
+#: Settings.ui.h:33
+msgid "Position and size"
+msgstr "Posisjon og størrelse"
+
+#: Settings.ui.h:34
+msgid "Show favorite applications"
+msgstr "Vis favorittprogrammer"
+
+#: Settings.ui.h:35
+msgid "Show running applications"
+msgstr "Vis kjørende programmer"
+
+#: Settings.ui.h:36
+msgid "Isolate workspaces."
+msgstr "Isoler arbeidsområder."
+
+#: Settings.ui.h:37
+msgid "Isolate monitors."
+msgstr "Isoler skjermer."
+
+#: Settings.ui.h:38
+msgid "Show open windows previews."
+msgstr "Vis forhåndsvisning av åpne vinduer."
+
+#: Settings.ui.h:39
+msgid ""
+"If disabled, these settings are accessible from gnome-tweak-tool or the "
+"extension website."
+msgstr ""
+"Om deaktivert er disse innstillingene tilgjengelig i gnome-tweak-tool eller "
+"på nettsiden for utvidelser."
+
+#: Settings.ui.h:40
+msgid "Show <i>Applications</i> icon"
+msgstr "Vis <i>programmer</i> ikon"
+
+#: Settings.ui.h:41
+msgid "Move the applications button at the beginning of the dock."
+msgstr "Flytt programmer-knappen til starten av dokken."
+
+#: Settings.ui.h:42
+msgid "Animate <i>Show Applications</i>."
+msgstr "Animere <i>Vis programmer</i>."
+
+#: Settings.ui.h:43
+msgid "Launchers"
+msgstr "Utløsere"
+
+#: Settings.ui.h:44
+msgid ""
+"Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
+"together with Shift and Ctrl."
+msgstr ""
+"Bruk Super+(0-9) som snarvei for å aktivere apper. Den kan også brukes i "
+"kombinasjon med Shift og Ctrl."
+
+#: Settings.ui.h:45
+msgid "Use keyboard shortcuts to activate apps"
+msgstr "Bruk tastatursnarveier for å åpne apper"
+
+#: Settings.ui.h:46
+msgid "Behaviour when clicking on the icon of a running application."
+msgstr "Oppførsel når du klikker på ikonet for et åpent program."
+
+#: Settings.ui.h:47
+msgid "Click action"
+msgstr "Klikkhandling"
+
+#: Settings.ui.h:48
+msgid "Minimize"
+msgstr "Minimer"
+
+#: Settings.ui.h:49
+msgid "Behaviour when scrolling on the icon of an application."
+msgstr "Oppførsel ved rulling over et programikon."
+
+#: Settings.ui.h:50
+msgid "Scroll action"
+msgstr "Rullehandling"
+
+#: Settings.ui.h:51
+msgid "Do nothing"
+msgstr "Ikke gjør noe"
+
+#: Settings.ui.h:52
+msgid "Switch workspace"
+msgstr "Bytt arbeidsområde"
+
+#: Settings.ui.h:53
+msgid "Behavior"
+msgstr "Oppførsel"
+
+#: Settings.ui.h:54
+msgid ""
+"Few customizations meant to integrate the dock with the default GNOME theme. "
+"Alternatively, specific options can be enabled below."
+msgstr ""
+"Enkelte tilpasninger som forsøker å integrere dokken med det standard GNOME-"
+"temaet. Alternativt kan bestemte valg aktiveres nedenfor."
+
+#: Settings.ui.h:55
+msgid "Use built-in theme"
+msgstr "Bruk innebygget tema"
+
+#: Settings.ui.h:56
+msgid "Save space reducing padding and border radius."
+msgstr "Spar plass ved å redusere utfylling og kant-radius."
+
+#: Settings.ui.h:57
+msgid "Shrink the dash"
+msgstr "Krymp dash"
+
+#: Settings.ui.h:58
+msgid "Customize windows counter indicators"
+msgstr "Tilpass vinduenes nummer-indikatorer"
+
+#: Settings.ui.h:59
+msgid "Default"
+msgstr "Standard"
+
+#: Settings.ui.h:60
+msgid "Dots"
+msgstr "Prikker"
+
+#: Settings.ui.h:61
+msgid "Squares"
+msgstr "Firkanter"
+
+#: Settings.ui.h:62
+msgid "Dashes"
+msgstr "Streker"
+
+#: Settings.ui.h:63
+msgid "Segmented"
+msgstr "Segmentert"
+
+#: Settings.ui.h:64
+msgid "Solid"
+msgstr "Solid"
+
+#: Settings.ui.h:65
+msgid "Ciliora"
+msgstr "Ciliora"
+
+#: Settings.ui.h:66
+msgid "Metro"
+msgstr "Metro"
+
+#: Settings.ui.h:67
+msgid "Set the background color for the dash."
+msgstr "Avgjør bakgrunnsfargen."
+
+#: Settings.ui.h:68
+msgid "Customize the dash color"
+msgstr "Tilpass fargen"
+
+#: Settings.ui.h:69
+msgid "Tune the dash background opacity."
+msgstr "Justere bakgrunnens gjennomsiktighet."
+
+#: Settings.ui.h:70
+msgid "Customize opacity"
+msgstr "Tilpass gjennomsiktighet"
+
+#: Settings.ui.h:71
+msgid "Fixed"
+msgstr "Fast"
+
+#: Settings.ui.h:72
+msgid "Adaptive"
+msgstr "Adaptiv"
+
+#: Settings.ui.h:73
+msgid "Dynamic"
+msgstr "Dynamisk"
+
+#: Settings.ui.h:74
+msgid "Opacity"
+msgstr "Gjennomsiktighet"
+
+#: Settings.ui.h:75
+msgid "Force straight corner\n"
+msgstr "Tving rette hjørner\n"
+
+#: Settings.ui.h:77
+msgid "Appearance"
+msgstr "Utseende"
+
+#: Settings.ui.h:78
+msgid "version: "
+msgstr "versjon: "
+
+#: Settings.ui.h:79
+msgid "Moves the dash out of the overview transforming it in a dock"
+msgstr "Flytter dash ut av oversikten og omformer den til en dokk"
+
+#: Settings.ui.h:80
+msgid "Created by"
+msgstr "Laget av"
+
+#: Settings.ui.h:81
+msgid "Webpage"
+msgstr "Nettside"
+
+#: Settings.ui.h:82
+msgid ""
+"<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
+"See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+"\">GNU General Public License, version 2 or later</a> for details.</span>"
+msgstr ""
+"<span size=\"small\">Dette programmet leveres med ABSOLUTT INGEN GARANTI.\n"
+"Se <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU "
+"General Public License, versjon 2 eller senere</a> for detaljer.</span>"
+
+#: Settings.ui.h:84
+msgid "About"
+msgstr "Om"
+
+#: Settings.ui.h:85
+msgid "Customize minimum and maximum opacity values"
+msgstr "Tilpass verdier for minimum og maks gjennomsiktighet"
+
+#: Settings.ui.h:86
+msgid "Minimum opacity"
+msgstr "Minimum gjennomsiktighet"
+
+#: Settings.ui.h:87
+msgid "Maximum opacity"
+msgstr "Maksimum gjennomsiktighet"
+
+#: Settings.ui.h:88
+msgid "Number overlay"
+msgstr "Nummerert overlag"
+
+#: Settings.ui.h:89
+msgid ""
+"Temporarily show the application numbers over the icons, corresponding to "
+"the shortcut."
+msgstr "Midlertidig vis programnummer over ikoner, som svarer til snarveien."
+
+#: Settings.ui.h:90
+msgid "Show the dock if it is hidden"
+msgstr "Vis dokken om den er skjult"
+
+#: Settings.ui.h:91
+msgid ""
+"If using autohide, the dock will appear for a short time when triggering the "
+"shortcut."
+msgstr ""
+"Om autoskjul er i bruk vil dokken vises en kort stund når snarveien utløses."
+
+#: Settings.ui.h:92
+msgid "Shortcut for the options above"
+msgstr "Snarvei for valgene ovenfor"
+
+#: Settings.ui.h:93
+msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
+msgstr "Syntaks: <Shift>, <Ctrl>, <Alt>, <Super>"
+
+#: Settings.ui.h:94
+msgid "Hide timeout (s)"
+msgstr "Skjuleperiode (s)"
+
+#: Settings.ui.h:95
+msgid "Show the dock by mouse hover on the screen edge."
+msgstr "Vis dokken når musepekeren holdes langs skjermkanten."
+
+#: Settings.ui.h:96
+msgid "Autohide"
+msgstr "Autoskjul"
+
+#: Settings.ui.h:97
+msgid "Push to show: require pressure to show the dock"
+msgstr "Dytt for å vise: krev et økt trykk for å vise dokken"
+
+#: Settings.ui.h:98
+msgid "Enable in fullscreen mode"
+msgstr "Aktiver i fullskjermmodus"
+
+#: Settings.ui.h:99
+msgid "Show the dock when it doesn't obstruct application windows."
+msgstr "Vis dokken når den ikke forstyrrer programvinduer."
+
+#: Settings.ui.h:100
+msgid "Dodge windows"
+msgstr "Smett unna vinduer"
+
+#: Settings.ui.h:101
+msgid "All windows"
+msgstr "Alle vinduer"
+
+#: Settings.ui.h:102
+msgid "Only focused application's windows"
+msgstr "Kun fokuserte programvinduer"
+
+#: Settings.ui.h:103
+msgid "Only maximized windows"
+msgstr "Kun maksimerte programvinduer"
+
+#: Settings.ui.h:104
+msgid "Animation duration (s)"
+msgstr "Animasjonsvarighet (s)"
+
+#: Settings.ui.h:105
+msgid "Show timeout (s)"
+msgstr "Visningslengde (s)"
+
+#: Settings.ui.h:106
+msgid "Pressure threshold"
+msgstr "Trykkterskel"
