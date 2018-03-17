@@ -376,9 +376,13 @@ const Transparency = new Lang.Class({
             global.window_manager,
             'switch-workspace',
             Lang.bind(this, this._updateSolidStyle)
-        ],[
+        ], [
             Main.overview,
             'hiding',
+            Lang.bind(this, this._updateSolidStyle)
+        ], [
+            Main.overview,
+            'showing',
             Lang.bind(this, this._updateSolidStyle)
         ]);
 
