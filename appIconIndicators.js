@@ -122,12 +122,17 @@ const IndicatorBase = new Lang.Class({
         this._settings = settings;
         this._source = source;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
+
+        this._sourceDestroyId = this._source.actor.connect('destroy',
+            Lang.bind(this._signalsHandler, this._signalsHandler.destroy)
+        );
     },
 
     update: function() {
     },
 
     destroy: function() {
+        this._source.actor.disconnect(this._sourceDestroyId);
         this._signalsHandler.destroy();
     }
 });

@@ -169,8 +169,6 @@ var MyAppIcon = new Lang.Class({
 
         if (this._scrollEventHandler)
             this.actor.disconnect(this._scrollEventHandler);
-
-        this._indicator.destroy();
     },
 
     // TOOD Rename this function
