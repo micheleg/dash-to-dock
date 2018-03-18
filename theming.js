@@ -147,7 +147,7 @@ var ThemeManager = new Lang.Class({
         // We want to find the inside border-color of the dock because it is
         // the side most visible to the user. We do this by finding the side
         // opposite the position
-        let position = Utils.getPosition(this._settings);
+        let position = Utils.getPosition(this._settings, this._dash._monitorIndex);
         let side = position + 2;
         if (side > 3)
             side = Math.abs(side - 4);
@@ -239,7 +239,7 @@ var ThemeManager = new Lang.Class({
             return;
 
         let newStyle = '';
-        let position = Utils.getPosition(this._settings);
+        let position = Utils.getPosition(this._settings, this._dash._monitorIndex);
 
         if (!this._settings.get_boolean('custom-theme-shrink')) {
             // obtain theme border settings
@@ -342,7 +342,7 @@ const Transparency = new Lang.Class({
         this._dockActor = dock.actor;
         this._dock = dock;
         this._panel = Main.panel;
-        this._position = Utils.getPosition(this._settings);
+        this._position = Utils.getPosition(this._settings, this._dash._monitorIndex);
 
         this._backgroundColor = '0,0,0';
         this._transparentAlpha = '0.2';

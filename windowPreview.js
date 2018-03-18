@@ -107,8 +107,7 @@ const WindowPreviewList = new Lang.Class({
 
         this.actor.connect('scroll-event', Lang.bind(this, this._onScrollEvent ));
 
-        let position = Utils.getPosition(this._dtdSettings);
-        this.isHorizontal = position == St.Side.BOTTOM || position == St.Side.TOP;
+        this.isHorizontal = Utils.isHorizontal(this._dtdSettings);
         this.box.set_vertical(!this.isHorizontal);
         this.box.set_name('dashtodockWindowList');
         this.actor.add_actor(this.box);

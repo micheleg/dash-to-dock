@@ -1,6 +1,7 @@
 const Clutter = imports.gi.Clutter;
 const Lang = imports.lang;
 const St = imports.gi.St;
+const Main = imports.ui.main;
 
 /**
  * Simplify global signals and function injections handling
@@ -208,15 +209,61 @@ var InjectionsHandler = new Lang.Class({
 });
 
 /**
+ * Return true if the dock layout si horizontal
+ */
+function isHorizontal(settings) {
+    let position = settings.get_enum('dock-position');
+    return (position == St.Side.TOP) || (position == St.Side.BOTTOM)
+}
+
+// Check if any monitor has no edge to the right of the selected one
+function isRightmost(monitor) {
+    // TODO IMPROVE
+    let rightmost = true;
+    let x1 = monitor.x + monitor.width;
+
+    for (let i = 0; i < Main.layoutManager.monitors.length; i++) {
+        if ((Main.layoutManager.monitors[i].x + Main.layoutManager.monitors[i].width) > x1) {
+            rightmost = false;
+            return rightmost;
+        }
+    }
+
+    return rightmost;
+}
+
+/**
  * Return the actual position reverseing left and right in rtl
  */
-function getPosition(settings) {
+function getPosition(settings, monitorIndex) {
+
+    let monitor = Main.layoutManager.monitors[monitorIndex];
     let position = settings.get_enum('dock-position');
-    if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL) {
-        if (position == St.Side.LEFT)
-            position = St.Side.RIGHT;
-        else if (position == St.Side.RIGHT)
-            position = St.Side.LEFT;
+
+    // TODO
+    let OUTER = true;
+
+    if (OUTER) {
+        if (Main.layoutManager.monitors.length > 1) {
+            // Is this the leftmost monitor?
+            if (monitor.x == 0) {
+                position = St.Side.LEFT;
+            } else if (isRightmost(monitor))
+                position = St.Side.RIGHT;
+        } else {
+            if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL) {
+                position = St.Side.RIGHT;
+            } else {
+                position = St.Side.LEFT;
+            }
+        }
+    } else {
+        if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL) {
+            if (position == St.Side.LEFT)
+                position = St.Side.RIGHT;
+            else if (position == St.Side.RIGHT)
+                position = St.Side.LEFT;
+        }
     }
     return position;
 }

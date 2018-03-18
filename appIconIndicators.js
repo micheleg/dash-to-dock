@@ -39,11 +39,11 @@ var AppIconIndicator = new Lang.Class({
 
     Name: 'DashToDock.AppIconIndicator',
 
-    _init: function(source, settings) {
+    _init: function(source, monitorIndex, settings) {
         this._indicators = [];
 
         // Unity indicators always enabled for now
-        let unityIndicator = new UnityIndicator(source, settings);
+        let unityIndicator = new UnityIndicator(source, monitorIndex, settings);
         this._indicators.push(unityIndicator);
 
         // Choose the style for the running indicators
@@ -58,39 +58,39 @@ var AppIconIndicator = new Lang.Class({
 
         switch (runningIndicatorStyle) {
             case RunningIndicatorStyle.DEFAULT:
-                runningIndicator = new RunningIndicatorBase(source, settings);
+                runningIndicator = new RunningIndicatorBase(source, monitorIndex, settings);
                 break;
 
             case RunningIndicatorStyle.DOTS:
-                runningIndicator = new RunningIndicatorDots(source, settings);
+                runningIndicator = new RunningIndicatorDots(source, monitorIndex, settings);
                 break;
 
             case RunningIndicatorStyle.SQUARES:
-                runningIndicator = new RunningIndicatorSquares(source, settings);
+                runningIndicator = new RunningIndicatorSquares(source, monitorIndex, settings);
                 break;
 
             case RunningIndicatorStyle.DASHES:
-                runningIndicator = new RunningIndicatorDashes(source, settings);
+                runningIndicator = new RunningIndicatorDashes(source, monitorIndex, settings);
             break;
 
             case RunningIndicatorStyle.SEGMENTED:
-                runningIndicator = new RunningIndicatorSegmented(source, settings);
+                runningIndicator = new RunningIndicatorSegmented(source, monitorIndex, settings);
                 break;
 
             case RunningIndicatorStyle.SOLID:
-                runningIndicator = new RunningIndicatorSolid(source, settings);
+                runningIndicator = new RunningIndicatorSolid(source, monitorIndex, settings);
                 break;
 
             case RunningIndicatorStyle.CILIORA:
-                runningIndicator = new RunningIndicatorCiliora(source, settings);
+                runningIndicator = new RunningIndicatorCiliora(source, monitorIndex, settings);
                 break;
 
             case RunningIndicatorStyle.METRO:
-                runningIndicator = new RunningIndicatorMetro(source, settings);
+                runningIndicator = new RunningIndicatorMetro(source, monitorIndex, settings);
             break;
 
             default:
-                runningIndicator = new RunningIndicatorBase(source, settings);
+                runningIndicator = new RunningIndicatorBase(source, monitorIndex, settings);
         }
 
         this._indicators.push(runningIndicator);
@@ -118,7 +118,7 @@ const IndicatorBase = new Lang.Class({
 
     Name: 'DashToDock.IndicatorBase',
 
-    _init: function(source, settings) {
+    _init: function(source, monitorIndex, settings) {
         this._settings = settings;
         this._source = source;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
@@ -142,11 +142,11 @@ const RunningIndicatorBase = new Lang.Class({
     Name: 'DashToDock.RunningIndicatorBase',
     Extends: IndicatorBase,
 
-    _init: function(source, settings) {
+    _init: function(source, monitorIndex, settings) {
 
-        this.parent(source, settings)
+        this.parent(source, monitorIndex, settings)
 
-        this._side =  Utils.getPosition(this._settings);
+        this._side =  Utils.getPosition(this._settings, monitorIndex);
         this._nWindows = 0;
 
         this._dominantColorExtractor = new DominantColorExtractor(this._source.app);
@@ -258,9 +258,9 @@ const RunningIndicatorDots = new Lang.Class({
     Name: 'DashToDock.RunningIndicatorDots',
     Extends: RunningIndicatorBase,
 
-    _init: function(source, settings) {
+    _init: function(source, monitorIndex, settings) {
 
-        this.parent(source, settings)
+        this.parent(source, monitorIndex, settings)
 
         this._hideDefaultDot();
 
@@ -601,8 +601,8 @@ const RunningIndicatorMetro = new Lang.Class({
     Name: 'DashToDock.RunningIndicatorMetro',
     Extends: RunningIndicatorDots,
 
-    _init: function(source, settings) {
-        this.parent(source, settings);
+    _init: function(source, monitorIndex, settings) {
+        this.parent(source, monitorIndex, settings);
         this._source.actor.add_style_class_name('metro');
     },
 
@@ -659,9 +659,9 @@ const UnityIndicator = new Lang.Class({
     Name: 'DashToDock.UnityIndicator',
     Extends: IndicatorBase,
 
-    _init: function(source, settings) {
+    _init: function(source, monitorIndex, settings) {
 
-        this.parent(source, settings);
+        this.parent(source, monitorIndex, settings);
 
         this._notificationBadgeLabel = new St.Label();
         this._notificationBadgeBin = new St.Bin({

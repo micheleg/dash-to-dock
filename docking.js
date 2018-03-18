@@ -204,8 +204,10 @@ const DockedDash = new Lang.Class({
 
         this._bindSettingsChanges();
 
-        this._position = Utils.getPosition(settings);
-        this._isHorizontal = ((this._position == St.Side.TOP) || (this._position == St.Side.BOTTOM));
+        // Put dock on the required monitor and position
+        this._monitor = Main.layoutManager.monitors[this._monitorIndex];
+        this._position = Utils.getPosition(settings, this._monitorIndex);
+        this._isHorizontal = Utils.isHorizontal(settings);
 
         // Temporary ignore hover events linked to autohide for whatever reason
         this._ignoreHover = false;
@@ -221,9 +223,6 @@ const DockedDash = new Lang.Class({
 
         // initialize dock state
         this._dockState = State.HIDDEN;
-
-        // Put dock on the required monitor
-        this._monitor = Main.layoutManager.monitors[this._monitorIndex];
 
         // this store size and the position where the dash is shown;
         // used by intellihide module to check window overlap.
@@ -1902,8 +1901,7 @@ var DockManager = new Lang.Class({
      * Adjust Panel corners
      */
     _adjustPanelCorners: function() {
-        let position = Utils.getPosition(this._settings);
-        let isHorizontal = ((position == St.Side.TOP) || (position == St.Side.BOTTOM));
+        let isHorizontal = Utils.isHorizontal(this._settings);
         let extendHeight   = this._settings.get_boolean('extend-height');
         let fixedIsEnabled = this._settings.get_boolean('dock-fixed');
         let dockOnPrimary  = this._settings.get_boolean('multi-monitor') ||

@@ -180,7 +180,7 @@ var MyAppIcon = new Lang.Class({
             this._indicator.destroy();
             this._indicator = null;
         }
-        this._indicator = new AppIconIndicators.AppIconIndicator(this, this._dtdSettings);
+        this._indicator = new AppIconIndicators.AppIconIndicator(this, this.monitorIndex, this._dtdSettings);
         this._indicator.update();
     },
 
@@ -318,9 +318,7 @@ var MyAppIcon = new Lang.Class({
                     // scrollable so the minimum height is smaller than the natural height.
                     let monitor_index = Main.layoutManager.findIndexForActor(this.actor);
                     let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor_index);
-                    let position = Utils.getPosition(this._dtdSettings);
-                    this._isHorizontal = ( position == St.Side.TOP ||
-                                           position == St.Side.BOTTOM);
+                    this._isHorizontal = Utils.isHorizontal(this._dtdSettings);
                     // If horizontal also remove the height of the dash
                     let additional_margin = this._isHorizontal && !this._dtdSettings.get_boolean('dock-fixed') ? Main.overview._dash.actor.height : 0;
                     let verticalMargins = this._menu.actor.margin_top + this._menu.actor.margin_bottom;
@@ -738,7 +736,7 @@ const MyAppIconMenu = new Lang.Class({
     Extends: AppDisplay.AppIconMenu,
 
     _init: function(source, settings) {
-        let side = Utils.getPosition(settings);
+        let side = Utils.getPosition(settings, source.monitorIndex);
 
         // Damm it, there has to be a proper way of doing this...
         // As I can't call the parent parent constructor (?) passing the side
@@ -987,8 +985,9 @@ function getInterestingWindows(app, settings, monitorIndex) {
  var ShowAppsIconWrapper = new Lang.Class({
     Name: 'DashToDock.ShowAppsIconWrapper',
 
-    _init: function(settings) {
+    _init: function(monitorIndex, settings) {
         this._dtdSettings = settings;
+        this._monitorIndex = monitorIndex;
         this.realShowAppsIcon = new Dash.ShowAppsIcon();
 
         /* the variable equivalent to toggleButton has a different name in the appIcon class
@@ -1099,8 +1098,8 @@ function itemShowLabel()  {
 
     let x, y, xOffset, yOffset;
 
-    let position = Utils.getPosition(this._dtdSettings);
-    this._isHorizontal = ((position == St.Side.TOP) || (position == St.Side.BOTTOM));
+    let position = Utils.getPosition(this._dtdSettings, this._monitorIndex);
+    this._isHorizontal = Utils.isHorizontal(this._dtdSettings);
     let labelOffset = node.get_length('-x-offset');
 
     switch (position) {

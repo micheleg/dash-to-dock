@@ -39,8 +39,9 @@ let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
  *  I can't subclass the original object because of this: https://bugzilla.gnome.org/show_bug.cgi?id=688973.
  *  thus use this ugly pattern.
  */
-function extendDashItemContainer(dashItemContainer, settings) {
+function extendDashItemContainer(dashItemContainer, monitorIndex, settings) {
     dashItemContainer._dtdSettings = settings;
+    dashItemContainer._monitorIndex = monitorIndex;
     dashItemContainer.showLabel = AppIcons.itemShowLabel;
 }
 
@@ -59,10 +60,7 @@ const MyDashActor = new Lang.Class({
         // a prefix is required to avoid conflicting with the parent class variable
         this._dtdSettings = settings;
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
-
-        this._position = Utils.getPosition(settings);
-        this._isHorizontal = ((this._position == St.Side.TOP) ||
-                               (this._position == St.Side.BOTTOM));
+        this._isHorizontal =  Utils.isHorizontal(settings);
 
         let layout = new Clutter.BoxLayout({
             orientation: this._isHorizontal ? Clutter.Orientation.HORIZONTAL : Clutter.Orientation.VERTICAL
@@ -190,9 +188,8 @@ var MyDash = new Lang.Class({
 
         this._remoteModel = remoteModel;
         this._monitorIndex = monitorIndex;
-        this._position = Utils.getPosition(settings);
-        this._isHorizontal = ((this._position == St.Side.TOP) ||
-                               (this._position == St.Side.BOTTOM));
+        this._position = Utils.getPosition(settings, monitorIndex);
+        this._isHorizontal = Utils.isHorizontal(settings);
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._dragPlaceholder = null;
@@ -458,7 +455,7 @@ var MyDash = new Lang.Class({
 
         let item = new Dash.DashItemContainer();
 
-        extendDashItemContainer(item, this._dtdSettings);
+        extendDashItemContainer(item, this._monitorIndex, this._dtdSettings);
         item.setChild(appIcon.actor);
 
         appIcon.actor.connect('notify::hover', Lang.bind(this, function() {
