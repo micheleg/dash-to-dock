@@ -45,7 +45,8 @@ const clickAction = {
     CYCLE_WINDOWS: 3,
     MINIMIZE_OR_OVERVIEW: 4,
     PREVIEWS: 5,
-    QUIT: 6
+    MINIMIZE_OR_PREVIEWS: 6,
+    QUIT: 7
 };
 
 const scrollAction = {
@@ -473,6 +474,29 @@ var MyAppIcon = new Lang.Class({
                         this._windowPreviews();
                 }
                 else {
+                    this.app.activate();
+                }
+                break;
+
+            case clickAction.MINIMIZE_OR_PREVIEWS:
+                // When a single window is present, toggle minimization
+                // If only one windows is present toggle minimization, but only when trigggered with the
+                // simple click action (no modifiers, no middle click).
+                if (!Main.overview._shown){
+                    if (windows.length == 1 && !modifiers && button == 1) {
+                        let w = windows[0];
+                        if (this.app == focusedApp) {
+                            // Window is raised, minimize it
+                            this._minimizeWindow(w);
+                        } else {
+                            // Window is minimized, raise it
+                            Main.activateWindow(w);
+                        }
+                    } else {
+                        // Launch previews when multiple windows are present
+                        this._windowPreviews();
+                    }
+                } else {
                     this.app.activate();
                 }
                 break;
