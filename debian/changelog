@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (0.9.1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (0.9.1) bionic; urgency=medium
 
   * Rebased against latest dash to dock master with bug fixes:
     - fix GJS warnings
@@ -6,7 +6,7 @@ gnome-shell-extension-ubuntu-dock (0.9.1) UNRELEASED; urgency=medium
     - theming: update panel solid style on showing the overview
     - translation updates
 
- -- Didier Roche <didrocks@ubuntu.com>  Mon, 26 Mar 2018 19:39:08 +0200
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 27 Mar 2018 09:22:53 +0200
 
 gnome-shell-extension-ubuntu-dock (0.9) bionic; urgency=medium
 
