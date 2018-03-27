@@ -1,3 +1,13 @@
+gnome-shell-extension-ubuntu-dock (0.9.1) UNRELEASED; urgency=medium
+
+  * Rebased against latest dash to dock master with bug fixes:
+    - fix GJS warnings
+    - appIconIndicators: fix backLight for workspace/monitor isolation
+    - theming: update panel solid style on showing the overview
+    - translation updates
+
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 26 Mar 2018 19:39:08 +0200
+
 gnome-shell-extension-ubuntu-dock (0.9) bionic; urgency=medium
 
   * Rebase on latest master.
