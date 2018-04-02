@@ -1,3 +1,17 @@
+- version: 63
+  date: 02-04-2018
+  shell_version: ["3.18", "3.20", "3.22", "3.24", "3.26", "3.28"]
+  notes:
+    - "Introduce GNOME Shell 3.28 support."
+    - "New feature: Implement new appIconIndicators styles."
+    - "New feature: ClickAction: add minimize-or-previews option [veridiam: b2e9bb7c]."
+    - "Improvement: Add scrollbars to settings windows [bfc7cfb07f6e]."
+    - "Fix border in overview [Beidl: f87c2a996d]."
+    - "Fix stale barrier state (dock stuck hidden) with fast or no animations [13c2efc3d1]."
+    - "Add Galician translation [Xose: faafac2ebf]."
+    - "Update Czech [Pavel: 490ba7fa], Ukraininan [Valentine A.: 81202c45], Russian [vantu5z: f93ab8e8], Norwegian Bokmål [Harald H: a36c50be], Swedish [Morgan Antonsson: 310e5d20] translations."
+  zip_url: https://extensions.gnome.org/review/download/8039.shell-extension.zip
+
 - version: 62
   date: 24-12-2017
   shell_version: ["3.18", "3.20", "3.22", "3.24", "3.26"]
