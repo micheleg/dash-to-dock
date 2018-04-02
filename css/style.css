@@ -308,49 +308,6 @@ a.small-button-link:hover:active{
     top: 1px;
 }
 
-#donations {
-    margin:0;
-    padding:0;
-    list-style:none;
-    overflow:hidden;
-    text-align:center;
-    min-height:50px;
-}
-
-#donations li {
-    height:50px;
-    min-width:100px;
-    padding: 0px 5px;
-}
-
-#donations span {
-  display:table-cell;
-  height:50px;
-  vertical-align:middle;
-}
-
-#lovebar {
-    background: url('../media/puzzle.png') top center no-repeat;
-    padding: 175px 0px 30px 0px;
-}
-
-#lovebar p {
-    text-align:center;
-    font-size:150%;
-    color: #555753;
-    margin:0;
-    margin-top:25px;
-}
-
-.lovebarBox1, .lovebarBox2 {
-    display:inline;
-}
-
-/* Fix facebook social button alignment */
-.fb-like.fb_iframe_widget span{
-  vertical-align: top !important;
-}
-
 @media all and (min-width: 960px) {
 
   #lovebar {
