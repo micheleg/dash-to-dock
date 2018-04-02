@@ -333,8 +333,11 @@ var MyAppIcon = new Lang.Class({
                 }
 
                 // Close the window previews
-                if (this._previewMenu && this._previewMenu.isOpen)
-                    this._previewMenu.close(~0);
+                if (this._previewMenu) {
+                    this._previewMenu.cancelOpen();
+                    if (this._previewMenu.isOpen)
+                        this._previewMenu.close(~0);
+                }
             }));
             let id = Main.overview.connect('hiding', Lang.bind(this, function() {
                 this._menu.close();
