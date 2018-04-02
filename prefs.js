@@ -96,7 +96,16 @@ const Settings = new Lang.Class({
         this._builder.set_translation_domain(Me.metadata['gettext-domain']);
         this._builder.add_from_file(Me.path + '/Settings.ui');
 
-        this.widget = this._builder.get_object('settings_notebook');
+        this.widget = new Gtk.ScrolledWindow({ hscrollbar_policy: Gtk.PolicyType.NEVER });
+        this._notebook = this._builder.get_object('settings_notebook');
+        this.widget.add(this._notebook);
+
+        // Set a reasonable initial window height
+        this.widget.connect('realize', Lang.bind(this, function() {
+            let window = this.widget.get_toplevel();
+            let [default_width, default_height] = window.get_default_size();
+            window.resize(default_width, 650);
+        }));
 
         // Timeout to delay the update of the settings
         this._dock_size_timeout = 0;
