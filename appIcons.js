@@ -461,9 +461,15 @@ var MyAppIcon = new Lang.Class({
                 break;
 
             case clickAction.CYCLE_MINIMIZE:
-                if (!Main.overview._shown)
+                if (!Main.overview._shown) {
+                    if (this.app != focusedApp) {
+                        recentlyClickedApp = this.app;
+                        recentlyClickedAppWindows = windows;
+                        recentlyClickedAppMonitor = this.monitorIndex;
+                        recentlyClickedAppIndex = -1;
+                    }
                     this._cycleThroughWindows(false, true);
-                else
+                } else
                     this.app.activate();
                 break;
 
