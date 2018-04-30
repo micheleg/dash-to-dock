@@ -82,6 +82,7 @@
                           <item translatable="yes">Minimize window</item>
                           <item translatable="yes">Launch new instance</item>
                           <item translatable="yes">Cycle through windows</item>
+                          <item translatable="yes">Cycle + Minimize</item>
                           <item translatable="yes">Minimize or overview</item>
                           <item translatable="yes">Show window previews</item>
                           <item translatable="yes">Minimize or show previews</item>
@@ -154,6 +155,7 @@
                           <item translatable="yes">Minimize window</item>
                           <item translatable="yes">Launch new instance</item>
                           <item translatable="yes">Cycle through windows</item>
+                          <item translatable="yes">Cycle + Minimize</item>
                           <item translatable="yes">Minimize or overview</item>
                           <item translatable="yes">Show window previews</item>
                           <item translatable="yes">Minimize or show previews</item>
@@ -226,6 +228,7 @@
                           <item translatable="yes">Minimize window</item>
                           <item translatable="yes">Launch new instance</item>
                           <item translatable="yes">Cycle through windows</item>
+                          <item translatable="yes">Cycle + Minimize</item>
                           <item translatable="yes">Minimize or overview</item>
                           <item translatable="yes">Show window previews</item>
                           <item translatable="yes">Minimize or show previews</item>
@@ -1586,6 +1589,7 @@
                                   <item translatable="yes">Minimize</item>
                                   <item translatable="yes">Launch new instance</item>
                                   <item translatable="yes">Cycle through windows</item>
+                                  <item translatable="yes">Cycle + Minimize</item>
                                   <item translatable="yes">Minimize or overview</item>
                                   <item translatable="yes">Show window previews</item>
                                   <item translatable="yes">Minimize or show previews</item>

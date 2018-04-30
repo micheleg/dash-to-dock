@@ -43,10 +43,11 @@ const clickAction = {
     MINIMIZE: 1,
     LAUNCH: 2,
     CYCLE_WINDOWS: 3,
-    MINIMIZE_OR_OVERVIEW: 4,
-    PREVIEWS: 5,
-    MINIMIZE_OR_PREVIEWS: 6,
-    QUIT: 7
+    CYCLE_MINIMIZE: 4,
+    MINIMIZE_OR_OVERVIEW: 5,
+    PREVIEWS: 6,
+    MINIMIZE_OR_PREVIEWS: 7,
+    QUIT: 8
 };
 
 const scrollAction = {
@@ -459,6 +460,13 @@ var MyAppIcon = new Lang.Class({
                     this.app.activate();
                 break;
 
+            case clickAction.CYCLE_MINIMIZE:
+                if (!Main.overview._shown)
+                    this._cycleThroughWindows(false, true);
+                else
+                    this.app.activate();
+                break;
+
             case clickAction.LAUNCH:
                 this.launchNewWindow();
                 break;
@@ -688,7 +696,7 @@ var MyAppIcon = new Lang.Class({
             windows[i].delete(global.get_current_time());
     },
 
-    _cycleThroughWindows: function(reversed) {
+    _cycleThroughWindows: function(reversed, minimize) {
         // Store for a little amount of time last clicked app and its windows
         // since the order changes upon window interaction
         let MEMORY_TIME=3000;
@@ -712,7 +720,7 @@ var MyAppIcon = new Lang.Class({
             recentlyClickedApp = this.app;
             recentlyClickedAppWindows = app_windows;
             recentlyClickedAppMonitor = this.monitorIndex;
-            recentlyClickedAppIndex = 0;
+            recentlyClickedAppIndex = reserved ? 0 : -1;
         }
 
         if (reversed) {
@@ -721,10 +729,17 @@ var MyAppIcon = new Lang.Class({
         } else {
             recentlyClickedAppIndex++;
         }
-        let index = recentlyClickedAppIndex % recentlyClickedAppWindows.length;
-        let window = recentlyClickedAppWindows[index];
 
-        Main.activateWindow(window);
+        let index = recentlyClickedAppIndex % recentlyClickedAppWindows.length;
+
+        if (minimize && recentlyClickedAppIndex !== 0 && index === 0) {
+            recentlyClickedAppWindows.forEach(function (w) { w.minimize(); });
+            recentlyClickedAppIndex = -1;
+        } else {
+            let window = recentlyClickedAppWindows[index];
+
+            Main.activateWindow(window);
+        }
     },
 
     _resetRecentlyClickedApp: function() {
