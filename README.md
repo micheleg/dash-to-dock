@@ -10,7 +10,10 @@ For installation instructions and more information visit [https://micheleg.githu
 
 The extension can be installed directly from source, either for the convenience of using git or to test the latest development version. Clone the desired branch with git
 
-<pre>git clone https://github.com/micheleg/dash-to-dock.git</pre>
+```sh
+git clone git@github.com:micheleg/dash-to-dock.git
+```
+
 or download the branch from github. A simple Makefile is included. Then run
 <pre>make
 make install
