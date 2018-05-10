@@ -1041,7 +1041,8 @@ function getInterestingWindows(app, settings, monitorIndex) {
         this._menuManager = new PopupMenu.PopupMenuManager(this);
         this._menuTimeoutId = 0;
 
-        this.showLabel = itemShowLabel;
+        this.realShowAppsIcon._dtdSettings = settings;
+        this.realShowAppsIcon.showLabel = itemShowLabel;
     },
 
     popupMenu: function() {
