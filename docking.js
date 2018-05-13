@@ -1696,6 +1696,14 @@ var DockManager = new Lang.Class({
 
     _createDocks: function() {
 
+        // If there are no monitors (headless configurations, but it can also happen temporary while disconnecting
+        // and reconnecting monitors), just do nothing. When a monitor will be connected we we'll be notified and
+        // and thus create the docks. This prevents pointing trying to access monitors throughout the code, were we
+        // are assuming that at least the primary monitor is present.
+        if (Main.layoutManager.monitors.length <= 0) {
+            return;
+        }
+
         this._preferredMonitorIndex = this._settings.get_int('preferred-monitor');
         // In case of multi-monitor, we consider the dock on the primary monitor to be the preferred (main) one
         // regardless of the settings
