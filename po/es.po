@@ -7,23 +7,23 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-05-30 17:27-0400\n"
-"PO-Revision-Date: 2017-02-17 12:11+0100\n"
-"Last-Translator: Hugo Olabera <hugolabe@gmail.com>\n"
+"PO-Revision-Date: 2017-08-23 19:42-0500\n"
+"Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
 "Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 2.0.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: prefs.js:113
 msgid "Primary monitor"
-msgstr "Pantalla principal"
+msgstr "Monitor principal"
 
 #: prefs.js:122 prefs.js:129
 msgid "Secondary monitor "
-msgstr "Pantalla secundaria"
+msgstr "Monitor secundario"
 
 #: prefs.js:154 Settings.ui.h:29
 msgid "Right"
@@ -35,15 +35,15 @@ msgstr "Izquierda"
 
 #: prefs.js:205
 msgid "Intelligent autohide customization"
-msgstr "Opciones de auto ocultado"
+msgstr "Personalización de ocultamiento inteligente"
 
 #: prefs.js:212 prefs.js:393 prefs.js:450
 msgid "Reset to defaults"
-msgstr "Restaurar"
+msgstr "Restablecer la configuración predeterminada"
 
 #: prefs.js:386
 msgid "Show dock and application numbers"
-msgstr "Mostrar el dock y el número de aplicación"
+msgstr "Mostrar dock y números de aplicación"
 
 #: prefs.js:443
 msgid "Customize middle-click behavior"
@@ -83,7 +83,7 @@ msgid ""
 "the shortcut."
 msgstr ""
 "Al usar atajos, mostrar momentáneamente el número de aplicación sobre los "
-"íconos."
+"iconos."
 
 #: Settings.ui.h:7
 msgid "Show the dock if it is hidden"
@@ -94,12 +94,12 @@ msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
 msgstr ""
-"Si auto-ocultar está activado, el dock aparecerá momentáneamente al usar el "
-"atajo."
+"Si se activa el ocultamiento automático, el dock aparecerá momentáneamente "
+"al usar el atajo."
 
 #: Settings.ui.h:9
 msgid "Shortcut for the options above"
-msgstr "Atajo para las opciones de arriba"
+msgstr "Atajo para las opciones anteriores"
 
 #: Settings.ui.h:10
 msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
@@ -114,12 +114,12 @@ msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
-"Cuando está seleccionado minimizar, doble click minimiza todas las ventanas "
-"de la aplicación."
+"Cuando se selecciona minimizar, una pulsación doble minimiza todas las "
+"ventanas de la aplicación."
 
 #: Settings.ui.h:13
 msgid "Shift+Click action"
-msgstr "Acción de Mayúsculas+Click"
+msgstr "Acción de Mayús + pulsación"
 
 #: Settings.ui.h:14
 msgid "Raise window"
@@ -131,7 +131,7 @@ msgstr "Minimizar ventana"
 
 #: Settings.ui.h:16
 msgid "Launch new instance"
-msgstr "Lanzar una nueva instancia"
+msgstr "Iniciar una instancia nueva"
 
 #: Settings.ui.h:17
 msgid "Cycle through windows"
@@ -151,11 +151,11 @@ msgstr "Acción del botón central"
 
 #: Settings.ui.h:21
 msgid "Behavior for Shift+Middle-Click."
-msgstr "Comportamiento para Mayúsculas+Botón-Central"
+msgstr "Comportamiento de Mayús + botón central"
 
 #: Settings.ui.h:22
 msgid "Shift+Middle-Click action"
-msgstr "Acción de Mayúsculas+Botón-Central"
+msgstr "Acción de Mayús + botón central"
 
 #: Settings.ui.h:23
 msgid "Show the dock on"
@@ -163,7 +163,7 @@ msgstr "Mostrar el dock en"
 
 #: Settings.ui.h:24
 msgid "Show on all monitors."
-msgstr "Mostrar en todas las pantallas."
+msgstr "Mostrar en todos los monitores."
 
 #: Settings.ui.h:25
 msgid "Position on screen"
@@ -171,23 +171,23 @@ msgstr "Posición en pantalla"
 
 #: Settings.ui.h:27
 msgid "Bottom"
-msgstr "Abajo"
+msgstr "Inferior"
 
 #: Settings.ui.h:28
 msgid "Top"
-msgstr "Arriba"
+msgstr "Superior"
 
 #: Settings.ui.h:30
 msgid ""
-"Hide the dock when it obstructs a window of the the current application. "
-"More refined settings are available."
+"Hide the dock when it obstructs a window of the current application. More "
+"refined settings are available."
 msgstr ""
 "Ocultar el dock cuando cubre una ventana de la aplicación activa. Otras "
 "opciones disponibles."
 
 #: Settings.ui.h:31
 msgid "Intelligent autohide"
-msgstr "Auto ocultado inteligente"
+msgstr "Ocultamiento automático inteligente"
 
 #: Settings.ui.h:32
 msgid "Dock size limit"
@@ -235,7 +235,7 @@ msgstr ""
 
 #: Settings.ui.h:42
 msgid "Show <i>Applications</i> icon"
-msgstr "Mostrar el icono <i>Mostrar aplicaciones</i>"
+msgstr "Mostrar el icono <i>Aplicaciones</i>"
 
 #: Settings.ui.h:43
 msgid "Move the applications button at the beginning of the dock."
@@ -267,7 +267,7 @@ msgstr "Comportamiento al pulsar el icono de una aplicación en ejecución"
 
 #: Settings.ui.h:49
 msgid "Click action"
-msgstr "Acción del Click"
+msgstr "Acción de pulsación"
 
 #: Settings.ui.h:50
 msgid "Minimize"
@@ -279,11 +279,11 @@ msgstr "Minimizar o vista de actividades"
 
 #: Settings.ui.h:52
 msgid "Behaviour when scrolling on the icon of an application."
-msgstr "Comportamiento al usar scroll sobre el icono de una aplicación."
+msgstr "Comportamiento al usar la rueda sobre el icono de una aplicación."
 
 #: Settings.ui.h:53
 msgid "Scroll action"
-msgstr "Acción de scroll"
+msgstr "Acción de desplazamiento"
 
 #: Settings.ui.h:54
 msgid "Do nothing"
@@ -307,7 +307,7 @@ msgstr ""
 
 #: Settings.ui.h:58
 msgid "Use built-in theme"
-msgstr "Utilizar el tema por defecto"
+msgstr "Utilizar el tema incorporado"
 
 #: Settings.ui.h:59
 msgid "Save space reducing padding and border radius."
@@ -315,7 +315,7 @@ msgstr "Reducir los márgenes para ganar espacio"
 
 #: Settings.ui.h:60
 msgid "Shrink the dash"
-msgstr "Encoger el dock"
+msgstr "Encoger el tablero"
 
 #: Settings.ui.h:61
 msgid "Show a dot for each windows of the application."
@@ -391,7 +391,7 @@ msgstr "Mostrar el dock al mover el puntero al borde de la pantalla"
 
 #: Settings.ui.h:79
 msgid "Autohide"
-msgstr "Auto ocultar"
+msgstr "Ocultar automáticamente"
 
 #: Settings.ui.h:80
 msgid "Push to show: require pressure to show the dock"
@@ -399,7 +399,7 @@ msgstr "Empujar para mostrar: requiere hacer presión para mostrar el dock"
 
 #: Settings.ui.h:81
 msgid "Enable in fullscreen mode"
-msgstr "Habilitar en modo pantalla completa"
+msgstr "Activar en modo de pantalla completa"
 
 #: Settings.ui.h:82
 msgid "Show the dock when it doesn't obstruct application windows."
@@ -407,7 +407,7 @@ msgstr "Mostrar el dock cuando no cubra otras ventanas de aplicaciones"
 
 #: Settings.ui.h:83
 msgid "Dodge windows"
-msgstr "Auto ocultado inteligente"
+msgstr "Esquivar las ventanas"
 
 #: Settings.ui.h:84
 msgid "All windows"
@@ -415,11 +415,11 @@ msgstr "Todas las ventanas"
 
 #: Settings.ui.h:85
 msgid "Only focused application's windows"
-msgstr "Sólo las ventanas de la aplicación activa"
+msgstr "Solo las ventanas de la aplicación activa"
 
 #: Settings.ui.h:86
 msgid "Only maximized windows"
-msgstr "Sólo las ventanas maximizadas"
+msgstr "Solo las ventanas maximizadas"
 
 #: Settings.ui.h:87
 msgid "Animation duration (s)"

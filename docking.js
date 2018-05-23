@@ -29,10 +29,11 @@ const Utils = Me.imports.utils;
 const Intellihide = Me.imports.intellihide;
 const Theming = Me.imports.theming;
 const MyDash = Me.imports.dash;
+const LauncherAPI = Me.imports.launcherAPI;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 
-const State = {
+var State = {
     HIDDEN:  0,
     SHOWING: 1,
     SHOWN:   2,
@@ -191,11 +192,12 @@ const DashSlideContainer = new Lang.Class({
 const DockedDash = new Lang.Class({
     Name: 'DashToDock.DockedDash',
 
-    _init: function(settings, monitorIndex) {
+    _init: function(settings, remoteModel, monitorIndex) {
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
         // Load settings
         this._settings = settings;
+        this._remoteModel = remoteModel;
         this._monitorIndex = monitorIndex;
         // Connect global signals
         this._signalsHandler = new Utils.GlobalSignalsHandler();
@@ -240,7 +242,7 @@ const DockedDash = new Lang.Class({
         this._dockDwellTimeoutId = 0
 
         // Create a new dash object
-        this.dash = new MyDash.MyDash(this._settings, this._monitorIndex);
+        this.dash = new MyDash.MyDash(this._settings, this._remoteModel, this._monitorIndex);
 
         if (!this._settings.get_boolean('show-show-apps-button'))
             this.dash.hideShowAppsButton();
@@ -350,7 +352,7 @@ const DockedDash = new Lang.Class({
         ]);
 
         this._injectionsHandler = new Utils.InjectionsHandler();
-        this._themeManager = new Theming.ThemeManager(this._settings, this.actor, this.dash);
+        this._themeManager = new Theming.ThemeManager(this._settings, this);
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
@@ -419,8 +421,6 @@ const DockedDash = new Lang.Class({
             this.actor.disconnect(this._paintId);
             this._paintId=0;
         }
-
-        this.dash.setIconSize(this._settings.get_int('dash-max-icon-size'), true);
 
         // Apply custome css class according to the settings
         this._themeManager.updateCustomTheme();
@@ -696,6 +696,10 @@ const DockedDash = new Lang.Class({
         }
     },
 
+    getDockState: function() {
+        return this._dockState;
+    },
+
     _show: function() {
         if ((this._dockState == State.HIDDEN) || (this._dockState == State.HIDING)) {
             if (this._dockState == State.HIDING)
@@ -755,6 +759,9 @@ const DockedDash = new Lang.Class({
             transition: 'easeOutQuad',
             onComplete: Lang.bind(this, function() {
                 this._dockState = State.HIDDEN;
+                // Remove queued barried removal if any
+                if (this._removeBarrierTimeoutId > 0)
+                    Mainloop.source_remove(this._removeBarrierTimeoutId);
                 this._updateBarrier();
             })
         });
@@ -1112,6 +1119,11 @@ const DockedDash = new Lang.Class({
     },
 
     _adjustLegacyTray: function() {
+        // The legacyTray has been removed in GNOME Shell 3.26.
+        // Once we drop support for previous releases this fuction can be dropped too.
+        if (!Main.legacyTray)
+            return;
+
         let use_work_area = true;
 
         if (this._fixedIsEnabled && !this._settings.get_boolean('extend-height')
@@ -1128,6 +1140,10 @@ const DockedDash = new Lang.Class({
     },
 
     _resetLegacyTray: function() {
+        // The legacyTray has been removed in GNOME Shell 3.26.
+        // Once we drop support for previous releases this fuction can be dropped too.
+        if (!Main.legacyTray)
+                return;
         Main.legacyTray.actor.clear_constraints();
         let constraint = new Layout.MonitorConstraint({
             primary: true,
@@ -1400,8 +1416,7 @@ const KeyboardShortcuts = new Lang.Class({
             return;
 
         // Setup keyboard bindings for dash elements
-        let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-',  // Regular numbers
-                    'app-hotkey-kp-', 'app-shift-hotkey-kp-', 'app-ctrl-hotkey-kp-']; // Key-pad numbers
+        let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
         keys.forEach( function(key) {
             for (let i = 0; i < this._numHotkeys; i++) {
                 let appNum = i;
@@ -1422,8 +1437,7 @@ const KeyboardShortcuts = new Lang.Class({
         if (!this._hotKeysEnabled)
             return;
 
-        let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-',  // Regular numbers
-                    'app-hotkey-kp-', 'app-shift-hotkey-kp-', 'app-ctrl-hotkey-kp-']; // Key-pad numbers
+        let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
         keys.forEach( function(key) {
             for (let i = 0; i < this._numHotkeys; i++)
                 Main.wm.removeKeybinding(key + (i + 1));
@@ -1625,10 +1639,11 @@ const WorkspaceIsolation = new Lang.Class({
 });
 
 
-const DockManager = new Lang.Class({
+var DockManager = new Lang.Class({
     Name: 'DashToDock.DockManager',
 
     _init: function() {
+        this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
         this._settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview._dash;
         /* Array of all the docks created */
@@ -1699,7 +1714,7 @@ const DockManager = new Lang.Class({
         }
 
         // First we create the main Dock, to get the extra features to bind to this one
-        let dock = new DockedDash(this._settings, this._preferredMonitorIndex);
+        let dock = new DockedDash(this._settings, this._remoteModel, this._preferredMonitorIndex);
         this._mainShowAppsButton = dock.dash.showAppsButton;
         this._allDocks.push(dock);
 
@@ -1717,7 +1732,7 @@ const DockManager = new Lang.Class({
             for (let iMon = 0; iMon < nMon; iMon++) {
                 if (iMon == this._preferredMonitorIndex)
                     continue;
-                let dock = new DockedDash(this._settings, iMon);
+                let dock = new DockedDash(this._settings, this._remoteModel, iMon);
                 this._allDocks.push(dock);
                 // connect app icon into the view selector
                 dock.dash.showAppsButton.connect('notify::checked', Lang.bind(this, this._onShowAppsButtonToggled));
@@ -1880,6 +1895,7 @@ const DockManager = new Lang.Class({
         this._deleteDocks();
         this._revertPanelCorners();
         this._restoreDash();
+        this._remoteModel.destroy();
     },
 
     /**

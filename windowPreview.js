@@ -101,8 +101,8 @@ const WindowPreviewList = new Lang.Class({
         this.parent();
 
         this.actor = new St.ScrollView({ name: 'dashtodockWindowScrollview',
-                                               hscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
-                                               vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
+                                               hscrollbar_policy: Gtk.PolicyType.NEVER,
+                                               vscrollbar_policy: Gtk.PolicyType.NEVER,
                                                enable_mouse_scrolling: true });
 
         this.actor.connect('scroll-event', Lang.bind(this, this._onScrollEvent ));
@@ -307,6 +307,39 @@ const WindowPreviewList = new Lang.Class({
 
         if (newWin.length < 1)
             this._getTopMenu().close(~0);
+
+        // As for upstream:
+        // St.ScrollView always requests space horizontally for a possible vertical
+        // scrollbar if in AUTOMATIC mode. Doing better would require implementation
+        // of width-for-height in St.BoxLayout and St.ScrollView. This looks bad
+        // when we *don't* need it, so turn off the scrollbar when that's true.
+        // Dynamic changes in whether we need it aren't handled properly.
+        let needsScrollbar = this._needsScrollbar();
+        let scrollbar_policy =  needsScrollbar ? Gtk.PolicyType.AUTOMATIC : Gtk.PolicyType.NEVER;
+        if (this.isHorizontal)
+            this.actor.hscrollbar_policy =  scrollbar_policy;
+        else
+            this.actor.vscrollbar_policy =  scrollbar_policy;
+
+        if (needsScrollbar)
+            this.actor.add_style_pseudo_class('scrolled');
+        else
+            this.actor.remove_style_pseudo_class('scrolled');
+    },
+
+    _needsScrollbar: function() {
+        let topMenu = this._getTopMenu();
+        let topThemeNode = topMenu.actor.get_theme_node();
+        if (this.isHorizontal) {
+            let [topMinWidth, topNaturalWidth] = topMenu.actor.get_preferred_width(-1);
+            let topMaxWidth = topThemeNode.get_max_width();
+            return topMaxWidth >= 0 && topNaturalWidth >= topMaxWidth;
+        } else {
+            let [topMinHeight, topNaturalHeight] = topMenu.actor.get_preferred_height(-1);
+            let topMaxHeight = topThemeNode.get_max_height();
+            return topMaxHeight >= 0 && topNaturalHeight >= topMaxHeight;
+        }
+
     },
 
     isAnimatingOut: function() {
@@ -336,15 +369,18 @@ const WindowPreviewMenuItem = new Lang.Class({
         this._window = window;
         this._destroyId = 0;
         this._windowAddedId = 0;
-        params = Params.parse(params, { style_class: 'app-well-preview-menu-item' });
         this.parent(params);
+
+        // We don't want this: it adds spacing on the left of the item.
+        this.actor.remove_child(this._ornamentLabel);
+        this.actor.add_style_class_name('dashtodock-app-well-preview-menu-item');
 
         this._cloneBin = new St.Bin();
         this._cloneBin.set_size(PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT);
 
         // TODO: improve the way the closebutton is layout. Just use some padding
         // for the moment.
-        this._cloneBin.set_style('padding: 5px');
+        this._cloneBin.set_style('padding-bottom: 0.5em');
 
         this.closeButton = new St.Button({ style_class: 'window-close',
                                           x_expand: true,

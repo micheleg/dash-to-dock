@@ -1,6 +1,7 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 const Clutter = imports.gi.Clutter;
+const GdkPixbuf = imports.gi.GdkPixbuf
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
@@ -31,6 +32,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
 const AppExposeOverview = Me.imports.appExposeOverview;
+const AppIconIndicators = Me.imports.appIconIndicators;
 
 let tracker = Shell.WindowTracker.get_default();
 
@@ -43,7 +45,8 @@ const clickAction = {
     CYCLE_WINDOWS: 3,
     MINIMIZE_OR_OVERVIEW: 4,
     PREVIEWS: 5,
-    QUIT: 6
+    MINIMIZE_OR_PREVIEWS: 6,
+    QUIT: 7
 };
 
 const scrollAction = {
@@ -63,7 +66,7 @@ let recentlyClickedAppMonitor = -1;
  *
  * - Pass settings to the constructor and bind settings changes
  * - Apply a css class based on the number of windows of each application (#N);
- * - Draw a dot for each window of the application based on the default "dot" style which is hidden (#N);
+ * - Customized indicators for running applications in place of the default "dot" style which is hidden (#N);
  *   a class of the form "running#N" is applied to the AppWellIcon actor.
  *   like the original .running one.
  * - Add a .focused style to the focused app
@@ -71,20 +74,24 @@ let recentlyClickedAppMonitor = -1;
  * - Update minimization animation target
  * - Update menu if open on windows change
  */
-const MyAppIcon = new Lang.Class({
+var MyAppIcon = new Lang.Class({
     Name: 'DashToDock.AppIcon',
     Extends: AppDisplay.AppIcon,
 
     // settings are required inside.
-    _init: function(settings, app, monitorIndex, iconParams) {
+    _init: function(settings, remoteModel, app, monitorIndex, iconParams) {
         // a prefix is required to avoid conflicting with the parent class variable
         this._dtdSettings = settings;
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._nWindows = 0;
         this.appExposeOverview = new AppExposeOverview.AppExposeOverview();
+        this.remoteModel = remoteModel;
+        this._indicator = null;
 
         this.parent(app, iconParams);
+
+        this._updateIndicatorStyle();
 
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
@@ -93,30 +100,42 @@ const MyAppIcon = new Lang.Class({
             this._stateChangedId = 0;
         }
 
-        this._stateChangedId = this.app.connect('windows-changed',
+        this._windowsChangedId = this.app.connect('windows-changed',
                                                 Lang.bind(this,
                                                           this.onWindowsChanged));
         this._focusAppChangeId = tracker.connect('notify::focus-app',
                                                  Lang.bind(this,
                                                            this._onFocusAppChanged));
-        this._dots = null;
+
+        // In Wayland sessions, this signal is needed to track the state of windows dragged
+        // from one monitor to another. As this is triggered quite often (whenever a new winow
+        // of any application opened or moved to a different desktop),
+        // we restrict this signal to  the case when 'isolate-monitors' is true,
+        // and if there are at least 2 monitors.
+        if (this._dtdSettings.get_boolean('isolate-monitors') &&
+            Main.layoutManager.monitors.length > 1) {
+            this._signalsHandler.removeWithLabel('isolate-monitors');
+            this._signalsHandler.addWithLabel('isolate-monitors', [
+                global.screen,
+                'window-entered-monitor',
+                Lang.bind(this, this._onWindowEntered)
+            ]);
+        }
+
+        this._progressOverlayArea = null;
+        this._progress = 0;
 
         let keys = ['apply-custom-theme',
-                   'custom-theme-running-dots',
-                   'custom-theme-customize-running-dots',
-                   'custom-theme-running-dots-color',
-                   'custom-theme-running-dots-border-color',
-                   'custom-theme-running-dots-border-width'];
+                   'running-indicator-style',
+                    ];
 
         keys.forEach(function(key) {
             this._signalsHandler.add([
                 this._dtdSettings,
                 'changed::' + key,
-                Lang.bind(this, this._toggleDots)
+                Lang.bind(this, this._updateIndicatorStyle)
             ]);
         }, this);
-
-        this._toggleDots();
 
         this._dtdSettings.connect('changed::scroll-action', Lang.bind(this, function() {
             this._optionalScrollCycleWindows();
@@ -139,7 +158,11 @@ const MyAppIcon = new Lang.Class({
             this._menu.close(false);
 
         // Disconect global signals
-        // stateChangedId is already handled by parent)
+
+        if (this._windowsChangedId > 0)
+            this.app.disconnect(this._windowsChangedId);
+        this._windowsChangedId = 0;
+
         if (this._focusAppChangeId > 0) {
             tracker.disconnect(this._focusAppChangeId);
             this._focusAppChangeId = 0;
@@ -153,6 +176,23 @@ const MyAppIcon = new Lang.Class({
         this.appExposeOverview.disconnect();
     },
 
+    // TOOD Rename this function
+    _updateIndicatorStyle: function() {
+
+        if (this._indicator !== null) {
+            this._indicator.destroy();
+            this._indicator = null;
+        }
+        this._indicator = new AppIconIndicators.AppIconIndicator(this, this._dtdSettings);
+        this._indicator.update();
+    },
+
+    _onWindowEntered: function(metaScreen, monitorIndex, metaWin) {
+        let app = Shell.WindowTracker.get_default().get_window_app(metaWin);
+        if (app && app.get_id() == this.app.get_id())
+            this.onWindowsChanged();
+    },
+
     _optionalScrollCycleWindows: function() {
         if (this._scrollEventHandler) {
             this.actor.disconnect(this._scrollEventHandler);
@@ -161,7 +201,6 @@ const MyAppIcon = new Lang.Class({
 
         let isEnabled = this._dtdSettings.get_enum('scroll-action') === scrollAction.CYCLE_WINDOWS;
         if (!isEnabled) return;
-
         this._scrollEventHandler = this.actor.connect('scroll-event', Lang.bind(this,
                                                           this.onScrollEvent));
     },
@@ -210,7 +249,7 @@ const MyAppIcon = new Lang.Class({
         if (this._menu && this._menu.isOpen)
             this._menu.update();
 
-        this._updateRunningStyle();
+        this._indicator.update();
         this.updateIconGeometry();
     },
 
@@ -242,54 +281,10 @@ const MyAppIcon = new Lang.Class({
         });
     },
 
-    _toggleDots: function() {
-        if (this._dtdSettings.get_boolean('custom-theme-running-dots') || this._dtdSettings.get_boolean('apply-custom-theme'))
-            this._showDots();
-        else
-            this._hideDots();
-    },
-
-    _showDots: function() {
-        // I use opacity to hide the default dot because the show/hide function
-        // are used by the parent class.
-        this._dot.opacity = 0;
-
-        // Just update style if dots already exist
-        if (this._dots) {
-            this._updateCounterClass();
-            return;
-        }
-
-        this._dots = new St.DrawingArea({x_expand: true, y_expand: true});
-        this._dots.connect('repaint', Lang.bind(this, function() {
-            this._drawCircles(this._dots, Utils.getPosition(this._dtdSettings));
-        }));
-        this._iconContainer.add_child(this._dots);
-        this._updateCounterClass();
-    },
-
-    _hideDots: function() {
-        this._dot.opacity = 255;
-        if (this._dots)
-            this._dots.destroy()
-        this._dots = null;
-    },
-
     _updateRunningStyle: function() {
-        // When using workspace isolation, we need to hide the dots of apps with
-        // no windows in the current workspace
-        if (this._dtdSettings.get_boolean('isolate-workspaces') ||
-            this._dtdSettings.get_boolean('isolate-monitors')) {
-            if (this.app.state != Shell.AppState.STOPPED
-                && this.getInterestingWindows().length != 0)
-                this._dot.show();
-            else
-                this._dot.hide();
-        }
-        else
-            this.parent();
-        this._onFocusAppChanged();
-        this._updateCounterClass();
+        // The logic originally in this function has been moved to
+        // AppIconIndicatorBase._updateDefaultDot(). However it cannot be removed as
+        // it called by the parent constructor.
     },
 
     popupMenu: function() {
@@ -342,21 +337,10 @@ const MyAppIcon = new Lang.Class({
     },
 
     _onFocusAppChanged: function() {
-        // We need to check the number of windows, as the focus might be
-        // happening on another monitor if using isolation
-        if (tracker.focus_app == this.app && this.getInterestingWindows().length != 0)
-            this.actor.add_style_class_name('focused');
-        else
-            this.actor.remove_style_class_name('focused');
+        this._indicator.update();
     },
 
     activate: function(button) {
-
-        if (!this._dtdSettings.get_boolean('customize-click')) {
-            this.parent(button);
-            return;
-        }
-
         let event = Clutter.get_current_event();
         let modifiers = event ? event.get_state() : 0;
         let focusedApp = tracker.focus_app;
@@ -488,6 +472,29 @@ const MyAppIcon = new Lang.Class({
                 }
                 break;
 
+            case clickAction.MINIMIZE_OR_PREVIEWS:
+                // When a single window is present, toggle minimization
+                // If only one windows is present toggle minimization, but only when trigggered with the
+                // simple click action (no modifiers, no middle click).
+                if (!Main.overview._shown){
+                    if (windows.length == 1 && !modifiers && button == 1) {
+                        let w = windows[0];
+                        if (this.app == focusedApp) {
+                            // Window is raised, minimize it
+                            this._minimizeWindow(w);
+                        } else {
+                            // Window is minimized, raise it
+                            Main.activateWindow(w);
+                        }
+                    } else {
+                        // Launch previews when multiple windows are present
+                        this._windowPreviews();
+                    }
+                } else {
+                    this.app.activate();
+                }
+                break;
+
             case clickAction.QUIT:
                 this.closeAllWindows();
                 break;
@@ -577,96 +584,6 @@ const MyAppIcon = new Lang.Class({
             else
                 this.app.activate();
         }
-    },
-
-    _updateCounterClass: function() {
-        let maxN = 4;
-        this._nWindows = Math.min(this.getInterestingWindows().length, maxN);
-
-        for (let i = 1; i <= maxN; i++) {
-            let className = 'running' + i;
-            if (i != this._nWindows)
-                this.actor.remove_style_class_name(className);
-            else
-                this.actor.add_style_class_name(className);
-        }
-
-        if (this._dots)
-            this._dots.queue_repaint();
-    },
-
-    _drawCircles: function(area, side) {
-        let borderColor, borderWidth, bodyColor;
-
-        if (!this._dtdSettings.get_boolean('apply-custom-theme')
-            && this._dtdSettings.get_boolean('custom-theme-running-dots')
-            && this._dtdSettings.get_boolean('custom-theme-customize-running-dots')) {
-            borderColor = Clutter.color_from_string(this._dtdSettings.get_string('custom-theme-running-dots-border-color'))[1];
-            borderWidth = this._dtdSettings.get_int('custom-theme-running-dots-border-width');
-            bodyColor =  Clutter.color_from_string(this._dtdSettings.get_string('custom-theme-running-dots-color'))[1];
-        }
-        else {
-            // Re-use the style - background color, and border width and color -
-            // of the default dot
-            let themeNode = this._dot.get_theme_node();
-            borderColor = themeNode.get_border_color(side);
-            borderWidth = themeNode.get_border_width(side);
-            bodyColor = themeNode.get_background_color();
-        }
-
-        let [width, height] = area.get_surface_size();
-        let cr = area.get_context();
-
-        // Draw the required numbers of dots
-        // Define the radius as an arbitrary size, but keep large enough to account
-        // for the drawing of the border.
-        let radius = Math.max(width/22, borderWidth/2);
-        let padding = 0; // distance from the margin
-        let spacing = radius + borderWidth; // separation between the dots
-        let n = this._nWindows;
-
-        cr.setLineWidth(borderWidth);
-        Clutter.cairo_set_source_color(cr, borderColor);
-
-        switch (side) {
-        case St.Side.TOP:
-            cr.translate((width - (2*n)*radius - (n-1)*spacing)/2, padding);
-            for (let i = 0; i < n; i++) {
-                cr.newSubPath();
-                cr.arc((2*i+1)*radius + i*spacing, radius + borderWidth/2, radius, 0, 2*Math.PI);
-            }
-            break;
-
-        case St.Side.BOTTOM:
-            cr.translate((width - (2*n)*radius - (n-1)*spacing)/2, height - padding);
-            for (let i = 0; i < n; i++) {
-                cr.newSubPath();
-                cr.arc((2*i+1)*radius + i*spacing, -radius - borderWidth/2, radius, 0, 2*Math.PI);
-            }
-            break;
-
-        case St.Side.LEFT:
-            cr.translate(padding, (height - (2*n)*radius - (n-1)*spacing)/2);
-            for (let i = 0; i < n; i++) {
-                cr.newSubPath();
-                cr.arc(radius + borderWidth/2, (2*i+1)*radius + i*spacing, radius, 0, 2*Math.PI);
-            }
-            break;
-
-        case St.Side.RIGHT:
-            cr.translate(width - padding , (height - (2*n)*radius - (n-1)*spacing)/2);
-            for (let i = 0; i < n; i++) {
-                cr.newSubPath();
-                cr.arc(-radius - borderWidth/2, (2*i+1)*radius + i*spacing, radius, 0, 2*Math.PI);
-            }
-            break;
-        }
-
-        cr.strokePreserve();
-
-        Clutter.cairo_set_source_color(cr, bodyColor);
-        cr.fill();
-        cr.$dispose();
     },
 
     _numberOverlay: function() {
@@ -1071,79 +988,88 @@ function getInterestingWindows(app, settings, monitorIndex) {
 }
 
 /**
- * Extend ShowAppsIcon
+ * A wrapper class around the ShowAppsIcon class.
  *
  * - Pass settings to the constructor
- * - set label position based on dash orientation
- * - implement a popupMenu based on the AppIcon code
+ * - set label position based on dash orientation (Note, I am reusing most machinery of the appIcon class)
+ * - implement a popupMenu based on the AppIcon code (Note, I am reusing most machinery of the appIcon class)
  *
- *  I can't subclass the original object because of this: https://bugzilla.gnome.org/show_bug.cgi?id=688973.
- *  thus use this ugly pattern.
+ * I can't subclass the original object because of this: https://bugzilla.gnome.org/show_bug.cgi?id=688973.
+ * thus use this pattern where the real showAppsIcon object is encaptulated, and a reference to it will be properly wired upon
+ * use of this class in place of the original showAppsButton.
+ *
  */
-function extendShowAppsIcon(showAppsIcon, settings) {
-    showAppsIcon._dtdSettings = settings;
-    /* the variable equivalent to toggleButton has a different name in the appIcon class
-     (actor): duplicate reference to easily reuse appIcon methods */
-    showAppsIcon.actor =  showAppsIcon.toggleButton;
 
-    // Re-use appIcon methods
-    showAppsIcon._removeMenuTimeout = AppDisplay.AppIcon.prototype._removeMenuTimeout;
-    showAppsIcon._setPopupTimeout = AppDisplay.AppIcon.prototype._setPopupTimeout;
-    showAppsIcon._onButtonPress = AppDisplay.AppIcon.prototype._onButtonPress;
-    showAppsIcon._onKeyboardPopupMenu = AppDisplay.AppIcon.prototype._onKeyboardPopupMenu;
-    showAppsIcon._onLeaveEvent = AppDisplay.AppIcon.prototype._onLeaveEvent;
-    showAppsIcon._onTouchEvent = AppDisplay.AppIcon.prototype._onTouchEvent;
-    showAppsIcon._onMenuPoppedDown = AppDisplay.AppIcon.prototype._onMenuPoppedDown;
+ var ShowAppsIconWrapper = new Lang.Class({
+    Name: 'DashToDock.ShowAppsIconWrapper',
 
+    _init: function(settings) {
+        this._dtdSettings = settings;
+        this.realShowAppsIcon = new Dash.ShowAppsIcon();
 
-    // No action on clicked (showing of the appsview is controlled elsewhere)
-    showAppsIcon._onClicked = function(actor, button) {
-        showAppsIcon._removeMenuTimeout();
-    };
+        /* the variable equivalent to toggleButton has a different name in the appIcon class
+        (actor): duplicate reference to easily reuse appIcon methods */
+        this.actor = this.realShowAppsIcon.toggleButton;
 
-    showAppsIcon.actor.connect('leave-event', Lang.bind(showAppsIcon, showAppsIcon._onLeaveEvent));
-    showAppsIcon.actor.connect('button-press-event', Lang.bind(showAppsIcon, showAppsIcon._onButtonPress));
-    showAppsIcon.actor.connect('touch-event', Lang.bind(showAppsIcon, showAppsIcon._onTouchEvent));
-    showAppsIcon.actor.connect('clicked', Lang.bind(showAppsIcon, showAppsIcon._onClicked));
-    showAppsIcon.actor.connect('popup-menu', Lang.bind(showAppsIcon, showAppsIcon._onKeyboardPopupMenu));
+        // Re-use appIcon methods
+        this._removeMenuTimeout = AppDisplay.AppIcon.prototype._removeMenuTimeout;
+        this._setPopupTimeout = AppDisplay.AppIcon.prototype._setPopupTimeout;
+        this._onButtonPress = AppDisplay.AppIcon.prototype._onButtonPress;
+        this._onKeyboardPopupMenu = AppDisplay.AppIcon.prototype._onKeyboardPopupMenu;
+        this._onLeaveEvent = AppDisplay.AppIcon.prototype._onLeaveEvent;
+        this._onTouchEvent = AppDisplay.AppIcon.prototype._onTouchEvent;
+        this._onMenuPoppedDown = AppDisplay.AppIcon.prototype._onMenuPoppedDown;
 
-    showAppsIcon._menu = null;
-    showAppsIcon._menuManager = new PopupMenu.PopupMenuManager(showAppsIcon);
-    showAppsIcon._menuTimeoutId = 0;
+        // No action on clicked (showing of the appsview is controlled elsewhere)
+        this._onClicked = Lang.bind(this, function(actor, button) {
+            this._removeMenuTimeout();
+        });
 
-    showAppsIcon.showLabel = itemShowLabel;
+        this.actor.connect('leave-event', Lang.bind(this, this._onLeaveEvent));
+        this.actor.connect('button-press-event', Lang.bind(this, this._onButtonPress));
+        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
+        this.actor.connect('clicked', Lang.bind(this, this._onClicked));
+        this.actor.connect('popup-menu', Lang.bind(this, this._onKeyboardPopupMenu));
 
-    showAppsIcon.popupMenu = function() {
-        showAppsIcon._removeMenuTimeout();
-        showAppsIcon.actor.fake_release();
+        this._menu = null;
+        this._menuManager = new PopupMenu.PopupMenuManager(this);
+        this._menuTimeoutId = 0;
 
-        if (!showAppsIcon._menu) {
-            showAppsIcon._menu = new MyShowAppsIconMenu(showAppsIcon, showAppsIcon._dtdSettings);
-            showAppsIcon._menu.connect('open-state-changed', Lang.bind(showAppsIcon, function(menu, isPoppedUp) {
+        this.realShowAppsIcon._dtdSettings = settings;
+        this.realShowAppsIcon.showLabel = itemShowLabel;
+    },
+
+    popupMenu: function() {
+        this._removeMenuTimeout();
+        this.actor.fake_release();
+
+        if (!this._menu) {
+            this._menu = new MyShowAppsIconMenu(this, this._dtdSettings);
+            this._menu.connect('open-state-changed', Lang.bind(this, function(menu, isPoppedUp) {
                 if (!isPoppedUp)
-                    showAppsIcon._onMenuPoppedDown();
+                    this._onMenuPoppedDown();
             }));
-            let id = Main.overview.connect('hiding', Lang.bind(showAppsIcon, function() {
-                showAppsIcon._menu.close();
+            let id = Main.overview.connect('hiding', Lang.bind(this, function() {
+                this._menu.close();
             }));
-            showAppsIcon._menu.actor.connect('destroy', function() {
+            this._menu.actor.connect('destroy', function() {
                 Main.overview.disconnect(id);
             });
-            showAppsIcon._menuManager.addMenu(showAppsIcon._menu);
+            this._menuManager.addMenu(this._menu);
         }
 
-        showAppsIcon.emit('menu-state-changed', true);
+        //this.emit('menu-state-changed', true);
 
-        showAppsIcon.actor.set_hover(true);
-        showAppsIcon._menu.popup();
-        showAppsIcon._menuManager.ignoreRelease();
-        showAppsIcon.emit('sync-tooltip');
+        this.actor.set_hover(true);
+        this._menu.popup();
+        this._menuManager.ignoreRelease();
+        this.emit('sync-tooltip');
 
         return false;
-    };
+    }
+});
+Signals.addSignalMethods(ShowAppsIconWrapper.prototype);
 
-    Signals.addSignalMethods(showAppsIcon);
-}
 
 /**
  * A menu for the showAppsIcon
@@ -1155,7 +1081,10 @@ const MyShowAppsIconMenu = new Lang.Class({
     _redisplay: function() {
         this.removeAll();
 
-        let item = this._appendMenuItem('Dash to Dock ' + _('Settings'));
+        /* Translators: %s is "Settings", which is automatically translated. You
+           can also translate the full message if this fits better your language. */
+        let name = __('Dash to Dock %s').format(_('Settings'))
+        let item = this._appendMenuItem(name);
 
         item.connect('activate', function () {
             Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);

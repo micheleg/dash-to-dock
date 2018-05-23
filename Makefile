@@ -2,14 +2,17 @@
 
 UUID = dash-to-dock@micxgx.gmail.com
 BASE_MODULES = extension.js stylesheet.css metadata.json COPYING README.md
-EXTRA_MODULES = convenience.js dash.js docking.js appIcons.js windowPreview.js appExposeOverview.js intellihide.js prefs.js theming.js utils.js Settings.ui
-EXTRA_MEDIA = logo.svg
+EXTRA_MODULES = convenience.js dash.js docking.js appIcons.js appIconIndicators.js launcherAPI.js windowPreview.js intellihide.js prefs.js theming.js utils.js Settings.ui appExposeOverview.js
+EXTRA_MEDIA = logo.svg glossy.svg highlight_stacked_bg.svg highlight_stacked_bg_h.svg
 TOLOCALIZE =  prefs.js appIcons.js
 MSGSRC = $(wildcard po/*.po)
 ifeq ($(strip $(DESTDIR)),)
+	INSTALLTYPE = local
 	INSTALLBASE = $(HOME)/.local/share/gnome-shell/extensions
 else
-	INSTALLBASE = $(DESTDIR)/usr/share/gnome-shell/extensions
+	INSTALLTYPE = system
+	SHARE_PREFIX = $(DESTDIR)/usr/share
+	INSTALLBASE = $(SHARE_PREFIX)/gnome-shell/extensions
 endif
 INSTALLNAME = dash-to-dock@micxgx.gmail.com
 
@@ -43,7 +46,7 @@ mergepo: potfile
 
 ./po/dashtodock.pot: $(TOLOCALIZE) Settings.ui
 	mkdir -p po
-	xgettext -k --keyword=__ --keyword=N__ -o po/dashtodock.pot --package-name "Dash to Dock" $(TOLOCALIZE)
+	xgettext -k --keyword=__ --keyword=N__ --add-comments='Translators:' -o po/dashtodock.pot --package-name "Dash to Dock" $(TOLOCALIZE)
 	intltool-extract --type=gettext/glade Settings.ui
 	xgettext -k --keyword=_ --keyword=N_ --join-existing -o po/dashtodock.pot Settings.ui.h
 
@@ -56,6 +59,13 @@ install-local: _build
 	rm -rf $(INSTALLBASE)/$(INSTALLNAME)
 	mkdir -p $(INSTALLBASE)/$(INSTALLNAME)
 	cp -r ./_build/* $(INSTALLBASE)/$(INSTALLNAME)/
+ifeq ($(INSTALLTYPE),system)
+	# system-wide settings and locale files
+	rm -r $(INSTALLBASE)/$(INSTALLNAME)/schemas $(INSTALLBASE)/$(INSTALLNAME)/locale
+	mkdir -p $(SHARE_PREFIX)/glib-2.0/schemas $(SHARE_PREFIX)/locale
+	cp -r ./schemas/*gschema.* $(SHARE_PREFIX)/glib-2.0/schemas
+	cp -r ./_build/locale/* $(SHARE_PREFIX)/locale
+endif
 	-rm -fR _build
 	echo done
 

@@ -7,7 +7,8 @@
     <value value='3' nick='cycle-windows'/>
     <value value='4' nick='minimize-or-overview'/>
     <value value='5' nick='previews'/>
-    <value value='6' nick='quit'/>
+    <value value='6' nick='minimize-or-previews'/>
+    <value value='7' nick='quit'/>
   </enum>
   <enum id='org.gnome.shell.extensions.dash-to-dock.scrollAction'>
     <value value='0' nick='do-nothing'/>
@@ -26,6 +27,22 @@
     <value value='0' nick='ALL_WINDOWS'/>
     <value value='1' nick='FOCUS_APPLICATION_WINDOWS'/>
     <value value='2' nick='MAXIMIZED_WINDOWS'/>
+  </enum>
+  <enum id='org.gnome.shell.extensions.dash-to-dock.transparency-mode'>
+    <value value='0' nick='DEFAULT'/>
+    <value value='1' nick='FIXED'/>
+    <value value='2' nick='ADAPTIVE'/>
+    <value value='3' nick='DYNAMIC'/>
+  </enum>
+    <enum id='org.gnome.shell.extensions.dash-to-dock.running-indicator-style'>
+    <value value='0' nick='DEFAULT'/>
+    <value value='1' nick='DOTS'/>
+    <value value='2' nick='SQUARES'/>
+    <value value='3' nick='DASHES'/>
+    <value value='4' nick='SEGMENTED'/>
+    <value value='5' nick='SOLID'/>
+    <value value='6' nick='CILIORA'/>
+    <value value='7' nick='METRO'/>
   </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key name="dock-position" enum="org.gnome.shell.extensions.dash-to-dock.position">
@@ -58,10 +75,35 @@
       <summary>Dash background color.</summary>
       <description>Customize the background color of the dash.</description>
     </key>
-    <key type="b" name="opaque-background">
+    <key name="transparency-mode" enum="org.gnome.shell.extensions.dash-to-dock.transparency-mode">
+      <default>'DEFAULT'</default>
+      <summary>Transparency mode for the dock</summary>
+      <description>FIXED: constant transparency. ADAPTIVE: lock state with the top panel when not hidden. DYNAMIC: dock takes the opaque style only when windows are close to it.</description>
+    </key>
+    <key name="running-indicator-style" enum="org.gnome.shell.extensions.dash-to-dock.running-indicator-style">
+      <default>'DEFAULT'</default>
+      <summary>...</summary>
+      <description>DEFAULT: .... DOTS: ....</description>
+    </key>
+    <key type="b" name="running-indicator-dominant-color">
       <default>false</default>
-      <summary>Dash background is opaque</summary>
-      <description>Makes the background of the dash opaque improving readability when in autohide mode.</description>
+      <summary>Use application icon dominant color for the indicator color</summary>
+      <description></description>
+    </key>
+    <key type="b" name="customize-alphas">
+      <default>false</default>
+      <summary>Manually set the min and max opacity</summary>
+      <description>For Adaptive and Dynamic modes, the min/max opacity values will be given by 'min-alpha' and 'max-alpha'.</description>
+    </key>
+    <key type="d" name="min-alpha">
+      <default>0.2</default>
+      <summary>Opacity of the dash background when free-floating</summary>
+      <description>Sets the opacity of the dash background when no windows are close.</description>
+    </key>
+    <key type="d" name="max-alpha">
+      <default>0.8</default>
+      <summary>Opacity of the dash background when windows are close.</summary>
+      <description>Sets the opacity of the dash background when windows are close.</description>
     </key>
     <key type="d" name="background-opacity">
       <default>0.8</default>
@@ -124,11 +166,6 @@
       <description>Apply customization to the dash appearance</description>
     </key>
     <key type="b" name="custom-theme-shrink">
-      <default>false</default>
-      <summary>TODO</summary>
-      <description>TODO</description>
-    </key>
-    <key type="b" name="custom-theme-running-dots">
       <default>false</default>
       <summary>TODO</summary>
       <description>TODO</description>
@@ -216,11 +253,6 @@
       <summary>Enable multi-monitor docks</summary>
       <description>Show a dock on every monitor</description>
     </key>
-    <key type="b" name="customize-click">
-      <default>true</default>
-      <summary>Customize click behaviour</summary>
-      <description>Customize action on various mouse events</description>
-    </key>
     <key type="b" name="minimize-shift">
       <default>true</default>
       <summary>Minimize on shift+click</summary>
@@ -241,7 +273,7 @@
     </key>
     <key name="shift-click-action" enum="org.gnome.shell.extensions.dash-to-dock.clickAction">
       <default>'minimize'</default>
-      <summary>Action when shit+clicking on a running app</summary>
+      <summary>Action when shift+clicking on a running app</summary>
       <description>Set the action that is executed when shift+clicking on the icon of a running application</description>
     </key>
     <key name="middle-click-action" enum="org.gnome.shell.extensions.dash-to-dock.clickAction">
@@ -494,220 +526,15 @@
         Keybinding to either show or launch the 10th application in the dash.
       </description>
     </key>
-    <key name="app-ctrl-hotkey-kp-1" type="as">
-      <default><![CDATA[['<Ctrl><Super>KP_1']]]></default>
-      <summary>Keybinding to launch 1st dash app</summary>
-      <description>
-        Keybinding to launch 1st app.
-      </description>
-    </key>
-    <key name="app-ctrl-hotkey-kp-2" type="as">
-      <default><![CDATA[['<Ctrl><Super>KP_2']]]></default>
-      <summary>Keybinding to launch 2nd dash app</summary>
-      <description>
-        Keybinding to launch 2nd app.
-      </description>
-    </key>
-    <key name="app-ctrl-hotkey-kp-3" type="as">
-      <default><![CDATA[['<Ctrl><Super>KP_3']]]></default>
-      <summary>Keybinding to launch 3rd dash app</summary>
-      <description>
-        Keybinding to launch 3rd app.
-      </description>
-    </key>
-    <key name="app-ctrl-hotkey-kp-4" type="as">
-      <default><![CDATA[['<Ctrl><Super>KP_4']]]></default>
-      <summary>Keybinding to launch 4th dash app</summary>
-      <description>
-        Keybinding to launch 4th app.
-      </description>
-    </key>
-    <key name="app-ctrl-hotkey-kp-5" type="as">
-      <default><![CDATA[['<Ctrl><Super>KP_5']]]></default>
-      <summary>Keybinding to launch 5th dash app</summary>
-      <description>
-        Keybinding to launch 5th app.
-      </description>
-    </key>
-    <key name="app-ctrl-hotkey-kp-6" type="as">
-      <default><![CDATA[['<Ctrl><Super>KP_6']]]></default>
-      <summary>Keybinding to launch 6th dash app</summary>
-      <description>
-        Keybinding to launch 6th app.
-      </description>
-    </key>
-    <key name="app-ctrl-hotkey-kp-7" type="as">
-      <default><![CDATA[['<Ctrl><Super>KP_7']]]></default>
-      <summary>Keybinding to launch 7th dash app</summary>
-      <description>
-        Keybinding to launch 7th app.
-      </description>
-    </key>
-    <key name="app-ctrl-hotkey-kp-8" type="as">
-      <default><![CDATA[['<Ctrl><Super>KP_8']]]></default>
-      <summary>Keybinding to launch 8th dash app</summary>
-      <description>
-        Keybinding to launch 8th app.
-      </description>
-    </key>
-    <key name="app-ctrl-hotkey-kp-9" type="as">
-      <default><![CDATA[['<Ctrl><Super>KP_9']]]></default>
-      <summary>Keybinding to launch 9th dash app</summary>
-      <description>
-        Keybinding to launch 9th app.
-      </description>
-    </key>
-    <key name="app-ctrl-hotkey-kp-10" type="as">
-      <default><![CDATA[['<Ctrl><Super>KP_0']]]></default>
-      <summary>Keybinding to launch 10th dash app</summary>
-      <description>
-        Keybinding to launch 10th app.
-      </description>
-    </key>
-    <key name="app-shift-hotkey-kp-1" type="as">
-      <default><![CDATA[['<Shift><Super>KP_1']]]></default>
-      <summary>Keybinding to trigger 1st dash app with shift behavior</summary>
-      <description>
-        Keybinding to trigger 1st app with shift behavior.
-      </description>
-    </key>
-    <key name="app-shift-hotkey-kp-2" type="as">
-      <default><![CDATA[['<Shift><Super>KP_2']]]></default>
-      <summary>Keybinding to trigger 2nd dash app with shift behavior</summary>
-      <description>
-        Keybinding to trigger 2nd app with shift behavior.
-      </description>
-    </key>
-    <key name="app-shift-hotkey-kp-3" type="as">
-      <default><![CDATA[['<Shift><Super>KP_3']]]></default>
-      <summary>Keybinding to trigger 3rd dash app with shift behavior</summary>
-      <description>
-        Keybinding to trigger 3rd app with shift behavior.
-      </description>
-    </key>
-    <key name="app-shift-hotkey-kp-4" type="as">
-      <default><![CDATA[['<Shift><Super>KP_4']]]></default>
-      <summary>Keybinding to trigger 4th dash app with shift behavior</summary>
-      <description>
-        Keybinding to trigger 4th app with shift behavior.
-      </description>
-    </key>
-    <key name="app-shift-hotkey-kp-5" type="as">
-      <default><![CDATA[['<Shift><Super>KP_5']]]></default>
-      <summary>Keybinding to trigger 5th dash app with shift behavior</summary>
-      <description>
-        Keybinding to trigger 5th app with shift behavior.
-      </description>
-    </key>
-    <key name="app-shift-hotkey-kp-6" type="as">
-      <default><![CDATA[['<Shift><Super>KP_6']]]></default>
-      <summary>Keybinding to trigger 6th dash app with shift behavior</summary>
-      <description>
-        Keybinding to trigger 6th app with shift behavior.
-      </description>
-    </key>
-    <key name="app-shift-hotkey-kp-7" type="as">
-      <default><![CDATA[['<Shift><Super>KP_7']]]></default>
-      <summary>Keybinding to trigger 7th dash app with shift behavior</summary>
-      <description>
-        Keybinding to trigger 7th app with shift behavior.
-      </description>
-    </key>
-    <key name="app-shift-hotkey-kp-8" type="as">
-      <default><![CDATA[['<Shift><Super>KP_8']]]></default>
-      <summary>Keybinding to trigger 8th dash app with shift behavior</summary>
-      <description>
-        Keybinding to trigger 8th app with shift behavior.
-      </description>
-    </key>
-    <key name="app-shift-hotkey-kp-9" type="as">
-      <default><![CDATA[['<Shift><Super>KP_9']]]></default>
-      <summary>Keybinding to trigger 9th dash app with shift behavior</summary>
-      <description>
-        Keybinding to trigger 9th app with shift behavior.
-      </description>
-    </key>
-    <key name="app-shift-hotkey-kp-10" type="as">
-      <default><![CDATA[['<Shift><Super>KP_0']]]></default>
-      <summary>Keybinding to trigger 10th dash app with shift behavior</summary>
-      <description>
-        Keybinding to trigger 10th app with shift behavior.
-      </description>
-    </key>
-    <key name="app-hotkey-kp-1" type="as">
-      <default><![CDATA[['<Super>KP_1']]]></default>
-      <summary>Keybinding to trigger 1st dash app</summary>
-      <description>
-        Keybinding to either show or launch the 1st application in the dash.
-      </description>
-    </key>
-    <key name="app-hotkey-kp-2" type="as">
-      <default><![CDATA[['<Super>KP_2']]]></default>
-      <summary>Keybinding to trigger 2nd dash app</summary>
-      <description>
-        Keybinding to either show or launch the 2nd application in the dash.
-      </description>
-    </key>
-    <key name="app-hotkey-kp-3" type="as">
-      <default><![CDATA[['<Super>KP_3']]]></default>
-      <summary>Keybinding to trigger 3rd dash app</summary>
-      <description>
-        Keybinding to either show or launch the 3rd application in the dash.
-      </description>
-    </key>
-    <key name="app-hotkey-kp-4" type="as">
-      <default><![CDATA[['<Super>KP_4']]]></default>
-      <summary>Keybinding to trigger 4th dash app</summary>
-      <description>
-        Keybinding to either show or launch the 4th application in the dash.
-      </description>
-    </key>
-    <key name="app-hotkey-kp-5" type="as">
-      <default><![CDATA[['<Super>KP_5']]]></default>
-      <summary>Keybinding to trigger 5th dash app</summary>
-      <description>
-        Keybinding to either show or launch the 5th application in the dash.
-      </description>
-    </key>
-    <key name="app-hotkey-kp-6" type="as">
-      <default><![CDATA[['<Super>KP_6']]]></default>
-      <summary>Keybinding to trigger 6th dash app</summary>
-      <description>
-        Keybinding to either show or launch the 6th application in the dash.
-      </description>
-    </key>
-    <key name="app-hotkey-kp-7" type="as">
-      <default><![CDATA[['<Super>KP_7']]]></default>
-      <summary>Keybinding to trigger 7th dash app</summary>
-      <description>
-        Keybinding to either show or launch the 7th application in the dash.
-      </description>
-    </key>
-    <key name="app-hotkey-kp-8" type="as">
-      <default><![CDATA[['<Super>KP_8']]]></default>
-      <summary>Keybinding to trigger 8th dash app</summary>
-      <description>
-        Keybinding to either show or launch the 8th application in the dash.
-      </description>
-    </key>
-    <key name="app-hotkey-kp-9" type="as">
-      <default><![CDATA[['<Super>KP_9']]]></default>
-      <summary>Keybinding to trigger 9th dash app</summary>
-      <description>
-        Keybinding to either show or launch the 9th application in the dash.
-      </description>
-    </key>
-    <key name="app-hotkey-kp-10" type="as">
-      <default><![CDATA[['<Super>KP_0']]]></default>
-      <summary>Keybinding to trigger 10th dash app</summary>
-      <description>
-        Keybinding to either show or launch the 10th application in the dash.
-      </description>
-    </key>
     <key name="force-straight-corner" type="b">
       <default>false</default>
       <summary>Force straight corners in dash</summary>
       <description>Make the borders in the dash non rounded</description>
+    </key>
+    <key name="unity-backlit-items" type="b">
+      <default>false</default>
+      <summary>Enable unity7 like glossy backlit items</summary>
+      <description>Emulate the unity7 backlit glossy items behaviour</description>
     </key>
   </schema>
 </schemalist>
