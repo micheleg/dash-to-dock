@@ -44,9 +44,10 @@ const clickAction = {
     LAUNCH: 2,
     CYCLE_WINDOWS: 3,
     MINIMIZE_OR_OVERVIEW: 4,
-    PREVIEWS: 5,
-    MINIMIZE_OR_PREVIEWS: 6,
-    QUIT: 7
+    MINIMIZE_OR_OVERVIEW_APP: 5,
+    PREVIEWS: 6,
+    MINIMIZE_OR_PREVIEWS: 7,
+    QUIT: 8
 };
 
 const scrollAction = {
@@ -413,6 +414,26 @@ var MyAppIcon = new Lang.Class({
                 break;
 
             case clickAction.MINIMIZE_OR_OVERVIEW:
+                // When a single window is present, toggle minimization
+                // If only one windows is present toggle minimization, but only when trigggered with the
+                // simple click action (no modifiers, no middle click).
+                if (windows.length == 1 && !modifiers && button == 1) {
+                    let w = windows[0];
+                    if (this.app == focusedApp) {
+                        // Window is raised, minimize it
+                        this._minimizeWindow(w);
+                    } else {
+                        // Window is minimized, raise it
+                        Main.activateWindow(w);
+                    }
+                    // Launch overview when multiple windows are present
+                } else {
+                    shouldHideOverview = false;
+                    Main.overview.toggle();
+                }
+                break;
+
+            case clickAction.MINIMIZE_OR_OVERVIEW_APP:
                 // When a single window is present, toggle minimization
                 // If only one windows is present toggle minimization, but only when trigggered with the
                 // simple click action (no modifiers, no middle click).
