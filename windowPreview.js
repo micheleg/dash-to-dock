@@ -23,6 +23,17 @@ const Utils = Me.imports.utils;
 const PREVIEW_MAX_WIDTH = 250;
 const PREVIEW_MAX_HEIGHT = 150;
 
+const clickAction = {
+    SKIP: 0,
+    MINIMIZE: 1,
+    LAUNCH: 2,
+    CYCLE_WINDOWS: 3,
+    MINIMIZE_OR_OVERVIEW: 4,
+    PREVIEWS: 5,
+    MINIMIZE_OR_PREVIEWS: 6,
+    QUIT: 7
+};
+
 const WindowPreviewMenu = new Lang.Class({
     Name: 'WindowPreviewMenu',
     Extends: PopupMenu.PopupMenu,
@@ -183,7 +194,7 @@ const WindowPreviewList = new Lang.Class({
     },
 
     _createPreviewItem: function(window) {
-        let preview = new WindowPreviewMenuItem(window);
+        let preview = new WindowPreviewMenuItem(window, this._dtdSettings);
         return preview;
     },
 
@@ -365,10 +376,11 @@ const WindowPreviewMenuItem = new Lang.Class({
     Name: 'WindowPreviewMenuItem',
     Extends: PopupMenu.PopupBaseMenuItem,
 
-    _init: function(window, params) {
+    _init: function(window, settings, params) {
         this._window = window;
         this._destroyId = 0;
         this._windowAddedId = 0;
+        this._dtdSettings = settings;
         this.parent(params);
 
         // We don't want this: it adds spacing on the left of the item.
@@ -604,7 +616,12 @@ const WindowPreviewMenuItem = new Lang.Class({
 
     activate: function() {
         this._getTopMenu().close();
-        Main.activateWindow(this._window);
+        let action = this._dtdSettings.get_enum('click-action');
+        if (this._window.has_focus() && (action === clickAction.MINIMIZE || action === clickAction.MINIMIZE_OR_OVERVIEW || action === clickAction.MINIMIZE_OR_PREVIEWS)) {
+            this._window.minimize();
+        } else {
+            Main.activateWindow(this._window);
+        }
     },
 
     _onDestroy: function() {

@@ -954,7 +954,7 @@ const MyAppIconMenu = new Lang.Class({
                         separatorShown = true;
                     }
 
-                    let item = new WindowPreview.WindowPreviewMenuItem(window);
+                    let item = new WindowPreview.WindowPreviewMenuItem(window, this._dtdSettings);
                     this._allWindowsMenuItem.menu.addMenuItem(item);
                     item.connect('activate', Lang.bind(this, function() {
                         this.emit('activate-window', window);
