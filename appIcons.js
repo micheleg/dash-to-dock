@@ -85,7 +85,6 @@ var MyAppIcon = new Lang.Class({
         this._dtdSettings = settings;
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
-        this._nWindows = 0;
         this.appExposeOverview = new AppExposeOverview.AppExposeOverview();
         this.remoteModel = remoteModel;
         this._indicator = null;
