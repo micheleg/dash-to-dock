@@ -6,7 +6,6 @@ const Workspace = imports.ui.workspace;
 const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 const ViewSelector = imports.ui.viewSelector;
 const Layout = imports.ui.layout;
-const Tweener = imports.ui.tweener;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const AppIcons = Me.imports.appIcons;
@@ -112,26 +111,7 @@ const AppExposeOverview = new Lang.Class({
 			if (this.appWindows.length === 1) {
 				Main.activateWindow(this.appWindows[0]);
 			}
-			// Add fade in when expose finished hiding,
-			// so windows not in expose dont suddenly pop up 
-			this._getNonExposeWindows().forEach(function (w) {
-				const moveX = w.width / 4;
-				const moveY = w.height / 4;
-				const originalX = w.x;
-				const originalY = w.y;
-				w.scale_x = 0.5,
-				w.scale_y = 0.5;
-				w.x = w.x + moveX;
-				w.y = w.y + moveY;
-				Tweener.addTween(w, { time: 0.1, transition: "linear", scale_x: 1, scale_y: 1, x: originalX, y: originalY });
-			});
 		}
-	},
-
-	_getNonExposeWindows: function() {
-		return global.get_window_actors().filter(function(w) {
-			return this.appWindows.indexOf(w.get_meta_window()) == -1;
-		}, this);
 	},
 
 	_onScrollInAppExposeOverview: function(actor, event) {
