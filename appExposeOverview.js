@@ -120,8 +120,8 @@ const AppExposeOverview = new Lang.Class({
 
 				w.scale_x = 0.5,
 				w.scale_y = 0.5;
-				w.x = 0;
-				w.y = 0;
+				w.x = w.get_meta_window().get_monitor().x;
+				w.y = w.get_meta_window().get_monitor().y;
 				Tweener.addTween(w, { time: 0.15, transition: "linear", scale_x: 1, scale_y: 1, x: originalX, y: originalY });
 			});
 		}
