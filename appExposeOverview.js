@@ -118,10 +118,13 @@ const AppExposeOverview = new Lang.Class({
 				const originalX = w.x;
 				const originalY = w.y;
 
-				w.scale_x = 0.5,
-				w.scale_y = 0.5;
-				w.x = w.get_meta_window().get_monitor().x;
-				w.y = w.get_meta_window().get_monitor().y;
+				const montiorCenterX = w.get_meta_window().get_monitor().x + w.get_meta_window().get_monitor().x/2;
+				const montiorCenterY = w.get_meta_window().get_monitor().y + w.get_meta_window().get_monitor().y/2;
+
+				w.scale_x = 0,
+				w.scale_y = 0;
+				w.x = montiorCenterX;
+				w.y = wmontiorCenterY;
 				Tweener.addTween(w, { time: 0.15, transition: "linear", scale_x: 1, scale_y: 1, x: originalX, y: originalY });
 			});
 		}
