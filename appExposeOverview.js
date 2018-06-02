@@ -118,13 +118,16 @@ const AppExposeOverview = new Lang.Class({
 				const originalX = w.x;
 				const originalY = w.y;
 
-				const montiorCenterX = w.get_meta_window().get_monitor().x + w.get_meta_window().get_monitor().x/2;
-				const montiorCenterY = w.get_meta_window().get_monitor().y + w.get_meta_window().get_monitor().y/2;
+				const monitorArea = global.screen.get_monitor_geometry(w.get_meta_window().get_monitor())
+				
+				const monitorCenterX = monitorArea.x + monitorArea.width/2;
+				const monitorCenterY = monitorArea.y + monitorArea.height/2;
 
 				w.scale_x = 0,
 				w.scale_y = 0;
-				w.x = montiorCenterX;
-				w.y = wmontiorCenterY;
+				w.x = monitorCenterX;
+				w.y = monitorCenterY;
+
 				Tweener.addTween(w, { time: 0.15, transition: "linear", scale_x: 1, scale_y: 1, x: originalX, y: originalY });
 			});
 		}
@@ -132,7 +135,7 @@ const AppExposeOverview = new Lang.Class({
 
 	_getNonExposeWindows: function() {
 		return global.get_window_actors().filter(function(w) {
-			return this.appWindows.indexOf(w.get_meta_window()) == -1;
+			return this.appWindows.indexOf(w.get_meta_window()) < 0;
 		}, this);
 	},
 
