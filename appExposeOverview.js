@@ -113,22 +113,27 @@ const AppExposeOverview = new Lang.Class({
 				Main.activateWindow(this.appWindows[0]);
 			}
 			// Add fade in when expose finished hiding,
-			// so windows not in expose dont suddenly pop up 
+			// so non app expose windows dont suddenly pop up 
 			this._getNonExposeWindows().forEach(function (w) {
 				const originalX = w.x;
 				const originalY = w.y;
 
 				const monitorArea = global.screen.get_monitor_geometry(w.get_meta_window().get_monitor())
 				
-				const monitorCenterX = monitorArea.x + monitorArea.width/2;
-				const monitorCenterY = monitorArea.y + monitorArea.height/2;
+				// version 1: start scaling non expose windows from monitor center
+				const startScaleX = monitorArea.x + monitorArea.width/2;
+				const startScaleY = monitorArea.y + monitorArea.height/2;
+
+				// version 2: start scaling non expose windows from monitor top left:
+				// const startScaleX = monitorArea.x;
+				// const startScaleY = monitorArea.y;
 
 				w.scale_x = 0,
 				w.scale_y = 0;
-				w.x = monitorCenterX;
-				w.y = monitorCenterY;
+				w.x = startScaleX;
+				w.y = startScaleY;
 
-				Tweener.addTween(w, { time: 0.15, transition: "linear", scale_x: 1, scale_y: 1, x: originalX, y: originalY });
+				Tweener.addTween(w, { time: 0.125, transition: "linear", scale_x: 1, scale_y: 1, x: originalX, y: originalY });
 			});
 		}
 	},
