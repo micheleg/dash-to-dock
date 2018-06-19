@@ -377,6 +377,14 @@ const Settings = new Lang.Class({
                             this._builder.get_object('application_button_animation_button'),
                             'sensitive',
                             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-bookmarks',
+                            this._builder.get_object('show_bookmarks_switch'),
+                            'active',
+                            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('max-recent-files',
+                            this._builder.get_object('show_recent_files_spinbutton'),
+                            'value',
+                            Gio.SettingsBindFlags.DEFAULT);
 
 
         // Behavior panel

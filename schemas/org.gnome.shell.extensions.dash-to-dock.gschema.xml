@@ -536,5 +536,19 @@
       <summary>Enable unity7 like glossy backlit items</summary>
       <description>Emulate the unity7 backlit glossy items behaviour</description>
     </key>
+    <key name="show-bookmarks" type="b">
+      <default>true</default>
+      <summary>Enable bookmarks in the nautilus icon menu</summary>
+      <description>
+        Display GTK3 bookmarks in the menu of the nautilus' icon.
+      </description>
+    </key>
+    <key name="max-recent-files" type="i">
+      <default>0</default>
+      <summary>Number of recent files in apps icon menu</summary>
+      <description>
+        Set the size of the list of compatible recent files displayed in the menu of app icons.
+      </description>
+    </key>
   </schema>
 </schemalist>

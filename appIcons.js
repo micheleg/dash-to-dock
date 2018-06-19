@@ -36,6 +36,8 @@ const AppIconIndicators = Me.imports.appIconIndicators;
 
 let tracker = Shell.WindowTracker.get_default();
 
+let RecentManager = new Gtk.RecentManager(); // TODO is it correct ?
+
 let DASH_ITEM_LABEL_SHOW_TIME = Dash.DASH_ITEM_LABEL_SHOW_TIME;
 
 const clickAction = {
@@ -873,6 +875,133 @@ const MyAppIconMenu = new Lang.Class({
         } else {
             this.parent();
         }
+        
+        if (this._dtdSettings.get_boolean('show-bookmarks') &&
+        (this._source.app.get_id() == 'org.gnome.Nautilus.desktop' ||
+        this._source.app.get_id() == 'nemo.desktop')) {
+            this._appendSeparator();
+            
+            /*
+            Building the item with buttons for special places
+            */
+            let buttonsMenuItem = new PopupMenu.PopupBaseMenuItem({ reactive: false, can_focus: false })
+            
+            let recentButton = new St.Button({
+                reactive: true,
+                can_focus: true,
+                track_hover: true,
+                accessible_name: _("Recent files"),
+                style_class: 'system-menu-action',
+            });
+            recentButton.child = new St.Icon({ icon_name: 'document-open-recent-symbolic' });
+            buttonsMenuItem.actor.add(recentButton, { expand: true, x_fill: false });
+            
+            let trashButton = new St.Button({
+                reactive: true,
+                can_focus: true,
+                track_hover: true,
+                accessible_name: _("Trash"),
+                style_class: 'system-menu-action',
+            });
+            trashButton.child = new St.Icon({ icon_name: 'user-trash-symbolic' });
+            buttonsMenuItem.actor.add(trashButton, { expand: true, x_fill: false });
+    
+            let otherButton = new St.Button({
+                reactive: true,
+                can_focus: true,
+                track_hover: true,
+                accessible_name: _("Other places"),
+                style_class: 'system-menu-action',
+            });
+            otherButton.child = new St.Icon({ icon_name: 'folder-remote-symbolic' });
+            buttonsMenuItem.actor.add(otherButton, { expand: true, x_fill: false });
+            
+            recentButton.connect('clicked', Lang.bind(this, function() {
+                Util.trySpawnCommandLine('nautilus recent:///');
+            }));
+            trashButton.connect('clicked', Lang.bind(this, function() {
+                Util.trySpawnCommandLine('nautilus trash:///');
+            }));
+            otherButton.connect('clicked', Lang.bind(this, function() {
+                Util.trySpawnCommandLine('nautilus other-locations:///');
+            }));
+            
+            this.addMenuItem(buttonsMenuItem);
+            
+            /*
+            Building the submenu for bookmarks
+            */
+            let file = Gio.file_new_for_path('.config/gtk-3.0/bookmarks'); //TODO could be ~/.gtk-bookmarks
+            let [result, contents] = file.load_contents(null);
+            if (!result) {
+                log('Could not read bookmarks file');
+            } else {
+                let content = contents.toString();
+                
+                this.bookmarksMenu = new PopupMenu.PopupSubMenuMenuItem(_("Bookmarks"));
+                this.addMenuItem(this.bookmarksMenu);
+                
+                let bookmarks = [];
+                
+                for(var i = 0; i < content.split('\n').length-1; i++) {
+                    let text = '';
+                    for(var j=1; j<content.split('\n')[i].split(' ').length; j++) {
+                        text += content.split('\n')[i].split(' ')[j] + ' ';
+                    }
+                    if(text == '') {
+                        text = content.split('\n')[i].split('/').pop();
+                    }
+                    bookmarks.push([
+                        new PopupMenu.PopupMenuItem( text ),
+                        content.split('\n')[i].split(' ')[0]
+                    ]);
+                }
+                
+                for(var j = 0; j < content.split('\n').length-1; j++) {
+                    this.bookmarksMenu.menu.addMenuItem(bookmarks[j][0]);
+                    bookmarks[j][0].connect('activate', Lang.bind(bookmarks[j], function() {
+                        Gio.app_info_launch_default_for_uri(this[1], global.create_app_launch_context(0, -1));
+                    }));
+                }
+            }
+        } else if (0 != this._dtdSettings.get_int('max-recent-files')) {
+        /*
+        Building the submenu for recent files
+        */
+            let appinfo = this._source.app.get_app_info();
+            if ((appinfo != null) && (appinfo.supports_uris())
+            && (this._source.app.get_app_info().get_supported_types() != null)){
+            
+                this._appendSeparator();
+                this.recentMenu = new PopupMenu.PopupSubMenuMenuItem(_("Recent files"));
+                this.addMenuItem(this.recentMenu);
+                
+                let app_types = this._source.app.get_app_info().get_supported_types();
+                let allRecentFiles = RecentManager.get_items();
+                let recentFilesMenuItems = [];
+            
+                var i = 0;
+                while(recentFilesMenuItems.length < this._dtdSettings.get_int('max-recent-files') && i < 300) {
+                    if(allRecentFiles[i] != null || allRecentFiles[i] != undefined) {
+                        let itemtype = allRecentFiles[i].get_mime_type();
+                        if ((app_types.indexOf(itemtype) != -1) && (allRecentFiles[i].exists())){
+                            let recent_item = new PopupMenu.PopupMenuItem( allRecentFiles[i].get_display_name() );
+                            this.recentMenu.menu.addMenuItem(recent_item);
+                            recentFilesMenuItems.push([
+                                recent_item,
+                                allRecentFiles[i].get_uri()
+                            ]);
+                        }
+                    }
+                    i++;
+                }
+                for(var j = 0; j < recentFilesMenuItems.length-1; j++) {
+                    recentFilesMenuItems[j][0].connect('activate', Lang.bind(recentFilesMenuItems[j], function() {
+                        appinfo.launch_uris([this[1]], global.create_app_launch_context(0, -1))
+                    }));
+                }
+            }
+        }
 
         // quit menu
         this._appendSeparator();
@@ -932,7 +1061,11 @@ const MyAppIconMenu = new Lang.Class({
           }
 
           // Update separators
-          this._getMenuItems().forEach(Lang.bind(this, this._updateSeparatorVisibility));
+          this._getMenuItems().forEach(Lang.bind(this, function(item) {
+              if (item.label) {
+                  this._updateSeparatorVisibility(item);
+              }
+          }));
       }
 
 
