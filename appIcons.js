@@ -36,7 +36,7 @@ const AppIconIndicators = Me.imports.appIconIndicators;
 
 let tracker = Shell.WindowTracker.get_default();
 
-let RecentManager = new Gtk.RecentManager(); // TODO is it correct ?
+let RecentManager = new Gtk.RecentManager();
 
 let DASH_ITEM_LABEL_SHOW_TIME = Dash.DASH_ITEM_LABEL_SHOW_TIME;
 
@@ -881,9 +881,7 @@ const MyAppIconMenu = new Lang.Class({
         this._source.app.get_id() == 'nemo.desktop')) {
             this._appendSeparator();
             
-            /*
-            Building the item with buttons for special places
-            */
+            // Building the item with buttons for special places
             let buttonsMenuItem = new PopupMenu.PopupBaseMenuItem({ reactive: false, can_focus: false })
             
             let recentButton = new St.Button({
@@ -905,7 +903,7 @@ const MyAppIconMenu = new Lang.Class({
             });
             trashButton.child = new St.Icon({ icon_name: 'user-trash-symbolic' });
             buttonsMenuItem.actor.add(trashButton, { expand: true, x_fill: false });
-    
+            
             let otherButton = new St.Button({
                 reactive: true,
                 can_focus: true,
@@ -928,9 +926,7 @@ const MyAppIconMenu = new Lang.Class({
             
             this.addMenuItem(buttonsMenuItem);
             
-            /*
-            Building the submenu for bookmarks
-            */
+            // Building the submenu for bookmarks
             let file = Gio.file_new_for_path('.config/gtk-3.0/bookmarks'); //TODO could be ~/.gtk-bookmarks
             let [result, contents] = file.load_contents(null);
             if (!result) {
@@ -965,9 +961,7 @@ const MyAppIconMenu = new Lang.Class({
                 }
             }
         } else if (0 != this._dtdSettings.get_int('max-recent-files')) {
-        /*
-        Building the submenu for recent files
-        */
+        // Building the submenu for recent files
             let appinfo = this._source.app.get_app_info();
             if ((appinfo != null) && (appinfo.supports_uris())
             && (this._source.app.get_app_info().get_supported_types() != null)){

@@ -1341,11 +1341,6 @@
                     </child>
                   </object>
                 </child>
-                
-                
-              
-              
-              
               </object>
             </child>
             <child type="label_item">
@@ -1359,7 +1354,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkFrame" id="customize_theme2">
+          <object class="GtkFrame" id="customize_menus_frame">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label_xalign">0</property>
@@ -1369,7 +1364,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="selection_mode">none</property>
-                
                 <child>
                   <object class="GtkListBoxRow" id="listboxrow18">
                     <property name="visible">True</property>
@@ -1429,7 +1423,6 @@
                     </child>
                   </object>
                 </child>
-                
                 <child>
                   <object class="GtkListBoxRow" id="listboxrow19">
                     <property name="visible">True</property>
@@ -1490,12 +1483,6 @@
                     </child>
                   </object>
                 </child>
-                
-                
-                
-                
-                
-                
               </object>
             </child>
             <child type="label_item">
@@ -1507,7 +1494,6 @@
             <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
-          
         </child>
       </object>
       <packing>
