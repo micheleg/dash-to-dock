@@ -927,15 +927,21 @@ const MyAppIconMenu = new Lang.Class({
             this.addMenuItem(buttonsMenuItem);
             
             // Building the submenu for bookmarks
-            let file = Gio.file_new_for_path('.config/gtk-3.0/bookmarks'); //TODO could be ~/.gtk-bookmarks
-            let [result, contents] = file.load_contents(null);
-            if (!result) {
-                log('Could not read bookmarks file');
-            } else {
+            try {
+                let file = null;
+                let paths = [
+                    GLib.build_filenamev([GLib.get_user_config_dir(), 'gtk-3.0', 'bookmarks']),
+                    GLib.build_filenamev([GLib.get_home_dir(), '.gtk-bookmarks']),
+                ];
+                for (let i = 0; i < paths.length; i++) {
+                if (GLib.file_test(paths[i], GLib.FileTest.EXISTS))
+                    file = Gio.File.new_for_path(paths[i]);
+                }
+                let [result, contents] = file.load_contents(null);
                 let content = contents.toString();
                 
-                this.bookmarksMenu = new PopupMenu.PopupSubMenuMenuItem(_("Bookmarks"));
-                this.addMenuItem(this.bookmarksMenu);
+                this.bookmarksMenuMenuItem = new PopupMenu.PopupSubMenuMenuItem(_("Bookmarks"));
+                this.addMenuItem(this.bookmarksMenuMenuItem);
                 
                 let bookmarks = [];
                 
@@ -954,33 +960,42 @@ const MyAppIconMenu = new Lang.Class({
                 }
                 
                 for(var j = 0; j < content.split('\n').length-1; j++) {
-                    this.bookmarksMenu.menu.addMenuItem(bookmarks[j][0]);
+                    this.bookmarksMenuMenuItem.menu.addMenuItem(bookmarks[j][0]);
                     bookmarks[j][0].connect('activate', Lang.bind(bookmarks[j], function() {
                         Gio.app_info_launch_default_for_uri(this[1], global.create_app_launch_context(0, -1));
                     }));
                 }
+                
+                if (bookmarks.length == 0) {
+                    this.bookmarksMenuMenuItem.actor.hide();
+                }
+            } catch(e) {
+                log(String(e.message));
             }
         } else if (0 != this._dtdSettings.get_int('max-recent-files')) {
         // Building the submenu for recent files
             let appinfo = this._source.app.get_app_info();
             if ((appinfo != null) && (appinfo.supports_uris())
             && (this._source.app.get_app_info().get_supported_types() != null)){
-            
+                
                 this._appendSeparator();
-                this.recentMenu = new PopupMenu.PopupSubMenuMenuItem(_("Recent files"));
-                this.addMenuItem(this.recentMenu);
+                this.recentMenuMenuItem = new PopupMenu.PopupSubMenuMenuItem(_("Recent files"));
+                this.addMenuItem(this.recentMenuMenuItem);
                 
                 let app_types = this._source.app.get_app_info().get_supported_types();
                 let allRecentFiles = RecentManager.get_items();
                 let recentFilesMenuItems = [];
-            
+                
                 var i = 0;
-                while(recentFilesMenuItems.length < this._dtdSettings.get_int('max-recent-files') && i < 300) {
-                    if(allRecentFiles[i] != null || allRecentFiles[i] != undefined) {
+                let shouldContinue = true;
+                while(recentFilesMenuItems.length < this._dtdSettings.get_int('max-recent-files') && shouldContinue) {
+                    if(allRecentFiles[i] == null || allRecentFiles[i] == undefined) {
+                        shouldContinue = false;
+                    } else {
                         let itemtype = allRecentFiles[i].get_mime_type();
                         if ((app_types.indexOf(itemtype) != -1) && (allRecentFiles[i].exists())){
                             let recent_item = new PopupMenu.PopupMenuItem( allRecentFiles[i].get_display_name() );
-                            this.recentMenu.menu.addMenuItem(recent_item);
+                            this.recentMenuMenuItem.menu.addMenuItem(recent_item);
                             recentFilesMenuItems.push([
                                 recent_item,
                                 allRecentFiles[i].get_uri()
@@ -989,10 +1004,15 @@ const MyAppIconMenu = new Lang.Class({
                     }
                     i++;
                 }
-                for(var j = 0; j < recentFilesMenuItems.length-1; j++) {
+                
+                for(var j = 0; j < recentFilesMenuItems.length; j++) {
                     recentFilesMenuItems[j][0].connect('activate', Lang.bind(recentFilesMenuItems[j], function() {
                         appinfo.launch_uris([this[1]], global.create_app_launch_context(0, -1))
                     }));
+                }
+                
+                if (recentFilesMenuItems.length == 0) {
+                    this.recentMenuMenuItem.actor.hide();
                 }
             }
         }
