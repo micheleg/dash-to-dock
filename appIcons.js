@@ -898,7 +898,7 @@ const MyAppIconMenu = new Lang.Class({
               if (windows.length == 1)
                   this._quitfromDashMenuItem.label.set_text(_("Quit"));
               else
-                  this._quitfromDashMenuItem.label.set_text(_("Quit") + ' ' + windows.length + ' ' + _("Windows"));
+                  this._quitfromDashMenuItem.label.set_text(_("Quit %d Windows").format(windows.length));
 
               this._quitfromDashMenuItem.actor.show();
 
