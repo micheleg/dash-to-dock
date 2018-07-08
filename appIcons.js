@@ -114,7 +114,7 @@ var MyAppIcon = new Lang.Class({
             Main.layoutManager.monitors.length > 1) {
             this._signalsHandler.removeWithLabel('isolate-monitors');
             this._signalsHandler.addWithLabel('isolate-monitors', [
-                global.screen,
+                Utils.DisplayWrapper.getScreen(),
                 'window-entered-monitor',
                 Lang.bind(this, this._onWindowEntered)
             ]);
@@ -642,7 +642,7 @@ var MyAppIcon = new Lang.Class({
     _minimizeWindow: function(param) {
         // Param true make all app windows minimize
         let windows = this.getInterestingWindows();
-        let current_workspace = global.screen.get_active_workspace();
+        let current_workspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
         for (let i = 0; i < windows.length; i++) {
             let w = windows[i];
             if (w.get_workspace() == current_workspace && w.showing_on_its_workspace()) {
@@ -666,7 +666,7 @@ var MyAppIcon = new Lang.Class({
 
         // then activate all other app windows in the current workspace
         let windows = this.getInterestingWindows();
-        let activeWorkspace = global.screen.get_active_workspace_index();
+        let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
 
         if (windows.length <= 0)
             return;
@@ -944,7 +944,7 @@ const MyAppIconMenu = new Lang.Class({
 
             if (windows.length > 0) {
 
-                let activeWorkspace = global.screen.get_active_workspace();
+                let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
                 let separatorShown =  windows[0].get_workspace() != activeWorkspace;
 
                 for (let i = 0; i < windows.length; i++) {
@@ -982,7 +982,7 @@ function getInterestingWindows(app, settings, monitorIndex) {
     // that are not in the current workspace
     if (settings.get_boolean('isolate-workspaces'))
         windows = windows.filter(function(w) {
-            return w.get_workspace().index() == global.screen.get_active_workspace_index();
+            return w.get_workspace().index() == Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
         });
 
     if (settings.get_boolean('isolate-monitors'))

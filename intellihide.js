@@ -76,7 +76,7 @@ var Intellihide = new Lang.Class({
         ], [
             // triggered for instance when the window list order changes,
             // included when the workspace is switched
-            global.screen,
+            Utils.DisplayWrapper.getScreen(),
             'restacked',
             Lang.bind(this, this._checkOverlap)
         ], [
@@ -87,9 +87,9 @@ var Intellihide = new Lang.Class({
             Lang.bind(this, this._checkOverlap)
         ], [
             // update wne monitor changes, for instance in multimonitor when monitor are attached
-            global.screen,
+            Utils.DisplayWrapper.getMonitorManager(),
             'monitors-changed',
-            Lang.bind(this, this._checkOverlap )
+            Lang.bind(this, this._checkOverlap)
         ]);
     },
 
@@ -249,7 +249,7 @@ var Intellihide = new Lang.Class({
         if (!this._handledWindow(wa))
             return false;
 
-        let currentWorkspace = global.screen.get_active_workspace_index();
+        let currentWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
         let wksp = meta_win.get_workspace();
         let wksp_index = wksp.index();
 

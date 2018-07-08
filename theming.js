@@ -473,7 +473,7 @@ const Transparency = new Lang.Class({
         if (this._dockActor.has_style_pseudo_class('overview'))
             return false;
         /* Get all the windows in the active workspace that are in the primary monitor and visible */
-        let activeWorkspace = global.screen.get_active_workspace();
+        let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
         let dash = this._dash;
         let windows = activeWorkspace.list_windows().filter(function(metaWindow) {
             return metaWindow.get_monitor() === dash._monitorIndex &&
@@ -536,7 +536,7 @@ const Transparency = new Lang.Class({
 
         /* Get all the windows in the active workspace that are in the
          * primary monitor and visible */
-        let activeWorkspace = global.screen.get_active_workspace();
+        let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
         let windows = activeWorkspace.list_windows().filter(function(metaWindow) {
             return metaWindow.is_on_primary_monitor() &&
                 metaWindow.showing_on_its_workspace() &&
