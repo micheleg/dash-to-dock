@@ -3,6 +3,8 @@ gnome-shell-extension-ubuntu-dock (0.9.1ubuntu18.04.1) UNRELEASED; urgency=mediu
   * Fix crash connecting/disconnecting monitors (LP: #1712661)
   * Fix showApps button label position (LP: #1784920)
   * Update translations, fixed settings typos
+  * debian/gbp.conf:
+    - set ubuntu branch and tagging schema
 
  -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 01 Aug 2018 20:21:08 +0200
 
