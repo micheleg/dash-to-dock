@@ -473,7 +473,50 @@ msgstr "Přizpůsobení průhlednosti"
 msgid "Maximum opacity"
 msgstr "Maximální průhlednost"
 
-#: Settings.ui.h:99
+#: Settings.ui.h:100
 msgid "Minimum opacity"
 msgstr "Minimální průhlednost"
+
+#: Settings.ui.h:101
+msgid "Minimize or show previews"
+msgstr "Minimalizovat nebo zobrazit náhledy oken"
+
+#: Settings.ui.h:102
+msgid "Customize windows counter indicators"
+msgstr "Indikátory počtu otevřených oken"
+
+#: Settings.ui.h:103
+msgid "Use dominant color"
+msgstr "Použít převládající barvu ikony"
+
+#: Settings.ui.h:104
+msgid "Dots"
+msgstr "Tečky"
+
+#: Settings.ui.h:105
+msgid "Squares"
+msgstr "Čtverečky"
+
+#: Settings.ui.h:106
+msgid "Dashes"
+msgstr "Čárky"
+
+#: Settings.ui.h:107
+msgid "Segmented"
+msgstr "Dělená linka"
+
+#: Settings.ui.h:108
+msgid "Solid"
+msgstr "Plná linka"
+
+#: Settings.ui.h:109
+msgid "Ciliora"
+msgstr "Styl Ciliora"
+
+#: Settings.ui.h:110
+msgid "Metro"
+msgstr "Styl Metro"
+
+
+
 

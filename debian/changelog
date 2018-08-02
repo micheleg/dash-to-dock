@@ -1,3 +1,16 @@
+gnome-shell-extension-ubuntu-dock (63ubuntu1) cosmic; urgency=medium
+
+  * Merged with latest master
+    - Fix crash connecting/disconnecting monitors (LP: #1712661)
+    - showApps button label position (LP: #1784920)
+    - Add wrapper to properly run in both gnome-shell 3.28 and 3.29.90
+    - Update translations, fixed settings typos
+  * Updated versioning to match with extensions.gnome.org
+  * debian/gbp.conf:
+    - updated branches and tags settings accordingly
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 02 Aug 2018 13:29:47 +0200
+
 gnome-shell-extension-ubuntu-dock (0.9.1) bionic; urgency=medium
 
   * Rebased against latest dash to dock master with bug fixes:

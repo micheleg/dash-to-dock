@@ -272,7 +272,7 @@ const WindowPreviewList = new Lang.Class({
         }
 
         // Separate windows from other workspaces
-        let ws_index = global.screen.get_active_workspace_index();
+        let ws_index = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
         let separator_index = 0;
         for (let i = 0; i < newWin.length; i++)
             if (newWin[i].get_workspace().index() == ws_index)
@@ -349,7 +349,7 @@ const WindowPreviewList = new Lang.Class({
     },
 
     sortWindowsCompareFunction: function(windowA, windowB) {
-        let ws_index = global.screen.get_active_workspace_index();
+        let ws_index = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
         let winA_inActiveWS = windowA.get_workspace().index() == ws_index;
         let winB_inActiveWS = windowB.get_workspace().index() == ws_index;
 
