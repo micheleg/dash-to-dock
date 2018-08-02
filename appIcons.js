@@ -45,7 +45,8 @@ const clickAction = {
     CYCLE_WINDOWS: 3,
     MINIMIZE_OR_OVERVIEW: 4,
     PREVIEWS: 5,
-    QUIT: 6
+    MINIMIZE_OR_PREVIEWS: 6,
+    QUIT: 7
 };
 
 const scrollAction = {
@@ -113,7 +114,7 @@ var MyAppIcon = new Lang.Class({
             Main.layoutManager.monitors.length > 1) {
             this._signalsHandler.removeWithLabel('isolate-monitors');
             this._signalsHandler.addWithLabel('isolate-monitors', [
-                global.screen,
+                Utils.DisplayWrapper.getScreen(),
                 'window-entered-monitor',
                 Lang.bind(this, this._onWindowEntered)
             ]);
@@ -477,6 +478,29 @@ var MyAppIcon = new Lang.Class({
                 }
                 break;
 
+            case clickAction.MINIMIZE_OR_PREVIEWS:
+                // When a single window is present, toggle minimization
+                // If only one windows is present toggle minimization, but only when trigggered with the
+                // simple click action (no modifiers, no middle click).
+                if (!Main.overview._shown){
+                    if (windows.length == 1 && !modifiers && button == 1) {
+                        let w = windows[0];
+                        if (this.app == focusedApp) {
+                            // Window is raised, minimize it
+                            this._minimizeWindow(w);
+                        } else {
+                            // Window is minimized, raise it
+                            Main.activateWindow(w);
+                        }
+                    } else {
+                        // Launch previews when multiple windows are present
+                        this._windowPreviews();
+                    }
+                } else {
+                    this.app.activate();
+                }
+                break;
+
             case clickAction.QUIT:
                 this.closeAllWindows();
                 break;
@@ -618,7 +642,7 @@ var MyAppIcon = new Lang.Class({
     _minimizeWindow: function(param) {
         // Param true make all app windows minimize
         let windows = this.getInterestingWindows();
-        let current_workspace = global.screen.get_active_workspace();
+        let current_workspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
         for (let i = 0; i < windows.length; i++) {
             let w = windows[i];
             if (w.get_workspace() == current_workspace && w.showing_on_its_workspace()) {
@@ -642,7 +666,7 @@ var MyAppIcon = new Lang.Class({
 
         // then activate all other app windows in the current workspace
         let windows = this.getInterestingWindows();
-        let activeWorkspace = global.screen.get_active_workspace_index();
+        let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
 
         if (windows.length <= 0)
             return;
@@ -874,7 +898,7 @@ const MyAppIconMenu = new Lang.Class({
               if (windows.length == 1)
                   this._quitfromDashMenuItem.label.set_text(_("Quit"));
               else
-                  this._quitfromDashMenuItem.label.set_text(_("Quit") + ' ' + windows.length + ' ' + _("Windows"));
+                  this._quitfromDashMenuItem.label.set_text(_("Quit %d Windows").format(windows.length));
 
               this._quitfromDashMenuItem.actor.show();
 
@@ -920,7 +944,7 @@ const MyAppIconMenu = new Lang.Class({
 
             if (windows.length > 0) {
 
-                let activeWorkspace = global.screen.get_active_workspace();
+                let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
                 let separatorShown =  windows[0].get_workspace() != activeWorkspace;
 
                 for (let i = 0; i < windows.length; i++) {
@@ -958,7 +982,7 @@ function getInterestingWindows(app, settings, monitorIndex) {
     // that are not in the current workspace
     if (settings.get_boolean('isolate-workspaces'))
         windows = windows.filter(function(w) {
-            return w.get_workspace().index() == global.screen.get_active_workspace_index();
+            return w.get_workspace().index() == Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
         });
 
     if (settings.get_boolean('isolate-monitors'))
@@ -1017,7 +1041,8 @@ function getInterestingWindows(app, settings, monitorIndex) {
         this._menuManager = new PopupMenu.PopupMenuManager(this);
         this._menuTimeoutId = 0;
 
-        this.showLabel = itemShowLabel;
+        this.realShowAppsIcon._dtdSettings = settings;
+        this.realShowAppsIcon.showLabel = itemShowLabel;
     },
 
     popupMenu: function() {

@@ -1,5 +1,6 @@
 const Clutter = imports.gi.Clutter;
 const Lang = imports.lang;
+const Meta = imports.gi.Meta;
 const St = imports.gi.St;
 
 /**
@@ -253,3 +254,19 @@ function drawRoundedLine(cr, x, y, width, height, isRoundLeft, isRoundRight, str
         cr.setSource(stroke);
     cr.stroke();
 }
+
+// This is wrapper to maintain compatibility with GNOME-Shell 3.30+ as well as
+// previous versions.
+var DisplayWrapper = {
+    getScreen: function() {
+        return global.screen || global.display;
+    },
+
+    getWorkspaceManager: function() {
+        return global.screen || global.workspace_manager;
+    },
+
+    getMonitorManager: function() {
+        return global.screen || Meta.MonitorManager.get();
+    }
+};

@@ -344,6 +344,7 @@ const Transparency = new Lang.Class({
         this._panel = Main.panel;
         this._position = Utils.getPosition(this._settings);
 
+        // All these properties are replaced with the ones in the .dummy-opaque and .dummy-transparent css classes
         this._backgroundColor = '0,0,0';
         this._transparentAlpha = '0.2';
         this._opaqueAlpha = '1';
@@ -448,6 +449,8 @@ const Transparency = new Lang.Class({
         let isNear = this._dockIsNear() || this._panelIsNear();
         if (isNear) {
             this._actor.set_style(this._opaque_style);
+            this._dockActor.remove_style_class_name('transparent');
+            this._dockActor.add_style_class_name('opaque');
             if (this._panel._updateSolidStyle && this._adaptiveEnabled) {
                 if (this._settings.get_boolean('dock-fixed') || this._panelIsNear())
                     this._panel._addStyleClassName('solid');
@@ -457,6 +460,8 @@ const Transparency = new Lang.Class({
         }
         else {
             this._actor.set_style(this._transparent_style);
+            this._dockActor.remove_style_class_name('opaque');
+            this._dockActor.add_style_class_name('transparent');
             if (this._panel._updateSolidStyle && this._adaptiveEnabled)
                 this._panel._removeStyleClassName('solid');
         }
@@ -468,7 +473,7 @@ const Transparency = new Lang.Class({
         if (this._dockActor.has_style_pseudo_class('overview'))
             return false;
         /* Get all the windows in the active workspace that are in the primary monitor and visible */
-        let activeWorkspace = global.screen.get_active_workspace();
+        let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
         let dash = this._dash;
         let windows = activeWorkspace.list_windows().filter(function(metaWindow) {
             return metaWindow.get_monitor() === dash._monitorIndex &&
@@ -531,7 +536,7 @@ const Transparency = new Lang.Class({
 
         /* Get all the windows in the active workspace that are in the
          * primary monitor and visible */
-        let activeWorkspace = global.screen.get_active_workspace();
+        let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
         let windows = activeWorkspace.list_windows().filter(function(metaWindow) {
             return metaWindow.is_on_primary_monitor() &&
                 metaWindow.showing_on_its_workspace() &&
@@ -582,13 +587,13 @@ const Transparency = new Lang.Class({
         });
         Main.uiGroup.add_child(dummyObject);
 
-        dummyObject.add_style_class_name('opaque');
+        dummyObject.add_style_class_name('dummy-opaque');
         let themeNode = dummyObject.get_theme_node();
         this._opaqueAlpha = themeNode.get_background_color().alpha / 255;
         this._opaqueAlphaBorder = themeNode.get_border_color(0).alpha / 255;
         this._opaqueTransition = themeNode.get_transition_duration();
 
-        dummyObject.add_style_class_name('transparent');
+        dummyObject.add_style_class_name('dummy-transparent');
         themeNode = dummyObject.get_theme_node();
         this._transparentAlpha = themeNode.get_background_color().alpha / 255;
         this._transparentAlphaBorder = themeNode.get_border_color(0).alpha / 255;
