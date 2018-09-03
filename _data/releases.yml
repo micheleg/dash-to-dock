@@ -1,3 +1,14 @@
+- version: 64
+  date: 04-09-2018
+  shell_version: ["3.18", "3.20", "3.22", "3.24", "3.26", "3.28", "3.30"]
+  zip_url: https://extensions.gnome.org/review/download/8355.shell-extension.zip
+  notes:
+    - "Introduce GNOME Shell 3.30 support."
+    - "Add real css classes for dynamic transparency [05436df]."
+    - "Update Italian, Czech, Chinese (Taiwain) and Spanish translations"
+    - "appIcons: Use `.format` to allow proper translations [842ba272]."
+    - "Fix showApps button label position [b91fa4fc]."
+
 - version: 63
   date: 02-04-2018
   shell_version: ["3.18", "3.20", "3.22", "3.24", "3.26", "3.28"]
