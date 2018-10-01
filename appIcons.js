@@ -36,7 +36,7 @@ const AppIconIndicators = Me.imports.appIconIndicators;
 
 let tracker = Shell.WindowTracker.get_default();
 
-let RecentManager = new Gtk.RecentManager();
+let recentManager = new Gtk.RecentManager();
 
 let DASH_ITEM_LABEL_SHOW_TIME = Dash.DASH_ITEM_LABEL_SHOW_TIME;
 
@@ -62,6 +62,10 @@ let recentlyClickedApp = null;
 let recentlyClickedAppWindows = null;
 let recentlyClickedAppIndex = 0;
 let recentlyClickedAppMonitor = -1;
+
+function sortByDate(x,y) {
+    return y.get_modified() - x.get_modified();
+}
 
 /**
  * Extend AppIcon
@@ -116,7 +120,7 @@ var MyAppIcon = new Lang.Class({
             Main.layoutManager.monitors.length > 1) {
             this._signalsHandler.removeWithLabel('isolate-monitors');
             this._signalsHandler.addWithLabel('isolate-monitors', [
-                global.screen,
+                Utils.DisplayWrapper.getScreen(),
                 'window-entered-monitor',
                 Lang.bind(this, this._onWindowEntered)
             ]);
@@ -644,7 +648,7 @@ var MyAppIcon = new Lang.Class({
     _minimizeWindow: function(param) {
         // Param true make all app windows minimize
         let windows = this.getInterestingWindows();
-        let current_workspace = global.screen.get_active_workspace();
+        let current_workspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
         for (let i = 0; i < windows.length; i++) {
             let w = windows[i];
             if (w.get_workspace() == current_workspace && w.showing_on_its_workspace()) {
@@ -668,7 +672,7 @@ var MyAppIcon = new Lang.Class({
 
         // then activate all other app windows in the current workspace
         let windows = this.getInterestingWindows();
-        let activeWorkspace = global.screen.get_active_workspace_index();
+        let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
 
         if (windows.length <= 0)
             return;
@@ -876,9 +880,8 @@ const MyAppIconMenu = new Lang.Class({
             this.parent();
         }
         
-        if (this._dtdSettings.get_boolean('show-bookmarks') &&
-        (this._source.app.get_id() == 'org.gnome.Nautilus.desktop' ||
-        this._source.app.get_id() == 'nemo.desktop')) {
+        if (this._dtdSettings.get_boolean('show-bookmarks')
+        && this._source.app.get_id() == 'org.gnome.Nautilus.desktop') {
             this._appendSeparator();
             
             // Building the item with buttons for special places
@@ -891,7 +894,10 @@ const MyAppIconMenu = new Lang.Class({
                 accessible_name: _("Recent files"),
                 style_class: 'system-menu-action',
             });
-            recentButton.child = new St.Icon({ icon_name: 'document-open-recent-symbolic' });
+            recentButton.child = new St.Icon({
+                icon_name: 'document-open-recent-symbolic',
+                icon_size: 16,
+            });
             buttonsMenuItem.actor.add(recentButton, { expand: true, x_fill: false });
             
             let trashButton = new St.Button({
@@ -901,7 +907,10 @@ const MyAppIconMenu = new Lang.Class({
                 accessible_name: _("Trash"),
                 style_class: 'system-menu-action',
             });
-            trashButton.child = new St.Icon({ icon_name: 'user-trash-symbolic' });
+            trashButton.child = new St.Icon({
+                icon_name: 'user-trash-symbolic',
+                icon_size: 16,
+            });
             buttonsMenuItem.actor.add(trashButton, { expand: true, x_fill: false });
             
             let otherButton = new St.Button({
@@ -911,18 +920,25 @@ const MyAppIconMenu = new Lang.Class({
                 accessible_name: _("Other places"),
                 style_class: 'system-menu-action',
             });
-            otherButton.child = new St.Icon({ icon_name: 'folder-remote-symbolic' });
+            otherButton.child = new St.Icon({
+                icon_name: 'list-add-symbolic',
+//                icon_name: 'folder-remote-symbolic',
+                icon_size: 16,
+            });
             buttonsMenuItem.actor.add(otherButton, { expand: true, x_fill: false });
             
-            recentButton.connect('clicked', Lang.bind(this, function() {
+            recentButton.connect('clicked', Lang.bind(this, function(button, one, param) {
                 Util.trySpawnCommandLine('nautilus recent:///');
-            }));
-            trashButton.connect('clicked', Lang.bind(this, function() {
+                param.close();
+            }, this));
+            trashButton.connect('clicked', Lang.bind(this, function(button, one, param) {
                 Util.trySpawnCommandLine('nautilus trash:///');
-            }));
-            otherButton.connect('clicked', Lang.bind(this, function() {
+                param.close();
+            }, this));
+            otherButton.connect('clicked', Lang.bind(this, function(button, one, param) {
                 Util.trySpawnCommandLine('nautilus other-locations:///');
-            }));
+                param.close();
+            }, this));
             
             this.addMenuItem(buttonsMenuItem);
             
@@ -983,12 +999,14 @@ const MyAppIconMenu = new Lang.Class({
                 this.addMenuItem(this.recentMenuMenuItem);
                 
                 let app_types = this._source.app.get_app_info().get_supported_types();
-                let allRecentFiles = RecentManager.get_items();
+                let allRecentFiles = recentManager.get_items();
+                allRecentFiles.sort(sortByDate);
                 let recentFilesMenuItems = [];
                 
                 var i = 0;
                 let shouldContinue = true;
-                while(recentFilesMenuItems.length < this._dtdSettings.get_int('max-recent-files') && shouldContinue) {
+                while(recentFilesMenuItems.length < this._dtdSettings.get_int('max-recent-files')
+                && shouldContinue) {
                     if(allRecentFiles[i] == null || allRecentFiles[i] == undefined) {
                         shouldContinue = false;
                     } else {
@@ -1041,7 +1059,7 @@ const MyAppIconMenu = new Lang.Class({
               if (windows.length == 1)
                   this._quitfromDashMenuItem.label.set_text(_("Quit"));
               else
-                  this._quitfromDashMenuItem.label.set_text(_("Quit") + ' ' + windows.length + ' ' + _("Windows"));
+                  this._quitfromDashMenuItem.label.set_text(_("Quit %d Windows").format(windows.length));
 
               this._quitfromDashMenuItem.actor.show();
 
@@ -1091,7 +1109,7 @@ const MyAppIconMenu = new Lang.Class({
 
             if (windows.length > 0) {
 
-                let activeWorkspace = global.screen.get_active_workspace();
+                let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
                 let separatorShown =  windows[0].get_workspace() != activeWorkspace;
 
                 for (let i = 0; i < windows.length; i++) {
@@ -1129,7 +1147,7 @@ function getInterestingWindows(app, settings, monitorIndex) {
     // that are not in the current workspace
     if (settings.get_boolean('isolate-workspaces'))
         windows = windows.filter(function(w) {
-            return w.get_workspace().index() == global.screen.get_active_workspace_index();
+            return w.get_workspace().index() == Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
         });
 
     if (settings.get_boolean('isolate-monitors'))
