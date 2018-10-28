@@ -188,15 +188,6 @@ const WindowPreviewList = new Lang.Class({
     },
 
     _redisplay: function () {
-        // Remove separator
-        let nonWinItem = this._getMenuItems().filter(function(actor) {
-                return !actor._window;
-            });
-        for (let i = 0; i < nonWinItem.length; i++) {
-             let item = nonWinItem[i];
-             item.destroy();
-        }
-
         let children = this._getMenuItems().filter(function(actor) {
                 return actor._window;
             });
@@ -206,8 +197,10 @@ const WindowPreviewList = new Lang.Class({
                 return actor._window;
             });
 
-        // All app windows
-        let newWin = this._source.getInterestingWindows().sort(this.sortWindowsCompareFunction);
+        // All app windows with a static order
+        let newWin = this._source.getInterestingWindows().sort(function(a, b) {
+            return a.get_stable_sequence() > b.get_stable_sequence();
+        });
 
         let addedItems = [];
         let removedActors = [];
@@ -271,26 +264,6 @@ const WindowPreviewList = new Lang.Class({
                 item.actor.destroy();
         }
 
-        // Separate windows from other workspaces
-        let ws_index = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
-        let separator_index = 0;
-        for (let i = 0; i < newWin.length; i++)
-            if (newWin[i].get_workspace().index() == ws_index)
-                separator_index++;
-
-        if (separator_index > 0 && separator_index !== newWin.length) {
-            let separatorItem = new PopupMenu.PopupSeparatorMenuItem();
-            if (this.isHorizontal) {
-                separatorItem._separator.set_x_expand(false);
-                separatorItem._separator.set_y_expand(true);
-                separatorItem._separator.set_name('dashtodockPreviewSeparator');
-                separatorItem._separator.add_style_class_name('popup-separator-menu-item-horizontal');
-                separatorItem._separator.set_x_align(Clutter.ActorAlign.CENTER);
-                separatorItem._separator.set_y_align(Clutter.ActorAlign.FILL);
-            }
-            this.addMenuItem(separatorItem, separator_index);
-        }
-
         // Skip animations on first run when adding the initial set
         // of items, to avoid all items zooming in at once
         let animate = this._shownInitially;
@@ -346,18 +319,6 @@ const WindowPreviewList = new Lang.Class({
         return this.actor.get_children().reduce(function(result, actor) {
                    return result || actor.animatingOut;
                }, false);
-    },
-
-    sortWindowsCompareFunction: function(windowA, windowB) {
-        let ws_index = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
-        let winA_inActiveWS = windowA.get_workspace().index() == ws_index;
-        let winB_inActiveWS = windowB.get_workspace().index() == ws_index;
-
-        // Only change the order if winA is not in the current WS, while winB is
-        if (!winA_inActiveWS && winB_inActiveWS)
-            return 1;
-
-        return 0;
     }
 });
 
