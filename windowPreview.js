@@ -20,10 +20,14 @@ const Workspace = imports.ui.workspace;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 
-const PREVIEW_MAX_WIDTH = 250;
-const PREVIEW_MAX_HEIGHT = 150;
+/*
+ * Timeouts for the hovering events
+ */
+const HOVER_ENTER_TIMEOUT = 100;
+const HOVER_LEAVE_TIMEOUT = 100;
+const HOVER_MENU_LEAVE_TIMEOUT = 500;
 
-const WindowPreviewMenu = new Lang.Class({
+var WindowPreviewMenu = new Lang.Class({
     Name: 'WindowPreviewMenu',
     Extends: PopupMenu.PopupMenu,
 
@@ -33,9 +37,6 @@ const WindowPreviewMenu = new Lang.Class({
         let side = Utils.getPosition(settings);
 
         this.parent(source.actor, 0.5, side);
-
-        // We want to keep the item hovered while the menu is up
-        this.blockSourceEvents = true;
 
         this._source = source;
         this._app = this._source.app;
@@ -62,6 +63,8 @@ const WindowPreviewMenu = new Lang.Class({
 
         this._previewBox = new WindowPreviewList(this._source, this._dtdSettings);
         this.addMenuItem(this._previewBox);
+
+        this.fromHover = false;
     },
 
     _redisplay: function() {
@@ -74,12 +77,13 @@ const WindowPreviewMenu = new Lang.Class({
         if (windows.length > 0) {
             this._redisplay();
             this.open();
-            this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
             this._source.emit('sync-tooltip');
         }
     },
 
     destroy: function () {
+        this.disableHover();
+
         if (this._mappedId)
             this._source.actor.disconnect(this._mappedId);
 
@@ -87,6 +91,122 @@ const WindowPreviewMenu = new Lang.Class({
             this._source.actor.disconnect(this._destroyId);
 
         this.parent();
+    },
+
+    enableHover: function() {
+        // Show window previews on mouse hover
+        this._enterSourceId = this._source.actor.connect('enter-event', Lang.bind(this, this._onEnter));
+        this._leaveSourceId = this._source.actor.connect('leave-event', Lang.bind(this, this._onLeave));
+
+        this._enterMenuId = this.actor.connect('enter-event', Lang.bind(this, this._onMenuEnter));
+        this._leaveMenuId = this.actor.connect('leave-event', Lang.bind(this, this._onMenuLeave));
+    },
+
+    disableHover: function() {
+        if (this._enterSourceId) {
+            this._source.actor.disconnect(this._enterSourceId);
+            this._enterSourceId = 0;
+        }
+        if (this._leaveSourceId) {
+            this._source.actor.disconnect(this._leaveSourceId);
+            this._leaveSourceId = 0;
+        }
+
+        if (this._enterMenuId) {
+            this.actor.disconnect(this._enterMenuId);
+            this._enterMenuId = 0;
+        }
+        if (this._leaveMenuId) {
+            this.actor.disconnect(this._leaveMenuId);
+            this._leaveMenuId = 0;
+        }
+    },
+
+    _onEnter: function () {
+        this.cancelOpen();
+        this.cancelClose();
+
+        this._hoverOpenTimeoutId = Mainloop.timeout_add(
+            HOVER_ENTER_TIMEOUT,
+            Lang.bind(this, this.hoverOpen)
+        );
+    },
+
+    _onLeave: function () {
+        this.cancelOpen();
+        this.cancelClose();
+
+        // grabHelper.grab() is usually called when the menu is opened. However, there seems to be a bug in the
+        // underlying gnome-shell that causes all window contents to freeze if the grab and ungrab occur
+        // in quick succession in timeouts from the Mainloop (for example, clicking the icon as the preview window is opening)
+        // So, instead wait until the mouse is leaving the icon (and might be moving toward the open window) to trigger the grab
+        if (this.isOpen) {
+            this._source._previewMenuManager._grabHelper.grab({
+                actor: this.actor,
+                focus: this.sourceActor,
+                onUngrab: Lang.bind(this, function() {
+                    this.close(~0);
+                })
+            });
+        }
+
+        this._hoverCloseTimeoutId = Mainloop.timeout_add(
+            HOVER_LEAVE_TIMEOUT,
+            Lang.bind(this, this.hoverClose)
+        );
+    },
+
+    cancelOpen: function () {
+        if (this._hoverOpenTimeoutId) {
+            Mainloop.source_remove(this._hoverOpenTimeoutId);
+            this._hoverOpenTimeoutId = null;
+        }
+    },
+
+    cancelClose: function () {
+        if (this._hoverCloseTimeoutId) {
+            Mainloop.source_remove(this._hoverCloseTimeoutId);
+            this._hoverCloseTimeoutId = null;
+        }
+    },
+
+    hoverOpen: function () {
+        this._hoverOpenTimeoutId = null;
+        if (!this.isOpen) {
+            this.fromHover = true;
+            this.popup();
+        }
+    },
+
+    hoverClose: function () {
+        this._hoverCloseTimeoutId = null;
+
+        if (!this.fromHover)
+            return;
+
+        if (this.isOpen)
+            this.close(~0);
+        this.fromHover = false;
+    },
+
+    _onMenuEnter: function () {
+        if (!this.fromHover)
+            return;
+
+        this.cancelClose();
+    },
+
+    _onMenuLeave: function () {
+        if (!this.fromHover)
+            return;
+
+        this.cancelOpen();
+        this.cancelClose();
+
+        this._hoverCloseTimeoutId = Mainloop.timeout_add(
+            HOVER_MENU_LEAVE_TIMEOUT,
+            Lang.bind(this, this.hoverClose)
+        );
     }
 
 });
@@ -183,7 +303,7 @@ const WindowPreviewList = new Lang.Class({
     },
 
     _createPreviewItem: function(window) {
-        let preview = new WindowPreviewMenuItem(window);
+        let preview = new WindowPreviewMenuItem(window, this._source);
         return preview;
     },
 
@@ -365,7 +485,7 @@ const WindowPreviewMenuItem = new Lang.Class({
     Name: 'WindowPreviewMenuItem',
     Extends: PopupMenu.PopupBaseMenuItem,
 
-    _init: function(window, params) {
+    _init: function(window, source, params) {
         this._window = window;
         this._destroyId = 0;
         this._windowAddedId = 0;
@@ -375,8 +495,13 @@ const WindowPreviewMenuItem = new Lang.Class({
         this.actor.remove_child(this._ornamentLabel);
         this.actor.add_style_class_name('dashtodock-app-well-preview-menu-item');
 
+        let monitorIndex = source.monitorIndex;
+        let monitor = Main.layoutManager.monitors[monitorIndex];
+        this._preview_max_width = Math.round(monitor.width / 5);
+        this._preview_max_height = Math.round(monitor.height / 5);
+
         this._cloneBin = new St.Bin();
-        this._cloneBin.set_size(PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT);
+        this._cloneBin.set_size(this._preview_max_width, this._preview_max_height);
 
         // TODO: improve the way the closebutton is layout. Just use some padding
         // for the moment.
@@ -398,7 +523,7 @@ const WindowPreviewMenuItem = new Lang.Class({
         overlayGroup.add_actor(this.closeButton);
 
         let label = new St.Label({ text: window.get_title()});
-        label.set_style('max-width: '+PREVIEW_MAX_WIDTH +'px');
+        label.set_style('max-width: ' + this._preview_max_width + 'px');
         let labelBin = new St.Bin({ child: label,
                                     x_align: St.Align.MIDDLE});
 
@@ -449,7 +574,7 @@ const WindowPreviewMenuItem = new Lang.Class({
         let windowTexture = mutterWindow.get_texture();
         let [width, height] = windowTexture.get_size();
 
-        let scale = Math.min(1.0, PREVIEW_MAX_WIDTH/width, PREVIEW_MAX_HEIGHT/height);
+        let scale = Math.min(1.0, this._preview_max_width / width, this._preview_max_height / height);
 
         let clone = new Clutter.Clone ({ source: windowTexture,
                                          reactive: true,

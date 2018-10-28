@@ -536,5 +536,10 @@
       <summary>Enable unity7 like glossy backlit items</summary>
       <description>Emulate the unity7 backlit glossy items behaviour</description>
     </key>
+    <key name="show-previews-hover" type="b">
+      <default>false</default>
+      <summary>Show window previews on mouse hover</summary>
+      <description></description>
+    </key>
   </schema>
 </schemalist>
