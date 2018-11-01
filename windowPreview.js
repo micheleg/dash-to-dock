@@ -59,13 +59,13 @@ const WindowPreviewMenu = new Lang.Class({
         this._arrowSide = side;
         this._boxPointer._arrowSide = side;
         this._boxPointer._userArrowSide = side;
-
-        this._previewBox = new WindowPreviewList(this._source, this._dtdSettings);
-        this.addMenuItem(this._previewBox);
     },
 
     _redisplay: function() {
-        this._previewBox._shownInitially = false;
+        if (this._previewBox)
+            this._previewBox.destroy();
+        this._previewBox = new WindowPreviewList(this._source, this._dtdSettings);
+        this.addMenuItem(this._previewBox);
         this._previewBox._redisplay();
     },
 
