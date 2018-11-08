@@ -4,6 +4,10 @@
 
 This is a fork of _Dash to dock_.
 Includes the option 'minimize or app overview' aka app-expose.
+Dash to dock is fantastic.
+Minimize on click. Why isnt it default.
+This just extensions the extension. Nothing else. Dash to Dock are the best. Its just about spreading windows of the currently selected app.
+Thats all.
 Basically it provides something like this: https://www.omgubuntu.co.uk/2014/03/minimize-click-launcher-option-ubuntu-14-04
 
 Will try to keep it in sync with the original/upstream version.
