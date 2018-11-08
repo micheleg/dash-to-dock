@@ -11,7 +11,7 @@ const Tweener = imports.ui.tweener;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const AppIcons = Me.imports.appIcons;
 
-const AppExposeOverview = new Lang.Class({
+var AppExposeOverview = new Lang.Class({
 	Name: 'DashToDock.AppExposeOverview',
 
 	_init: function() {
@@ -121,12 +121,12 @@ const AppExposeOverview = new Lang.Class({
 				const monitorArea = global.screen.get_monitor_geometry(w.get_meta_window().get_monitor())
 				
 				// version 1: start scaling non expose windows from monitor center
-				const startScaleX = monitorArea.x + monitorArea.width/2;
-				const startScaleY = monitorArea.y + monitorArea.height/2;
+				// const startScaleX = monitorArea.x + monitorArea.width/2;
+				// const startScaleY = monitorArea.y + monitorArea.height/2;
 
 				// version 2: start scaling non expose windows from monitor top left:
-				// const startScaleX = monitorArea.x;
-				// const startScaleY = monitorArea.y;
+				const startScaleX = monitorArea.x;
+				const startScaleY = monitorArea.y;
 
 				w.scale_x = 0,
 				w.scale_y = 0;
