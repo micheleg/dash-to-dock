@@ -1,5 +1,39 @@
-# Dash to Dock
-![screenshot](https://github.com/micheleg/dash-to-dock/raw/master/media/screenshot.jpg)
+# Dash to Dock - app expose fork
+
+## Fork info
+
+This is a fork of _Dash to dock_.
+Includes the option 'minimize or app overview' aka app-expose.
+Basically it provides something like this: https://www.omgubuntu.co.uk/2014/03/minimize-click-launcher-option-ubuntu-14-04
+
+Will try to keep it in sync with the original/upstream version.
+
+### Install:
+
+* Disable 'Dash to dock' extension. _(if installed, as this is a fork)_
+* Terminal:
+    * `cd ~/.local/share/gnome-shell/extensions/`
+    * `git clone https://github.com/ggcode/dash-to-dock.git dash-to-dock-app-exopse@fork.localhost`
+* _Not sure, if needed. But, just in case .. Close 'extensions manager' (gnome tweaks or https://extensions.gnome.org/local/)_
+* Restart gnome session: Hit Alt-F2 -> Type the letter 'r' -> Hit _Enter_
+* Enable extension 'Dash to dock - app expose'
+
+### And then, what?
+* Where is that new option? 
+    * 'Dash to dock - app expose' Settings -> _Behaviour_ -> _Click action_: 'Minimize or overview app'
+* How to use?
+    * Open mutliple windows of the same app. Click on the icon of that app in the dash. Then again. _app expose view_. Click again. Cycle.
+    * Open multiple windows of different apps and switch between those via the dash.
+    * Close apps in _app expose_view_
+    * Move apps between workspaces in _app expose_view_
+
+
+
+### Updates:
+
+* You know, git pull
+    * `cd ~/.local/share/gnome-shell/extensions/dash-to-dock-app-exopse@fork.localhost`
+    * `git pull`
 
 ## A dock for the GNOME Shell
 This extension enhances the dash moving it out of the overview and transforming it in a dock for an easier launching of applications and a faster switching between windows and desktops without having to leave the desktop view.
