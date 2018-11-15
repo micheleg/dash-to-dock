@@ -349,6 +349,13 @@ const DockedDash = new Lang.Class({
             Lang.bind(this, function() {
                 Main.overview.dashIconSize = this.dash.iconSize;
             })
+        ], [
+            // sync hover after a popupmenu is closed
+            this.dash,
+            'menu-closed',
+            Lang.bind(this, function() {
+                this._box.sync_hover()
+            })
         ]);
 
         this._injectionsHandler = new Utils.InjectionsHandler();
@@ -362,11 +369,6 @@ const DockedDash = new Lang.Class({
 
         this.dash._container.connect('allocation-changed', Lang.bind(this, this._updateStaticBox));
         this._slider.actor.connect(this._isHorizontal ? 'notify::x' : 'notify::y', Lang.bind(this, this._updateStaticBox));
-
-        // sync hover after a popupmenu is closed
-        this.dash.connect('menu-closed', Lang.bind(this, function() {
-            this._box.sync_hover();
-        }));
 
         // Load optional features that need to be activated for one dock only
         if (this._monitorIndex == this._settings.get_int('preferred-monitor'))
