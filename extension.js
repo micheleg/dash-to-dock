@@ -21,20 +21,24 @@ function enable() {
      * Listen to enabled extension, if Dash to Dock is on the list or become active,
      * we disable this dock.
      */
-    dockManager=null; // even if declared, we need to initialize it to not trigger a referenceError.
     _extensionlistenerId = ExtensionSystem.connect('extension-state-changed',
                                                    conditionallyenabledock);
     conditionallyenabledock();
 }
 
 function disable() {
-    dockManager.destroy();
-
-    dockManager=null;
-
-    if (_extensionlistenerId) {
-        ExtensionSystem.disconnect(_extensionlistenerId);
-        _extensionlistenerId = 0;
+    try {
+        if (dockManager != null) {
+            dockManager.destroy();
+            dockManager = null;
+        }
+    } catch(e) {
+        log('Failed to destroy dockManager: %s'.format(e.message));
+    } finally {
+        if (_extensionlistenerId) {
+            ExtensionSystem.disconnect(_extensionlistenerId);
+            _extensionlistenerId = 0;
+        }
     }
 }
 
