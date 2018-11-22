@@ -1,3 +1,10 @@
+gnome-shell-extension-ubuntu-dock (63ubuntu1.18.10.1) UNRELEASED; urgency=medium
+
+  * debian/control, debian/gbp.conf:
+    - update branch references
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 22 Nov 2018 15:35:25 -0600
+
 gnome-shell-extension-ubuntu-dock (63ubuntu1) cosmic; urgency=medium
 
   * Merged with latest master
