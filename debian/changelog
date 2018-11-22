@@ -1,3 +1,10 @@
+gnome-shell-extension-ubuntu-dock (63ubuntu2) UNRELEASED; urgency=medium
+
+  * debian/control:
+    - Set Vcs-Git and Vcs-Browser to proper locations
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 22 Nov 2018 15:35:25 -0600
+
 gnome-shell-extension-ubuntu-dock (63ubuntu1) cosmic; urgency=medium
 
   * Merged with latest master
