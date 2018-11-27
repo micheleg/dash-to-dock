@@ -1,9 +1,14 @@
 gnome-shell-extension-ubuntu-dock (63ubuntu2) UNRELEASED; urgency=medium
 
+  [ Marco Trevisan (Treviño) ]
   * debian/control:
-    - Set Vcs-Git and Vcs-Browser to proper locations
+    - Point Vcs-Git and Vcs-Browser to proper locations
+  * dash, docking: remove Shell.GenericContainer
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 22 Nov 2018 15:35:25 -0600
+  [ Andrea Azzarone ]
+  * docking: Fix leaking signal connection
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 27 Nov 2018 12:28:28 -0500
 
 gnome-shell-extension-ubuntu-dock (63ubuntu1) cosmic; urgency=medium
 
