@@ -7,6 +7,8 @@ gnome-shell-extension-ubuntu-dock (63ubuntu2) UNRELEASED; urgency=medium
 
   [ Andrea Azzarone ]
   * docking: Fix leaking signal connection
+  * extension: Ensure that ubuntu-dock will not re-enable itself during
+    lockscreen if dash-to-dock is installed and enabled too. (LP: #1769383)
 
  -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 27 Nov 2018 12:28:28 -0500
 
