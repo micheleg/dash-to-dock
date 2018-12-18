@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (63ubuntu1.18.10.1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (63ubuntu1.18.10.1) cosmic; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * debian/control, debian/gbp.conf:
@@ -7,7 +7,7 @@ gnome-shell-extension-ubuntu-dock (63ubuntu1.18.10.1) UNRELEASED; urgency=medium
   [ Andrea Azzarone ]
   * extension: Ensure signal disconnection (LP: #1769383)
 
- -- Andrea <andrea@ubuntu>  Fri, 30 Nov 2018 11:49:18 +0000
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 22 Nov 2018 15:35:25 -0600
 
 gnome-shell-extension-ubuntu-dock (63ubuntu1) cosmic; urgency=medium
 
