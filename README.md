@@ -4,13 +4,13 @@
 ## A dock for the GNOME Shell
 This extension enhances the dash moving it out of the overview and transforming it in a dock for an easier launching of applications and a faster switching between windows and desktops without having to leave the desktop view.
 
-For installation instructions and more information visit [https://micheleg.github.io/dash-to-dock/](https://micheleg.github.io/dash-to-dock/).
+For additional installation instructions and more information visit [https://micheleg.github.io/dash-to-dock/](https://micheleg.github.io/dash-to-dock/).
 
 ## Installation from source
 
 The extension can be installed directly from source, either for the convenience of using git or to test the latest development version. Clone the desired branch with git
 
-<pre>git clone https://github.com/micheleg/dash-to-dock.git</pre>
+<pre>git clone https://github.com/micheleg/dash-to-dock.git -b ubuntu-dock</pre>
 or download the branch from github. A simple Makefile is included. Then run
 <pre>make
 make install

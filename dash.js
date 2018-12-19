@@ -53,7 +53,7 @@ function extendDashItemContainer(dashItemContainer, settings) {
  * - handle horizontal dash
  */
 const MyDashActor = new Lang.Class({
-    Name: 'DashToDock.MyDashActor',
+    Name: 'DashToDock_MyDashActor',
     Extends: St.Widget,
 
     _init: function(settings) {
@@ -74,6 +74,11 @@ const MyDashActor = new Lang.Class({
             layout_manager: layout,
             clip_to_allocation: true
         });
+
+        // Since we are usually visible but not usually changing, make sure
+        // most repaint requests don't actually require us to repaint anything.
+        // This saves significant CPU when repainting the screen.
+        this.set_offscreen_redirect(Clutter.OffscreenRedirect.ALWAYS);
     },
 
     vfunc_allocate: function(box, flags) {

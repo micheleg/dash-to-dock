@@ -2849,7 +2849,7 @@ See the &lt;a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;G
                     <property name="column_spacing">32</property>
                     <child>
                       <object class="GtkEntry" id="shortcut_entry">
-                        <property name="can_focus">False</property>
+                        <property name="can_focus">True</property>
                         <property name="valign">center</property>
                         <property name="width_chars">12</property>
                       </object>
