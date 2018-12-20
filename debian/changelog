@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (64ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (64ubuntu1) disco; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * New upstream release: 64
