@@ -60,7 +60,7 @@ const scrollAction = {
  * side.
 */
 const DashSlideContainer = new Lang.Class({
-    Name: 'DashToDock.DashSlideContainer',
+    Name: 'DashToDock_DashSlideContainer',
     Extends: St.Widget,
 
     _init: function(params) {

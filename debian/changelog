@@ -1,3 +1,38 @@
+gnome-shell-extension-ubuntu-dock (64ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release: 64
+  * dash, docking: remove Shell.GenericContainer.
+
+  [ Adolfo Jayme Barrientos ]
+  * Update Spanish translation.
+
+  [ franglais125 ]
+  * Settings.ui: Fix GtkEntry property to make the shortcut editable.
+
+  [ Michele ]
+  * Add Gnome Shell 3.30 support.
+  * Bump version (v64).
+
+  [ vantu5z ]
+  * Update Russian translation.
+
+  [ Andrea Azzarone ]
+  * docking: Fix leaking signal connection
+
+  [ Michele Gaio ]
+  * Update Readme with official extension badge.
+
+  [ Michele ]
+  * Add a .default class to the appiconindicators.
+  * Make window previews order stable in the dedicated popup (LP: #1809129).
+  * Recreate windows preview whenever the popup is open.
+
+  [ Daniel van Vugt ]
+  * Avoid repainting an unchanging dock.
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 19 Dec 2018 10:06:26 -0500
+
 gnome-shell-extension-ubuntu-dock (63ubuntu2) disco; urgency=medium
 
   [ Marco Trevisan (Treviño) ]

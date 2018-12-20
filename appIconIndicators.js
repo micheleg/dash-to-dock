@@ -58,7 +58,7 @@ var AppIconIndicator = new Lang.Class({
 
         switch (runningIndicatorStyle) {
             case RunningIndicatorStyle.DEFAULT:
-                runningIndicator = new RunningIndicatorBase(source, settings);
+                runningIndicator = new RunningIndicatorDefault(source, settings);
                 break;
 
             case RunningIndicatorStyle.DOTS:
@@ -257,6 +257,23 @@ const RunningIndicatorBase = new Lang.Class({
     }
 });
 
+// We add a css class so third parties themes can limit their indicaor customization
+// to the case we do nothing
+const RunningIndicatorDefault =  new Lang.Class({
+
+    Name: 'DashToDock.RunningIndicatorDefault',
+    Extends: RunningIndicatorBase,
+
+    _init: function(source, settings) {
+        this.parent(source, settings);
+        this._source.actor.add_style_class_name('default');
+    },
+
+    destroy: function() {
+        this.parent();
+        this._source.actor.remove_style_class_name('default');
+    }
+});
 
 const RunningIndicatorDots = new Lang.Class({
 
