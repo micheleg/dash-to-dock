@@ -387,11 +387,13 @@ const Transparency = new Lang.Class({
         ]);
 
         // Window signals
-        global.get_window_actors().forEach(function(win) {
+        global.window_group.get_children().filter(function(child) {
             // An irrelevant window actor ('Gnome-shell') produces an error when the signals are
             // disconnected, therefore do not add signals to it.
-            if (win.get_meta_window().get_wm_class() !== 'Gnome-shell')
-                this._onWindowActorAdded(null, win);
+            return child instanceof Meta.WindowActor &&
+                   child.get_meta_window().get_wm_class() !== 'Gnome-shell';
+        }).forEach(function(win) {
+            this._onWindowActorAdded(null, win);
         }, this);
 
         if (this._settings.get_enum('transparency-mode') === TransparencyMode.ADAPTIVE)
