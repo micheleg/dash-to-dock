@@ -1,3 +1,14 @@
+gnome-shell-extension-ubuntu-dock (0.9.1ubuntu18.04.2) UNRELEASED; urgency=medium
+
+  [ Daniel van Vugt ]
+  * Avoid repainting an unchanging dock (LP: #1743976).
+
+  [ Andrea Azzarone ]
+  * theming: Ensure _trackingWindows contains valid windows (LP: #1769383)
+  * extension: Ensure signal disconnection (LP: #1769383)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 16 Jan 2019 00:11:56 +0100
+
 gnome-shell-extension-ubuntu-dock (0.9.1ubuntu18.04.1) bionic; urgency=medium
 
   * Fix crash connecting/disconnecting monitors (LP: #1712661)
