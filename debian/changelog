@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (64ubuntu2) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (64ubuntu2) disco; urgency=medium
 
   * theming: Ensure _trackingWindows contains valid windows. (LP: #1769383)
 
