@@ -1,9 +1,9 @@
-gnome-shell-extension-ubuntu-dock (63ubuntu1.18.10.2) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (63ubuntu1.18.10.2) cosmic; urgency=medium
 
   [ Andrea Azzarone ]
   * theming: Ensure _trackingWindows contains valid windows (LP: #1769383)
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 15 Jan 2019 22:34:00 +0100
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 15 Jan 2019 22:35:34 +0100
 
 gnome-shell-extension-ubuntu-dock (63ubuntu1.18.10.1) cosmic; urgency=medium
 
