@@ -352,8 +352,7 @@ const Transparency = new Lang.Class({
         this._opaqueAlphaBorder = '0.5';
         this._transparentTransition = '0ms';
         this._opaqueTransition = '0ms';
-
-        this._updateStyles();
+        this._base_actor_style = "";
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._injectionsHandler = new Utils.InjectionsHandler();
@@ -364,6 +363,11 @@ const Transparency = new Lang.Class({
         // ensure I never double-register/inject
         // although it should never happen
         this.disable();
+
+        this._base_actor_style = this._actor.get_style();
+        if (this._base_actor_style == null) {
+            this._base_actor_style = "";
+        }
 
         this._signalsHandler.addWithLabel('transparency', [
             global.window_group,
@@ -402,6 +406,9 @@ const Transparency = new Lang.Class({
 
         if (this._actor.get_stage())
             this._updateSolidStyle();
+
+        this._updateStyles();
+        this._updateSolidStyle();
 
         this.emit('transparency-enabled');
     },
@@ -560,14 +567,14 @@ const Transparency = new Lang.Class({
     _updateStyles: function() {
         this._getAlphas();
 
-        this._transparent_style =
+        this._transparent_style = this._base_actor_style +
             'background-color: rgba(' +
             this._backgroundColor + ', ' + this._transparentAlpha + ');' +
             'border-color: rgba(' +
             this._backgroundColor + ', ' + this._transparentAlphaBorder + ');' +
             'transition-duration: ' + this._transparentTransition + 'ms;';
 
-        this._opaque_style =
+        this._opaque_style = this._base_actor_style +
             'background-color: rgba(' +
             this._backgroundColor + ', ' + this._opaqueAlpha + ');' +
             'border-color: rgba(' +
