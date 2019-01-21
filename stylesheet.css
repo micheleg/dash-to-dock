@@ -96,6 +96,14 @@
 }
 
 /*
+ * This is applied to a dummy actor. Only the background and border color values are used
+ */
+#dashtodockContainer.progress-bar {
+    background-color: lightgrey;
+    border-color: lightgrey;
+}
+
+/*
  * This is applied to a dummy actor. Only the alpha value for the background and border color
  * and the transition-duration are used
  */

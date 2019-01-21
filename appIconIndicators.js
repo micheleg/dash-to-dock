@@ -9,6 +9,7 @@ const Pango = imports.gi.Pango;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 
+const Main = imports.ui.main;
 const Util = imports.misc.util;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -858,8 +859,20 @@ const UnityIndicator = new Lang.Class({
         height -= 2.0*lineWidth;
 
         let finishedWidth = Math.ceil(this._progress * width);
-        stroke = Cairo.SolidPattern.createRGBA(0.8, 0.8, 0.8, 1.0);
-        fill = Cairo.SolidPattern.createRGBA(0.9, 0.9, 0.9, 1.0);
+
+        // Create dumy object to get progress-bar style
+        let dummyObject = new St.Bin({
+            name: 'dashtodockContainer',
+        });
+        Main.uiGroup.add_child(dummyObject);
+
+        dummyObject.add_style_class_name('progress-bar');
+        let themeNode = dummyObject.get_theme_node();
+        let bg = themeNode.get_background_color();
+        let bd = themeNode.get_border_color(St.Side.BOTTOM);
+
+        stroke = Cairo.SolidPattern.createRGBA(bd.red/255, bd.green/255, bd.blue/255, bd.alpha/255);
+        fill = Cairo.SolidPattern.createRGBA(bg.red/255, bg.green/255, bg.blue/255, bg.alpha/255);
 
         if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL)
             Utils.drawRoundedLine(cr, x + lineWidth/2.0 + width - finishedWidth, y + lineWidth/2.0, finishedWidth, height, true, true, stroke, fill);
