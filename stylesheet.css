@@ -95,6 +95,13 @@
     background: #2e3436;
 }
 
+#dashtodockContainer.dashtodock .progress-bar {
+    /* Customization of the progress bar style, e.g.:
+      -progress-bar-background: rgba(0.8, 0.8, 0.8, 1);
+      -progress-bar-border: rgba(0.9, 0.9, 0.9, 1);
+    */
+}
+
 /*
  * This is applied to a dummy actor. Only the alpha value for the background and border color
  * and the transition-duration are used
