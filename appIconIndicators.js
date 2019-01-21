@@ -794,11 +794,26 @@ const UnityIndicator = new Lang.Class({
         }
 
         this._progressOverlayArea = new St.DrawingArea({x_expand: true, y_expand: true});
+        this._progressOverlayArea.add_style_class_name('progress-bar');
         this._progressOverlayArea.connect('repaint', Lang.bind(this, function() {
             this._drawProgressOverlay(this._progressOverlayArea);
         }));
 
         this._source._iconContainer.add_child(this._progressOverlayArea);
+        let node = this._progressOverlayArea.get_theme_node();
+
+        let [hasColor, color] = node.lookup_color('-progress-bar-background', false);
+        if (hasColor)
+            this._progressbar_background = color
+        else
+            this._progressbar_background = new Clutter.Color({red: 204, green: 204, blue: 204, alpha: 255});
+
+        [hasColor, color] = node.lookup_color('-progress-bar-border', false);
+        if (hasColor)
+            this._progressbar_border = color;
+        else
+            this._progressbar_border = new Clutter.Color({red: 230, green: 230, blue: 230, alpha: 255});
+
         this._updateProgressOverlay();
     },
 
@@ -806,6 +821,8 @@ const UnityIndicator = new Lang.Class({
         if (this._progressOverlayArea)
             this._progressOverlayArea.destroy();
         this._progressOverlayArea = null;
+        this._progressbar_background = null;
+        this._progressbar_border = null;
     },
 
     _updateProgressOverlay: function() {
@@ -858,8 +875,12 @@ const UnityIndicator = new Lang.Class({
         height -= 2.0*lineWidth;
 
         let finishedWidth = Math.ceil(this._progress * width);
-        stroke = Cairo.SolidPattern.createRGBA(0.8, 0.8, 0.8, 1.0);
-        fill = Cairo.SolidPattern.createRGBA(0.9, 0.9, 0.9, 1.0);
+
+        let bg = this._progressbar_background;
+        let bd = this._progressbar_border;
+
+        stroke = Cairo.SolidPattern.createRGBA(bd.red/255, bd.green/255, bd.blue/255, bd.alpha/255);
+        fill = Cairo.SolidPattern.createRGBA(bg.red/255, bg.green/255, bg.blue/255, bg.alpha/255);
 
         if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL)
             Utils.drawRoundedLine(cr, x + lineWidth/2.0 + width - finishedWidth, y + lineWidth/2.0, finishedWidth, height, true, true, stroke, fill);
