@@ -45,10 +45,9 @@ const TransparencyMode = {
 /**
  * Manage theme customization and custom theme support
  */
-var ThemeManager = new Lang.Class({
-    Name: 'DashToDock.ThemeManager',
+var ThemeManager = class DashToDock_ThemeManager {
 
-    _init: function(settings, dock) {
+    constructor(settings, dock) {
         this._settings = settings;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._bindSettingsChanges();
@@ -82,22 +81,22 @@ var ThemeManager = new Lang.Class({
         // in order to disconnect signals
         this._actor.connect('destroy', Lang.bind(this, this.destroy));
 
-    },
+    }
 
-    destroy: function() {
+    destroy() {
         this._signalsHandler.destroy();
         this._transparency.destroy();
-    },
+    }
 
-    _onOverviewShowing: function() {
+    _onOverviewShowing() {
         this._actor.add_style_pseudo_class('overview');
-    },
+    }
 
-    _onOverviewHiding: function() {
+    _onOverviewHiding() {
         this._actor.remove_style_pseudo_class('overview');
-    },
+    }
 
-    _updateDashOpacity: function() {
+    _updateDashOpacity() {
         let newAlpha = this._settings.get_double('background-opacity');
 
         let [backgroundColor, borderColor] = this._getDefaultColors();
@@ -126,9 +125,9 @@ var ThemeManager = new Lang.Class({
             borderColor.blue + ',' +
             borderAlpha + ')';
 
-    },
+    }
 
-    _getDefaultColors: function() {
+    _getDefaultColors() {
         // Prevent shell crash if the actor is not on the stage.
         // It happens enabling/disabling repeatedly the extension
         if (!this._dash._container.get_stage())
@@ -155,9 +154,9 @@ var ThemeManager = new Lang.Class({
         let borderColor = themeNode.get_border_color(side);
 
         return [backgroundColor, borderColor];
-    },
+    }
 
-    _updateDashColor: function() {
+    _updateDashColor() {
         // Retrieve the color. If needed we will adjust it before passing it to
         // this._transparency.
         let [backgroundColor, borderColor] = this._getDefaultColors();
@@ -184,9 +183,9 @@ var ThemeManager = new Lang.Class({
             this._customizedBorder = this._customizedBackground;
         }
         this._transparency.setColor(backgroundColor);
-    },
+    }
 
-    _updateCustomStyleClasses: function() {
+    _updateCustomStyleClasses() {
         if (this._settings.get_boolean('apply-custom-theme'))
             this._actor.add_style_class_name('dashtodock');
         else
@@ -211,20 +210,20 @@ var ThemeManager = new Lang.Class({
         } else {
             this._actor.remove_style_class_name('straight-corner');
         }
-    },
+    }
 
-    updateCustomTheme: function() {
+    updateCustomTheme() {
         this._updateCustomStyleClasses();
         this._updateDashOpacity();
         this._updateDashColor();
         this._adjustTheme();
         this._dash._redisplay();
-    },
+    }
 
     /**
      * Reimported back and adapted from atomdock
      */
-    _adjustTheme: function() {
+    _adjustTheme() {
         // Prevent shell crash if the actor is not on the stage.
         // It happens enabling/disabling repeatedly the extension
         if (!this._dash._container.get_stage())
@@ -301,9 +300,9 @@ var ThemeManager = new Lang.Class({
                        'transition-delay: 0s; transition-duration: 0.250s;';
             this._dash._container.set_style(newStyle);
         }
-    },
+    }
 
-    _bindSettingsChanges: function() {
+    _bindSettingsChanges() {
         let keys = ['transparency-mode',
                     'customize-alphas',
                     'min-alpha',
@@ -325,17 +324,16 @@ var ThemeManager = new Lang.Class({
            ]);
         }, this);
     }
-});
+};
 
 /**
  * The following class is based on the following upstream commit:
  * https://git.gnome.org/browse/gnome-shell/commit/?id=447bf55e45b00426ed908b1b1035f472c2466956
  * Transparency when free-floating
  */
-const Transparency = new Lang.Class({
-    Name: 'DashToDock.Transparency',
+var Transparency = class DashToDock_Transparency {
 
-    _init: function(settings, dock) {
+    constructor(settings, dock) {
         this._settings = settings;
         this._dash = dock.dash;
         this._actor = this._dash._container;
@@ -357,9 +355,9 @@ const Transparency = new Lang.Class({
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._injectionsHandler = new Utils.InjectionsHandler();
         this._trackedWindows = new Map();
-    },
+    }
 
-    enable: function() {
+    enable() {
         // ensure I never double-register/inject
         // although it should never happen
         this.disable();
@@ -411,9 +409,9 @@ const Transparency = new Lang.Class({
         this._updateSolidStyle();
 
         this.emit('transparency-enabled');
-    },
+    }
 
-    disable: function() {
+    disable() {
         this._disableAdaptive();
 
         // ensure I never double-register/inject
@@ -427,23 +425,23 @@ const Transparency = new Lang.Class({
         this._trackedWindows.clear();
 
         this.emit('transparency-disabled');
-    },
+    }
 
-    destroy: function() {
+    destroy() {
         this.disable();
         this._signalsHandler.destroy();
         this._injectionsHandler.destroy();
-    },
+    }
 
-    _onWindowActorAdded: function(container, metaWindowActor) {
+    _onWindowActorAdded(container, metaWindowActor) {
         let signalIds = [];
         ['allocation-changed', 'notify::visible'].forEach(s => {
             signalIds.push(metaWindowActor.connect(s, Lang.bind(this, this._updateSolidStyle)));
         });
         this._trackedWindows.set(metaWindowActor, signalIds);
-    },
+    }
 
-    _onWindowActorRemoved: function(container, metaWindowActor) {
+    _onWindowActorRemoved(container, metaWindowActor) {
         if (!this._trackedWindows.get(metaWindowActor))
             return;
 
@@ -452,9 +450,9 @@ const Transparency = new Lang.Class({
         });
         this._trackedWindows.delete(metaWindowActor);
         this._updateSolidStyle();
-    },
+    }
 
-    _updateSolidStyle: function() {
+    _updateSolidStyle() {
         let isNear = this._dockIsNear() || this._panelIsNear();
         if (isNear) {
             this._actor.set_style(this._opaque_style);
@@ -476,9 +474,9 @@ const Transparency = new Lang.Class({
         }
 
         this.emit('solid-style-updated', isNear);
-    },
+    }
 
-    _dockIsNear: function() {
+    _dockIsNear() {
         if (this._dockActor.has_style_pseudo_class('overview'))
             return false;
         /* Get all the windows in the active workspace that are in the primary monitor and visible */
@@ -531,9 +529,9 @@ const Transparency = new Lang.Class({
         }));
 
         return isNearEnough;
-    },
+    }
 
-    _panelIsNear: function() {
+    _panelIsNear() {
         if (!this._panel._updateSolidStyle ||
             this._settings.get_enum('transparency-mode') !== TransparencyMode.ADAPTIVE)
             return false;
@@ -562,9 +560,9 @@ const Transparency = new Lang.Class({
         }));
 
         return isNearEnough;
-    },
+    }
 
-    _updateStyles: function() {
+    _updateStyles() {
         this._getAlphas();
 
         this._transparent_style = this._base_actor_style +
@@ -582,14 +580,14 @@ const Transparency = new Lang.Class({
             'transition-duration: ' + this._opaqueTransition + 'ms;';
 
         this.emit('styles-updated');
-    },
+    }
 
-    setColor: function(color) {
+    setColor(color) {
         this._backgroundColor = color.red + ',' + color.green + ',' + color.blue;
         this._updateStyles();
-    },
+    }
 
-    _getAlphas: function() {
+    _getAlphas() {
         // Create dummy object and add to the uiGroup to get it to the stage
         let dummyObject = new St.Bin({
             name: 'dashtodockContainer',
@@ -635,9 +633,9 @@ const Transparency = new Lang.Class({
                 this._panel._removeStyleClassName('solid');
             }
         }
-    },
+    }
 
-    _enableAdaptive: function() {
+    _enableAdaptive() {
         if (!this._panel._updateSolidStyle ||
             this._dash._monitorIndex !== Main.layoutManager.primaryIndex)
             return;
@@ -663,9 +661,9 @@ const Transparency = new Lang.Class({
 
         for (let win of this._panel._trackedWindows.keys())
             this._panel._onWindowActorAdded(null, win);
-    },
+    }
 
-    _disableAdaptive: function() {
+    _disableAdaptive() {
         if (!this._adaptiveEnabled)
             return;
 
@@ -682,5 +680,5 @@ const Transparency = new Lang.Class({
         for (let win of this._panel._trackedWindows.keys())
             this._panel._onWindowActorAdded(null, win);
     }
-});
+};
 Signals.addSignalMethods(Transparency.prototype);
