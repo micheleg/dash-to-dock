@@ -4,10 +4,9 @@ const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Signals = imports.signals;
 
-var LauncherEntryRemoteModel = new Lang.Class({
-    Name: 'DashToDock.LauncherEntryRemoteModel',
+var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
 
-    _init: function () {
+    constructor() {
         this._entriesByDBusName = {};
 
         this._launcher_entry_dbus_signal_id =
@@ -29,9 +28,9 @@ var LauncherEntryRemoteModel = new Lang.Class({
                 Lang.bind(this, this._onDBusNameOwnerChanged));
 
         this._acquireUnityDBus();
-    },
+    }
 
-    destroy: function () {
+    destroy() {
         if (this._launcher_entry_dbus_signal_id) {
             Gio.DBus.session.signal_unsubscribe(this._launcher_entry_dbus_signal_id);
         }
@@ -41,17 +40,17 @@ var LauncherEntryRemoteModel = new Lang.Class({
         }
 
         this._releaseUnityDBus();
-    },
+    }
 
-    size: function () {
+    size() {
         return Object.keys(this._entriesByDBusName).length;
-    },
+    }
 
-    lookupByDBusName: function (dbusName) {
+    lookupByDBusName(dbusName) {
         return this._entriesByDBusName.hasOwnProperty(dbusName) ? this._entriesByDBusName[dbusName] : null;
-    },
+    }
 
-    lookupById: function (appId) {
+    lookupById(appId) {
         let ret = [];
         for (let dbusName in this._entriesByDBusName) {
             let entry = this._entriesByDBusName[dbusName];
@@ -61,9 +60,9 @@ var LauncherEntryRemoteModel = new Lang.Class({
         }
 
         return ret;
-    },
+    }
 
-    addEntry: function (entry) {
+    addEntry(entry) {
         let existingEntry = this.lookupByDBusName(entry.dbusName());
         if (existingEntry) {
             existingEntry.update(entry);
@@ -71,28 +70,28 @@ var LauncherEntryRemoteModel = new Lang.Class({
             this._entriesByDBusName[entry.dbusName()] = entry;
             this.emit('entry-added', entry);
         }
-    },
+    }
 
-    removeEntry: function (entry) {
+    removeEntry(entry) {
         delete this._entriesByDBusName[entry.dbusName()]
         this.emit('entry-removed', entry);
-    },
+    }
 
-    _acquireUnityDBus: function () {
+    _acquireUnityDBus() {
         if (!this._unity_bus_id) {
             Gio.DBus.session.own_name('com.canonical.Unity',
                 Gio.BusNameOwnerFlags.ALLOW_REPLACEMENT, null, null);
         }
-    },
+    }
 
-    _releaseUnityDBus: function () {
+    _releaseUnityDBus() {
         if (this._unity_bus_id) {
             Gio.DBus.session.unown_name(this._unity_bus_id);
             this._unity_bus_id = 0;
         }
-    },
+    }
 
-    _onEntrySignalReceived: function (connection, sender_name, object_path,
+    _onEntrySignalReceived(connection, sender_name, object_path,
         interface_name, signal_name, parameters, user_data) {
         if (!parameters || !signal_name)
             return;
@@ -104,9 +103,9 @@ var LauncherEntryRemoteModel = new Lang.Class({
 
             this._handleUpdateRequest(sender_name, parameters);
         }
-    },
+    }
 
-    _onDBusNameOwnerChanged: function (connection, sender_name, object_path,
+    _onDBusNameOwnerChanged(connection, sender_name, object_path,
         interface_name, signal_name, parameters, user_data) {
         if (!parameters || !this.size())
             return;
@@ -118,9 +117,9 @@ var LauncherEntryRemoteModel = new Lang.Class({
                 this.removeEntry(this._entriesByDBusName[before]);
             }
         }
-    },
+    }
 
-    _handleUpdateRequest: function (senderName, parameters) {
+    _handleUpdateRequest(senderName, parameters) {
         if (!senderName || !parameters) {
             return;
         }
@@ -136,15 +135,13 @@ var LauncherEntryRemoteModel = new Lang.Class({
             let entry = new LauncherEntryRemote(senderName, appId, properties);
             this.addEntry(entry);
         }
-    },
-});
-
+    }
+};
 Signals.addSignalMethods(LauncherEntryRemoteModel.prototype);
 
-var LauncherEntryRemote = new Lang.Class({
-    Name: 'DashToDock.LauncherEntryRemote',
+var LauncherEntryRemote = class DashToDock_LauncherEntryRemote {
 
-    _init: function (dbusName, appId, properties) {
+    constructor(dbusName, appId, properties) {
         this._dbusName = dbusName;
         this._appId = appId;
         this._count = 0;
@@ -152,69 +149,69 @@ var LauncherEntryRemote = new Lang.Class({
         this._progress = 0.0;
         this._progressVisible = false;
         this.update(properties);
-    },
+    }
 
-    appId: function () {
+    appId() {
         return this._appId;
-    },
+    }
 
-    dbusName: function () {
+    dbusName() {
         return this._dbusName;
-    },
+    }
 
-    count: function () {
+    count() {
         return this._count;
-    },
+    }
 
-    setCount: function (count) {
+    setCount(count) {
         if (this._count != count) {
             this._count = count;
             this.emit('count-changed', this._count);
         }
-    },
+    }
 
-    countVisible: function () {
+    countVisible() {
         return this._countVisible;
-    },
+    }
 
-    setCountVisible: function (countVisible) {
+    setCountVisible(countVisible) {
         if (this._countVisible != countVisible) {
             this._countVisible = countVisible;
             this.emit('count-visible-changed', this._countVisible);
         }
-    },
+    }
 
-    progress: function () {
+    progress() {
         return this._progress;
-    },
+    }
 
-    setProgress: function (progress) {
+    setProgress(progress) {
         if (this._progress != progress) {
             this._progress = progress;
             this.emit('progress-changed', this._progress);
         }
-    },
+    }
 
-    progressVisible: function () {
+    progressVisible() {
         return this._progressVisible;
-    },
+    }
 
-    setProgressVisible: function (progressVisible) {
+    setProgressVisible(progressVisible) {
         if (this._progressVisible != progressVisible) {
             this._progressVisible = progressVisible;
             this.emit('progress-visible-changed', this._progressVisible);
         }
-    },
+    }
 
-    setDBusName: function (dbusName) {
+    setDBusName(dbusName) {
         if (this._dbusName != dbusName) {
             let oldName = this._dbusName;
             this._dbusName = dbusName;
             this.emit('dbus-name-changed', oldName);
         }
-    },
+    }
 
-    update: function (other) {
+    update(other) {
         if (other instanceof LauncherEntryRemote) {
             this.setDBusName(other.dbusName())
             this.setCount(other.count());
@@ -238,7 +235,6 @@ var LauncherEntryRemote = new Lang.Class({
                 }
             }
         }
-    },
-});
-
+    }
+};
 Signals.addSignalMethods(LauncherEntryRemote.prototype);
