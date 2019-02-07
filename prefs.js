@@ -84,10 +84,9 @@ function setShortcut(settings) {
     }
 }
 
-const Settings = new Lang.Class({
-    Name: 'DashToDock.Settings',
+var Settings = class DashToDock_Settings {
 
-    _init: function() {
+    constructor() {
         this._settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
 
         this._rtl = (Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL);
@@ -115,16 +114,144 @@ const Settings = new Lang.Class({
         this._bindSettings();
 
         this._builder.connect_signals_full(Lang.bind(this, this._connector));
-    },
+    }
 
     /**
      * Connect signals
      */
-    _connector: function(builder, object, signal, handler) {
-        object.connect(signal, Lang.bind(this, this._SignalHandler[handler]));
-    },
+    _connector(builder, object, signal, handler) {
+        /**init
+         * Object containing all signals defined in the glade file
+         */
+        const SignalHandler = {
+            dock_display_combo_changed_cb(combo) {
+                this._settings.set_int('preferred-monitor', this._monitors[combo.get_active()]);
+            },
 
-    _bindSettings: function() {
+            position_top_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('dock-position', 0);
+            },
+
+            position_right_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('dock-position', 1);
+            },
+
+            position_bottom_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('dock-position', 2);
+            },
+
+            position_left_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('dock-position', 3);
+            },
+
+            icon_size_combo_changed_cb(combo) {
+                this._settings.set_int('dash-max-icon-size', this._allIconSizes[combo.get_active()]);
+            },
+
+            dock_size_scale_format_value_cb(scale, value) {
+                return Math.round(value * 100) + ' %';
+            },
+
+            dock_size_scale_value_changed_cb(scale) {
+                // Avoid settings the size consinuosly
+                if (this._dock_size_timeout > 0)
+                    Mainloop.source_remove(this._dock_size_timeout);
+
+                this._dock_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function () {
+                    this._settings.set_double('height-fraction', scale.get_value());
+                    this._dock_size_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                }));
+            },
+
+            icon_size_scale_format_value_cb(scale, value) {
+                return value + ' px';
+            },
+
+            icon_size_scale_value_changed_cb(scale) {
+                // Avoid settings the size consinuosly
+                if (this._icon_size_timeout > 0)
+                    Mainloop.source_remove(this._icon_size_timeout);
+
+                this._icon_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function () {
+                    this._settings.set_int('dash-max-icon-size', scale.get_value());
+                    this._icon_size_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                }));
+            },
+
+            custom_opacity_scale_value_changed_cb(scale) {
+                // Avoid settings the opacity consinuosly as it's change is animated
+                if (this._opacity_timeout > 0)
+                    Mainloop.source_remove(this._opacity_timeout);
+
+                this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function () {
+                    this._settings.set_double('background-opacity', scale.get_value());
+                    this._opacity_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                }));
+            },
+
+            min_opacity_scale_value_changed_cb(scale) {
+                // Avoid settings the opacity consinuosly as it's change is animated
+                if (this._opacity_timeout > 0)
+                    Mainloop.source_remove(this._opacity_timeout);
+
+                this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function () {
+                    this._settings.set_double('min-alpha', scale.get_value());
+                    this._opacity_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                }));
+            },
+
+            max_opacity_scale_value_changed_cb(scale) {
+                // Avoid settings the opacity consinuosly as it's change is animated
+                if (this._opacity_timeout > 0)
+                    Mainloop.source_remove(this._opacity_timeout);
+
+                this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function () {
+                    this._settings.set_double('max-alpha', scale.get_value());
+                    this._opacity_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                }));
+            },
+
+            custom_opacity_scale_format_value_cb(scale, value) {
+                return Math.round(value * 100) + ' %';
+            },
+
+            min_opacity_scale_format_value_cb(scale, value) {
+                return Math.round(value * 100) + ' %';
+            },
+
+            max_opacity_scale_format_value_cb(scale, value) {
+                return Math.round(value * 100) + ' %';
+            },
+
+            all_windows_radio_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('intellihide-mode', 0);
+            },
+
+            focus_application_windows_radio_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('intellihide-mode', 1);
+            },
+
+            maximized_windows_radio_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('intellihide-mode', 2);
+            }
+        }
+
+        object.connect(signal, Lang.bind(this, SignalHandler[handler]));
+    }
+
+    _bindSettings() {
         // Position and size panel
 
         // Monitor options
@@ -725,136 +852,8 @@ const Settings = new Lang.Class({
         // About Panel
 
         this._builder.get_object('extension_version').set_label(Me.metadata.version.toString());
-    },
-
-    /**
-     * Object containing all signals defined in the glade file
-     */
-    _SignalHandler: {
-        dock_display_combo_changed_cb: function(combo) {
-            this._settings.set_int('preferred-monitor', this._monitors[combo.get_active()]);
-        },
-
-        position_top_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('dock-position', 0);
-        },
-
-        position_right_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('dock-position', 1);
-        },
-
-        position_bottom_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('dock-position', 2);
-        },
-
-        position_left_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('dock-position', 3);
-        },
-
-        icon_size_combo_changed_cb: function(combo) {
-            this._settings.set_int('dash-max-icon-size', this._allIconSizes[combo.get_active()]);
-        },
-
-        dock_size_scale_format_value_cb: function(scale, value) {
-            return Math.round(value*100)+ ' %';
-        },
-
-        dock_size_scale_value_changed_cb: function(scale) {
-            // Avoid settings the size consinuosly
-            if (this._dock_size_timeout > 0)
-                Mainloop.source_remove(this._dock_size_timeout);
-
-            this._dock_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_double('height-fraction', scale.get_value());
-                this._dock_size_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            }));
-        },
-
-        icon_size_scale_format_value_cb: function(scale, value) {
-            return value+ ' px';
-        },
-
-        icon_size_scale_value_changed_cb: function(scale) {
-            // Avoid settings the size consinuosly
-            if (this._icon_size_timeout > 0)
-                Mainloop.source_remove(this._icon_size_timeout);
-
-            this._icon_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_int('dash-max-icon-size', scale.get_value());
-                this._icon_size_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            }));
-        },
-
-        custom_opacity_scale_value_changed_cb: function(scale) {
-            // Avoid settings the opacity consinuosly as it's change is animated
-            if (this._opacity_timeout > 0)
-                Mainloop.source_remove(this._opacity_timeout);
-
-            this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_double('background-opacity', scale.get_value());
-                this._opacity_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            }));
-        },
-
-        min_opacity_scale_value_changed_cb: function(scale) {
-            // Avoid settings the opacity consinuosly as it's change is animated
-            if (this._opacity_timeout > 0)
-                Mainloop.source_remove(this._opacity_timeout);
-
-            this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_double('min-alpha', scale.get_value());
-                this._opacity_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            }));
-        },
-
-        max_opacity_scale_value_changed_cb: function(scale) {
-            // Avoid settings the opacity consinuosly as it's change is animated
-            if (this._opacity_timeout > 0)
-                Mainloop.source_remove(this._opacity_timeout);
-
-            this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_double('max-alpha', scale.get_value());
-                this._opacity_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            }));
-        },
-
-        custom_opacity_scale_format_value_cb: function(scale, value) {
-            return Math.round(value*100) + ' %';
-        },
-
-        min_opacity_scale_format_value_cb: function(scale, value) {
-            return Math.round(value*100) + ' %';
-        },
-
-        max_opacity_scale_format_value_cb: function(scale, value) {
-            return Math.round(value*100) + ' %';
-        },
-
-        all_windows_radio_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('intellihide-mode', 0);
-        },
-
-        focus_application_windows_radio_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('intellihide-mode', 1);
-        },
-
-        maximized_windows_radio_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('intellihide-mode', 2);
-        }
     }
-});
+};
 
 function init() {
     Convenience.initTranslations();
