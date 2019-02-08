@@ -6,7 +6,6 @@ const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Signals = imports.signals;
-const Lang = imports.lang;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
@@ -97,11 +96,9 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         }
 
         this._windowsChangedId = this.app.connect('windows-changed',
-                                                Lang.bind(this,
-                                                          this.onWindowsChanged));
+                                                  this.onWindowsChanged.bind(this));
         this._focusAppChangeId = tracker.connect('notify::focus-app',
-                                                 Lang.bind(this,
-                                                           this._onFocusAppChanged));
+                                                 this._onFocusAppChanged.bind(this));
 
         // In Wayland sessions, this signal is needed to track the state of windows dragged
         // from one monitor to another. As this is triggered quite often (whenever a new winow
@@ -114,7 +111,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
             this._signalsHandler.addWithLabel('isolate-monitors', [
                 Utils.DisplayWrapper.getScreen(),
                 'window-entered-monitor',
-                Lang.bind(this, this._onWindowEntered)
+                this._onWindowEntered.bind(this)
             ]);
         }
 
@@ -129,13 +126,13 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
             this._signalsHandler.add([
                 this._dtdSettings,
                 'changed::' + key,
-                Lang.bind(this, this._updateIndicatorStyle)
+                this._updateIndicatorStyle.bind(this)
             ]);
         }, this);
 
-        this._dtdSettings.connect('changed::scroll-action', Lang.bind(this, function() {
+        this._dtdSettings.connect('changed::scroll-action', () => {
             this._optionalScrollCycleWindows();
-        }));
+        });
         this._optionalScrollCycleWindows();
 
         this._numberOverlay();
@@ -195,8 +192,8 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
 
         let isEnabled = this._dtdSettings.get_enum('scroll-action') === scrollAction.CYCLE_WINDOWS;
         if (!isEnabled) return;
-        this._scrollEventHandler = this.actor.connect('scroll-event', Lang.bind(this,
-                                                          this.onScrollEvent));
+        this._scrollEventHandler = this.actor.connect('scroll-event',
+                                                      this.onScrollEvent.bind(this));
     }
 
     onScrollEvent(actor, event) {
@@ -213,9 +210,9 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         if (this._optionalScrollCycleWindowsDeadTimeId > 0)
             return false;
         else
-            this._optionalScrollCycleWindowsDeadTimeId = Mainloop.timeout_add(250, Lang.bind(this, function() {
+            this._optionalScrollCycleWindowsDeadTimeId = Mainloop.timeout_add(250, () => {
                 this._optionalScrollCycleWindowsDeadTimeId = 0;
-            }));
+            });
 
         let direction = null;
 
@@ -304,10 +301,10 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
 
         if (!this._menu) {
             this._menu = new MyAppIconMenu(this, this._dtdSettings);
-            this._menu.connect('activate-window', Lang.bind(this, function(menu, window) {
+            this._menu.connect('activate-window', (menu, window) => {
                 this.activateWindow(window);
-            }));
-            this._menu.connect('open-state-changed', Lang.bind(this, function(menu, isPoppedUp) {
+            });
+            this._menu.connect('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
                 else {
@@ -325,10 +322,10 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
                     this._menu.actor.style = ('max-height: ' + Math.round(workArea.height - additional_margin - verticalMargins) + 'px;' +
                                               'max-width: 400px');
                 }
-            }));
-            let id = Main.overview.connect('hiding', Lang.bind(this, function() {
+            });
+            let id = Main.overview.connect('hiding', () => {
                 this._menu.close();
-            }));
+            });
             this._menu.actor.connect('destroy', function() {
                 Main.overview.disconnect(id);
             });
@@ -532,13 +529,13 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
 
             this._previewMenuManager.addMenu(this._previewMenu);
 
-            this._previewMenu.connect('open-state-changed', Lang.bind(this, function(menu, isPoppedUp) {
+            this._previewMenu.connect('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
-            }));
-            let id = Main.overview.connect('hiding', Lang.bind(this, function() {
+            });
+            let id = Main.overview.connect('hiding', () => {
                 this._previewMenu.close();
-            }));
+            });
             this._previewMenu.actor.connect('destroy', function() {
                 Main.overview.disconnect(id);
             });
@@ -790,13 +787,13 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                 if (this._source.app.can_open_new_window() &&
                     actions.indexOf('new-window') == -1) {
                     this._newWindowMenuItem = this._appendMenuItem(_("New Window"));
-                    this._newWindowMenuItem.connect('activate', Lang.bind(this, function() {
+                    this._newWindowMenuItem.connect('activate', () => {
                         if (this._source.app.state == Shell.AppState.STOPPED)
                             this._source.animateLaunch();
 
                         this._source.app.open_new_window(-1);
                         this.emit('activate-window', null);
-                    }));
+                    });
                     this._appendSeparator();
                 }
 
@@ -805,22 +802,22 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                     this._source.app.state == Shell.AppState.STOPPED &&
                     actions.indexOf('activate-discrete-gpu') == -1) {
                     this._onDiscreteGpuMenuItem = this._appendMenuItem(_("Launch using Dedicated Graphics Card"));
-                    this._onDiscreteGpuMenuItem.connect('activate', Lang.bind(this, function() {
+                    this._onDiscreteGpuMenuItem.connect('activate', () => {
                         if (this._source.app.state == Shell.AppState.STOPPED)
                             this._source.animateLaunch();
 
                         this._source.app.launch(0, -1, true);
                         this.emit('activate-window', null);
-                    }));
+                    });
                 }
 
                 for (let i = 0; i < actions.length; i++) {
                     let action = actions[i];
                     let item = this._appendMenuItem(appInfo.get_action_name(action));
-                    item.connect('activate', Lang.bind(this, function(emitter, event) {
+                    item.connect('activate', (emitter, event) => {
                         this._source.app.launch_action(action, event.get_time(), -1);
                         this.emit('activate-window', null);
-                    }));
+                    });
                 }
 
                 let canFavorite = global.settings.is_writable('favorite-apps');
@@ -832,23 +829,23 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
 
                     if (isFavorite) {
                         let item = this._appendMenuItem(_("Remove from Favorites"));
-                        item.connect('activate', Lang.bind(this, function() {
+                        item.connect('activate', () => {
                             let favs = AppFavorites.getAppFavorites();
                             favs.removeFavorite(this._source.app.get_id());
-                        }));
+                        });
                     } else {
                         let item = this._appendMenuItem(_("Add to Favorites"));
-                        item.connect('activate', Lang.bind(this, function() {
+                        item.connect('activate', () => {
                             let favs = AppFavorites.getAppFavorites();
                             favs.addFavorite(this._source.app.get_id());
-                        }));
+                        });
                     }
                 }
 
                 if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop')) {
                     this._appendSeparator();
                     let item = this._appendMenuItem(_("Show Details"));
-                    item.connect('activate', Lang.bind(this, function() {
+                    item.connect('activate', () => {
                         let id = this._source.app.get_id();
                         let args = GLib.Variant.new('(ss)', [id, '']);
                         Gio.DBus.get(Gio.BusType.SESSION, null,
@@ -862,7 +859,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                                          null, 0, -1, null, null);
                                 Main.overview.hide();
                             });
-                    }));
+                    });
                 }
             }
 
@@ -873,9 +870,9 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
         // quit menu
         this._appendSeparator();
         this._quitfromDashMenuItem = this._appendMenuItem(_("Quit"));
-        this._quitfromDashMenuItem.connect('activate', Lang.bind(this, function() {
+        this._quitfromDashMenuItem.connect('activate', () => {
             this._source.closeAllWindows();
-        }));
+        });
 
         this.update();
     }
@@ -928,7 +925,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
           }
 
           // Update separators
-          this._getMenuItems().forEach(Lang.bind(this, this._updateSeparatorVisibility));
+          this._getMenuItems().forEach(this._updateSeparatorVisibility.bind(this));
       }
 
 
@@ -952,15 +949,15 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
 
                     let item = new WindowPreview.WindowPreviewMenuItem(window);
                     this._allWindowsMenuItem.menu.addMenuItem(item);
-                    item.connect('activate', Lang.bind(this, function() {
+                    item.connect('activate', () => {
                         this.emit('activate-window', window);
-                    }));
+                    });
 
                     // This is to achieve a more gracefull transition when the last windows is closed.
-                    item.connect('destroy', Lang.bind(this, function() {
+                    item.connect('destroy', () => {
                         if(this._allWindowsMenuItem.menu._getMenuItems().length == 1) // It's still counting the item just going to be destroyed
                             this._allWindowsMenuItem.setSensitive(false);
-                    }));
+                    });
                 }
             }
     }
@@ -1021,15 +1018,15 @@ var ShowAppsIconWrapper = class DashToDock_ShowAppsIconWrapper {
         this._onMenuPoppedDown = AppDisplay.AppIcon.prototype._onMenuPoppedDown;
 
         // No action on clicked (showing of the appsview is controlled elsewhere)
-        this._onClicked = Lang.bind(this, function(actor, button) {
+        this._onClicked = (actor, button) => {
             this._removeMenuTimeout();
-        });
+        };
 
-        this.actor.connect('leave-event', Lang.bind(this, this._onLeaveEvent));
-        this.actor.connect('button-press-event', Lang.bind(this, this._onButtonPress));
-        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
-        this.actor.connect('clicked', Lang.bind(this, this._onClicked));
-        this.actor.connect('popup-menu', Lang.bind(this, this._onKeyboardPopupMenu));
+        this.actor.connect('leave-event', this._onLeaveEvent.bind(this));
+        this.actor.connect('button-press-event', this._onButtonPress.bind(this));
+        this.actor.connect('touch-event', this._onTouchEvent.bind(this));
+        this.actor.connect('clicked', this._onClicked.bind(this));
+        this.actor.connect('popup-menu', this._onKeyboardPopupMenu.bind(this));
 
         this._menu = null;
         this._menuManager = new PopupMenu.PopupMenuManager(this);
@@ -1045,13 +1042,13 @@ var ShowAppsIconWrapper = class DashToDock_ShowAppsIconWrapper {
 
         if (!this._menu) {
             this._menu = new MyShowAppsIconMenu(this, this._dtdSettings);
-            this._menu.connect('open-state-changed', Lang.bind(this, function(menu, isPoppedUp) {
+            this._menu.connect('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
-            }));
-            let id = Main.overview.connect('hiding', Lang.bind(this, function() {
+            });
+            let id = Main.overview.connect('hiding', () => {
                 this._menu.close();
-            }));
+            });
             this._menu.actor.connect('destroy', function() {
                 Main.overview.disconnect(id);
             });

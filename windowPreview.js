@@ -6,7 +6,6 @@
  */
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
-const Lang = imports.lang;
 const St = imports.gi.St;
 const Mainloop = imports.mainloop;
 const Main = imports.ui.main;
@@ -44,11 +43,11 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
         this.actor.hide();
 
         // Chain our visibility and lifecycle to that of the source
-        this._mappedId = this._source.actor.connect('notify::mapped', Lang.bind(this, function () {
+        this._mappedId = this._source.actor.connect('notify::mapped', () => {
             if (!this._source.actor.mapped)
                 this.close();
-        }));
-        this._destroyId = this._source.actor.connect('destroy', Lang.bind(this, this.destroy));
+        });
+        this._destroyId = this._source.actor.connect('destroy', this.destroy.bind(this));
 
         Main.uiGroup.add_actor(this.actor);
 
@@ -98,7 +97,7 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
                                                vscrollbar_policy: Gtk.PolicyType.NEVER,
                                                enable_mouse_scrolling: true });
 
-        this.actor.connect('scroll-event', Lang.bind(this, this._onScrollEvent ));
+        this.actor.connect('scroll-event', this._onScrollEvent .bind(this));
 
         let position = Utils.getPosition(this._dtdSettings);
         this.isHorizontal = position == St.Side.BOTTOM || position == St.Side.TOP;
@@ -112,12 +111,11 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
         this._source = source;
         this.app = source.app;
 
-        this._redisplayId = Main.initializeDeferredWork(this.actor, Lang.bind(this, this._redisplay));
+        this._redisplayId = Main.initializeDeferredWork(this.actor, this._redisplay.bind(this));
 
-        this.actor.connect('destroy', Lang.bind(this, this._onDestroy));
+        this.actor.connect('destroy', this._onDestroy.bind(this));
         this._stateChangedId = this.app.connect('windows-changed',
-                                                Lang.bind(this,
-                                                          this._queueRedisplay));
+                                                this._queueRedisplay.bind(this));
     }
 
     _queueRedisplay () {
@@ -343,7 +341,7 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
 
 
         this.closeButton.opacity = 0;
-        this.closeButton.connect('clicked', Lang.bind(this, this._closeWindow));
+        this.closeButton.connect('clicked', this._closeWindow.bind(this));
 
         let overlayGroup = new Clutter.Actor({layout_manager: new Clutter.BinLayout() });
 
@@ -355,9 +353,9 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
         let labelBin = new St.Bin({ child: label,
                                     x_align: St.Align.MIDDLE});
 
-        this._windowTitleId = this._window.connect('notify::title', Lang.bind(this, function() {
+        this._windowTitleId = this._window.connect('notify::title', () => {
                                   label.set_text(this._window.get_title());
-                              }));
+                              });
 
         let box = new St.BoxLayout({ vertical: true,
                                      reactive:true,
@@ -367,13 +365,13 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
         this.actor.add_actor(box);
 
         this.actor.connect('enter-event',
-                                  Lang.bind(this, this._onEnter));
+                                  this._onEnter.bind(this));
         this.actor.connect('leave-event',
-                                  Lang.bind(this, this._onLeave));
+                                  this._onLeave.bind(this));
         this.actor.connect('key-focus-in',
-                                  Lang.bind(this, this._onEnter));
+                                  this._onEnter.bind(this));
         this.actor.connect('key-focus-out',
-                                  Lang.bind(this, this._onLeave));
+                                  this._onLeave.bind(this));
 
         this._cloneTexture(window);
 
@@ -387,14 +385,13 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
         // the compositor finds out about them...
         // Moreover sometimes they return an empty texture, thus as a workarounf also check for it size
         if (!mutterWindow || !mutterWindow.get_texture() || !mutterWindow.get_texture().get_size()[0]) {
-            let id = Mainloop.idle_add(Lang.bind(this,
-                                            function () {
-                                                // Check if there's still a point in getting the texture,
-                                                // otherwise this could go on indefinitely
-                                                if (this.actor && metaWin.get_workspace())
-                                                    this._cloneTexture(metaWin);
-                                                return GLib.SOURCE_REMOVE;
-                                            }));
+            let id = Mainloop.idle_add(() => {
+                // Check if there's still a point in getting the texture,
+                // otherwise this could go on indefinitely
+                if (this.actor && metaWin.get_workspace())
+                    this._cloneTexture(metaWin);
+                return GLib.SOURCE_REMOVE;
+            });
             GLib.Source.set_name_by_id(id, '[dash-to-dock] this._cloneTexture');
             return;
         }
@@ -411,12 +408,12 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
 
         // when the source actor is destroyed, i.e. the window closed, first destroy the clone
         // and then destroy the menu item (do this animating out)
-        this._destroyId = mutterWindow.connect('destroy', Lang.bind(this, function() {
+        this._destroyId = mutterWindow.connect('destroy', () => {
             clone.destroy();
             this._destroyId = 0; // avoid to try to disconnect this signal from mutterWindow in _onDestroy(),
                                  // as the object was just destroyed
             this._animateOutAndDestroy();
-        }));
+        });
 
         this._clone = clone;
         this._mutterWindow = mutterWindow;
@@ -436,8 +433,7 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
         // for instance because asking user confirmation, by monitoring the opening of
         // such additional confirmation window
         this._windowAddedId = this._workspace.connect('window-added',
-                                                      Lang.bind(this,
-                                                                this._onWindowAdded));
+                                                      this._onWindowAdded.bind(this));
 
         this.deleteAllWindows();
     }
@@ -465,11 +461,10 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
 
             // use an idle handler to avoid mapping problems -
             // see comment in Workspace._windowAdded
-            let id = Mainloop.idle_add(Lang.bind(this,
-                                            function() {
-                                                this.emit('activate');
-                                                return GLib.SOURCE_REMOVE;
-                                            }));
+            let id = Mainloop.idle_add(() => {
+                this.emit('activate');
+                return GLib.SOURCE_REMOVE;
+            });
             GLib.Source.set_name_by_id(id, '[dash-to-dock] this.emit');
         }
     }

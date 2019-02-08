@@ -6,7 +6,6 @@ const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Signals = imports.signals;
-const Lang = imports.lang;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
@@ -210,7 +209,7 @@ var MyDash = class DashToDock_MyDash {
             enable_mouse_scrolling: false
         });
 
-        this._scrollView.connect('scroll-event', Lang.bind(this, this._onScrollEvent));
+        this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
 
         this._box = new St.BoxLayout({
             vertical: !this._isHorizontal,
@@ -224,9 +223,9 @@ var MyDash = class DashToDock_MyDash {
 
         // Create a wrapper around the real showAppsIcon in order to add a popupMenu.
         let showAppsIconWrapper = new AppIcons.ShowAppsIconWrapper(this._dtdSettings);
-        showAppsIconWrapper.connect('menu-state-changed', Lang.bind(this, function(showAppsIconWrapper, opened) {
+        showAppsIconWrapper.connect('menu-state-changed', (showAppsIconWrapper, opened) => {
             this._itemMenuStateChanged(showAppsIconWrapper, opened);
-        }));
+        });
         // an instance of the showAppsIcon class is encapsulated in the wrapper
         this._showAppsIcon = showAppsIconWrapper.realShowAppsIcon;
 
@@ -247,27 +246,27 @@ var MyDash = class DashToDock_MyDash {
         });
 
         if (this._isHorizontal) {
-            this.actor.connect('notify::width', Lang.bind(this, function() {
+            this.actor.connect('notify::width', () => {
                 if (this._maxHeight != this.actor.width)
                     this._queueRedisplay();
                 this._maxHeight = this.actor.width;
-            }));
+            });
         }
         else {
-            this.actor.connect('notify::height', Lang.bind(this, function() {
+            this.actor.connect('notify::height', () => {
                 if (this._maxHeight != this.actor.height)
                     this._queueRedisplay();
                 this._maxHeight = this.actor.height;
-            }));
+            });
         }
 
         // Update minimization animation target position on allocation of the
         // container and on scrollview change.
-        this._box.connect('notify::allocation', Lang.bind(this, this._updateAppsIconGeometry));
+        this._box.connect('notify::allocation', this._updateAppsIconGeometry.bind(this));
         let scrollViewAdjustment = this._isHorizontal ? this._scrollView.hscroll.adjustment : this._scrollView.vscroll.adjustment;
-        scrollViewAdjustment.connect('notify::value', Lang.bind(this, this._updateAppsIconGeometry));
+        scrollViewAdjustment.connect('notify::value', this._updateAppsIconGeometry.bind(this));
 
-        this._workId = Main.initializeDeferredWork(this._box, Lang.bind(this, this._redisplay));
+        this._workId = Main.initializeDeferredWork(this._box, this._redisplay.bind(this));
 
         this._settings = new Gio.Settings({
             schema_id: 'org.gnome.shell'
@@ -278,30 +277,30 @@ var MyDash = class DashToDock_MyDash {
         this._signalsHandler.add([
             this._appSystem,
             'installed-changed',
-            Lang.bind(this, function() {
+            () => {
                 AppFavorites.getAppFavorites().reload();
                 this._queueRedisplay();
-            })
+            }
         ], [
             AppFavorites.getAppFavorites(),
             'changed',
-            Lang.bind(this, this._queueRedisplay)
+            this._queueRedisplay.bind(this)
         ], [
             this._appSystem,
             'app-state-changed',
-            Lang.bind(this, this._queueRedisplay)
+            this._queueRedisplay.bind(this)
         ], [
             Main.overview,
             'item-drag-begin',
-            Lang.bind(this, this._onDragBegin)
+            this._onDragBegin.bind(this)
         ], [
             Main.overview,
             'item-drag-end',
-            Lang.bind(this, this._onDragEnd)
+            this._onDragEnd.bind(this)
         ], [
             Main.overview,
             'item-drag-cancelled',
-            Lang.bind(this, this._onDragCancelled)
+            this._onDragCancelled.bind(this)
         ]);
     }
 
@@ -357,7 +356,7 @@ var MyDash = class DashToDock_MyDash {
     _onDragBegin() {
         this._dragCancelled = false;
         this._dragMonitor = {
-            dragMotion: Lang.bind(this, this._onDragMotion)
+            dragMotion: this._onDragMotion.bind(this)
         };
         DND.addDragMonitor(this._dragMonitor);
 
@@ -417,22 +416,22 @@ var MyDash = class DashToDock_MyDash {
     }
 
     _hookUpLabel(item, appIcon) {
-        item.child.connect('notify::hover', Lang.bind(this, function() {
+        item.child.connect('notify::hover', () => {
             this._syncLabel(item, appIcon);
-        }));
+        });
 
-        let id = Main.overview.connect('hiding', Lang.bind(this, function() {
+        let id = Main.overview.connect('hiding', () => {
             this._labelShowing = false;
             item.hideLabel();
-        }));
+        });
         item.child.connect('destroy', function() {
             Main.overview.disconnect(id);
         });
 
         if (appIcon) {
-            appIcon.connect('sync-tooltip', Lang.bind(this, function() {
+            appIcon.connect('sync-tooltip', () => {
                 this._syncLabel(item, appIcon);
-            }));
+            });
         }
     }
 
@@ -442,30 +441,30 @@ var MyDash = class DashToDock_MyDash {
                                                showLabel: false });
 
         if (appIcon._draggable) {
-            appIcon._draggable.connect('drag-begin', Lang.bind(this, function() {
+            appIcon._draggable.connect('drag-begin', () => {
                 appIcon.actor.opacity = 50;
-            }));
-            appIcon._draggable.connect('drag-end', Lang.bind(this, function() {
+            });
+            appIcon._draggable.connect('drag-end', () => {
                 appIcon.actor.opacity = 255;
-            }));
+            });
         }
 
-        appIcon.connect('menu-state-changed', Lang.bind(this, function(appIcon, opened) {
+        appIcon.connect('menu-state-changed', (appIcon, opened) => {
             this._itemMenuStateChanged(item, opened);
-        }));
+        });
 
         let item = new Dash.DashItemContainer();
 
         extendDashItemContainer(item, this._dtdSettings);
         item.setChild(appIcon.actor);
 
-        appIcon.actor.connect('notify::hover', Lang.bind(this, function() {
+        appIcon.actor.connect('notify::hover', () => {
             if (appIcon.actor.hover) {
-                this._ensureAppIconVisibilityTimeoutId = Mainloop.timeout_add(100, Lang.bind(this, function() {
+                this._ensureAppIconVisibilityTimeoutId = Mainloop.timeout_add(100, () => {
                     ensureActorVisibleInScrollView(this._scrollView, appIcon.actor);
                     this._ensureAppIconVisibilityTimeoutId = 0;
                     return GLib.SOURCE_REMOVE;
-                }));
+                });
             }
             else {
                 if (this._ensureAppIconVisibilityTimeoutId > 0) {
@@ -473,13 +472,13 @@ var MyDash = class DashToDock_MyDash {
                     this._ensureAppIconVisibilityTimeoutId = 0;
                 }
             }
-        }));
+        });
 
-        appIcon.actor.connect('clicked', Lang.bind(this, function(actor) {
+        appIcon.actor.connect('clicked', (actor) => {
             ensureActorVisibleInScrollView(this._scrollView, actor);
-        }));
+        });
 
-        appIcon.actor.connect('key-focus-in', Lang.bind(this, function(actor) {
+        appIcon.actor.connect('key-focus-in', (actor) => {
             let [x_shift, y_shift] = ensureActorVisibleInScrollView(this._scrollView, actor);
 
             // This signal is triggered also by mouse click. The popup menu is opened at the original
@@ -488,7 +487,7 @@ var MyDash = class DashToDock_MyDash {
                 appIcon._menu._boxPointer.xOffset = -x_shift;
                 appIcon._menu._boxPointer.yOffset = -y_shift;
             }
-        }));
+        });
 
         // Override default AppIcon label_actor, now the
         // accessible_name is set at DashItemContainer.setLabelText
@@ -555,12 +554,12 @@ var MyDash = class DashToDock_MyDash {
         if (shouldShow) {
             if (this._showLabelTimeoutId == 0) {
                 let timeout = this._labelShowing ? 0 : DASH_ITEM_HOVER_TIMEOUT;
-                this._showLabelTimeoutId = Mainloop.timeout_add(timeout, Lang.bind(this, function() {
+                this._showLabelTimeoutId = Mainloop.timeout_add(timeout, () => {
                     this._labelShowing = true;
                     item.showLabel();
                     this._showLabelTimeoutId = 0;
                     return GLib.SOURCE_REMOVE;
-                }));
+                });
                 GLib.Source.set_name_by_id(this._showLabelTimeoutId, '[gnome-shell] item.showLabel');
                 if (this._resetHoverTimeoutId > 0) {
                     Mainloop.source_remove(this._resetHoverTimeoutId);
@@ -574,11 +573,11 @@ var MyDash = class DashToDock_MyDash {
             this._showLabelTimeoutId = 0;
             item.hideLabel();
             if (this._labelShowing) {
-                this._resetHoverTimeoutId = Mainloop.timeout_add(DASH_ITEM_HOVER_TIMEOUT, Lang.bind(this, function() {
+                this._resetHoverTimeoutId = Mainloop.timeout_add(DASH_ITEM_HOVER_TIMEOUT, () => {
                     this._labelShowing = false;
                     this._resetHoverTimeoutId = 0;
                     return GLib.SOURCE_REMOVE;
-                }));
+                });
                 GLib.Source.set_name_by_id(this._resetHoverTimeoutId, '[gnome-shell] this._labelShowing');
             }
         }
@@ -933,9 +932,9 @@ var MyDash = class DashToDock_MyDash {
         if (this._dragPlaceholder) {
             this._animatingPlaceholdersCount++;
             this._dragPlaceholder.animateOutAndDestroy();
-            this._dragPlaceholder.connect('destroy', Lang.bind(this, function() {
+            this._dragPlaceholder.connect('destroy', () => {
                 this._animatingPlaceholdersCount--;
-            }));
+            });
             this._dragPlaceholder = null;
         }
         this._dragPlaceholderPos = -1;
@@ -1077,14 +1076,14 @@ var MyDash = class DashToDock_MyDash {
         if (!this._dragPlaceholder)
             return true;
 
-        Meta.later_add(Meta.LaterType.BEFORE_REDRAW, Lang.bind(this, function() {
+        Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
             let appFavorites = AppFavorites.getAppFavorites();
             if (srcIsFavorite)
                 appFavorites.moveFavoriteToPos(id, favPos);
             else
                 appFavorites.addFavoriteAtPos(id, favPos);
             return false;
-        }));
+        });
 
         return true;
     }

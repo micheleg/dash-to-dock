@@ -4,7 +4,6 @@ const Clutter = imports.gi.Clutter;
 const GdkPixbuf = imports.gi.GdkPixbuf
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
-const Lang = imports.lang;
 const Pango = imports.gi.Pango;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
@@ -119,9 +118,9 @@ var IndicatorBase = class DashToDock_IndicatorBase {
         this._source = source;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
-        this._sourceDestroyId = this._source.actor.connect('destroy',
-            Lang.bind(this._signalsHandler, this._signalsHandler.destroy)
-        );
+        this._sourceDestroyId = this._source.actor.connect('destroy', () => {
+            this._signalsHandler.destroy();
+        });
     }
 
     update() {
@@ -300,7 +299,7 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
 
         this._area.set_transform(m);
 
-        this._area.connect('repaint', Lang.bind(this, this._updateIndicator));
+        this._area.connect('repaint', this._updateIndicator.bind(this));
         this._source._iconContainer.add_child(this._area);
 
         let keys = ['custom-theme-running-dots-color',
@@ -314,7 +313,7 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
             this._signalsHandler.add([
                 this._settings,
                 'changed::' + key,
-                Lang.bind(this, this.update)
+                this.update.bind(this)
             ]);
         }, this);
 
@@ -658,23 +657,23 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         this._notificationBadgeBin.hide();
 
         this._source._iconContainer.add_child(this._notificationBadgeBin);
-        this._source._iconContainer.connect('allocation-changed', Lang.bind(this, this.updateNotificationBadge));
+        this._source._iconContainer.connect('allocation-changed', this.updateNotificationBadge.bind(this));
 
         this._remoteEntries = [];
         this._source.remoteModel.lookupById(this._source.app.id).forEach(
-            Lang.bind(this, function(entry) {
+            (entry) => {
                 this.insertEntryRemote(entry);
-            })
+            }
         );
 
         this._signalsHandler.add([
             this._source.remoteModel,
             'entry-added',
-            Lang.bind(this, this._onLauncherEntryRemoteAdded)
+            this._onLauncherEntryRemoteAdded.bind(this)
         ], [
             this._source.remoteModel,
             'entry-removed',
-            Lang.bind(this, this._onLauncherEntryRemoteRemoved)
+            this._onLauncherEntryRemoteRemoved.bind(this)
         ])
     }
 
@@ -754,9 +753,9 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         }
 
         this._progressOverlayArea = new St.DrawingArea({x_expand: true, y_expand: true});
-        this._progressOverlayArea.connect('repaint', Lang.bind(this, function() {
+        this._progressOverlayArea.connect('repaint', () => {
             this._drawProgressOverlay(this._progressOverlayArea);
-        }));
+        });
 
         this._source._iconContainer.add_child(this._progressOverlayArea);
         this._updateProgressOverlay();
@@ -877,27 +876,27 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         [
             remote,
             'count-changed',
-            Lang.bind(this, (remote, value) => {
+            (remote, value) => {
                 this.setNotificationBadge(value);
-            })
+            }
         ], [
             remote,
             'count-visible-changed',
-            Lang.bind(this, (remote, value) => {
+            (remote, value) => {
                 this.toggleNotificationBadge(value);
-            })
+            }
         ], [
             remote,
             'progress-changed',
-            Lang.bind(this, (remote, value) => {
+            (remote, value) => {
                 this.setProgress(value);
-            })
+            }
         ], [
             remote,
             'progress-visible-changed',
-            Lang.bind(this, (remote, value) => {
+            (remote, value) => {
                 this.toggleProgressOverlay(value);
-            })
+            }
         ]);
 
         this.setNotificationBadge(remote.count());
