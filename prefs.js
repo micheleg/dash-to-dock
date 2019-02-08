@@ -15,7 +15,6 @@ const N__ = function(e) { return e };
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
 
 const SCALE_UPDATE_TIMEOUT = 500;
 const DEFAULT_ICONS_SIZES = [ 128, 96, 64, 48, 32, 24, 16 ];
@@ -86,7 +85,7 @@ function setShortcut(settings) {
 var Settings = class DashToDock_Settings {
 
     constructor() {
-        this._settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
 
         this._rtl = (Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL);
 
@@ -854,7 +853,7 @@ var Settings = class DashToDock_Settings {
 };
 
 function init() {
-    Convenience.initTranslations();
+    ExtensionUtils.initTranslations();
 }
 
 function buildPrefsWidget() {
