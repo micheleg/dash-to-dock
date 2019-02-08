@@ -323,10 +323,8 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
         // Apply glossy background
         // TODO: move to enable/disableBacklit to apply itonly to the running apps?
         // TODO: move to css class for theming support
-        let path = imports.misc.extensionUtils.getCurrentExtension().path;
-        this._glossyBackgroundStyle = 'background-image: url(\'' + path + '/media/glossy.svg\');' +
-                              'background-size: contain;';
-
+        this._glossyBackgroundStyle = 'background-image: url(\'' + Me.path + '/media/glossy.svg\');' +
+                                      'background-size: contain;';
     }
 
     update() {
