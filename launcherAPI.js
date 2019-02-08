@@ -1,7 +1,6 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 const Gio = imports.gi.Gio;
-const Lang = imports.lang;
 const Signals = imports.signals;
 
 var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
@@ -16,7 +15,7 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
                 null, // path
                 null, // arg0
                 Gio.DBusSignalFlags.NONE,
-                Lang.bind(this, this._onEntrySignalReceived));
+                this._onEntrySignalReceived.bind(this));
 
         this._dbus_name_owner_changed_signal_id =
             Gio.DBus.session.signal_subscribe('org.freedesktop.DBus',  // sender
@@ -25,7 +24,7 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
                 '/org/freedesktop/DBus', // path
                 null,                    // arg0
                 Gio.DBusSignalFlags.NONE,
-                Lang.bind(this, this._onDBusNameOwnerChanged));
+                this._onDBusNameOwnerChanged.bind(this));
 
         this._acquireUnityDBus();
     }

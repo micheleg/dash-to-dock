@@ -1,7 +1,6 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 const GLib = imports.gi.GLib;
-const Lang = imports.lang;
 const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
@@ -71,24 +70,24 @@ var Intellihide = class DashToDock_Intellihide {
             // Add signals on windows created from now on
             global.display,
             'window-created',
-            Lang.bind(this, this._windowCreated)
+            this._windowCreated.bind(this)
         ], [
             // triggered for instance when the window list order changes,
             // included when the workspace is switched
             Utils.DisplayWrapper.getScreen(),
             'restacked',
-            Lang.bind(this, this._checkOverlap)
+            this._checkOverlap.bind(this)
         ], [
             // when windows are alwasy on top, the focus window can change
             // without the windows being restacked. Thus monitor window focus change.
             this._tracker,
             'notify::focus-app',
-            Lang.bind(this, this._checkOverlap)
+            this._checkOverlap.bind(this)
         ], [
             // update wne monitor changes, for instance in multimonitor when monitor are attached
             Utils.DisplayWrapper.getMonitorManager(),
             'monitors-changed',
-            Lang.bind(this, this._checkOverlap)
+            this._checkOverlap.bind(this)
         ]);
     }
 
@@ -130,9 +129,9 @@ var Intellihide = class DashToDock_Intellihide {
     _addWindowSignals(wa) {
         if (!this._handledWindow(wa))
             return;
-        let signalId = wa.connect('allocation-changed', Lang.bind(this, this._checkOverlap, wa.get_meta_window()));
+        let signalId = wa.connect('allocation-changed', this._checkOverlap.bind(this));
         this._trackedWindows.set(wa, signalId);
-        wa.connect('destroy', Lang.bind(this, this._removeWindowSignals));
+        wa.connect('destroy', this._removeWindowSignals.bind(this));
     }
 
     _removeWindowSignals(wa) {
@@ -169,7 +168,7 @@ var Intellihide = class DashToDock_Intellihide {
 
         this._doCheckOverlap();
 
-        this._checkOverlapTimeoutId = Mainloop.timeout_add(INTELLIHIDE_CHECK_INTERVAL, Lang.bind(this, function() {
+        this._checkOverlapTimeoutId = Mainloop.timeout_add(INTELLIHIDE_CHECK_INTERVAL, () => {
             this._doCheckOverlap();
             if (this._checkOverlapTimeoutContinue) {
                 this._checkOverlapTimeoutContinue = false;
@@ -178,7 +177,7 @@ var Intellihide = class DashToDock_Intellihide {
                 this._checkOverlapTimeoutId = 0;
                 return GLib.SOURCE_REMOVE;
             }
-        }));
+        });
     }
 
     _doCheckOverlap() {

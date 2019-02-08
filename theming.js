@@ -5,7 +5,6 @@ const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Signals = imports.signals;
-const Lang = imports.lang;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
@@ -63,23 +62,23 @@ var ThemeManager = class DashToDock_ThemeManager {
             // When theme changes re-obtain default background color
             St.ThemeContext.get_for_stage (global.stage),
             'changed',
-            Lang.bind(this, this.updateCustomTheme)
+            this.updateCustomTheme.bind(this)
         ], [
             // update :overview pseudoclass
             Main.overview,
             'showing',
-            Lang.bind(this, this._onOverviewShowing)
+            this._onOverviewShowing.bind(this)
         ], [
             Main.overview,
             'hiding',
-            Lang.bind(this, this._onOverviewHiding)
+            this._onOverviewHiding.bind(this)
         ]);
 
         this._updateCustomStyleClasses();
 
         // destroy themeManager when the managed actor is destroyed (e.g. extension unload)
         // in order to disconnect signals
-        this._actor.connect('destroy', Lang.bind(this, this.destroy));
+        this._actor.connect('destroy', this.destroy.bind(this));
 
     }
 
@@ -320,7 +319,7 @@ var ThemeManager = class DashToDock_ThemeManager {
             this._signalsHandler.add([
                 this._settings,
                 'changed::' + key,
-                Lang.bind(this, this.updateCustomTheme)
+                this.updateCustomTheme.bind(this)
            ]);
         }, this);
     }
@@ -370,23 +369,23 @@ var Transparency = class DashToDock_Transparency {
         this._signalsHandler.addWithLabel('transparency', [
             global.window_group,
             'actor-added',
-            Lang.bind(this, this._onWindowActorAdded)
+            this._onWindowActorAdded.bind(this)
         ], [
             global.window_group,
             'actor-removed',
-            Lang.bind(this, this._onWindowActorRemoved)
+            this._onWindowActorRemoved.bind(this)
         ], [
             global.window_manager,
             'switch-workspace',
-            Lang.bind(this, this._updateSolidStyle)
+            this._updateSolidStyle.bind(this)
         ], [
             Main.overview,
             'hiding',
-            Lang.bind(this, this._updateSolidStyle)
+            this._updateSolidStyle.bind(this)
         ], [
             Main.overview,
             'showing',
-            Lang.bind(this, this._updateSolidStyle)
+            this._updateSolidStyle.bind(this)
         ]);
 
         // Window signals
@@ -436,7 +435,7 @@ var Transparency = class DashToDock_Transparency {
     _onWindowActorAdded(container, metaWindowActor) {
         let signalIds = [];
         ['allocation-changed', 'notify::visible'].forEach(s => {
-            signalIds.push(metaWindowActor.connect(s, Lang.bind(this, this._updateSolidStyle)));
+            signalIds.push(metaWindowActor.connect(s, this._updateSolidStyle.bind(this)));
         });
         this._trackedWindows.set(metaWindowActor, signalIds);
     }
@@ -508,7 +507,7 @@ var Transparency = class DashToDock_Transparency {
             threshold = topCoord - this._actor.get_height() * factor;
 
         let scale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let isNearEnough = windows.some(Lang.bind(this, function(metaWindow) {
+        let isNearEnough = windows.some((metaWindow) => {
             let coord;
             if (this._position === St.Side.LEFT) {
                 coord = metaWindow.get_frame_rect().x;
@@ -526,7 +525,7 @@ var Transparency = class DashToDock_Transparency {
                 coord = metaWindow.get_frame_rect().y + metaWindow.get_frame_rect().height;
                 return coord > threshold - 5 * scale;
             }
-        }));
+        });
 
         return isNearEnough;
     }
@@ -554,10 +553,10 @@ var Transparency = class DashToDock_Transparency {
         let [, panelTop] = this._panel.actor.get_transformed_position();
         let panelBottom = panelTop + this._panel.actor.get_height();
         let scale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let isNearEnough = windows.some(Lang.bind(this._panel, function(metaWindow) {
+        let isNearEnough = windows.some((metaWindow) => {
             let verticalPosition = metaWindow.get_frame_rect().y;
             return verticalPosition < panelBottom + 5 * scale;
-        }));
+        });
 
         return isNearEnough;
     }
