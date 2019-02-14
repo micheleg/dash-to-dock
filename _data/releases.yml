@@ -1,3 +1,19 @@
+- version: 65
+  date: 12-02-2019
+  shell_version: ["3.18", "3.20", "3.22", "3.24", "3.26", "3.28", "3.30"]
+  zip_url: https://extensions.gnome.org/review/download/9189.shell-extension.zip
+  notes:
+    - "docking: Fix leaking signal connection"
+    - "theming: Ensure _trackingWindows contains valid windows"
+    - "Avoid repainting an unchanging dock."
+    - "dash, docking: remove Shell.GenericContainer."
+    - "Add a .default class to the appiconindicators."
+    - "Make window previews order stable in the dedicated popup."
+    - "Recreate windows preview whenever the popup is open."
+    - "Fix for border radius with adaptive/dynamic opacity."
+    - "Update Portuguese (Rúben Lopes), Turkish (Serdar Sağlam ) and Russian (vantu5) translations."
+
+
 - version: 64
   date: 04-09-2018
   shell_version: ["3.18", "3.20", "3.22", "3.24", "3.26", "3.28", "3.30"]
