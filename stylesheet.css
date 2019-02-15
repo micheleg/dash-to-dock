@@ -96,7 +96,7 @@
 }
 
 /*
- * This is applied to a dummy actor. Only the background and border color values are used
+ * Only the background and border color values are used
  */
 #dashtodockContainer.progress-bar {
     background-color: lightgrey;

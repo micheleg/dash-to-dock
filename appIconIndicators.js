@@ -794,7 +794,19 @@ const UnityIndicator = new Lang.Class({
             return;
         }
 
-        this._progressOverlayArea = new St.DrawingArea({x_expand: true, y_expand: true});
+        this._progressOverlayArea = new St.DrawingArea({name: 'dashtodockContainer', x_expand: true, y_expand: true});
+
+        // Get progress-bar background and border color from CSS
+        this._progressOverlayArea.add_style_class_name('progress-bar');
+        Main.uiGroup.add_child(this._progressOverlayArea);
+
+        let nome = this._progressOverlayArea.get_theme_node();
+        this._progressbar_background = nome.get_background_color();
+        this._progressbar_border = nome.get_border_color(St.Side.BOTTOM);
+
+        Main.uiGroup.remove_child(this._progressOverlayArea);
+        this._progressOverlayArea.remove_style_class_name('progress-bar');
+
         this._progressOverlayArea.connect('repaint', Lang.bind(this, function() {
             this._drawProgressOverlay(this._progressOverlayArea);
         }));
@@ -807,6 +819,8 @@ const UnityIndicator = new Lang.Class({
         if (this._progressOverlayArea)
             this._progressOverlayArea.destroy();
         this._progressOverlayArea = null;
+        this._progressbar_background = null;
+        this._progressbar_border = null;
     },
 
     _updateProgressOverlay: function() {
@@ -860,16 +874,8 @@ const UnityIndicator = new Lang.Class({
 
         let finishedWidth = Math.ceil(this._progress * width);
 
-        // Create dumy object to get progress-bar style
-        let dummyObject = new St.Bin({
-            name: 'dashtodockContainer',
-        });
-        Main.uiGroup.add_child(dummyObject);
-
-        dummyObject.add_style_class_name('progress-bar');
-        let themeNode = dummyObject.get_theme_node();
-        let bg = themeNode.get_background_color();
-        let bd = themeNode.get_border_color(St.Side.BOTTOM);
+        let bg = this._progressbar_background;
+        let bd = this._progressbar_border;
 
         stroke = Cairo.SolidPattern.createRGBA(bd.red/255, bd.green/255, bd.blue/255, bd.alpha/255);
         fill = Cairo.SolidPattern.createRGBA(bg.red/255, bg.green/255, bg.blue/255, bg.alpha/255);
