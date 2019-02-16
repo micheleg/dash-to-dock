@@ -1275,16 +1275,16 @@ var DockedDash = GObject.registerClass({
                         Main.wm._workspaceSwitcherPopup = null;
                     });
 
-                // Do not show wokspaceSwithcer in overview
-                if (!Main.overview.visible)
-                    Main.wm._workspaceSwitcherPopup.display(direction, ws.index());
-
                 // If Workspace Grid is installed, let them handle the scroll behaviour.
                 if (Utils.DisplayWrapper.getWorkspaceManager().workspace_grid !== undefined)
-                    Utils.DisplayWrapper.getWorkspaceManager().workspace_grid
+                    ws = Utils.DisplayWrapper.getWorkspaceManager().workspace_grid
                         .actionMoveWorkspace(direction);
                 else
                     Main.wm.actionMoveWorkspace(ws);
+
+                // Do not show wokspaceSwithcer in overview
+                if (!Main.overview.visible)
+                    Main.wm._workspaceSwitcherPopup.display(direction, ws.index());
 
                 return true;
             }
