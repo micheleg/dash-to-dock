@@ -794,24 +794,17 @@ const UnityIndicator = new Lang.Class({
             return;
         }
 
-        this._progressOverlayArea = new St.DrawingArea({name: 'dashtodockContainer', x_expand: true, y_expand: true});
-
-        // Get progress-bar background and border color from CSS
+        this._progressOverlayArea = new St.DrawingArea({x_expand: true, y_expand: true});
         this._progressOverlayArea.add_style_class_name('progress-bar');
-        Main.uiGroup.add_child(this._progressOverlayArea);
-
-        let nome = this._progressOverlayArea.get_theme_node();
-        this._progressbar_background = nome.get_background_color();
-        this._progressbar_border = nome.get_border_color(St.Side.BOTTOM);
-
-        Main.uiGroup.remove_child(this._progressOverlayArea);
-        this._progressOverlayArea.remove_style_class_name('progress-bar');
 
         this._progressOverlayArea.connect('repaint', Lang.bind(this, function() {
             this._drawProgressOverlay(this._progressOverlayArea);
         }));
 
         this._source._iconContainer.add_child(this._progressOverlayArea);
+        let node = this._progressOverlayArea.get_theme_node();
+        this._progressbar_background = node.get_color('-progress-bar-background');
+        this._progressbar_border = node.get_color('-progress-bar-border');
         this._updateProgressOverlay();
     },
 

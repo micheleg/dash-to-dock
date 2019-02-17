@@ -98,9 +98,9 @@
 /*
  * Only the background and border color values are used
  */
-#dashtodockContainer.progress-bar {
-    background-color: lightgrey;
-    border-color: lightgrey;
+#dashtodockContainer .progress-bar {
+    -progress-bar-background: lightgrey;
+    -progress-bar-border: lightgrey;
 }
 
 /*
