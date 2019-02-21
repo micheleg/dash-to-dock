@@ -5,7 +5,6 @@ const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Signals = imports.signals;
-const Lang = imports.lang;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
@@ -45,10 +44,9 @@ const TransparencyMode = {
 /**
  * Manage theme customization and custom theme support
  */
-var ThemeManager = new Lang.Class({
-    Name: 'DashToDock.ThemeManager',
+var ThemeManager = class DashToDock_ThemeManager {
 
-    _init: function(settings, dock) {
+    constructor(settings, dock) {
         this._settings = settings;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._bindSettingsChanges();
@@ -64,40 +62,40 @@ var ThemeManager = new Lang.Class({
             // When theme changes re-obtain default background color
             St.ThemeContext.get_for_stage (global.stage),
             'changed',
-            Lang.bind(this, this.updateCustomTheme)
+            this.updateCustomTheme.bind(this)
         ], [
             // update :overview pseudoclass
             Main.overview,
             'showing',
-            Lang.bind(this, this._onOverviewShowing)
+            this._onOverviewShowing.bind(this)
         ], [
             Main.overview,
             'hiding',
-            Lang.bind(this, this._onOverviewHiding)
+            this._onOverviewHiding.bind(this)
         ]);
 
         this._updateCustomStyleClasses();
 
         // destroy themeManager when the managed actor is destroyed (e.g. extension unload)
         // in order to disconnect signals
-        this._actor.connect('destroy', Lang.bind(this, this.destroy));
+        this._actor.connect('destroy', this.destroy.bind(this));
 
-    },
+    }
 
-    destroy: function() {
+    destroy() {
         this._signalsHandler.destroy();
         this._transparency.destroy();
-    },
+    }
 
-    _onOverviewShowing: function() {
+    _onOverviewShowing() {
         this._actor.add_style_pseudo_class('overview');
-    },
+    }
 
-    _onOverviewHiding: function() {
+    _onOverviewHiding() {
         this._actor.remove_style_pseudo_class('overview');
-    },
+    }
 
-    _updateDashOpacity: function() {
+    _updateDashOpacity() {
         let newAlpha = this._settings.get_double('background-opacity');
 
         let [backgroundColor, borderColor] = this._getDefaultColors();
@@ -126,9 +124,9 @@ var ThemeManager = new Lang.Class({
             borderColor.blue + ',' +
             borderAlpha + ')';
 
-    },
+    }
 
-    _getDefaultColors: function() {
+    _getDefaultColors() {
         // Prevent shell crash if the actor is not on the stage.
         // It happens enabling/disabling repeatedly the extension
         if (!this._dash._container.get_stage())
@@ -155,9 +153,9 @@ var ThemeManager = new Lang.Class({
         let borderColor = themeNode.get_border_color(side);
 
         return [backgroundColor, borderColor];
-    },
+    }
 
-    _updateDashColor: function() {
+    _updateDashColor() {
         // Retrieve the color. If needed we will adjust it before passing it to
         // this._transparency.
         let [backgroundColor, borderColor] = this._getDefaultColors();
@@ -184,9 +182,9 @@ var ThemeManager = new Lang.Class({
             this._customizedBorder = this._customizedBackground;
         }
         this._transparency.setColor(backgroundColor);
-    },
+    }
 
-    _updateCustomStyleClasses: function() {
+    _updateCustomStyleClasses() {
         if (this._settings.get_boolean('apply-custom-theme'))
             this._actor.add_style_class_name('dashtodock');
         else
@@ -211,20 +209,20 @@ var ThemeManager = new Lang.Class({
         } else {
             this._actor.remove_style_class_name('straight-corner');
         }
-    },
+    }
 
-    updateCustomTheme: function() {
+    updateCustomTheme() {
         this._updateCustomStyleClasses();
         this._updateDashOpacity();
         this._updateDashColor();
         this._adjustTheme();
         this._dash._redisplay();
-    },
+    }
 
     /**
      * Reimported back and adapted from atomdock
      */
-    _adjustTheme: function() {
+    _adjustTheme() {
         // Prevent shell crash if the actor is not on the stage.
         // It happens enabling/disabling repeatedly the extension
         if (!this._dash._container.get_stage())
@@ -301,9 +299,9 @@ var ThemeManager = new Lang.Class({
                        'transition-delay: 0s; transition-duration: 0.250s;';
             this._dash._container.set_style(newStyle);
         }
-    },
+    }
 
-    _bindSettingsChanges: function() {
+    _bindSettingsChanges() {
         let keys = ['transparency-mode',
                     'customize-alphas',
                     'min-alpha',
@@ -321,21 +319,20 @@ var ThemeManager = new Lang.Class({
             this._signalsHandler.add([
                 this._settings,
                 'changed::' + key,
-                Lang.bind(this, this.updateCustomTheme)
+                this.updateCustomTheme.bind(this)
            ]);
         }, this);
     }
-});
+};
 
 /**
  * The following class is based on the following upstream commit:
  * https://git.gnome.org/browse/gnome-shell/commit/?id=447bf55e45b00426ed908b1b1035f472c2466956
  * Transparency when free-floating
  */
-const Transparency = new Lang.Class({
-    Name: 'DashToDock.Transparency',
+var Transparency = class DashToDock_Transparency {
 
-    _init: function(settings, dock) {
+    constructor(settings, dock) {
         this._settings = settings;
         this._dash = dock.dash;
         this._actor = this._dash._container;
@@ -352,39 +349,43 @@ const Transparency = new Lang.Class({
         this._opaqueAlphaBorder = '0.5';
         this._transparentTransition = '0ms';
         this._opaqueTransition = '0ms';
-
-        this._updateStyles();
+        this._base_actor_style = "";
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._injectionsHandler = new Utils.InjectionsHandler();
         this._trackedWindows = new Map();
-    },
+    }
 
-    enable: function() {
+    enable() {
         // ensure I never double-register/inject
         // although it should never happen
         this.disable();
 
+        this._base_actor_style = this._actor.get_style();
+        if (this._base_actor_style == null) {
+            this._base_actor_style = "";
+        }
+
         this._signalsHandler.addWithLabel('transparency', [
             global.window_group,
             'actor-added',
-            Lang.bind(this, this._onWindowActorAdded)
+            this._onWindowActorAdded.bind(this)
         ], [
             global.window_group,
             'actor-removed',
-            Lang.bind(this, this._onWindowActorRemoved)
+            this._onWindowActorRemoved.bind(this)
         ], [
             global.window_manager,
             'switch-workspace',
-            Lang.bind(this, this._updateSolidStyle)
+            this._updateSolidStyle.bind(this)
         ], [
             Main.overview,
             'hiding',
-            Lang.bind(this, this._updateSolidStyle)
+            this._updateSolidStyle.bind(this)
         ], [
             Main.overview,
             'showing',
-            Lang.bind(this, this._updateSolidStyle)
+            this._updateSolidStyle.bind(this)
         ]);
 
         // Window signals
@@ -403,10 +404,13 @@ const Transparency = new Lang.Class({
         if (this._actor.get_stage())
             this._updateSolidStyle();
 
-        this.emit('transparency-enabled');
-    },
+        this._updateStyles();
+        this._updateSolidStyle();
 
-    disable: function() {
+        this.emit('transparency-enabled');
+    }
+
+    disable() {
         this._disableAdaptive();
 
         // ensure I never double-register/inject
@@ -420,23 +424,23 @@ const Transparency = new Lang.Class({
         this._trackedWindows.clear();
 
         this.emit('transparency-disabled');
-    },
+    }
 
-    destroy: function() {
+    destroy() {
         this.disable();
         this._signalsHandler.destroy();
         this._injectionsHandler.destroy();
-    },
+    }
 
-    _onWindowActorAdded: function(container, metaWindowActor) {
+    _onWindowActorAdded(container, metaWindowActor) {
         let signalIds = [];
         ['allocation-changed', 'notify::visible'].forEach(s => {
-            signalIds.push(metaWindowActor.connect(s, Lang.bind(this, this._updateSolidStyle)));
+            signalIds.push(metaWindowActor.connect(s, this._updateSolidStyle.bind(this)));
         });
         this._trackedWindows.set(metaWindowActor, signalIds);
-    },
+    }
 
-    _onWindowActorRemoved: function(container, metaWindowActor) {
+    _onWindowActorRemoved(container, metaWindowActor) {
         if (!this._trackedWindows.get(metaWindowActor))
             return;
 
@@ -445,9 +449,9 @@ const Transparency = new Lang.Class({
         });
         this._trackedWindows.delete(metaWindowActor);
         this._updateSolidStyle();
-    },
+    }
 
-    _updateSolidStyle: function() {
+    _updateSolidStyle() {
         let isNear = this._dockIsNear() || this._panelIsNear();
         if (isNear) {
             this._actor.set_style(this._opaque_style);
@@ -469,13 +473,13 @@ const Transparency = new Lang.Class({
         }
 
         this.emit('solid-style-updated', isNear);
-    },
+    }
 
-    _dockIsNear: function() {
+    _dockIsNear() {
         if (this._dockActor.has_style_pseudo_class('overview'))
             return false;
         /* Get all the windows in the active workspace that are in the primary monitor and visible */
-        let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
+        let activeWorkspace = global.workspace_manager.get_active_workspace();
         let dash = this._dash;
         let windows = activeWorkspace.list_windows().filter(function(metaWindow) {
             return metaWindow.get_monitor() === dash._monitorIndex &&
@@ -503,7 +507,7 @@ const Transparency = new Lang.Class({
             threshold = topCoord - this._actor.get_height() * factor;
 
         let scale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let isNearEnough = windows.some(Lang.bind(this, function(metaWindow) {
+        let isNearEnough = windows.some((metaWindow) => {
             let coord;
             if (this._position === St.Side.LEFT) {
                 coord = metaWindow.get_frame_rect().x;
@@ -521,12 +525,12 @@ const Transparency = new Lang.Class({
                 coord = metaWindow.get_frame_rect().y + metaWindow.get_frame_rect().height;
                 return coord > threshold - 5 * scale;
             }
-        }));
+        });
 
         return isNearEnough;
-    },
+    }
 
-    _panelIsNear: function() {
+    _panelIsNear() {
         if (!this._panel._updateSolidStyle ||
             this._settings.get_enum('transparency-mode') !== TransparencyMode.ADAPTIVE)
             return false;
@@ -538,7 +542,7 @@ const Transparency = new Lang.Class({
 
         /* Get all the windows in the active workspace that are in the
          * primary monitor and visible */
-        let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
+        let activeWorkspace = global.workspace_manager.get_active_workspace();
         let windows = activeWorkspace.list_windows().filter(function(metaWindow) {
             return metaWindow.is_on_primary_monitor() &&
                 metaWindow.showing_on_its_workspace() &&
@@ -549,25 +553,25 @@ const Transparency = new Lang.Class({
         let [, panelTop] = this._panel.actor.get_transformed_position();
         let panelBottom = panelTop + this._panel.actor.get_height();
         let scale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let isNearEnough = windows.some(Lang.bind(this._panel, function(metaWindow) {
+        let isNearEnough = windows.some((metaWindow) => {
             let verticalPosition = metaWindow.get_frame_rect().y;
             return verticalPosition < panelBottom + 5 * scale;
-        }));
+        });
 
         return isNearEnough;
-    },
+    }
 
-    _updateStyles: function() {
+    _updateStyles() {
         this._getAlphas();
 
-        this._transparent_style =
+        this._transparent_style = this._base_actor_style +
             'background-color: rgba(' +
             this._backgroundColor + ', ' + this._transparentAlpha + ');' +
             'border-color: rgba(' +
             this._backgroundColor + ', ' + this._transparentAlphaBorder + ');' +
             'transition-duration: ' + this._transparentTransition + 'ms;';
 
-        this._opaque_style =
+        this._opaque_style = this._base_actor_style +
             'background-color: rgba(' +
             this._backgroundColor + ', ' + this._opaqueAlpha + ');' +
             'border-color: rgba(' +
@@ -575,14 +579,14 @@ const Transparency = new Lang.Class({
             'transition-duration: ' + this._opaqueTransition + 'ms;';
 
         this.emit('styles-updated');
-    },
+    }
 
-    setColor: function(color) {
+    setColor(color) {
         this._backgroundColor = color.red + ',' + color.green + ',' + color.blue;
         this._updateStyles();
-    },
+    }
 
-    _getAlphas: function() {
+    _getAlphas() {
         // Create dummy object and add to the uiGroup to get it to the stage
         let dummyObject = new St.Bin({
             name: 'dashtodockContainer',
@@ -628,9 +632,9 @@ const Transparency = new Lang.Class({
                 this._panel._removeStyleClassName('solid');
             }
         }
-    },
+    }
 
-    _enableAdaptive: function() {
+    _enableAdaptive() {
         if (!this._panel._updateSolidStyle ||
             this._dash._monitorIndex !== Main.layoutManager.primaryIndex)
             return;
@@ -656,9 +660,9 @@ const Transparency = new Lang.Class({
 
         for (let win of this._panel._trackedWindows.keys())
             this._panel._onWindowActorAdded(null, win);
-    },
+    }
 
-    _disableAdaptive: function() {
+    _disableAdaptive() {
         if (!this._adaptiveEnabled)
             return;
 
@@ -675,5 +679,5 @@ const Transparency = new Lang.Class({
         for (let win of this._panel._trackedWindows.keys())
             this._panel._onWindowActorAdded(null, win);
     }
-});
+};
 Signals.addSignalMethods(Transparency.prototype);

@@ -6,7 +6,6 @@
  */
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
-const Lang = imports.lang;
 const St = imports.gi.St;
 const Mainloop = imports.mainloop;
 const Main = imports.ui.main;
@@ -23,16 +22,13 @@ const Utils = Me.imports.utils;
 const PREVIEW_MAX_WIDTH = 250;
 const PREVIEW_MAX_HEIGHT = 150;
 
-const WindowPreviewMenu = new Lang.Class({
-    Name: 'WindowPreviewMenu',
-    Extends: PopupMenu.PopupMenu,
+var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.PopupMenu {
 
-    _init: function(source, settings) {
-        this._dtdSettings = settings;
-
+    constructor(source, settings) {
         let side = Utils.getPosition(settings);
+        super(source.actor, 0.5, side);
 
-        this.parent(source.actor, 0.5, side);
+        this._dtdSettings = settings;
 
         // We want to keep the item hovered while the menu is up
         this.blockSourceEvents = true;
@@ -47,11 +43,11 @@ const WindowPreviewMenu = new Lang.Class({
         this.actor.hide();
 
         // Chain our visibility and lifecycle to that of the source
-        this._mappedId = this._source.actor.connect('notify::mapped', Lang.bind(this, function () {
+        this._mappedId = this._source.actor.connect('notify::mapped', () => {
             if (!this._source.actor.mapped)
                 this.close();
-        }));
-        this._destroyId = this._source.actor.connect('destroy', Lang.bind(this, this.destroy));
+        });
+        this._destroyId = this._source.actor.connect('destroy', this.destroy.bind(this));
 
         Main.uiGroup.add_actor(this.actor);
 
@@ -59,17 +55,19 @@ const WindowPreviewMenu = new Lang.Class({
         this._arrowSide = side;
         this._boxPointer._arrowSide = side;
         this._boxPointer._userArrowSide = side;
-    },
 
-    _redisplay: function() {
+        this.connect('destroy', this._onDestroy.bind(this));
+    }
+
+    _redisplay() {
         if (this._previewBox)
             this._previewBox.destroy();
         this._previewBox = new WindowPreviewList(this._source, this._dtdSettings);
         this.addMenuItem(this._previewBox);
         this._previewBox._redisplay();
-    },
+    }
 
-    popup: function() {
+    popup() {
         let windows = this._source.getInterestingWindows();
         if (windows.length > 0) {
             this._redisplay();
@@ -77,35 +75,29 @@ const WindowPreviewMenu = new Lang.Class({
             this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
             this._source.emit('sync-tooltip');
         }
-    },
+    }
 
-    destroy: function () {
+    _onDestroy() {
         if (this._mappedId)
             this._source.actor.disconnect(this._mappedId);
 
         if (this._destroyId)
             this._source.actor.disconnect(this._destroyId);
-
-        this.parent();
     }
+};
 
-});
+var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.PopupMenuSection {
 
-const WindowPreviewList = new Lang.Class({
-    Name: 'WindowPreviewMenuSection',
-    Extends: PopupMenu.PopupMenuSection,
-
-    _init: function(source, settings) {
+    constructor(source, settings) {
+        super();
         this._dtdSettings = settings;
-
-        this.parent();
 
         this.actor = new St.ScrollView({ name: 'dashtodockWindowScrollview',
                                                hscrollbar_policy: Gtk.PolicyType.NEVER,
                                                vscrollbar_policy: Gtk.PolicyType.NEVER,
                                                enable_mouse_scrolling: true });
 
-        this.actor.connect('scroll-event', Lang.bind(this, this._onScrollEvent ));
+        this.actor.connect('scroll-event', this._onScrollEvent.bind(this));
 
         let position = Utils.getPosition(this._dtdSettings);
         this.isHorizontal = position == St.Side.BOTTOM || position == St.Side.TOP;
@@ -119,19 +111,18 @@ const WindowPreviewList = new Lang.Class({
         this._source = source;
         this.app = source.app;
 
-        this._redisplayId = Main.initializeDeferredWork(this.actor, Lang.bind(this, this._redisplay));
+        this._redisplayId = Main.initializeDeferredWork(this.actor, this._redisplay.bind(this));
 
-        this.actor.connect('destroy', Lang.bind(this, this._onDestroy));
+        this.actor.connect('destroy', this._onDestroy.bind(this));
         this._stateChangedId = this.app.connect('windows-changed',
-                                                Lang.bind(this,
-                                                          this._queueRedisplay));
-    },
+                                                this._queueRedisplay.bind(this));
+    }
 
-    _queueRedisplay: function () {
+    _queueRedisplay () {
         Main.queueDeferredWork(this._redisplayId);
-    },
+    }
 
-    _onScrollEvent: function(actor, event) {
+    _onScrollEvent(actor, event) {
         // Event coordinates are relative to the stage but can be transformed
         // as the actor will only receive events within his bounds.
         let stage_x, stage_y, ok, event_x, event_y, actor_w, actor_h;
@@ -175,19 +166,19 @@ const WindowPreviewList = new Lang.Class({
         adjustment.set_value(adjustment.get_value() + delta);
 
         return Clutter.EVENT_STOP;
-    },
+    }
 
-    _onDestroy: function() {
+    _onDestroy() {
         this.app.disconnect(this._stateChangedId);
         this._stateChangedId = 0;
-    },
+    }
 
-    _createPreviewItem: function(window) {
+    _createPreviewItem(window) {
         let preview = new WindowPreviewMenuItem(window);
         return preview;
-    },
+    }
 
-    _redisplay: function () {
+    _redisplay () {
         let children = this._getMenuItems().filter(function(actor) {
                 return actor._window;
             });
@@ -298,9 +289,9 @@ const WindowPreviewList = new Lang.Class({
             this.actor.add_style_pseudo_class('scrolled');
         else
             this.actor.remove_style_pseudo_class('scrolled');
-    },
+    }
 
-    _needsScrollbar: function() {
+    _needsScrollbar() {
         let topMenu = this._getTopMenu();
         let topThemeNode = topMenu.actor.get_theme_node();
         if (this.isHorizontal) {
@@ -313,24 +304,23 @@ const WindowPreviewList = new Lang.Class({
             return topMaxHeight >= 0 && topNaturalHeight >= topMaxHeight;
         }
 
-    },
+    }
 
-    isAnimatingOut: function() {
+    isAnimatingOut() {
         return this.actor.get_children().reduce(function(result, actor) {
                    return result || actor.animatingOut;
                }, false);
     }
-});
+};
 
-const WindowPreviewMenuItem = new Lang.Class({
-    Name: 'WindowPreviewMenuItem',
-    Extends: PopupMenu.PopupBaseMenuItem,
+var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
 
-    _init: function(window, params) {
+    constructor(window, params) {
+        super(params);
+
         this._window = window;
         this._destroyId = 0;
         this._windowAddedId = 0;
-        this.parent(params);
 
         // We don't want this: it adds spacing on the left of the item.
         this.actor.remove_child(this._ornamentLabel);
@@ -351,7 +341,7 @@ const WindowPreviewMenuItem = new Lang.Class({
 
 
         this.closeButton.opacity = 0;
-        this.closeButton.connect('clicked', Lang.bind(this, this._closeWindow));
+        this.closeButton.connect('clicked', this._closeWindow.bind(this));
 
         let overlayGroup = new Clutter.Actor({layout_manager: new Clutter.BinLayout() });
 
@@ -363,9 +353,9 @@ const WindowPreviewMenuItem = new Lang.Class({
         let labelBin = new St.Bin({ child: label,
                                     x_align: St.Align.MIDDLE});
 
-        this._windowTitleId = this._window.connect('notify::title', Lang.bind(this, function() {
+        this._windowTitleId = this._window.connect('notify::title', () => {
                                   label.set_text(this._window.get_title());
-                              }));
+                              });
 
         let box = new St.BoxLayout({ vertical: true,
                                      reactive:true,
@@ -375,19 +365,19 @@ const WindowPreviewMenuItem = new Lang.Class({
         this.actor.add_actor(box);
 
         this.actor.connect('enter-event',
-                                  Lang.bind(this, this._onEnter));
+                                  this._onEnter.bind(this));
         this.actor.connect('leave-event',
-                                  Lang.bind(this, this._onLeave));
+                                  this._onLeave.bind(this));
         this.actor.connect('key-focus-in',
-                                  Lang.bind(this, this._onEnter));
+                                  this._onEnter.bind(this));
         this.actor.connect('key-focus-out',
-                                  Lang.bind(this, this._onLeave));
+                                  this._onLeave.bind(this));
 
         this._cloneTexture(window);
 
-    },
+    }
 
-    _cloneTexture: function(metaWin){
+    _cloneTexture(metaWin){
 
         let mutterWindow = metaWin.get_compositor_private();
 
@@ -395,14 +385,13 @@ const WindowPreviewMenuItem = new Lang.Class({
         // the compositor finds out about them...
         // Moreover sometimes they return an empty texture, thus as a workarounf also check for it size
         if (!mutterWindow || !mutterWindow.get_texture() || !mutterWindow.get_texture().get_size()[0]) {
-            let id = Mainloop.idle_add(Lang.bind(this,
-                                            function () {
-                                                // Check if there's still a point in getting the texture,
-                                                // otherwise this could go on indefinitely
-                                                if (this.actor && metaWin.get_workspace())
-                                                    this._cloneTexture(metaWin);
-                                                return GLib.SOURCE_REMOVE;
-                                            }));
+            let id = Mainloop.idle_add(() => {
+                // Check if there's still a point in getting the texture,
+                // otherwise this could go on indefinitely
+                if (this.actor && metaWin.get_workspace())
+                    this._cloneTexture(metaWin);
+                return GLib.SOURCE_REMOVE;
+            });
             GLib.Source.set_name_by_id(id, '[dash-to-dock] this._cloneTexture');
             return;
         }
@@ -419,24 +408,24 @@ const WindowPreviewMenuItem = new Lang.Class({
 
         // when the source actor is destroyed, i.e. the window closed, first destroy the clone
         // and then destroy the menu item (do this animating out)
-        this._destroyId = mutterWindow.connect('destroy', Lang.bind(this, function() {
+        this._destroyId = mutterWindow.connect('destroy', () => {
             clone.destroy();
             this._destroyId = 0; // avoid to try to disconnect this signal from mutterWindow in _onDestroy(),
                                  // as the object was just destroyed
             this._animateOutAndDestroy();
-        }));
+        });
 
         this._clone = clone;
         this._mutterWindow = mutterWindow;
         this._cloneBin.set_child(this._clone);
-    },
+    }
 
-    _windowCanClose: function() {
+    _windowCanClose() {
         return this._window.can_close() &&
                !this._hasAttachedDialogs();
-    },
+    }
 
-    _closeWindow: function(actor) {
+    _closeWindow(actor) {
         this._workspace = this._window.get_workspace();
 
         // This mechanism is copied from the workspace.js upstream code
@@ -444,13 +433,12 @@ const WindowPreviewMenuItem = new Lang.Class({
         // for instance because asking user confirmation, by monitoring the opening of
         // such additional confirmation window
         this._windowAddedId = this._workspace.connect('window-added',
-                                                      Lang.bind(this,
-                                                                this._onWindowAdded));
+                                                      this._onWindowAdded.bind(this));
 
         this.deleteAllWindows();
-    },
+    }
 
-    deleteAllWindows: function() {
+    deleteAllWindows() {
         // Delete all windows, starting from the bottom-most (most-modal) one
         //let windows = this._window.get_compositor_private().get_children();
         let windows = this._clone.get_children();
@@ -462,9 +450,9 @@ const WindowPreviewMenuItem = new Lang.Class({
         }
 
         this._window.delete(global.get_current_time());
-    },
+    }
 
-    _onWindowAdded: function(workspace, win) {
+    _onWindowAdded(workspace, win) {
         let metaWindow = this._window;
 
         if (win.get_transient_for() == metaWindow) {
@@ -473,36 +461,35 @@ const WindowPreviewMenuItem = new Lang.Class({
 
             // use an idle handler to avoid mapping problems -
             // see comment in Workspace._windowAdded
-            let id = Mainloop.idle_add(Lang.bind(this,
-                                            function() {
-                                                this.emit('activate');
-                                                return GLib.SOURCE_REMOVE;
-                                            }));
+            let id = Mainloop.idle_add(() => {
+                this.emit('activate');
+                return GLib.SOURCE_REMOVE;
+            });
             GLib.Source.set_name_by_id(id, '[dash-to-dock] this.emit');
         }
-    },
+    }
 
-    _hasAttachedDialogs: function() {
+    _hasAttachedDialogs() {
         // count trasient windows
         let n=0;
         this._window.foreach_transient(function(){n++;});
         return n>0;
-    },
+    }
 
-    _onEnter: function() {
+    _onEnter() {
         this._showCloseButton();
         return Clutter.EVENT_PROPAGATE;
-    },
+    }
 
-    _onLeave: function() {
+    _onLeave() {
         if (!this._cloneBin.has_pointer &&
             !this.closeButton.has_pointer)
             this._hideCloseButton();
 
         return Clutter.EVENT_PROPAGATE;
-    },
+    }
 
-    _idleToggleCloseButton: function() {
+    _idleToggleCloseButton() {
         this._idleToggleCloseId = 0;
 
         if (!this._cloneBin.has_pointer &&
@@ -510,9 +497,9 @@ const WindowPreviewMenuItem = new Lang.Class({
             this._hideCloseButton();
 
         return GLib.SOURCE_REMOVE;
-    },
+    }
 
-    _showCloseButton: function() {
+    _showCloseButton() {
 
         if (this._windowCanClose()) {
             this.closeButton.show();
@@ -521,16 +508,16 @@ const WindowPreviewMenuItem = new Lang.Class({
                                time: Workspace.CLOSE_BUTTON_FADE_TIME,
                                transition: 'easeOutQuad' });
         }
-    },
+    }
 
-    _hideCloseButton: function() {
+    _hideCloseButton() {
         Tweener.addTween(this.closeButton,
                          { opacity: 0,
                            time: Workspace.CLOSE_BUTTON_FADE_TIME,
                            transition: 'easeInQuad' });
-    },
+    }
 
-    show: function(animate) {
+    show(animate) {
         let fullWidth = this.actor.get_width();
 
         this.actor.opacity = 0;
@@ -543,9 +530,9 @@ const WindowPreviewMenuItem = new Lang.Class({
                            time: time,
                            transition: 'easeInOutQuad'
                          });
-    },
+    }
 
-    _animateOutAndDestroy: function() {
+    _animateOutAndDestroy() {
         Tweener.addTween(this.actor,
                          { opacity: 0,
                            time: 0.25,
@@ -557,20 +544,19 @@ const WindowPreviewMenuItem = new Lang.Class({
                            time: 0.25,
                            delay: 0.25,
                            onCompleteScope: this,
-                           onComplete: function() {
+                           onComplete() {
                               this.actor.destroy();
                            }
                          });
-    },
+    }
 
-    activate: function() {
+    activate() {
         this._getTopMenu().close();
         Main.activateWindow(this._window);
-    },
+    }
 
-    _onDestroy: function() {
-
-        this.parent();
+    _onDestroy() {
+        super._onDestroy();
 
         if (this._windowAddedId > 0) {
             this._workspace.disconnect(this._windowAddedId);
@@ -587,6 +573,5 @@ const WindowPreviewMenuItem = new Lang.Class({
             this._windowTitleId = 0;
         }
     }
-
-});
+};
 

@@ -5,7 +5,6 @@ const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
-const Lang = imports.lang;
 const Mainloop = imports.mainloop;
 
 // Use __ () and N__() for the extension gettext domain, and reuse
@@ -16,7 +15,6 @@ const N__ = function(e) { return e };
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
-const Convenience = Me.imports.convenience;
 
 const SCALE_UPDATE_TIMEOUT = 500;
 const DEFAULT_ICONS_SIZES = [ 128, 96, 64, 48, 32, 24, 16 ];
@@ -84,11 +82,10 @@ function setShortcut(settings) {
     }
 }
 
-const Settings = new Lang.Class({
-    Name: 'DashToDock.Settings',
+var Settings = class DashToDock_Settings {
 
-    _init: function() {
-        this._settings = Convenience.getSettings('org.gnome.shell.extensions.dash-to-dock');
+    constructor() {
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
 
         this._rtl = (Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL);
 
@@ -101,11 +98,11 @@ const Settings = new Lang.Class({
         this.widget.add(this._notebook);
 
         // Set a reasonable initial window height
-        this.widget.connect('realize', Lang.bind(this, function() {
+        this.widget.connect('realize', () => {
             let window = this.widget.get_toplevel();
             let [default_width, default_height] = window.get_default_size();
             window.resize(default_width, 650);
-        }));
+        });
 
         // Timeout to delay the update of the settings
         this._dock_size_timeout = 0;
@@ -114,17 +111,145 @@ const Settings = new Lang.Class({
 
         this._bindSettings();
 
-        this._builder.connect_signals_full(Lang.bind(this, this._connector));
-    },
+        this._builder.connect_signals_full(this._connector.bind(this));
+    }
 
     /**
      * Connect signals
      */
-    _connector: function(builder, object, signal, handler) {
-        object.connect(signal, Lang.bind(this, this._SignalHandler[handler]));
-    },
+    _connector(builder, object, signal, handler) {
+        /**init
+         * Object containing all signals defined in the glade file
+         */
+        const SignalHandler = {
+            dock_display_combo_changed_cb(combo) {
+                this._settings.set_int('preferred-monitor', this._monitors[combo.get_active()]);
+            },
 
-    _bindSettings: function() {
+            position_top_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('dock-position', 0);
+            },
+
+            position_right_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('dock-position', 1);
+            },
+
+            position_bottom_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('dock-position', 2);
+            },
+
+            position_left_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('dock-position', 3);
+            },
+
+            icon_size_combo_changed_cb(combo) {
+                this._settings.set_int('dash-max-icon-size', this._allIconSizes[combo.get_active()]);
+            },
+
+            dock_size_scale_format_value_cb(scale, value) {
+                return Math.round(value * 100) + ' %';
+            },
+
+            dock_size_scale_value_changed_cb(scale) {
+                // Avoid settings the size consinuosly
+                if (this._dock_size_timeout > 0)
+                    Mainloop.source_remove(this._dock_size_timeout);
+
+                this._dock_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, () => {
+                    this._settings.set_double('height-fraction', scale.get_value());
+                    this._dock_size_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                });
+            },
+
+            icon_size_scale_format_value_cb(scale, value) {
+                return value + ' px';
+            },
+
+            icon_size_scale_value_changed_cb(scale) {
+                // Avoid settings the size consinuosly
+                if (this._icon_size_timeout > 0)
+                    Mainloop.source_remove(this._icon_size_timeout);
+
+                this._icon_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, () => {
+                    this._settings.set_int('dash-max-icon-size', scale.get_value());
+                    this._icon_size_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                });
+            },
+
+            custom_opacity_scale_value_changed_cb(scale) {
+                // Avoid settings the opacity consinuosly as it's change is animated
+                if (this._opacity_timeout > 0)
+                    Mainloop.source_remove(this._opacity_timeout);
+
+                this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, () => {
+                    this._settings.set_double('background-opacity', scale.get_value());
+                    this._opacity_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                });
+            },
+
+            min_opacity_scale_value_changed_cb(scale) {
+                // Avoid settings the opacity consinuosly as it's change is animated
+                if (this._opacity_timeout > 0)
+                    Mainloop.source_remove(this._opacity_timeout);
+
+                this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, () => {
+                    this._settings.set_double('min-alpha', scale.get_value());
+                    this._opacity_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                });
+            },
+
+            max_opacity_scale_value_changed_cb(scale) {
+                // Avoid settings the opacity consinuosly as it's change is animated
+                if (this._opacity_timeout > 0)
+                    Mainloop.source_remove(this._opacity_timeout);
+
+                this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, () => {
+                    this._settings.set_double('max-alpha', scale.get_value());
+                    this._opacity_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                });
+            },
+
+            custom_opacity_scale_format_value_cb(scale, value) {
+                return Math.round(value * 100) + ' %';
+            },
+
+            min_opacity_scale_format_value_cb(scale, value) {
+                return Math.round(value * 100) + ' %';
+            },
+
+            max_opacity_scale_format_value_cb(scale, value) {
+                return Math.round(value * 100) + ' %';
+            },
+
+            all_windows_radio_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('intellihide-mode', 0);
+            },
+
+            focus_application_windows_radio_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('intellihide-mode', 1);
+            },
+
+            maximized_windows_radio_button_toggled_cb(button) {
+                if (button.get_active())
+                    this._settings.set_enum('intellihide-mode', 2);
+            }
+        }
+
+        object.connect(signal, SignalHandler[handler].bind(this));
+    }
+
+    _bindSettings() {
         // Position and size panel
 
         // Monitor options
@@ -227,7 +352,7 @@ const Settings = new Lang.Class({
         //this._builder.get_object('animation_duration_spinbutton').set_value(this._settings.get_double('animation-time'));
 
         // Create dialog for intelligent autohide advanced settings
-        this._builder.get_object('intelligent_autohide_button').connect('clicked', Lang.bind(this, function() {
+        this._builder.get_object('intelligent_autohide_button').connect('clicked', () => {
 
             let dialog = new Gtk.Dialog({ title: __('Intelligent autohide customization'),
                                           transient_for: this.widget.get_toplevel(),
@@ -283,7 +408,7 @@ const Settings = new Lang.Class({
                                 'sensitive',
                                 Gio.SettingsBindFlags.DEFAULT);
 
-            dialog.connect('response', Lang.bind(this, function(dialog, id) {
+            dialog.connect('response', (dialog, id) => {
                 if (id == 1) {
                     // restore default settings for the relevant keys
                     let keys = ['intellihide', 'autohide', 'intellihide-mode', 'autohide-in-fullscreen', 'require-pressure-to-show',
@@ -298,11 +423,11 @@ const Settings = new Lang.Class({
                     dialog.destroy();
                 }
                 return;
-            }));
+            });
 
             dialog.show_all();
 
-        }));
+        });
 
         // size options
         this._builder.get_object('dock_size_scale').set_value(this._settings.get_double('height-fraction'));
@@ -391,28 +516,28 @@ const Settings = new Lang.Class({
                             Gio.SettingsBindFlags.DEFAULT);
 
         this._builder.get_object('click_action_combo').set_active(this._settings.get_enum('click-action'));
-        this._builder.get_object('click_action_combo').connect('changed', Lang.bind (this, function(widget) {
+        this._builder.get_object('click_action_combo').connect('changed', (widget) => {
             this._settings.set_enum('click-action', widget.get_active());
-        }));
+        });
 
         this._builder.get_object('scroll_action_combo').set_active(this._settings.get_enum('scroll-action'));
-        this._builder.get_object('scroll_action_combo').connect('changed', Lang.bind (this, function(widget) {
+        this._builder.get_object('scroll_action_combo').connect('changed', (widget) => {
             this._settings.set_enum('scroll-action', widget.get_active());
-        }));
+        });
 
-        this._builder.get_object('shift_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
+        this._builder.get_object('shift_click_action_combo').connect('changed', (widget) => {
             this._settings.set_enum('shift-click-action', widget.get_active());
-        }));
+        });
 
-        this._builder.get_object('middle_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
+        this._builder.get_object('middle_click_action_combo').connect('changed', (widget) => {
             this._settings.set_enum('middle-click-action', widget.get_active());
-        }));
-        this._builder.get_object('shift_middle_click_action_combo').connect('changed', Lang.bind (this, function(widget) {
+        });
+        this._builder.get_object('shift_middle_click_action_combo').connect('changed', (widget) => {
             this._settings.set_enum('shift-middle-click-action', widget.get_active());
-        }));
+        });
 
         // Create dialog for number overlay options
-        this._builder.get_object('overlay_button').connect('clicked', Lang.bind(this, function() {
+        this._builder.get_object('overlay_button').connect('clicked', () => {
 
             let dialog = new Gtk.Dialog({ title: __('Show dock and application numbers'),
                                           transient_for: this.widget.get_toplevel(),
@@ -430,7 +555,7 @@ const Settings = new Lang.Class({
             this._builder.get_object('show_dock_switch').set_active(this._settings.get_boolean('hotkeys-show-dock'));
 
             // We need to update the shortcut 'strv' when the text is modified
-            this._settings.connect('changed::shortcut-text', Lang.bind(this, function() {setShortcut(this._settings);}));
+            this._settings.connect('changed::shortcut-text', () => {setShortcut(this._settings);});
             this._settings.bind('shortcut-text',
                                 this._builder.get_object('shortcut_entry'),
                                 'text',
@@ -449,7 +574,7 @@ const Settings = new Lang.Class({
                                 'value',
                                 Gio.SettingsBindFlags.DEFAULT);
 
-            dialog.connect('response', Lang.bind(this, function(dialog, id) {
+            dialog.connect('response', (dialog, id) => {
                 if (id == 1) {
                     // restore default settings for the relevant keys
                     let keys = ['shortcut-text', 'hotkeys-overlay', 'hotkeys-show-dock', 'shortcut-timeout'];
@@ -462,14 +587,13 @@ const Settings = new Lang.Class({
                     dialog.destroy();
                 }
                 return;
-            }));
+            });
 
             dialog.show_all();
-
-        }));
+        });
 
         // Create dialog for middle-click options
-        this._builder.get_object('middle_click_options_button').connect('clicked', Lang.bind(this, function() {
+        this._builder.get_object('middle_click_options_button').connect('clicked', () => {
 
             let dialog = new Gtk.Dialog({ title: __('Customize middle-click behavior'),
                                           transient_for: this.widget.get_toplevel(),
@@ -502,7 +626,7 @@ const Settings = new Lang.Class({
                                 'active-id',
                                 Gio.SettingsBindFlags.DEFAULT);
 
-            dialog.connect('response', Lang.bind(this, function(dialog, id) {
+            dialog.connect('response', (dialog, id) => {
                 if (id == 1) {
                     // restore default settings for the relevant keys
                     let keys = ['shift-click-action', 'middle-click-action', 'shift-middle-click-action'];
@@ -518,11 +642,11 @@ const Settings = new Lang.Class({
                     dialog.destroy();
                 }
                 return;
-            }));
+            });
 
             dialog.show_all();
 
-        }));
+        });
 
         // Appearance Panel
 
@@ -536,23 +660,23 @@ const Settings = new Lang.Class({
         );
         this._builder.get_object('running_indicators_combo').connect(
             'changed',
-            Lang.bind (this, function(widget) {
+            (widget) => {
                 this._settings.set_enum('running-indicator-style', widget.get_active());
-            })
+            }
         );
 
         if (this._settings.get_enum('running-indicator-style') == RunningIndicatorStyle.DEFAULT)
             this._builder.get_object('running_indicators_advance_settings_button').set_sensitive(false);
 
-        this._settings.connect('changed::running-indicator-style', Lang.bind(this, function() {
+        this._settings.connect('changed::running-indicator-style', () => {
            if (this._settings.get_enum('running-indicator-style') == RunningIndicatorStyle.DEFAULT)
                this._builder.get_object('running_indicators_advance_settings_button').set_sensitive(false);
            else
                this._builder.get_object('running_indicators_advance_settings_button').set_sensitive(true);
-        }));
+        });
 
         // Create dialog for running indicators advanced settings
-        this._builder.get_object('running_indicators_advance_settings_button').connect('clicked', Lang.bind(this, function() {
+        this._builder.get_object('running_indicators_advance_settings_button').connect('clicked', () => {
 
             let dialog = new Gtk.Dialog({ title: __('Customize running indicators'),
                                           transient_for: this.widget.get_toplevel(),
@@ -579,22 +703,22 @@ const Settings = new Lang.Class({
             rgba.parse(this._settings.get_string('custom-theme-running-dots-color'));
             this._builder.get_object('dot_color_colorbutton').set_rgba(rgba);
 
-            this._builder.get_object('dot_color_colorbutton').connect('notify::color', Lang.bind(this, function(button) {
+            this._builder.get_object('dot_color_colorbutton').connect('notify::color', (button) => {
                 let rgba = button.get_rgba();
                 let css = rgba.to_string();
                 let hexString = cssHexString(css);
                 this._settings.set_string('custom-theme-running-dots-color', hexString);
-            }));
+            });
 
             rgba.parse(this._settings.get_string('custom-theme-running-dots-border-color'));
             this._builder.get_object('dot_border_color_colorbutton').set_rgba(rgba);
 
-            this._builder.get_object('dot_border_color_colorbutton').connect('notify::color', Lang.bind(this, function(button) {
+            this._builder.get_object('dot_border_color_colorbutton').connect('notify::color', (button) => {
                 let rgba = button.get_rgba();
                 let css = rgba.to_string();
                 let hexString = cssHexString(css);
                 this._settings.set_string('custom-theme-running-dots-border-color', hexString);
-            }));
+            });
 
             this._settings.bind('custom-theme-running-dots-border-width',
                                 this._builder.get_object('dot_border_width_spin_button'),
@@ -602,16 +726,16 @@ const Settings = new Lang.Class({
                                 Gio.SettingsBindFlags.DEFAULT);
 
 
-            dialog.connect('response', Lang.bind(this, function(dialog, id) {
+            dialog.connect('response', (dialog, id) => {
                 // remove the settings box so it doesn't get destroyed;
                 dialog.get_content_area().remove(box);
                 dialog.destroy();
                 return;
-            }));
+            });
 
             dialog.show_all();
 
-        }));
+        });
 
         this._settings.bind('custom-background-color', this._builder.get_object('custom_background_color_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('custom-background-color', this._builder.get_object('custom_background_color'), 'sensitive', Gio.SettingsBindFlags.DEFAULT);
@@ -620,12 +744,12 @@ const Settings = new Lang.Class({
         rgba.parse(this._settings.get_string('background-color'));
         this._builder.get_object('custom_background_color').set_rgba(rgba);
 
-        this._builder.get_object('custom_background_color').connect('notify::color', Lang.bind(this, function(button) {
+        this._builder.get_object('custom_background_color').connect('notify::color', (button) => {
             let rgba = button.get_rgba();
             let css = rgba.to_string();
             let hexString = cssHexString(css);
             this._settings.set_string('background-color', hexString);
-        }));
+        });
 
         // Opacity
         this._builder.get_object('customize_opacity_combo').set_active(
@@ -633,9 +757,9 @@ const Settings = new Lang.Class({
         );
         this._builder.get_object('customize_opacity_combo').connect(
             'changed',
-            Lang.bind (this, function(widget) {
+            (widget) => {
                 this._settings.set_enum('transparency-mode', widget.get_active());
-            })
+            }
         );
 
         this._builder.get_object('custom_opacity_scale').set_value(this._settings.get_double('background-opacity'));
@@ -643,19 +767,19 @@ const Settings = new Lang.Class({
         if (this._settings.get_enum('transparency-mode') !== TransparencyMode.FIXED)
             this._builder.get_object('custom_opacity_scale').set_sensitive(false);
 
-        this._settings.connect('changed::transparency-mode', Lang.bind(this, function() {
+        this._settings.connect('changed::transparency-mode', () => {
            if (this._settings.get_enum('transparency-mode') !== TransparencyMode.FIXED)
                this._builder.get_object('custom_opacity_scale').set_sensitive(false);
            else
                this._builder.get_object('custom_opacity_scale').set_sensitive(true);
-        }));
+        });
 
         if (this._settings.get_enum('transparency-mode') !== TransparencyMode.ADAPTIVE &&
             this._settings.get_enum('transparency-mode') !== TransparencyMode.DYNAMIC) {
             this._builder.get_object('dynamic_opacity_button').set_sensitive(false);
         }
 
-        this._settings.connect('changed::transparency-mode', Lang.bind(this, function() {
+        this._settings.connect('changed::transparency-mode', () => {
             if (this._settings.get_enum('transparency-mode') !== TransparencyMode.ADAPTIVE &&
                 this._settings.get_enum('transparency-mode') !== TransparencyMode.DYNAMIC) {
                 this._builder.get_object('dynamic_opacity_button').set_sensitive(false);
@@ -663,10 +787,10 @@ const Settings = new Lang.Class({
             else {
                 this._builder.get_object('dynamic_opacity_button').set_sensitive(true);
             }
-        }));
+        });
 
         // Create dialog for transparency advanced settings
-        this._builder.get_object('dynamic_opacity_button').connect('clicked', Lang.bind(this, function() {
+        this._builder.get_object('dynamic_opacity_button').connect('clicked', () => {
 
             let dialog = new Gtk.Dialog({ title: __('Cutomize opacity'),
                                           transient_for: this.widget.get_toplevel(),
@@ -702,15 +826,15 @@ const Settings = new Lang.Class({
                 this._settings.get_double('max-alpha')
             );
 
-            dialog.connect('response', Lang.bind(this, function(dialog, id) {
+            dialog.connect('response', (dialog, id) => {
                 // remove the settings box so it doesn't get destroyed;
                 dialog.get_content_area().remove(box);
                 dialog.destroy();
                 return;
-            }));
+            });
 
             dialog.show_all();
-        }));
+        });
 
 
         this._settings.bind('unity-backlit-items',
@@ -725,139 +849,11 @@ const Settings = new Lang.Class({
         // About Panel
 
         this._builder.get_object('extension_version').set_label(Me.metadata.version.toString());
-    },
-
-    /**
-     * Object containing all signals defined in the glade file
-     */
-    _SignalHandler: {
-        dock_display_combo_changed_cb: function(combo) {
-            this._settings.set_int('preferred-monitor', this._monitors[combo.get_active()]);
-        },
-
-        position_top_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('dock-position', 0);
-        },
-
-        position_right_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('dock-position', 1);
-        },
-
-        position_bottom_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('dock-position', 2);
-        },
-
-        position_left_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('dock-position', 3);
-        },
-
-        icon_size_combo_changed_cb: function(combo) {
-            this._settings.set_int('dash-max-icon-size', this._allIconSizes[combo.get_active()]);
-        },
-
-        dock_size_scale_format_value_cb: function(scale, value) {
-            return Math.round(value*100)+ ' %';
-        },
-
-        dock_size_scale_value_changed_cb: function(scale) {
-            // Avoid settings the size consinuosly
-            if (this._dock_size_timeout > 0)
-                Mainloop.source_remove(this._dock_size_timeout);
-
-            this._dock_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_double('height-fraction', scale.get_value());
-                this._dock_size_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            }));
-        },
-
-        icon_size_scale_format_value_cb: function(scale, value) {
-            return value+ ' px';
-        },
-
-        icon_size_scale_value_changed_cb: function(scale) {
-            // Avoid settings the size consinuosly
-            if (this._icon_size_timeout > 0)
-                Mainloop.source_remove(this._icon_size_timeout);
-
-            this._icon_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_int('dash-max-icon-size', scale.get_value());
-                this._icon_size_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            }));
-        },
-
-        custom_opacity_scale_value_changed_cb: function(scale) {
-            // Avoid settings the opacity consinuosly as it's change is animated
-            if (this._opacity_timeout > 0)
-                Mainloop.source_remove(this._opacity_timeout);
-
-            this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_double('background-opacity', scale.get_value());
-                this._opacity_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            }));
-        },
-
-        min_opacity_scale_value_changed_cb: function(scale) {
-            // Avoid settings the opacity consinuosly as it's change is animated
-            if (this._opacity_timeout > 0)
-                Mainloop.source_remove(this._opacity_timeout);
-
-            this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_double('min-alpha', scale.get_value());
-                this._opacity_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            }));
-        },
-
-        max_opacity_scale_value_changed_cb: function(scale) {
-            // Avoid settings the opacity consinuosly as it's change is animated
-            if (this._opacity_timeout > 0)
-                Mainloop.source_remove(this._opacity_timeout);
-
-            this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, Lang.bind(this, function() {
-                this._settings.set_double('max-alpha', scale.get_value());
-                this._opacity_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            }));
-        },
-
-        custom_opacity_scale_format_value_cb: function(scale, value) {
-            return Math.round(value*100) + ' %';
-        },
-
-        min_opacity_scale_format_value_cb: function(scale, value) {
-            return Math.round(value*100) + ' %';
-        },
-
-        max_opacity_scale_format_value_cb: function(scale, value) {
-            return Math.round(value*100) + ' %';
-        },
-
-        all_windows_radio_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('intellihide-mode', 0);
-        },
-
-        focus_application_windows_radio_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('intellihide-mode', 1);
-        },
-
-        maximized_windows_radio_button_toggled_cb: function(button) {
-            if (button.get_active())
-                this._settings.set_enum('intellihide-mode', 2);
-        }
     }
-});
+};
 
 function init() {
-    Convenience.initTranslations();
+    ExtensionUtils.initTranslations();
 }
 
 function buildPrefsWidget() {

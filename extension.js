@@ -1,8 +1,8 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
-const Convenience = Me.imports.convenience;
 const ExtensionSystem = imports.ui.extensionSystem;
 
 // We declare this with var so it can be accessed by other extensions in
@@ -13,7 +13,7 @@ var dockManager;
 let _extensionlistenerId;
 
 function init() {
-    Convenience.initTranslations('dashtodock');
+    ExtensionUtils.initTranslations('dashtodock');
 }
 
 function enable() {

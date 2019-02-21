@@ -1,7 +1,6 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 const GLib = imports.gi.GLib;
-const Lang = imports.lang;
 const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
@@ -45,10 +44,9 @@ const handledWindowTypes = [
  * Intallihide object: emit 'status-changed' signal when the overlap of windows
  * with the provided targetBoxClutter.ActorBox changes;
  */
-var Intellihide = new Lang.Class({
-    Name: 'DashToDock.Intellihide',
+var Intellihide = class DashToDock_Intellihide {
 
-    _init: function(settings, monitorIndex) {
+    constructor(settings, monitorIndex) {
         // Load settings
         this._settings = settings;
         this._monitorIndex = monitorIndex;
@@ -72,45 +70,45 @@ var Intellihide = new Lang.Class({
             // Add signals on windows created from now on
             global.display,
             'window-created',
-            Lang.bind(this, this._windowCreated)
+            this._windowCreated.bind(this)
         ], [
             // triggered for instance when the window list order changes,
             // included when the workspace is switched
-            Utils.DisplayWrapper.getScreen(),
+            global.display,
             'restacked',
-            Lang.bind(this, this._checkOverlap)
+            this._checkOverlap.bind(this)
         ], [
             // when windows are alwasy on top, the focus window can change
             // without the windows being restacked. Thus monitor window focus change.
             this._tracker,
             'notify::focus-app',
-            Lang.bind(this, this._checkOverlap)
+            this._checkOverlap.bind(this)
         ], [
             // update wne monitor changes, for instance in multimonitor when monitor are attached
-            Utils.DisplayWrapper.getMonitorManager(),
+            Meta.MonitorManager.get(),
             'monitors-changed',
-            Lang.bind(this, this._checkOverlap)
+            this._checkOverlap.bind(this)
         ]);
-    },
+    }
 
-    destroy: function() {
+    destroy() {
         // Disconnect global signals
         this._signalsHandler.destroy();
 
         // Remove  residual windows signals
         this.disable();
-    },
+    }
 
-    enable: function() {
+    enable() {
         this._isEnabled = true;
         this._status = OverlapStatus.UNDEFINED;
         global.get_window_actors().forEach(function(wa) {
             this._addWindowSignals(wa);
         }, this);
         this._doCheckOverlap();
-    },
+    }
 
-    disable: function() {
+    disable() {
         this._isEnabled = false;
 
         for (let wa of this._trackedWindows.keys()) {
@@ -122,43 +120,43 @@ var Intellihide = new Lang.Class({
             Mainloop.source_remove(this._checkOverlapTimeoutId);
             this._checkOverlapTimeoutId = 0;
         }
-    },
+    }
 
-    _windowCreated: function(display, metaWindow) {
+    _windowCreated(display, metaWindow) {
         this._addWindowSignals(metaWindow.get_compositor_private());
-    },
+    }
 
-    _addWindowSignals: function(wa) {
+    _addWindowSignals(wa) {
         if (!this._handledWindow(wa))
             return;
-        let signalId = wa.connect('allocation-changed', Lang.bind(this, this._checkOverlap, wa.get_meta_window()));
+        let signalId = wa.connect('allocation-changed', this._checkOverlap.bind(this));
         this._trackedWindows.set(wa, signalId);
-        wa.connect('destroy', Lang.bind(this, this._removeWindowSignals));
-    },
+        wa.connect('destroy', this._removeWindowSignals.bind(this));
+    }
 
-    _removeWindowSignals: function(wa) {
+    _removeWindowSignals(wa) {
         if (this._trackedWindows.get(wa)) {
            wa.disconnect(this._trackedWindows.get(wa));
            this._trackedWindows.delete(wa);
         }
 
-    },
+    }
 
-    updateTargetBox: function(box) {
+    updateTargetBox(box) {
         this._targetBox = box;
         this._checkOverlap();
-    },
+    }
 
-    forceUpdate: function() {
+    forceUpdate() {
         this._status = OverlapStatus.UNDEFINED;
         this._doCheckOverlap();
-    },
+    }
 
-    getOverlapStatus: function() {
+    getOverlapStatus() {
         return (this._status == OverlapStatus.TRUE);
-    },
+    }
 
-    _checkOverlap: function() {
+    _checkOverlap() {
         if (!this._isEnabled || (this._targetBox == null))
             return;
 
@@ -170,7 +168,7 @@ var Intellihide = new Lang.Class({
 
         this._doCheckOverlap();
 
-        this._checkOverlapTimeoutId = Mainloop.timeout_add(INTELLIHIDE_CHECK_INTERVAL, Lang.bind(this, function() {
+        this._checkOverlapTimeoutId = Mainloop.timeout_add(INTELLIHIDE_CHECK_INTERVAL, () => {
             this._doCheckOverlap();
             if (this._checkOverlapTimeoutContinue) {
                 this._checkOverlapTimeoutContinue = false;
@@ -179,10 +177,10 @@ var Intellihide = new Lang.Class({
                 this._checkOverlapTimeoutId = 0;
                 return GLib.SOURCE_REMOVE;
             }
-        }));
-    },
+        });
+    }
 
-    _doCheckOverlap: function() {
+    _doCheckOverlap() {
 
         if (!this._isEnabled || (this._targetBox == null))
             return;
@@ -239,17 +237,17 @@ var Intellihide = new Lang.Class({
             this.emit('status-changed', this._status);
         }
 
-    },
+    }
 
     // Filter interesting windows to be considered for intellihide.
     // Consider all windows visible on the current workspace.
     // Optionally skip windows of other applications
-    _intellihideFilterInteresting: function(wa) {
+    _intellihideFilterInteresting(wa) {
         let meta_win = wa.get_meta_window();
         if (!this._handledWindow(wa))
             return false;
 
-        let currentWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
+        let currentWorkspace = global.workspace_manager.get_active_workspace_index();
         let wksp = meta_win.get_workspace();
         let wksp_index = wksp.index();
 
@@ -293,11 +291,11 @@ var Intellihide = new Lang.Class({
         else
             return false;
 
-    },
+    }
 
     // Filter windows by type
     // inspired by Opacify@gnome-shell.localdomain.pl
-    _handledWindow: function(wa) {
+    _handledWindow(wa) {
         let metaWindow = wa.get_meta_window();
 
         if (!metaWindow)
@@ -318,6 +316,6 @@ var Intellihide = new Lang.Class({
         }
         return false;
     }
-});
+};
 
 Signals.addSignalMethods(Intellihide.prototype);
