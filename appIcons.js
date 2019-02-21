@@ -109,7 +109,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
             Main.layoutManager.monitors.length > 1) {
             this._signalsHandler.removeWithLabel('isolate-monitors');
             this._signalsHandler.addWithLabel('isolate-monitors', [
-                Utils.DisplayWrapper.getScreen(),
+                global.display,
                 'window-entered-monitor',
                 this._onWindowEntered.bind(this)
             ]);
@@ -637,7 +637,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
     _minimizeWindow(param) {
         // Param true make all app windows minimize
         let windows = this.getInterestingWindows();
-        let current_workspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
+        let current_workspace = global.workspace_manager.get_active_workspace();
         for (let i = 0; i < windows.length; i++) {
             let w = windows[i];
             if (w.get_workspace() == current_workspace && w.showing_on_its_workspace()) {
@@ -661,7 +661,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
 
         // then activate all other app windows in the current workspace
         let windows = this.getInterestingWindows();
-        let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
+        let activeWorkspace = global.workspace_manager.get_active_workspace_index();
 
         if (windows.length <= 0)
             return;
@@ -937,7 +937,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
 
             if (windows.length > 0) {
 
-                let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
+                let activeWorkspace = global.workspace_manager.get_active_workspace();
                 let separatorShown =  windows[0].get_workspace() != activeWorkspace;
 
                 for (let i = 0; i < windows.length; i++) {
@@ -975,7 +975,7 @@ function getInterestingWindows(app, settings, monitorIndex) {
     // that are not in the current workspace
     if (settings.get_boolean('isolate-workspaces'))
         windows = windows.filter(function(w) {
-            return w.get_workspace().index() == Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
+            return w.get_workspace().index() == global.workspace_manager.get_active_workspace_index();
         });
 
     if (settings.get_boolean('isolate-monitors'))
