@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (64ubuntu3) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (64ubuntu3) disco; urgency=medium
 
   [ Andrea Azzarone ]
   * theming: Ensure _trackingWindows contains valid windows (#868)
@@ -20,7 +20,7 @@ gnome-shell-extension-ubuntu-dock (64ubuntu3) UNRELEASED; urgency=medium
   * docking: remove support for legacy tray
   * utils: remove DisplayWrapper temporary workaround
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 21 Feb 2019 16:20:48 +0100
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 21 Feb 2019 16:31:00 +0100
 
 gnome-shell-extension-ubuntu-dock (64ubuntu2) disco; urgency=medium
 
