@@ -1077,8 +1077,6 @@ var DockedDash = class DashToDock {
         }
 
         this._y0 = this.actor.y;
-
-        this._adjustLegacyTray();
     }
 
     // Set the dash at the correct depth in z
@@ -1088,27 +1086,6 @@ var DockedDash = class DashToDock {
             Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.legacyTray.actor);
         else
             Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
-    }
-
-    _adjustLegacyTray() {
-        // The legacyTray has been removed in GNOME Shell 3.26.
-        // Once we drop support for previous releases this fuction can be dropped too.
-        if (!Main.legacyTray)
-            return;
-
-        let use_work_area = true;
-
-        if (this._fixedIsEnabled && !this._settings.get_boolean('extend-height')
-            && this._isPrimaryMonitor()
-            && ((this._position == St.Side.BOTTOM) || (this._position == St.Side.LEFT)))
-            use_work_area = false;
-
-        Main.legacyTray.actor.clear_constraints();
-        let constraint = new Layout.MonitorConstraint({
-            primary: true,
-            work_area: use_work_area
-        });
-        Main.legacyTray.actor.add_constraint(constraint);
     }
 
     _resetLegacyTray() {
