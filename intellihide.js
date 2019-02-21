@@ -74,7 +74,7 @@ var Intellihide = class DashToDock_Intellihide {
         ], [
             // triggered for instance when the window list order changes,
             // included when the workspace is switched
-            Utils.DisplayWrapper.getScreen(),
+            global.display,
             'restacked',
             this._checkOverlap.bind(this)
         ], [
@@ -85,7 +85,7 @@ var Intellihide = class DashToDock_Intellihide {
             this._checkOverlap.bind(this)
         ], [
             // update wne monitor changes, for instance in multimonitor when monitor are attached
-            Utils.DisplayWrapper.getMonitorManager(),
+            Meta.MonitorManager.get(),
             'monitors-changed',
             this._checkOverlap.bind(this)
         ]);
@@ -247,7 +247,7 @@ var Intellihide = class DashToDock_Intellihide {
         if (!this._handledWindow(wa))
             return false;
 
-        let currentWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
+        let currentWorkspace = global.workspace_manager.get_active_workspace_index();
         let wksp = meta_win.get_workspace();
         let wksp_index = wksp.index();
 
