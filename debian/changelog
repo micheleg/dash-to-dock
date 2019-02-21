@@ -1,3 +1,27 @@
+gnome-shell-extension-ubuntu-dock (64ubuntu3) UNRELEASED; urgency=medium
+
+  [ Andrea Azzarone ]
+  * theming: Ensure _trackingWindows contains valid windows (#868)
+
+  [ Serdar Sağlam ]
+  * Update tr.po
+
+  [ Rúben Lopes ]
+  * Update Portuguese translation (#878)
+
+  [ Michele ]
+  * Fix for border radius with adaptive/dynamic opacity.
+
+  [ Marco Trevisan (Treviño) ]
+  * metadata: mark dash-to-dock as working only on 3.31+ versions
+  * dash-to-dock: rewrite classes using pure ES6 classes
+  * Remove usage of legacy Lang features
+  * Drop Convenience library
+  * docking: remove support for legacy tray
+  * utils: remove DisplayWrapper temporary workaround
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 21 Feb 2019 16:20:48 +0100
+
 gnome-shell-extension-ubuntu-dock (64ubuntu2) disco; urgency=medium
 
   * theming: Ensure _trackingWindows contains valid windows. (LP: #1769383)
