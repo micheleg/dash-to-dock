@@ -248,19 +248,3 @@ function drawRoundedLine(cr, x, y, width, height, isRoundLeft, isRoundRight, str
         cr.setSource(stroke);
     cr.stroke();
 }
-
-// This is wrapper to maintain compatibility with GNOME-Shell 3.30+ as well as
-// previous versions.
-var DisplayWrapper = class DashToDock_DisplayWrapper {
-    static getScreen() {
-        return global.screen || global.display;
-    }
-
-    static getWorkspaceManager() {
-        return global.screen || global.workspace_manager;
-    }
-
-    static getMonitorManager() {
-        return global.screen || Meta.MonitorManager.get();
-    }
-};

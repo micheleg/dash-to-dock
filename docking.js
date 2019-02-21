@@ -287,7 +287,7 @@ var DockedDash = class DashToDock {
         ], [
             // update when workarea changes, for instance if  other extensions modify the struts
             //(like moving th panel at the bottom)
-            Utils.DisplayWrapper.getScreen(),
+            global.display,
             'workareas-changed',
             this._resetPosition.bind(this)
         ], [
@@ -313,7 +313,7 @@ var DockedDash = class DashToDock {
             'notify::checked',
             this._syncShowAppsButtonToggled.bind(this)
         ], [
-            Utils.DisplayWrapper.getScreen(),
+            global.display,
             'in-fullscreen-changed',
             this._updateBarrier.bind(this)
         ], [
@@ -1240,7 +1240,7 @@ var DockedDash = class DashToDock {
             if (Main.overview.visible && Main.overview.viewSelector.getActivePage() !== ViewSelector.ViewPage.WINDOWS)
                 return false;
 
-            let activeWs = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
+            let activeWs = global.workspace_manager.get_active_workspace();
             let direction = null;
 
             switch (event.get_scroll_direction()) {
@@ -1526,7 +1526,7 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
 
         this._allDocks.forEach(function(dock) {
             this._signalsHandler.addWithLabel('isolation', [
-                Utils.DisplayWrapper.getScreen(),
+                global.display,
                 'restacked',
                 dock.dash._queueRedisplay.bind(dock.dash)
             ], [
@@ -1539,7 +1539,7 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
             // might migrate from one monitor to another without triggering 'restacked'
             if (this._settings.get_boolean('isolate-monitors'))
                 this._signalsHandler.addWithLabel('isolation', [
-                    Utils.DisplayWrapper.getScreen(),
+                    global.display,
                     'window-entered-monitor',
                     dock.dash._queueRedisplay.bind(dock.dash)
                 ]);
@@ -1550,13 +1550,13 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
         function IsolatedOverview() {
             // These lines take care of Nautilus for icons on Desktop
             let windows = this.get_windows().filter(function(w) {
-                return w.get_workspace().index() == Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
+                return w.get_workspace().index() == global.workspace_manager.get_active_workspace_index();
             });
             if (windows.length == 1)
                 if (windows[0].skip_taskbar)
                     return this.open_new_window(-1);
 
-            if (this.is_on_workspace(Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace()))
+            if (this.is_on_workspace(global.workspace_manager.get_active_workspace()))
                 return Main.activateWindow(windows[0]);
             return this.open_new_window(-1);
         }
@@ -1608,7 +1608,7 @@ var DockManager = class DashToDock_DockManager {
         // Connect relevant signals to the toggling function
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._signalsHandler.add([
-            Utils.DisplayWrapper.getMonitorManager(),
+            Meta.MonitorManager.get(),
             'monitors-changed',
             this._toggle.bind(this)
         ], [
