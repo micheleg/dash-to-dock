@@ -95,12 +95,9 @@
     background: #2e3436;
 }
 
-/*
- * Only the background and border color values are used
- */
-#dashtodockContainer .progress-bar {
-    -progress-bar-background: lightgrey;
-    -progress-bar-border: lightgrey;
+#dashtodockContainer.dashtodock .progress-bar {
+    -progress-bar-background: green;
+    -progress-bar-border: green;
 }
 
 /*
