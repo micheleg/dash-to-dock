@@ -73,7 +73,6 @@ class DashToDock_MyDashActor extends St.Widget {
             layout_manager: layout,
             clip_to_allocation: true
         });
-        this.name = this.constructor.name;
 
         // Since we are usually visible but not usually changing, make sure
         // most repaint requests don't actually require us to repaint anything.

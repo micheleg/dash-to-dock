@@ -82,7 +82,6 @@ class DashToDock_DashSlideContainer extends St.Widget {
         }
 
         super._init(params);
-        this.name = this.constructor.name;
         this._child = null;
 
         // slide parameter: 1 = visible, 0 = hidden.
