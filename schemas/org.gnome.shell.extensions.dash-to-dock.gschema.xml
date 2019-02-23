@@ -32,7 +32,6 @@
   <enum id='org.gnome.shell.extensions.dash-to-dock.transparency-mode'>
     <value value='0' nick='DEFAULT'/>
     <value value='1' nick='FIXED'/>
-    <value value='2' nick='ADAPTIVE'/>
     <value value='3' nick='DYNAMIC'/>
   </enum>
     <enum id='org.gnome.shell.extensions.dash-to-dock.running-indicator-style'>
@@ -79,7 +78,7 @@
     <key name="transparency-mode" enum="org.gnome.shell.extensions.dash-to-dock.transparency-mode">
       <default>'DEFAULT'</default>
       <summary>Transparency mode for the dock</summary>
-      <description>FIXED: constant transparency. ADAPTIVE: lock state with the top panel when not hidden. DYNAMIC: dock takes the opaque style only when windows are close to it.</description>
+      <description>FIXED: constant transparency. DYNAMIC: dock takes the opaque style only when windows are close to it.</description>
     </key>
     <key name="running-indicator-style" enum="org.gnome.shell.extensions.dash-to-dock.running-indicator-style">
       <default>'DEFAULT'</default>
@@ -94,7 +93,7 @@
     <key type="b" name="customize-alphas">
       <default>false</default>
       <summary>Manually set the min and max opacity</summary>
-      <description>For Adaptive and Dynamic modes, the min/max opacity values will be given by 'min-alpha' and 'max-alpha'.</description>
+      <description>For the dynamic mode, the min/max opacity values will be given by 'min-alpha' and 'max-alpha'.</description>
     </key>
     <key type="d" name="min-alpha">
       <default>0.2</default>
