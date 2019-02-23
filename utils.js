@@ -91,12 +91,20 @@ var ColorUtils = class DashToDock_ColorUtils {
     static ColorLuminance(r, g, b, dlum) {
         let rgbString = '#';
 
-        rgbString += Math.round(Math.min(Math.max(r*(1+dlum), 0), 255)).toString(16);
-        rgbString += Math.round(Math.min(Math.max(g*(1+dlum), 0), 255)).toString(16);
-        rgbString += Math.round(Math.min(Math.max(b*(1+dlum), 0), 255)).toString(16);
+        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(r*(1+dlum), 0), 255)), 2);
+        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(g*(1+dlum), 0), 255)), 2);
+        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(b*(1+dlum), 0), 255)), 2);
 
         return rgbString;
     }
+
+    // Convert decimal to an hexadecimal string adding the desired padding
+    _decimalToHex: function(d, padding) {
+        let hex = d.toString(16);
+        while (hex.length < padding)
+            hex = '0'+ hex;
+        return hex;
+    },
 
     // Convert hsv ([0-1, 0-1, 0-1]) to rgb ([0-255, 0-255, 0-255]).
     // Following algorithm in https://en.wikipedia.org/wiki/HSL_and_HSV
