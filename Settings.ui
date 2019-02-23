@@ -2160,7 +2160,6 @@
                                     <items>
                                       <item translatable="yes">Default</item>
                                       <item translatable="yes">Fixed</item>
-                                      <item translatable="yes">Adaptive</item>
                                       <item translatable="yes">Dynamic</item>
                                     </items>
                                   </object>

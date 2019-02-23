@@ -22,7 +22,6 @@ const DEFAULT_ICONS_SIZES = [ 128, 96, 64, 48, 32, 24, 16 ];
 const TransparencyMode = {
     DEFAULT:  0,
     FIXED:    1,
-    ADAPTIVE: 2,
     DYNAMIC:  3
 };
 
@@ -774,14 +773,12 @@ var Settings = class DashToDock_Settings {
                this._builder.get_object('custom_opacity_scale').set_sensitive(true);
         });
 
-        if (this._settings.get_enum('transparency-mode') !== TransparencyMode.ADAPTIVE &&
-            this._settings.get_enum('transparency-mode') !== TransparencyMode.DYNAMIC) {
+        if (this._settings.get_enum('transparency-mode') !== TransparencyMode.DYNAMIC) {
             this._builder.get_object('dynamic_opacity_button').set_sensitive(false);
         }
 
         this._settings.connect('changed::transparency-mode', () => {
-            if (this._settings.get_enum('transparency-mode') !== TransparencyMode.ADAPTIVE &&
-                this._settings.get_enum('transparency-mode') !== TransparencyMode.DYNAMIC) {
+            if (this._settings.get_enum('transparency-mode') !== TransparencyMode.DYNAMIC) {
                 this._builder.get_object('dynamic_opacity_button').set_sensitive(false);
             }
             else {

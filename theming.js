@@ -28,16 +28,11 @@ const Utils = Me.imports.utils;
 /*
  * DEFAULT:  transparency given by theme
  * FIXED:    constant transparency chosen by user
- * ADAPTIVE: apply 'transparent' style to dock AND panel when
- *           no windows are close to the dock OR panel.
- *           When dock is hidden, the dock 'transparent' style only
- *           apply to itself.
  * DYNAMIC:  apply 'transparent' style when no windows are close to the dock
  * */
 const TransparencyMode = {
     DEFAULT:  0,
     FIXED:    1,
-    ADAPTIVE: 2,
     DYNAMIC:  3
 };
 
@@ -166,7 +161,7 @@ var ThemeManager = class DashToDock_ThemeManager {
         if (this._settings.get_boolean('custom-background-color')) {
             // When applying a custom color, we need to check the alpha value,
             // if not the opacity will always be overridden by the color below.
-            // Note that if using 'adaptive' or 'dynamic' transparency modes,
+            // Note that if using 'dynamic' transparency modes,
             // the opacity will be set by the opaque/transparent styles anyway.
             let newAlpha = Math.round(backgroundColor.alpha/2.55)/100;
             if (this._settings.get_enum('transparency-mode') == TransparencyMode.FIXED)
@@ -398,9 +393,6 @@ var Transparency = class DashToDock_Transparency {
             this._onWindowActorAdded(null, win);
         }, this);
 
-        if (this._settings.get_enum('transparency-mode') === TransparencyMode.ADAPTIVE)
-            this._enableAdaptive();
-
         if (this._actor.get_stage())
             this._updateSolidStyle();
 
@@ -411,8 +403,6 @@ var Transparency = class DashToDock_Transparency {
     }
 
     disable() {
-        this._disableAdaptive();
-
         // ensure I never double-register/inject
         // although it should never happen
         this._signalsHandler.removeWithLabel('transparency');
@@ -452,24 +442,15 @@ var Transparency = class DashToDock_Transparency {
     }
 
     _updateSolidStyle() {
-        let isNear = this._dockIsNear() || this._panelIsNear();
-        if (isNear) {
+        if (this._dockIsNear()) {
             this._actor.set_style(this._opaque_style);
             this._dockActor.remove_style_class_name('transparent');
             this._dockActor.add_style_class_name('opaque');
-            if (this._panel._updateSolidStyle && this._adaptiveEnabled) {
-                if (this._settings.get_boolean('dock-fixed') || this._panelIsNear())
-                    this._panel._addStyleClassName('solid');
-                else
-                    this._panel._removeStyleClassName('solid');
-            }
         }
         else {
             this._actor.set_style(this._transparent_style);
             this._dockActor.remove_style_class_name('opaque');
             this._dockActor.add_style_class_name('transparent');
-            if (this._panel._updateSolidStyle && this._adaptiveEnabled)
-                this._panel._removeStyleClassName('solid');
         }
 
         this.emit('solid-style-updated', isNear);
@@ -530,37 +511,6 @@ var Transparency = class DashToDock_Transparency {
         return isNearEnough;
     }
 
-    _panelIsNear() {
-        if (!this._panel._updateSolidStyle ||
-            this._settings.get_enum('transparency-mode') !== TransparencyMode.ADAPTIVE)
-            return false;
-
-        if (this._panel.actor.has_style_pseudo_class('overview') || !Main.sessionMode.hasWindows) {
-            this._panel._removeStyleClassName('solid');
-            return false;
-        }
-
-        /* Get all the windows in the active workspace that are in the
-         * primary monitor and visible */
-        let activeWorkspace = global.workspace_manager.get_active_workspace();
-        let windows = activeWorkspace.list_windows().filter(function(metaWindow) {
-            return metaWindow.is_on_primary_monitor() &&
-                metaWindow.showing_on_its_workspace() &&
-                metaWindow.get_window_type() != Meta.WindowType.DESKTOP;
-        });
-
-        /* Check if at least one window is near enough to the panel */
-        let [, panelTop] = this._panel.actor.get_transformed_position();
-        let panelBottom = panelTop + this._panel.actor.get_height();
-        let scale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let isNearEnough = windows.some((metaWindow) => {
-            let verticalPosition = metaWindow.get_frame_rect().y;
-            return verticalPosition < panelBottom + 5 * scale;
-        });
-
-        return isNearEnough;
-    }
-
     _updateStyles() {
         this._getAlphas();
 
@@ -613,71 +563,6 @@ var Transparency = class DashToDock_Transparency {
             this._transparentAlpha = this._settings.get_double('min-alpha');
             this._transparentAlphaBorder = this._transparentAlpha / 2;
         }
-
-        if (this._settings.get_enum('transparency-mode') === TransparencyMode.ADAPTIVE &&
-            this._panel._updateSolidStyle) {
-            themeNode = this._panel.actor.get_theme_node();
-            if (this._panel.actor.has_style_class_name('solid')) {
-                this._opaqueTransition = themeNode.get_transition_duration();
-                this._panel._removeStyleClassName('solid');
-                themeNode = this._panel.actor.get_theme_node();
-                this._transparentTransition = themeNode.get_transition_duration();
-                this._panel._addStyleClassName('solid');
-            }
-            else {
-                this._transparentTransition = themeNode.get_transition_duration();
-                this._panel._addStyleClassName('solid');
-                themeNode = this._panel.actor.get_theme_node();
-                this._opaqueTransition = themeNode.get_transition_duration();
-                this._panel._removeStyleClassName('solid');
-            }
-        }
-    }
-
-    _enableAdaptive() {
-        if (!this._panel._updateSolidStyle ||
-            this._dash._monitorIndex !== Main.layoutManager.primaryIndex)
-            return;
-
-        this._adaptiveEnabled = true;
-
-        function UpdateSolidStyle() {
-            return;
-        }
-
-        this._injectionsHandler.addWithLabel('adaptive', [
-            this._panel,
-            '_updateSolidStyle',
-            UpdateSolidStyle
-        ]);
-
-        // Once we injected the new function, we need to disconnect and
-        // reconnect all window signals.
-        for (let key of this._panel._trackedWindows.keys())
-            this._panel._trackedWindows.get(key).forEach(id => {
-                key.disconnect(id);
-            });
-
-        for (let win of this._panel._trackedWindows.keys())
-            this._panel._onWindowActorAdded(null, win);
-    }
-
-    _disableAdaptive() {
-        if (!this._adaptiveEnabled)
-            return;
-
-        this._injectionsHandler.removeWithLabel('adaptive');
-        this._adaptiveEnabled = false;
-
-        // Once we removed the injection, we need to disconnect and
-        // reconnect all window signals.
-        for (let key of this._panel._trackedWindows.keys())
-            this._panel._trackedWindows.get(key).forEach(id => {
-                key.disconnect(id);
-            });
-
-        for (let win of this._panel._trackedWindows.keys())
-            this._panel._onWindowActorAdded(null, win);
     }
 };
 Signals.addSignalMethods(Transparency.prototype);
