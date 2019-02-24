@@ -99,12 +99,12 @@ var ColorUtils = class DashToDock_ColorUtils {
     }
 
     // Convert decimal to an hexadecimal string adding the desired padding
-    _decimalToHex: function(d, padding) {
+    static _decimalToHex(d, padding) {
         let hex = d.toString(16);
         while (hex.length < padding)
             hex = '0'+ hex;
         return hex;
-    },
+    }
 
     // Convert hsv ([0-1, 0-1, 0-1]) to rgb ([0-255, 0-255, 0-255]).
     // Following algorithm in https://en.wikipedia.org/wiki/HSL_and_HSV
