@@ -46,7 +46,8 @@ const clickAction = {
     MINIMIZE_OR_OVERVIEW: 4,
     PREVIEWS: 5,
     MINIMIZE_OR_PREVIEWS: 6,
-    QUIT: 7
+    FOCUS_OR_PREVIEWS: 7,
+    QUIT: 8,
 };
 
 const scrollAction = {
@@ -457,6 +458,17 @@ var MyAppIcon = new Lang.Class({
                 }
                 else
                     this.app.activate();
+                break;
+
+            case clickAction.FOCUS_OR_PREVIEWS:
+                if (this.app == focusedApp &&
+                    (windows.length > 1 || modifiers || button != 1)) {
+                    this._windowPreviews();
+                } else {
+                    // Activate the first window
+                    let w = windows[0];
+                    Main.activateWindow(w);
+                }
                 break;
 
             case clickAction.LAUNCH:
