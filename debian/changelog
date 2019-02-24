@@ -1,11 +1,11 @@
-gnome-shell-extension-ubuntu-dock (64ubuntu4) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (64ubuntu4) disco; urgency=medium
 
   * Re-upload to disco, with a dependency on gnome-shell versions that this
     extension is declared to work on in its metadata.json:
     - >= 3.31
     - << 3.33
 
- -- Iain Lane <iain@orangesquash.org.uk>  Sun, 24 Feb 2019 20:09:56 +0000
+ -- Iain Lane <iain@orangesquash.org.uk>  Sun, 24 Feb 2019 20:19:55 +0000
 
 gnome-shell-extension-ubuntu-dock (64ubuntu3) disco; urgency=medium
 
