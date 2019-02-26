@@ -6,7 +6,6 @@ const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Gtk = imports.gi.Gtk;
 const Signals = imports.signals;
-const Lang = imports.lang;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
@@ -46,7 +45,8 @@ const clickAction = {
     MINIMIZE_OR_OVERVIEW: 4,
     PREVIEWS: 5,
     MINIMIZE_OR_PREVIEWS: 6,
-    QUIT: 7
+    FOCUS_OR_PREVIEWS: 7,
+    QUIT: 8,
 };
 
 const scrollAction = {
@@ -74,20 +74,18 @@ let recentlyClickedAppMonitor = -1;
  * - Update minimization animation target
  * - Update menu if open on windows change
  */
-var MyAppIcon = new Lang.Class({
-    Name: 'DashToDock.AppIcon',
-    Extends: AppDisplay.AppIcon,
+var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
 
     // settings are required inside.
-    _init: function(settings, remoteModel, app, monitorIndex, iconParams) {
+    constructor(settings, remoteModel, app, monitorIndex, iconParams) {
+        super(app, iconParams);
+
         // a prefix is required to avoid conflicting with the parent class variable
         this._dtdSettings = settings;
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this.remoteModel = remoteModel;
         this._indicator = null;
-
-        this.parent(app, iconParams);
 
         this._updateIndicatorStyle();
 
@@ -99,11 +97,9 @@ var MyAppIcon = new Lang.Class({
         }
 
         this._windowsChangedId = this.app.connect('windows-changed',
-                                                Lang.bind(this,
-                                                          this.onWindowsChanged));
+                                                  this.onWindowsChanged.bind(this));
         this._focusAppChangeId = tracker.connect('notify::focus-app',
-                                                 Lang.bind(this,
-                                                           this._onFocusAppChanged));
+                                                 this._onFocusAppChanged.bind(this));
 
         // In Wayland sessions, this signal is needed to track the state of windows dragged
         // from one monitor to another. As this is triggered quite often (whenever a new winow
@@ -114,9 +110,9 @@ var MyAppIcon = new Lang.Class({
             Main.layoutManager.monitors.length > 1) {
             this._signalsHandler.removeWithLabel('isolate-monitors');
             this._signalsHandler.addWithLabel('isolate-monitors', [
-                Utils.DisplayWrapper.getScreen(),
+                global.display,
                 'window-entered-monitor',
-                Lang.bind(this, this._onWindowEntered)
+                this._onWindowEntered.bind(this)
             ]);
         }
 
@@ -131,23 +127,23 @@ var MyAppIcon = new Lang.Class({
             this._signalsHandler.add([
                 this._dtdSettings,
                 'changed::' + key,
-                Lang.bind(this, this._updateIndicatorStyle)
+                this._updateIndicatorStyle.bind(this)
             ]);
         }, this);
 
-        this._dtdSettings.connect('changed::scroll-action', Lang.bind(this, function() {
+        this._dtdSettings.connect('changed::scroll-action', () => {
             this._optionalScrollCycleWindows();
-        }));
+        });
         this._optionalScrollCycleWindows();
 
         this._numberOverlay();
 
         this._previewMenuManager = null;
         this._previewMenu = null;
-    },
+    }
 
-    _onDestroy: function() {
-        this.parent();
+    _onDestroy() {
+        super._onDestroy();
 
         // This is necessary due to an upstream bug
         // https://bugzilla.gnome.org/show_bug.cgi?id=757556
@@ -170,10 +166,10 @@ var MyAppIcon = new Lang.Class({
 
         if (this._scrollEventHandler)
             this.actor.disconnect(this._scrollEventHandler);
-    },
+    }
 
     // TOOD Rename this function
-    _updateIndicatorStyle: function() {
+    _updateIndicatorStyle() {
 
         if (this._indicator !== null) {
             this._indicator.destroy();
@@ -181,15 +177,15 @@ var MyAppIcon = new Lang.Class({
         }
         this._indicator = new AppIconIndicators.AppIconIndicator(this, this._dtdSettings);
         this._indicator.update();
-    },
+    }
 
-    _onWindowEntered: function(metaScreen, monitorIndex, metaWin) {
+    _onWindowEntered(metaScreen, monitorIndex, metaWin) {
         let app = Shell.WindowTracker.get_default().get_window_app(metaWin);
         if (app && app.get_id() == this.app.get_id())
             this.onWindowsChanged();
-    },
+    }
 
-    _optionalScrollCycleWindows: function() {
+    _optionalScrollCycleWindows() {
         if (this._scrollEventHandler) {
             this.actor.disconnect(this._scrollEventHandler);
             this._scrollEventHandler = 0;
@@ -197,11 +193,11 @@ var MyAppIcon = new Lang.Class({
 
         let isEnabled = this._dtdSettings.get_enum('scroll-action') === scrollAction.CYCLE_WINDOWS;
         if (!isEnabled) return;
-        this._scrollEventHandler = this.actor.connect('scroll-event', Lang.bind(this,
-                                                          this.onScrollEvent));
-    },
+        this._scrollEventHandler = this.actor.connect('scroll-event',
+                                                      this.onScrollEvent.bind(this));
+    }
 
-    onScrollEvent: function(actor, event) {
+    onScrollEvent(actor, event) {
 
         // We only activate windows of running applications, i.e. we never open new windows
         // We check if the app is running, and that the # of windows is > 0 in
@@ -215,9 +211,9 @@ var MyAppIcon = new Lang.Class({
         if (this._optionalScrollCycleWindowsDeadTimeId > 0)
             return false;
         else
-            this._optionalScrollCycleWindowsDeadTimeId = Mainloop.timeout_add(250, Lang.bind(this, function() {
+            this._optionalScrollCycleWindowsDeadTimeId = Mainloop.timeout_add(250, () => {
                 this._optionalScrollCycleWindowsDeadTimeId = 0;
-            }));
+            });
 
         let direction = null;
 
@@ -254,21 +250,21 @@ var MyAppIcon = new Lang.Class({
         else
             this.app.activate();
         return true;
-    },
+    }
 
-    onWindowsChanged: function() {
+    onWindowsChanged() {
 
         if (this._menu && this._menu.isOpen)
             this._menu.update();
 
         this._indicator.update();
         this.updateIconGeometry();
-    },
+    }
 
     /**
      * Update taraget for minimization animation
      */
-    updateIconGeometry: function() {
+    updateIconGeometry() {
         // If (for unknown reason) the actor is not on the stage the reported size
         // and position are random values, which might exceeds the integer range
         // resulting in an error when assigned to the a rect. This is a more like
@@ -291,25 +287,25 @@ var MyAppIcon = new Lang.Class({
         windows.forEach(function(w) {
             w.set_icon_geometry(rect);
         });
-    },
+    }
 
-    _updateRunningStyle: function() {
+    _updateRunningStyle() {
         // The logic originally in this function has been moved to
         // AppIconIndicatorBase._updateDefaultDot(). However it cannot be removed as
         // it called by the parent constructor.
-    },
+    }
 
-    popupMenu: function() {
+    popupMenu() {
         this._removeMenuTimeout();
         this.actor.fake_release();
         this._draggable.fakeRelease();
 
         if (!this._menu) {
             this._menu = new MyAppIconMenu(this, this._dtdSettings);
-            this._menu.connect('activate-window', Lang.bind(this, function(menu, window) {
+            this._menu.connect('activate-window', (menu, window) => {
                 this.activateWindow(window);
-            }));
-            this._menu.connect('open-state-changed', Lang.bind(this, function(menu, isPoppedUp) {
+            });
+            this._menu.connect('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
                 else {
@@ -327,10 +323,10 @@ var MyAppIcon = new Lang.Class({
                     this._menu.actor.style = ('max-height: ' + Math.round(workArea.height - additional_margin - verticalMargins) + 'px;' +
                                               'max-width: 400px');
                 }
-            }));
-            let id = Main.overview.connect('hiding', Lang.bind(this, function() {
+            });
+            let id = Main.overview.connect('hiding', () => {
                 this._menu.close();
-            }));
+            });
             this._menu.actor.connect('destroy', function() {
                 Main.overview.disconnect(id);
             });
@@ -346,13 +342,13 @@ var MyAppIcon = new Lang.Class({
         this.emit('sync-tooltip');
 
         return false;
-    },
+    }
 
-    _onFocusAppChanged: function() {
+    _onFocusAppChanged() {
         this._indicator.update();
-    },
+    }
 
-    activate: function(button) {
+    activate(button) {
         let event = Clutter.get_current_event();
         let modifiers = event ? event.get_state() : 0;
         let focusedApp = tracker.focus_app;
@@ -366,7 +362,7 @@ var MyAppIcon = new Lang.Class({
                 // Keep default behaviour: launch new window
                 // By calling the parent method I make it compatible
                 // with other extensions tweaking ctrl + click
-                this.parent(button);
+                super.activate(button);
                 return;
         }
 
@@ -459,6 +455,17 @@ var MyAppIcon = new Lang.Class({
                     this.app.activate();
                 break;
 
+            case clickAction.FOCUS_OR_PREVIEWS:
+                if (this.app == focusedApp &&
+                    (windows.length > 1 || modifiers || button != 1)) {
+                    this._windowPreviews();
+                } else {
+                    // Activate the first window
+                    let w = windows[0];
+                    Main.activateWindow(w);
+                }
+                break;
+
             case clickAction.LAUNCH:
                 this.launchNewWindow();
                 break;
@@ -519,14 +526,14 @@ var MyAppIcon = new Lang.Class({
         if(shouldHideOverview) {
             Main.overview.hide();
         }
-    },
+    }
 
-    shouldShowTooltip: function() {
+    shouldShowTooltip() {
         return this.actor.hover && (!this._menu || !this._menu.isOpen) &&
                             (!this._previewMenu || !this._previewMenu.isOpen);
-    },
+    }
 
-    _windowPreviews: function() {
+    _windowPreviews() {
         if (!this._previewMenu) {
             this._previewMenuManager = new PopupMenu.PopupMenuManager(this);
 
@@ -534,13 +541,13 @@ var MyAppIcon = new Lang.Class({
 
             this._previewMenuManager.addMenu(this._previewMenu);
 
-            this._previewMenu.connect('open-state-changed', Lang.bind(this, function(menu, isPoppedUp) {
+            this._previewMenu.connect('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
-            }));
-            let id = Main.overview.connect('hiding', Lang.bind(this, function() {
+            });
+            let id = Main.overview.connect('hiding', () => {
                 this._previewMenu.close();
-            }));
+            });
             this._previewMenu.actor.connect('destroy', function() {
                 Main.overview.disconnect(id);
             });
@@ -553,12 +560,12 @@ var MyAppIcon = new Lang.Class({
             this._previewMenu.popup();
 
         return false;
-    },
+    }
 
     // Try to do the right thing when attempting to launch a new window of an app. In
     // particular, if the application doens't allow to launch a new window, activate
     // the existing window instead.
-    launchNewWindow: function(p) {
+    launchNewWindow(p) {
         let appInfo = this.app.get_app_info();
         let actions = appInfo.list_actions();
         if (this.app.can_open_new_window()) {
@@ -590,9 +597,9 @@ var MyAppIcon = new Lang.Class({
             else
                 this.app.activate();
         }
-    },
+    }
 
-    _numberOverlay: function() {
+    _numberOverlay() {
         // Add label for a Hot-Key visual aid
         this._numberOverlayLabel = new St.Label();
         this._numberOverlayBin = new St.Bin({
@@ -606,9 +613,9 @@ var MyAppIcon = new Lang.Class({
 
         this._iconContainer.add_child(this._numberOverlayBin);
 
-    },
+    }
 
-    updateNumberOverlay: function() {
+    updateNumberOverlay() {
         // We apply an overall scale factor that might come from a HiDPI monitor.
         // Clutter dimensions are in physical pixels, but CSS measures are in logical
         // pixels, so make sure to consider the scale.
@@ -623,26 +630,26 @@ var MyAppIcon = new Lang.Class({
            'border-radius: ' + this.icon.iconSize + 'px;' +
            'width: ' + size + 'px; height: ' + size +'px;'
         );
-    },
+    }
 
-    setNumberOverlay: function(number) {
+    setNumberOverlay(number) {
         this._numberOverlayOrder = number;
         this._numberOverlayLabel.set_text(number.toString());
-    },
+    }
 
-    toggleNumberOverlay: function(activate) {
+    toggleNumberOverlay(activate) {
         if (activate && this._numberOverlayOrder > -1) {
             this.updateNumberOverlay();
             this._numberOverlayBin.show();
         }
         else
             this._numberOverlayBin.hide();
-    },
+    }
 
-    _minimizeWindow: function(param) {
+    _minimizeWindow(param) {
         // Param true make all app windows minimize
         let windows = this.getInterestingWindows();
-        let current_workspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
+        let current_workspace = global.workspace_manager.get_active_workspace();
         for (let i = 0; i < windows.length; i++) {
             let w = windows[i];
             if (w.get_workspace() == current_workspace && w.showing_on_its_workspace()) {
@@ -653,11 +660,11 @@ var MyAppIcon = new Lang.Class({
                     break;
             }
         }
-    },
+    }
 
     // By default only non minimized windows are activated.
     // This activates all windows in the current workspace.
-    _activateAllWindows: function() {
+    _activateAllWindows() {
         // First activate first window so workspace is switched if needed.
         // We don't do this if isolation is on!
         if (!this._dtdSettings.get_boolean('isolate-workspaces') &&
@@ -666,7 +673,7 @@ var MyAppIcon = new Lang.Class({
 
         // then activate all other app windows in the current workspace
         let windows = this.getInterestingWindows();
-        let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
+        let activeWorkspace = global.workspace_manager.get_active_workspace_index();
 
         if (windows.length <= 0)
             return;
@@ -679,16 +686,16 @@ var MyAppIcon = new Lang.Class({
                 activatedWindows++;
             }
         }
-    },
+    }
 
     //This closes all windows of the app.
-    closeAllWindows: function() {
+    closeAllWindows() {
         let windows = this.getInterestingWindows();
         for (let i = 0; i < windows.length; i++)
             windows[i].delete(global.get_current_time());
-    },
+    }
 
-    _cycleThroughWindows: function(reversed) {
+    _cycleThroughWindows(reversed) {
         // Store for a little amount of time last clicked app and its windows
         // since the order changes upon window interaction
         let MEMORY_TIME=3000;
@@ -725,9 +732,9 @@ var MyAppIcon = new Lang.Class({
         let window = recentlyClickedAppWindows[index];
 
         Main.activateWindow(window);
-    },
+    }
 
-    _resetRecentlyClickedApp: function() {
+    _resetRecentlyClickedApp() {
         if (recentlyClickedAppLoopId > 0)
             Mainloop.source_remove(recentlyClickedAppLoopId);
         recentlyClickedAppLoopId=0;
@@ -737,14 +744,14 @@ var MyAppIcon = new Lang.Class({
         recentlyClickedAppMonitor = -1;
 
         return false;
-    },
+    }
 
     // Filter out unnecessary windows, for instance
     // nautilus desktop window.
-    getInterestingWindows: function() {
+    getInterestingWindows() {
         return getInterestingWindows(this.app, this._dtdSettings, this.monitorIndex);
     }
-});
+};
 /**
  * Extend AppIconMenu
  *
@@ -755,17 +762,15 @@ var MyAppIcon = new Lang.Class({
  * - Add open windows thumbnails instead of list
  * - update menu when application windows change
  */
-const MyAppIconMenu = new Lang.Class({
-    Name: 'DashToDock.MyAppIconMenu',
-    Extends: AppDisplay.AppIconMenu,
+const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconMenu {
 
-    _init: function(source, settings) {
+    constructor(source, settings) {
         let side = Utils.getPosition(settings);
 
         // Damm it, there has to be a proper way of doing this...
         // As I can't call the parent parent constructor (?) passing the side
         // parameter, I overwite what I need later
-        this.parent(source);
+        super(source);
 
         // Change the initialized side where required.
         this._arrowSide = side;
@@ -773,9 +778,9 @@ const MyAppIconMenu = new Lang.Class({
         this._boxPointer._userArrowSide = side;
 
         this._dtdSettings = settings;
-    },
+    }
 
-    _redisplay: function() {
+    _redisplay() {
         this.removeAll();
 
         if (this._dtdSettings.get_boolean('show-windows-preview')) {
@@ -794,13 +799,13 @@ const MyAppIconMenu = new Lang.Class({
                 if (this._source.app.can_open_new_window() &&
                     actions.indexOf('new-window') == -1) {
                     this._newWindowMenuItem = this._appendMenuItem(_("New Window"));
-                    this._newWindowMenuItem.connect('activate', Lang.bind(this, function() {
+                    this._newWindowMenuItem.connect('activate', () => {
                         if (this._source.app.state == Shell.AppState.STOPPED)
                             this._source.animateLaunch();
 
                         this._source.app.open_new_window(-1);
                         this.emit('activate-window', null);
-                    }));
+                    });
                     this._appendSeparator();
                 }
 
@@ -809,22 +814,22 @@ const MyAppIconMenu = new Lang.Class({
                     this._source.app.state == Shell.AppState.STOPPED &&
                     actions.indexOf('activate-discrete-gpu') == -1) {
                     this._onDiscreteGpuMenuItem = this._appendMenuItem(_("Launch using Dedicated Graphics Card"));
-                    this._onDiscreteGpuMenuItem.connect('activate', Lang.bind(this, function() {
+                    this._onDiscreteGpuMenuItem.connect('activate', () => {
                         if (this._source.app.state == Shell.AppState.STOPPED)
                             this._source.animateLaunch();
 
                         this._source.app.launch(0, -1, true);
                         this.emit('activate-window', null);
-                    }));
+                    });
                 }
 
                 for (let i = 0; i < actions.length; i++) {
                     let action = actions[i];
                     let item = this._appendMenuItem(appInfo.get_action_name(action));
-                    item.connect('activate', Lang.bind(this, function(emitter, event) {
+                    item.connect('activate', (emitter, event) => {
                         this._source.app.launch_action(action, event.get_time(), -1);
                         this.emit('activate-window', null);
-                    }));
+                    });
                 }
 
                 let canFavorite = global.settings.is_writable('favorite-apps');
@@ -836,23 +841,23 @@ const MyAppIconMenu = new Lang.Class({
 
                     if (isFavorite) {
                         let item = this._appendMenuItem(_("Remove from Favorites"));
-                        item.connect('activate', Lang.bind(this, function() {
+                        item.connect('activate', () => {
                             let favs = AppFavorites.getAppFavorites();
                             favs.removeFavorite(this._source.app.get_id());
-                        }));
+                        });
                     } else {
                         let item = this._appendMenuItem(_("Add to Favorites"));
-                        item.connect('activate', Lang.bind(this, function() {
+                        item.connect('activate', () => {
                             let favs = AppFavorites.getAppFavorites();
                             favs.addFavorite(this._source.app.get_id());
-                        }));
+                        });
                     }
                 }
 
                 if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop')) {
                     this._appendSeparator();
                     let item = this._appendMenuItem(_("Show Details"));
-                    item.connect('activate', Lang.bind(this, function() {
+                    item.connect('activate', () => {
                         let id = this._source.app.get_id();
                         let args = GLib.Variant.new('(ss)', [id, '']);
                         Gio.DBus.get(Gio.BusType.SESSION, null,
@@ -866,27 +871,27 @@ const MyAppIconMenu = new Lang.Class({
                                          null, 0, -1, null, null);
                                 Main.overview.hide();
                             });
-                    }));
+                    });
                 }
             }
 
         } else {
-            this.parent();
+            super._redisplay();
         }
 
         // quit menu
         this._appendSeparator();
         this._quitfromDashMenuItem = this._appendMenuItem(_("Quit"));
-        this._quitfromDashMenuItem.connect('activate', Lang.bind(this, function() {
+        this._quitfromDashMenuItem.connect('activate', () => {
             this._source.closeAllWindows();
-        }));
+        });
 
         this.update();
-    },
+    }
 
     // update menu content when application windows change. This is desirable as actions
     // acting on windows (closing) are performed while the menu is shown.
-    update: function() {
+    update() {
 
       if(this._dtdSettings.get_boolean('show-windows-preview')){
 
@@ -932,19 +937,19 @@ const MyAppIconMenu = new Lang.Class({
           }
 
           // Update separators
-          this._getMenuItems().forEach(Lang.bind(this, this._updateSeparatorVisibility));
+          this._getMenuItems().forEach(this._updateSeparatorVisibility.bind(this));
       }
 
 
-    },
+    }
 
-    _populateAllWindowMenu: function(windows) {
+    _populateAllWindowMenu(windows) {
 
         this._allWindowsMenuItem.menu.removeAll();
 
             if (windows.length > 0) {
 
-                let activeWorkspace = Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace();
+                let activeWorkspace = global.workspace_manager.get_active_workspace();
                 let separatorShown =  windows[0].get_workspace() != activeWorkspace;
 
                 for (let i = 0; i < windows.length; i++) {
@@ -956,19 +961,19 @@ const MyAppIconMenu = new Lang.Class({
 
                     let item = new WindowPreview.WindowPreviewMenuItem(window);
                     this._allWindowsMenuItem.menu.addMenuItem(item);
-                    item.connect('activate', Lang.bind(this, function() {
+                    item.connect('activate', () => {
                         this.emit('activate-window', window);
-                    }));
+                    });
 
                     // This is to achieve a more gracefull transition when the last windows is closed.
-                    item.connect('destroy', Lang.bind(this, function() {
+                    item.connect('destroy', () => {
                         if(this._allWindowsMenuItem.menu._getMenuItems().length == 1) // It's still counting the item just going to be destroyed
                             this._allWindowsMenuItem.setSensitive(false);
-                    }));
+                    });
                 }
             }
-    },
-});
+    }
+};
 Signals.addSignalMethods(MyAppIconMenu.prototype);
 
 // Filter out unnecessary windows, for instance
@@ -982,7 +987,7 @@ function getInterestingWindows(app, settings, monitorIndex) {
     // that are not in the current workspace
     if (settings.get_boolean('isolate-workspaces'))
         windows = windows.filter(function(w) {
-            return w.get_workspace().index() == Utils.DisplayWrapper.getWorkspaceManager().get_active_workspace_index();
+            return w.get_workspace().index() == global.workspace_manager.get_active_workspace_index();
         });
 
     if (settings.get_boolean('isolate-monitors'))
@@ -1006,10 +1011,8 @@ function getInterestingWindows(app, settings, monitorIndex) {
  *
  */
 
- var ShowAppsIconWrapper = new Lang.Class({
-    Name: 'DashToDock.ShowAppsIconWrapper',
-
-    _init: function(settings) {
+var ShowAppsIconWrapper = class DashToDock_ShowAppsIconWrapper {
+    constructor(settings) {
         this._dtdSettings = settings;
         this.realShowAppsIcon = new Dash.ShowAppsIcon();
 
@@ -1027,15 +1030,15 @@ function getInterestingWindows(app, settings, monitorIndex) {
         this._onMenuPoppedDown = AppDisplay.AppIcon.prototype._onMenuPoppedDown;
 
         // No action on clicked (showing of the appsview is controlled elsewhere)
-        this._onClicked = Lang.bind(this, function(actor, button) {
+        this._onClicked = (actor, button) => {
             this._removeMenuTimeout();
-        });
+        };
 
-        this.actor.connect('leave-event', Lang.bind(this, this._onLeaveEvent));
-        this.actor.connect('button-press-event', Lang.bind(this, this._onButtonPress));
-        this.actor.connect('touch-event', Lang.bind(this, this._onTouchEvent));
-        this.actor.connect('clicked', Lang.bind(this, this._onClicked));
-        this.actor.connect('popup-menu', Lang.bind(this, this._onKeyboardPopupMenu));
+        this.actor.connect('leave-event', this._onLeaveEvent.bind(this));
+        this.actor.connect('button-press-event', this._onButtonPress.bind(this));
+        this.actor.connect('touch-event', this._onTouchEvent.bind(this));
+        this.actor.connect('clicked', this._onClicked.bind(this));
+        this.actor.connect('popup-menu', this._onKeyboardPopupMenu.bind(this));
 
         this._menu = null;
         this._menuManager = new PopupMenu.PopupMenuManager(this);
@@ -1043,21 +1046,21 @@ function getInterestingWindows(app, settings, monitorIndex) {
 
         this.realShowAppsIcon._dtdSettings = settings;
         this.realShowAppsIcon.showLabel = itemShowLabel;
-    },
+    }
 
-    popupMenu: function() {
+    popupMenu() {
         this._removeMenuTimeout();
         this.actor.fake_release();
 
         if (!this._menu) {
             this._menu = new MyShowAppsIconMenu(this, this._dtdSettings);
-            this._menu.connect('open-state-changed', Lang.bind(this, function(menu, isPoppedUp) {
+            this._menu.connect('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
-            }));
-            let id = Main.overview.connect('hiding', Lang.bind(this, function() {
+            });
+            let id = Main.overview.connect('hiding', () => {
                 this._menu.close();
-            }));
+            });
             this._menu.actor.connect('destroy', function() {
                 Main.overview.disconnect(id);
             });
@@ -1073,18 +1076,15 @@ function getInterestingWindows(app, settings, monitorIndex) {
 
         return false;
     }
-});
+};
 Signals.addSignalMethods(ShowAppsIconWrapper.prototype);
 
 
 /**
  * A menu for the showAppsIcon
  */
-const MyShowAppsIconMenu = new Lang.Class({
-    Name: 'DashToDock.ShowAppsIconMenu',
-    Extends: MyAppIconMenu,
-
-    _redisplay: function() {
+var MyShowAppsIconMenu = class DashToDock_MyShowAppsIconMenu extends MyAppIconMenu {
+    _redisplay() {
         this.removeAll();
 
         /* Translators: %s is "Settings", which is automatically translated. You
@@ -1096,7 +1096,7 @@ const MyShowAppsIconMenu = new Lang.Class({
             Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
         });
     }
-});
+};
 
 /**
  * This function is used for both extendShowAppsIcon and extendDashItemContainer
