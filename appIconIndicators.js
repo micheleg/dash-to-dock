@@ -803,8 +803,19 @@ const UnityIndicator = new Lang.Class({
 
         this._source._iconContainer.add_child(this._progressOverlayArea);
         let node = this._progressOverlayArea.get_theme_node();
-        this._progressbar_background = node.get_color('-progress-bar-background');
-        this._progressbar_border = node.get_color('-progress-bar-border');
+
+        let [hasColor, color] = node.lookup_color('-progress-bar-background', false);
+        if (hasColor)
+            this._progressbar_background = color
+        else
+            this._progressbar_background = Clutter.color_from_string('lightgrey')[1];
+
+        [hasColor, color] = node.lookup_color('-progress-bar-border', false);
+        if (hasColor)
+            this._progressbar_border = color;
+        else
+            this._progressbar_border = Clutter.color_from_string('lightgrey')[1];
+
         this._updateProgressOverlay();
     },
 

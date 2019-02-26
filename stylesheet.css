@@ -96,8 +96,8 @@
 }
 
 #dashtodockContainer.dashtodock .progress-bar {
-    -progress-bar-background: green;
-    -progress-bar-border: green;
+    /*-progress-bar-background: lightgrey;*/
+    /*-progress-bar-border: lightgrey;*/
 }
 
 /*
