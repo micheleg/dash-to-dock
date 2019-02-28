@@ -442,7 +442,8 @@ var Transparency = class DashToDock_Transparency {
     }
 
     _updateSolidStyle() {
-        if (this._dockIsNear()) {
+        let isNear = this._dockIsNear();
+        if (isNear) {
             this._actor.set_style(this._opaque_style);
             this._dockActor.remove_style_class_name('transparent');
             this._dockActor.add_style_class_name('opaque');
