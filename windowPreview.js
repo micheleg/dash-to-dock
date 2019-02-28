@@ -346,6 +346,7 @@ const WindowPreviewMenuItem = new Lang.Class({
         this.closeButton = new St.Button({ style_class: 'window-close',
                                           x_expand: true,
                                           y_expand: true});
+        this.closeButton.add_actor(new St.Icon({ icon_name: 'window-close-symbolic' }));
         this.closeButton.set_x_align(Clutter.ActorAlign.END);
         this.closeButton.set_y_align(Clutter.ActorAlign.START);
 
