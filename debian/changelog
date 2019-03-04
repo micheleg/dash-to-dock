@@ -1,3 +1,27 @@
+gnome-shell-extension-ubuntu-dock (64ubuntu5) disco; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * metadata: mark dash-to-dock as working only on 3.31+ versions
+  * dash-to-dock: rewrite classes using pure ES6 classes
+  * Remove usage of legacy Lang features
+  * Drop Convenience library
+  * docking: remove support for legacy tray
+  * utils: remove DisplayWrapper temporary workaround
+  * utils: use ES6 syntax to define _decimalToHex method
+  * appIcons: Add Focus or Previews click action
+  * theming: fix missing variable definition as per previous commit
+  * windowPreview: Use symbolic icon for close button
+  * d/schemas/10_ubuntu-dock.gschema.override: set focus-or-previews as default for click
+  * debian/gbp.conf: sign tags and use multimaint-merge in dch
+
+  [ Michele Gaio ]
+  * Remove all legacyTray code.
+  * Fix mixing of es6 class names with St names.
+  * AppIconIndicators: fix invalid dominant css color for certain icons.
+  * Remove the Adaptive transparency mode.
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 04 Mar 2019 18:02:16 +0100
+
 gnome-shell-extension-ubuntu-dock (64ubuntu4) disco; urgency=medium
 
   * Re-upload to disco, with a dependency on gnome-shell versions that this
