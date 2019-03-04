@@ -82,7 +82,6 @@ class DashToDock_DashSlideContainer extends St.Widget {
         }
 
         super._init(params);
-        this.name = this.constructor.name;
         this._child = null;
 
         // slide parameter: 1 = visible, 0 = hidden.
@@ -462,9 +461,6 @@ var DockedDash = class DashToDock {
 
         // Remove the dashSpacer
         this._dashSpacer.destroy();
-
-        // Restore legacyTray position
-        this._resetLegacyTray();
 
     }
 
@@ -1081,24 +1077,8 @@ var DockedDash = class DashToDock {
 
     // Set the dash at the correct depth in z
     _resetDepth() {
-        // Keep the dash below the modalDialogGroup and the legacyTray
-        if (Main.legacyTray && Main.legacyTray.actor)
-            Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.legacyTray.actor);
-        else
-            Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
-    }
-
-    _resetLegacyTray() {
-        // The legacyTray has been removed in GNOME Shell 3.26.
-        // Once we drop support for previous releases this fuction can be dropped too.
-        if (!Main.legacyTray)
-                return;
-        Main.legacyTray.actor.clear_constraints();
-        let constraint = new Layout.MonitorConstraint({
-            primary: true,
-            work_area: true
-        });
-        Main.legacyTray.actor.add_constraint(constraint);
+        // Keep the dash below the modalDialogGroup
+        Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
     }
 
     _updateStaticBox() {
