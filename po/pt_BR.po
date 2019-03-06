@@ -8,177 +8,175 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-04 12:35+0100\n"
-"PO-Revision-Date: 2017-04-16 23:10-0300\n"
-"Last-Translator: Fábio Nogueira <fnogueira@gnome.org>\n"
+"POT-Creation-Date: 2019-03-06 01:57-0600\n"
+"PO-Revision-Date: 2019-03-06 03:56-0600\n"
+"Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
 "Language-Team: Português do Brasil\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.2.1\n"
 
-#: prefs.js:113
+#: prefs.js:264
 msgid "Primary monitor"
 msgstr "Monitor primário"
 
-#: prefs.js:122 prefs.js:129
+#: prefs.js:273 prefs.js:280
 msgid "Secondary monitor "
 msgstr "Monitor secundário"
 
-#: prefs.js:154 Settings.ui.h:29
+#: prefs.js:305 Settings.ui.h:28
 msgid "Right"
 msgstr "Direita"
 
-#: prefs.js:155 Settings.ui.h:26
+#: prefs.js:306 Settings.ui.h:25
 msgid "Left"
 msgstr "Esquerda"
 
-#: prefs.js:205
+#: prefs.js:356
 msgid "Intelligent autohide customization"
 msgstr "Configuração da ocultação inteligente"
 
-#: prefs.js:212 prefs.js:393 prefs.js:450
+#: prefs.js:363 prefs.js:548 prefs.js:604
 msgid "Reset to defaults"
 msgstr "Restaurar o padrão"
 
-#: prefs.js:386
+#: prefs.js:541
 msgid "Show dock and application numbers"
 msgstr "Exibir o dock e os números dos aplicativos"
 
-#: prefs.js:443
+#: prefs.js:597
 msgid "Customize middle-click behavior"
 msgstr "Customizar o comportamento do clique do botão do meio"
 
-#: prefs.js:514
+#: prefs.js:680
 msgid "Customize running indicators"
 msgstr "Customizar os indicadores de execução"
 
-#: appIcons.js:804
+#: prefs.js:792
+msgid "Cutomize opacity"
+msgstr "Customizar opacidade"
+
+#: appIcons.js:790
 msgid "All Windows"
-msgstr "Todas as Janelas"
+msgstr "Todas as janelas"
+
+#. Translators: %s is "Settings", which is automatically translated. You
+#. can also translate the full message if this fits better your language.
+#: appIcons.js:1092
+#, javascript-format
+msgid "Dash to Dock %s"
+msgstr "%s do Dash to Dock"
 
 #: Settings.ui.h:1
-msgid "Customize indicator style"
-msgstr "Customizar o estilo do indicador"
-
-#: Settings.ui.h:2
-msgid "Color"
-msgstr "Cor"
-
-#: Settings.ui.h:3
-msgid "Border color"
-msgstr "Cor da borda"
-
-#: Settings.ui.h:4
-msgid "Border width"
-msgstr "Tamanho da borda"
-
-#: Settings.ui.h:5
-msgid "Number overlay"
-msgstr "Sobreposição de número"
-
-#: Settings.ui.h:6
-msgid ""
-"Temporarily show the application numbers over the icons, corresponding to "
-"the shortcut."
-msgstr ""
-"Mostrar temporariamente os números dos aplicativos sobre os ícones, "
-"correspondentes ao atalho."
-
-#: Settings.ui.h:7
-msgid "Show the dock if it is hidden"
-msgstr "Exibir o dock se este estiver oculto"
-
-#: Settings.ui.h:8
-msgid ""
-"If using autohide, the dock will appear for a short time when triggering the "
-"shortcut."
-msgstr ""
-"Se utilizar a ocultação, o dock será exibido por um curto período de tempo "
-"ao acionar o atalho."
-
-#: Settings.ui.h:9
-msgid "Shortcut for the options above"
-msgstr "Atalho para as opções acima"
-
-#: Settings.ui.h:10
-msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
-msgstr "Sintaxe: <Shift>, <Ctrl>, <Alt>, <Super>"
-
-#: Settings.ui.h:11
-msgid "Hide timeout (s)"
-msgstr "Ocultar tempo limite [s]"
-
-#: Settings.ui.h:12
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
 "Quando minimizar, o duplo clique minizará todas as janelas dos aplicativos"
 
-#: Settings.ui.h:13
+#: Settings.ui.h:2
 msgid "Shift+Click action"
 msgstr "Ação do Shift+Clique"
 
-#: Settings.ui.h:14
+#: Settings.ui.h:3
 msgid "Raise window"
 msgstr "Aumentar janela"
 
-#: Settings.ui.h:15
+#: Settings.ui.h:4
 msgid "Minimize window"
 msgstr "Minimizar janela"
 
-#: Settings.ui.h:16
+#: Settings.ui.h:5
 msgid "Launch new instance"
 msgstr "Iniciar nova instância"
 
-#: Settings.ui.h:17
+#: Settings.ui.h:6
 msgid "Cycle through windows"
 msgstr "Percorrer através das janelas"
 
-#: Settings.ui.h:18
+#: Settings.ui.h:7
+msgid "Minimize or overview"
+msgstr "Minimizar o visão geral"
+
+#: Settings.ui.h:8
+msgid "Show window previews"
+msgstr "Mostrar pré-visualizações das janelas"
+
+#: Settings.ui.h:9
+msgid "Minimize or show previews"
+msgstr "Minimizar o mostrar pré-visualizações"
+
+#: Settings.ui.h:10
+msgid "Focus or show previews"
+msgstr "Pôr em foco o pré-visualizar"
+
+#: Settings.ui.h:11
 msgid "Quit"
 msgstr "Sair"
 
-#: Settings.ui.h:19
+#: Settings.ui.h:12
 msgid "Behavior for Middle-Click."
 msgstr "Comportamento do Clique do botão do meio."
 
-#: Settings.ui.h:20
+#: Settings.ui.h:13
 msgid "Middle-Click action"
 msgstr "Ação do clique do botão do meio"
 
-#: Settings.ui.h:21
+#: Settings.ui.h:14
 msgid "Behavior for Shift+Middle-Click."
 msgstr "Comportamento para Shift + Clique do botão do meio."
 
-#: Settings.ui.h:22
+#: Settings.ui.h:15
 msgid "Shift+Middle-Click action"
 msgstr "Ação do Shift+Clique do botão do meio"
 
-#: Settings.ui.h:23
+#: Settings.ui.h:16
+msgid "Enable Unity7 like glossy backlit items"
+msgstr "Ativar retroiluminação estilo Unity 7 dos elementos"
+
+#: Settings.ui.h:17
+msgid "Use dominant color"
+msgstr "Usar cor dominante"
+
+#: Settings.ui.h:18
+msgid "Customize indicator style"
+msgstr "Customizar o estilo do indicador"
+
+#: Settings.ui.h:19
+msgid "Color"
+msgstr "Cor"
+
+#: Settings.ui.h:20
+msgid "Border color"
+msgstr "Cor da borda"
+
+#: Settings.ui.h:21
+msgid "Border width"
+msgstr "Tamanho da borda"
+
+#: Settings.ui.h:22
 msgid "Show the dock on"
 msgstr "Exibir o dock"
 
-#: Settings.ui.h:24
-#, fuzzy
+#: Settings.ui.h:23
 msgid "Show on all monitors."
-msgstr "Monitor secundário"
+msgstr "Mostrar em todos os monitores."
 
-#: Settings.ui.h:25
+#: Settings.ui.h:24
 msgid "Position on screen"
 msgstr "Posição na tela"
 
-#: Settings.ui.h:27
+#: Settings.ui.h:26
 msgid "Bottom"
 msgstr "Embaixo"
 
-#: Settings.ui.h:28
+#: Settings.ui.h:27
 msgid "Top"
 msgstr "Em cima"
 
-#: Settings.ui.h:30
+#: Settings.ui.h:29
 msgid ""
 "Hide the dock when it obstructs a window of the current application. More "
 "refined settings are available."
@@ -186,41 +184,45 @@ msgstr ""
 "Ocultar o dock quando o mesmo sobrepor a janela do aplicativo em uso. "
 "Definições mais aperfeiçoadas estão disponíveis."
 
-#: Settings.ui.h:31
+#: Settings.ui.h:30
 msgid "Intelligent autohide"
 msgstr "Ocultação inteligente"
 
-#: Settings.ui.h:32
+#: Settings.ui.h:31
 msgid "Dock size limit"
 msgstr "Tamanho limite do dock"
 
-#: Settings.ui.h:33
+#: Settings.ui.h:32
 msgid "Panel mode: extend to the screen edge"
 msgstr "Modo do painel: estender até a borda da tela"
 
-#: Settings.ui.h:34
+#: Settings.ui.h:33
 msgid "Icon size limit"
 msgstr "Tamanho limite do ícone"
 
-#: Settings.ui.h:35
+#: Settings.ui.h:34
 msgid "Fixed icon size: scroll to reveal other icons"
 msgstr "Tamanho do ícone fixo: use o scroll do mouse para revelar outro ícone"
 
-#: Settings.ui.h:36
+#: Settings.ui.h:35
 msgid "Position and size"
 msgstr "Posição e tamanho"
 
-#: Settings.ui.h:37
+#: Settings.ui.h:36
 msgid "Show favorite applications"
 msgstr "Mostrar aplicativos favoritos"
 
-#: Settings.ui.h:38
+#: Settings.ui.h:37
 msgid "Show running applications"
 msgstr "Mostrar aplicativos em execução"
 
-#: Settings.ui.h:39
+#: Settings.ui.h:38
 msgid "Isolate workspaces."
 msgstr "Isolar espaços de trabalho."
+
+#: Settings.ui.h:39
+msgid "Isolate monitors."
+msgstr "Isolar monitores."
 
 #: Settings.ui.h:40
 msgid "Show open windows previews."
@@ -275,31 +277,26 @@ msgid "Minimize"
 msgstr "Minimizar"
 
 #: Settings.ui.h:51
-#, fuzzy
-msgid "Minimize or overview"
-msgstr "Minimizar janela"
-
-#: Settings.ui.h:52
 msgid "Behaviour when scrolling on the icon of an application."
 msgstr "Comportamento ao rolar sobre o ícone de um aplicativo."
 
-#: Settings.ui.h:53
+#: Settings.ui.h:52
 msgid "Scroll action"
 msgstr "Ação da rolagem"
 
-#: Settings.ui.h:54
+#: Settings.ui.h:53
 msgid "Do nothing"
 msgstr "Não fazer nada"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:54
 msgid "Switch workspace"
 msgstr "Alternar espaço de trabalho"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:55
 msgid "Behavior"
 msgstr "Comportamento"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:56
 msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
@@ -307,71 +304,107 @@ msgstr ""
 "Algumas personalizações se destinam a integrar o dock com o tema padrão do "
 "GNOME. Alternativamente, as opções específicas podem ser ativadas abaixo."
 
-#: Settings.ui.h:58
+#: Settings.ui.h:57
 msgid "Use built-in theme"
 msgstr "Usar o tema do sistema"
 
-#: Settings.ui.h:59
+#: Settings.ui.h:58
 msgid "Save space reducing padding and border radius."
 msgstr "Economizar espaço reduzindo preenchimento e a borda arredondada"
 
-#: Settings.ui.h:60
+#: Settings.ui.h:59
 msgid "Shrink the dash"
 msgstr "Encolher o dash"
 
+#: Settings.ui.h:60
+msgid "Customize windows counter indicators"
+msgstr "Customizar indicadores de contagem de janelas"
+
 #: Settings.ui.h:61
-msgid "Show a dot for each windows of the application."
-msgstr "Mostrar um ponto para cada janela do aplicativo"
+msgid "Default"
+msgstr "Padrão"
 
 #: Settings.ui.h:62
-msgid "Show windows counter indicators"
-msgstr "Mostrar indicadores de contador de janelas"
+msgid "Dots"
+msgstr "Pontos"
 
 #: Settings.ui.h:63
+msgid "Squares"
+msgstr "Quadrados"
+
+#: Settings.ui.h:64
+msgid "Dashes"
+msgstr "Linhas"
+
+#: Settings.ui.h:65
+msgid "Segmented"
+msgstr "Segmentado"
+
+#: Settings.ui.h:66
+msgid "Solid"
+msgstr "Sólido"
+
+#: Settings.ui.h:67
+msgid "Ciliora"
+msgstr "Ciliora"
+
+#: Settings.ui.h:68
+msgid "Metro"
+msgstr "Metro"
+
+#: Settings.ui.h:69
 msgid "Set the background color for the dash."
 msgstr "Define a cor de fundo para o dash."
 
-#: Settings.ui.h:64
+#: Settings.ui.h:70
 msgid "Customize the dash color"
 msgstr "Customizar a cor do dash"
 
-#: Settings.ui.h:65
+#: Settings.ui.h:71
 msgid "Tune the dash background opacity."
 msgstr "Ajustar a opacidade do fundo do dash."
 
-#: Settings.ui.h:66
+#: Settings.ui.h:72
 msgid "Customize opacity"
 msgstr "Customizar opacidade"
 
-#: Settings.ui.h:67
+#: Settings.ui.h:73
+msgid "Fixed"
+msgstr "Fixo"
+
+#: Settings.ui.h:74
+msgid "Dynamic"
+msgstr "Dinâmico"
+
+#: Settings.ui.h:75
 msgid "Opacity"
 msgstr "Opacidade"
 
-#: Settings.ui.h:68
+#: Settings.ui.h:76
 msgid "Force straight corner\n"
 msgstr "Forçar canto reto\n"
 
-#: Settings.ui.h:70
+#: Settings.ui.h:78
 msgid "Appearance"
 msgstr "Aparência"
 
-#: Settings.ui.h:71
+#: Settings.ui.h:79
 msgid "version: "
 msgstr "versão:"
 
-#: Settings.ui.h:72
+#: Settings.ui.h:80
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "Mover o dash para fora da visão geral transformando-o em dock"
 
-#: Settings.ui.h:73
+#: Settings.ui.h:81
 msgid "Created by"
 msgstr "Criado por"
 
-#: Settings.ui.h:74
+#: Settings.ui.h:82
 msgid "Webpage"
 msgstr "Página Web"
 
-#: Settings.ui.h:75
+#: Settings.ui.h:83
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -382,174 +415,102 @@ msgstr ""
 "\">GNU General Public License, versão 2 ou posterior</a> para maiores "
 "detalhes.</span>"
 
-#: Settings.ui.h:77
+#: Settings.ui.h:85
 msgid "About"
 msgstr "Sobre"
 
-#: Settings.ui.h:78
+#: Settings.ui.h:86
+msgid "Customize minimum and maximum opacity values"
+msgstr "Customizar os valores mínimo e máximo da opacidade"
+
+#: Settings.ui.h:87
+msgid "Minimum opacity"
+msgstr "Opacidade mínima"
+
+#: Settings.ui.h:88
+msgid "Maximum opacity"
+msgstr "Opacidade máxima"
+
+#: Settings.ui.h:89
+msgid "Number overlay"
+msgstr "Sobreposição de número"
+
+#: Settings.ui.h:90
+msgid ""
+"Temporarily show the application numbers over the icons, corresponding to "
+"the shortcut."
+msgstr ""
+"Mostrar temporariamente os números dos aplicativos sobre os ícones, "
+"correspondentes ao atalho."
+
+#: Settings.ui.h:91
+msgid "Show the dock if it is hidden"
+msgstr "Exibir o dock se este estiver oculto"
+
+#: Settings.ui.h:92
+msgid ""
+"If using autohide, the dock will appear for a short time when triggering the "
+"shortcut."
+msgstr ""
+"Se utilizar a ocultação, o dock será exibido por um curto período de tempo "
+"ao acionar o atalho."
+
+#: Settings.ui.h:93
+msgid "Shortcut for the options above"
+msgstr "Atalho para as opções acima"
+
+#: Settings.ui.h:94
+msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
+msgstr "Sintaxe: <Shift>, <Ctrl>, <Alt>, <Super>"
+
+#: Settings.ui.h:95
+msgid "Hide timeout (s)"
+msgstr "Ocultar tempo limite [s]"
+
+#: Settings.ui.h:96
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "Mostrar o dock quando o mouse pairar sobre a tela."
 
-#: Settings.ui.h:79
+#: Settings.ui.h:97
 msgid "Autohide"
 msgstr "Ocultação"
 
-#: Settings.ui.h:80
+#: Settings.ui.h:98
 msgid "Push to show: require pressure to show the dock"
 msgstr "Empurrar para mostrar: requer pressão para mostrar o dock"
 
-#: Settings.ui.h:81
+#: Settings.ui.h:99
 msgid "Enable in fullscreen mode"
 msgstr "Habilitar modo tela cheia"
 
-#: Settings.ui.h:82
+#: Settings.ui.h:100
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Mostrar o dock quando nenhum aplicativo sobrepor o mesmo."
 
-#: Settings.ui.h:83
+#: Settings.ui.h:101
 msgid "Dodge windows"
 msgstr "Esconder janela"
 
-#: Settings.ui.h:84
+#: Settings.ui.h:102
 msgid "All windows"
 msgstr "Todas as janelas"
 
-#: Settings.ui.h:85
+#: Settings.ui.h:103
 msgid "Only focused application's windows"
 msgstr "Apenas janelas de aplicativos em foco"
 
-#: Settings.ui.h:86
+#: Settings.ui.h:104
 msgid "Only maximized windows"
 msgstr "Somente janelas maximizadas"
 
-#: Settings.ui.h:87
+#: Settings.ui.h:105
 msgid "Animation duration (s)"
 msgstr "Tempo da animação [s]"
 
-#: Settings.ui.h:88
-msgid "0.000"
-msgstr "0.000"
-
-#: Settings.ui.h:89
+#: Settings.ui.h:106
 msgid "Show timeout (s)"
 msgstr "Mostrar tempo limite [s]"
 
-#: Settings.ui.h:90
+#: Settings.ui.h:107
 msgid "Pressure threshold"
 msgstr "Limite de pressão"
-
-#~ msgid "New Window"
-#~ msgstr "Nova janela"
-
-#~ msgid "Launch using Dedicated Graphics Card"
-#~ msgstr "Inicia utilizando uma placa gráfica dedicada"
-
-#~ msgid "Remove from Favorites"
-#~ msgstr "Remover dos favoritos"
-
-#~ msgid "Add to Favorites"
-#~ msgstr "Adicionar aos favoritos"
-
-#~ msgid "Show Details"
-#~ msgstr "Exibir detalhes"
-
-#~ msgid "Windows"
-#~ msgstr "Janelas"
-
-#~ msgid "Settings"
-#~ msgstr "Configurações"
-
-#~ msgid "Dash"
-#~ msgstr "Dash"
-
-#~ msgid ""
-#~ "With fixed icon size, only the edge of the dock and the <i>Show "
-#~ "Applications</i> icon are active."
-#~ msgstr ""
-#~ "Com o tamanho do ícone fixo, somente a borda do dock e o ícone <i>Mostrar "
-#~ "aplicativos</i> são ativados."
-
-#~ msgid "Switch workspace by scrolling on the dock"
-#~ msgstr ""
-#~ "Trocar de área de trabalho quando usar o scroll do mouse sobre o dock"
-
-#~ msgid "Only consider windows of the focused application"
-#~ msgstr "Considere apenas janelas de aplicativos em uso."
-
-#~ msgid "Dock is fixed and always visible"
-#~ msgstr "O Dock está fixo e sempre visível"
-
-#~ msgid "Show delay [ms]"
-#~ msgstr "Mostrar delay [ms]"
-
-#~ msgid "Hide delay [ms]"
-#~ msgstr "Ocultar delay [ms]"
-
-#~ msgid "Application based intellihide"
-#~ msgstr "Ocultação inteligente por aplicação"
-
-#~ msgid "Show the dock on following monitor (if attached)"
-#~ msgstr "Mostrar o dock nos monitores abaixo (se anexados)"
-
-#~ msgid "Primary (default)"
-#~ msgstr "Primário (por padrão)"
-
-#~ msgid "1"
-#~ msgstr "1"
-
-#~ msgid "2"
-#~ msgstr "2"
-
-#~ msgid "3"
-#~ msgstr "3"
-
-#~ msgid "4"
-#~ msgstr "4"
-
-#~ msgid "Max height"
-#~ msgstr "Altura máxima"
-
-#~ msgid "Expand (experimental and buggy)"
-#~ msgstr "Expandir (experimental e bugada)"
-
-#~ msgid "Maximum icon size"
-#~ msgstr "Tamanho máximo dos ícones"
-
-#~ msgid "16"
-#~ msgstr "16"
-
-#~ msgid "24"
-#~ msgstr "24"
-
-#~ msgid "32"
-#~ msgstr "32"
-
-#~ msgid "48"
-#~ msgstr "48"
-
-#~ msgid "64"
-#~ msgstr "64"
-
-#~ msgid "Optional features"
-#~ msgstr "Recursos opcionais"
-
-#~ msgid "Only a 1px wide area close to the screen edge is active"
-#~ msgstr ""
-#~ "Somente uma área de 1px de largura na borda da tela quando estiver ativa"
-
-#~ msgid "All the area of the dock is active"
-#~ msgstr "Toda a área quando o dock estiver ativo"
-
-#~ msgid "Customize actions on mouse click"
-#~ msgstr "Alterar configurações do click do mouse"
-
-#~ msgid "Action on clicking on running app"
-#~ msgstr "Ações de clique em aplicações em execução"
-
-#~ msgid "Minimize window on shift+click (double click for all app windows)"
-#~ msgstr ""
-#~ "Minimizar a janela com shift+click (clique duplo para todas as janelas de "
-#~ "aplicação)"
-
-#~ msgid "Only when in autohide"
-#~ msgstr "Somente quando estiver em auto-esconder"
