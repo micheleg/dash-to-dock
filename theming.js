@@ -234,53 +234,51 @@ var ThemeManager = class DashToDock_ThemeManager {
         let newStyle = '';
         let position = Utils.getPosition(this._settings);
 
-        if (!this._settings.get_boolean('custom-theme-shrink')) {
-            // obtain theme border settings
-            let themeNode = this._dash._container.get_theme_node();
-            let borderColor = themeNode.get_border_color(St.Side.TOP);
-            let borderWidth = themeNode.get_border_width(St.Side.TOP);
-            let borderRadius = themeNode.get_border_radius(St.Corner.TOPRIGHT);
+        // obtain theme border settings
+        let themeNode = this._dash._container.get_theme_node();
+        let borderColor = themeNode.get_border_color(St.Side.TOP);
+        let borderWidth = themeNode.get_border_width(St.Side.TOP);
+        let borderRadius = themeNode.get_border_radius(St.Corner.TOPRIGHT);
 
-            // We're copying border and corner styles to left border and top-left
-            // corner, also removing bottom border and bottom-right corner styles
-            let borderInner = '';
-            let borderRadiusValue = '';
-            let borderMissingStyle = '';
+        // We're copying border and corner styles to left border and top-left
+        // corner, also removing bottom border and bottom-right corner styles
+        let borderInner = '';
+        let borderRadiusValue = '';
+        let borderMissingStyle = '';
 
-            if (this._rtl && (position != St.Side.RIGHT))
-                borderMissingStyle = 'border-right: ' + borderWidth + 'px solid ' +
-                       borderColor.to_string() + ';';
-            else if (!this._rtl && (position != St.Side.LEFT))
-                borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
-                       borderColor.to_string() + ';';
+        if (this._rtl && (position != St.Side.RIGHT))
+            borderMissingStyle = 'border-right: ' + borderWidth + 'px solid ' +
+                   borderColor.to_string() + ';';
+        else if (!this._rtl && (position != St.Side.LEFT))
+            borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
+                   borderColor.to_string() + ';';
 
-            switch (position) {
-            case St.Side.LEFT:
-                borderInner = 'border-left';
-                borderRadiusValue = '0 ' + borderRadius + 'px ' + borderRadius + 'px 0;';
-                break;
-            case St.Side.RIGHT:
-                borderInner = 'border-right';
-                borderRadiusValue = borderRadius + 'px 0 0 ' + borderRadius + 'px;';
-                break;
-            case St.Side.TOP:
-                borderInner = 'border-top';
-                borderRadiusValue = '0 0 ' + borderRadius + 'px ' + borderRadius + 'px;';
-                break;
-            case St.Side.BOTTOM:
-                borderInner = 'border-bottom';
-                borderRadiusValue = borderRadius + 'px ' + borderRadius + 'px 0 0;';
-                break;
-            }
-
-            newStyle = borderInner + ': none;' +
-                'border-radius: ' + borderRadiusValue +
-                borderMissingStyle;
-
-            // I do call set_style possibly twice so that only the background gets the transition.
-            // The transition-property css rules seems to be unsupported
-            this._dash._container.set_style(newStyle);
+        switch (position) {
+        case St.Side.LEFT:
+            borderInner = 'border-left';
+            borderRadiusValue = '0 ' + borderRadius + 'px ' + borderRadius + 'px 0;';
+            break;
+        case St.Side.RIGHT:
+            borderInner = 'border-right';
+            borderRadiusValue = borderRadius + 'px 0 0 ' + borderRadius + 'px;';
+            break;
+        case St.Side.TOP:
+            borderInner = 'border-top';
+            borderRadiusValue = '0 0 ' + borderRadius + 'px ' + borderRadius + 'px;';
+            break;
+        case St.Side.BOTTOM:
+            borderInner = 'border-bottom';
+            borderRadiusValue = borderRadius + 'px ' + borderRadius + 'px 0 0;';
+            break;
         }
+
+        newStyle = borderInner + ': none;' +
+            'border-radius: ' + borderRadiusValue +
+            borderMissingStyle;
+
+        // I do call set_style possibly twice so that only the background gets the transition.
+        // The transition-property css rules seems to be unsupported
+        this._dash._container.set_style(newStyle);
 
         // Customize background
         let fixedTransparency = this._settings.get_enum('transparency-mode') == TransparencyMode.FIXED;
