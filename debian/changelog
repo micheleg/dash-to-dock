@@ -1,3 +1,21 @@
+gnome-shell-extension-ubuntu-dock (64ubuntu6) disco; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * ubuntu-dock.gschema.override: apply settings to ubuntu sessions only
+  * ubuntu-dock.gschema.override: set intellihide to true by default
+  * ubuntu-dock.gschema.override: set transparency-mode to DEFAULT
+
+  [ Adolfo Jayme Barrientos ]
+  * Update Spanish and Portuguese translations
+
+  [ Serdar Sağlam ]
+  * Update Turkish translation.
+
+  [ Carlo Lobrano ]
+  * LauncherAPI: use CSS to style progress bar color
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 11 Apr 2019 11:33:24 -0500
+
 gnome-shell-extension-ubuntu-dock (64ubuntu5) disco; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
