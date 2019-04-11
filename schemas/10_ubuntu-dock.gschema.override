@@ -1,4 +1,4 @@
-[org.gnome.shell.extensions.dash-to-dock]
+[org.gnome.shell.extensions.dash-to-dock:ubuntu]
 dock-fixed=true
 intellihide-mode='ALL_WINDOWS'
 icon-size-fixed=true
