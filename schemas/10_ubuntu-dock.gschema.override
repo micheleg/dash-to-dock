@@ -1,6 +1,7 @@
 [org.gnome.shell.extensions.dash-to-dock:ubuntu]
 dock-fixed=true
 intellihide-mode='ALL_WINDOWS'
+intellihide=true
 icon-size-fixed=true
 custom-theme-shrink=true
 custom-theme-customize-running-dots=true
