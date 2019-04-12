@@ -1,3 +1,9 @@
+gnome-shell-extension-ubuntu-dock (64ubuntu7) disco; urgency=medium
+
+  * debian/rules: Ignore default stylesheet in ubuntu session (LP: #1824591)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 12 Apr 2019 17:03:43 -0500
+
 gnome-shell-extension-ubuntu-dock (64ubuntu6) disco; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
