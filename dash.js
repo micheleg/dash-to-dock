@@ -53,7 +53,8 @@ function extendDashItemContainer(dashItemContainer, settings) {
  * - handle horizontal dash
  */
 const MyDashActor = new Lang.Class({
-    Name: 'DashToDock.MyDashActor',
+    Name: 'DashToDock_MyDashActor',
+    Extends: St.Widget,
 
     _init: function(settings) {
         // a prefix is required to avoid conflicting with the parent class variable
@@ -68,24 +69,25 @@ const MyDashActor = new Lang.Class({
             orientation: this._isHorizontal ? Clutter.Orientation.HORIZONTAL : Clutter.Orientation.VERTICAL
         });
 
-        this.actor = new Shell.GenericContainer({
+        this.parent({
             name: 'dash',
             layout_manager: layout,
             clip_to_allocation: true
         });
-        this.actor.connect('get-preferred-width', Lang.bind(this, this._getPreferredWidth));
-        this.actor.connect('get-preferred-height', Lang.bind(this, this._getPreferredHeight));
-        this.actor.connect('allocate', Lang.bind(this, this._allocate));
 
-        this.actor._delegate = this;
+        // Since we are usually visible but not usually changing, make sure
+        // most repaint requests don't actually require us to repaint anything.
+        // This saves significant CPU when repainting the screen.
+        this.set_offscreen_redirect(Clutter.OffscreenRedirect.ALWAYS);
     },
 
-    _allocate: function(actor, box, flags) {
+    vfunc_allocate: function(box, flags) {
+        this.set_allocation(box, flags);
         let contentBox = box;
         let availWidth = contentBox.x2 - contentBox.x1;
         let availHeight = contentBox.y2 - contentBox.y1;
 
-        let [appIcons, showAppsButton] = actor.get_children();
+        let [appIcons, showAppsButton] = this.get_children();
         let [showAppsMinHeight, showAppsNatHeight] = showAppsButton.get_preferred_height(availWidth);
         let [showAppsMinWidth, showAppsNatWidth] = showAppsButton.get_preferred_width(availHeight);
 
@@ -123,37 +125,35 @@ const MyDashActor = new Lang.Class({
         }
     },
 
-    _getPreferredWidth: function(actor, forHeight, alloc) {
+    vfunc_get_preferred_width: function(forHeight) {
         // We want to request the natural height of all our children
         // as our natural height, so we chain up to StWidget (which
         // then calls BoxLayout), but we only request the showApps
         // button as the minimum size
 
-        let [, natWidth] = this.actor.layout_manager.get_preferred_width(this.actor, forHeight);
+        let [, natWidth] = this.layout_manager.get_preferred_width(this, forHeight);
 
-        let themeNode = this.actor.get_theme_node();
-        let [, showAppsButton] = this.actor.get_children();
+        let themeNode = this.get_theme_node();
+        let [, showAppsButton] = this.get_children();
         let [minWidth, ] = showAppsButton.get_preferred_height(forHeight);
 
-        alloc.min_size = minWidth;
-        alloc.natural_size = natWidth;
+        return [minWidth, natWidth];
 
     },
 
-    _getPreferredHeight: function(actor, forWidth, alloc) {
+    vfunc_get_preferred_height: function(forWidth) {
         // We want to request the natural height of all our children
         // as our natural height, so we chain up to StWidget (which
         // then calls BoxLayout), but we only request the showApps
         // button as the minimum size
 
-        let [, natHeight] = this.actor.layout_manager.get_preferred_height(this.actor, forWidth);
+        let [, natHeight] = this.layout_manager.get_preferred_height(this, forWidth);
 
-        let themeNode = this.actor.get_theme_node();
-        let [, showAppsButton] = this.actor.get_children();
+        let themeNode = this.get_theme_node();
+        let [, showAppsButton] = this.get_children();
         let [minHeight, ] = showAppsButton.get_preferred_height(forWidth);
 
-        alloc.min_size = minHeight;
-        alloc.natural_size = natHeight;
+        return [minHeight, natHeight];
     }
 });
 
@@ -203,8 +203,7 @@ var MyDash = new Lang.Class({
         this._ensureAppIconVisibilityTimeoutId = 0;
         this._labelShowing = false;
 
-        this._containerObject = new MyDashActor(settings);
-        this._container = this._containerObject.actor;
+        this._container = new MyDashActor(settings);
         this._scrollView = new St.ScrollView({
             name: 'dashtodockDashScrollview',
             hscrollbar_policy: Gtk.PolicyType.NEVER,
