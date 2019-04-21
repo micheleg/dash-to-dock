@@ -76,15 +76,15 @@ var FileManager1Client = class DashToDock_FileManager1Client {
      * sub-directories of that location.
      */
     getWindows(location) {
-        let ret = [];
+        let ret = new Set();
         for (let [k,v] of this._locationMap) {
             if (k.startsWith(location)) {
                 for (let l of v) {
-                    ret.push(l);
+                    ret.add(l);
                 }
             }
         }
-        return ret;
+        return Array.from(ret);
     }
 
     _onPropertyChanged(proxy, changed, invalidated) {
