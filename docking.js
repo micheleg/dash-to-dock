@@ -979,16 +979,17 @@ var DockedDash = GObject.registerClass({
                 direction = Meta.BarrierDirection.NEGATIVE_Y;
             }
 
-            this._barrier = new Meta.Barrier({
-                display: global.display,
-                x1: x1,
-                x2: x2,
-                y1: y1,
-                y2: y2,
-                directions: direction
-            });
-            if (this._pressureBarrier)
+            if (this._pressureBarrier && this._dockState == State.HIDDEN) {
+                this._barrier = new Meta.Barrier({
+                    display: global.display,
+                    x1: x1,
+                    x2: x2,
+                    y1: y1,
+                    y2: y2,
+                    directions: direction
+                });
                 this._pressureBarrier.addBarrier(this._barrier);
+            }
         }
     }
 
