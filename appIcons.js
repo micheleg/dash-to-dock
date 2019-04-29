@@ -880,11 +880,13 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
         }
 
         // quit menu
-        this._appendSeparator();
-        this._quitfromDashMenuItem = this._appendMenuItem(_("Quit"));
-        this._quitfromDashMenuItem.connect('activate', () => {
-            this._source.closeAllWindows();
-        });
+        if (this._source.app.state == Shell.AppState.RUNNING) {
+            this._appendSeparator();
+            this._quitfromDashMenuItem = this._appendMenuItem(_("Quit"));
+            this._quitfromDashMenuItem.connect('activate', () => {
+                this._source.closeAllWindows();
+            });
+        }
 
         this.update();
     }
