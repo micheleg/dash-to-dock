@@ -8,27 +8,23 @@
 #dashtodockContainer.shrink.left #dash,
 #dashtodockContainer.dashtodock.left #dash {
     border-left: 0px;
-    border-radius: 0px 9px 9px 0px;
 }
 
 
 #dashtodockContainer.shrink.right #dash,
 #dashtodockContainer.dashtodock.right #dash {
     border-right: 0px;
-    border-radius: 9px 0px 0px 9px;
 }
 
 
 #dashtodockContainer.shrink.top #dash,
 #dashtodockContainer.dashtodock.top #dash {
     border-top: 0px;
-    border-radius: 0px 0px 9px 9px;
 }
 
 #dashtodockContainer.shrink.bottom #dash,
 #dashtodockContainer.dashtodock.bottom #dash {
     border-bottom: 0px;
-    border-radius: 9px 9px 0px 0px;
 }
 
 #dashtodockContainer.straight-corner #dash,
@@ -93,6 +89,13 @@
 
 #dashtodockContainer.dashtodock #dash {
     background: #2e3436;
+}
+
+#dashtodockContainer.dashtodock .progress-bar {
+    /* Customization of the progress bar style, e.g.:
+      -progress-bar-background: rgba(0.8, 0.8, 0.8, 1);
+      -progress-bar-border: rgba(0.9, 0.9, 0.9, 1);
+    */
 }
 
 /*
