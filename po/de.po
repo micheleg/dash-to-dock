@@ -455,6 +455,10 @@ msgstr "Einblende-Verzögerung in s"
 msgid "Pressure threshold"
 msgstr "Stoßschwellwert"
 
+#: Settings.ui.h:91
+msgid "Isolate monitors."
+msgstr "Isoliere Monitore."
+
 #, fuzzy
 #~ msgid ""
 #~ "With fixed icon size, only the edge of the dock and the <i>Show "
