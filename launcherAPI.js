@@ -151,6 +151,7 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
 const launcherEntryDefaults = {
     count: 0,
     progress: 0,
+    urgent: false,
     quicklist: null,
     'count-visible': false,
     'progress-visible': false,

@@ -75,13 +75,14 @@ let recentlyClickedAppMonitor = -1;
 var MyAppIcon = GObject.registerClass(
 class MyAppIcon extends Dash.DashIcon {
     // settings are required inside.
-    _init(remoteModel, app, monitorIndex) {
+    _init(remoteModel, app, monitorIndex, iconAnimator) {
         super._init(app);
 
         // a prefix is required to avoid conflicting with the parent class variable
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this.remoteModel = remoteModel;
+        this.iconAnimator = iconAnimator;
         this._indicator = null;
 
         let appInfo = app.get_app_info();

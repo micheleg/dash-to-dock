@@ -683,6 +683,10 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
             (sender, { progress, progress_visible }) =>
                 this.setProgress(progress_visible ? progress : -1)
         ], [
+            remoteEntry,
+            'urgent-changed',
+            (sender, { urgent }) => this.setUrgent(urgent)
+        ], [
             St.ThemeContext.get_for_stage(global.stage),
             'changed',
             this.updateNotificationBadgeStyle.bind(this)
@@ -691,6 +695,8 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
             'notify::size',
             this.updateNotificationBadgeStyle.bind(this)
         ]);
+
+        this._isUrgent = false;
     }
 
     updateNotificationBadgeStyle() {
@@ -856,6 +862,23 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         } else {
             this._progress = Math.min(progress, 1.0);
             this._showProgressOverlay();
+        }
+    }
+
+    setUrgent(urgent) {
+        const icon = this._source.icon._iconBin;
+        if (urgent) {
+            if (!this._isUrgent) {
+                icon.set_pivot_point(0.5, 0.5);
+                this._source.iconAnimator.addAnimation(icon, 'dance');
+                this._isUrgent = true;
+            }
+        } else {
+            if (this._isUrgent) {
+                this._source.iconAnimator.removeAnimation(icon, 'dance');
+                this._isUrgent = false;
+            }
+            icon.rotation_angle_z = 0;
         }
     }
 }

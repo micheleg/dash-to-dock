@@ -216,8 +216,10 @@ var DockedDash = GObject.registerClass({
         this._dockDwellUserTime = 0;
         this._dockDwellTimeoutId = 0
 
+        this._iconAnimator = new IconAnimator();
+
         // Create a new dash object
-        this.dash = new MyDash.MyDash(this._remoteModel, this._monitorIndex);
+        this.dash = new MyDash.MyDash(this._remoteModel, this._monitorIndex, this._iconAnimator);
 
         if (Main.overview.isDummy || !settings.get_boolean('show-show-apps-button'))
             this.dash.hideShowAppsButton();
@@ -450,6 +452,8 @@ var DockedDash = GObject.registerClass({
 
         // Remove the dashSpacer
         this._dashSpacer.destroy();
+
+        this._iconAnimator.destroy();
     }
 
     _bindSettingsChanges() {
@@ -704,6 +708,7 @@ var DockedDash = GObject.registerClass({
     _animateIn(time, delay) {
         this._dockState = State.SHOWING;
         delete this._delayedHide;
+        this._iconAnimator.start();
 
         this._slider.ease_property('slidex', 1, {
             duration: time * 1000,
@@ -740,6 +745,7 @@ var DockedDash = GObject.registerClass({
                 if (this._removeBarrierTimeoutId > 0)
                     GLib.source_remove(this._removeBarrierTimeoutId);
                 this._updateBarrier();
+                this._iconAnimator.pause();
             }
         });
     }
@@ -1989,3 +1995,66 @@ var DockManager = class DashToDock_DockManager {
     }
 };
 Signals.addSignalMethods(DockManager.prototype);
+
+// This class drives long-running icon animations, to keep them running in sync
+// with each other, and to save CPU by pausing them when the dock is hidden.
+var IconAnimator = class DashToDock_IconAnimator {
+    constructor() {
+        this._count = 0;
+        this._started = false;
+        this._animations = {
+            dance: [],
+        };
+        this._timeline = new Clutter.Timeline({
+            duration: 3000,
+            repeat_count: -1,
+        });
+        this._timeline.connect('new-frame', () => {
+            const progress = this._timeline.get_progress();
+            const danceRotation = progress < 1/6 ? 15*Math.sin(progress*24*Math.PI) : 0;
+            const dancers = this._animations.dance;
+            for (let i = 0, iMax = dancers.length; i < iMax; i++) {
+                dancers[i].rotation_angle_z = danceRotation;
+            }
+        });
+    }
+
+    destroy() {
+        this._timeline.stop();
+        this._timeline = null;
+        this._animations = null;
+    }
+
+    pause() {
+        if (this._started && this._count > 0) {
+            this._timeline.stop();
+        }
+        this._started = false;
+    }
+
+    start() {
+        if (!this._started && this._count > 0) {
+            this._timeline.start();
+        }
+        this._started = true;
+    }
+
+    addAnimation(target, name) {
+        this._animations[name].push(target);
+        if (this._started && this._count === 0) {
+            this._timeline.start();
+        }
+        this._count++;
+    }
+
+    removeAnimation(target, name) {
+        const index = this._animations[name].indexOf(target);
+        if (index >= 0) {
+            this._animations[name].splice(index, 1);
+            this._count--;
+            if (this._started && this._count === 0) {
+                this._timeline.stop();
+            }
+        }
+    }
+};
