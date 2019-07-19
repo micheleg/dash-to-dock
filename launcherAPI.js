@@ -112,7 +112,35 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
             remoteMap.set(appId, remote = Object.assign({}, launcherEntryDefaults));
         }
         for (const name in properties) {
-            remote[name] = properties[name].unpack();
+            if (name === 'quicklist') {
+                const quicklistPath = properties[name].unpack();
+                if (quicklistPath && (!remote._quicklistMenuClient || remote._quicklistMenuClient.dbus_object !== quicklistPath)) {
+                    remote.quicklist = null;
+                    let menuClient = remote._quicklistMenuClient;
+                    if (menuClient) {
+                        menuClient.dbus_object = quicklistPath;
+                    } else {
+                        // This property should not be enumerable
+                        Object.defineProperty(remote, '_quicklistMenuClient', {
+                            writable: true,
+                            value: menuClient = new Dbusmenu.Client({ dbus_name: senderName, dbus_object: quicklistPath }),
+                        });
+                    }
+                    const handler = () => {
+                        const root = menuClient.get_root();
+                        if (remote.quicklist !== root) {
+                            remote.quicklist = root;
+                            if (sourceStack.isTop(remote)) {
+                                sourceStack.target.quicklist = root;
+                                sourceStack.target._emitChangedEvents(['quicklist']);
+                            }
+                        }
+                    };
+                    menuClient.connect(Dbusmenu.CLIENT_SIGNAL_ROOT_CHANGED, handler);
+                }
+            } else {
+                remote[name] = properties[name].unpack();
+            }
         }
 
         const sourceStack = this._lookupStackById(appId);
@@ -123,6 +151,7 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
 const launcherEntryDefaults = {
     count: 0,
     progress: 0,
+    quicklist: null,
     'count-visible': false,
     'progress-visible': false,
 };

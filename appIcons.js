@@ -32,6 +32,7 @@ const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
 const AppIconIndicators = Me.imports.appIconIndicators;
+const DbusmenuUtils = Me.imports.dbusmenuUtils;
 
 let tracker = Shell.WindowTracker.get_default();
 
@@ -293,7 +294,7 @@ class MyAppIcon extends Dash.DashIcon {
         this._draggable.fakeRelease();
 
         if (!this._menu) {
-            this._menu = new MyAppIconMenu(this);
+            this._menu = new MyAppIconMenu(this, this.remoteModel);
             this._menu.connect('activate-window', (menu, window) => {
                 this.activateWindow(window);
             });
@@ -768,7 +769,7 @@ class MyAppIcon extends Dash.DashIcon {
  */
 const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconMenu {
 
-    constructor(source) {
+    constructor(source, remoteModel) {
         let side = Utils.getPosition();
 
         // Damm it, there has to be a proper way of doing this...
@@ -780,6 +781,33 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
         this._arrowSide = side;
         this._boxPointer._arrowSide = side;
         this._boxPointer._userArrowSide = side;
+
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
+
+        if (remoteModel) {
+            const [onQuicklist, onDynamicSection] = Utils.splitHandler((sender, { quicklist }, dynamicSection) => {
+                dynamicSection.removeAll();
+                if (quicklist) {
+                    quicklist.get_children().forEach(remoteItem =>
+                        dynamicSection.addMenuItem(DbusmenuUtils.makePopupMenuItem(remoteItem, false)));
+                }
+            });
+
+            this._signalsHandler.add([
+                remoteModel.lookupById(this._source.app.id),
+                'quicklist-changed',
+                onQuicklist
+            ], [
+                this,
+                'dynamic-section-changed',
+                onDynamicSection
+            ]);
+        }
+    }
+
+    destroy() {
+        this._signalsHandler.destroy();
+        super.destroy();
     }
 
     _redisplay() {
@@ -891,6 +919,22 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                 super._redisplay();
         }
 
+        // dynamic menu
+        const items = this._getMenuItems();
+        let i = items.length;
+        if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop')) {
+            i -= 2;
+        }
+        if (global.settings.is_writable('favorite-apps')) {
+            i -= 2;
+        }
+        if (i < 0) {
+            i = 0;
+        }
+        const dynamicSection = new PopupMenu.PopupMenuSection();
+        this.addMenuItem(dynamicSection, i);
+        this.emit('dynamic-section-changed', dynamicSection);
+
         // quit menu
         this._appendSeparator();
         this._quitfromDashMenuItem = this._appendMenuItem(_('Quit'));
@@ -950,7 +994,11 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
       }
 
       // Update separators
-      this._getMenuItems().forEach(this._updateSeparatorVisibility.bind(this));
+      this._getMenuItems().forEach(item => {
+          if ('label' in item) {
+              this._updateSeparatorVisibility(item);
+          }
+      });
     }
 
     _populateAllWindowMenu(windows) {
