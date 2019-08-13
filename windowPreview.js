@@ -6,6 +6,7 @@
  */
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
+const GObject = imports.gi.GObject;
 const St = imports.gi.St;
 const Mainloop = imports.mainloop;
 const Main = imports.ui.main;
@@ -313,18 +314,18 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
     }
 };
 
-var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
-
-    constructor(window, params) {
-        super(params);
+var WindowPreviewMenuItem = GObject.registerClass(
+class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
+    _init(window, params) {
+        super._init(params);
 
         this._window = window;
         this._destroyId = 0;
         this._windowAddedId = 0;
 
         // We don't want this: it adds spacing on the left of the item.
-        this.actor.remove_child(this._ornamentLabel);
-        this.actor.add_style_class_name('dashtodock-app-well-preview-menu-item');
+        this.remove_child(this._ornamentLabel);
+        this.add_style_class_name('dashtodock-app-well-preview-menu-item');
 
         this._cloneBin = new St.Bin();
         this._cloneBin.set_size(PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT);
@@ -363,16 +364,12 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
                                      x_expand:true });
         box.add(overlayGroup);
         box.add(labelBin);
-        this.actor.add_actor(box);
+        this.add_actor(box);
 
-        this.actor.connect('enter-event',
-                                  this._onEnter.bind(this));
-        this.actor.connect('leave-event',
-                                  this._onLeave.bind(this));
-        this.actor.connect('key-focus-in',
-                                  this._onEnter.bind(this));
-        this.actor.connect('key-focus-out',
-                                  this._onLeave.bind(this));
+        this.connect('enter-event', this._onEnter.bind(this));
+        this.connect('leave-event', this._onLeave.bind(this));
+        this.connect('key-focus-in', this._onEnter.bind(this));
+        this.connect('key-focus-out', this._onLeave.bind(this));
 
         this._cloneTexture(window);
 
@@ -386,14 +383,15 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
         // the compositor finds out about them...
         // Moreover sometimes they return an empty texture, thus as a workarounf also check for it size
         if (!mutterWindow || !mutterWindow.get_texture() || !mutterWindow.get_texture().get_size()[0]) {
-            let id = Mainloop.idle_add(() => {
+            this._cloneTextureId = Mainloop.idle_add(() => {
                 // Check if there's still a point in getting the texture,
                 // otherwise this could go on indefinitely
-                if (this.actor && metaWin.get_workspace())
+                if (metaWin.get_workspace())
                     this._cloneTexture(metaWin);
+                this._cloneTextureId = 0;
                 return GLib.SOURCE_REMOVE;
             });
-            GLib.Source.set_name_by_id(id, '[dash-to-dock] this._cloneTexture');
+            GLib.Source.set_name_by_id(this._cloneTextureId, '[dash-to-dock] this._cloneTexture');
             return;
         }
 
@@ -462,8 +460,9 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
 
             // use an idle handler to avoid mapping problems -
             // see comment in Workspace._windowAdded
+            let activationEvent = Clutter.get_current_event();
             let id = Mainloop.idle_add(() => {
-                this.emit('activate');
+                this.emit('activate', activationEvent);
                 return GLib.SOURCE_REMOVE;
             });
             GLib.Source.set_name_by_id(id, '[dash-to-dock] this.emit');
@@ -519,13 +518,13 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
     }
 
     show(animate) {
-        let fullWidth = this.actor.get_width();
+        let fullWidth = this.get_width();
 
-        this.actor.opacity = 0;
-        this.actor.set_width(0);
+        this.opacity = 0;
+        this.set_width(0);
 
         let time = animate ? 0.25 : 0;
-        Tweener.addTween(this.actor,
+        Tweener.addTween(this,
                          { opacity: 255,
                            width: fullWidth,
                            time: time,
@@ -534,19 +533,19 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
     }
 
     _animateOutAndDestroy() {
-        Tweener.addTween(this.actor,
+        Tweener.addTween(this,
                          { opacity: 0,
                            time: 0.25,
                          });
 
-        Tweener.addTween(this.actor,
+        Tweener.addTween(this,
                          { height: 0,
                            width: 0,
                            time: 0.25,
                            delay: 0.25,
                            onCompleteScope: this,
                            onComplete() {
-                              this.actor.destroy();
+                              this.destroy();
                            }
                          });
     }
@@ -558,6 +557,11 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
 
     _onDestroy() {
         super._onDestroy();
+
+        if (this._cloneTextureId) {
+            GLib.source_remove(this._cloneTextureId);
+            this._cloneTextureId = 0;
+        }
 
         if (this._windowAddedId > 0) {
             this._workspace.disconnect(this._windowAddedId);
@@ -574,5 +578,4 @@ var WindowPreviewMenuItem = class DashToDock_WindowPreviewMenuItem extends Popup
             this._windowTitleId = 0;
         }
     }
-};
-
+});
