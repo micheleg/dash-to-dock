@@ -535,7 +535,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
 
     _windowPreviews() {
         if (!this._previewMenu) {
-            this._previewMenuManager = new PopupMenu.PopupMenuManager(this);
+            this._previewMenuManager = new PopupMenu.PopupMenuManager(this.actor);
 
             this._previewMenu = new WindowPreview.WindowPreviewMenu(this, this._dtdSettings);
 
@@ -1042,7 +1042,7 @@ var ShowAppsIconWrapper = class DashToDock_ShowAppsIconWrapper {
         this.actor.connect('popup-menu', this._onKeyboardPopupMenu.bind(this));
 
         this._menu = null;
-        this._menuManager = new PopupMenu.PopupMenuManager(this);
+        this._menuManager = new PopupMenu.PopupMenuManager(this.actor);
         this._menuTimeoutId = 0;
 
         this.realShowAppsIcon._dtdSettings = settings;
