@@ -1015,6 +1015,7 @@ var ShowAppsIconWrapper = class DashToDock_ShowAppsIconWrapper {
     constructor(settings) {
         this._dtdSettings = settings;
         this.realShowAppsIcon = new Dash.ShowAppsIcon();
+        this.realShowAppsIcon.show();
 
         /* the variable equivalent to toggleButton has a different name in the appIcon class
         (actor): duplicate reference to easily reuse appIcon methods */
