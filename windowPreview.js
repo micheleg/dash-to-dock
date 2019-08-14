@@ -505,7 +505,7 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             this.closeButton.show();
             Tweener.addTween(this.closeButton,
                              { opacity: 255,
-                               time: Workspace.CLOSE_BUTTON_FADE_TIME,
+                               time: Workspace.WINDOW_OVERLAY_FADE_TIME / 1000,
                                transition: 'easeOutQuad' });
         }
     }
@@ -513,7 +513,7 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     _hideCloseButton() {
         Tweener.addTween(this.closeButton,
                          { opacity: 0,
-                           time: Workspace.CLOSE_BUTTON_FADE_TIME,
+                           time: Workspace.WINDOW_OVERLAY_FADE_TIME / 1000,
                            transition: 'easeInQuad' });
     }
 

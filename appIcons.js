@@ -35,7 +35,7 @@ const AppIconIndicators = Me.imports.appIconIndicators;
 
 let tracker = Shell.WindowTracker.get_default();
 
-let DASH_ITEM_LABEL_SHOW_TIME = Dash.DASH_ITEM_LABEL_SHOW_TIME;
+let DASH_ITEM_LABEL_SHOW_TIME = Dash.DASH_ITEM_LABEL_SHOW_TIME / 1000;
 
 const clickAction = {
     SKIP: 0,
@@ -1166,7 +1166,7 @@ function itemShowLabel()  {
     this.label.set_position(x, y);
     Tweener.addTween(this.label, {
         opacity: 255,
-        time: DASH_ITEM_LABEL_SHOW_TIME,
+        time: DASH_ITEM_LABEL_SHOW_TIME / 1000,
         transition: 'easeOutQuad',
     });
 }

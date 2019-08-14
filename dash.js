@@ -26,9 +26,9 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const AppIcons = Me.imports.appIcons;
 
-let DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
-let DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME;
-let DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
+const DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME / 1000;
+const DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME / 1000;
+const DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT / 1000;
 
 /**
  * Extend DashItemContainer
@@ -1155,7 +1155,7 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
 
     if (vvalue !== vvalue0) {
         Tweener.addTween(vadjustment, { value: vvalue,
-            time: Util.SCROLL_TIME,
+            time: Util.SCROLL_TIME / 1000,
             transition: 'easeOutQuad'
         });
     }
@@ -1163,7 +1163,7 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
     if (hvalue !== hvalue0) {
         Tweener.addTween(hadjustment,
                          { value: hvalue,
-                           time: Util.SCROLL_TIME,
+                           time: Util.SCROLL_TIME / 1000,
                            transition: 'easeOutQuad' });
     }
 
