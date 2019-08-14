@@ -36,13 +36,20 @@ const DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT / 1000;
  * - Pass settings to the constructor
  * - set label position based on dash orientation
  *
- *  I can't subclass the original object because of this: https://bugzilla.gnome.org/show_bug.cgi?id=688973.
- *  thus use this ugly pattern.
  */
-function extendDashItemContainer(dashItemContainer, settings) {
-    dashItemContainer._dtdSettings = settings;
-    dashItemContainer.showLabel = AppIcons.itemShowLabel;
-}
+let MyDashItemContainer = GObject.registerClass(
+class DashToDock_MyDashItemContainer extends Dash.DashItemContainer {
+
+    _init(settings) {
+        this._dtdSettings = settings;
+
+        super._init();
+    }
+
+    showLabel() {
+        return AppIcons.itemShowLabel.call(this);
+    }
+});
 
 /**
  * This class is a fork of the upstream DashActor class (ui.dash.js)
@@ -458,9 +465,7 @@ var MyDash = GObject.registerClass({
             this._itemMenuStateChanged(item, opened);
         });
 
-        let item = new Dash.DashItemContainer();
-
-        extendDashItemContainer(item, this._dtdSettings);
+        let item = new MyDashItemContainer(this._dtdSettings);
         item.setChild(appIcon.actor);
 
         appIcon.actor.connect('notify::hover', () => {
