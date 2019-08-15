@@ -179,9 +179,14 @@ class DashToDock_DashSlideContainer extends St.Widget {
     }
 });
 
-var DockedDash = class DashToDock {
+var DockedDash = GObject.registerClass({
+    Signals: {
+        'showing': {},
+        'hiding': {},
+    }
+}, class DashToDock extends St.Bin {
 
-    constructor(settings, remoteModel, monitorIndex) {
+    _init(settings, remoteModel, monitorIndex) {
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
         // Load settings
@@ -241,14 +246,14 @@ var DockedDash = class DashToDock {
 
         let positionStyleClass = ['top', 'right', 'bottom', 'left'];
         // This is the centering actor
-        this.actor = new St.Bin({
+        super._init({
             name: 'dashtodockContainer',
             reactive: false,
             style_class: positionStyleClass[this._position],
             x_align: this._isHorizontal?St.Align.MIDDLE:St.Align.START,
             y_align: this._isHorizontal?St.Align.START:St.Align.MIDDLE
         });
-        this.actor._delegate = this;
+        this._delegate = this;
 
         // This is the sliding actor whose allocation is to be tracked for input regions
         this._slider = new DashSlideContainer({
@@ -264,12 +269,12 @@ var DockedDash = class DashToDock {
         });
         this._box.connect('notify::hover', this._hoverChanged.bind(this));
 
-        // Create and apply height constraint to the dash. It's controlled by this.actor height
+        // Create and apply height constraint to the dash. It's controlled by this.height
         this.constrainSize = new Clutter.BindConstraint({
-            source: this.actor,
+            source: this,
             coordinate: this._isHorizontal?Clutter.BindCoordinate.WIDTH:Clutter.BindCoordinate.HEIGHT
         });
-        this.dash.actor.add_constraint(this.constrainSize);
+        this.dash.add_constraint(this.constrainSize);
 
         this._signalsHandler.add([
             Main.overview,
@@ -347,8 +352,8 @@ var DockedDash = class DashToDock {
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
         // anymore an update of the input regions. Force the update manually.
-        this.actor.connect('notify::allocation',
-                                              Main.layoutManager._queueUpdateRegions.bind(Main.layoutManager));
+        this.connect('notify::allocation',
+                     Main.layoutManager._queueUpdateRegions.bind(Main.layoutManager));
 
         this.dash._container.connect('allocation-changed', this._updateStaticBox.bind(this));
         this._slider.connect(this._isHorizontal ? 'notify::x' : 'notify::y', this._updateStaticBox.bind(this));
@@ -362,7 +367,7 @@ var DockedDash = class DashToDock {
          // Delay operations that require the shell to be fully loaded and with
          // user theme applied.
 
-        this._paintId = this.actor.connect('paint', this._initialize.bind(this));
+        this._paintId = this.connect('paint', this._initialize.bind(this));
 
         // Manage the  which is used to reserve space in the overview for the dock
         // Add and additional dashSpacer positioned according to the dash positioning.
@@ -380,17 +385,17 @@ var DockedDash = class DashToDock {
             Main.overview._overview.insert_child_at_index(this._dashSpacer, -1);
 
         // Add dash container actor and the container to the Chrome.
-        this.actor.set_child(this._slider);
+        this.set_child(this._slider);
         this._slider.add_child(this._box);
-        this._box.add_actor(this.dash.actor);
+        this._box.add_actor(this.dash);
 
         // Add aligning container without tracking it for input region
-        Main.uiGroup.add_child(this.actor);
+        Main.uiGroup.add_child(this);
 
         if (this._settings.get_boolean('dock-fixed')) {
             // Note: tracking the fullscreen directly on the slider actor causes some hiccups when fullscreening
             // windows of certain applications
-            Main.layoutManager._trackActor(this.actor, {affectsInputRegion: false, trackFullscreen: true});
+            Main.layoutManager._trackActor(this, {affectsInputRegion: false, trackFullscreen: true});
             Main.layoutManager._trackActor(this._slider, {affectsStruts: true});
         }
         else
@@ -399,11 +404,13 @@ var DockedDash = class DashToDock {
         // Set initial position
         this._resetDepth();
         this._resetPosition();
+
+        this.connect('destroy', this._onDestroy.bind(this));
     }
 
     _initialize() {
         if (this._paintId > 0) {
-            this.actor.disconnect(this._paintId);
+            this.disconnect(this._paintId);
             this._paintId=0;
         }
 
@@ -432,7 +439,7 @@ var DockedDash = class DashToDock {
         this._setupDockDwellIfNeeded();
     }
 
-    destroy() {
+    _onDestroy() {
         // Disconnect global signals
         this._signalsHandler.destroy();
         // The dash, intellihide and themeManager have global signals as well internally
@@ -441,10 +448,6 @@ var DockedDash = class DashToDock {
         this._themeManager.destroy();
 
         this._injectionsHandler.destroy();
-
-        // Destroy main clutter actor: this should be sufficient removing it and
-        // destroying  all its children
-        this.actor.destroy();
 
         // Remove barrier timeout
         if (this._removeBarrierTimeoutId > 0)
@@ -461,7 +464,6 @@ var DockedDash = class DashToDock {
 
         // Remove the dashSpacer
         this._dashSpacer.destroy();
-
     }
 
     _bindSettingsChanges() {
@@ -503,12 +505,12 @@ var DockedDash = class DashToDock {
             'changed::dock-fixed',
             () => {
                     if (this._settings.get_boolean('dock-fixed')) {
-                        Main.layoutManager._untrackActor(this.actor);
-                        Main.layoutManager._trackActor(this.actor, {affectsInputRegion: false, trackFullscreen: true});
+                        Main.layoutManager._untrackActor(this);
+                        Main.layoutManager._trackActor(this, {affectsInputRegion: false, trackFullscreen: true});
                         Main.layoutManager._untrackActor(this._slider);
                         Main.layoutManager._trackActor(this._slider, {affectsStruts: true});
                     } else {
-                        Main.layoutManager._untrackActor(this.actor);
+                        Main.layoutManager._untrackActor(this);
                         Main.layoutManager._untrackActor(this._slider);
                         Main.layoutManager._trackActor(this._slider);
                     }
@@ -1020,7 +1022,7 @@ var DockedDash = class DashToDock {
         let anchor_point;
 
         if (this._isHorizontal) {
-            this.actor.width = Math.round( fraction * workArea.width);
+            this.width = Math.round(fraction * workArea.width);
 
             let pos_y;
             if (this._position == St.Side.BOTTOM) {
@@ -1032,21 +1034,21 @@ var DockedDash = class DashToDock {
                 anchor_point = Clutter.Gravity.NORTH_WEST;
             }
 
-            this.actor.move_anchor_point_from_gravity(anchor_point);
-            this.actor.x = workArea.x + Math.round((1 - fraction) / 2 * workArea.width);
-            this.actor.y = pos_y;
+            this.move_anchor_point_from_gravity(anchor_point);
+            this.x = workArea.x + Math.round((1 - fraction) / 2 * workArea.width);
+            this.y = pos_y;
 
             if (extendHeight) {
-                this.dash._container.set_width(this.actor.width);
-                this.actor.add_style_class_name('extended');
+                this.dash._container.set_width(this.width);
+                this.add_style_class_name('extended');
             }
             else {
                 this.dash._container.set_width(-1);
-                this.actor.remove_style_class_name('extended');
+                this.remove_style_class_name('extended');
             }
         }
         else {
-            this.actor.height = Math.round(fraction * workArea.height);
+            this.height = Math.round(fraction * workArea.height);
 
             let pos_x;
             if (this._position == St.Side.RIGHT) {
@@ -1058,33 +1060,33 @@ var DockedDash = class DashToDock {
                 anchor_point = Clutter.Gravity.NORTH_WEST;
             }
 
-            this.actor.move_anchor_point_from_gravity(anchor_point);
-            this.actor.x = pos_x;
-            this.actor.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
+            this.move_anchor_point_from_gravity(anchor_point);
+            this.x = pos_x;
+            this.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
 
             if (extendHeight) {
-                this.dash._container.set_height(this.actor.height);
-                this.actor.add_style_class_name('extended');
+                this.dash._container.set_height(this.height);
+                this.add_style_class_name('extended');
             }
             else {
                 this.dash._container.set_height(-1);
-                this.actor.remove_style_class_name('extended');
+                this.remove_style_class_name('extended');
             }
         }
 
-        this._y0 = this.actor.y;
+        this._y0 = this.y;
     }
 
     // Set the dash at the correct depth in z
     _resetDepth() {
         // Keep the dash below the modalDialogGroup
-        Main.layoutManager.uiGroup.set_child_below_sibling(this.actor, Main.layoutManager.modalDialogGroup);
+        Main.layoutManager.uiGroup.set_child_below_sibling(this, Main.layoutManager.modalDialogGroup);
     }
 
     _updateStaticBox() {
         this.staticBox.init_rect(
-            this.actor.x + this._slider.x - (this._position == St.Side.RIGHT ? this._box.width : 0),
-            this.actor.y + this._slider.y - (this._position == St.Side.BOTTOM ? this._box.height : 0),
+            this.x + this._slider.x - (this._position == St.Side.RIGHT ? this._box.width : 0),
+            this.y + this._slider.y - (this._position == St.Side.BOTTOM ? this._box.height : 0),
             this._box.width,
             this._box.height
         );
@@ -1099,7 +1101,7 @@ var DockedDash = class DashToDock {
     _onDragStart() {
         // The dash need to be above the top_window_group, otherwise it doesn't
         // accept dnd of app icons when not in overiew mode.
-        Main.layoutManager.uiGroup.set_child_above_sibling(this.actor, global.top_window_group);
+        Main.layoutManager.uiGroup.set_child_above_sibling(this, global.top_window_group);
         this._oldignoreHover = this._ignoreHover;
         this._ignoreHover = true;
         this._animateIn(this._settings.get_double('animation-time'), 0);
@@ -1169,7 +1171,7 @@ var DockedDash = class DashToDock {
     _enableExtraFeatures() {
         // Restore dash accessibility
         Main.ctrlAltTabManager.addGroup(
-            this.dash.actor, _('Dash'), 'user-bookmarks-symbolic',
+            this.dash, _('Dash'), 'user-bookmarks-symbolic',
                 {focusCallback: this._onAccessibilityFocus.bind(this)});
     }
 
@@ -1295,9 +1297,7 @@ var DockedDash = class DashToDock {
         if (appIndex < apps.length)
             apps[appIndex].activate(button);
     }
-};
-
-Signals.addSignalMethods(DockedDash.prototype);
+});
 
 /*
  * Handle keybaord shortcuts

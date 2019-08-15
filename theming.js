@@ -45,7 +45,7 @@ var ThemeManager = class DashToDock_ThemeManager {
         this._settings = settings;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._bindSettingsChanges();
-        this._actor = dock.actor;
+        this._actor = dock;
         this._dash = dock.dash;
 
         // initialize colors with generic values
@@ -329,7 +329,7 @@ var Transparency = class DashToDock_Transparency {
         this._settings = settings;
         this._dash = dock.dash;
         this._actor = this._dash._container;
-        this._dockActor = dock.actor;
+        this._dockActor = dock;
         this._dock = dock;
         this._panel = Main.panel;
         this._position = Utils.getPosition(this._settings);
