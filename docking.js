@@ -1643,7 +1643,6 @@ var DockManager = class DashToDock_DockManager {
 
         // First we create the main Dock, to get the extra features to bind to this one
         let dock = new DockedDash(this._settings, this._remoteModel, this._preferredMonitorIndex);
-        this._mainShowAppsButton = dock.dash.showAppsButton;
         this._allDocks.push(dock);
 
         // connect app icon into the view selector

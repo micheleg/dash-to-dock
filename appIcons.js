@@ -4,6 +4,7 @@ const Clutter = imports.gi.Clutter;
 const GdkPixbuf = imports.gi.GdkPixbuf
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
+const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Signals = imports.signals;
 const Meta = imports.gi.Meta;
@@ -999,27 +1000,25 @@ function getInterestingWindows(app, settings, monitorIndex) {
 }
 
 /**
- * A wrapper class around the ShowAppsIcon class.
+ * A ShowAppsIcon improved class.
  *
  * - Pass settings to the constructor
  * - set label position based on dash orientation (Note, I am reusing most machinery of the appIcon class)
  * - implement a popupMenu based on the AppIcon code (Note, I am reusing most machinery of the appIcon class)
  *
- * I can't subclass the original object because of this: https://bugzilla.gnome.org/show_bug.cgi?id=688973.
- * thus use this pattern where the real showAppsIcon object is encaptulated, and a reference to it will be properly wired upon
- * use of this class in place of the original showAppsButton.
- *
  */
 
-var ShowAppsIconWrapper = class DashToDock_ShowAppsIconWrapper {
-    constructor(settings) {
-        this._dtdSettings = settings;
-        this.realShowAppsIcon = new Dash.ShowAppsIcon();
-        this.realShowAppsIcon.show();
+var MyShowAppsIcon = GObject.registerClass({
+    Signals: {
+        'menu-state-changed': { param_types: [GObject.TYPE_BOOLEAN] },
+        'sync-tooltip': {}
+    }
+}
+, class DashToDock_MyShowAppsIcon extends Dash.ShowAppsIcon {
+    _init(settings) {
+        super._init();
 
-        /* the variable equivalent to toggleButton has a different name in the appIcon class
-        (actor): duplicate reference to easily reuse appIcon methods */
-        this.actor = this.realShowAppsIcon.toggleButton;
+        this._dtdSettings = settings;
 
         // Re-use appIcon methods
         this._removeMenuTimeout = AppDisplay.AppIcon.prototype._removeMenuTimeout;
@@ -1045,8 +1044,14 @@ var ShowAppsIconWrapper = class DashToDock_ShowAppsIconWrapper {
         this._menuManager = new PopupMenu.PopupMenuManager(this.actor);
         this._menuTimeoutId = 0;
 
-        this.realShowAppsIcon._dtdSettings = settings;
-        this.realShowAppsIcon.showLabel = itemShowLabel;
+        this.showLabel = itemShowLabel;
+    }
+
+    get actor() {
+        /* Until GNOME Shell AppIcon is an actor we need to provide this
+         * compatibility layer or the shell won't be able to access to the
+         * actual actor */
+        return this.toggleButton;
     }
 
     popupMenu() {
@@ -1068,7 +1073,7 @@ var ShowAppsIconWrapper = class DashToDock_ShowAppsIconWrapper {
             this._menuManager.addMenu(this._menu);
         }
 
-        //this.emit('menu-state-changed', true);
+        this.emit('menu-state-changed', true);
 
         this.actor.set_hover(true);
         this._menu.popup();
@@ -1077,8 +1082,7 @@ var ShowAppsIconWrapper = class DashToDock_ShowAppsIconWrapper {
 
         return false;
     }
-};
-Signals.addSignalMethods(ShowAppsIconWrapper.prototype);
+});
 
 
 /**

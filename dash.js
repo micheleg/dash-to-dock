@@ -232,19 +232,13 @@ var MyDash = GObject.registerClass({
         this._scrollView.add_actor(this._box);
 
         // Create a wrapper around the real showAppsIcon in order to add a popupMenu.
-        let showAppsIconWrapper = new AppIcons.ShowAppsIconWrapper(this._dtdSettings);
-        showAppsIconWrapper.connect('menu-state-changed', (showAppsIconWrapper, opened) => {
-            this._itemMenuStateChanged(showAppsIconWrapper, opened);
-        });
-        // an instance of the showAppsIcon class is encapsulated in the wrapper
-        this._showAppsIcon = showAppsIconWrapper.realShowAppsIcon;
-
-        this._showAppsIcon.childScale = 1;
-        this._showAppsIcon.childOpacity = 255;
+        this._showAppsIcon = new AppIcons.MyShowAppsIcon(this._dtdSettings);
+        this._showAppsIcon.show();
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._hookUpLabel(this._showAppsIcon);
-
-        this.showAppsButton = this._showAppsIcon.toggleButton;
+        this._showAppsIcon.connect('menu-state-changed', (_icon, opened) => {
+            this._itemMenuStateChanged(this._showAppsIcon, opened);
+        });
 
         this._container.add_actor(this._showAppsIcon);
 
@@ -1093,6 +1087,10 @@ var MyDash = GObject.registerClass({
         });
 
         return true;
+    }
+
+    get showAppsButton() {
+        return this._showAppsIcon.toggleButton;
     }
 
     showShowAppsButton() {
