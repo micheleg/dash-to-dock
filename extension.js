@@ -13,11 +13,9 @@ function init() {
 }
 
 function enable() {
-    dockManager = new Docking.DockManager();
+    new Docking.DockManager();
 }
 
 function disable() {
     dockManager.destroy();
-
-    dockManager=null;
 }

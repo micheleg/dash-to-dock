@@ -30,6 +30,7 @@ const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
 const AppIconIndicators = Me.imports.appIconIndicators;
@@ -65,7 +66,6 @@ let recentlyClickedAppMonitor = -1;
 /**
  * Extend AppIcon
  *
- * - Pass settings to the constructor and bind settings changes
  * - Apply a css class based on the number of windows of each application (#N);
  * - Customized indicators for running applications in place of the default "dot" style which is hidden (#N);
  *   a class of the form "running#N" is applied to the AppWellIcon actor.
@@ -78,11 +78,10 @@ let recentlyClickedAppMonitor = -1;
 var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
 
     // settings are required inside.
-    constructor(settings, remoteModel, app, monitorIndex, iconParams) {
+    constructor(remoteModel, app, monitorIndex, iconParams) {
         super(app, iconParams);
 
         // a prefix is required to avoid conflicting with the parent class variable
-        this._dtdSettings = settings;
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this.remoteModel = remoteModel;
@@ -107,7 +106,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         // of any application opened or moved to a different desktop),
         // we restrict this signal to  the case when 'isolate-monitors' is true,
         // and if there are at least 2 monitors.
-        if (this._dtdSettings.get_boolean('isolate-monitors') &&
+        if (Docking.DockManager.settings.get_boolean('isolate-monitors') &&
             Main.layoutManager.monitors.length > 1) {
             this._signalsHandler.removeWithLabel('isolate-monitors');
             this._signalsHandler.addWithLabel('isolate-monitors', [
@@ -126,16 +125,17 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
 
         keys.forEach(function(key) {
             this._signalsHandler.add([
-                this._dtdSettings,
+                Docking.DockManager.settings,
                 'changed::' + key,
                 this._updateIndicatorStyle.bind(this)
             ]);
         }, this);
 
-        this._dtdSettings.connect('changed::scroll-action', () => {
-            this._optionalScrollCycleWindows();
-        });
-        this._optionalScrollCycleWindows();
+        this._signalsHandler.add([
+            Docking.DockManager.settings,
+            'changed::scroll-action',
+            this._optionalScrollCycleWindows.bind(this)
+        ]);
 
         this._numberOverlay();
 
@@ -176,7 +176,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
             this._indicator.destroy();
             this._indicator = null;
         }
-        this._indicator = new AppIconIndicators.AppIconIndicator(this, this._dtdSettings);
+        this._indicator = new AppIconIndicators.AppIconIndicator(this);
         this._indicator.update();
     }
 
@@ -192,7 +192,8 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
             this._scrollEventHandler = 0;
         }
 
-        let isEnabled = this._dtdSettings.get_enum('scroll-action') === scrollAction.CYCLE_WINDOWS;
+        let settings = Docking.DockManager.settings;
+        let isEnabled = settings.get_enum('scroll-action') === scrollAction.CYCLE_WINDOWS;
         if (!isEnabled) return;
         this._scrollEventHandler = this.actor.connect('scroll-event',
                                                       this.onScrollEvent.bind(this));
@@ -279,7 +280,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         [rect.width, rect.height] = this.actor.get_transformed_size();
 
         let windows = this.app.get_windows();
-        if (this._dtdSettings.get_boolean('multi-monitor')){
+        if (Docking.DockManager.settings.get_boolean('multi-monitor')){
             let monitorIndex = this.monitorIndex;
             windows = windows.filter(function(w) {
                 return w.get_monitor() == monitorIndex;
@@ -302,7 +303,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         this._draggable.fakeRelease();
 
         if (!this._menu) {
-            this._menu = new MyAppIconMenu(this, this._dtdSettings);
+            this._menu = new MyAppIconMenu(this);
             this._menu.connect('activate-window', (menu, window) => {
                 this.activateWindow(window);
             });
@@ -314,11 +315,12 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
                     // scrollable so the minimum height is smaller than the natural height.
                     let monitor_index = Main.layoutManager.findIndexForActor(this.actor);
                     let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor_index);
-                    let position = Utils.getPosition(this._dtdSettings);
+                    let position = Utils.getPosition();
                     this._isHorizontal = ( position == St.Side.TOP ||
                                            position == St.Side.BOTTOM);
                     // If horizontal also remove the height of the dash
-                    let additional_margin = this._isHorizontal && !this._dtdSettings.get_boolean('dock-fixed') ? Main.overview._dash.actor.height : 0;
+                    let fixedDock = Docking.DockManager.settings.get_boolean('dock-fixed');
+                    let additional_margin = this._isHorizontal && !fixedDock ? Main.overview._dash.actor.height : 0;
                     let verticalMargins = this._menu.actor.margin_top + this._menu.actor.margin_bottom;
                     // Also set a max width to the menu, so long labels (long windows title) get truncated
                     this._menu.actor.style = ('max-height: ' + Math.round(workArea.height - additional_margin - verticalMargins) + 'px;' +
@@ -371,17 +373,18 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         // being used. We then define what buttonAction should be for this
         // event.
         let buttonAction = 0;
+        let settings = Docking.DockManager.settings;
         if (button && button == 2 ) {
             if (modifiers & Clutter.ModifierType.SHIFT_MASK)
-                buttonAction = this._dtdSettings.get_enum('shift-middle-click-action');
+                buttonAction = settings.get_enum('shift-middle-click-action');
             else
-                buttonAction = this._dtdSettings.get_enum('middle-click-action');
+                buttonAction = settings.get_enum('middle-click-action');
         }
         else if (button && button == 1) {
             if (modifiers & Clutter.ModifierType.SHIFT_MASK)
-                buttonAction = this._dtdSettings.get_enum('shift-click-action');
+                buttonAction = settings.get_enum('shift-click-action');
             else
-                buttonAction = this._dtdSettings.get_enum('click-action');
+                buttonAction = settings.get_enum('click-action');
         }
 
         // We check if the app is running, and that the # of windows is > 0 in
@@ -538,7 +541,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         if (!this._previewMenu) {
             this._previewMenuManager = new PopupMenu.PopupMenuManager(this.actor);
 
-            this._previewMenu = new WindowPreview.WindowPreviewMenu(this, this._dtdSettings);
+            this._previewMenu = new WindowPreview.WindowPreviewMenu(this);
 
             this._previewMenuManager.addMenu(this._previewMenu);
 
@@ -668,8 +671,8 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
     _activateAllWindows() {
         // First activate first window so workspace is switched if needed.
         // We don't do this if isolation is on!
-        if (!this._dtdSettings.get_boolean('isolate-workspaces') &&
-            !this._dtdSettings.get_boolean('isolate-monitors'))
+        if (!Docking.DockManager.settings.get_boolean('isolate-workspaces') &&
+            !Docking.DockManager.settings.get_boolean('isolate-monitors'))
             this.app.activate();
 
         // then activate all other app windows in the current workspace
@@ -712,7 +715,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
 
         // If there isn't already a list of windows for the current app,
         // or the stored list is outdated, use the current windows list.
-        let monitorIsolation = this._dtdSettings.get_boolean('isolate-monitors');
+        let monitorIsolation = Docking.DockManager.settings.get_boolean('isolate-monitors');
         if (!recentlyClickedApp ||
             recentlyClickedApp.get_id() != this.app.get_id() ||
             recentlyClickedAppWindows.length != app_windows.length ||
@@ -750,13 +753,12 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
     // Filter out unnecessary windows, for instance
     // nautilus desktop window.
     getInterestingWindows() {
-        return getInterestingWindows(this.app, this._dtdSettings, this.monitorIndex);
+        return getInterestingWindows(this.app, this.monitorIndex);
     }
 };
 /**
  * Extend AppIconMenu
  *
- * - Pass settings to the constructor
  * - set popup arrow side based on dash orientation
  * - Add close windows option based on quitfromdash extension
  *   (https://github.com/deuill/shell-extension-quitfromdash)
@@ -765,8 +767,8 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
  */
 const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconMenu {
 
-    constructor(source, settings) {
-        let side = Utils.getPosition(settings);
+    constructor(source) {
+        let side = Utils.getPosition();
 
         // Damm it, there has to be a proper way of doing this...
         // As I can't call the parent parent constructor (?) passing the side
@@ -777,14 +779,12 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
         this._arrowSide = side;
         this._boxPointer._arrowSide = side;
         this._boxPointer._userArrowSide = side;
-
-        this._dtdSettings = settings;
     }
 
     _redisplay() {
         this.removeAll();
 
-        if (this._dtdSettings.get_boolean('show-windows-preview')) {
+        if (Docking.DockManager.settings.get_boolean('show-windows-preview')) {
             // Display the app windows menu items and the separator between windows
             // of the current desktop and other windows.
 
@@ -894,7 +894,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
     // acting on windows (closing) are performed while the menu is shown.
     update() {
 
-      if(this._dtdSettings.get_boolean('show-windows-preview')){
+      if(Docking.DockManager.settings.get_boolean('show-windows-preview')){
 
           let windows = this._source.getInterestingWindows();
 
@@ -979,10 +979,12 @@ Signals.addSignalMethods(MyAppIconMenu.prototype);
 
 // Filter out unnecessary windows, for instance
 // nautilus desktop window.
-function getInterestingWindows(app, settings, monitorIndex) {
+function getInterestingWindows(app, monitorIndex) {
     let windows = app.get_windows().filter(function(w) {
         return !w.skip_taskbar;
     });
+
+    let settings = Docking.DockManager.settings;
 
     // When using workspace isolation, we filter out windows
     // that are not in the current workspace
@@ -1002,7 +1004,6 @@ function getInterestingWindows(app, settings, monitorIndex) {
 /**
  * A ShowAppsIcon improved class.
  *
- * - Pass settings to the constructor
  * - set label position based on dash orientation (Note, I am reusing most machinery of the appIcon class)
  * - implement a popupMenu based on the AppIcon code (Note, I am reusing most machinery of the appIcon class)
  *
@@ -1015,10 +1016,8 @@ var MyShowAppsIcon = GObject.registerClass({
     }
 }
 , class DashToDock_MyShowAppsIcon extends Dash.ShowAppsIcon {
-    _init(settings) {
+    _init() {
         super._init();
-
-        this._dtdSettings = settings;
 
         // Re-use appIcon methods
         let appIconPrototype = AppDisplay.AppIcon.prototype;
@@ -1061,7 +1060,7 @@ var MyShowAppsIcon = GObject.registerClass({
         this.actor.fake_release();
 
         if (!this._menu) {
-            this._menu = new MyShowAppsIconMenu(this, this._dtdSettings);
+            this._menu = new MyShowAppsIconMenu(this);
             this._menu.connect('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
@@ -1129,7 +1128,7 @@ function itemShowLabel()  {
 
     let x, y, xOffset, yOffset;
 
-    let position = Utils.getPosition(this._dtdSettings);
+    let position = Utils.getPosition();
     this._isHorizontal = ((position == St.Side.TOP) || (position == St.Side.BOTTOM));
     let labelOffset = node.get_length('-x-offset');
 

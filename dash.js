@@ -23,6 +23,7 @@ const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 const AppIcons = Me.imports.appIcons;
 
@@ -33,18 +34,11 @@ const DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT / 1000;
 /**
  * Extend DashItemContainer
  *
- * - Pass settings to the constructor
  * - set label position based on dash orientation
  *
  */
 let MyDashItemContainer = GObject.registerClass(
 class DashToDock_MyDashItemContainer extends Dash.DashItemContainer {
-
-    _init(settings) {
-        this._dtdSettings = settings;
-
-        super._init();
-    }
 
     showLabel() {
         return AppIcons.itemShowLabel.call(this);
@@ -55,19 +49,17 @@ class DashToDock_MyDashItemContainer extends Dash.DashItemContainer {
  * This class is a fork of the upstream DashActor class (ui.dash.js)
  *
  * Summary of changes:
- * - passed settings to class as parameter
  * - modified chldBox calculations for when 'show-apps-at-top' option is checked
  * - handle horizontal dash
  */
 var MyDashActor = GObject.registerClass(
 class DashToDock_MyDashActor extends St.Widget {
 
-    _init(settings) {
+    _init() {
         // a prefix is required to avoid conflicting with the parent class variable
-        this._dtdSettings = settings;
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
-        this._position = Utils.getPosition(settings);
+        this._position = Utils.getPosition();
         this._isHorizontal = ((this._position == St.Side.TOP) ||
                                (this._position == St.Side.BOTTOM));
 
@@ -101,9 +93,10 @@ class DashToDock_MyDashActor extends St.Widget {
         let offset_y = this._isHorizontal?0:showAppsNatHeight;
 
         let childBox = new Clutter.ActorBox();
-        if ((this._dtdSettings.get_boolean('show-apps-at-top') && !this._isHorizontal)
-            || (this._dtdSettings.get_boolean('show-apps-at-top') && !this._rtl)
-            || (!this._dtdSettings.get_boolean('show-apps-at-top') && this._isHorizontal && this._rtl)) {
+        let settings = Docking.DockManager.settings;
+        if ((settings.get_boolean('show-apps-at-top') && !this._isHorizontal)
+            || (settings.get_boolean('show-apps-at-top') && !this._rtl)
+            || (!settings.get_boolean('show-apps-at-top') && this._isHorizontal && this._rtl)) {
             childBox.x1 = contentBox.x1 + offset_x;
             childBox.y1 = contentBox.y1 + offset_y;
             childBox.x2 = contentBox.x2;
@@ -186,19 +179,17 @@ var MyDash = GObject.registerClass({
     }
 }, class DashToDock_MyDash extends St.Bin {
 
-    _init(settings, remoteModel, monitorIndex) {
-        this._dtdSettings = settings;
-
+    _init(remoteModel, monitorIndex) {
         // Initialize icon variables and size
         this._maxHeight = -1;
-        this.iconSize = this._dtdSettings.get_int('dash-max-icon-size');
+        this.iconSize = Docking.DockManager.settings.get_int('dash-max-icon-size');
         this._availableIconSizes = baseIconSizes;
         this._shownInitially = false;
         this._initializeIconSize(this.iconSize);
 
         this._remoteModel = remoteModel;
         this._monitorIndex = monitorIndex;
-        this._position = Utils.getPosition(settings);
+        this._position = Utils.getPosition();
         this._isHorizontal = ((this._position == St.Side.TOP) ||
                                (this._position == St.Side.BOTTOM));
         this._signalsHandler = new Utils.GlobalSignalsHandler();
@@ -211,7 +202,7 @@ var MyDash = GObject.registerClass({
         this._ensureAppIconVisibilityTimeoutId = 0;
         this._labelShowing = false;
 
-        this._container = new MyDashActor(settings);
+        this._container = new MyDashActor();
         this._scrollView = new St.ScrollView({
             name: 'dashtodockDashScrollview',
             hscrollbar_policy: Gtk.PolicyType.NEVER,
@@ -232,7 +223,7 @@ var MyDash = GObject.registerClass({
         this._scrollView.add_actor(this._box);
 
         // Create a wrapper around the real showAppsIcon in order to add a popupMenu.
-        this._showAppsIcon = new AppIcons.MyShowAppsIcon(this._dtdSettings);
+        this._showAppsIcon = new AppIcons.MyShowAppsIcon();
         this._showAppsIcon.show();
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._hookUpLabel(this._showAppsIcon);
@@ -272,7 +263,7 @@ var MyDash = GObject.registerClass({
 
         this._workId = Main.initializeDeferredWork(this._box, this._redisplay.bind(this));
 
-        this._settings = new Gio.Settings({
+        this._shellSettings = new Gio.Settings({
             schema_id: 'org.gnome.shell'
         });
 
@@ -316,7 +307,7 @@ var MyDash = GObject.registerClass({
 
     _onScrollEvent(actor, event) {
         // If scroll is not used because the icon is resized, let the scroll event propagate.
-        if (!this._dtdSettings.get_boolean('icon-size-fixed'))
+        if (!Docking.DockManager.settings.get_boolean('icon-size-fixed'))
             return Clutter.EVENT_PROPAGATE;
 
         // reset timeout to avid conflicts with the mousehover event
@@ -442,7 +433,8 @@ var MyDash = GObject.registerClass({
     }
 
     _createAppItem(app) {
-        let appIcon = new AppIcons.MyAppIcon(this._dtdSettings, this._remoteModel, app, this._monitorIndex,
+        let appIcon = new AppIcons.MyAppIcon(this._remoteModel, app,
+                                             this._monitorIndex,
                                              { setSizeManually: true,
                                                showLabel: false });
 
@@ -459,7 +451,7 @@ var MyDash = GObject.registerClass({
             this._itemMenuStateChanged(item, opened);
         });
 
-        let item = new MyDashItemContainer(this._dtdSettings);
+        let item = new MyDashItemContainer();
         item.setChild(appIcon.actor);
 
         appIcon.actor.connect('notify::hover', () => {
@@ -699,14 +691,15 @@ var MyDash = GObject.registerClass({
         let favorites = AppFavorites.getAppFavorites().getFavoriteMap();
 
         let running = this._appSystem.get_running();
-        if (this._dtdSettings.get_boolean('isolate-workspaces') ||
-            this._dtdSettings.get_boolean('isolate-monitors')) {
+        let settings = Docking.DockManager.settings;
+
+        if (settings.get_boolean('isolate-workspaces') ||
+            settings.get_boolean('isolate-monitors')) {
             // When using isolation, we filter out apps that have no windows in
             // the current workspace
-            let settings = this._dtdSettings;
             let monitorIndex = this._monitorIndex;
             running = running.filter(function(_app) {
-                return AppIcons.getInterestingWindows(_app, settings, monitorIndex).length != 0;
+                return AppIcons.getInterestingWindows(_app, monitorIndex).length != 0;
             });
         }
 
@@ -722,20 +715,20 @@ var MyDash = GObject.registerClass({
         // Apps supposed to be in the dash
         let newApps = [];
 
-        if (this._dtdSettings.get_boolean('show-favorites')) {
+        if (settings.get_boolean('show-favorites')) {
             for (let id in favorites)
                 newApps.push(favorites[id]);
         }
 
         // We reorder the running apps so that they don't change position on the
         // dash with every redisplay() call
-        if (this._dtdSettings.get_boolean('show-running')) {
+        if (settings.get_boolean('show-running')) {
             // First: add the apps from the oldApps list that are still running
             for (let i = 0; i < oldApps.length; i++) {
                 let index = running.indexOf(oldApps[i]);
                 if (index > -1) {
                     let app = running.splice(index, 1)[0];
-                    if (this._dtdSettings.get_boolean('show-favorites') && (app.get_id() in favorites))
+                    if (settings.get_boolean('show-favorites') && (app.get_id() in favorites))
                         continue;
                     newApps.push(app);
                 }
@@ -743,7 +736,7 @@ var MyDash = GObject.registerClass({
             // Second: add the new apps
             for (let i = 0; i < running.length; i++) {
                 let app = running[i];
-                if (this._dtdSettings.get_boolean('show-favorites') && (app.get_id() in favorites))
+                if (settings.get_boolean('show-favorites') && (app.get_id() in favorites))
                     continue;
                 newApps.push(app);
             }
@@ -889,7 +882,7 @@ var MyDash = GObject.registerClass({
         let max_allowed = baseIconSizes[baseIconSizes.length-1];
         max_size = Math.min(max_size, max_allowed);
 
-        if (this._dtdSettings.get_boolean('icon-size-fixed'))
+        if (Docking.DockManager.settings.get_boolean('icon-size-fixed'))
             this._availableIconSizes = [max_size];
         else {
             this._availableIconSizes = baseIconSizes.filter(function(val) {
@@ -955,7 +948,8 @@ var MyDash = GObject.registerClass({
         if (app == null || app.is_window_backed())
             return DND.DragMotionResult.NO_DROP;
 
-        if (!this._settings.is_writable('favorite-apps') || !this._dtdSettings.get_boolean('show-favorites'))
+        if (!this._shellSettings.is_writable('favorite-apps') ||
+            !Docking.DockManager.settings.get_boolean('show-favorites'))
             return DND.DragMotionResult.NO_DROP;
 
         let favorites = AppFavorites.getAppFavorites().getFavorites();
@@ -1050,7 +1044,8 @@ var MyDash = GObject.registerClass({
         if (app == null || app.is_window_backed())
             return false;
 
-        if (!this._settings.is_writable('favorite-apps') || !this._dtdSettings.get_boolean('show-favorites'))
+        if (!this._shellSettings.is_writable('favorite-apps') ||
+            !Docking.DockManager.settings.get_boolean('show-favorites'))
             return false;
 
         let id = app.get_id();

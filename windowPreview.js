@@ -25,11 +25,9 @@ const PREVIEW_MAX_HEIGHT = 150;
 
 var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.PopupMenu {
 
-    constructor(source, settings) {
-        let side = Utils.getPosition(settings);
+    constructor(source) {
+        let side = Utils.getPosition();
         super(source.actor, 0.5, side);
-
-        this._dtdSettings = settings;
 
         // We want to keep the item hovered while the menu is up
         this.blockSourceEvents = true;
@@ -63,7 +61,7 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
     _redisplay() {
         if (this._previewBox)
             this._previewBox.destroy();
-        this._previewBox = new WindowPreviewList(this._source, this._dtdSettings);
+        this._previewBox = new WindowPreviewList(this._source);
         this.addMenuItem(this._previewBox);
         this._previewBox._redisplay();
     }
@@ -89,10 +87,8 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
 
 var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.PopupMenuSection {
 
-    constructor(source, settings) {
+    constructor(source) {
         super();
-        this._dtdSettings = settings;
-
         this.actor = new St.ScrollView({ name: 'dashtodockWindowScrollview',
                                                hscrollbar_policy: Gtk.PolicyType.NEVER,
                                                vscrollbar_policy: Gtk.PolicyType.NEVER,
@@ -100,7 +96,7 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
 
         this.actor.connect('scroll-event', this._onScrollEvent.bind(this));
 
-        let position = Utils.getPosition(this._dtdSettings);
+        let position = Utils.getPosition();
         this.isHorizontal = position == St.Side.BOTTOM || position == St.Side.TOP;
         this.box.set_vertical(!this.isHorizontal);
         this.box.set_name('dashtodockWindowList');

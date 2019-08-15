@@ -186,11 +186,11 @@ var DockedDash = GObject.registerClass({
     }
 }, class DashToDock extends St.Bin {
 
-    _init(settings, remoteModel, monitorIndex) {
+    _init(remoteModel, monitorIndex) {
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
         // Load settings
-        this._settings = settings;
+        let settings = DockManager.settings;
         this._remoteModel = remoteModel;
         this._monitorIndex = monitorIndex;
         // Connect global signals
@@ -198,7 +198,7 @@ var DockedDash = GObject.registerClass({
 
         this._bindSettingsChanges();
 
-        this._position = Utils.getPosition(settings);
+        this._position = Utils.getPosition();
         this._isHorizontal = ((this._position == St.Side.TOP) || (this._position == St.Side.BOTTOM));
 
         // Temporary ignore hover events linked to autohide for whatever reason
@@ -211,7 +211,7 @@ var DockedDash = GObject.registerClass({
         this._fixedIsEnabled = null;
 
         // Create intellihide object to monitor windows overlapping
-        this._intellihide = new Intellihide.Intellihide(this._settings, this._monitorIndex);
+        this._intellihide = new Intellihide.Intellihide(this._monitorIndex);
 
         // initialize dock state
         this._dockState = State.HIDDEN;
@@ -236,9 +236,9 @@ var DockedDash = GObject.registerClass({
         this._dockDwellTimeoutId = 0
 
         // Create a new dash object
-        this.dash = new MyDash.MyDash(this._settings, this._remoteModel, this._monitorIndex);
+        this.dash = new MyDash.MyDash(this._remoteModel, this._monitorIndex);
 
-        if (!this._settings.get_boolean('show-show-apps-button'))
+        if (!settings.get_boolean('show-show-apps-button'))
             this.dash.hideShowAppsButton();
 
         // Create the main actor and the containers for sliding in and out and
@@ -347,7 +347,7 @@ var DockedDash = GObject.registerClass({
         ]);
 
         this._injectionsHandler = new Utils.InjectionsHandler();
-        this._themeManager = new Theming.ThemeManager(this._settings, this);
+        this._themeManager = new Theming.ThemeManager(this);
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
@@ -359,7 +359,7 @@ var DockedDash = GObject.registerClass({
         this._slider.connect(this._isHorizontal ? 'notify::x' : 'notify::y', this._updateStaticBox.bind(this));
 
         // Load optional features that need to be activated for one dock only
-        if (this._monitorIndex == this._settings.get_int('preferred-monitor'))
+        if (this._monitorIndex == settings.get_int('preferred-monitor'))
             this._enableExtraFeatures();
         // Load optional features that need to be activated once per dock
         this._optionalScrollWorkspaceSwitch();
@@ -392,7 +392,7 @@ var DockedDash = GObject.registerClass({
         // Add aligning container without tracking it for input region
         Main.uiGroup.add_child(this);
 
-        if (this._settings.get_boolean('dock-fixed')) {
+        if (settings.get_boolean('dock-fixed')) {
             // Note: tracking the fullscreen directly on the slider actor causes some hiccups when fullscreening
             // windows of certain applications
             Main.layoutManager._trackActor(this, {affectsInputRegion: false, trackFullscreen: true});
@@ -467,44 +467,45 @@ var DockedDash = GObject.registerClass({
     }
 
     _bindSettingsChanges() {
+        let settings = DockManager.settings;
         this._signalsHandler.add([
-            this._settings,
+            settings,
             'changed::scroll-action',
             () => { this._optionalScrollWorkspaceSwitch(); }
         ], [
-            this._settings,
+            settings,
             'changed::dash-max-icon-size',
-            () => { this.dash.setIconSize(this._settings.get_int('dash-max-icon-size')); }
+            () => { this.dash.setIconSize(settings.get_int('dash-max-icon-size')); }
         ], [
-            this._settings,
+            settings,
             'changed::icon-size-fixed',
-            () => { this.dash.setIconSize(this._settings.get_int('dash-max-icon-size')); }
+            () => { this.dash.setIconSize(settings.get_int('dash-max-icon-size')); }
         ], [
-            this._settings,
+            settings,
             'changed::show-favorites',
             () => { this.dash.resetAppIcons(); }
         ], [
-            this._settings,
+            settings,
             'changed::show-running',
             () => { this.dash.resetAppIcons(); }
         ], [
-            this._settings,
+            settings,
             'changed::show-apps-at-top',
             () => { this.dash.resetAppIcons(); }
         ], [
-            this._settings,
+            settings,
             'changed::show-show-apps-button',
             () => {
-                    if (this._settings.get_boolean('show-show-apps-button'))
+                    if (settings.get_boolean('show-show-apps-button'))
                         this.dash.showShowAppsButton();
                     else
                         this.dash.hideShowAppsButton();
             }
         ], [
-            this._settings,
+            settings,
             'changed::dock-fixed',
             () => {
-                    if (this._settings.get_boolean('dock-fixed')) {
+                    if (settings.get_boolean('dock-fixed')) {
                         Main.layoutManager._untrackActor(this);
                         Main.layoutManager._trackActor(this, {affectsInputRegion: false, trackFullscreen: true});
                         Main.layoutManager._untrackActor(this._slider);
@@ -523,35 +524,35 @@ var DockedDash = GObject.registerClass({
                     this._updateVisibilityMode();
             }
         ], [
-            this._settings,
+            settings,
             'changed::intellihide',
             this._updateVisibilityMode.bind(this)
         ], [
-            this._settings,
+            settings,
             'changed::intellihide-mode',
             () => { this._intellihide.forceUpdate(); }
         ], [
-            this._settings,
+            settings,
             'changed::autohide',
             () => {
                     this._updateVisibilityMode();
                     this._updateBarrier();
             }
         ], [
-            this._settings,
+            settings,
             'changed::autohide-in-fullscreen',
             this._updateBarrier.bind(this)
         ],
         [
-            this._settings,
+            settings,
             'changed::extend-height',
             this._resetPosition.bind(this)
         ], [
-            this._settings,
+            settings,
             'changed::height-fraction',
             this._resetPosition.bind(this)
         ], [
-            this._settings,
+            settings,
             'changed::require-pressure-to-show',
             () => {
                     // Remove pointer watcher
@@ -563,7 +564,7 @@ var DockedDash = GObject.registerClass({
                     this._updateBarrier();
             }
         ], [
-            this._settings,
+            settings,
             'changed::pressure-threshold',
             () => {
                     this._updatePressureBarrier();
@@ -577,15 +578,16 @@ var DockedDash = GObject.registerClass({
      * This is call when visibility settings change
      */
     _updateVisibilityMode() {
-        if (this._settings.get_boolean('dock-fixed')) {
+        let settings = DockManager.settings;
+        if (settings.get_boolean('dock-fixed')) {
             this._fixedIsEnabled = true;
             this._autohideIsEnabled = false;
             this._intellihideIsEnabled = false;
         }
         else {
             this._fixedIsEnabled = false;
-            this._autohideIsEnabled = this._settings.get_boolean('autohide')
-            this._intellihideIsEnabled = this._settings.get_boolean('intellihide')
+            this._autohideIsEnabled = settings.get_boolean('autohide')
+            this._intellihideIsEnabled = settings.get_boolean('intellihide')
         }
 
         if (this._intellihideIsEnabled)
@@ -608,21 +610,23 @@ var DockedDash = GObject.registerClass({
         if (Main.overview.visibleTarget)
             return;
 
+        let settings = DockManager.settings;
+
         if (this._fixedIsEnabled) {
             this._removeAnimations();
-            this._animateIn(this._settings.get_double('animation-time'), 0);
+            this._animateIn(settings.get_double('animation-time'), 0);
         }
         else if (this._intellihideIsEnabled) {
             if (this._intellihide.getOverlapStatus()) {
                 this._ignoreHover = false;
                 // Do not hide if autohide is enabled and mouse is hover
                 if (!this._box.hover || !this._autohideIsEnabled)
-                    this._animateOut(this._settings.get_double('animation-time'), 0);
+                    this._animateOut(settings.get_double('animation-time'), 0);
             }
             else {
                 this._ignoreHover = true;
                 this._removeAnimations();
-                this._animateIn(this._settings.get_double('animation-time'), 0);
+                this._animateIn(settings.get_double('animation-time'), 0);
             }
         }
         else {
@@ -631,12 +635,12 @@ var DockedDash = GObject.registerClass({
                 global.sync_pointer();
 
                 if (this._box.hover)
-                    this._animateIn(this._settings.get_double('animation-time'), 0);
+                    this._animateIn(settings.get_double('animation-time'), 0);
                 else
-                    this._animateOut(this._settings.get_double('animation-time'), 0);
+                    this._animateOut(settings.get_double('animation-time'), 0);
             }
             else
-                this._animateOut(this._settings.get_double('animation-time'), 0);
+                this._animateOut(settings.get_double('animation-time'), 0);
         }
     }
 
@@ -644,7 +648,7 @@ var DockedDash = GObject.registerClass({
         this._ignoreHover = true;
         this._intellihide.disable();
         this._removeAnimations();
-        this._animateIn(this._settings.get_double('animation-time'), 0);
+        this._animateIn(DockManager.settings.get_double('animation-time'), 0);
     }
 
     _onOverviewHiding() {
@@ -678,25 +682,26 @@ var DockedDash = GObject.registerClass({
                 this._removeAnimations();
 
             this.emit('showing');
-            this._animateIn(this._settings.get_double('animation-time'), 0);
+            this._animateIn(DockManager.settings.get_double('animation-time'), 0);
         }
     }
 
     _hide() {
         // If no hiding animation is running or queued
         if ((this._dockState == State.SHOWN) || (this._dockState == State.SHOWING)) {
+            let settings = DockManager.settings;
             let delay;
 
             if (this._dockState == State.SHOWING)
                 //if a show already started, let it finish; queue hide without removing the show.
                 // to obtain this I increase the delay to avoid the overlap and interference
                 // between the animations
-                delay = this._settings.get_double('hide-delay') + this._settings.get_double('animation-time');
+                delay = settings.get_double('hide-delay') + settings.get_double('animation-time');
             else
-                delay = this._settings.get_double('hide-delay');
+                delay = settings.get_double('hide-delay');
 
             this.emit('hiding');
-            this._animateOut(this._settings.get_double('animation-time'), delay);
+            this._animateOut(settings.get_double('animation-time'), delay);
         }
     }
 
@@ -743,7 +748,8 @@ var DockedDash = GObject.registerClass({
     _setupDockDwellIfNeeded() {
         // If we don't have extended barrier features, then we need
         // to support the old tray dwelling mechanism.
-        if (!global.display.supports_extended_barriers() || !this._settings.get_boolean('require-pressure-to-show')) {
+        if (!global.display.supports_extended_barriers() ||
+            !DockManager.settings.get_boolean('require-pressure-to-show')) {
             let pointerWatcher = PointerWatcher.getPointerWatcher();
             this._dockWatch = pointerWatcher.addWatch(DOCK_DWELL_CHECK_INTERVAL, this._checkDockDwell.bind(this));
             this._dockDwelling = false;
@@ -777,7 +783,7 @@ var DockedDash = GObject.registerClass({
                 let focusWindow = global.display.focus_window;
                 this._dockDwellUserTime = focusWindow ? focusWindow.user_time : 0;
 
-                this._dockDwellTimeoutId = Mainloop.timeout_add(this._settings.get_double('show-delay') * 1000,
+                this._dockDwellTimeoutId = Mainloop.timeout_add(DockManager.settings.get_double('show-delay') * 1000,
                                                                 this._dockDwellTimeout.bind(this));
                 GLib.Source.set_name_by_id(this._dockDwellTimeoutId, '[dash-to-dock] this._dockDwellTimeout');
             }
@@ -799,7 +805,8 @@ var DockedDash = GObject.registerClass({
     _dockDwellTimeout() {
         this._dockDwellTimeoutId = 0;
 
-        if (!this._settings.get_boolean('autohide-in-fullscreen') && this._monitor.inFullscreen)
+        if (!DockManager.settings.get_boolean('autohide-in-fullscreen') &&
+            this._monitor.inFullscreen)
             return GLib.SOURCE_REMOVE;
 
         // We don't want to open the tray when a modal dialog
@@ -821,8 +828,9 @@ var DockedDash = GObject.registerClass({
     }
 
     _updatePressureBarrier() {
+        let settings = DockManager.settings;
         this._canUsePressure = global.display.supports_extended_barriers();
-        let pressureThreshold = this._settings.get_double('pressure-threshold');
+        let pressureThreshold = settings.get_double('pressure-threshold');
 
         // Remove existing pressure barrier
         if (this._pressureBarrier) {
@@ -837,10 +845,10 @@ var DockedDash = GObject.registerClass({
 
         // Create new pressure barrier based on pressure threshold setting
         if (this._canUsePressure) {
-            this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, this._settings.get_double('show-delay')*1000,
+            this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, settings.get_double('show-delay')*1000,
                                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
             this._pressureBarrier.connect('trigger', (barrier) => {
-                if (!this._settings.get_boolean('autohide-in-fullscreen') && this._monitor.inFullscreen)
+                if (!settings.get_boolean('autohide-in-fullscreen') && this._monitor.inFullscreen)
                     return;
                 this._onPressureSensed();
             });
@@ -930,7 +938,8 @@ var DockedDash = GObject.registerClass({
 
         // The barrier needs to be removed in fullscreen with autohide disabled, otherwise the mouse can
         // get trapped on monitor.
-        if (this._monitor.inFullscreen && !this._settings.get_boolean('autohide-in-fullscreen'))
+        if (this._monitor.inFullscreen &&
+            !DockManager.settings.get_boolean('autohide-in-fullscreen'))
             return
 
         // Manually reset pressure barrier
@@ -943,7 +952,8 @@ var DockedDash = GObject.registerClass({
         // Create new barrier
         // The barrier extends to the whole workarea, minus 1 px to avoid conflicting with other active corners
         // Note: dash in fixed position doesn't use pressure barrier.
-        if (this._canUsePressure && this._autohideIsEnabled && this._settings.get_boolean('require-pressure-to-show')) {
+        if (this._canUsePressure && this._autohideIsEnabled &&
+            DockManager.settings.get_boolean('require-pressure-to-show')) {
             let x1, x2, y1, y2, direction;
             let workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index)
 
@@ -997,7 +1007,7 @@ var DockedDash = GObject.registerClass({
         // Ensure variables linked to settings are updated.
         this._updateVisibilityMode();
 
-        let extendHeight = this._settings.get_boolean('extend-height');
+        let extendHeight = DockManager.settings.get_boolean('extend-height');
 
         // Note: do not use the workarea coordinates in the direction on which the dock is placed,
         // to avoid a loop [position change -> workArea change -> position change] with
@@ -1012,7 +1022,7 @@ var DockedDash = GObject.registerClass({
             // No space is required in the overview of the dash
             this._dashSpacer.hide();
 
-        let fraction = this._settings.get_double('height-fraction');
+        let fraction = DockManager.settings.get_double('height-fraction');
 
         if (extendHeight)
             fraction = 1;
@@ -1104,7 +1114,7 @@ var DockedDash = GObject.registerClass({
         Main.layoutManager.uiGroup.set_child_above_sibling(this, global.top_window_group);
         this._oldignoreHover = this._ignoreHover;
         this._ignoreHover = true;
-        this._animateIn(this._settings.get_double('animation-time'), 0);
+        this._animateIn(DockManager.settings.get_double('animation-time'), 0);
     }
 
     _onDragEnd() {
@@ -1124,9 +1134,9 @@ var DockedDash = GObject.registerClass({
                            activePage == ViewSelector.ViewPage.APPS);
 
         if (dashVisible)
-            this._animateIn(this._settings.get_double('animation-time'), 0);
+            this._animateIn(DockManager.settings.get_double('animation-time'), 0);
         else
-            this._animateOut(this._settings.get_double('animation-time'), 0);
+            this._animateOut(DockManager.settings.get_double('animation-time'), 0);
     }
 
     _onPageEmpty() {
@@ -1155,7 +1165,7 @@ var DockedDash = GObject.registerClass({
      */
     _onAccessibilityFocus() {
         this._box.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
-        this._animateIn(this._settings.get_double('animation-time'), 0);
+        this._animateIn(DockManager.settings.get_double('animation-time'), 0);
     }
 
     /**
@@ -1182,10 +1192,10 @@ var DockedDash = GObject.registerClass({
         let label = 'optionalScrollWorkspaceSwitch';
 
         function isEnabled() {
-            return this._settings.get_enum('scroll-action') === scrollAction.SWITCH_WORKSPACE;
+            return DockManager.settings.get_enum('scroll-action') === scrollAction.SWITCH_WORKSPACE;
         }
 
-        this._settings.connect('changed::scroll-action', () => {
+        DockManager.settings.connect('changed::scroll-action', () => {
             if (isEnabled.bind(this)())
                 enable.bind(this)();
             else
@@ -1306,20 +1316,19 @@ const DashToDock_KeyboardShortcuts_NUM_HOTKEYS = 10;
 
 var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
 
-    constructor(settings, allDocks){
-        this._settings = settings;
+    constructor(allDocks){
         this._allDocks = allDocks;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._hotKeysEnabled = false;
-        if (this._settings.get_boolean('hot-keys'))
+        if (DockManager.settings.get_boolean('hot-keys'))
             this._enableHotKeys();
 
         this._signalsHandler.add([
-            this._settings,
+            DockManager.settings,
             'changed::hot-keys',
             () => {
-                    if (this._settings.get_boolean('hot-keys'))
+                    if (DockManager.settings.get_boolean('hot-keys'))
                         this._enableHotKeys.bind(this)();
                     else
                         this._disableHotKeys.bind(this)();
@@ -1345,7 +1354,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
         keys.forEach( function(key) {
             for (let i = 0; i < DashToDock_KeyboardShortcuts_NUM_HOTKEYS; i++) {
                 let appNum = i;
-                Main.wm.addKeybinding(key + (i + 1), this._settings,
+                Main.wm.addKeybinding(key + (i + 1), DockManager.settings,
                                       Meta.KeyBindingFlags.NONE,
                                       Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                                       () => {
@@ -1372,30 +1381,33 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
     }
 
     _optionalNumberOverlay() {
+        let settings = DockManager.settings;
         this._shortcutIsSet = false;
         // Enable extra shortcut if either 'overlay' or 'show-dock' are true
-        if (this._settings.get_boolean('hot-keys') &&
-           (this._settings.get_boolean('hotkeys-overlay') || this._settings.get_boolean('hotkeys-show-dock')))
+        if (settings.get_boolean('hot-keys') &&
+           (settings.get_boolean('hotkeys-overlay') || settings.get_boolean('hotkeys-show-dock')))
             this._enableExtraShortcut();
 
         this._signalsHandler.add([
-            this._settings,
+            settings,
             'changed::hot-keys',
             this._checkHotkeysOptions.bind(this)
         ], [
-            this._settings,
+            settings,
             'changed::hotkeys-overlay',
             this._checkHotkeysOptions.bind(this)
         ], [
-            this._settings,
+            settings,
             'changed::hotkeys-show-dock',
             this._checkHotkeysOptions.bind(this)
         ]);
     }
 
     _checkHotkeysOptions() {
-        if (this._settings.get_boolean('hot-keys') &&
-           (this._settings.get_boolean('hotkeys-overlay') || this._settings.get_boolean('hotkeys-show-dock')))
+        let settings = DockManager.settings;
+
+        if (settings.get_boolean('hot-keys') &&
+           (settings.get_boolean('hotkeys-overlay') || settings.get_boolean('hotkeys-show-dock')))
             this._enableExtraShortcut();
         else
             this._disableExtraShortcut();
@@ -1403,7 +1415,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
 
     _enableExtraShortcut() {
         if (!this._shortcutIsSet) {
-            Main.wm.addKeybinding('shortcut', this._settings,
+            Main.wm.addKeybinding('shortcut', DockManager.settings,
                                   Meta.KeyBindingFlags.NONE,
                                   Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                                   this._showOverlay.bind(this));
@@ -1456,44 +1468,44 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
  */
 var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
 
-    constructor(settings, allDocks) {
+    constructor(allDocks) {
 
-        this._settings = settings;
+        let settings = DockManager.settings;
         this._allDocks = allDocks;
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._injectionsHandler = new Utils.InjectionsHandler();
 
         this._signalsHandler.add([
-            this._settings,
+            settings,
             'changed::isolate-workspaces',
             () => {
                     this._allDocks.forEach(function(dock) {
                         dock.dash.resetAppIcons();
                     });
-                    if (this._settings.get_boolean('isolate-workspaces') ||
-                        this._settings.get_boolean('isolate-monitors'))
+                    if (settings.get_boolean('isolate-workspaces') ||
+                        settings.get_boolean('isolate-monitors'))
                         this._enable.bind(this)();
                     else
                         this._disable.bind(this)();
             }
         ],[
-            this._settings,
+            settings,
             'changed::isolate-monitors',
             () => {
                     this._allDocks.forEach(function(dock) {
                         dock.dash.resetAppIcons();
                     });
-                    if (this._settings.get_boolean('isolate-workspaces') ||
-                        this._settings.get_boolean('isolate-monitors'))
+                    if (settings.get_boolean('isolate-workspaces') ||
+                        settings.get_boolean('isolate-monitors'))
                         this._enable.bind(this)();
                     else
                         this._disable.bind(this)();
             }
         ]);
 
-        if (this._settings.get_boolean('isolate-workspaces') ||
-            this._settings.get_boolean('isolate-monitors'))
+        if (settings.get_boolean('isolate-workspaces') ||
+            settings.get_boolean('isolate-monitors'))
             this._enable();
 
     }
@@ -1517,7 +1529,7 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
 
             // This last signal is only needed for monitor isolation, as windows
             // might migrate from one monitor to another without triggering 'restacked'
-            if (this._settings.get_boolean('isolate-monitors'))
+            if (DockManager.settings.get_boolean('isolate-monitors'))
                 this._signalsHandler.addWithLabel('isolation', [
                     global.display,
                     'window-entered-monitor',
@@ -1563,6 +1575,11 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
 var DockManager = class DashToDock_DockManager {
 
     constructor() {
+        if (Me.imports.extension.dockManager)
+            throw new Error('DashToDock has been already initialized');
+
+        Me.imports.extension.dockManager = this;
+
         this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview._dash;
@@ -1576,6 +1593,14 @@ var DockManager = class DashToDock_DockManager {
 
         // Connect relevant signals to the toggling function
         this._bindSettingsChanges();
+    }
+
+    static getDefault() {
+        return Me.imports.extension.dockManager
+    }
+
+    static get settings() {
+        return DockManager.getDefault()._settings;
     }
 
     _toggle() {
@@ -1642,7 +1667,7 @@ var DockManager = class DashToDock_DockManager {
         }
 
         // First we create the main Dock, to get the extra features to bind to this one
-        let dock = new DockedDash(this._settings, this._remoteModel, this._preferredMonitorIndex);
+        let dock = new DockedDash(this._remoteModel, this._preferredMonitorIndex);
         this._allDocks.push(dock);
 
         // connect app icon into the view selector
@@ -1659,7 +1684,7 @@ var DockManager = class DashToDock_DockManager {
             for (let iMon = 0; iMon < nMon; iMon++) {
                 if (iMon == this._preferredMonitorIndex)
                     continue;
-                let dock = new DockedDash(this._settings, this._remoteModel, iMon);
+                let dock = new DockedDash(this._remoteModel, iMon);
                 this._allDocks.push(dock);
                 // connect app icon into the view selector
                 dock.dash.showAppsButton.connect('notify::checked', this._onShowAppsButtonToggled.bind(this));
@@ -1668,8 +1693,8 @@ var DockManager = class DashToDock_DockManager {
 
         // Load optional features. We load *after* the docks are created, since
         // we need to connect the signals to all dock instances.
-        this._workspaceIsolation = new WorkspaceIsolation(this._settings, this._allDocks);
-        this._keyboardShortcuts = new KeyboardShortcuts(this._settings, this._allDocks);
+        this._workspaceIsolation = new WorkspaceIsolation(this._allDocks);
+        this._keyboardShortcuts = new KeyboardShortcuts(this._allDocks);
     }
 
     _prepareMainDash() {
@@ -1822,13 +1847,17 @@ var DockManager = class DashToDock_DockManager {
         this._revertPanelCorners();
         this._restoreDash();
         this._remoteModel.destroy();
+        this._settings.run_dispose();
+        this._settings = null;
+
+        Me.imports.extension.dockManager = null;
     }
 
     /**
      * Adjust Panel corners
      */
     _adjustPanelCorners() {
-        let position = Utils.getPosition(this._settings);
+        let position = Utils.getPosition();
         let isHorizontal = ((position == St.Side.TOP) || (position == St.Side.BOTTOM));
         let extendHeight   = this._settings.get_boolean('extend-height');
         let fixedIsEnabled = this._settings.get_boolean('dock-fixed');
