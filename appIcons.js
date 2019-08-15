@@ -1021,30 +1021,16 @@ var MyShowAppsIcon = GObject.registerClass({
         this._dtdSettings = settings;
 
         // Re-use appIcon methods
-        this._removeMenuTimeout = AppDisplay.AppIcon.prototype._removeMenuTimeout;
-        this._setPopupTimeout = AppDisplay.AppIcon.prototype._setPopupTimeout;
-        this._onButtonPress = AppDisplay.AppIcon.prototype._onButtonPress;
-        this._onKeyboardPopupMenu = AppDisplay.AppIcon.prototype._onKeyboardPopupMenu;
-        this._onLeaveEvent = AppDisplay.AppIcon.prototype._onLeaveEvent;
-        this._onTouchEvent = AppDisplay.AppIcon.prototype._onTouchEvent;
-        this._onMenuPoppedDown = AppDisplay.AppIcon.prototype._onMenuPoppedDown;
-
-        // No action on clicked (showing of the appsview is controlled elsewhere)
-        this._onClicked = (actor, button) => {
-            this._removeMenuTimeout();
-        };
-
-        this.actor.connect('leave-event', this._onLeaveEvent.bind(this));
-        this.actor.connect('button-press-event', this._onButtonPress.bind(this));
-        this.actor.connect('touch-event', this._onTouchEvent.bind(this));
-        this.actor.connect('clicked', this._onClicked.bind(this));
-        this.actor.connect('popup-menu', this._onKeyboardPopupMenu.bind(this));
+        let appIconPrototype = AppDisplay.AppIcon.prototype;
+        this.actor.connect('leave-event', appIconPrototype._onLeaveEvent.bind(this));
+        this.actor.connect('button-press-event', appIconPrototype._onButtonPress.bind(this));
+        this.actor.connect('touch-event', appIconPrototype._onTouchEvent.bind(this));
+        this.actor.connect('popup-menu', appIconPrototype._onKeyboardPopupMenu.bind(this));
+        this.actor.connect('clicked', this._removeMenuTimeout.bind(this));
 
         this._menu = null;
         this._menuManager = new PopupMenu.PopupMenuManager(this.actor);
         this._menuTimeoutId = 0;
-
-        this.showLabel = itemShowLabel;
     }
 
     get actor() {
@@ -1052,6 +1038,22 @@ var MyShowAppsIcon = GObject.registerClass({
          * compatibility layer or the shell won't be able to access to the
          * actual actor */
         return this.toggleButton;
+    }
+
+    showLabel() {
+        itemShowLabel.call(this);
+    }
+
+    _onMenuPoppedDown() {
+        AppDisplay.AppIcon.prototype._onMenuPoppedDown.apply(this, arguments);
+    }
+
+    _setPopupTimeout() {
+        AppDisplay.AppIcon.prototype._onMenuPoppedDown.apply(this, arguments);
+    }
+
+    _removeMenuTimeout() {
+        AppDisplay.AppIcon.prototype._removeMenuTimeout.apply(this, arguments);
     }
 
     popupMenu() {
