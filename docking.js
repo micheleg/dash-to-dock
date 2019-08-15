@@ -1756,7 +1756,7 @@ var DockManager = class DashToDock_DockManager {
                         Main.overview.viewSelector._activePage.hide();
                         Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
                         Main.overview.viewSelector._activePage.show();
-                        grid.actor.opacity = 0;
+                        grid.opacity = 0;
 
                         // The animation has to be trigered manually because the AppDisplay.animate
                         // method is waiting for an allocation not happening, as we skip the workspace view
@@ -1766,7 +1766,7 @@ var DockManager = class DashToDock_DockManager {
                         let overviewShownId = Main.overview.connect('shown', () => {
                             Main.overview.disconnect(overviewShownId);
                             Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
-                                grid.actor.opacity = 255;
+                                grid.opacity = 255;
                                 grid.animateSpring(IconGrid.AnimationDirection.IN, this._allDocks[0].dash.showAppsButton);
                             });
                         });
@@ -1774,7 +1774,7 @@ var DockManager = class DashToDock_DockManager {
                     else {
                         Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
                         Main.overview.viewSelector._activePage.show();
-                        grid.actor.opacity = 255;
+                        grid.opacity = 255;
                     }
 
                 }
@@ -1792,7 +1792,6 @@ var DockManager = class DashToDock_DockManager {
                         // workspaceView to avoid the zoomout animation. Hide the appPage
                         // onComplete to avoid ugly flashing of original icons.
                         let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
-                        let grid = view._grid;
                         view.animate(IconGrid.AnimationDirection.OUT, () => {
                             Main.overview.viewSelector._appsPage.hide();
                             Main.overview.hide();
