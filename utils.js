@@ -2,6 +2,9 @@ const Clutter = imports.gi.Clutter;
 const Meta = imports.gi.Meta;
 const St = imports.gi.St;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Docking = Me.imports.docking;
+
 /**
  * Simplify global signals and function injections handling
  * abstract class
@@ -213,8 +216,8 @@ var InjectionsHandler = class DashToDock_InjectionsHandler extends BasicHandler 
 /**
  * Return the actual position reverseing left and right in rtl
  */
-function getPosition(settings) {
-    let position = settings.get_enum('dock-position');
+function getPosition() {
+    let position = Docking.DockManager.settings.get_enum('dock-position');
     if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL) {
         if (position == St.Side.LEFT)
             position = St.Side.RIGHT;

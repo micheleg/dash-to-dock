@@ -2162,9 +2162,9 @@
                                     <property name="can_focus">False</property>
                                     <property name="valign">center</property>
                                     <items>
-                                      <item translatable="yes">Default</item>
-                                      <item translatable="yes">Fixed</item>
-                                      <item translatable="yes">Dynamic</item>
+                                      <item id="0" translatable="yes">Default</item>
+                                      <item id="1" translatable="yes">Fixed</item>
+                                      <item id="3" translatable="yes">Dynamic</item>
                                     </items>
                                   </object>
                                   <packing>

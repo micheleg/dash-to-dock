@@ -30,7 +30,6 @@ function disable() {
     try {
         if (dockManager != null) {
             dockManager.destroy();
-            dockManager = null;
         }
     } catch(e) {
         log('Failed to destroy dockManager: %s'.format(e.message));
@@ -52,6 +51,5 @@ function conditionallyenabledock() {
         dockManager = new Docking.DockManager();
     } else if (!to_enable && dockManager) {
         dockManager.destroy();
-        dockManager = null;
     }
 }

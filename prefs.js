@@ -751,13 +751,13 @@ var Settings = class DashToDock_Settings {
         });
 
         // Opacity
-        this._builder.get_object('customize_opacity_combo').set_active(
-            this._settings.get_enum('transparency-mode')
+        this._builder.get_object('customize_opacity_combo').set_active_id(
+            this._settings.get_enum('transparency-mode').toString()
         );
         this._builder.get_object('customize_opacity_combo').connect(
             'changed',
             (widget) => {
-                this._settings.set_enum('transparency-mode', widget.get_active());
+                this._settings.set_enum('transparency-mode', parseInt(widget.get_active_id()));
             }
         );
 
