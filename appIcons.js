@@ -30,6 +30,7 @@ const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
+const FileManager1API = Me.imports.fileManager1API;
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
 const AppIconIndicators = Me.imports.appIconIndicators;
@@ -84,6 +85,9 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         this.remoteModel = remoteModel;
         this._indicator = null;
 
+        let appInfo = app.get_app_info();
+        this._location = appInfo ? appInfo.get_string('XdtdUri') : null;
+
         this._updateIndicatorStyle();
 
         // Monitor windows-changes instead of app state.
@@ -127,6 +131,11 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
                 this._updateIndicatorStyle.bind(this)
             ]);
         }, this);
+        this._signalsHandler.add([
+            FileManager1API.fm1Client,
+            'windows-changed',
+            this.onWindowsChanged.bind(this)
+        ]);
 
         this._signalsHandler.add([
             Docking.DockManager.settings,
@@ -276,8 +285,8 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         [rect.x, rect.y] = this.actor.get_transformed_position();
         [rect.width, rect.height] = this.actor.get_transformed_size();
 
-        let windows = this.app.get_windows();
-        if (Docking.DockManager.settings.get_boolean('multi-monitor')){
+        let windows = this.getWindows();
+        if (Docking.DockManager.settings.get_boolean('multi-monitor')) {
             let monitorIndex = this.monitorIndex;
             windows = windows.filter(function(w) {
                 return w.get_monitor() == monitorIndex;
@@ -387,7 +396,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         // We check if the app is running, and that the # of windows is > 0 in
         // case we use workspace isolation.
         let windows = this.getInterestingWindows();
-        let appIsRunning = this.app.state == Shell.AppState.RUNNING
+        let appIsRunning = (this.app.state == Shell.AppState.RUNNING || this.isLocation())
             && windows.length > 0;
 
         // Some action modes (e.g. MINIMIZE_OR_OVERVIEW) require overview to remain open
@@ -592,7 +601,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
             // Try to manually activate the first window. Otherwise, when the app is activated by
             // switching to a different workspace, a launch spinning icon is shown and disappers only
             // after a timeout.
-            let windows = this.app.get_windows();
+            let windows = this.getWindows();
             if (windows.length > 0)
                 Main.activateWindow(windows[0])
             else
@@ -747,10 +756,19 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         return false;
     }
 
+    getWindows() {
+        return getWindows(this.app, this._location);
+    }
+
     // Filter out unnecessary windows, for instance
     // nautilus desktop window.
     getInterestingWindows() {
-        return getInterestingWindows(this.app, this.monitorIndex);
+        return getInterestingWindows(this.app, this.monitorIndex, this._location);
+    }
+
+    // Does the Icon represent a location rather than an App
+    isLocation() {
+        return this._location != null;
     }
 };
 /**
@@ -830,7 +848,8 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                     });
                 }
 
-                let canFavorite = global.settings.is_writable('favorite-apps');
+                let canFavorite = global.settings.is_writable('favorite-apps') &&
+                                  !this._source.isLocation();
 
                 if (canFavorite) {
                     this._appendSeparator();
@@ -852,7 +871,8 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                     }
                 }
 
-                if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop')) {
+                if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop') &&
+                    !this._source.isLocation()) {
                     this._appendSeparator();
                     let item = this._appendMenuItem(_("Show Details"));
                     item.connect('activate', () => {
@@ -974,10 +994,18 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
 };
 Signals.addSignalMethods(MyAppIconMenu.prototype);
 
+function getWindows(app, location) {
+    if (location != null) {
+        return FileManager1API.fm1Client.getWindows(location);
+    } else {
+        return app.get_windows();
+    }
+}
+
 // Filter out unnecessary windows, for instance
 // nautilus desktop window.
-function getInterestingWindows(app, monitorIndex) {
-    let windows = app.get_windows().filter(function(w) {
+function getInterestingWindows(app, monitorIndex, location) {
+    let windows = getWindows(app, location).filter(function(w) {
         return !w.skip_taskbar;
     });
 
