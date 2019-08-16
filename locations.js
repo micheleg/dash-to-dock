@@ -23,30 +23,42 @@ var Trash = class DashToDock_Trash {
 
     constructor() {
         this._file = Gio.file_new_for_uri('trash://');
-        this._monitor = this._file.monitor_directory(0, null);
-        this._lastEmpty = null;
-        this._empty = null;
-        this._signalId =
-            this._monitor.connect('changed',
-                                  this._onTrashChange.bind(this));
+        try {
+            this._monitor = this._file.monitor_directory(0, null);
+            this._signalId = this._monitor.connect(
+                'changed',
+                this._onTrashChange.bind(this)
+            );
+        } catch (e) {
+            log(`Impossible to monitor trash: ${e}`)
+        }
+        this._lastEmpty = true;
+        this._empty = true;
         this._onTrashChange();
     }
 
     destroy() {
-        this._monitor.disconnect(this._signalId);
+        if (this._monitor) {
+            this._monitor.disconnect(this._signalId);
+            this._monitor.run_dispose();
+        }
+        this._file.run_dispose();
     }
 
     _onTrashChange() {
-        let children = this._file.enumerate_children('*', 0, null);
-        this._empty = children.next_file(null) == null;
-        children.close(null);
-        if (this._lastEmpty != this._empty) {
-            this._makeApp();
-            this.emit('changed');
+        try {
+            let children = this._file.enumerate_children('*', 0, null);
+            this._empty = children.next_file(null) == null;
+            children.close(null);
+        } catch (e) {
+            log(`Impossible to enumerate trash children: ${e}`)
+            return;
         }
+
+        this._ensureApp();
     }
 
-    _makeApp() {
+    _ensureApp() {
         if (this._trashApp == null ||
             this._lastEmpty != this._empty) {
             let trashKeys = new GLib.KeyFile();
@@ -67,10 +79,13 @@ var Trash = class DashToDock_Trash {
             let trashAppInfo = Gio.DesktopAppInfo.new_from_keyfile(trashKeys);
             this._trashApp = new Shell.App({appInfo: trashAppInfo});
             this._lastEmpty = this._empty;
+
+            this.emit('changed');
         }
     }
 
     getApp() {
+        this._ensureApp();
         return this._trashApp;
     }
 }
