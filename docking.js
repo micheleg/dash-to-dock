@@ -59,34 +59,25 @@ const scrollAction = {
  * must have a WEST (SOUTH) anchor_point to achieve the sliding to the RIGHT (BOTTOM)
  * side.
 */
-var DashSlideContainer = GObject.registerClass(
-class DashToDock_DashSlideContainer extends St.Widget {
+var DashSlideContainer = GObject.registerClass({
+    Properties: {
+        'side': GObject.ParamSpec.enum(
+            'side', 'side', 'side',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            St.Side, St.Side.LEFT),
+        'slidex': GObject.ParamSpec.double(
+            'slidex', 'slidex', 'slidex',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
+            0, 1, 1),
+    }
+}, class DashToDock_DashSlideContainer extends St.Widget {
 
-    _init(params) {
-        // Default local params
-        let localDefaults = {
-            side: St.Side.LEFT,
-            initialSlideValue: 1
-        }
-
-        let localParams = Params.parse(params, localDefaults, true);
-
-        if (params) {
-            // Remove local params before passing the params to the parent
-            // constructor to avoid errors.
-            let prop;
-            for (prop in localDefaults) {
-                if ((prop in params))
-                    delete params[prop];
-            }
-        }
-
+    _init(params = {}) {
         super._init(params);
         this._child = null;
 
         // slide parameter: 1 = visible, 0 = hidden.
-        this._slidex = localParams.initialSlideValue;
-        this._side = localParams.side;
+        this._slidex = params.slidex || 1;
         this._slideoutSize = 0; // minimum size when slided out
     }
 
@@ -108,19 +99,19 @@ class DashToDock_DashSlideContainer extends St.Widget {
 
         let slideoutSize = this._slideoutSize;
 
-        if (this._side == St.Side.LEFT) {
+        if (this.side == St.Side.LEFT) {
             childBox.x1 = (this._slidex -1) * (childWidth - slideoutSize);
             childBox.x2 = slideoutSize + this._slidex*(childWidth - slideoutSize);
             childBox.y1 = 0;
             childBox.y2 = childBox.y1 + childHeight;
         }
-        else if ((this._side == St.Side.RIGHT) || (this._side == St.Side.BOTTOM)) {
+        else if ((this.side == St.Side.RIGHT) || (this.side == St.Side.BOTTOM)) {
             childBox.x1 = 0;
             childBox.x2 = childWidth;
             childBox.y1 = 0;
             childBox.y2 = childBox.y1 + childHeight;
         }
-        else if (this._side == St.Side.TOP) {
+        else if (this.side == St.Side.TOP) {
             childBox.x1 = 0;
             childBox.x2 = childWidth;
             childBox.y1 = (this._slidex -1) * (childHeight - slideoutSize);
@@ -137,7 +128,7 @@ class DashToDock_DashSlideContainer extends St.Widget {
      */
     vfunc_get_preferred_width(forHeight) {
         let [minWidth, natWidth] = this._child.get_preferred_width(forHeight);
-        if ((this._side ==  St.Side.LEFT) || (this._side == St.Side.RIGHT)) {
+        if ((this.side ==  St.Side.LEFT) || (this.side == St.Side.RIGHT)) {
             minWidth = (minWidth - this._slideoutSize) * this._slidex + this._slideoutSize;
             natWidth = (natWidth - this._slideoutSize) * this._slidex + this._slideoutSize;
         }
@@ -149,7 +140,7 @@ class DashToDock_DashSlideContainer extends St.Widget {
      */
     vfunc_get_preferred_height(forWidth) {
         let [minHeight, natHeight] = this._child.get_preferred_height(forWidth);
-        if ((this._side ==  St.Side.TOP) || (this._side ==  St.Side.BOTTOM)) {
+        if ((this.side ==  St.Side.TOP) || (this.side ==  St.Side.BOTTOM)) {
             minHeight = (minHeight - this._slideoutSize) * this._slidex + this._slideoutSize;
             natHeight = (natHeight - this._slideoutSize) * this._slidex + this._slideoutSize;
         }
@@ -170,8 +161,14 @@ class DashToDock_DashSlideContainer extends St.Widget {
     }
 
     set slidex(value) {
+        if (value == this._slidex)
+            return;
+
         this._slidex = value;
-        this._child.queue_relayout();
+        this.notify('slidex');
+
+        if (this._child)
+            this._child.queue_relayout();
     }
 
     get slidex() {
@@ -258,7 +255,7 @@ var DockedDash = GObject.registerClass({
         // This is the sliding actor whose allocation is to be tracked for input regions
         this._slider = new DashSlideContainer({
             side: this._position,
-            initialSlideValue: 0
+            slidex: 0
         });
 
         // This is the actor whose hover status us tracked for autohide
