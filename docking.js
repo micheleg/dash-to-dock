@@ -16,7 +16,6 @@ const IconGrid = imports.ui.iconGrid;
 const Overview = imports.ui.overview;
 const OverviewControls = imports.ui.overviewControls;
 const PointerWatcher = imports.ui.pointerWatcher;
-const Tweener = imports.ui.tweener;
 const Signals = imports.signals;
 const ViewSelector = imports.ui.viewSelector;
 const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
@@ -674,7 +673,7 @@ var DockedDash = GObject.registerClass({
     _show() {
         if ((this._dockState == State.HIDDEN) || (this._dockState == State.HIDING)) {
             if (this._dockState == State.HIDING)
-                // suppress all potential queued hiding animations - i.e. added to Tweener but not started,
+                // suppress all potential queued transitions - i.e. added but not started,
                 // always give priority to show
                 this._removeAnimations();
 
@@ -705,11 +704,10 @@ var DockedDash = GObject.registerClass({
     _animateIn(time, delay) {
         this._dockState = State.SHOWING;
 
-        Tweener.addTween(this._slider, {
-            slidex: 1,
-            time: time,
-            delay: delay,
-            transition: 'easeOutQuad',
+        this._slider.ease_property('slidex', 1, {
+            duration: time * 1000,
+            delay: delay * 1000,
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             onComplete: () => {
                 this._dockState = State.SHOWN;
                 // Remove barrier so that mouse pointer is released and can access monitors on other side of dock
@@ -724,11 +722,11 @@ var DockedDash = GObject.registerClass({
 
     _animateOut(time, delay) {
         this._dockState = State.HIDING;
-        Tweener.addTween(this._slider, {
-            slidex: 0,
-            time: time,
-            delay: delay ,
-            transition: 'easeOutQuad',
+
+        this._slider.ease_property('slidex', 0, {
+            duration: time * 1000,
+            delay: delay * 1000,
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             onComplete: () => {
                 this._dockState = State.HIDDEN;
                 // Remove queued barried removal if any
@@ -1102,7 +1100,7 @@ var DockedDash = GObject.registerClass({
     }
 
     _removeAnimations() {
-        Tweener.removeTweens(this._slider);
+        this._slider.remove_all_transitions();
     }
 
     _onDragStart() {

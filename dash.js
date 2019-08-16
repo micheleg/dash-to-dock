@@ -18,7 +18,6 @@ const DND = imports.ui.dnd;
 const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
 const PopupMenu = imports.ui.popupMenu;
-const Tweener = imports.ui.tweener;
 const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
 
@@ -27,9 +26,9 @@ const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 const AppIcons = Me.imports.appIcons;
 
-const DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME / 1000;
-const DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME / 1000;
-const DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT / 1000;
+const DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
+const DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME;
+const DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
 
 /**
  * Extend DashItemContainer
@@ -678,12 +677,13 @@ var MyDash = GObject.registerClass({
             icon.icon.set_size(icon.icon.width * scale,
                                icon.icon.height * scale);
 
-            Tweener.addTween(icon.icon,
-                             { width: targetWidth,
-                               height: targetHeight,
-                               time: DASH_ANIMATION_TIME,
-                               transition: 'easeOutQuad',
-                             });
+            icon.icon.remove_all_transitions();
+            icon.icon.ease({
+                width: targetWidth,
+                height: targetHeight,
+                time: DASH_ANIMATION_TIME,
+                mode: Clutter.AnimationMode.EASE_OUT_QUAD
+            });
         }
     }
 
@@ -1112,8 +1112,8 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
     let adjust_v = true;
     let adjust_h = true;
 
-    let vadjustment = scrollView.vscroll.adjustment;
-    let hadjustment = scrollView.hscroll.adjustment;
+    let vadjustment = scrollView.get_vscroll_bar().get_adjustment();
+    let hadjustment = scrollView.get_hscroll_bar().get_adjustment();
     let [vvalue, vlower, vupper, vstepIncrement, vpageIncrement, vpageSize] = vadjustment.get_values();
     let [hvalue, hlower, hupper, hstepIncrement, hpageIncrement, hpageSize] = hadjustment.get_values();
 
@@ -1154,17 +1154,17 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
         hvalue = Math.min(hupper - hpageSize, x2 + hoffset - hpageSize);
 
     if (vvalue !== vvalue0) {
-        Tweener.addTween(vadjustment, { value: vvalue,
-            time: Util.SCROLL_TIME / 1000,
-            transition: 'easeOutQuad'
+        vadjustment.ease(vvalue, {
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+            duration: Util.SCROLL_TIME
         });
     }
 
     if (hvalue !== hvalue0) {
-        Tweener.addTween(hadjustment,
-                         { value: hvalue,
-                           time: Util.SCROLL_TIME / 1000,
-                           transition: 'easeOutQuad' });
+        hadjustment.ease(hvalue, {
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+            duration: Util.SCROLL_TIME
+        });
     }
 
     return [hvalue- hvalue0, vvalue - vvalue0];

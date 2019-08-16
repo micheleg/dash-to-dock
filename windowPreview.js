@@ -14,7 +14,6 @@ const Gtk = imports.gi.Gtk;
 
 const Params = imports.misc.params;
 const PopupMenu = imports.ui.popupMenu;
-const Tweener = imports.ui.tweener;
 const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -22,6 +21,8 @@ const Utils = Me.imports.utils;
 
 const PREVIEW_MAX_WIDTH = 250;
 const PREVIEW_MAX_HEIGHT = 150;
+
+const PREVIEW_ANIMATION_DURATION = 250;
 
 var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.PopupMenu {
 
@@ -413,6 +414,14 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this._clone = clone;
         this._mutterWindow = mutterWindow;
         this._cloneBin.set_child(this._clone);
+
+        this._clone.connect('destroy', () => {
+            if (this._destroyId) {
+                mutterWindow.disconnect(this._destroyId);
+                this._destroyId = 0;
+            }
+            this._clone = null;
+        })
     }
 
     _windowCanClose() {
@@ -499,18 +508,22 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
 
         if (this._windowCanClose()) {
             this.closeButton.show();
-            Tweener.addTween(this.closeButton,
-                             { opacity: 255,
-                               time: Workspace.WINDOW_OVERLAY_FADE_TIME / 1000,
-                               transition: 'easeOutQuad' });
+            this.closeButton.remove_all_transitions();
+            this.closeButton.ease({
+                opacity: 255,
+                duration: Workspace.WINDOW_OVERLAY_FADE_TIME,
+                mode: Clutter.AnimationMode.EASE_OUT_QUAD
+            });
         }
     }
 
     _hideCloseButton() {
-        Tweener.addTween(this.closeButton,
-                         { opacity: 0,
-                           time: Workspace.WINDOW_OVERLAY_FADE_TIME / 1000,
-                           transition: 'easeInQuad' });
+        this.closeButton.remove_all_transitions();
+        this.closeButton.ease({
+            opacity: 0,
+            duration: Workspace.WINDOW_OVERLAY_FADE_TIME,
+            mode: Clutter.AnimationMode.EASE_IN_QUAD
+        });
     }
 
     show(animate) {
@@ -519,31 +532,30 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this.opacity = 0;
         this.set_width(0);
 
-        let time = animate ? 0.25 : 0;
-        Tweener.addTween(this,
-                         { opacity: 255,
-                           width: fullWidth,
-                           time: time,
-                           transition: 'easeInOutQuad'
-                         });
+        let time = animate ? PREVIEW_ANIMATION_DURATION : 0;
+        this.remove_all_transitions();
+        this.ease({
+            opacity: 255,
+            width: fullWidth,
+            duration: time,
+            mode: Clutter.AnimationMode.EASE_IN_OUT_QUAD,
+        });
     }
 
     _animateOutAndDestroy() {
-        Tweener.addTween(this,
-                         { opacity: 0,
-                           time: 0.25,
-                         });
+        this.remove_all_transitions();
+        this.ease({
+            opacity: 0,
+            duration: PREVIEW_ANIMATION_DURATION,
+        });
 
-        Tweener.addTween(this,
-                         { height: 0,
-                           width: 0,
-                           time: 0.25,
-                           delay: 0.25,
-                           onCompleteScope: this,
-                           onComplete() {
-                              this.destroy();
-                           }
-                         });
+        this.ease({
+            width: 0,
+            height: 0,
+            duration: PREVIEW_ANIMATION_DURATION,
+            delay: PREVIEW_ANIMATION_DURATION,
+            onComplete: () => this.destroy()
+        });
     }
 
     activate() {

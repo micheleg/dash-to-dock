@@ -17,7 +17,6 @@ const DND = imports.ui.dnd;
 const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
 const PopupMenu = imports.ui.popupMenu;
-const Tweener = imports.ui.tweener;
 const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
 

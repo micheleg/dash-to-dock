@@ -25,7 +25,6 @@ const DND = imports.ui.dnd;
 const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
 const PopupMenu = imports.ui.popupMenu;
-const Tweener = imports.ui.tweener;
 const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
 
@@ -36,8 +35,6 @@ const WindowPreview = Me.imports.windowPreview;
 const AppIconIndicators = Me.imports.appIconIndicators;
 
 let tracker = Shell.WindowTracker.get_default();
-
-let DASH_ITEM_LABEL_SHOW_TIME = Dash.DASH_ITEM_LABEL_SHOW_TIME / 1000;
 
 const clickAction = {
     SKIP: 0,
@@ -1169,10 +1166,11 @@ function itemShowLabel()  {
     else if (x + labelWidth > monitor.x + monitor.width - gap)
         x -= x + labelWidth - (monitor.x + monitor.width) + gap;
 
+    this.label.remove_all_transitions();
     this.label.set_position(x, y);
-    Tweener.addTween(this.label, {
+    this.label.ease({
         opacity: 255,
-        time: DASH_ITEM_LABEL_SHOW_TIME / 1000,
-        transition: 'easeOutQuad',
+        duration: Dash.DASH_ITEM_LABEL_SHOW_TIME,
+        mode: Clutter.AnimationMode.EASE_OUT_QUAD
     });
 }
