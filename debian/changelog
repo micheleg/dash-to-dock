@@ -1,3 +1,53 @@
+gnome-shell-extension-ubuntu-dock (66ubuntu19.10.1) UNRELEASED; urgency=medium
+
+  [ Adolfo Jayme Barrientos ]
+  * Update Spanish and Portuguese translations
+
+  [ Serdar Sağlam ]
+  * Update Turkish translation.
+
+  [ Michele Gaio ]
+  * Bump version (v66).
+  * Fix regression with transparencey settings UI.
+
+  [ Carlo Lobrano ]
+  * LauncherAPI: use CSS to style progress bar color
+
+  [ Joonas Henriksson ]
+  * Don't reset border-radius for shrinked dash
+
+  [ Philip Langdale ]
+  * dash: Add Trash Icon
+  * dash: Add Removable drive/device icons
+  * prefs: Add prefs to toggle showing Trash and Mounted Volumes
+  * appIcons: Implement window tracking for removable devices and trash
+  * fileManager1API: Deduplicate window with related locations in tabs
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+  * WindowPreviewMenuItem: Inherit from GObject (LP: #1835706)
+  * Animations: Convert shell durations in seconds (LP: #1835706)
+  * appIcons: Show the ShowAppIcon by default
+  * metadata: Bump shell version to 3.34 (LP: #1835706)
+  * cleanup: Use inheritance for Actor classes instead of composition
+  * dash: Inherit DashItemContainer instead of adding methods
+  * appIcons: Pass icon actor to PopupMenuManager (LP: #1835706)
+  * docking: Don't use actor parameter for grid
+  * ShowAppsIcons: Inherit from Dash.ShowAppsIcon
+  * appIcons: Define re-used AppIcon methods as class methods
+  * Docking: Use the DockManager as a singleton and keep settings reference there
+  * DashSlideContainer: Use native GObject properties
+  * general: Use native clutter animations instead of Tweener
+  * extension: Use new Shell's ExtensionManager API (LP: #1835706)
+  * locations: Handle Trash Errors
+  * ubuntu: Disable trash in Ubuntu
+  * locations: Ensure volume monitor is destroyed on destruction
+  * dash: Destroy Removables and Trash if disabled
+  * DockManager: Keep a fm1Client reference and destroy it when unneeded
+  * debian/control: Bump dependency to gnome-shell 3.33
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 19 Aug 2019 14:59:01 +0200
+
 gnome-shell-extension-ubuntu-dock (64ubuntu7) disco; urgency=medium
 
   * debian/rules: Ignore default stylesheet in ubuntu session (LP: #1824591)
