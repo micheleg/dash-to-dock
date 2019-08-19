@@ -755,6 +755,7 @@ var MyDash = class DashToDock_MyDash {
             Array.prototype.push.apply(newApps, this._removables.getApps());
         } else if (this._removables) {
             this._signalsHandler.removeWithLabel('show-mounts');
+            this._removables.destroy();
             this._removables = null;
         }
 
@@ -769,6 +770,7 @@ var MyDash = class DashToDock_MyDash {
             newApps.push(this._trash.getApp());
         } else if (this._trash) {
             this._signalsHandler.removeWithLabel('show-trash');
+            this._trash.destroy();
             this._trash = null;
         }
 
