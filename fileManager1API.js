@@ -69,6 +69,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
 
     destroy() {
         this._signalsHandler.destroy();
+        this._proxy.run_dispose();
     }
 
     /**
@@ -214,5 +215,3 @@ function guessWindowXID(win) {
         return null;
     }
 }
-
-var fm1Client = new FileManager1Client();
