@@ -29,7 +29,7 @@ const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const FileManager1API = Me.imports.fileManager1API;
+const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
 const AppIconIndicators = Me.imports.appIconIndicators;
@@ -134,11 +134,14 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
                 this._updateIndicatorStyle.bind(this)
             ]);
         }, this);
-        this._signalsHandler.add([
-            FileManager1API.fm1Client,
-            'windows-changed',
-            this.onWindowsChanged.bind(this)
-        ]);
+
+        if (this._location) {
+            this._signalsHandler.add([
+                Docking.DockManager.getDefault().fm1Client,
+                'windows-changed',
+                this.onWindowsChanged.bind(this)
+            ]);
+        }
 
         this._dtdSettings.connect('changed::scroll-action', () => {
             this._optionalScrollCycleWindows();
@@ -997,8 +1000,8 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
 Signals.addSignalMethods(MyAppIconMenu.prototype);
 
 function getWindows(app, location) {
-    if (location != null) {
-        return FileManager1API.fm1Client.getWindows(location);
+    if (location != null && Docking.DockManager.getDefault().fm1Client) {
+        return Docking.DockManager.getDefault().fm1Client.getWindows(location);
     } else {
         return app.get_windows();
     }

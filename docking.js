@@ -30,6 +30,7 @@ const Intellihide = Me.imports.intellihide;
 const Theming = Me.imports.theming;
 const MyDash = Me.imports.dash;
 const LauncherAPI = Me.imports.launcherAPI;
+const FileManager1API = Me.imports.fileManager1API;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 
@@ -1574,6 +1575,8 @@ var DockManager = class DashToDock_DockManager {
         this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview._dash;
+        this._ensureFileManagerClient();
+
         /* Array of all the docks created */
         this._allDocks = [];
         this._createDocks();
@@ -1584,6 +1587,32 @@ var DockManager = class DashToDock_DockManager {
 
         // Connect relevant signals to the toggling function
         this._bindSettingsChanges();
+    }
+
+    static getDefault() {
+        return Me.imports.extension.dockManager
+    }
+
+    static get settings() {
+        return DockManager.getDefault()._settings;
+    }
+
+    get fm1Client() {
+        return this._fm1Client;
+    }
+
+    _ensureFileManagerClient() {
+        let supportsLocations = ['show-trash', 'show-mounts'].some((s) => {
+            return this._settings.get_boolean(s);
+        });
+
+        if (supportsLocations) {
+            if (!this._fm1Client)
+                this._fm1Client = new FileManager1API.FileManager1Client();
+        } else if (this._fm1Client) {
+            this._fm1Client.destroy();
+            this._fm1Client = null;
+        }
     }
 
     _toggle() {
@@ -1619,7 +1648,15 @@ var DockManager = class DashToDock_DockManager {
             this._settings,
             'changed::dock-fixed',
             this._adjustPanelCorners.bind(this)
-        ]);
+        ], [
+            this._settings,
+            'changed::show-trash',
+            () => this._ensureFileManagerClient()
+        ], [
+            this._settings,
+            'changed::show-mounts',
+            () => this._ensureFileManagerClient()
+        ], );
     }
 
     _createDocks() {
@@ -1831,6 +1868,10 @@ var DockManager = class DashToDock_DockManager {
         this._deleteDocks();
         this._revertPanelCorners();
         this._restoreDash();
+        if (this._fm1Client) {
+            this._fm1Client.destroy();
+            this._fm1Client = null;
+        }
         this._remoteModel.destroy();
     }
 
