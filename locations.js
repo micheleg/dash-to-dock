@@ -138,6 +138,7 @@ var Removables = class DashToDock_Removables {
 
     destroy() {
         this._signalsHandler.destroy();
+        this._monitor.run_dispose();
     }
 
     _getWorkingIconName(icon) {
