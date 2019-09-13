@@ -85,6 +85,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         this._indicator = null;
 
         this._updateIndicatorStyle();
+        this._optionalScrollCycleWindows();
 
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
