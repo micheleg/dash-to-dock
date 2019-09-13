@@ -207,7 +207,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         if (!appIsRunning)
             return false
 
-        if (this._optionalScrollCycleWindowsDeadTimeId > 0)
+        if (this._optionalScrollCycleWindowsDeadTimeId)
             return false;
         else
             this._optionalScrollCycleWindowsDeadTimeId = Mainloop.timeout_add(250, () => {
