@@ -379,7 +379,7 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         // Newly-created windows are added to a workspace before
         // the compositor finds out about them...
         // Moreover sometimes they return an empty texture, thus as a workarounf also check for it size
-        if (!mutterWindow || !mutterWindow.get_texture() || !mutterWindow.get_texture().get_size()[0]) {
+        if (!mutterWindow || !mutterWindow.get_texture() || !mutterWindow.get_size()[0]) {
             this._cloneTextureId = Mainloop.idle_add(() => {
                 // Check if there's still a point in getting the texture,
                 // otherwise this could go on indefinitely
@@ -392,12 +392,9 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             return;
         }
 
-        let windowTexture = mutterWindow.get_texture();
-        let [width, height] = windowTexture.get_size();
-
+        let [width, height] = mutterWindow.get_size();
         let scale = Math.min(1.0, PREVIEW_MAX_WIDTH/width, PREVIEW_MAX_HEIGHT/height);
-
-        let clone = new Clutter.Clone ({ source: windowTexture,
+        let clone = new Clutter.Clone ({ source: mutterWindow,
                                          reactive: true,
                                          width: width * scale,
                                          height: height * scale });
