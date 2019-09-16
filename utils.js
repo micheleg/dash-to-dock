@@ -1,6 +1,13 @@
 const Clutter = imports.gi.Clutter;
 const Meta = imports.gi.Meta;
 const St = imports.gi.St;
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Docking = Me.imports.docking;
+
+var SignalsHandlerFlags = {
+    NONE: 0,
+    CONNECT_AFTER: 1
+};
 
 /**
  * Simplify global signals and function injections handling
@@ -31,7 +38,11 @@ const BasicHandler = class DashToDock_BasicHandler {
         // Skip first element of the arguments
         for (let i = 1; i < arguments.length; i++) {
             let item = this._storage[label];
-            item.push(this._create(arguments[i]));
+            try {
+                item.push(this._create(arguments[i]));
+            } catch (e) {
+                logError(e);
+            }
         }
     }
 
@@ -70,7 +81,21 @@ var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHan
         let object = item[0];
         let event = item[1];
         let callback = item[2]
-        let id = object.connect(event, callback);
+        let flags = item.length > 3 ? item[3] : SignalsHandlerFlags.NONE;
+
+        if (!object)
+            throw new Error('Impossible to connect to an invalid object');
+
+        let after = flags == SignalsHandlerFlags.CONNECT_AFTER;
+        let connector = after ? object.connect_after : object.connect;
+
+        if (!connector) {
+            throw new Error(`Requested to connect to signal '${event}', ` +
+                `but no implementation for 'connect${after ? '_after' : ''}' `+
+                `found in ${object.constructor.name}`);
+        }
+
+        let id = connector.call(object, event, callback);
 
         return [object, id];
     }
