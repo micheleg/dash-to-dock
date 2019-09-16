@@ -53,14 +53,14 @@ const BasicHandler = class DashToDock_BasicHandler {
      * Create single element to be stored in the storage structure
      */
     _create(item) {
-        throw new Error('no implementation of _create in ' + this);
+        throw new GObject.NotImplementedError(`_create in ${this.constructor.name}`);
     }
 
     /**
      * Correctly delete single element
      */
     _remove(item) {
-        throw new Error('no implementation of _remove in ' + this);
+        throw new GObject.NotImplementedError(`_remove in ${this.constructor.name}`);
     }
 };
 
