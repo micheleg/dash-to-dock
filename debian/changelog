@@ -1,3 +1,14 @@
+gnome-shell-extension-ubuntu-dock (66ubuntu19.10.2) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * windowPreview: Use the window actor as Clone source (LP: #1843520)
+  * appIcons: Don't warn if variable is undefined
+  * appIcons: Enable scroll handler if enabled on construction
+  * docking: Don't warn if variable is undefined
+  * ubuntu-gschema.override: Enable fixed transparency with opacity at 70%
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 16 Sep 2019 14:24:52 +0200
+
 gnome-shell-extension-ubuntu-dock (66ubuntu19.10.1) eoan; urgency=medium
 
   [ Adolfo Jayme Barrientos ]
