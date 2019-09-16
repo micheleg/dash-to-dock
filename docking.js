@@ -484,11 +484,13 @@ var DockedDash = GObject.registerClass({
         ], [
             settings,
             'changed::show-trash',
-            () => { this.dash.resetAppIcons(); }
+            () => { this.dash.resetAppIcons(); },
+            Utils.SignalsHandlerFlags.CONNECT_AFTER,
         ], [
             settings,
             'changed::show-mounts',
-            () => { this.dash.resetAppIcons(); }
+            () => { this.dash.resetAppIcons(); },
+            Utils.SignalsHandlerFlags.CONNECT_AFTER
         ], [
             settings,
             'changed::show-running',
