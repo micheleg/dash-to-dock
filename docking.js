@@ -485,11 +485,13 @@ var DockedDash = class DashToDock {
         ], [
             this._settings,
             'changed::show-trash',
-            () => { this.dash.resetAppIcons(); }
+            () => { this.dash.resetAppIcons(); },
+            Utils.SignalsHandlerFlags.CONNECT_AFTER,
         ], [
             this._settings,
             'changed::show-mounts',
-            () => { this.dash.resetAppIcons(); }
+            () => { this.dash.resetAppIcons(); },
+            Utils.SignalsHandlerFlags.CONNECT_AFTER
         ], [
             this._settings,
             'changed::show-running',
