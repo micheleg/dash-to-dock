@@ -88,6 +88,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         this._location = appInfo ? appInfo.get_string('XdtdUri') : null;
 
         this._updateIndicatorStyle();
+        this._optionalScrollCycleWindows();
 
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
@@ -218,7 +219,7 @@ var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
         if (!appIsRunning)
             return false
 
-        if (this._optionalScrollCycleWindowsDeadTimeId > 0)
+        if (this._optionalScrollCycleWindowsDeadTimeId)
             return false;
         else
             this._optionalScrollCycleWindowsDeadTimeId = Mainloop.timeout_add(250, () => {

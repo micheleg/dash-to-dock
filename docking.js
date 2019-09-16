@@ -1217,14 +1217,12 @@ var DockedDash = GObject.registerClass({
                 'scroll-event',
                 onScrollEvent.bind(this)
             ]);
-
-            this._optionalScrollWorkspaceSwitchDeadTimeId = 0;
         }
 
         function disable() {
             this._signalsHandler.removeWithLabel(label);
 
-            if (this._optionalScrollWorkspaceSwitchDeadTimeId > 0) {
+            if (this._optionalScrollWorkspaceSwitchDeadTimeId) {
                 Mainloop.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
                 this._optionalScrollWorkspaceSwitchDeadTimeId = 0;
             }
@@ -1261,7 +1259,7 @@ var DockedDash = GObject.registerClass({
                 // Usefull on laptops when using a touchpad.
 
                 // During the deadtime do nothing
-                if (this._optionalScrollWorkspaceSwitchDeadTimeId > 0)
+                if (this._optionalScrollWorkspaceSwitchDeadTimeId)
                     return false;
                 else
                     this._optionalScrollWorkspaceSwitchDeadTimeId = Mainloop.timeout_add(250, () => {
