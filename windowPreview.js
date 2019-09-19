@@ -369,6 +369,7 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
 
         this._cloneTexture(window);
 
+        this.connect('destroy', this._onDestroy.bind(this));
     }
 
     _cloneTexture(metaWin){
@@ -560,8 +561,6 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     }
 
     _onDestroy() {
-        super._onDestroy();
-
         if (this._cloneTextureId) {
             GLib.source_remove(this._cloneTextureId);
             this._cloneTextureId = 0;
