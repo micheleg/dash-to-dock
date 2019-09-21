@@ -9,6 +9,7 @@ const Main = imports.ui.main;
 const Signals = imports.signals;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 
 // A good compromise between reactivity and efficiency; to be tuned.
@@ -46,9 +47,8 @@ const handledWindowTypes = [
  */
 var Intellihide = class DashToDock_Intellihide {
 
-    constructor(settings, monitorIndex) {
+    constructor(monitorIndex) {
         // Load settings
-        this._settings = settings;
         this._monitorIndex = monitorIndex;
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
@@ -252,7 +252,7 @@ var Intellihide = class DashToDock_Intellihide {
         let wksp_index = wksp.index();
 
         // Depending on the intellihide mode, exclude non-relevent windows
-        switch (this._settings.get_enum('intellihide-mode')) {
+        switch (Docking.DockManager.settings.get_enum('intellihide-mode')) {
             case IntellihideMode.ALL_WINDOWS:
                 // Do nothing
                 break;
