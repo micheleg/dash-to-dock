@@ -322,7 +322,7 @@ msgstr "Dash の縮小表示"
 
 #: Settings.ui:1923
 msgid "Customize windows counter indicators"
-msgstr "ウィンドウ数インジケーターの表示"
+msgstr "ウィンドウ数インジケーターの設定"
 
 #: Settings.ui:1966 Settings.ui:2165
 msgid "Default"
