@@ -176,7 +176,7 @@ var Removables = class DashToDock_Removables {
         volumeKeys.set_string('Desktop Entry', 'Name', volume.get_name());
         volumeKeys.set_string('Desktop Entry', 'Icon', this._getWorkingIconName(volume.get_icon()));
         volumeKeys.set_string('Desktop Entry', 'Type', 'Application');
-        volumeKeys.set_string('Desktop Entry', 'Exec', 'nautilus "' + uri + '"');
+        volumeKeys.set_string('Desktop Entry', 'Exec', 'gio open "' + uri + '"');
         volumeKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
         volumeKeys.set_string('Desktop Entry', 'Actions', 'mount;');
         volumeKeys.set_string('Desktop Action mount', 'Name', __('Mount'));
