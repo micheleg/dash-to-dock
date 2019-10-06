@@ -25,6 +25,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 const AppIcons = Me.imports.appIcons;
+const Locations = Me.imports.locations;
 
 const DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
 const DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME;
@@ -740,6 +741,36 @@ var MyDash = GObject.registerClass({
                     continue;
                 newApps.push(app);
             }
+        }
+
+        if (settings.get_boolean('show-mounts')) {
+            if (!this._removables) {
+                this._removables = new Locations.Removables();
+                this._signalsHandler.addWithLabel('show-mounts',
+                    [ this._removables,
+                      'changed',
+                      this._queueRedisplay.bind(this) ]);
+            }
+            Array.prototype.push.apply(newApps, this._removables.getApps());
+        } else if (this._removables) {
+            this._signalsHandler.removeWithLabel('show-mounts');
+            this._removables.destroy();
+            this._removables = null;
+        }
+
+        if (settings.get_boolean('show-trash')) {
+            if (!this._trash) {
+                this._trash = new Locations.Trash();
+                this._signalsHandler.addWithLabel('show-trash',
+                    [ this._trash,
+                      'changed',
+                      this._queueRedisplay.bind(this) ]);
+            }
+            newApps.push(this._trash.getApp());
+        } else if (this._trash) {
+            this._signalsHandler.removeWithLabel('show-trash');
+            this._trash.destroy();
+            this._trash = null;
         }
 
         // Figure out the actual changes to the list of items; we iterate
