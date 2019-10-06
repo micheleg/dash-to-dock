@@ -1,3 +1,14 @@
+- version: 67
+  date: 06-10-2019
+  shell_version: ["3.34"]
+  zip_url: https://extensions.gnome.org/review/download/12397.shell-extension.zip
+  notes:
+    - Introducing support for Gnome Shell 3.34 and dropping support for previous versions.
+    - "Trash and removable devices launchers (Philip Langdale, Marco Trevisan (Treviño))"
+    - "Theme support: LauncherAPI: use CSS to style progress bar color (Carlo Lobrano)"
+    - "Theme support: Don't reset border-radius for shrinked dash (Joonas Henriksson)"
+    - "Bugfix: Fix regression with transparency settings UI."
+
 - version: 66
   date: 17-03-2019
   shell_version: ["3.32"]
