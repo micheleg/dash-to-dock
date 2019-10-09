@@ -9,7 +9,6 @@ const Signals = imports.signals;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-const Mainloop = imports.mainloop;
 
 const AppDisplay = imports.ui.appDisplay;
 const AppFavorites = imports.ui.appFavorites;
@@ -312,7 +311,7 @@ var MyDash = GObject.registerClass({
 
         // reset timeout to avid conflicts with the mousehover event
         if (this._ensureAppIconVisibilityTimeoutId > 0) {
-            Mainloop.source_remove(this._ensureAppIconVisibilityTimeoutId);
+            GLib.source_remove(this._ensureAppIconVisibilityTimeoutId);
             this._ensureAppIconVisibilityTimeoutId = 0;
         }
 
@@ -456,7 +455,8 @@ var MyDash = GObject.registerClass({
 
         appIcon.actor.connect('notify::hover', () => {
             if (appIcon.actor.hover) {
-                this._ensureAppIconVisibilityTimeoutId = Mainloop.timeout_add(100, () => {
+                this._ensureAppIconVisibilityTimeoutId = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, 100, () => {
                     ensureActorVisibleInScrollView(this._scrollView, appIcon.actor);
                     this._ensureAppIconVisibilityTimeoutId = 0;
                     return GLib.SOURCE_REMOVE;
@@ -464,7 +464,7 @@ var MyDash = GObject.registerClass({
             }
             else {
                 if (this._ensureAppIconVisibilityTimeoutId > 0) {
-                    Mainloop.source_remove(this._ensureAppIconVisibilityTimeoutId);
+                    GLib.source_remove(this._ensureAppIconVisibilityTimeoutId);
                     this._ensureAppIconVisibilityTimeoutId = 0;
                 }
             }
@@ -530,7 +530,7 @@ var MyDash = GObject.registerClass({
         // that the notify::hover handler does everything we need to.
         if (opened) {
             if (this._showLabelTimeoutId > 0) {
-                Mainloop.source_remove(this._showLabelTimeoutId);
+                GLib.source_remove(this._showLabelTimeoutId);
                 this._showLabelTimeoutId = 0;
             }
 
@@ -566,7 +566,7 @@ var MyDash = GObject.registerClass({
                 });
                 GLib.Source.set_name_by_id(this._showLabelTimeoutId, '[gnome-shell] item.showLabel');
                 if (this._resetHoverTimeoutId > 0) {
-                    Mainloop.source_remove(this._resetHoverTimeoutId);
+                    GLib.source_remove(this._resetHoverTimeoutId);
                     this._resetHoverTimeoutId = 0;
                 }
             }
@@ -577,7 +577,8 @@ var MyDash = GObject.registerClass({
             this._showLabelTimeoutId = 0;
             item.hideLabel();
             if (this._labelShowing) {
-                this._resetHoverTimeoutId = Mainloop.timeout_add(DASH_ITEM_HOVER_TIMEOUT, () => {
+                this._resetHoverTimeoutId = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, DASH_ITEM_HOVER_TIMEOUT, () => {
                     this._labelShowing = false;
                     this._resetHoverTimeoutId = 0;
                     return GLib.SOURCE_REMOVE;

@@ -8,7 +8,6 @@ const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const St = imports.gi.St;
-const Mainloop = imports.mainloop;
 const Main = imports.ui.main;
 const Gtk = imports.gi.Gtk;
 
@@ -381,7 +380,7 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         // the compositor finds out about them...
         // Moreover sometimes they return an empty texture, thus as a workarounf also check for it size
         if (!mutterWindow || !mutterWindow.get_texture() || !mutterWindow.get_size()[0]) {
-            this._cloneTextureId = Mainloop.idle_add(() => {
+            this._cloneTextureId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                 // Check if there's still a point in getting the texture,
                 // otherwise this could go on indefinitely
                 if (metaWin.get_workspace())
@@ -464,7 +463,7 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             // use an idle handler to avoid mapping problems -
             // see comment in Workspace._windowAdded
             let activationEvent = Clutter.get_current_event();
-            let id = Mainloop.idle_add(() => {
+            let id = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                 this.emit('activate', activationEvent);
                 return GLib.SOURCE_REMOVE;
             });

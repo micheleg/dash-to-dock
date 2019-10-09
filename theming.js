@@ -8,7 +8,6 @@ const Signals = imports.signals;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-const Mainloop = imports.mainloop;
 
 const AppDisplay = imports.ui.appDisplay;
 const AppFavorites = imports.ui.appFavorites;
