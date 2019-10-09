@@ -7,7 +7,7 @@ const Docking = Me.imports.docking;
 
 var SignalsHandlerFlags = {
     NONE: 0,
-    CONNECT_AFTER: 1,
+    CONNECT_AFTER: 1
 };
 
 /**
