@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (67ubuntu19.10.1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (67ubuntu19.10.1) eoan; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * utils: Use GObject.NotImplementedError for such errors
@@ -33,7 +33,7 @@ gnome-shell-extension-ubuntu-dock (67ubuntu19.10.1) UNRELEASED; urgency=medium
   [ sicklylife.jp ]
   * Update Japanese translation.
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 09 Oct 2019 17:28:16 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 09 Oct 2019 17:30:41 +0200
 
 gnome-shell-extension-ubuntu-dock (66ubuntu19.10.2) eoan; urgency=medium
 
