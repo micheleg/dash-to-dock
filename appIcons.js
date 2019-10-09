@@ -72,7 +72,7 @@ let recentlyClickedAppMonitor = -1;
  * - Update minimization animation target
  * - Update menu if open on windows change
  */
-var MyAppIcon = class DashToDock_AppIcon extends AppDisplay.AppIcon {
+var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
 
     // settings are required inside.
     constructor(remoteModel, app, monitorIndex, iconParams) {
