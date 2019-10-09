@@ -1,3 +1,40 @@
+gnome-shell-extension-ubuntu-dock (67ubuntu19.10.1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * utils: Use GObject.NotImplementedError for such errors
+  * utils: Allow to pass flags to SignalsHandler's
+  * locations: Handle Trash Errors
+  * locations: Ensure volume monitor is destroyed on destruction
+  * dash: Destroy Removables and Trash if disabled
+  * DockManager: Keep a fm1Client reference and destroy it when unneeded
+  * docking: Use CONNNECT_AFTER for mounts changes in docked dash
+  * dash: Remove the show label timeout if actor got destroyed
+  * windowPreviewMenuItem: Disconnect to signals on destroy
+  * cleanup: Replace Mainloop functions with GLib ones
+  * DashSlideContainer: Inherit from St.Bin instead of widget
+  * MyAppIcon: Inherit from Dash.DashIcon (LP: #1846477, #1847102)
+  * debian/control: Depend on gnome-shell 3.34.0
+
+  [ Michele Gaio ]
+  * Fix a regression due to variable renaming.
+  * New upstream release (v67).
+
+  [ Twille ]
+  * add missing translation
+
+  [ Philip Langdale ]
+  * dash: Add Trash Icon
+  * dash: Add Removable drive/device icons
+  * prefs: Add prefs to toggle showing Trash and Mounted Volumes
+  * appIcons: Implement window tracking for removable devices and trash
+  * fileManager1API: Deduplicate window with related locations in tabs
+  * locations: Fix a remaining use of `nautilus` vs `gio open`
+
+  [ sicklylife.jp ]
+  * Update Japanese translation.
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 09 Oct 2019 17:28:16 +0200
+
 gnome-shell-extension-ubuntu-dock (66ubuntu19.10.2) eoan; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
