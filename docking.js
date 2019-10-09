@@ -69,11 +69,10 @@ var DashSlideContainer = GObject.registerClass({
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
             0, 1, 1),
     }
-}, class DashToDock_DashSlideContainer extends St.Widget {
+}, class DashToDock_DashSlideContainer extends St.Bin {
 
     _init(params = {}) {
         super._init(params);
-        this._child = null;
 
         // slide parameter: 1 = visible, 0 = hidden.
         this._slidex = params.slidex || 1;
@@ -83,13 +82,13 @@ var DashSlideContainer = GObject.registerClass({
     vfunc_allocate(box, flags) {
         this.set_allocation(box, flags);
 
-        if (this._child == null)
+        if (this.child == null)
             return;
 
         let availWidth = box.x2 - box.x1;
         let availHeight = box.y2 - box.y1;
         let [, , natChildWidth, natChildHeight] =
-            this._child.get_preferred_size();
+            this.child.get_preferred_size();
 
         let childWidth = natChildWidth;
         let childHeight = natChildHeight;
@@ -117,16 +116,16 @@ var DashSlideContainer = GObject.registerClass({
             childBox.y2 = slideoutSize + this._slidex * (childHeight - slideoutSize);
         }
 
-        this._child.allocate(childBox, flags);
-        this._child.set_clip(-childBox.x1, -childBox.y1,
-                             -childBox.x1+availWidth, -childBox.y1 + availHeight);
+        this.child.allocate(childBox, flags);
+        this.child.set_clip(-childBox.x1, -childBox.y1,
+                            -childBox.x1+availWidth, -childBox.y1 + availHeight);
     }
 
     /**
      * Just the child width but taking into account the slided out part
      */
     vfunc_get_preferred_width(forHeight) {
-        let [minWidth, natWidth] = this._child.get_preferred_width(forHeight);
+        let [minWidth, natWidth] = this.child.get_preferred_width(forHeight);
         if ((this.side ==  St.Side.LEFT) || (this.side == St.Side.RIGHT)) {
             minWidth = (minWidth - this._slideoutSize) * this._slidex + this._slideoutSize;
             natWidth = (natWidth - this._slideoutSize) * this._slidex + this._slideoutSize;
@@ -138,25 +137,12 @@ var DashSlideContainer = GObject.registerClass({
      * Just the child height but taking into account the slided out part
      */
     vfunc_get_preferred_height(forWidth) {
-        let [minHeight, natHeight] = this._child.get_preferred_height(forWidth);
+        let [minHeight, natHeight] = this.child.get_preferred_height(forWidth);
         if ((this.side ==  St.Side.TOP) || (this.side ==  St.Side.BOTTOM)) {
             minHeight = (minHeight - this._slideoutSize) * this._slidex + this._slideoutSize;
             natHeight = (natHeight - this._slideoutSize) * this._slidex + this._slideoutSize;
         }
         return [minHeight, natHeight];
-    }
-
-    /**
-     * I was expecting it to be a virtual function... stil I don't understand
-     * how things work.
-     */
-    add_child(actor) {
-        // I'm supposed to have only on child
-        if (this._child !== null)
-            this.remove_child(actor);
-
-        this._child = actor;
-        super.add_child(actor);
     }
 
     set slidex(value) {
@@ -166,8 +152,7 @@ var DashSlideContainer = GObject.registerClass({
         this._slidex = value;
         this.notify('slidex');
 
-        if (this._child)
-            this._child.queue_relayout();
+        this.queue_relayout();
     }
 
     get slidex() {
@@ -382,7 +367,7 @@ var DockedDash = GObject.registerClass({
 
         // Add dash container actor and the container to the Chrome.
         this.set_child(this._slider);
-        this._slider.add_child(this._box);
+        this._slider.set_child(this._box);
         this._box.add_actor(this.dash);
 
         // Add aligning container without tracking it for input region
