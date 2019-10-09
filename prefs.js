@@ -5,7 +5,6 @@ const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
-const Mainloop = imports.mainloop;
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
@@ -156,9 +155,10 @@ var Settings = class DashToDock_Settings {
             dock_size_scale_value_changed_cb(scale) {
                 // Avoid settings the size consinuosly
                 if (this._dock_size_timeout > 0)
-                    Mainloop.source_remove(this._dock_size_timeout);
+                    GLib.source_remove(this._dock_size_timeout);
 
-                this._dock_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, () => {
+                this._dock_size_timeout = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
                     this._settings.set_double('height-fraction', scale.get_value());
                     this._dock_size_timeout = 0;
                     return GLib.SOURCE_REMOVE;
@@ -172,9 +172,10 @@ var Settings = class DashToDock_Settings {
             icon_size_scale_value_changed_cb(scale) {
                 // Avoid settings the size consinuosly
                 if (this._icon_size_timeout > 0)
-                    Mainloop.source_remove(this._icon_size_timeout);
+                    GLib.source_remove(this._icon_size_timeout);
 
-                this._icon_size_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, () => {
+                this._icon_size_timeout = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
                     this._settings.set_int('dash-max-icon-size', scale.get_value());
                     this._icon_size_timeout = 0;
                     return GLib.SOURCE_REMOVE;
@@ -184,9 +185,10 @@ var Settings = class DashToDock_Settings {
             custom_opacity_scale_value_changed_cb(scale) {
                 // Avoid settings the opacity consinuosly as it's change is animated
                 if (this._opacity_timeout > 0)
-                    Mainloop.source_remove(this._opacity_timeout);
+                    GLib.source_remove(this._opacity_timeout);
 
-                this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, () => {
+                this._opacity_timeout = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
                     this._settings.set_double('background-opacity', scale.get_value());
                     this._opacity_timeout = 0;
                     return GLib.SOURCE_REMOVE;
@@ -196,9 +198,10 @@ var Settings = class DashToDock_Settings {
             min_opacity_scale_value_changed_cb(scale) {
                 // Avoid settings the opacity consinuosly as it's change is animated
                 if (this._opacity_timeout > 0)
-                    Mainloop.source_remove(this._opacity_timeout);
+                    GLib.source_remove(this._opacity_timeout);
 
-                this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, () => {
+                this._opacity_timeout = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
                     this._settings.set_double('min-alpha', scale.get_value());
                     this._opacity_timeout = 0;
                     return GLib.SOURCE_REMOVE;
@@ -208,9 +211,10 @@ var Settings = class DashToDock_Settings {
             max_opacity_scale_value_changed_cb(scale) {
                 // Avoid settings the opacity consinuosly as it's change is animated
                 if (this._opacity_timeout > 0)
-                    Mainloop.source_remove(this._opacity_timeout);
+                    GLib.source_remove(this._opacity_timeout);
 
-                this._opacity_timeout = Mainloop.timeout_add(SCALE_UPDATE_TIMEOUT, () => {
+                this._opacity_timeout = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
                     this._settings.set_double('max-alpha', scale.get_value());
                     this._opacity_timeout = 0;
                     return GLib.SOURCE_REMOVE;

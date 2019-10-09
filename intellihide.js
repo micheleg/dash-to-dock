@@ -1,7 +1,6 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 const GLib = imports.gi.GLib;
-const Mainloop = imports.mainloop;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 
@@ -117,7 +116,7 @@ var Intellihide = class DashToDock_Intellihide {
         this._trackedWindows.clear();
 
         if (this._checkOverlapTimeoutId > 0) {
-            Mainloop.source_remove(this._checkOverlapTimeoutId);
+            GLib.source_remove(this._checkOverlapTimeoutId);
             this._checkOverlapTimeoutId = 0;
         }
     }
@@ -168,7 +167,8 @@ var Intellihide = class DashToDock_Intellihide {
 
         this._doCheckOverlap();
 
-        this._checkOverlapTimeoutId = Mainloop.timeout_add(INTELLIHIDE_CHECK_INTERVAL, () => {
+        this._checkOverlapTimeoutId = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, INTELLIHIDE_CHECK_INTERVAL, () => {
             this._doCheckOverlap();
             if (this._checkOverlapTimeoutContinue) {
                 this._checkOverlapTimeoutContinue = false;

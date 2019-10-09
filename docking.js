@@ -7,7 +7,6 @@ const Gtk = imports.gi.Gtk;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-const Mainloop = imports.mainloop;
 const Params = imports.misc.params;
 
 const Main = imports.ui.main;
@@ -448,7 +447,7 @@ var DockedDash = GObject.registerClass({
 
         // Remove barrier timeout
         if (this._removeBarrierTimeoutId > 0)
-            Mainloop.source_remove(this._removeBarrierTimeoutId);
+            GLib.source_remove(this._removeBarrierTimeoutId);
 
         // Remove existing barrier
         this._removeBarrier();
@@ -725,8 +724,9 @@ var DockedDash = GObject.registerClass({
                 // NOTE: Delay needed to keep mouse from moving past dock and re-hiding dock immediately. This
                 // gives users an opportunity to hover over the dock
                 if (this._removeBarrierTimeoutId > 0)
-                    Mainloop.source_remove(this._removeBarrierTimeoutId);
-                this._removeBarrierTimeoutId = Mainloop.timeout_add(100, this._removeBarrier.bind(this));
+                    GLib.source_remove(this._removeBarrierTimeoutId);
+                this._removeBarrierTimeoutId = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, 100, this._removeBarrier.bind(this));
             }
         });
     }
@@ -742,7 +742,7 @@ var DockedDash = GObject.registerClass({
                 this._dockState = State.HIDDEN;
                 // Remove queued barried removal if any
                 if (this._removeBarrierTimeoutId > 0)
-                    Mainloop.source_remove(this._removeBarrierTimeoutId);
+                    GLib.source_remove(this._removeBarrierTimeoutId);
                 this._updateBarrier();
             }
         });
@@ -789,8 +789,10 @@ var DockedDash = GObject.registerClass({
                 let focusWindow = global.display.focus_window;
                 this._dockDwellUserTime = focusWindow ? focusWindow.user_time : 0;
 
-                this._dockDwellTimeoutId = Mainloop.timeout_add(DockManager.settings.get_double('show-delay') * 1000,
-                                                                this._dockDwellTimeout.bind(this));
+                this._dockDwellTimeoutId = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT,
+                    DockManager.settings.get_double('show-delay') * 1000,
+                    this._dockDwellTimeout.bind(this));
                 GLib.Source.set_name_by_id(this._dockDwellTimeoutId, '[dash-to-dock] this._dockDwellTimeout');
             }
             this._dockDwelling = true;
@@ -803,7 +805,7 @@ var DockedDash = GObject.registerClass({
 
     _cancelDockDwell() {
         if (this._dockDwellTimeoutId != 0) {
-            Mainloop.source_remove(this._dockDwellTimeoutId);
+            GLib.source_remove(this._dockDwellTimeoutId);
             this._dockDwellTimeoutId = 0;
         }
     }
@@ -870,7 +872,7 @@ var DockedDash = GObject.registerClass({
 
         // In case the mouse move away from the dock area before hovering it, in such case the leave event
         // would never be triggered and the dock would stay visible forever.
-        let triggerTimeoutId =  Mainloop.timeout_add(250, () => {
+        let triggerTimeoutId =  GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => {
             triggerTimeoutId = 0;
 
             let [x, y, mods] = global.get_pointer();
@@ -1225,7 +1227,7 @@ var DockedDash = GObject.registerClass({
             this._signalsHandler.removeWithLabel(label);
 
             if (this._optionalScrollWorkspaceSwitchDeadTimeId) {
-                Mainloop.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
+                GLib.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
                 this._optionalScrollWorkspaceSwitchDeadTimeId = 0;
             }
         }
@@ -1264,7 +1266,8 @@ var DockedDash = GObject.registerClass({
                 if (this._optionalScrollWorkspaceSwitchDeadTimeId)
                     return false;
                 else
-                    this._optionalScrollWorkspaceSwitchDeadTimeId = Mainloop.timeout_add(250, () => {
+                    this._optionalScrollWorkspaceSwitchDeadTimeId = GLib.timeout_add(
+                        GLib.PRIORITY_DEFAULT, 250, () => {
                         this._optionalScrollWorkspaceSwitchDeadTimeId = 0;
                     });
 
@@ -1442,13 +1445,14 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
 
             // Restart the counting if the shortcut is pressed again
             if (dock._numberOverlayTimeoutId) {
-                Mainloop.source_remove(dock._numberOverlayTimeoutId);
+                GLib.source_remove(dock._numberOverlayTimeoutId);
                 dock._numberOverlayTimeoutId = 0;
             }
 
             // Hide the overlay/dock after the timeout
             let timeout = dock._settings.get_double('shortcut-timeout') * 1000;
-            dock._numberOverlayTimeoutId = Mainloop.timeout_add(timeout, () => {
+            dock._numberOverlayTimeoutId = GLib.timeout_add(
+                GLib.PRIORITY_DEFAULT, timeout, () => {
                     dock._numberOverlayTimeoutId = 0;
                     dock.dash.toggleNumberOverlay(false);
                     // Hide the dock again if necessary

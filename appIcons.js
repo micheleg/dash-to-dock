@@ -10,7 +10,6 @@ const Signals = imports.signals;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-const Mainloop = imports.mainloop;
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
@@ -222,7 +221,8 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
         if (this._optionalScrollCycleWindowsDeadTimeId)
             return false;
         else
-            this._optionalScrollCycleWindowsDeadTimeId = Mainloop.timeout_add(250, () => {
+            this._optionalScrollCycleWindowsDeadTimeId = GLib.timeout_add(
+                GLib.PRIORITY_DEFAULT, 250, () => {
                 this._optionalScrollCycleWindowsDeadTimeId = 0;
             });
 
@@ -719,8 +719,9 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
             return
 
         if (recentlyClickedAppLoopId > 0)
-            Mainloop.source_remove(recentlyClickedAppLoopId);
-        recentlyClickedAppLoopId = Mainloop.timeout_add(MEMORY_TIME, this._resetRecentlyClickedApp);
+            GLib.source_remove(recentlyClickedAppLoopId);
+        recentlyClickedAppLoopId = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, MEMORY_TIME, this._resetRecentlyClickedApp);
 
         // If there isn't already a list of windows for the current app,
         // or the stored list is outdated, use the current windows list.
@@ -749,7 +750,7 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
 
     _resetRecentlyClickedApp() {
         if (recentlyClickedAppLoopId > 0)
-            Mainloop.source_remove(recentlyClickedAppLoopId);
+            GLib.source_remove(recentlyClickedAppLoopId);
         recentlyClickedAppLoopId=0;
         recentlyClickedApp =null;
         recentlyClickedAppWindows = null;
