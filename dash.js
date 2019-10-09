@@ -551,10 +551,17 @@ var MyDash = GObject.registerClass({
         if (shouldShow) {
             if (this._showLabelTimeoutId == 0) {
                 let timeout = this._labelShowing ? 0 : DASH_ITEM_HOVER_TIMEOUT;
-                this._showLabelTimeoutId = Mainloop.timeout_add(timeout, () => {
+                let actor = (item instanceof Clutter.Actor) ? item : item.actor;
+                let destroyId = actor.connect('destroy', () => {
+                    if (this._showLabelTimeoutId)
+                        GLib.source_remove(this._showLabelTimeoutId);
+                });
+                this._showLabelTimeoutId = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, timeout, () => {
+                    this._showLabelTimeoutId = 0;
+                    actor.disconnect(destroyId);
                     this._labelShowing = true;
                     item.showLabel();
-                    this._showLabelTimeoutId = 0;
                     return GLib.SOURCE_REMOVE;
                 });
                 GLib.Source.set_name_by_id(this._showLabelTimeoutId, '[gnome-shell] item.showLabel');
@@ -566,7 +573,7 @@ var MyDash = GObject.registerClass({
         }
         else {
             if (this._showLabelTimeoutId > 0)
-                Mainloop.source_remove(this._showLabelTimeoutId);
+                GLib.source_remove(this._showLabelTimeoutId);
             this._showLabelTimeoutId = 0;
             item.hideLabel();
             if (this._labelShowing) {
