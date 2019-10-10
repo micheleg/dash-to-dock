@@ -1437,7 +1437,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
     _showOverlay() {
         for (let i = 0; i < this._allDocks.length; i++) {
             let dock = this._allDocks[i];
-            if (dock._settings.get_boolean('hotkeys-overlay'))
+            if (DockManager.settings.get_boolean('hotkeys-overlay'))
                 dock.dash.toggleNumberOverlay(true);
 
             // Restart the counting if the shortcut is pressed again
@@ -1447,7 +1447,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
             }
 
             // Hide the overlay/dock after the timeout
-            let timeout = dock._settings.get_double('shortcut-timeout') * 1000;
+            let timeout = DockManager.settings.get_double('shortcut-timeout') * 1000;
             dock._numberOverlayTimeoutId = Mainloop.timeout_add(timeout, () => {
                     dock._numberOverlayTimeoutId = 0;
                     dock.dash.toggleNumberOverlay(false);
@@ -1456,7 +1456,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
             });
 
             // Show the dock if it is hidden
-            if (dock._settings.get_boolean('hotkeys-show-dock')) {
+            if (DockManager.settings.get_boolean('hotkeys-show-dock')) {
                 let showDock = (dock._intellihideIsEnabled || dock._autohideIsEnabled);
                 if (showDock)
                     dock._show();
