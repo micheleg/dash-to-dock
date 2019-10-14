@@ -797,7 +797,7 @@ var Settings = class DashToDock_Settings {
         // Create dialog for transparency advanced settings
         this._builder.get_object('dynamic_opacity_button').connect('clicked', () => {
 
-            let dialog = new Gtk.Dialog({ title: __('Cutomize opacity'),
+            let dialog = new Gtk.Dialog({ title: __('Customize opacity'),
                                           transient_for: this.widget.get_toplevel(),
                                           use_header_bar: true,
                                           modal: true });
