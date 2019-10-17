@@ -1277,7 +1277,7 @@ var DockedDash = GObject.registerClass({
                     // Set the actor non reactive, so that it doesn't prevent the
                     // clicks events from reaching the dash actor. I can't see a reason
                     // why it should be reactive.
-                    Main.wm._workspaceSwitcherPopup.actor.reactive = false;
+                    Main.wm._workspaceSwitcherPopup.reactive = false;
                     Main.wm._workspaceSwitcherPopup.connect('destroy', function() {
                         Main.wm._workspaceSwitcherPopup = null;
                     });
