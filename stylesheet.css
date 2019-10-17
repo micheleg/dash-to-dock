@@ -32,6 +32,24 @@
     border-radius: 0px;
 }
 
+/* Adjust built-in theme for different orientations */
+
+#dashtodockContainer.top #dash {
+    border-radius: 0px 0px 8px 8px;
+}
+
+#dashtodockContainer.bottom #dash {
+    border-radius: 8px 8px 0px 0px;
+}
+
+#dashtodockContainer.left #dash {
+    border-radius: 0px 8px 8px 0px;
+}
+
+#dashtodockContainer.right #dash {
+    border-radius: 8px 0px 0px 8px;
+}
+
 /* Scrollview style */
 .bottom #dashtodockDashScrollview,
 .top #dashtodockDashScrollview {
