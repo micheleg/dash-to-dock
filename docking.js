@@ -697,14 +697,10 @@ var DockedDash = GObject.registerClass({
         // If no hiding animation is running or queued
         if ((this._dockState == State.SHOWN) || (this._dockState == State.SHOWING)) {
             let settings = DockManager.settings;
-            let delay;
+            // Remove delay if dock is in the process of showing
+            let delay = 0;
 
-            if (this._dockState == State.SHOWING)
-                //if a show already started, let it finish; queue hide without removing the show.
-                // to obtain this I increase the delay to avoid the overlap and interference
-                // between the animations
-                delay = settings.get_double('hide-delay') + settings.get_double('animation-time');
-            else
+            if (this._dockState != State.SHOWING)
                 delay = settings.get_double('hide-delay');
 
             this.emit('hiding');
