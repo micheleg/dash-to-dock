@@ -259,7 +259,7 @@ var RunningIndicatorDefault = class DashToDock_RunningIndicatorDefault extends R
         this._source.actor.add_style_class_name('default');
     }
 
-    destory() {
+    destroy() {
         this._source.actor.remove_style_class_name('default');
         super.destroy();
     }
