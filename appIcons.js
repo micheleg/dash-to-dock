@@ -1067,7 +1067,7 @@ var ShowAppsIconWrapper = class DashToDock_ShowAppsIconWrapper {
             this._menuManager.addMenu(this._menu);
         }
 
-        //this.emit('menu-state-changed', true);
+        this.emit('menu-state-changed', true);
 
         this.actor.set_hover(true);
         this._menu.popup();

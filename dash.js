@@ -223,7 +223,7 @@ var MyDash = class DashToDock_MyDash {
         // Create a wrapper around the real showAppsIcon in order to add a popupMenu.
         let showAppsIconWrapper = new AppIcons.ShowAppsIconWrapper(this._dtdSettings);
         showAppsIconWrapper.connect('menu-state-changed', (showAppsIconWrapper, opened) => {
-            this._itemMenuStateChanged(showAppsIconWrapper, opened);
+            this._itemMenuStateChanged(showAppsIconWrapper.realShowAppsIcon, opened);
         });
         // an instance of the showAppsIcon class is encapsulated in the wrapper
         this._showAppsIcon = showAppsIconWrapper.realShowAppsIcon;
