@@ -55,7 +55,7 @@ msgid "Customize running indicators"
 msgstr "Tilpass kjørende indikatorer"
 
 #: prefs.js:662
-msgid "Cutomize opacity"
+msgid "Customize opacity"
 msgstr "Tilpass gjennomsiktighet"
 
 #: appIcons.js:763

@@ -56,7 +56,7 @@ msgid "Customize running indicators"
 msgstr "Çalışan göstergeleri özelleştir"
 
 #: prefs.js:800
-msgid "Cutomize opacity"
+msgid "Customize opacity"
 msgstr "Saydamlığı özelleştir"
 
 #: appIcons.js:809

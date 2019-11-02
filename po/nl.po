@@ -58,7 +58,7 @@ msgid "Customize running indicators"
 msgstr "Indicatoren van draaiende programma's aanpassen"
 
 #: prefs.js:800
-msgid "Cutomize opacity"
+msgid "Customize opacity"
 msgstr "Doorzichtigheid aanpassen"
 
 #: appIcons.js:809

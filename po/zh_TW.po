@@ -55,7 +55,7 @@ msgid "Customize running indicators"
 msgstr "自訂執行中指示器"
 
 #: prefs.js:800
-msgid "Cutomize opacity"
+msgid "Customize opacity"
 msgstr "自訂不透明度"
 
 #: appIcons.js:809

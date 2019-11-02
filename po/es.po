@@ -54,7 +54,7 @@ msgid "Customize running indicators"
 msgstr "Personalizar indicadores de ejecución"
 
 #: prefs.js:792
-msgid "Cutomize opacity"
+msgid "Customize opacity"
 msgstr "Personalizar la opacidad"
 
 #: appIcons.js:790

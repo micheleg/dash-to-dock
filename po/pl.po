@@ -58,7 +58,7 @@ msgid "Customize running indicators"
 msgstr "Dostosowanie wskaźników okien"
 
 #: prefs.js:800
-msgid "Cutomize opacity"
+msgid "Customize opacity"
 msgstr "Dostosowanie nieprzejrzystości"
 
 #: appIcons.js:809

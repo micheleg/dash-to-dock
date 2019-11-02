@@ -54,7 +54,7 @@ msgid "Customize running indicators"
 msgstr "Настройка индикаторов запуска"
 
 #: prefs.js:671
-msgid "Cutomize opacity"
+msgid "Customize opacity"
 msgstr "Настроить прозрачность"
 
 #: appIcons.js:785

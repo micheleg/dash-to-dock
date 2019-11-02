@@ -129,7 +129,7 @@ msgid "Customize the dash color"
 msgstr "Changer la couleur du dock"
 
 #: prefs.js:634
-msgid "Cutomize opacity"
+msgid "Customize opacity"
 msgstr "Régler l'opacité du dock"
 
 #: Settings.ui.h:17
