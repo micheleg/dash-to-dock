@@ -58,6 +58,7 @@ msgid "Customize running indicators"
 msgstr "Dostosowanie wskaźników okien"
 
 #: prefs.js:800
+#: Settings.ui.h:74
 msgid "Customize opacity"
 msgstr "Dostosowanie nieprzejrzystości"
 
@@ -405,10 +406,6 @@ msgstr "Kolor kokpitu"
 #: Settings.ui.h:73
 msgid "Tune the dash background opacity."
 msgstr "Modyfikuje zaciemnienie tła kokpitu"
-
-#: Settings.ui.h:74
-msgid "Customize opacity"
-msgstr "Dostosowanie nieprzejrzystości"
 
 #: Settings.ui.h:75
 msgid "Fixed"

@@ -53,10 +53,6 @@ msgstr "Personalizar comportamiento del botón central"
 msgid "Customize running indicators"
 msgstr "Personalizar indicadores de ejecución"
 
-#: prefs.js:792
-msgid "Customize opacity"
-msgstr "Personalizar la opacidad"
-
 #: appIcons.js:790
 msgid "All Windows"
 msgstr "Todas las ventanas"
@@ -364,6 +360,7 @@ msgstr "Personalizar el color del dock"
 msgid "Tune the dash background opacity."
 msgstr "Ajustar la opacidad del fondo del dock."
 
+#: prefs.js:792
 #: Settings.ui.h:72
 msgid "Customize opacity"
 msgstr "Personalizar opacidad"

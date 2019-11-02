@@ -58,6 +58,7 @@ msgid "Customize running indicators"
 msgstr "Indicatoren van draaiende programma's aanpassen"
 
 #: prefs.js:800
+#: Settings.ui.h:74
 msgid "Customize opacity"
 msgstr "Doorzichtigheid aanpassen"
 
@@ -378,10 +379,6 @@ msgstr "Snelstarterkleur aanpassen"
 #: Settings.ui.h:73
 msgid "Tune the dash background opacity."
 msgstr "Pas de doorzichtigheid van de snelstarterachtergrond aan."
-
-#: Settings.ui.h:74
-msgid "Customize opacity"
-msgstr "Doorzichtigheid aanpassen"
 
 #: Settings.ui.h:75
 msgid "Fixed"

@@ -54,6 +54,7 @@ msgid "Customize running indicators"
 msgstr "Настройка индикаторов запуска"
 
 #: prefs.js:671
+#: Settings.ui.h:71
 msgid "Customize opacity"
 msgstr "Настроить прозрачность"
 
@@ -363,10 +364,6 @@ msgstr "Настроить цвет Дока"
 #: Settings.ui.h:70
 msgid "Tune the dash background opacity."
 msgstr "Настройка прозрачности фона Дока."
-
-#: Settings.ui.h:71
-msgid "Customize opacity"
-msgstr "Настроить прозрачность"
 
 #: Settings.ui.h:72
 msgid "Fixed"

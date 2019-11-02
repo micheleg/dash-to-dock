@@ -55,6 +55,7 @@ msgid "Customize running indicators"
 msgstr "Tilpass kjørende indikatorer"
 
 #: prefs.js:662
+#: Settings.ui.h:70
 msgid "Customize opacity"
 msgstr "Tilpass gjennomsiktighet"
 
@@ -356,10 +357,6 @@ msgstr "Tilpass fargen"
 #: Settings.ui.h:69
 msgid "Tune the dash background opacity."
 msgstr "Justere bakgrunnens gjennomsiktighet."
-
-#: Settings.ui.h:70
-msgid "Customize opacity"
-msgstr "Tilpass gjennomsiktighet"
 
 #: Settings.ui.h:71
 msgid "Fixed"

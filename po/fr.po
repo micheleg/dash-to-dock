@@ -117,6 +117,7 @@ msgid "Customize minimum and maximum opacity values"
 msgstr "Personnaliser les valeurs minimum et maximum de l'opacité"
 
 #: Settings.ui.h:71
+#: prefs.js:634
 msgid "Customize opacity"
 msgstr "Régler l'opacité du dock"
 
@@ -127,10 +128,6 @@ msgstr "Régler les indicateurs de fenêtres"
 #: Settings.ui.h:69
 msgid "Customize the dash color"
 msgstr "Changer la couleur du dock"
-
-#: prefs.js:634
-msgid "Customize opacity"
-msgstr "Régler l'opacité du dock"
 
 #: Settings.ui.h:17
 msgid "Cycle through windows"

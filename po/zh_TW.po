@@ -55,8 +55,9 @@ msgid "Customize running indicators"
 msgstr "自訂執行中指示器"
 
 #: prefs.js:800
+#: Settings.ui.h:74
 msgid "Customize opacity"
-msgstr "自訂不透明度"
+msgstr "自訂不透明性"
 
 #: appIcons.js:809
 msgid "All Windows"
@@ -383,10 +384,6 @@ msgstr "自訂 Dash 色彩"
 #: Settings.ui.h:73
 msgid "Tune the dash background opacity."
 msgstr "調整 Dash 背景不透明性。"
-
-#: Settings.ui.h:74
-msgid "Customize opacity"
-msgstr "自訂不透明性"
 
 #: Settings.ui.h:75
 msgid "Fixed"

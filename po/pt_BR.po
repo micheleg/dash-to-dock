@@ -55,6 +55,7 @@ msgid "Customize running indicators"
 msgstr "Customizar os indicadores de execução"
 
 #: prefs.js:792
+#: Settings.ui.h:72
 msgid "Customize opacity"
 msgstr "Customizar opacidade"
 
@@ -363,10 +364,6 @@ msgstr "Customizar a cor do dash"
 #: Settings.ui.h:71
 msgid "Tune the dash background opacity."
 msgstr "Ajustar a opacidade do fundo do dash."
-
-#: Settings.ui.h:72
-msgid "Customize opacity"
-msgstr "Customizar opacidade"
 
 #: Settings.ui.h:73
 msgid "Fixed"
