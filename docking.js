@@ -372,6 +372,8 @@ var DockedDash = GObject.registerClass({
 
         // Add aligning container without tracking it for input region
         Main.uiGroup.add_child(this);
+        if (Main.uiGroup.contains(global.top_window_group))
+            Main.uiGroup.set_child_below_sibling(this, global.top_window_group);
 
         if (settings.get_boolean('dock-fixed')) {
             // Note: tracking the fullscreen directly on the slider actor causes some hiccups when fullscreening
@@ -383,7 +385,6 @@ var DockedDash = GObject.registerClass({
             Main.layoutManager._trackActor(this._slider);
 
         // Set initial position
-        this._resetDepth();
         this._resetPosition();
 
         this.connect('destroy', this._onDestroy.bind(this));
@@ -1080,12 +1081,6 @@ var DockedDash = GObject.registerClass({
         this._y0 = this.y;
     }
 
-    // Set the dash at the correct depth in z
-    _resetDepth() {
-        // Keep the dash below the modalDialogGroup
-        Main.layoutManager.uiGroup.set_child_below_sibling(this, Main.layoutManager.modalDialogGroup);
-    }
-
     _updateStaticBox() {
         this.staticBox.init_rect(
             this.x + this._slider.x - (this._position == St.Side.RIGHT ? this._box.width : 0),
@@ -1102,17 +1097,12 @@ var DockedDash = GObject.registerClass({
     }
 
     _onDragStart() {
-        // The dash need to be above the top_window_group, otherwise it doesn't
-        // accept dnd of app icons when not in overiew mode.
-        Main.layoutManager.uiGroup.set_child_above_sibling(this, global.top_window_group);
         this._oldignoreHover = this._ignoreHover;
         this._ignoreHover = true;
         this._animateIn(DockManager.settings.get_double('animation-time'), 0);
     }
 
     _onDragEnd() {
-        // Restore drag default dash stack order
-        this._resetDepth();
         if (this._oldignoreHover !== null)
             this._ignoreHover  = this._oldignoreHover;
         this._oldignoreHover = null;
