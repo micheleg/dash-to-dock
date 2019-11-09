@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-10-10 10:14+0200\n"
-"PO-Revision-Date: 2019-10-10 22:18+0800\n"
+"PO-Revision-Date: 2019-11-10 00:12+0800\n"
 "Last-Translator: Yi-Jyun Pan <pan93412@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.2.4\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: prefs.js:264
@@ -54,8 +54,7 @@ msgstr "自訂滑鼠中鍵行為"
 msgid "Customize running indicators"
 msgstr "自訂執行中指示器"
 
-#: prefs.js:800
-#: Settings.ui.h:74
+#: prefs.js:800 Settings.ui.h:74
 msgid "Customize opacity"
 msgstr "自訂不透明性"
 
@@ -84,7 +83,7 @@ msgstr "掛載"
 
 #: locations.js:225
 msgid "Eject"
-msgstr "射出"
+msgstr "退出"
 
 #: locations.js:230
 msgid "Unmount"
