@@ -1,31 +1,37 @@
-# Turkish Translation.
-# Copyright (C) 2015
-# This file is distributed under the same license with main package.
+# Turkish translation for dash-to-dock GNOME shell extension.
+# Copyright (C) 2015-2019, dash-to-dock'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the dash-to-dock package.
+#
 # Mustafa Akgün <mustafa.akgun@gmail.com>, 2015.
 # Çağatay Yiğit Şahin <cyigitsahin@outlook.com>, 2016.
 # Serdar Sağlam <teknomobil@yandex.com>, 2018, 2019.
+# Sabri Ünal <libreajans@gmail.com>, 2019.
+#
+# Note for all turkish translators:
+# Lütfen GNOME Shell çevirileri ile uyumlu çevirmeye gayret edelim.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: dash-to-dock\n"
-"Report-Msgid-Bugs-To: \n"
+"Project-Id-Version: dash-to-dock master\n"
+"Report-Msgid-Bugs-To: https://github.com/micheleg/dash-to-dock\n"
 "POT-Creation-Date: 2019-10-13 08:54+0300\n"
-"PO-Revision-Date: 2019-10-13 08:56+0300\n"
-"Last-Translator: Serdar Sağlam <teknomobil@yandex.com>\n"
+"PO-Revision-Date: 2019-11-11 17:21+0300\n"
+"Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
 "Language-Team: \n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: prefs.js:264
 msgid "Primary monitor"
-msgstr "Ana Ekran"
+msgstr "Ana ekran"
 
 #: prefs.js:273 prefs.js:280
 msgid "Secondary monitor "
-msgstr "İkincil Ekran"
+msgstr "İkincil ekran "
 
 #: prefs.js:305 Settings.ui.h:28
 msgid "Right"
@@ -37,7 +43,7 @@ msgstr "Sol"
 
 #: prefs.js:356
 msgid "Intelligent autohide customization"
-msgstr "Akıllı otomatik gizleme geliştirmeleri"
+msgstr "Akıllı otomatik gizleme özelleştirmeleri"
 
 #: prefs.js:363 prefs.js:556 prefs.js:612
 msgid "Reset to defaults"
@@ -45,7 +51,7 @@ msgstr "Varsayılan ayarlara dön"
 
 #: prefs.js:549
 msgid "Show dock and application numbers"
-msgstr "Çalışan uygulamaları göster"
+msgstr "Rıhtımı ve uygulama sayılarını göster"
 
 #: prefs.js:605
 msgid "Customize middle-click behavior"
@@ -55,34 +61,31 @@ msgstr "Orta tık davranışını özelleştir"
 msgid "Customize running indicators"
 msgstr "Çalışan göstergeleri özelleştir"
 
-#: prefs.js:800
-#: Settings.ui.h:74
+#: prefs.js:800 Settings.ui.h:74
 msgid "Customize opacity"
-msgstr "Saydamlığı özelleştir"
+msgstr "Matlığı özelleştir"
 
 #: appIcons.js:809
 msgid "All Windows"
 msgstr "Tüm Pencereler"
 
+# %s değişkeni Ayarlar olarak çevrildiği için, bir ı harfi ekleyerek Türkçeye uyumlu hale getiriyoruz.
 #. Translators: %s is "Settings", which is automatically translated. You
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1126
 #, javascript-format
 msgid "Dash to Dock %s"
-msgstr "Dash to Dock %s"
+msgstr "Dash to Dock %sı"
 
 #: Settings.ui.h:1
-msgid ""
-"When set to minimize, double clicking minimizes all the windows of the "
-"application."
-msgstr ""
-"En küçüğe ayarlandığında, tüm uygulama pencerelerini küçültmek için çift "
-"tıklayın."
+msgid "When set to minimize, double clicking minimizes all the windows of the application."
+msgstr "Küçültmeye ayarlandığında, çift tıklamak uygulamanın tüm pencerelerini küçültür."
 
 #: Settings.ui.h:2
 msgid "Shift+Click action"
-msgstr "Shift+Tıklama eylemi"
+msgstr "Shift + Tıklama eylemi"
 
+# Tweak ayarlarında raise için öne çıkar kullanılmış
 #: Settings.ui.h:3
 msgid "Raise window"
 msgstr "Pencereyi büyüt"
@@ -93,7 +96,7 @@ msgstr "Pencereyi küçült"
 
 #: Settings.ui.h:5
 msgid "Launch new instance"
-msgstr "Uygulamayı başlat"
+msgstr "Yeni uygulama örneği başlat"
 
 #: Settings.ui.h:6
 msgid "Cycle through windows"
@@ -105,15 +108,15 @@ msgstr "Küçült yada genel bakış"
 
 #: Settings.ui.h:8
 msgid "Show window previews"
-msgstr "Pencere önizlemeleri"
+msgstr "Pencere önizlemelerini göster"
 
 #: Settings.ui.h:9
 msgid "Minimize or show previews"
-msgstr "Küçült yada önizle"
+msgstr "Küçült yada önizlemeleri göster"
 
 #: Settings.ui.h:10
 msgid "Focus or show previews"
-msgstr "Odaklan veya önizle"
+msgstr "Odaklan veya önizlemeleri göster"
 
 #: Settings.ui.h:11
 msgid "Quit"
@@ -121,7 +124,7 @@ msgstr "Çık"
 
 #: Settings.ui.h:12
 msgid "Behavior for Middle-Click."
-msgstr "Orta Tıklama için Davranış."
+msgstr "Orta Tıklama davranışı."
 
 #: Settings.ui.h:13
 msgid "Middle-Click action"
@@ -129,12 +132,13 @@ msgstr "Orta Tıklama eylemi"
 
 #: Settings.ui.h:14
 msgid "Behavior for Shift+Middle-Click."
-msgstr "Shift+Orta Tıklama için davranış."
+msgstr "Shift + Orta Tıklama davranışı."
 
 #: Settings.ui.h:15
 msgid "Shift+Middle-Click action"
-msgstr "Shift+Orta Tıklama eylemi"
+msgstr "Shift + Orta Tıklama eylemi"
 
+# glossy backlit için serbest çeviri yapıldı
 #: Settings.ui.h:16
 msgid "Enable Unity7 like glossy backlit items"
 msgstr "Unity7 tipi parlak öğeleri etkinleştir"
@@ -145,7 +149,7 @@ msgstr "Baskın rengi kullan"
 
 #: Settings.ui.h:18
 msgid "Customize indicator style"
-msgstr "Gösterge biçimini özelleştir"
+msgstr "Gösterge biçemini özelleştir"
 
 #: Settings.ui.h:19
 msgid "Color"
@@ -153,11 +157,11 @@ msgstr "Renk"
 
 #: Settings.ui.h:20
 msgid "Border color"
-msgstr "Kenar rengi"
+msgstr "Kenarlık rengi"
 
 #: Settings.ui.h:21
 msgid "Border width"
-msgstr "Kenar genişliği"
+msgstr "Kenarlık genişliği"
 
 #: Settings.ui.h:22
 msgid "Show the dock on"
@@ -181,31 +185,30 @@ msgstr "Üst"
 
 #: Settings.ui.h:29
 msgid ""
-"Hide the dock when it obstructs a window of the current application. More "
-"refined settings are available."
-msgstr ""
-"Etkin uygulamanın penceresini engellediğinde paneli gizle. Daha ileri "
-"ayarlar mevcuttur."
+"Hide the dock when it obstructs a window of the current application. More refined settings are available."
+msgstr "Geçerli uygulamanın penceresini engellediğinde rıhtımı gizle. Daha detaylı ayarlar mevcuttur."
 
 #: Settings.ui.h:30
 msgid "Intelligent autohide"
-msgstr "Akıllı Gizleme"
+msgstr "Akıllı gizleme"
 
+# son limit cümlesi kasten çevrilmedi
 #: Settings.ui.h:31
 msgid "Dock size limit"
 msgstr "Rıhtım boyutu"
 
 #: Settings.ui.h:32
 msgid "Panel mode: extend to the screen edge"
-msgstr "Rıhtım kipi: Ekran köşelerine genişlet"
+msgstr "Panel kipi: Ekran köşelerine genişlet"
 
+# son limit cümlesi kasten çevrilmedi
 #: Settings.ui.h:33
 msgid "Icon size limit"
 msgstr "Simge boyutu"
 
 #: Settings.ui.h:34
 msgid "Fixed icon size: scroll to reveal other icons"
-msgstr "Sabit simge sınırı: Diğer simgeleri görmek için kaydırmak gerekir"
+msgstr "Sabit simge boyutu: Diğer simgeleri görmek için kaydır"
 
 #: Settings.ui.h:35
 msgid "Position and size"
@@ -231,25 +234,24 @@ msgstr "Ekranları ayır."
 msgid "Show open windows previews."
 msgstr "Açık pencere önizlemelerini göster."
 
+# Anlamlı ve açıklayıcı olması için ilave değerler eklendi
 #: Settings.ui.h:41
-msgid ""
-"If disabled, these settings are accessible from gnome-tweak-tool or the "
-"extension website."
+msgid "If disabled, these settings are accessible from gnome-tweak-tool or the extension website."
 msgstr ""
-"Eğer kapatılmışsa, bu ayarlara Gnome İnce Ayarlar ile veya Gnome eklentiler "
-"sitesinden ulaşılabilir."
+"Eğer kapatılmışsa, bu ayarlara GNOME İnce Ayarlar (gnome-tweak-tool) uygulamasından veya GNOME eklentileri "
+"(https://extensions.gnome.org) sitesinden ulaşılabilir."
 
 #: Settings.ui.h:42
 msgid "Show <i>Applications</i> icon"
-msgstr "Uygulamalar menü simgesini göster"
+msgstr "<i>Uygulamalar</i> simgesini göster"
 
 #: Settings.ui.h:43
 msgid "Move the applications button at the beginning of the dock."
-msgstr "Uygulamalar simgesini rıhtım'ın üstüne taşı."
+msgstr "Uygulamalar simgesini rıhtım'ın başlangıcına taşı."
 
 #: Settings.ui.h:44
 msgid "Animate <i>Show Applications</i>."
-msgstr "Uygulamalar açılırken canlandırma göster."
+msgstr "<i>Uygulamalar</i> açılırken canlandırma göster."
 
 #: Settings.ui.h:45
 msgid "Show trash can"
@@ -257,27 +259,25 @@ msgstr "Çöp kutusunu göster"
 
 #: Settings.ui.h:46
 msgid "Show mounted volumes and devices"
-msgstr "Takılı birimleri ve cihazları göster"
+msgstr "Bağlı birimleri ve aygıtları göster"
 
 #: Settings.ui.h:47
 msgid "Launchers"
 msgstr "Başlatıcılar"
 
 #: Settings.ui.h:48
-msgid ""
-"Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
-"together with Shift and Ctrl."
+msgid "Enable Super+(0-9) as shortcuts to activate apps. It can also be used together with Shift and Ctrl."
 msgstr ""
-"Uygulamaları etkinleştirmek için Super+(0-9) seçeneğini kısayol olarak "
-"etkinleştirin. Ayrıca kullanılabilir Shift ve Ctrl ile kullanılacak."
+"Uygulamaları etkinleştirmek için Super+(0-9) seçeneğini kısayol olarak etkinleştir. Ayrıca Shift ve Ctrl "
+"ile birlikte de kullanılabilir."
 
 #: Settings.ui.h:49
 msgid "Use keyboard shortcuts to activate apps"
-msgstr "Uygulamaları etkinleştirmek için klavye kısayollarını kullanın"
+msgstr "Uygulamaları etkinleştirmek için klavye kısayollarını kullan"
 
 #: Settings.ui.h:50
 msgid "Behaviour when clicking on the icon of a running application."
-msgstr "Çalışan bir uygulamanın simgesini tıkladığınızda davranış."
+msgstr "Çalışan bir uygulamanın simgesine tıklandığındaki davranışı."
 
 #: Settings.ui.h:51
 msgid "Click action"
@@ -289,7 +289,7 @@ msgstr "Küçült"
 
 #: Settings.ui.h:53
 msgid "Behaviour when scrolling on the icon of an application."
-msgstr "Bir uygulamanın simgesinde ilerlerken davranış."
+msgstr "Bir uygulamanın simgesini kaydırdığınızdaki davranışı."
 
 #: Settings.ui.h:54
 msgid "Scroll action"
@@ -307,13 +307,14 @@ msgstr "Çalışma alanını değiştir"
 msgid "Behavior"
 msgstr "Davranış"
 
+# Çeviri yapmak yerine, Türkçe'de anlamlı, konuma uyumlu özgün metin oluşturuldu.
 #: Settings.ui.h:58
 msgid ""
-"Few customizations meant to integrate the dock with the default GNOME theme. "
-"Alternatively, specific options can be enabled below."
+"Few customizations meant to integrate the dock with the default GNOME theme. Alternatively, specific "
+"options can be enabled below."
 msgstr ""
-"Sistemde bulunan aktif Gnome Teması kullanılır ve rıhtım ona göre "
-"şekillenir. Özelleştirmek isterseniz bu menüyü kapatın."
+"Sistemde bulunan etkin GNOME teması kullanılır ve rıhtım ona göre şekillenir. Özelleştirmek isterseniz bu "
+"menüyü kapatın."
 
 #: Settings.ui.h:59
 msgid "Use built-in theme"
@@ -321,19 +322,21 @@ msgstr "Yerleşik temayı kullan"
 
 #: Settings.ui.h:60
 msgid "Save space reducing padding and border radius."
-msgstr "Yer kazanmak için dolgu ve kenar çizgileri ufaltır."
+msgstr "Dolgu ve kenarlığı azaltarak yer kazan."
 
+# Shrink için genelde küçült çevirisini kullanıyoruz ama,
+# anlamlı ve eylemle uyumlu olduğu için daralt çevirisi kullanıldı
 #: Settings.ui.h:61
 msgid "Shrink the dash"
-msgstr "Rıhtım'ı daralt"
+msgstr "Paneli daralt"
 
 #: Settings.ui.h:62
 msgid "Customize windows counter indicators"
-msgstr "Pencere göstergelerini ayarla"
+msgstr "Pencere sayı göstergelerini özelleştir"
 
 #: Settings.ui.h:63
 msgid "Default"
-msgstr "Öntanımlı"
+msgstr "Varsayılan"
 
 #: Settings.ui.h:64
 msgid "Dots"
@@ -365,15 +368,15 @@ msgstr "Metro"
 
 #: Settings.ui.h:71
 msgid "Set the background color for the dash."
-msgstr "Rıhtım arkaplan renğini değiştir."
+msgstr "Panel arkaplan rengini ayarla."
 
 #: Settings.ui.h:72
 msgid "Customize the dash color"
-msgstr "Renk değiştir"
+msgstr "Panel rengini özelleştir"
 
 #: Settings.ui.h:73
 msgid "Tune the dash background opacity."
-msgstr "Rıhtım arkaplan saydamlığını ayarla."
+msgstr "Panel arkaplan matlığını ayarla."
 
 #: Settings.ui.h:75
 msgid "Fixed"
@@ -385,11 +388,12 @@ msgstr "Dinamik"
 
 #: Settings.ui.h:77
 msgid "Opacity"
-msgstr "Saydamlık"
+msgstr "Matlık"
 
+# Daha anlaşılır olması için serbest çeviri yapıldı
 #: Settings.ui.h:78
 msgid "Force straight corner\n"
-msgstr "Düz köşeyi zorla\n"
+msgstr "Köşeleri düzleştir\n"
 
 #: Settings.ui.h:80
 msgid "Appearance"
@@ -401,66 +405,59 @@ msgstr "sürüm: "
 
 #: Settings.ui.h:82
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr "Paneli genel görünümden ana ekrana taşır"
+msgstr "Paneli genel görünümden taşır ve rıhtıma dönüştürür"
 
+# Çeviri anlamlı olması için : eklendi
 #: Settings.ui.h:83
 msgid "Created by"
-msgstr "Oluşturan"
+msgstr "Oluşturan:"
 
 #: Settings.ui.h:84
 msgid "Webpage"
-msgstr "Site"
+msgstr "Web sitesi"
 
 #: Settings.ui.h:85
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
-"See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
-"\">GNU General Public License, version 2 or later</a> for details.</span>"
+"See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License, "
+"version 2 or later</a> for details.</span>"
 msgstr ""
-"<span size=\"small\">Bu yazılım kesinlikle garantisiz olarak gelmektedir..\n"
-"Detayları görüntülemek için <a href=\"https://www.gnu.org/licenses/old-"
-"licenses/gpl-2.0.html\">GNU Genel Halk Lisansı, sürüm 2 veya üstü</a> "
-"tıklayın</span>"
+"<span size=\"small\">Bu program kesinlikle hiçbir garanti vermiyor..\n"
+"Ayrıntılar için <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU Genel Kamu Lisansı, "
+"sürüm 2 veya üstü</a> bağlantısına bakın</span>"
 
 #: Settings.ui.h:87
 msgid "About"
 msgstr "Hakkında"
 
+# minimum and maximum değerleri çevrilmedi
 #: Settings.ui.h:88
 msgid "Customize minimum and maximum opacity values"
-msgstr "Saydamlık değerini özelleştir"
+msgstr "Matlık değerlerini özelleştir"
 
 #: Settings.ui.h:89
 msgid "Minimum opacity"
-msgstr "Asgari saydamlık"
+msgstr "Asgari matlık"
 
 #: Settings.ui.h:90
 msgid "Maximum opacity"
-msgstr "Azami saydamlık"
+msgstr "Azami matlık"
 
 #: Settings.ui.h:91
 msgid "Number overlay"
 msgstr "Sayı yerleşimi"
 
 #: Settings.ui.h:92
-msgid ""
-"Temporarily show the application numbers over the icons, corresponding to "
-"the shortcut."
-msgstr ""
-"Uygulama numaralarını, karşılık gelen simgelere göre geçici olarak göster "
-"kısayol."
+msgid "Temporarily show the application numbers over the icons, corresponding to the shortcut."
+msgstr "Uygulama numaralarını, karşılık gelen simgelere göre geçici olarak göster kısayol."
 
 #: Settings.ui.h:93
 msgid "Show the dock if it is hidden"
 msgstr "Gizlenmişse rıhtım'ı göster"
 
 #: Settings.ui.h:94
-msgid ""
-"If using autohide, the dock will appear for a short time when triggering the "
-"shortcut."
-msgstr ""
-"Gizleme kullanıyorsanız, tetiklendiğinde rıhtım kısa bir süre için "
-"görünecektir. kısayol."
+msgid "If using autohide, the dock will appear for a short time when triggering the shortcut."
+msgstr "Otomatik gizleme kullanıyorsanız, kısayol tetiklendiğinde rıhtım kısa bir süre için görünür."
 
 #: Settings.ui.h:95
 msgid "Shortcut for the options above"
@@ -472,16 +469,17 @@ msgstr "Sözdizimi: <Shift>, <Ctrl>, <Alt>, <Super>"
 
 #: Settings.ui.h:97
 msgid "Hide timeout (s)"
-msgstr "Gecikme zaman aşımı (s)"
+msgstr "Gizleme zaman aşımı (s)"
 
 #: Settings.ui.h:98
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr "Fare ekran köşeleri üzerinde iken rıhtım'ı göster."
+msgstr "Fare ekran köşeleri üzerindeyken rıhtım'ı göster."
 
 #: Settings.ui.h:99
 msgid "Autohide"
-msgstr "Gizle"
+msgstr "Otomatik gizle"
 
+# Anlaşılması kolay olsun diye, pressure burada etki olarak çevrilmiştir
 #: Settings.ui.h:100
 msgid "Push to show: require pressure to show the dock"
 msgstr "Göstermek için it: Rıhtım'ın gösterilmesi için etki gerekir"
@@ -492,7 +490,7 @@ msgstr "Tam ekran kipinde etkinleştir"
 
 #: Settings.ui.h:102
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr "Uygulama penceresine engel olmadığında paneli göster."
+msgstr "Uygulama penceresine engel olmadığında rıhtımı göster."
 
 #: Settings.ui.h:103
 msgid "Dodge windows"
@@ -504,7 +502,7 @@ msgstr "Tüm pencereler"
 
 #: Settings.ui.h:105
 msgid "Only focused application's windows"
-msgstr "Sadece odaklanan uygulamanın pencereleri"
+msgstr "Sadece odaklanılan uygulamanın pencereleri"
 
 #: Settings.ui.h:106
 msgid "Only maximized windows"
@@ -516,8 +514,9 @@ msgstr "Canlandırma süresi (s)"
 
 #: Settings.ui.h:108
 msgid "Show timeout (s)"
-msgstr "Zaman aşımı (s)"
+msgstr "Gösterim zaman aşımı (s)"
 
+# Anlaşılması kolay olsun diye, pressure burada etki olarak çevrilmiştir
 #: Settings.ui.h:109
 msgid "Pressure threshold"
 msgstr "Etki eşiği"
