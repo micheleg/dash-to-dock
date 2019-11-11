@@ -162,6 +162,10 @@ var Removables = class DashToDock_Removables {
             return;
         }
 
+        if (volume.get_identifier('class') == 'network') {
+            return;
+        }
+
         let activationRoot = volume.get_activation_root();
         if (!activationRoot) {
             // Can't offer to mount a device if we don't know
