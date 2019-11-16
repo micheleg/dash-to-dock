@@ -664,6 +664,7 @@ var Settings = class DashToDock_Settings {
         this._settings.bind('apply-custom-theme', this._builder.get_object('customize_theme'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN | Gio.SettingsBindFlags.GET);
         this._settings.bind('apply-custom-theme', this._builder.get_object('builtin_theme_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('custom-theme-shrink', this._builder.get_object('shrink_dash_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-notification-badges', this._builder.get_object('show_badges_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
 
         // Running indicators
         this._builder.get_object('running_indicators_combo').set_active(

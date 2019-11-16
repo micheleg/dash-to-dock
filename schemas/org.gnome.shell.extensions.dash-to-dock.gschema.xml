@@ -170,6 +170,11 @@
       <summary>TODO</summary>
       <description>TODO</description>
     </key>
+    <key type="b" name="show-notification-badges">
+      <default>false</default>
+      <summary>Show Unity-like notification and progress indicators.</summary>
+      <description>Show Unity-like notification and progress indicators.</description>
+    </key>
     <key type="b" name="custom-theme-customize-running-dots">
       <default>false</default>
       <summary>Customize the style of the running application indicators.</summary>

@@ -39,16 +39,16 @@ var AppIconIndicator = class DashToDock_AppIconIndicator {
 
     constructor(source) {
         this._indicators = [];
-
-        // Unity indicators always enabled for now
-        let unityIndicator = new UnityIndicator(source);
-        this._indicators.push(unityIndicator);
+        let settings = Docking.DockManager.settings;
+        if (settings.get_boolean('show-notification-badges')) {
+            let unityIndicator = new UnityIndicator(source);
+            this._indicators.push(unityIndicator);
+        }
 
         // Choose the style for the running indicators
         let runningIndicator = null;
         let runningIndicatorStyle;
 
-        let settings = Docking.DockManager.settings;
         if (settings.get_boolean('apply-custom-theme' )) {
             runningIndicatorStyle = RunningIndicatorStyle.DOTS;
         } else {
