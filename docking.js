@@ -689,15 +689,14 @@ var DockedDash = GObject.registerClass({
         // If no hiding animation is running or queued
         if ((this._dockState == State.SHOWN) || (this._dockState == State.SHOWING)) {
             let settings = DockManager.settings;
-            let delay;
+            let delay = settings.get_double('hide-delay');
 
-            if (this._dockState == State.SHOWING)
-                //if a show already started, let it finish; queue hide without removing the show.
-                // to obtain this I increase the delay to avoid the overlap and interference
-                // between the animations
-                delay = settings.get_double('hide-delay') + settings.get_double('animation-time');
-            else
-                delay = settings.get_double('hide-delay');
+            if (this._dockState == State.SHOWING) {
+                // if a show already started, let it finish; queue hide without removing the show.
+                // to obtain this, we wait for the animateIn animation to be completed
+                this._delayedHide = true;
+                return;
+            }
 
             this.emit('hiding');
             this._animateOut(settings.get_double('animation-time'), delay);
@@ -706,6 +705,7 @@ var DockedDash = GObject.registerClass({
 
     _animateIn(time, delay) {
         this._dockState = State.SHOWING;
+        delete this._delayedHide;
 
         this._slider.ease_property('slidex', 1, {
             duration: time * 1000,
@@ -718,8 +718,13 @@ var DockedDash = GObject.registerClass({
                 // gives users an opportunity to hover over the dock
                 if (this._removeBarrierTimeoutId > 0)
                     GLib.source_remove(this._removeBarrierTimeoutId);
-                this._removeBarrierTimeoutId = GLib.timeout_add(
-                    GLib.PRIORITY_DEFAULT, 100, this._removeBarrier.bind(this));
+
+                if (!this._delayedHide) {
+                    this._removeBarrierTimeoutId = GLib.timeout_add(
+                        GLib.PRIORITY_DEFAULT, 100, this._removeBarrier.bind(this));
+                } else {
+                    this._hide();
+                }
             }
         });
     }
