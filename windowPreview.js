@@ -27,7 +27,7 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
 
     constructor(source) {
         let side = Utils.getPosition();
-        super(source.actor, 0.5, side);
+        super(source, 0.5, side);
 
         // We want to keep the item hovered while the menu is up
         this.blockSourceEvents = true;
@@ -42,11 +42,11 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
         this.actor.hide();
 
         // Chain our visibility and lifecycle to that of the source
-        this._mappedId = this._source.actor.connect('notify::mapped', () => {
-            if (!this._source.actor.mapped)
+        this._mappedId = this._source.connect('notify::mapped', () => {
+            if (!this._source.mapped)
                 this.close();
         });
-        this._destroyId = this._source.actor.connect('destroy', this.destroy.bind(this));
+        this._destroyId = this._source.connect('destroy', this.destroy.bind(this));
 
         Main.uiGroup.add_actor(this.actor);
 
@@ -78,10 +78,10 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
 
     _onDestroy() {
         if (this._mappedId)
-            this._source.actor.disconnect(this._mappedId);
+            this._source.disconnect(this._mappedId);
 
         if (this._destroyId)
-            this._source.actor.disconnect(this._destroyId);
+            this._source.disconnect(this._destroyId);
     }
 };
 
