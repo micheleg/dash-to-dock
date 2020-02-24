@@ -485,9 +485,8 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     }
 
     _onLeave() {
-        if (!this._cloneBin.has_pointer &&
-            !this.closeButton.has_pointer)
-            this._hideCloseButton();
+        this._hideCloseButton();
+    }
 
         return Clutter.EVENT_PROPAGATE;
     }
@@ -495,9 +494,7 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     _idleToggleCloseButton() {
         this._idleToggleCloseId = 0;
 
-        if (!this._cloneBin.has_pointer &&
-            !this.closeButton.has_pointer)
-            this._hideCloseButton();
+        this._hideCloseButton();
 
         return GLib.SOURCE_REMOVE;
     }
@@ -516,6 +513,10 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     }
 
     _hideCloseButton() {
+        if (this.closeButton.has_pointer ||
+            this.get_children().some(a => a.has_pointer))
+            return;
+
         this.closeButton.remove_all_transitions();
         this.closeButton.ease({
             opacity: 0,
