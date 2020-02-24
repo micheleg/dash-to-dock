@@ -219,7 +219,7 @@ var DockedDash = GObject.registerClass({
         // Create a new dash object
         this.dash = new MyDash.MyDash(this._remoteModel, this._monitorIndex);
 
-        if (!settings.get_boolean('show-show-apps-button'))
+        if (Main.overview.isDummy || !settings.get_boolean('show-show-apps-button'))
             this.dash.hideShowAppsButton();
 
         // Create the main actor and the containers for sliding in and out and
@@ -258,45 +258,11 @@ var DockedDash = GObject.registerClass({
         this.dash.add_constraint(this.constrainSize);
 
         this._signalsHandler.add([
-            Main.overview,
-            'item-drag-begin',
-            this._onDragStart.bind(this)
-        ], [
-            Main.overview,
-            'item-drag-end',
-            this._onDragEnd.bind(this)
-        ], [
-            Main.overview,
-            'item-drag-cancelled',
-            this._onDragEnd.bind(this)
-        ], [
             // update when workarea changes, for instance if  other extensions modify the struts
             //(like moving th panel at the bottom)
             global.display,
             'workareas-changed',
             this._resetPosition.bind(this)
-        ], [
-            Main.overview,
-            'showing',
-            this._onOverviewShowing.bind(this)
-        ], [
-            Main.overview,
-            'hiding',
-            this._onOverviewHiding.bind(this)
-        ], [
-            // Hide on appview
-            Main.overview.viewSelector,
-            'page-changed',
-            this._pageChanged.bind(this)
-        ], [
-            Main.overview.viewSelector,
-            'page-empty',
-            this._onPageEmpty.bind(this)
-        ], [
-            // Ensure the ShowAppsButton status is kept in sync
-            Main.overview.viewSelector._showAppsButton,
-            'notify::checked',
-            this._syncShowAppsButtonToggled.bind(this)
         ], [
             global.display,
             'in-fullscreen-changed',
@@ -312,20 +278,58 @@ var DockedDash = GObject.registerClass({
             'icon-size-changed',
             () => { Main.overview.dashIconSize = this.dash.iconSize; }
         ], [
-            // This duplicate the similar signal which is in owerview.js.
-            // Being connected and thus executed later this effectively
-            // overwrite any attempt to use the size of the default dash
-            //which given the customization is usually much smaller.
-            // I can't easily disconnect the original signal
-            Main.overview._controls.dash,
-            'icon-size-changed',
-            () => { Main.overview.dashIconSize = this.dash.iconSize; }
-        ], [
             // sync hover after a popupmenu is closed
             this.dash,
             'menu-closed',
             () => { this._box.sync_hover() }
         ]);
+
+        if (!Main.overview.isDummy) {
+            this._signalsHandler.add([
+                Main.overview,
+                'item-drag-begin',
+                this._onDragStart.bind(this)
+            ], [
+                Main.overview,
+                'item-drag-end',
+                this._onDragEnd.bind(this)
+            ], [
+                Main.overview,
+                'item-drag-cancelled',
+                this._onDragEnd.bind(this)
+            ], [
+                Main.overview,
+                'showing',
+                this._onOverviewShowing.bind(this)
+            ], [
+                Main.overview,
+                'hiding',
+                this._onOverviewHiding.bind(this)
+            ], [
+                // Hide on appview
+                Main.overview.viewSelector,
+                'page-changed',
+                this._pageChanged.bind(this)
+            ], [
+                Main.overview.viewSelector,
+                'page-empty',
+                this._onPageEmpty.bind(this)
+            ], [
+                // Ensure the ShowAppsButton status is kept in sync
+                Main.overview.viewSelector._showAppsButton,
+                'notify::checked',
+                this._syncShowAppsButtonToggled.bind(this)
+            ], [
+                // This duplicate the similar signal which is in owerview.js.
+                // Being connected and thus executed later this effectively
+                // overwrite any attempt to use the size of the default dash
+                //which given the customization is usually much smaller.
+                // I can't easily disconnect the original signal
+                Main.overview._controls.dash,
+                'icon-size-changed',
+                () => { Main.overview.dashIconSize = this.dash.iconSize; }
+            ]);
+        }
 
         this._injectionsHandler = new Utils.InjectionsHandler();
         this._themeManager = new Theming.ThemeManager(this);
@@ -356,14 +360,17 @@ var DockedDash = GObject.registerClass({
         this._dashSpacer = new OverviewControls.DashSpacer();
         this._dashSpacer.setDashActor(this._box);
 
-        if (this._position == St.Side.LEFT)
-            Main.overview._controls._group.insert_child_at_index(this._dashSpacer, this._rtl ? -1 : 0); // insert on first
-        else if (this._position ==  St.Side.RIGHT)
-            Main.overview._controls._group.insert_child_at_index(this._dashSpacer, this._rtl ? 0 : -1); // insert on last
-        else if (this._position == St.Side.TOP)
-            Main.overview._overview.insert_child_at_index(this._dashSpacer, 0);
-        else if (this._position == St.Side.BOTTOM)
-            Main.overview._overview.insert_child_at_index(this._dashSpacer, -1);
+        if (!Main.overview.isDummy) {
+            const { _controls, _overview } = Main.overview;
+            if (this._position == St.Side.LEFT)
+                _controls._group.insert_child_at_index(this._dashSpacer, this._rtl ? -1 : 0); // insert on first
+            else if (this._position ==  St.Side.RIGHT)
+                _controls._group.insert_child_at_index(this._dashSpacer, this._rtl ? 0 : -1); // insert on last
+            else if (this._position == St.Side.TOP)
+                _overview.insert_child_at_index(this._dashSpacer, 0);
+            else if (this._position == St.Side.BOTTOM)
+                _overview.insert_child_at_index(this._dashSpacer, -1);
+        }
 
         // Add dash container actor and the container to the Chrome.
         this.set_child(this._slider);
@@ -400,7 +407,7 @@ var DockedDash = GObject.registerClass({
 
         // Since Gnome 3.8 dragging an app without having opened the overview before cause the attemp to
         //animate a null target since some variables are not initialized when the viewSelector is created
-        if (Main.overview.viewSelector._activePage == null)
+        if (!Main.overview.isDummy && Main.overview.viewSelector._activePage == null)
             Main.overview.viewSelector._activePage = Main.overview.viewSelector._workspacesPage;
 
         this._updateVisibilityMode();
@@ -487,7 +494,8 @@ var DockedDash = GObject.registerClass({
             settings,
             'changed::show-show-apps-button',
             () => {
-                    if (settings.get_boolean('show-show-apps-button'))
+                    if (!Main.overview.isDummy &&
+                        settings.get_boolean('show-show-apps-button'))
                         this.dash.showShowAppsButton();
                     else
                         this.dash.hideShowAppsButton();
@@ -1737,6 +1745,9 @@ var DockManager = class DashToDock_DockManager {
         // set stored icon size  to the new dash
         Main.overview.dashIconSize = this._allDocks[0].dash.iconSize;
 
+        if (Main.overview.isDummy)
+            return;
+
         // Hide usual Dash
         Main.overview._controls.dash.actor.hide();
 
@@ -1763,6 +1774,9 @@ var DockManager = class DashToDock_DockManager {
     }
 
     _restoreDash() {
+        if (Main.overview.isDummy)
+            return;
+
         Main.overview._controls.dash.actor.show();
         Main.overview._controls.dash.actor.set_width(-1); //reset default dash size
         // This force the recalculation of the icon size
