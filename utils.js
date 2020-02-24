@@ -22,9 +22,8 @@ const BasicHandler = class DashToDock_BasicHandler {
 
     add(/* unlimited 3-long array arguments */) {
         // Convert arguments object to array, concatenate with generic
-        let args = Array.concat('generic', Array.slice(arguments));
         // Call addWithLabel with ags as if they were passed arguments
-        this.addWithLabel.apply(this, args);
+        this.addWithLabel('generic', ...arguments);
     }
 
     destroy() {
