@@ -362,11 +362,6 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         box.add(labelBin);
         this.add_actor(box);
 
-        this.connect('enter-event', this._onEnter.bind(this));
-        this.connect('leave-event', this._onLeave.bind(this));
-        this.connect('key-focus-in', this._onEnter.bind(this));
-        this.connect('key-focus-out', this._onLeave.bind(this));
-
         this._cloneTexture(window);
 
         this.connect('destroy', this._onDestroy.bind(this));
@@ -478,16 +473,24 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         return n>0;
     }
 
-    _onEnter() {
+    vfunc_key_focus_in() {
+        super.vfunc_key_focus_in();
         this._showCloseButton();
-        return Clutter.EVENT_PROPAGATE;
     }
 
-    _onLeave() {
+    vfunc_key_focus_out() {
+        super.vfunc_key_focus_out();
         this._hideCloseButton();
     }
 
-        return Clutter.EVENT_PROPAGATE;
+    vfunc_enter_event(crossingEvent) {
+        this._showCloseButton();
+        return super.vfunc_enter_event(crossingEvent);
+    }
+
+    vfunc_leave_event(crossingEvent) {
+        this._hideCloseButton();
+        return super.vfunc_leave_event(crossingEvent);
     }
 
     _idleToggleCloseButton() {

@@ -87,7 +87,6 @@ class MyAppIcon extends Dash.DashIcon {
         this._location = appInfo ? appInfo.get_string('XdtdUri') : null;
 
         this._updateIndicatorStyle();
-        this._optionalScrollCycleWindows();
 
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
@@ -139,12 +138,6 @@ class MyAppIcon extends Dash.DashIcon {
             ]);
         }
 
-        this._signalsHandler.add([
-            Docking.DockManager.settings,
-            'changed::scroll-action',
-            this._optionalScrollCycleWindows.bind(this)
-        ]);
-
         this._numberOverlay();
 
         this._previewMenuManager = null;
@@ -191,20 +184,11 @@ class MyAppIcon extends Dash.DashIcon {
             this.onWindowsChanged();
     }
 
-    _optionalScrollCycleWindows() {
-        if (this._scrollEventHandler) {
-            this.disconnect(this._scrollEventHandler);
-            this._scrollEventHandler = 0;
-        }
-
+    vfunc_scroll_event(scrollEvent) {
         let settings = Docking.DockManager.settings;
         let isEnabled = settings.get_enum('scroll-action') === scrollAction.CYCLE_WINDOWS;
-        if (!isEnabled) return;
-        this._scrollEventHandler = this.connect('scroll-event',
-            this.onScrollEvent.bind(this));
-    }
-
-    onScrollEvent(actor, event) {
+        if (!isEnabled)
+            return Clutter.EVENT_PROPAGATE;
 
         // We only activate windows of running applications, i.e. we never open new windows
         // We check if the app is running, and that the # of windows is > 0 in
@@ -213,10 +197,10 @@ class MyAppIcon extends Dash.DashIcon {
             && this.getInterestingWindows().length > 0;
 
         if (!appIsRunning)
-            return false
+            return Clutter.EVENT_PROPAGATE;
 
         if (this._optionalScrollCycleWindowsDeadTimeId)
-            return false;
+            return Clutter.EVENT_PROPAGATE;
         else
             this._optionalScrollCycleWindowsDeadTimeId = GLib.timeout_add(
                 GLib.PRIORITY_DEFAULT, 250, () => {
@@ -225,7 +209,7 @@ class MyAppIcon extends Dash.DashIcon {
 
         let direction = null;
 
-        switch (event.get_scroll_direction()) {
+        switch (scrollEvent.direction) {
         case Clutter.ScrollDirection.UP:
             direction = Meta.MotionDirection.UP;
             break;
@@ -233,7 +217,7 @@ class MyAppIcon extends Dash.DashIcon {
             direction = Meta.MotionDirection.DOWN;
             break;
         case Clutter.ScrollDirection.SMOOTH:
-            let [dx, dy] = event.get_scroll_delta();
+            let [, dy] = Clutter.get_current_event().get_scroll_delta();
             if (dy < 0)
                 direction = Meta.MotionDirection.UP;
             else if (dy > 0)
@@ -257,7 +241,7 @@ class MyAppIcon extends Dash.DashIcon {
         }
         else
             this.app.activate();
-        return true;
+        return Clutter.EVENT_STOP;
     }
 
     onWindowsChanged() {
