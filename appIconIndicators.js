@@ -119,7 +119,7 @@ var IndicatorBase = class DashToDock_IndicatorBase {
         this._source = source;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
-        this._sourceDestroyId = this._source.actor.connect('destroy', () => {
+        this._sourceDestroyId = this._source.connect('destroy', () => {
             this._signalsHandler.destroy();
         });
     }
@@ -128,7 +128,7 @@ var IndicatorBase = class DashToDock_IndicatorBase {
     }
 
     destroy() {
-        this._source.actor.disconnect(this._sourceDestroyId);
+        this._source.disconnect(this._sourceDestroyId);
         this._signalsHandler.destroy();
     }
 };
@@ -180,17 +180,17 @@ var RunningIndicatorBase = class DashToDock_RunningIndicatorBase extends Indicat
         for (let i = 1; i <= MAX_WINDOWS_CLASSES; i++) {
             let className = 'running' + i;
             if (i != this._nWindows)
-                this._source.actor.remove_style_class_name(className);
+                this._source.remove_style_class_name(className);
             else
-                this._source.actor.add_style_class_name(className);
+                this._source.add_style_class_name(className);
         }
     }
 
     _updateFocusClass() {
         if (this._isFocused)
-            this._source.actor.add_style_class_name('focused');
+            this._source.add_style_class_name('focused');
         else
-            this._source.actor.remove_style_class_name('focused');
+            this._source.remove_style_class_name('focused');
     }
 
     _updateDefaultDot() {
@@ -256,11 +256,11 @@ var RunningIndicatorDefault = class DashToDock_RunningIndicatorDefault extends R
 
     constructor(source) {
         super(source);
-        this._source.actor.add_style_class_name('default');
+        this._source.add_style_class_name('default');
     }
 
     destroy() {
-        this._source.actor.remove_style_class_name('default');
+        this._source.remove_style_class_name('default');
         super.destroy();
     }
 };
@@ -597,11 +597,11 @@ var RunningIndicatorMetro = class DashToDock_RunningIndicatorMetro extends Runni
 
     constructor(source) {
         super(source);
-        this._source.actor.add_style_class_name('metro');
+        this._source.add_style_class_name('metro');
     }
 
     destroy() {
-        this._source.actor.remove_style_class_name('metro');
+        this._source.remove_style_class_name('metro');
         super.destroy();
     }
 
