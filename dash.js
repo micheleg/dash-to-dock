@@ -433,16 +433,14 @@ var MyDash = GObject.registerClass({
 
     _createAppItem(app) {
         let appIcon = new AppIcons.MyAppIcon(this._remoteModel, app,
-                                             this._monitorIndex,
-                                             { setSizeManually: true,
-                                               showLabel: false });
+            this._monitorIndex);
 
         if (appIcon._draggable) {
             appIcon._draggable.connect('drag-begin', () => {
-                appIcon.actor.opacity = 50;
+                appIcon.opacity = 50;
             });
             appIcon._draggable.connect('drag-end', () => {
-                appIcon.actor.opacity = 255;
+                appIcon.opacity = 255;
             });
         }
 
@@ -451,13 +449,13 @@ var MyDash = GObject.registerClass({
         });
 
         let item = new MyDashItemContainer();
-        item.setChild(appIcon.actor);
+        item.setChild(appIcon);
 
-        appIcon.actor.connect('notify::hover', () => {
-            if (appIcon.actor.hover) {
+        appIcon.connect('notify::hover', () => {
+            if (appIcon.hover) {
                 this._ensureAppIconVisibilityTimeoutId = GLib.timeout_add(
                     GLib.PRIORITY_DEFAULT, 100, () => {
-                    ensureActorVisibleInScrollView(this._scrollView, appIcon.actor);
+                    ensureActorVisibleInScrollView(this._scrollView, appIcon);
                     this._ensureAppIconVisibilityTimeoutId = 0;
                     return GLib.SOURCE_REMOVE;
                 });
@@ -470,11 +468,11 @@ var MyDash = GObject.registerClass({
             }
         });
 
-        appIcon.actor.connect('clicked', (actor) => {
+        appIcon.connect('clicked', (actor) => {
             ensureActorVisibleInScrollView(this._scrollView, actor);
         });
 
-        appIcon.actor.connect('key-focus-in', (actor) => {
+        appIcon.connect('key-focus-in', (actor) => {
             let [x_shift, y_shift] = ensureActorVisibleInScrollView(this._scrollView, actor);
 
             // This signal is triggered also by mouse click. The popup menu is opened at the original
@@ -487,7 +485,7 @@ var MyDash = GObject.registerClass({
 
         // Override default AppIcon label_actor, now the
         // accessible_name is set at DashItemContainer.setLabelText
-        appIcon.actor.label_actor = null;
+        appIcon.label_actor = null;
         item.setLabelText(app.get_name());
 
         appIcon.icon.setIconSize(this.iconSize);
