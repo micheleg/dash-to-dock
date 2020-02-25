@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (67ubuntu20.04.1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.1) focal; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * general: Update to gnome-shell 3.36 code, with more actor inheritance
@@ -72,7 +72,7 @@ gnome-shell-extension-ubuntu-dock (67ubuntu20.04.1) UNRELEASED; urgency=medium
   [ Florian Müllner ]
   * docking: Handle no-overview case
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 25 Feb 2020 02:55:57 +0100
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 25 Feb 2020 03:08:41 +0100
 
 gnome-shell-extension-ubuntu-dock (67ubuntu19.10.1) eoan; urgency=medium
 
