@@ -7,67 +7,87 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-28 22:27+0800\n"
-"PO-Revision-Date: 2018-06-28 22:52+0800\n"
+"POT-Creation-Date: 2019-10-10 10:14+0200\n"
+"PO-Revision-Date: 2019-11-10 00:12+0800\n"
 "Last-Translator: Yi-Jyun Pan <pan93412@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.8\n"
+"X-Generator: Poedit 2.2.4\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: prefs.js:140
+#: prefs.js:264
 msgid "Primary monitor"
 msgstr "主螢幕"
 
-#: prefs.js:149 prefs.js:156
+#: prefs.js:273 prefs.js:280
 msgid "Secondary monitor "
 msgstr "次螢幕"
 
-#: prefs.js:181 Settings.ui.h:27
+#: prefs.js:305 Settings.ui.h:28
 msgid "Right"
 msgstr "右側"
 
-#: prefs.js:182 Settings.ui.h:24
+#: prefs.js:306 Settings.ui.h:25
 msgid "Left"
 msgstr "左側"
 
-#: prefs.js:232
+#: prefs.js:356
 msgid "Intelligent autohide customization"
 msgstr "智慧型自動隱藏自訂"
 
-#: prefs.js:239 prefs.js:424 prefs.js:481
+#: prefs.js:363 prefs.js:556 prefs.js:612
 msgid "Reset to defaults"
 msgstr "重設回預設值"
 
-#: prefs.js:417
+#: prefs.js:549
 msgid "Show dock and application numbers"
 msgstr "顯示 Dock 和應用程式數目"
 
-#: prefs.js:474
+#: prefs.js:605
 msgid "Customize middle-click behavior"
 msgstr "自訂滑鼠中鍵行為"
 
-#: prefs.js:557
+#: prefs.js:688
 msgid "Customize running indicators"
 msgstr "自訂執行中指示器"
 
-#: prefs.js:671
-msgid "Cutomize opacity"
-msgstr "自訂不透明度"
+#: prefs.js:800 Settings.ui.h:74
+msgid "Customize opacity"
+msgstr "自訂不透明性"
 
-#: appIcons.js:785
+#: appIcons.js:809
 msgid "All Windows"
 msgstr "所有視窗"
 
 #. Translators: %s is "Settings", which is automatically translated. You
 #. can also translate the full message if this fits better your language.
-#: appIcons.js:1092
+#: appIcons.js:1126
 #, javascript-format
 msgid "Dash to Dock %s"
 msgstr "Dash 至 Dock %s"
+
+#: locations.js:65
+msgid "Trash"
+msgstr "垃圾桶"
+
+#: locations.js:74
+msgid "Empty Trash"
+msgstr "清空垃圾桶"
+
+#: locations.js:182
+msgid "Mount"
+msgstr "掛載"
+
+#: locations.js:225
+msgid "Eject"
+msgstr "退出"
+
+#: locations.js:230
+msgid "Unmount"
+msgstr "卸載"
 
 #: Settings.ui.h:1
 msgid ""
@@ -108,295 +128,299 @@ msgid "Minimize or show previews"
 msgstr "最小化或顯示預覽"
 
 #: Settings.ui.h:10
+msgid "Focus or show previews"
+msgstr "聚焦或顯示預覽"
+
+#: Settings.ui.h:11
 msgid "Quit"
 msgstr "退出"
 
-#: Settings.ui.h:11
+#: Settings.ui.h:12
 msgid "Behavior for Middle-Click."
 msgstr "滑鼠中鍵行為。"
 
-#: Settings.ui.h:12
+#: Settings.ui.h:13
 msgid "Middle-Click action"
 msgstr "滑鼠中鍵動作"
 
-#: Settings.ui.h:13
+#: Settings.ui.h:14
 msgid "Behavior for Shift+Middle-Click."
 msgstr "Shift+滑鼠中鍵行為。"
 
-#: Settings.ui.h:14
+#: Settings.ui.h:15
 msgid "Shift+Middle-Click action"
 msgstr "Shift+滑鼠中鍵動作"
 
-#: Settings.ui.h:15
+#: Settings.ui.h:16
 msgid "Enable Unity7 like glossy backlit items"
 msgstr "啟用 Unity7 如平滑背光物體"
 
-#: Settings.ui.h:16
+#: Settings.ui.h:17
 msgid "Use dominant color"
 msgstr "使用主色調"
 
-#: Settings.ui.h:17
+#: Settings.ui.h:18
 msgid "Customize indicator style"
 msgstr "自訂指示器樣式"
 
-#: Settings.ui.h:18
+#: Settings.ui.h:19
 msgid "Color"
 msgstr "色彩"
 
-#: Settings.ui.h:19
+#: Settings.ui.h:20
 msgid "Border color"
 msgstr "邊緣色彩"
 
-#: Settings.ui.h:20
+#: Settings.ui.h:21
 msgid "Border width"
 msgstr "邊緣寬度"
 
-#: Settings.ui.h:21
+#: Settings.ui.h:22
 msgid "Show the dock on"
 msgstr "Dock 顯示於"
 
-#: Settings.ui.h:22
+#: Settings.ui.h:23
 msgid "Show on all monitors."
 msgstr "所有螢幕上都顯示。"
 
-#: Settings.ui.h:23
+#: Settings.ui.h:24
 msgid "Position on screen"
 msgstr "螢幕上的位置"
 
-#: Settings.ui.h:25
+#: Settings.ui.h:26
 msgid "Bottom"
 msgstr "下面"
 
-#: Settings.ui.h:26
+#: Settings.ui.h:27
 msgid "Top"
 msgstr "上面"
 
-#: Settings.ui.h:28
+#: Settings.ui.h:29
 msgid ""
 "Hide the dock when it obstructs a window of the current application. More "
 "refined settings are available."
 msgstr "當 Dock 會遮到目前應用程式的視窗時隱藏起來。有更多精細的設定可以調整。"
 
-#: Settings.ui.h:29
+#: Settings.ui.h:30
 msgid "Intelligent autohide"
 msgstr "智慧型自動隱藏"
 
-#: Settings.ui.h:30
+#: Settings.ui.h:31
 msgid "Dock size limit"
 msgstr "Dock 大小限制"
 
-#: Settings.ui.h:31
+#: Settings.ui.h:32
 msgid "Panel mode: extend to the screen edge"
 msgstr "面板模式：延伸到螢幕邊緣"
 
-#: Settings.ui.h:32
+#: Settings.ui.h:33
 msgid "Icon size limit"
 msgstr "圖示大小限制"
 
-#: Settings.ui.h:33
+#: Settings.ui.h:34
 msgid "Fixed icon size: scroll to reveal other icons"
 msgstr "固定圖示大小：捲動滑鼠以揭開其他圖示"
 
-#: Settings.ui.h:34
+#: Settings.ui.h:35
 msgid "Position and size"
 msgstr "位置與大小"
 
-#: Settings.ui.h:35
+#: Settings.ui.h:36
 msgid "Show favorite applications"
 msgstr "顯示喜愛的應用程式"
 
-#: Settings.ui.h:36
+#: Settings.ui.h:37
 msgid "Show running applications"
 msgstr "顯示執行中應用程式"
 
-#: Settings.ui.h:37
+#: Settings.ui.h:38
 msgid "Isolate workspaces."
 msgstr "獨立工作區。"
 
-#: Settings.ui.h:38
+#: Settings.ui.h:39
 msgid "Isolate monitors."
 msgstr "分離顯示器。"
 
-#: Settings.ui.h:39
+#: Settings.ui.h:40
 msgid "Show open windows previews."
 msgstr "顯示開啟視窗的預覽。"
 
-#: Settings.ui.h:40
+#: Settings.ui.h:41
 msgid ""
 "If disabled, these settings are accessible from gnome-tweak-tool or the "
 "extension website."
 msgstr "若停用，這些設定值可另外從 gnome-tweak-tool 或擴充套件網站存取。"
 
-#: Settings.ui.h:41
+#: Settings.ui.h:42
 msgid "Show <i>Applications</i> icon"
 msgstr "顯示 <i>應用程式</i> 圖示"
 
-#: Settings.ui.h:42
+#: Settings.ui.h:43
 msgid "Move the applications button at the beginning of the dock."
 msgstr "將應用程式按鈕移動到 Dock 的起頭。"
 
-#: Settings.ui.h:43
+#: Settings.ui.h:44
 msgid "Animate <i>Show Applications</i>."
 msgstr "動畫方式<i>顯示應用程式</i>。"
 
-#: Settings.ui.h:44
+#: Settings.ui.h:45
+msgid "Show trash can"
+msgstr "顯示垃圾桶"
+
+#: Settings.ui.h:46
+msgid "Show mounted volumes and devices"
+msgstr "顯示掛載儲存區和裝置"
+
+#: Settings.ui.h:47
 msgid "Launchers"
 msgstr "啟動器"
 
-#: Settings.ui.h:45
+#: Settings.ui.h:48
 msgid ""
 "Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
 "together with Shift and Ctrl."
 msgstr ""
 "啟用 Super+(0-9) 作為快捷鍵來啓動程式。這也可以搭配 Shift 和 Ctrl 使用。"
 
-#: Settings.ui.h:46
+#: Settings.ui.h:49
 msgid "Use keyboard shortcuts to activate apps"
 msgstr "使用鍵盤快捷鍵啟用程式"
 
-#: Settings.ui.h:47
+#: Settings.ui.h:50
 msgid "Behaviour when clicking on the icon of a running application."
 msgstr "點按執行中應用程式圖示時的行為。"
 
-#: Settings.ui.h:48
+#: Settings.ui.h:51
 msgid "Click action"
 msgstr "點按動作"
 
-#: Settings.ui.h:49
+#: Settings.ui.h:52
 msgid "Minimize"
 msgstr "最小化"
 
-#: Settings.ui.h:50
+#: Settings.ui.h:53
 msgid "Behaviour when scrolling on the icon of an application."
 msgstr "在應用程式的圖示上捲動滑鼠時的行為。"
 
-#: Settings.ui.h:51
+#: Settings.ui.h:54
 msgid "Scroll action"
 msgstr "捲動動作"
 
-#: Settings.ui.h:52
+#: Settings.ui.h:55
 msgid "Do nothing"
 msgstr "什麼都不做"
 
-#: Settings.ui.h:53
+#: Settings.ui.h:56
 msgid "Switch workspace"
 msgstr "切換工作區"
 
-#: Settings.ui.h:54
+#: Settings.ui.h:57
 msgid "Behavior"
 msgstr "行為"
 
-#: Settings.ui.h:55
+#: Settings.ui.h:58
 msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr "較少自訂可以讓 Dock 整合到預設 GNOME 主題。另外，下方可啟用特定選項。"
 
-#: Settings.ui.h:56
+#: Settings.ui.h:59
 msgid "Use built-in theme"
 msgstr "使用內建主題"
 
-#: Settings.ui.h:57
+#: Settings.ui.h:60
 msgid "Save space reducing padding and border radius."
 msgstr "節省空間減少襯邊與邊圓半徑。"
 
-#: Settings.ui.h:58
+#: Settings.ui.h:61
 msgid "Shrink the dash"
 msgstr "縮小 Dash"
 
-#: Settings.ui.h:59
+#: Settings.ui.h:62
 msgid "Customize windows counter indicators"
 msgstr "自訂視窗計數器的指示器"
 
-#: Settings.ui.h:60
+#: Settings.ui.h:63
 msgid "Default"
 msgstr "預設"
 
-#: Settings.ui.h:61
+#: Settings.ui.h:64
 msgid "Dots"
 msgstr "點"
 
-#: Settings.ui.h:62
+#: Settings.ui.h:65
 msgid "Squares"
 msgstr "方形"
 
-#: Settings.ui.h:63
+#: Settings.ui.h:66
 msgid "Dashes"
 msgstr "Dash"
 
-#: Settings.ui.h:64
+#: Settings.ui.h:67
 msgid "Segmented"
 msgstr "切割"
 
-#: Settings.ui.h:65
+#: Settings.ui.h:68
 msgid "Solid"
 msgstr "單色"
 
-#: Settings.ui.h:66
+#: Settings.ui.h:69
 msgid "Ciliora"
 msgstr "Ciliora"
 
-#: Settings.ui.h:67
+#: Settings.ui.h:70
 msgid "Metro"
 msgstr "Metro"
 
-#: Settings.ui.h:68
+#: Settings.ui.h:71
 msgid "Set the background color for the dash."
 msgstr "設定 Dash 的背景色彩。"
 
-#: Settings.ui.h:69
+#: Settings.ui.h:72
 msgid "Customize the dash color"
 msgstr "自訂 Dash 色彩"
 
-#: Settings.ui.h:70
+#: Settings.ui.h:73
 msgid "Tune the dash background opacity."
 msgstr "調整 Dash 背景不透明性。"
 
-#: Settings.ui.h:71
-msgid "Customize opacity"
-msgstr "自訂不透明性"
-
-#: Settings.ui.h:72
+#: Settings.ui.h:75
 msgid "Fixed"
-msgstr "Fixed"
+msgstr "固定"
 
-#: Settings.ui.h:73
-msgid "Adaptive"
-msgstr "自適應"
-
-#: Settings.ui.h:74
+#: Settings.ui.h:76
 msgid "Dynamic"
 msgstr "動態"
 
-#: Settings.ui.h:75
+#: Settings.ui.h:77
 msgid "Opacity"
 msgstr "不透明"
 
-#: Settings.ui.h:76
+#: Settings.ui.h:78
 msgid "Force straight corner\n"
 msgstr "強迫角落直角\n"
 
-#: Settings.ui.h:78
+#: Settings.ui.h:80
 msgid "Appearance"
 msgstr "外觀"
 
-#: Settings.ui.h:79
+#: Settings.ui.h:81
 msgid "version: "
 msgstr "版本："
 
-#: Settings.ui.h:80
+#: Settings.ui.h:82
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "將 Dash 移出概覽轉變成 Dock"
 
-#: Settings.ui.h:81
+#: Settings.ui.h:83
 msgid "Created by"
 msgstr "作者"
 
-#: Settings.ui.h:82
+#: Settings.ui.h:84
 msgid "Webpage"
 msgstr "網頁"
 
-#: Settings.ui.h:83
+#: Settings.ui.h:85
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -406,101 +430,104 @@ msgstr ""
 "請見 <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU "
 "通用公眾授權第 2 版，或後續版本</a> 深入瞭解更多細節。</span>"
 
-#: Settings.ui.h:85
+#: Settings.ui.h:87
 msgid "About"
 msgstr "關於"
 
-#: Settings.ui.h:86
+#: Settings.ui.h:88
 msgid "Customize minimum and maximum opacity values"
 msgstr "自訂最低與最高不透明值"
 
-#: Settings.ui.h:87
+#: Settings.ui.h:89
 msgid "Minimum opacity"
 msgstr "最小化不透明度"
 
-#: Settings.ui.h:88
+#: Settings.ui.h:90
 msgid "Maximum opacity"
 msgstr "最大化不透明度"
 
-#: Settings.ui.h:89
+#: Settings.ui.h:91
 msgid "Number overlay"
 msgstr "數字覆層"
 
-#: Settings.ui.h:90
+#: Settings.ui.h:92
 msgid ""
 "Temporarily show the application numbers over the icons, corresponding to "
 "the shortcut."
 msgstr "暫時顯示應用程式數目在圖示上，可對應到快捷鍵。"
 
-#: Settings.ui.h:91
+#: Settings.ui.h:93
 msgid "Show the dock if it is hidden"
 msgstr "若隱藏時顯示 Dock"
 
-#: Settings.ui.h:92
+#: Settings.ui.h:94
 msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
 msgstr "若使用自動隱藏，則觸發快捷鍵時 Dock 會出現一段時間。"
 
-#: Settings.ui.h:93
+#: Settings.ui.h:95
 msgid "Shortcut for the options above"
 msgstr "上述選項的快捷鍵"
 
-#: Settings.ui.h:94
+#: Settings.ui.h:96
 msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
 msgstr "語法：<Shift>, <Ctrl>, <Alt>, <Super>"
 
-#: Settings.ui.h:95
+#: Settings.ui.h:97
 msgid "Hide timeout (s)"
 msgstr "隱藏等候時間"
 
-#: Settings.ui.h:96
+#: Settings.ui.h:98
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "滑鼠停駐在螢幕邊緣時顯示 Dock。"
 
-#: Settings.ui.h:97
+#: Settings.ui.h:99
 msgid "Autohide"
 msgstr "自動隱藏"
 
-#: Settings.ui.h:98
+#: Settings.ui.h:100
 msgid "Push to show: require pressure to show the dock"
 msgstr "推擠才顯示：需要一些壓力才會顯示 Dock"
 
-#: Settings.ui.h:99
+#: Settings.ui.h:101
 msgid "Enable in fullscreen mode"
 msgstr "於全螢幕模式下啟用"
 
-#: Settings.ui.h:100
+#: Settings.ui.h:102
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "當 Dock 不會遮到應用程式視窗時顯示。"
 
-#: Settings.ui.h:101
+#: Settings.ui.h:103
 msgid "Dodge windows"
 msgstr "躲避視窗"
 
-#: Settings.ui.h:102
+#: Settings.ui.h:104
 msgid "All windows"
 msgstr "所有視窗"
 
-#: Settings.ui.h:103
+#: Settings.ui.h:105
 msgid "Only focused application's windows"
 msgstr "僅焦點中的應用程式視窗"
 
-#: Settings.ui.h:104
+#: Settings.ui.h:106
 msgid "Only maximized windows"
 msgstr "僅最大化的視窗"
 
-#: Settings.ui.h:105
+#: Settings.ui.h:107
 msgid "Animation duration (s)"
 msgstr "動畫時間長度"
 
-#: Settings.ui.h:106
+#: Settings.ui.h:108
 msgid "Show timeout (s)"
 msgstr "顯示等候秒數"
 
-#: Settings.ui.h:107
+#: Settings.ui.h:109
 msgid "Pressure threshold"
 msgstr "壓力閾值"
+
+#~ msgid "Adaptive"
+#~ msgstr "自適應"
 
 #~ msgid "Show a dot for each windows of the application."
 #~ msgstr "為應用程式的每個視窗顯示圓點。"

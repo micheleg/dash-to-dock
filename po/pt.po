@@ -54,7 +54,8 @@ msgid "Customize running indicators"
 msgstr "Personalizar indicadores de execução"
 
 #: prefs.js:792
-msgid "Cutomize opacity"
+#: Settings.ui.h:72
+msgid "Customize opacity"
 msgstr "Personalizar opacidade"
 
 #: appIcons.js:790
@@ -363,10 +364,6 @@ msgstr "Personalizar cor do painel"
 #: Settings.ui.h:71
 msgid "Tune the dash background opacity."
 msgstr "Afinar a cor de fundo do painel."
-
-#: Settings.ui.h:72
-msgid "Customize opacity"
-msgstr "Personalizar opacidade"
 
 #: Settings.ui.h:73
 msgid "Fixed"

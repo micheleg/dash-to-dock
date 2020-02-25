@@ -54,7 +54,8 @@ msgid "Customize running indicators"
 msgstr "Anpassa körningsindikatorer"
 
 #: prefs.js:662
-msgid "Cutomize opacity"
+#: Settings.ui.h:70
+msgid "Customize opacity"
 msgstr "Anpassa opacitet"
 
 #: appIcons.js:763
@@ -355,10 +356,6 @@ msgstr "Anpassa färgen för snabbstartspanelen"
 #: Settings.ui.h:69
 msgid "Tune the dash background opacity."
 msgstr "Justera opacitet för bakgrunden till snabbstartspanelen."
-
-#: Settings.ui.h:70
-msgid "Customize opacity"
-msgstr "Anpassa opacitet"
 
 #: Settings.ui.h:71
 msgid "Fixed"

@@ -162,6 +162,10 @@ var Removables = class DashToDock_Removables {
             return;
         }
 
+        if (volume.get_identifier('class') == 'network') {
+            return;
+        }
+
         let activationRoot = volume.get_activation_root();
         if (!activationRoot) {
             // Can't offer to mount a device if we don't know
@@ -170,7 +174,9 @@ var Removables = class DashToDock_Removables {
             // don't normally unmount them anyway.
             return;
         }
-        let uri = GLib.uri_unescape_string(activationRoot.get_uri(), null);
+
+        let escapedUri = activationRoot.get_uri()
+        let uri = GLib.uri_unescape_string(escapedUri, null);
 
         let volumeKeys = new GLib.KeyFile();
         volumeKeys.set_string('Desktop Entry', 'Name', volume.get_name());
@@ -178,6 +184,7 @@ var Removables = class DashToDock_Removables {
         volumeKeys.set_string('Desktop Entry', 'Type', 'Application');
         volumeKeys.set_string('Desktop Entry', 'Exec', 'gio open "' + uri + '"');
         volumeKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
+        volumeKeys.set_string('Desktop Entry', 'XdtdUri', escapedUri);
         volumeKeys.set_string('Desktop Entry', 'Actions', 'mount;');
         volumeKeys.set_string('Desktop Action mount', 'Name', __('Mount'));
         volumeKeys.set_string('Desktop Action mount', 'Exec', 'gio mount "' + uri + '"');

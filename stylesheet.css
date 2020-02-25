@@ -1,4 +1,4 @@
-/* Shrink the dash by reducing padding and border radius */
+/* Shrink the dash by reducing padding */
 #dashtodockContainer.shrink #dash,
 #dashtodockContainer.dashtodock #dash {
     border:1px;
@@ -30,6 +30,24 @@
 #dashtodockContainer.straight-corner #dash,
 #dashtodockContainer.shrink.straight-corner #dash {
     border-radius: 0px;
+}
+
+/* for the built-in theme only, we control border radius directly for each
+position. In the other cases the border are taken dynamically from the theme */
+#dashtodockContainer.dashtodock.top #dash {
+    border-radius: 0px 0px 9px 9px;
+}
+
+#dashtodockContainer.dashtodock.bottom #dash {
+    border-radius: 9px 9px 0px 0px;
+}
+
+#dashtodockContainer.dashtodock.left #dash {
+    border-radius: 0px 9px 9px 0px;
+}
+
+#dashtodockContainer.dashtodock.right #dash {
+    border-radius: 9px 0px 0px 9px;
 }
 
 /* Scrollview style */

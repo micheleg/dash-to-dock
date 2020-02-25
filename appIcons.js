@@ -915,23 +915,23 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
     // acting on windows (closing) are performed while the menu is shown.
     update() {
 
+      let windows = this._source.getInterestingWindows();
+
+      // update, show or hide the quit menu
+      if ( windows.length > 0) {
+          let quitFromDashMenuText = "";
+          if (windows.length == 1)
+              this._quitfromDashMenuItem.label.set_text(_("Quit"));
+          else
+              this._quitfromDashMenuItem.label.set_text(_("Quit %d Windows").format(windows.length));
+
+          this._quitfromDashMenuItem.actor.show();
+
+      } else {
+          this._quitfromDashMenuItem.actor.hide();
+      }
+
       if(Docking.DockManager.settings.get_boolean('show-windows-preview')){
-
-          let windows = this._source.getInterestingWindows();
-
-          // update, show or hide the quit menu
-          if ( windows.length > 0) {
-              let quitFromDashMenuText = "";
-              if (windows.length == 1)
-                  this._quitfromDashMenuItem.label.set_text(_("Quit"));
-              else
-                  this._quitfromDashMenuItem.label.set_text(_("Quit %d Windows").format(windows.length));
-
-              this._quitfromDashMenuItem.actor.show();
-
-          } else {
-              this._quitfromDashMenuItem.actor.hide();
-          }
 
           // update, show, or hide the allWindows menu
           // Check if there are new windows not already displayed. In such case, repopulate the allWindows
@@ -957,12 +957,10 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
               this._allWindowsMenuItem.actor.show();
               this._allWindowsMenuItem.setSensitive(true);
           }
-
-          // Update separators
-          this._getMenuItems().forEach(this._updateSeparatorVisibility.bind(this));
       }
 
-
+      // Update separators
+      this._getMenuItems().forEach(this._updateSeparatorVisibility.bind(this));
     }
 
     _populateAllWindowMenu(windows) {
