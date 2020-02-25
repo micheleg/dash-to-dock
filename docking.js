@@ -276,7 +276,7 @@ var DockedDash = GObject.registerClass({
             // Keep dragged icon consistent in size with this dash
             this.dash,
             'icon-size-changed',
-            () => { Main.overview.dashIconSize = this.dash.iconSize; }
+            () => { Main.overview.dash.iconSize = this.dash.iconSize; }
         ], [
             // sync hover after a popupmenu is closed
             this.dash,
@@ -325,9 +325,9 @@ var DockedDash = GObject.registerClass({
                 // overwrite any attempt to use the size of the default dash
                 //which given the customization is usually much smaller.
                 // I can't easily disconnect the original signal
-                Main.overview._controls.dash,
+                Main.overview.dash,
                 'icon-size-changed',
-                () => { Main.overview.dashIconSize = this.dash.iconSize; }
+                () => { Main.overview.dash.iconSize = this.dash.iconSize; }
             ]);
         }
 
@@ -361,15 +361,15 @@ var DockedDash = GObject.registerClass({
         this._dashSpacer.setDashActor(this._box);
 
         if (!Main.overview.isDummy) {
-            const { _controls, _overview } = Main.overview;
+            const overviewActor = Main.overview._overview;
             if (this._position == St.Side.LEFT)
-                _controls._group.insert_child_at_index(this._dashSpacer, this._rtl ? -1 : 0); // insert on first
+                overviewActor._controls._group.insert_child_at_index(this._dashSpacer, this._rtl ? -1 : 0); // insert on first
             else if (this._position ==  St.Side.RIGHT)
-                _controls._group.insert_child_at_index(this._dashSpacer, this._rtl ? 0 : -1); // insert on last
+                overviewActor._controls._group.insert_child_at_index(this._dashSpacer, this._rtl ? 0 : -1); // insert on last
             else if (this._position == St.Side.TOP)
-                _overview.insert_child_at_index(this._dashSpacer, 0);
+                overviewActor.insert_child_at_index(this._dashSpacer, 0);
             else if (this._position == St.Side.BOTTOM)
-                _overview.insert_child_at_index(this._dashSpacer, -1);
+                overviewActor.insert_child_at_index(this._dashSpacer, -1);
         }
 
         // Add dash container actor and the container to the Chrome.
@@ -1150,7 +1150,7 @@ var DockedDash = GObject.registerClass({
          * Moreover, hiding the spacer ensure the appGrid allocaton is triggered.
          * This matter as the appview spring animation is triggered by to first reallocaton of the appGrid,
          * (See appDisplay.js, line 202 on GNOME Shell 3.14:
-         *                             this._grid.actor.connect('notify::allocation', ...)
+         *                             this._grid.connect('notify::allocation', ...)
          * which in turn seems to be triggered by changes in the other actors in the overview.
          * Normally, as far as I could understand, either the dashSpacer being hidden or the workspacesThumbnails
          * sliding out would trigger the allocation. However, with no stock dash
@@ -1744,13 +1744,13 @@ var DockManager = class DashToDock_DockManager {
         Main.overview._dash = this._allDocks[0].dash;
 
         // set stored icon size  to the new dash
-        Main.overview.dashIconSize = this._allDocks[0].dash.iconSize;
+        Main.overview.dash.iconSize = this._allDocks[0].dash.iconSize;
 
         if (Main.overview.isDummy)
             return;
 
         // Hide usual Dash
-        Main.overview._controls.dash.actor.hide();
+        Main.overview.dash.hide();
 
         // Also set dash width to 1, so it's almost not taken into account by code
         // calculaing the reserved space in the overview. The reason to keep it at 1 is
@@ -1758,7 +1758,7 @@ var DockManager = class DashToDock_DockManager {
         // in turn is triggergin the appsIcon spring animation, required when no other
         // actors has this effect, i.e in horizontal mode and without the workspaceThumnails
         // 1 static workspace only)
-        Main.overview._controls.dash.actor.set_width(1);
+        Main.overview.dash.set_width(1);
     }
 
     _deleteDocks() {
@@ -1778,13 +1778,13 @@ var DockManager = class DashToDock_DockManager {
         if (Main.overview.isDummy)
             return;
 
-        Main.overview._controls.dash.actor.show();
-        Main.overview._controls.dash.actor.set_width(-1); //reset default dash size
+        Main.overview.dash.show();
+        Main.overview.dash.set_width(-1); //reset default dash size
         // This force the recalculation of the icon size
-        Main.overview._controls.dash._maxHeight = -1;
+        Main.overview.dash._maxHeight = -1;
 
         // reset stored icon size  to the default dash
-        Main.overview.dashIconSize = Main.overview._controls.dash.iconSize;
+        Main.overview.dash.iconSize = Main.overview.dash.iconSize;
 
         Main.overview._dash = this._oldDash;
     }
@@ -1803,7 +1803,7 @@ var DockManager = class DashToDock_DockManager {
             // find visible view
             let visibleView;
             Main.overview.viewSelector.appDisplay._views.every(function(v, index) {
-                if (v.view.actor.visible) {
+                if (v.view.visible) {
                     visibleView = index;
                     return false;
                 }
@@ -1916,16 +1916,16 @@ var DockManager = class DashToDock_DockManager {
                              this._preferredMonitorIndex == Main.layoutManager.primaryIndex;
 
         if (!isHorizontal && dockOnPrimary && extendHeight && fixedIsEnabled) {
-            Main.panel._rightCorner.actor.hide();
-            Main.panel._leftCorner.actor.hide();
+            Main.panel._rightCorner.hide();
+            Main.panel._leftCorner.hide();
         }
         else
             this._revertPanelCorners();
     }
 
     _revertPanelCorners() {
-        Main.panel._leftCorner.actor.show();
-        Main.panel._rightCorner.actor.show();
+        Main.panel._leftCorner.show();
+        Main.panel._rightCorner.show();
     }
 };
 Signals.addSignalMethods(DockManager.prototype);

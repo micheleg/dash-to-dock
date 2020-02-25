@@ -71,11 +71,11 @@ let recentlyClickedAppMonitor = -1;
  * - Update minimization animation target
  * - Update menu if open on windows change
  */
-var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
-
+var MyAppIcon = GObject.registerClass(
+class MyAppIcon extends Dash.DashIcon {
     // settings are required inside.
-    constructor(remoteModel, app, monitorIndex, iconParams) {
-        super(app, iconParams);
+    _init(remoteModel, app, monitorIndex) {
+        super._init(app);
 
         // a prefix is required to avoid conflicting with the parent class variable
         this.monitorIndex = monitorIndex;
@@ -87,7 +87,6 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
         this._location = appInfo ? appInfo.get_string('XdtdUri') : null;
 
         this._updateIndicatorStyle();
-        this._optionalScrollCycleWindows();
 
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
@@ -139,12 +138,6 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
             ]);
         }
 
-        this._signalsHandler.add([
-            Docking.DockManager.settings,
-            'changed::scroll-action',
-            this._optionalScrollCycleWindows.bind(this)
-        ]);
-
         this._numberOverlay();
 
         this._previewMenuManager = null;
@@ -172,9 +165,6 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
         }
 
         this._signalsHandler.destroy();
-
-        if (this._scrollEventHandler)
-            this.actor.disconnect(this._scrollEventHandler);
     }
 
     // TOOD Rename this function
@@ -194,20 +184,11 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
             this.onWindowsChanged();
     }
 
-    _optionalScrollCycleWindows() {
-        if (this._scrollEventHandler) {
-            this.actor.disconnect(this._scrollEventHandler);
-            this._scrollEventHandler = 0;
-        }
-
+    vfunc_scroll_event(scrollEvent) {
         let settings = Docking.DockManager.settings;
         let isEnabled = settings.get_enum('scroll-action') === scrollAction.CYCLE_WINDOWS;
-        if (!isEnabled) return;
-        this._scrollEventHandler = this.actor.connect('scroll-event',
-                                                      this.onScrollEvent.bind(this));
-    }
-
-    onScrollEvent(actor, event) {
+        if (!isEnabled)
+            return Clutter.EVENT_PROPAGATE;
 
         // We only activate windows of running applications, i.e. we never open new windows
         // We check if the app is running, and that the # of windows is > 0 in
@@ -216,10 +197,10 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
             && this.getInterestingWindows().length > 0;
 
         if (!appIsRunning)
-            return false
+            return Clutter.EVENT_PROPAGATE;
 
         if (this._optionalScrollCycleWindowsDeadTimeId)
-            return false;
+            return Clutter.EVENT_PROPAGATE;
         else
             this._optionalScrollCycleWindowsDeadTimeId = GLib.timeout_add(
                 GLib.PRIORITY_DEFAULT, 250, () => {
@@ -228,7 +209,7 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
 
         let direction = null;
 
-        switch (event.get_scroll_direction()) {
+        switch (scrollEvent.direction) {
         case Clutter.ScrollDirection.UP:
             direction = Meta.MotionDirection.UP;
             break;
@@ -236,7 +217,7 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
             direction = Meta.MotionDirection.DOWN;
             break;
         case Clutter.ScrollDirection.SMOOTH:
-            let [dx, dy] = event.get_scroll_delta();
+            let [, dy] = Clutter.get_current_event().get_scroll_delta();
             if (dy < 0)
                 direction = Meta.MotionDirection.UP;
             else if (dy > 0)
@@ -260,7 +241,7 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
         }
         else
             this.app.activate();
-        return true;
+        return Clutter.EVENT_STOP;
     }
 
     onWindowsChanged() {
@@ -280,13 +261,13 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
         // and position are random values, which might exceeds the integer range
         // resulting in an error when assigned to the a rect. This is a more like
         // a workaround to prevent flooding the system with errors.
-        if (this.actor.get_stage() == null)
+        if (this.get_stage() == null)
             return;
 
         let rect = new Meta.Rectangle();
 
-        [rect.x, rect.y] = this.actor.get_transformed_position();
-        [rect.width, rect.height] = this.actor.get_transformed_size();
+        [rect.x, rect.y] = this.get_transformed_position();
+        [rect.width, rect.height] = this.get_transformed_size();
 
         let windows = this.getWindows();
         if (Docking.DockManager.settings.get_boolean('multi-monitor')) {
@@ -308,7 +289,7 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
 
     popupMenu() {
         this._removeMenuTimeout();
-        this.actor.fake_release();
+        this.fake_release();
         this._draggable.fakeRelease();
 
         if (!this._menu) {
@@ -322,14 +303,14 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
                 else {
                     // Setting the max-height is s useful if part of the menu is
                     // scrollable so the minimum height is smaller than the natural height.
-                    let monitor_index = Main.layoutManager.findIndexForActor(this.actor);
+                    let monitor_index = Main.layoutManager.findIndexForActor(this);
                     let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor_index);
                     let position = Utils.getPosition();
                     this._isHorizontal = ( position == St.Side.TOP ||
                                            position == St.Side.BOTTOM);
                     // If horizontal also remove the height of the dash
                     let fixedDock = Docking.DockManager.settings.get_boolean('dock-fixed');
-                    let additional_margin = this._isHorizontal && !fixedDock ? Main.overview._dash.actor.height : 0;
+                    let additional_margin = this._isHorizontal && !fixedDock ? Main.overview._dash.height : 0;
                     let verticalMargins = this._menu.actor.margin_top + this._menu.actor.margin_bottom;
                     // Also set a max width to the menu, so long labels (long windows title) get truncated
                     this._menu.actor.style = ('max-height: ' + Math.round(workArea.height - additional_margin - verticalMargins) + 'px;' +
@@ -348,7 +329,7 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
 
         this.emit('menu-state-changed', true);
 
-        this.actor.set_hover(true);
+        this.set_hover(true);
         this._menu.popup();
         this._menuManager.ignoreRelease();
         this.emit('sync-tooltip');
@@ -542,13 +523,13 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
     }
 
     shouldShowTooltip() {
-        return this.actor.hover && (!this._menu || !this._menu.isOpen) &&
+        return this.hover && (!this._menu || !this._menu.isOpen) &&
                             (!this._previewMenu || !this._previewMenu.isOpen);
     }
 
     _windowPreviews() {
         if (!this._previewMenu) {
-            this._previewMenuManager = new PopupMenu.PopupMenuManager(this.actor);
+            this._previewMenuManager = new PopupMenu.PopupMenuManager(this);
 
             this._previewMenu = new WindowPreview.WindowPreviewMenu(this);
 
@@ -774,7 +755,7 @@ var MyAppIcon = class DashToDock_AppIcon extends Dash.DashIcon {
     isLocation() {
         return this._location != null;
     }
-};
+});
 /**
  * Extend AppIconMenu
  *
@@ -808,7 +789,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
             // of the current desktop and other windows.
 
             this._allWindowsMenuItem = new PopupMenu.PopupSubMenuMenuItem(__('All Windows'), false);
-            this._allWindowsMenuItem.actor.hide();
+            this._allWindowsMenuItem.hide();
             this.addMenuItem(this._allWindowsMenuItem);
 
             if (!this._source.app.is_window_backed()) {
@@ -947,14 +928,14 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
               // Try to set the width to that of the submenu.
               // TODO: can't get the actual size, getting a bit less.
               // Temporary workaround: add 15px to compensate
-              this._allWindowsMenuItem.actor.width =  this._allWindowsMenuItem.menu.actor.width + 15;
+              this._allWindowsMenuItem.width =  this._allWindowsMenuItem.menu.actor.width + 15;
 
           }
 
           // The menu is created hidden and never hidded after being shown. Instead, a singlal
           // connected to its items destroy will set is insensitive if no more windows preview are shown.
           if (windows.length > 0){
-              this._allWindowsMenuItem.actor.show();
+              this._allWindowsMenuItem.show();
               this._allWindowsMenuItem.setSensitive(true);
           }
       }
@@ -1048,22 +1029,32 @@ var MyShowAppsIcon = GObject.registerClass({
 
         // Re-use appIcon methods
         let appIconPrototype = AppDisplay.AppIcon.prototype;
-        this.actor.connect('leave-event', appIconPrototype._onLeaveEvent.bind(this));
-        this.actor.connect('button-press-event', appIconPrototype._onButtonPress.bind(this));
-        this.actor.connect('touch-event', appIconPrototype._onTouchEvent.bind(this));
-        this.actor.connect('popup-menu', appIconPrototype._onKeyboardPopupMenu.bind(this));
-        this.actor.connect('clicked', this._removeMenuTimeout.bind(this));
+        this.toggleButton.connect('popup-menu',
+            appIconPrototype._onKeyboardPopupMenu.bind(this));
+        this.toggleButton.connect('clicked',
+            this._removeMenuTimeout.bind(this));
 
         this._menu = null;
-        this._menuManager = new PopupMenu.PopupMenuManager(this.actor);
+        this._menuManager = new PopupMenu.PopupMenuManager(this);
         this._menuTimeoutId = 0;
     }
 
-    get actor() {
-        /* Until GNOME Shell AppIcon is an actor we need to provide this
-         * compatibility layer or the shell won't be able to access to the
-         * actual actor */
-        return this.toggleButton;
+    vfunc_leave_event(leaveEvent)
+    {
+        return AppDisplay.AppIcon.prototype.vfunc_leave_event.apply(this,
+            leaveEvent);
+    }
+
+    vfunc_button_press_event(buttonPressEvent)
+    {
+        return AppDisplay.AppIcon.prototype.vfunc_button_press_event.apply(this,
+            buttonPressEvent);
+    }
+
+    vfunc_touch_event(touchEvent)
+    {
+        return AppDisplay.AppIcon.prototype.vfunc_touch_event.apply(this,
+            touchEvent);
     }
 
     showLabel() {
@@ -1086,7 +1077,7 @@ var MyShowAppsIcon = GObject.registerClass({
         return false;
 
         this._removeMenuTimeout();
-        this.actor.fake_release();
+        this.toggleButton.fake_release();
 
         if (!this._menu) {
             this._menu = new MyShowAppsIconMenu(this);
@@ -1105,7 +1096,7 @@ var MyShowAppsIcon = GObject.registerClass({
 
         this.emit('menu-state-changed', true);
 
-        this.actor.set_hover(true);
+        this.toggleButton.set_hover(true);
         this._menu.popup();
         this._menuManager.ignoreRelease();
         this.emit('sync-tooltip');
