@@ -1,3 +1,79 @@
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * general: Update to gnome-shell 3.36 code, with more actor inheritance
+  * metadata: Set extension compatible with shell 3.36 only
+  * utils: Use more ES6-compliant code to override calls
+  * windowPreview: Only hide the close button if no entry child has pointer
+  * appIcons, windowPreview: Use vfunc instead of signals
+  * docking: Delay hide requests if we're currently showing
+  * debian/control: Bump dependency on gnome-shell 3.36
+
+  [ pyroxar ]
+  * Update polish translation
+
+  [ 賴家亨 ]
+  * Update Tradition Chinese
+  * Correct one translation.
+
+  [ Heimen Stoffels ]
+  * Updated Dutch translation
+
+  [ Serdar Sağlam ]
+  * Turkish translate update
+
+  [ Kiyotaka Nishibori ]
+  * fixed a typo in a translatable string.
+
+  [ Michele Gaio ]
+  * Amend po files accordingly.
+  * Fix broken po files (regression).
+  * Fix regression with border radius with built-in theme.
+  * Fix mouse trapped due to barrier set up with dock shown.
+
+  [ franglais125 ]
+  * Fix regression with _showOverlay hotkeys.
+  * Unity7 backlight: add toggle option for glossy effect.
+
+  [ Sergio Costas ]
+  * docking.js: fix warning when using wheel
+
+  [ Muntazar ]
+  * Fixed a typo
+
+  [ Philip Langdale ]
+  * locations: Add missing xdtduri property to Volume icons
+  * locations: Filter out network volume locations
+
+  [ mars ]
+  * update Simplified Chinese translation
+  * add translation for locations.js
+
+  [ Sabri Ünal ]
+  * Fix unnecessary new line
+  * Improve Turkish translation
+
+  [ vantu5z ]
+  * update Russian translation
+
+  [ VeryLoudMonstercat ]
+  * Fix border radius for built-in theme
+
+  [ Felipe Marinho ]
+  * add support to workspace-grid extension
+  * pass the correct index to workspaceSwitcher
+
+  [ Julien Humbert ]
+  * Update French translation
+
+  [ Joonas Henriksson ]
+  * Update AppIconMenu when window-previews are disabled
+
+  [ Florian Müllner ]
+  * docking: Handle no-overview case
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 25 Feb 2020 02:55:57 +0100
+
 gnome-shell-extension-ubuntu-dock (67ubuntu19.10.1) eoan; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
