@@ -1,18 +1,18 @@
 # Dash to Dock master ja.po
-# Copyright (C) 2013-2019 THE PACKAGE'S COPYRIGHT HOLDER
+# Copyright (C) 2013-2020 THE dash-to-dock'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the dash-to-dock package.
 # Jiro Matsuzawa <jmatsuzawa@gnome.org>, 2013.
 # Debonne Hooties <debonne.hooties@gmail.com>, 2014-2017.
-# sicklylife <translation@sicklylife.jp>, 2019.
+# sicklylife <translation@sicklylife.jp>, 2019-2020.
 # Ryo Nakano <ryonakaknock3@gmail.com>, 2019.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-08-30 19:40+0900\n"
-"PO-Revision-Date:  2019-09-29 21:39+0900\n"
-"Last-Translator: Ryo Nakano <ryonakaknock3@gmail.com>\n"
+"POT-Creation-Date: 2020-02-26 20:00+0900\n"
+"PO-Revision-Date: 2020-02-26 20:34+0900\n"
+"Last-Translator: sicklylife <translation@sicklylife.jp>\n"
 "Language-Team: Japanese <>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -20,69 +20,98 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: prefs.js
 msgid "Primary monitor"
 msgstr "プライマリーモニター"
 
+#: prefs.js
 msgid "Secondary monitor "
 msgstr "セカンダリーモニター"
 
+#: prefs.js
 msgid "Intelligent autohide customization"
 msgstr "インテリジェント表示の設定"
 
+#: prefs.js
 msgid "Reset to defaults"
 msgstr "既定値にリセット"
 
+#: prefs.js
 msgid "Show dock and application numbers"
 msgstr "ドック表示とアプリケーション番号"
 
+#: prefs.js
 msgid "Customize middle-click behavior"
 msgstr "中ボタンクリック時のアクション"
 
+#: prefs.js
 msgid "Customize running indicators"
 msgstr "インジケーターの表示設定"
 
+#: appIcons.js
 msgid "All Windows"
 msgstr "ウィンドウプレビューの表示"
 
+#: appIcons.js
 #, javascript-format
 msgid "Dash to Dock %s"
 msgstr "Dash to Dock の%s"
 
-#: appIcons.js:801
+#: locations.js
+msgid "Trash"
+msgstr "ゴミ箱"
+
+#: locations.js
+msgid "Empty Trash"
+msgstr "ゴミ箱を空にする"
+
+#: locations.js
+msgid "Mount"
+msgstr "マウント"
+
+#: locations.js
+msgid "Eject"
+msgstr "取り出す"
+
+#: locations.js
+msgid "Unmount"
+msgstr "アンマウント"
+
+#: appIcons.js:821
 msgid "New Window"
 msgstr "新しいウィンドウ"
 
-#: appIcons.js:816
+#: appIcons.js:836
 msgid "Launch using Dedicated Graphics Card"
 msgstr "専用のグラフィックカードを使用して起動"
 
-#: appIcons.js:843
+#: appIcons.js:864
 msgid "Remove from Favorites"
 msgstr "お気に入りから削除"
 
-#: appIcons.js:849
+#: appIcons.js:870
 msgid "Add to Favorites"
 msgstr "お気に入りに追加"
 
-#: appIcons.js:859
+#: appIcons.js:881
 msgid "Show Details"
 msgstr "詳細を表示"
 
-#: appIcons.js:884 appIcons.js:904
-#: Settings.ui:89 Settings.ui:162 Settings.ui:235
+#: appIcons.js:906 appIcons.js:924 Settings.ui:89 Settings.ui:162
+#: Settings.ui:235
 msgid "Quit"
 msgstr "閉じる"
 
-#: appIcons.js:906
+#: appIcons.js:926
 #, javascript-format
 msgid "Quit %d Windows"
 msgstr "%d 個のウィンドウを閉じる"
 
-#: appIcons.js:1092
+#: appIcons.js:1125
 msgid "Settings"
 msgstr "設定"
 
-#: docking.js:1172
+#: docking.js:1186
 msgid "Dash"
 msgstr ""
 
@@ -94,7 +123,7 @@ msgstr "[ウィンドウの最小化] に設定したときは、アイコンを
 msgid "Shift+Click action"
 msgstr "Shift + クリック時のアクション"
 
-#: Settings.ui:81 Settings.ui:154 Settings.ui:227 Settings.ui:1588
+#: Settings.ui:81 Settings.ui:154 Settings.ui:227 Settings.ui:1672
 msgid "Raise window"
 msgstr "ウィンドウの再表示"
 
@@ -102,28 +131,28 @@ msgstr "ウィンドウの再表示"
 msgid "Minimize window"
 msgstr "ウィンドウの最小化"
 
-#: Settings.ui:83 Settings.ui:156 Settings.ui:229 Settings.ui:1590
+#: Settings.ui:83 Settings.ui:156 Settings.ui:229 Settings.ui:1674
 msgid "Launch new instance"
 msgstr "新しいウィンドウを開く"
 
-#: Settings.ui:84 Settings.ui:157 Settings.ui:230 Settings.ui:1591
-#: Settings.ui:1693
+#: Settings.ui:84 Settings.ui:157 Settings.ui:230 Settings.ui:1675
+#: Settings.ui:1777
 msgid "Cycle through windows"
 msgstr "ウィンドウの切り替え"
 
-#: Settings.ui:85 Settings.ui:158 Settings.ui:231 Settings.ui:1592
+#: Settings.ui:85 Settings.ui:158 Settings.ui:231 Settings.ui:1676
 msgid "Minimize or overview"
 msgstr "ウィンドウの最小化またはオーバービュー"
 
-#: Settings.ui:86 Settings.ui:159 Settings.ui:232 Settings.ui:1593
+#: Settings.ui:86 Settings.ui:159 Settings.ui:232 Settings.ui:1677
 msgid "Show window previews"
 msgstr "ウィンドウのプレビュー表示"
 
-#: Settings.ui:87 Settings.ui:160 Settings.ui:233 Settings.ui:1594
+#: Settings.ui:87 Settings.ui:160 Settings.ui:233 Settings.ui:1678
 msgid "Minimize or show previews"
 msgstr "ウィンドウの最小化またはプレビュー表示"
 
-#: Settings.ui:88 Settings.ui:161 Settings.ui:234 Settings.ui:1595
+#: Settings.ui:88 Settings.ui:161 Settings.ui:234 Settings.ui:1679
 msgid "Focus or show previews"
 msgstr "フォーカスまたはプレビュー表示"
 
@@ -259,157 +288,165 @@ msgstr "ドックの先頭（最上段または左端）に表示"
 msgid "Animate <i>Show Applications</i>."
 msgstr "アニメーションしながらアプリケーション一覧を表示"
 
-#: Settings.ui:1362
+#: Settings.ui:1371
+msgid "Show trash can"
+msgstr "ゴミ箱を表示"
+
+#: Settings.ui:1413
+msgid "Show mounted volumes and devices"
+msgstr "マウントしたボリュームとデバイスを表示"
+
+#: Settings.ui:1446
 msgid "Launchers"
 msgstr "ランチャー"
 
-#: Settings.ui:1408
+#: Settings.ui:1492
 msgid "Enable Super+(0-9) as shortcuts to activate apps. It can also be used together with Shift and Ctrl."
 msgstr ""
 "スーパーキーと番号 (0-9) を同時に押すことでアプリケーションのアクティブ化を可能にします。\n"
 "Shift または Ctrl キーをスーパーキーとともに押しても機能します。"
 
-#: Settings.ui:1426
+#: Settings.ui:1510
 msgid "Use keyboard shortcuts to activate apps"
 msgstr "アプリのアクティブ化にキーボードショートカットを使用"
 
-#: Settings.ui:1529
+#: Settings.ui:1613
 msgid "Behaviour when clicking on the icon of a running application."
 msgstr "実行中アプリケーションのアイコンをクリックしたときの動作を設定します。"
 
-#: Settings.ui:1546
+#: Settings.ui:1630
 msgid "Click action"
 msgstr "クリック時のアクション"
 
-#: Settings.ui:1589
+#: Settings.ui:1673
 msgid "Minimize"
 msgstr "ウィンドウの最小化"
 
-#: Settings.ui:1656
+#: Settings.ui:1740
 msgid "Behaviour when scrolling on the icon of an application."
 msgstr "実行中アプリケーションのアイコン上でスクロールしたときの動作を設定します。"
 
-#: Settings.ui:1673
+#: Settings.ui:1757
 msgid "Scroll action"
 msgstr "スクロール時のアクション"
 
-#: Settings.ui:1692
+#: Settings.ui:1776
 msgid "Do nothing"
 msgstr "何もしない"
 
-#: Settings.ui:1694
+#: Settings.ui:1778
 msgid "Switch workspace"
 msgstr "ワークスペースの切り替え"
 
-#: Settings.ui:1735
+#: Settings.ui:1819
 msgid "Behavior"
 msgstr "動作"
 
-#: Settings.ui:1781
+#: Settings.ui:1865
 msgid "Few customizations meant to integrate the dock with the default GNOME theme. Alternatively, specific options can be enabled below."
 msgstr "この設定がオンのときは、お使いのGNOMEテーマとの調和を図るためカスタマイズは無効になります。オフのときには以下のカスタマイズが可能です。"
 
-#: Settings.ui:1798
+#: Settings.ui:1882
 msgid "Use built-in theme"
 msgstr "ビルトインテーマの使用"
 
-#: Settings.ui:1877
+#: Settings.ui:1961
 msgid "Save space reducing padding and border radius."
 msgstr "境界線の太さとパディングを減らして表示域を小さくします。"
 
-#: Settings.ui:1893
+#: Settings.ui:1977
 msgid "Shrink the dash"
 msgstr "Dash の縮小表示"
 
-#: Settings.ui:1923
+#: Settings.ui:2007
 msgid "Customize windows counter indicators"
 msgstr "ウィンドウ数インジケーターの設定"
 
-#: Settings.ui:1966 Settings.ui:2165
+#: Settings.ui:2050 Settings.ui:2249
 msgid "Default"
 msgstr "デフォルト"
 
-#: Settings.ui:1967
+#: Settings.ui:2051
 msgid "Dots"
 msgstr ""
 
-#: Settings.ui:1968
+#: Settings.ui:2052
 msgid "Squares"
 msgstr ""
 
-#: Settings.ui:1969
+#: Settings.ui:2053
 msgid "Dashes"
 msgstr ""
 
-#: Settings.ui:1970
+#: Settings.ui:2054
 msgid "Segmented"
 msgstr ""
 
-#: Settings.ui:1971
+#: Settings.ui:2055
 msgid "Solid"
 msgstr ""
 
-#: Settings.ui:1972
+#: Settings.ui:2056
 msgid "Ciliora"
 msgstr ""
 
-#: Settings.ui:1973
+#: Settings.ui:2057
 msgid "Metro"
 msgstr ""
 
-#: Settings.ui:2014
+#: Settings.ui:2098
 msgid "Set the background color for the dash."
 msgstr "Dash の背景色を設定します"
 
-#: Settings.ui:2031
+#: Settings.ui:2115
 msgid "Customize the dash color"
 msgstr "Dash 背景色の設定"
 
-#: Settings.ui:2106
+#: Settings.ui:2190
 msgid "Tune the dash background opacity."
 msgstr "Dash 背景の不透明度を調整します。"
 
-#: Settings.ui:2122
+#: Settings.ui:2206
 msgid "Customize opacity"
 msgstr "不透明度の調整"
 
-#: Settings.ui:2166
+#: Settings.ui:2250
 msgid "Fixed"
 msgstr "固定"
 
-#: Settings.ui:2167
+#: Settings.ui:2251
 msgid "Dynamic"
 msgstr "動的"
 
-#: Settings.ui:2203
+#: Settings.ui:2287
 msgid "Opacity"
 msgstr "不透明度"
 
-#: Settings.ui:2259
-msgid "Force straight corner\n"
-msgstr "角を丸めない\n"
+#: Settings.ui:2343
+msgid "Force straight corner"
+msgstr "角を丸めない"
 
-#: Settings.ui:2308
+#: Settings.ui:2391
 msgid "Appearance"
 msgstr "外観"
 
-#: Settings.ui:2360
+#: Settings.ui:2443
 msgid "version: "
 msgstr "バージョン: "
 
-#: Settings.ui:2392
+#: Settings.ui:2475
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "Dash をドック化してアクティビティ画面以外でも Dash 操作を可能にします。"
 
-#: Settings.ui:2412
+#: Settings.ui:2495
 msgid "Created by"
 msgstr "作者:"
 
-#: Settings.ui:2442
+#: Settings.ui:2525
 msgid "Webpage"
 msgstr "ウェブページ"
 
-#: Settings.ui:2462
+#: Settings.ui:2545
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General Public License, version 2 or later</a> for details.</span>"
@@ -417,95 +454,95 @@ msgstr ""
 "<span size=\"small\">このプログラムに<b>保証は一切ありません</b>。\n"
 "詳しくは <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU一般公衆ライセンス（GPL）バージョン2</a> またはそれ以降のバージョンをご覧ください。</span>"
 
-#: Settings.ui:2483
+#: Settings.ui:2566
 msgid "About"
 msgstr "情報"
 
-#: Settings.ui:2556
+#: Settings.ui:2639
 msgid "Customize minimum and maximum opacity values"
-msgstr ""
+msgstr "不透明度の最小値と最大値の設定"
 
-#: Settings.ui:2585
+#: Settings.ui:2668
 msgid "Minimum opacity"
-msgstr ""
+msgstr "最小不透明度"
 
-#: Settings.ui:2633
+#: Settings.ui:2716
 msgid "Maximum opacity"
-msgstr ""
+msgstr "最大不透明度"
 
-#: Settings.ui:2747
+#: Settings.ui:2830
 msgid "Number overlay"
 msgstr "番号の表示"
 
-#: Settings.ui:2759
+#: Settings.ui:2842
 msgid "Temporarily show the application numbers over the icons, corresponding to the shortcut."
 msgstr "ショートカットキーが押されたときに、アイコン上にアプリケーション番号を一時的に表示します。"
 
-#: Settings.ui:2809
+#: Settings.ui:2892
 msgid "Show the dock if it is hidden"
 msgstr "ドックが非表示なら一時的に表示"
 
-#: Settings.ui:2821
+#: Settings.ui:2904
 msgid "If using autohide, the dock will appear for a short time when triggering the shortcut."
 msgstr "ドックが表示されていない状態のとき、ショーカットキーで一時的にドックを表示します。"
 
-#: Settings.ui:2869
+#: Settings.ui:2952
 msgid "Shortcut for the options above"
 msgstr "上記設定のためのショートカットキー"
 
-#: Settings.ui:2881
+#: Settings.ui:2964
 msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
 msgstr "表記法: <Shift>, <Ctrl>, <Alt>, <Super>"
 
-#: Settings.ui:2934 Settings.ui:3284
+#: Settings.ui:3017 Settings.ui:3367
 msgid "Hide timeout (s)"
 msgstr "非表示までのタイムアウト (秒)"
 
-#: Settings.ui:3001
+#: Settings.ui:3084
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "ドックを表示したいとき、ポインターを画面端に移動するとドックが表示されます。"
 
-#: Settings.ui:3018
+#: Settings.ui:3101
 msgid "Autohide"
 msgstr "オンデマンド表示"
 
-#: Settings.ui:3041
+#: Settings.ui:3124
 msgid "Push to show: require pressure to show the dock"
 msgstr "押し込んで表示（画面外にポインターを移動するようにマウスを動かして表示）"
 
-#: Settings.ui:3056
+#: Settings.ui:3139
 msgid "Enable in fullscreen mode"
 msgstr "フルスクリーンモード時でも表示"
 
-#: Settings.ui:3092
+#: Settings.ui:3175
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "ドックを常に表示しますが、アプリケーションウィンドウと重なるときは表示しません。"
 
-#: Settings.ui:3109
+#: Settings.ui:3192
 msgid "Dodge windows"
 msgstr "ウィンドウ重なり防止"
 
-#: Settings.ui:3137
+#: Settings.ui:3220
 msgid "All windows"
 msgstr "すべてのウィンドウが対象"
 
-#: Settings.ui:3155
+#: Settings.ui:3238
 msgid "Only focused application's windows"
 msgstr "フォーカスされたアプリケーションのウィンドウが対象"
 
-#: Settings.ui:3173
+#: Settings.ui:3256
 msgid "Only maximized windows"
 msgstr "最大化されたウィンドウが対象"
 
-#: Settings.ui:3233
+#: Settings.ui:3316
 msgid "Animation duration (s)"
 msgstr "アニメーション表示時間 (秒)"
 
-#: Settings.ui:3297
+#: Settings.ui:3380
 msgid "Show timeout (s)"
 msgstr "表示までのタイムアウト (秒)"
 
-#: Settings.ui:3310
+#: Settings.ui:3393
 msgid "Pressure threshold"
 msgstr "押し込み量 (ピクセル)"
 
