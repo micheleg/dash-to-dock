@@ -1,3 +1,14 @@
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.2) focal; urgency=medium
+
+  * general: Use Clutter.ActorAlign to set alignments
+  * docking: Ensure that all the slider children are properly centered
+  * dash: Properly respect RTL layout, applying the right box alignment
+  * dash, docking: Don't use the _delegate pattern
+  * dash: Reuse as much as possible upstream code
+  * appIconIndicators: Make the count badge text size relative to icon size
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 27 Feb 2020 23:34:18 +0100
+
 gnome-shell-extension-ubuntu-dock (67ubuntu20.04.1) focal; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
