@@ -212,10 +212,11 @@ var MyDash = GObject.registerClass({
 
         this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
 
+        let rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
         this._box = new St.BoxLayout({
             vertical: !this._isHorizontal,
             clip_to_allocation: false,
-            x_align: Clutter.ActorAlign.START,
+            x_align: rtl ? Clutter.ActorAlign.END : Clutter.ActorAlign.START,
             y_align: Clutter.ActorAlign.START
         });
         this._box._delegate = this;
@@ -233,11 +234,10 @@ var MyDash = GObject.registerClass({
 
         this._container.add_actor(this._showAppsIcon);
 
-        let rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
         super._init({
             child: this._container,
+            x_align: Clutter.ActorAlign.START,
             y_align: Clutter.ActorAlign.START,
-            x_align: rtl ? Clutter.ActorAlign.END : Clutter.ActorAlign.START,
         });
 
         if (this._isHorizontal) {
