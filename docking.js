@@ -231,15 +231,16 @@ var DockedDash = GObject.registerClass({
             name: 'dashtodockContainer',
             reactive: false,
             style_class: positionStyleClass[this._position],
-            x_align: this._isHorizontal?St.Align.MIDDLE:St.Align.START,
-            y_align: this._isHorizontal?St.Align.START:St.Align.MIDDLE
         });
-        this._delegate = this;
 
         // This is the sliding actor whose allocation is to be tracked for input regions
         this._slider = new DashSlideContainer({
             side: this._position,
-            slidex: 0
+            slidex: 0,
+            x_align: this._isHorizontal ?
+                Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
+            y_align: this._isHorizontal ?
+                Clutter.ActorAlign.START : Clutter.ActorAlign.CENTER,
         });
 
         // This is the actor whose hover status us tracked for autohide
@@ -1090,8 +1091,6 @@ var DockedDash = GObject.registerClass({
                 this.remove_style_class_name('extended');
             }
         }
-
-        this._y0 = this.y;
     }
 
     // Set the dash at the correct depth in z
@@ -1310,13 +1309,12 @@ var DockedDash = GObject.registerClass({
     _activateApp(appIndex) {
         let children = this.dash._box.get_children().filter(function(actor) {
                 return actor.child &&
-                       actor.child._delegate &&
-                       actor.child._delegate.app;
+                       actor.child.app;
         });
 
         // Apps currently in the dash
         let apps = children.map(function(actor) {
-                return actor.child._delegate;
+                return actor.child;
             });
 
         // Activate with button = 1, i.e. same as left click
