@@ -349,7 +349,8 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         let label = new St.Label({ text: window.get_title()});
         label.set_style('max-width: '+PREVIEW_MAX_WIDTH +'px');
         let labelBin = new St.Bin({ child: label,
-                                    x_align: St.Align.MIDDLE});
+            x_align: Clutter.ActorAlign.CENTER,
+        });
 
         this._windowTitleId = this._window.connect('notify::title', () => {
                                   label.set_text(this._window.get_title());

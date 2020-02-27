@@ -69,7 +69,7 @@ class DashToDock_MyDashActor extends St.Widget {
         super._init({
             name: 'dash',
             layout_manager: layout,
-            clip_to_allocation: true
+            clip_to_allocation: true,
         });
 
         // Since we are usually visible but not usually changing, make sure
@@ -235,8 +235,8 @@ var MyDash = GObject.registerClass({
         let rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
         super._init({
             child: this._container,
-            y_align: St.Align.START,
-            x_align: rtl ? St.Align.END : St.Align.START
+            y_align: Clutter.ActorAlign.START,
+            x_align: rtl ? Clutter.ActorAlign.END : Clutter.ActorAlign.START,
         });
 
         if (this._isHorizontal) {

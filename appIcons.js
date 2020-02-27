@@ -615,7 +615,8 @@ class MyAppIcon extends Dash.DashIcon {
         this._numberOverlayLabel = new St.Label();
         this._numberOverlayBin = new St.Bin({
             child: this._numberOverlayLabel,
-            x_align: St.Align.START, y_align: St.Align.START,
+            x_align: Clutter.ActorAlign.START,
+            y_align: Clutter.ActorAlign.START,
             x_expand: true, y_expand: true
         });
         this._numberOverlayLabel.add_style_class_name('number-overlay');
