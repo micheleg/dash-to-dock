@@ -1089,8 +1089,6 @@ var DockedDash = GObject.registerClass({
                 this.remove_style_class_name('extended');
             }
         }
-
-        this._y0 = this.y;
     }
 
     _updateStaticBox() {
