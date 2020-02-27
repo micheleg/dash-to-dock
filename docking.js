@@ -231,15 +231,17 @@ var DockedDash = GObject.registerClass({
             name: 'dashtodockContainer',
             reactive: false,
             style_class: positionStyleClass[this._position],
-            x_align: this._isHorizontal ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
-            y_align: this._isHorizontal ? Clutter.ActorAlign.START : Clutter.ActorAlign.CENTER,
         });
         this._delegate = this;
 
         // This is the sliding actor whose allocation is to be tracked for input regions
         this._slider = new DashSlideContainer({
             side: this._position,
-            slidex: 0
+            slidex: 0,
+            x_align: this._isHorizontal ?
+                Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
+            y_align: this._isHorizontal ?
+                Clutter.ActorAlign.START : Clutter.ActorAlign.CENTER,
         });
 
         // This is the actor whose hover status us tracked for autohide
