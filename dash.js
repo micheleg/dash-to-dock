@@ -509,13 +509,12 @@ var MyDash = GObject.registerClass({
         // the animation)
         let iconChildren = this._box.get_children().filter(function(actor) {
             return actor.child &&
-                   actor.child._delegate &&
-                   actor.child._delegate.icon &&
+                   !!actor.child.icon &&
                    !actor.animatingOut;
         });
 
         let appIcons = iconChildren.map(function(actor) {
-            return actor.child._delegate;
+            return actor.child;
         });
 
       return appIcons;
@@ -598,8 +597,7 @@ var MyDash = GObject.registerClass({
         // the animation)
         let iconChildren = this._box.get_children().filter(function(actor) {
             return actor.child &&
-                   actor.child._delegate &&
-                   actor.child._delegate.icon &&
+                   !!actor.child.icon &&
                    !actor.animatingOut;
         });
 
@@ -629,7 +627,7 @@ var MyDash = GObject.registerClass({
         let spacing = themeNode.get_length('spacing');
 
         let firstButton = iconChildren[0].child;
-        let firstIcon = firstButton._delegate.icon;
+        let firstIcon = firstButton.icon;
 
         let minHeight, natHeight, minWidth, natWidth;
 
@@ -669,7 +667,7 @@ var MyDash = GObject.registerClass({
 
         let scale = oldIconSize / newIconSize;
         for (let i = 0; i < iconChildren.length; i++) {
-            let icon = iconChildren[i].child._delegate.icon;
+            let icon = iconChildren[i].child.icon || iconChildren[i].icon;
 
             // Set the new size immediately, to keep the icons' sizes
             // in sync with this.iconSize
@@ -717,12 +715,11 @@ var MyDash = GObject.registerClass({
 
         let children = this._box.get_children().filter(function(actor) {
             return actor.child &&
-                   actor.child._delegate &&
-                   actor.child._delegate.app;
+                   !!actor.child.app;
         });
         // Apps currently in the dash
         let oldApps = children.map(function(actor) {
-            return actor.child._delegate.app;
+            return actor.child.app;
         });
         // Apps supposed to be in the dash
         let newApps = [];
@@ -834,7 +831,7 @@ var MyDash = GObject.registerClass({
             // App moved
             let insertHere = newApps[newIndex + 1] && (newApps[newIndex + 1] == oldApps[oldIndex]);
             let alreadyRemoved = removedActors.reduce(function(result, actor) {
-                let removedApp = actor.child._delegate.app;
+                let removedApp = actor.child.app;
                 return result || removedApp == newApps[newIndex];
             }, false);
 
@@ -950,8 +947,7 @@ var MyDash = GObject.registerClass({
     resetAppIcons() {
         let children = this._box.get_children().filter(function(actor) {
             return actor.child &&
-                actor.child._delegate &&
-                actor.child._delegate.icon;
+                   !!actor.child.icon;
         });
         for (let i = 0; i < children.length; i++) {
             let item = children[i];
@@ -1102,7 +1098,7 @@ var MyDash = GObject.registerClass({
             if (this._dragPlaceholder && (children[i] == this._dragPlaceholder))
                 continue;
 
-            let childId = children[i].child._delegate.app.get_id();
+            let childId = children[i].child.app.get_id();
             if (childId == id)
                 continue;
             if (childId in favorites)
