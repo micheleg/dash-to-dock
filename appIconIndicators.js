@@ -659,7 +659,8 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         this._notificationBadgeLabel = new St.Label();
         this._notificationBadgeBin = new St.Bin({
             child: this._notificationBadgeLabel,
-            x_align: St.Align.END, y_align: St.Align.START,
+            x_align: Clutter.ActorAlign.END,
+            y_align: Clutter.ActorAlign.START,
             x_expand: true, y_expand: true
         });
         this._notificationBadgeLabel.add_style_class_name('notification-badge');

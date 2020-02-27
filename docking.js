@@ -231,8 +231,8 @@ var DockedDash = GObject.registerClass({
             name: 'dashtodockContainer',
             reactive: false,
             style_class: positionStyleClass[this._position],
-            x_align: this._isHorizontal?St.Align.MIDDLE:St.Align.START,
-            y_align: this._isHorizontal?St.Align.START:St.Align.MIDDLE
+            x_align: this._isHorizontal ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
+            y_align: this._isHorizontal ? Clutter.ActorAlign.START : Clutter.ActorAlign.CENTER,
         });
         this._delegate = this;
 
