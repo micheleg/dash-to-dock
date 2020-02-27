@@ -232,7 +232,6 @@ var DockedDash = GObject.registerClass({
             reactive: false,
             style_class: positionStyleClass[this._position],
         });
-        this._delegate = this;
 
         // This is the sliding actor whose allocation is to be tracked for input regions
         this._slider = new DashSlideContainer({
@@ -1305,13 +1304,12 @@ var DockedDash = GObject.registerClass({
     _activateApp(appIndex) {
         let children = this.dash._box.get_children().filter(function(actor) {
                 return actor.child &&
-                       actor.child._delegate &&
-                       actor.child._delegate.app;
+                       actor.child.app;
         });
 
         // Apps currently in the dash
         let apps = children.map(function(actor) {
-                return actor.child._delegate;
+                return actor.child;
             });
 
         // Activate with button = 1, i.e. same as left click
