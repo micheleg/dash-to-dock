@@ -225,6 +225,11 @@
       <summary>Show mounted volumes and devices</summary>
       <description>Show or hide mounted volume and device icons in the dash</description>
     </key>
+    <key type="s" name="hide-mounts-regex">
+      <default>""</default>
+      <summary>Regex to filter and hide mounted devices</summary>
+      <description>Hide certain mounted volume and device icons in the dash</description>
+    </key>
     <key type="b" name="show-show-apps-button">
       <default>true</default>
       <summary>Show applications button</summary>
