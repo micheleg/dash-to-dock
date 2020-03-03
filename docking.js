@@ -1271,11 +1271,12 @@ var DockedDash = GObject.registerClass({
 
                 if (Main.wm._workspaceSwitcherPopup == null)
                     // Support Workspace Grid extension showing their custom Grid Workspace Switcher
-                    if (Utils.DisplayWrapper.getWorkspaceManager().workspace_grid !== undefined)
-                        Main.wm._workspaceSwitcherPopup = Utils.DisplayWrapper.getWorkspaceManager()
-                            .workspace_grid.getWorkspaceSwitcherPopup();
-                    else
+                    if (global.workspace_manager.workspace_grid !== undefined) {
+                        Main.wm._workspaceSwitcherPopup =
+                            global.workspace_manager.workspace_grid.getWorkspaceSwitcherPopup();
+                    } else {
                         Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+                    }
                     // Set the actor non reactive, so that it doesn't prevent the
                     // clicks events from reaching the dash actor. I can't see a reason
                     // why it should be reactive.
@@ -1285,9 +1286,8 @@ var DockedDash = GObject.registerClass({
                     });
 
                 // If Workspace Grid is installed, let them handle the scroll behaviour.
-                if (Utils.DisplayWrapper.getWorkspaceManager().workspace_grid !== undefined)
-                    ws = Utils.DisplayWrapper.getWorkspaceManager().workspace_grid
-                        .actionMoveWorkspace(direction);
+                if (global.workspace_manager.workspace_grid !== undefined)
+                    ws = global.workspace_manager.workspace_grid.actionMoveWorkspace(direction);
                 else
                     Main.wm.actionMoveWorkspace(ws);
 
