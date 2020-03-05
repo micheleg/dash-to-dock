@@ -40,10 +40,8 @@ var AppIconIndicator = class DashToDock_AppIconIndicator {
     constructor(source) {
         this._indicators = [];
         let settings = Docking.DockManager.settings;
-        if (settings.get_boolean('show-notification-badges')) {
-            let unityIndicator = new UnityIndicator(source);
-            this._indicators.push(unityIndicator);
-        }
+        this._unityIndicator = new UnityIndicator(source);
+        this._indicators.push(this._unityIndicator);
 
         // Choose the style for the running indicators
         let runningIndicator = null;
@@ -112,7 +110,7 @@ var AppIconIndicator = class DashToDock_AppIconIndicator {
 
 /*
  * Base class to be inherited by all indicators of any kind
-*/
+ */
 var IndicatorBase = class DashToDock_IndicatorBase {
 
     constructor(source) {
@@ -676,6 +674,8 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
             }
         );
 
+        this._couldShowProgress = false
+
         this._signalsHandler.add([
             this._source.remoteModel,
             'entry-added',
@@ -684,7 +684,24 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
             this._source.remoteModel,
             'entry-removed',
             this._onLauncherEntryRemoteRemoved.bind(this)
-        ])
+        ], [
+            Docking.DockManager.settings,
+            'changed::show-notification-badges',
+            this._toggleHiding.bind(this)
+        ]);
+    }
+
+    _toggleHiding() {
+        let settings = Docking.DockManager.settings;
+        if (settings.get_boolean('show-notification-badges')) {
+            this.toggleNotificationBadge(true);
+            if (this._couldShowProgress) {
+                this.toggleProgressOverlay(true);
+            }
+        } else {
+            this.toggleNotificationBadge(false);
+            this.toggleProgressOverlay(false);
+        }
     }
 
     _onLauncherEntryRemoteAdded(remoteModel, entry) {
@@ -748,7 +765,8 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
     }
 
     toggleNotificationBadge(activate) {
-        if (activate && this._notificationBadgeCount > 0) {
+        if (activate && this._notificationBadgeCount > 0
+                && Docking.DockManager.settings.get_boolean('show-notification-badges')) {
             this.updateNotificationBadge();
             this._notificationBadgeBin.show();
         }
@@ -865,7 +883,7 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
     }
 
     toggleProgressOverlay(activate) {
-        if (activate) {
+        if (activate && Docking.DockManager.settings.get_boolean('show-notification-badges')) {
             this._showProgressOverlay();
         }
         else {
@@ -894,6 +912,7 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
             this.toggleNotificationBadge(false);
             this.setProgress(0);
             this.toggleProgressOverlay(false);
+            this._couldShowProgress = false;
         }
     }
 
@@ -926,6 +945,7 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
             remote,
             'progress-visible-changed',
             (remote, value) => {
+                this._couldShowProgress = value;
                 this.toggleProgressOverlay(value);
             }
         ]);
