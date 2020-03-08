@@ -70,7 +70,7 @@ class DashToDock_MyDashActor extends St.Widget {
             name: 'dash',
             layout_manager: layout,
             clip_to_allocation: true,
-            y_align: Clutter.ActorAlign.CENTER,
+            y_align: Clutter.ActorAlign.START,
         });
 
         // Since we are usually visible but not usually changing, make sure
@@ -236,8 +236,8 @@ var MyDash = GObject.registerClass({
 
         super._init({
             child: this._container,
-            x_align: Clutter.ActorAlign.START,
-            y_align: Clutter.ActorAlign.START,
+            x_align: Clutter.ActorAlign.FILL,
+            y_align: Clutter.ActorAlign.FILL,
         });
 
         if (this._isHorizontal) {

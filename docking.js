@@ -247,7 +247,11 @@ var DockedDash = GObject.registerClass({
         this._box = new St.BoxLayout({
             name: 'dashtodockBox',
             reactive: true,
-            track_hover: true
+            track_hover: true,
+            x_align: this._isHorizontal ?
+                Clutter.ActorAlign.FILL : Clutter.ActorAlign.START,
+            y_align: this._isHorizontal ?
+                Clutter.ActorAlign.START : Clutter.ActorAlign.FILL
         });
         this._box.connect('notify::hover', this._hoverChanged.bind(this));
 
