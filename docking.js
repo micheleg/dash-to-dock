@@ -1597,7 +1597,7 @@ var DockManager = class DashToDock_DockManager {
 
         this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
-        this._oldDash = Main.overview._dash;
+        this._oldDash = Main.overview._overview._controls.dash;
         this._ensureFileManagerClient();
 
         /* Array of all the docks created */
@@ -1716,7 +1716,7 @@ var DockManager = class DashToDock_DockManager {
         // connect app icon into the view selector
         dock.dash.showAppsButton.connect('notify::checked', this._onShowAppsButtonToggled.bind(this));
 
-        // Make the necessary changes to Main.overview._dash
+        // Make the necessary changes to Main.overview._overview._dash
         this._prepareMainDash();
 
         // Adjust corners if necessary
@@ -1743,7 +1743,7 @@ var DockManager = class DashToDock_DockManager {
     _prepareMainDash() {
         // Pretend I'm the dash: meant to make appgrd swarm animation come from the
         // right position of the appShowButton.
-        Main.overview._dash = this._allDocks[0].dash;
+        Main.overview._overview._controls.dash = this._allDocks[0].dash;
 
         // set stored icon size  to the new dash
         Main.overview.dash.iconSize = this._allDocks[0].dash.iconSize;
@@ -1752,7 +1752,7 @@ var DockManager = class DashToDock_DockManager {
             return;
 
         // Hide usual Dash
-        Main.overview.dash.hide();
+        this._oldDash.hide();
 
         // Also set dash width to 1, so it's almost not taken into account by code
         // calculaing the reserved space in the overview. The reason to keep it at 1 is
@@ -1760,7 +1760,7 @@ var DockManager = class DashToDock_DockManager {
         // in turn is triggergin the appsIcon spring animation, required when no other
         // actors has this effect, i.e in horizontal mode and without the workspaceThumnails
         // 1 static workspace only)
-        Main.overview.dash.set_width(1);
+        this._oldDash.set_width(1);
     }
 
     _deleteDocks() {
@@ -1788,7 +1788,7 @@ var DockManager = class DashToDock_DockManager {
         // reset stored icon size  to the default dash
         Main.overview.dash.iconSize = Main.overview.dash.iconSize;
 
-        Main.overview._dash = this._oldDash;
+        Main.overview._overview._controls.dash = this._oldDash;
     }
 
     _onShowAppsButtonToggled(button) {
