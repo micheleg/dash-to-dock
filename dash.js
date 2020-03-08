@@ -70,7 +70,8 @@ class DashToDock_MyDashActor extends St.Widget {
             name: 'dash',
             layout_manager: layout,
             clip_to_allocation: true,
-            y_align: Clutter.ActorAlign.START,
+            x_align: this._isHorizontal ? Clutter.ActorAlign.START: Clutter.ActorAlign.FILL,
+            y_align: this._isHorizontal ? Clutter.ActorAlign.FILL: Clutter.ActorAlign.START
         });
 
         // Since we are usually visible but not usually changing, make sure
