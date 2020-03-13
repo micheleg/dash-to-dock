@@ -85,7 +85,7 @@ class DashToDock_MyDashActor extends St.Widget {
 
     vfunc_allocate(box, flags) {
         this.set_allocation(box, flags);
-        let contentBox = box;
+        let contentBox = this.get_theme_node().get_content_box(box);
         let availWidth = contentBox.x2 - contentBox.x1;
         let availHeight = contentBox.y2 - contentBox.y1;
 
