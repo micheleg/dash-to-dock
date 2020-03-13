@@ -1772,11 +1772,8 @@ var DockManager = class DashToDock_DockManager {
         this._keyboardShortcuts.destroy();
 
         // Delete all docks
-        let nDocks = this._allDocks.length;
-        for (let i = nDocks-1; i >= 0; i--) {
-            this._allDocks[i].destroy();
-            this._allDocks.pop();
-        }
+        this._allDocks.forEach(d => d.destroy());
+        this._allDocks = [];
     }
 
     _restoreDash() {
