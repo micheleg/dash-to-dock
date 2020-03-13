@@ -84,14 +84,15 @@ class DashToDock_MyDashActor extends St.Widget {
     }
 
     vfunc_allocate(box, flags) {
-        this.set_allocation(box, flags);
         let contentBox = this.get_theme_node().get_content_box(box);
         let availWidth = contentBox.x2 - contentBox.x1;
         let availHeight = contentBox.y2 - contentBox.y1;
 
+        this.set_allocation(box, flags);
+
         let [appIcons, showAppsButton] = this.get_children();
-        let [showAppsMinHeight, showAppsNatHeight] = showAppsButton.get_preferred_height(availWidth);
-        let [showAppsMinWidth, showAppsNatWidth] = showAppsButton.get_preferred_width(availHeight);
+        let [, showAppsNatHeight] = showAppsButton.get_preferred_height(availWidth);
+        let [, showAppsNatWidth] = showAppsButton.get_preferred_width(availHeight);
 
         let offset_x = this._isHorizontal?showAppsNatWidth:0;
         let offset_y = this._isHorizontal?0:showAppsNatHeight;
