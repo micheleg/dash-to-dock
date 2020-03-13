@@ -1569,6 +1569,7 @@ var DockManager = class DashToDock_DockManager {
         Me.imports.extension.dockManager = this;
 
         this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
 
@@ -1621,7 +1622,6 @@ var DockManager = class DashToDock_DockManager {
 
     _bindSettingsChanges() {
         // Connect relevant signals to the toggling function
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._signalsHandler.add([
             Meta.MonitorManager.get(),
             'monitors-changed',
@@ -1735,6 +1735,8 @@ var DockManager = class DashToDock_DockManager {
         if (Main.overview.isDummy)
             return;
 
+        this._signalsHandler.removeWithLabel('old-dash-changes');
+
         // Hide usual Dash
         this._oldDash.hide();
 
@@ -1745,6 +1747,16 @@ var DockManager = class DashToDock_DockManager {
         // actors has this effect, i.e in horizontal mode and without the workspaceThumnails
         // 1 static workspace only)
         this._oldDash.set_width(1);
+
+        this._signalsHandler.addWithLabel('old-dash-changes', [
+            this._oldDash,
+            'notify::visible',
+            () => this._prepareMainDash()
+        ], [
+            this._oldDash,
+            'notify::width',
+            () => this._prepareMainDash()
+        ]);
 
         // Pretend I'm the dash: meant to make appgrid swarm animation come from
         // the right position of the appShowButton.
@@ -1774,6 +1786,8 @@ var DockManager = class DashToDock_DockManager {
 
         if (!this._oldDash)
                 return;
+
+        this._signalsHandler.removeWithLabel('old-dash-changes');
 
         Main.overview._overview._controls.dash = this._oldDash;
 
