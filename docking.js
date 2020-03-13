@@ -1341,7 +1341,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
             for (let i = 0; i < DashToDock_KeyboardShortcuts_NUM_HOTKEYS; i++) {
                 let appNum = i;
                 Main.wm.addKeybinding(key + (i + 1), DockManager.settings,
-                                      Meta.KeyBindingFlags.NONE,
+                                      Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
                                       Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                                       () => {
                                           DockManager.getDefault().mainDock._activateApp(appNum);
@@ -1402,7 +1402,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
     _enableExtraShortcut() {
         if (!this._shortcutIsSet) {
             Main.wm.addKeybinding('shortcut', DockManager.settings,
-                                  Meta.KeyBindingFlags.NONE,
+                                  Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
                                   Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                                   this._showOverlay.bind(this));
             this._shortcutIsSet = true;
