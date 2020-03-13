@@ -1345,7 +1345,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
                                       Meta.KeyBindingFlags.NONE,
                                       Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                                       () => {
-                                          this._allDocks[0]._activateApp(appNum);
+                                          DockManager.getDefault().mainDock._activateApp(appNum);
                                           this._showOverlay();
                                       });
             }
@@ -1599,6 +1599,10 @@ var DockManager = class DashToDock_DockManager {
         return this._fm1Client;
     }
 
+    get mainDock() {
+        return this._allDocks.length ? this._allDocks[0] : null;
+    }
+
     _ensureFileManagerClient() {
         let supportsLocations = ['show-trash', 'show-mounts'].some((s) => {
             return this._settings.get_boolean(s);
@@ -1729,7 +1733,7 @@ var DockManager = class DashToDock_DockManager {
         Object.defineProperty(Main.overview, 'dash', {
             configurable: true,
             get: () => Main.overview.isDummy ?
-                this._allDocks[0].dash : defaultDashGetter.call(Main.overview),
+                this.mainDock.dash : defaultDashGetter.call(Main.overview),
         });
 
         if (Main.overview.isDummy)
@@ -1760,7 +1764,7 @@ var DockManager = class DashToDock_DockManager {
 
         // Pretend I'm the dash: meant to make appgrid swarm animation come from
         // the right position of the appShowButton.
-        Main.overview._overview._controls.dash = this._allDocks[0].dash;
+        Main.overview._overview._controls.dash = this.mainDock.dash;
     }
 
     _deleteDocks() {
@@ -1843,7 +1847,7 @@ var DockManager = class DashToDock_DockManager {
                             Main.overview.disconnect(overviewShownId);
                             Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
                                 grid.opacity = 255;
-                                grid.animateSpring(IconGrid.AnimationDirection.IN, this._allDocks[0].dash.showAppsButton);
+                                grid.animateSpring(IconGrid.AnimationDirection.IN, this.mainDock.dash.showAppsButton);
                             });
                         });
                     }
