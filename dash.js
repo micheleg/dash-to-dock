@@ -112,8 +112,7 @@ class DashToDock_MyDashActor extends St.Widget {
             childBox.x2 = contentBox.x1 + showAppsNatWidth;
             childBox.y2 = contentBox.y1 + showAppsNatHeight;
             showAppsButton.allocate(childBox, flags);
-        }
-        else {
+        } else {
             childBox.x1 = contentBox.x1;
             childBox.y1 = contentBox.y1;
             childBox.x2 = contentBox.x2 - offset_x;
@@ -129,33 +128,24 @@ class DashToDock_MyDashActor extends St.Widget {
     }
 
     vfunc_get_preferred_width(forHeight) {
-        // We want to request the natural height of all our children
-        // as our natural height, so we chain up to StWidget (which
+        // We want to request the natural width of all our children
+        // as our natural width, so we chain up to StWidget (which
         // then calls BoxLayout), but we only request the showApps
         // button as the minimum size
 
-        let [, natWidth] = this.layout_manager.get_preferred_width(this, forHeight);
+        let [, natWidth] = super.vfunc_get_preferred_width(forHeight);
 
         let themeNode = this.get_theme_node();
+        let adjustedForHeight = themeNode.adjust_for_height(forHeight);
         let [, showAppsButton] = this.get_children();
-        let [minWidth, ] = showAppsButton.get_preferred_height(forHeight);
+        let [minWidth] = showAppsButton.get_preferred_width(adjustedForHeight);
+        [minWidth] = themeNode.adjust_preferred_width(minWidth, natWidth);
 
         return [minWidth, natWidth];
     }
 
     vfunc_get_preferred_height(forWidth) {
-        // We want to request the natural height of all our children
-        // as our natural height, so we chain up to StWidget (which
-        // then calls BoxLayout), but we only request the showApps
-        // button as the minimum size
-
-        let [, natHeight] = this.layout_manager.get_preferred_height(this, forWidth);
-
-        let themeNode = this.get_theme_node();
-        let [, showAppsButton] = this.get_children();
-        let [minHeight, ] = showAppsButton.get_preferred_height(forWidth);
-
-        return [minHeight, natHeight];
+        return Dash.DashActor.prototype.vfunc_get_preferred_height.call(this, forWidth);
     }
 });
 
