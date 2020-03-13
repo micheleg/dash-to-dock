@@ -1303,8 +1303,7 @@ const DashToDock_KeyboardShortcuts_NUM_HOTKEYS = 10;
 
 var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
 
-    constructor(allDocks){
-        this._allDocks = allDocks;
+    constructor() {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._hotKeysEnabled = false;
@@ -1418,8 +1417,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
     }
 
     _showOverlay() {
-        for (let i = 0; i < this._allDocks.length; i++) {
-            let dock = this._allDocks[i];
+        for (let dock of DockManager.allDocks) {
             if (DockManager.settings.get_boolean('hotkeys-overlay'))
                 dock.dash.toggleNumberOverlay(true);
 
@@ -1456,10 +1454,9 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
  */
 var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
 
-    constructor(allDocks) {
+    constructor() {
 
         let settings = DockManager.settings;
-        this._allDocks = allDocks;
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._injectionsHandler = new Utils.InjectionsHandler();
@@ -1468,9 +1465,8 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
             settings,
             'changed::isolate-workspaces',
             () => {
-                    this._allDocks.forEach(function(dock) {
-                        dock.dash.resetAppIcons();
-                    });
+                    DockManager.allDocks.forEach((dock) =>
+                        dock.dash.resetAppIcons());
                     if (settings.get_boolean('isolate-workspaces') ||
                         settings.get_boolean('isolate-monitors'))
                         this._enable.bind(this)();
@@ -1481,9 +1477,8 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
             settings,
             'changed::isolate-monitors',
             () => {
-                    this._allDocks.forEach(function(dock) {
-                        dock.dash.resetAppIcons();
-                    });
+                    DockManager.allDocks.forEach((dock) =>
+                        dock.dash.resetAppIcons());
                     if (settings.get_boolean('isolate-workspaces') ||
                         settings.get_boolean('isolate-monitors'))
                         this._enable.bind(this)();
@@ -1504,7 +1499,7 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
         // although it should never happen
         this._disable();
 
-        this._allDocks.forEach(function(dock) {
+        DockManager.allDocks.forEach((dock) => {
             this._signalsHandler.addWithLabel('isolation', [
                 global.display,
                 'restacked',
@@ -1589,6 +1584,10 @@ var DockManager = class DashToDock_DockManager {
 
     static getDefault() {
         return Me.imports.extension.dockManager
+    }
+
+    static get allDocks() {
+        return DockManager.getDefault()._allDocks;
     }
 
     static get settings() {
@@ -1719,8 +1718,8 @@ var DockManager = class DashToDock_DockManager {
 
         // Load optional features. We load *after* the docks are created, since
         // we need to connect the signals to all dock instances.
-        this._workspaceIsolation = new WorkspaceIsolation(this._allDocks);
-        this._keyboardShortcuts = new KeyboardShortcuts(this._allDocks);
+        this._workspaceIsolation = new WorkspaceIsolation();
+        this._keyboardShortcuts = new KeyboardShortcuts();
     }
 
     _prepareMainDash() {
