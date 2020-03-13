@@ -32,6 +32,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
 
     constructor() {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._cancellable = new Gio.Cancellable();
 
         this._locationMap = new Map();
         this._proxy = new FileManager1Proxy(Gio.DBus.session,
@@ -40,11 +41,12 @@ var FileManager1Client = class DashToDock_FileManager1Client {
                                             (initable, error) => {
             // Use async construction to avoid blocking on errors.
             if (error) {
-                global.log(error);
+                if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                    global.log(error);
             } else {
                 this._updateLocationMap();
             }
-        });
+        }, this._cancellable);
 
         this._signalsHandler.add([
             this._proxy,
@@ -68,6 +70,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
     }
 
     destroy() {
+        this._cancellable.cancel();
         this._signalsHandler.destroy();
         this._proxy.run_dispose();
     }
