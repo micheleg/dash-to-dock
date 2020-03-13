@@ -612,17 +612,13 @@ var MyDash = GObject.registerClass({
         let firstButton = iconChildren[0].child;
         let firstIcon = firstButton.icon;
 
-        let minHeight, natHeight, minWidth, natWidth;
-
         // Enforce the current icon size during the size request
         firstIcon.setIconSize(this.iconSize);
-        [minHeight, natHeight] = firstButton.get_preferred_height(-1);
-        [minWidth, natWidth] = firstButton.get_preferred_width(-1);
+        let [, natHeight] = firstButton.get_preferred_height(-1);
+        let [, natWidth] = firstButton.get_preferred_width(-1);
 
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let iconSizes = this._availableIconSizes.map(function(s) {
-            return s * scaleFactor;
-        });
+        let iconSizes = this._availableIconSizes.map(s => s * scaleFactor);
 
         // Subtract icon padding and box spacing from the available height
         if (this._isHorizontal)
@@ -670,7 +666,6 @@ var MyDash = GObject.registerClass({
             icon.icon.set_size(icon.icon.width * scale,
                                icon.icon.height * scale);
 
-            icon.icon.remove_all_transitions();
             icon.icon.ease({
                 width: targetWidth,
                 height: targetHeight,
