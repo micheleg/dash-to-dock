@@ -275,11 +275,6 @@ var DockedDash = GObject.registerClass({
             'status-changed',
             this._updateDashVisibility.bind(this)
         ], [
-            // Keep dragged icon consistent in size with this dash
-            this.dash,
-            'icon-size-changed',
-            () => { Main.overview.dash.iconSize = this.dash.iconSize; }
-        ], [
             // sync hover after a popupmenu is closed
             this.dash,
             'menu-closed',
@@ -321,15 +316,6 @@ var DockedDash = GObject.registerClass({
                 Main.overview.viewSelector._showAppsButton,
                 'notify::checked',
                 this._syncShowAppsButtonToggled.bind(this)
-            ], [
-                // This duplicate the similar signal which is in owerview.js.
-                // Being connected and thus executed later this effectively
-                // overwrite any attempt to use the size of the default dash
-                //which given the customization is usually much smaller.
-                // I can't easily disconnect the original signal
-                Main.overview.dash,
-                'icon-size-changed',
-                () => { Main.overview.dash.iconSize = this.dash.iconSize; }
             ]);
         }
 
@@ -1795,9 +1781,6 @@ var DockManager = class DashToDock_DockManager {
         Main.overview.dash.set_width(-1); //reset default dash size
         // This force the recalculation of the icon size
         Main.overview.dash._maxHeight = -1;
-
-        // reset stored icon size  to the default dash
-        Main.overview.dash.iconSize = Main.overview.dash.iconSize;
     }
 
     _onShowAppsButtonToggled(button) {
