@@ -3,7 +3,6 @@
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
-const Gtk = imports.gi.Gtk;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
@@ -1142,7 +1141,7 @@ var DockedDash = GObject.registerClass({
      * Show dock and give key focus to it
      */
     _onAccessibilityFocus() {
-        this._box.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
+        this._box.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
         this._animateIn(DockManager.settings.get_double('animation-time'), 0);
     }
 
