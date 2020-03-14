@@ -9,7 +9,6 @@ const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const St = imports.gi.St;
 const Main = imports.ui.main;
-const Gtk = imports.gi.Gtk;
 
 const Params = imports.misc.params;
 const PopupMenu = imports.ui.popupMenu;
@@ -71,7 +70,7 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
         if (windows.length > 0) {
             this._redisplay();
             this.open();
-            this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
+            this.actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
             this._source.emit('sync-tooltip');
         }
     }
@@ -89,10 +88,12 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
 
     constructor(source) {
         super();
-        this.actor = new St.ScrollView({ name: 'dashtodockWindowScrollview',
-                                               hscrollbar_policy: Gtk.PolicyType.NEVER,
-                                               vscrollbar_policy: Gtk.PolicyType.NEVER,
-                                               enable_mouse_scrolling: true });
+        this.actor = new St.ScrollView({
+            name: 'dashtodockWindowScrollview',
+            hscrollbar_policy: St.PolicyType.NEVER,
+            vscrollbar_policy: St.PolicyType.NEVER,
+            enable_mouse_scrolling: true
+        });
 
         this.actor.connect('scroll-event', this._onScrollEvent.bind(this));
 
@@ -276,7 +277,8 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
         // when we *don't* need it, so turn off the scrollbar when that's true.
         // Dynamic changes in whether we need it aren't handled properly.
         let needsScrollbar = this._needsScrollbar();
-        let scrollbar_policy =  needsScrollbar ? Gtk.PolicyType.AUTOMATIC : Gtk.PolicyType.NEVER;
+        let scrollbar_policy = needsScrollbar ?
+            St.PolicyType.AUTOMATIC : St.PolicyType.NEVER;
         if (this.isHorizontal)
             this.actor.hscrollbar_policy =  scrollbar_policy;
         else
