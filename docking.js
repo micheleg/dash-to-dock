@@ -79,13 +79,14 @@ var DashSlideContainer = GObject.registerClass({
     }
 
     vfunc_allocate(box, flags) {
+        let contentBox = this.get_theme_node().get_content_box(box);
         this.set_allocation(box, flags);
 
         if (this.child == null)
             return;
 
-        let availWidth = box.x2 - box.x1;
-        let availHeight = box.y2 - box.y1;
+        let availWidth = contentBox.x2 - contentBox.x1;
+        let availHeight = contentBox.y2 - contentBox.y1;
         let [, , natChildWidth, natChildHeight] =
             this.child.get_preferred_size();
 
