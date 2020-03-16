@@ -1618,10 +1618,16 @@ var DockManager = class DashToDock_DockManager {
     }
 
     _toggle() {
-        this._restoreDash();
-        this._deleteDocks();
-        this._createDocks();
-        this.emit('toggled');
+        if (this._toggleLater)
+            Meta.later_remove(this._toggleLater);
+
+        this._toggleLater = Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
+            delete this._toggleLater;
+            this._restoreDash();
+            this._deleteDocks();
+            this._createDocks();
+            this.emit('toggled');
+        });
     }
 
     _bindSettingsChanges() {
@@ -1899,6 +1905,10 @@ var DockManager = class DashToDock_DockManager {
 
     destroy() {
         this._signalsHandler.destroy();
+        if (this._toggleLater) {
+            Meta.later_remove(this._toggleLater);
+            delete this._toggleLater;
+        }
         this._restoreDash();
         this._deleteDocks();
         this._revertPanelCorners();
