@@ -251,13 +251,6 @@ var DockedDash = GObject.registerClass({
         });
         this._box.connect('notify::hover', this._hoverChanged.bind(this));
 
-        // Create and apply height constraint to the dash. It's controlled by this.height
-        this.constrainSize = new Clutter.BindConstraint({
-            source: this,
-            coordinate: this._isHorizontal?Clutter.BindCoordinate.WIDTH:Clutter.BindCoordinate.HEIGHT
-        });
-        this.dash.add_constraint(this.constrainSize);
-
         this._signalsHandler.add([
             // update when workarea changes, for instance if  other extensions modify the struts
             //(like moving th panel at the bottom)
@@ -377,6 +370,15 @@ var DockedDash = GObject.registerClass({
         }
         else
             Main.layoutManager._trackActor(this._slider);
+
+        // Create and apply height/width constraint to the dash.
+        // It's controlled by this.height or this.width
+        this._constrainSize = new Clutter.BindConstraint({
+            source: this,
+            coordinate: this._isHorizontal ?
+                Clutter.BindCoordinate.WIDTH : Clutter.BindCoordinate.HEIGHT
+        });
+        this.dash.add_constraint(this._constrainSize);
 
         // Set initial position
         this._resetPosition();
