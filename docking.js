@@ -1804,7 +1804,12 @@ var DockManager = class DashToDock_DockManager {
 
         // Pretend I'm the dash: meant to make appgrid swarm animation come from
         // the right position of the appShowButton.
-        Main.overview._overview._controls.dash = this.mainDock.dash;
+        let overviewControls = Main.overview._overview._controls;
+        overviewControls.dash = this.mainDock.dash;
+
+        this._oldDashSpacer = overviewControls._dashSpacer;
+        this._oldDashSpacer.hide();
+        overviewControls._dashSpacer = this.mainDock._dashSpacer;
     }
 
     _deleteDocks() {
@@ -1830,8 +1835,12 @@ var DockManager = class DashToDock_DockManager {
 
         this._signalsHandler.removeWithLabel('old-dash-changes');
 
-        Main.overview._overview._controls.dash = this._oldDash;
+        let overviewControls = Main.overview._overview._controls;
+        overviewControls._dashSpacer = this._oldDashSpacer;
+        overviewControls.dash = this._oldDash;
+        this._oldDashSpacer = null;
 
+        overviewControls._dashSpacer.show();
         Main.overview.dash.show();
         Main.overview.dash.set_width(-1); //reset default dash size
         // This force the recalculation of the icon size
