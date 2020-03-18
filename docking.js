@@ -334,10 +334,6 @@ var DockedDash = GObject.registerClass({
                 'page-changed',
                 this._pageChanged.bind(this)
             ], [
-                Main.overview.viewSelector,
-                'page-empty',
-                this._onPageEmpty.bind(this)
-            ], [
                 // Ensure the ShowAppsButton status is kept in sync
                 Main.overview.viewSelector._showAppsButton,
                 'notify::checked',
@@ -384,6 +380,9 @@ var DockedDash = GObject.registerClass({
                 overviewActor.insert_child_at_index(this._dashSpacer, 0);
             else if (this._position == St.Side.BOTTOM)
                 overviewActor.insert_child_at_index(this._dashSpacer, -1);
+
+            if (this._isHorizontal)
+                this._dashSpacer.visible = true;
         }
 
         // Add dash container actor and the container to the Chrome.
@@ -1190,27 +1189,6 @@ var DockedDash = GObject.registerClass({
             this._animateOut(DockManager.settings.get_double('animation-time'), 0);
     }
 
-    _onPageEmpty() {
-        /* The dash spacer is required only in the WINDOWS view if in the default position.
-         * The 'page-empty' signal is emitted in between a change of view,
-         * signalling the spacer can be added and removed without visible effect,
-         * as it's done for the upstream dashSpacer.
-         *
-         * Moreover, hiding the spacer ensure the appGrid allocaton is triggered.
-         * This matter as the appview spring animation is triggered by to first reallocaton of the appGrid,
-         * (See appDisplay.js, line 202 on GNOME Shell 3.14:
-         *                             this._grid.connect('notify::allocation', ...)
-         * which in turn seems to be triggered by changes in the other actors in the overview.
-         * Normally, as far as I could understand, either the dashSpacer being hidden or the workspacesThumbnails
-         * sliding out would trigger the allocation. However, with no stock dash
-         * and no thumbnails, which happen if the user configured only 1 and static workspace,
-         * the animation out of icons is not played.
-         */
-
-        let activePage = Main.overview.viewSelector.getActivePage();
-        this._dashSpacer.visible = (this._isHorizontal || activePage == ViewSelector.ViewPage.WINDOWS);
-    }
-
     /**
      * Show dock and give key focus to it
      */
@@ -1845,9 +1823,11 @@ var DockManager = class DashToDock_DockManager {
         let overviewControls = Main.overview._overview._controls;
         overviewControls.dash = this.mainDock.dash;
 
-        this._oldDashSpacer = overviewControls._dashSpacer;
-        this._oldDashSpacer.hide();
-        overviewControls._dashSpacer = this.mainDock._dashSpacer;
+        if (!this.mainDock.dash._isHorizontal) {
+            this._oldDashSpacer = overviewControls._dashSpacer;
+            overviewControls.remove_child(this._oldDashSpacer);
+            overviewControls._dashSpacer = this.mainDock._dashSpacer;
+        }
     }
 
     _deleteDocks() {
@@ -1874,11 +1854,13 @@ var DockManager = class DashToDock_DockManager {
         this._signalsHandler.removeWithLabel('old-dash-changes');
 
         let overviewControls = Main.overview._overview._controls;
-        overviewControls._dashSpacer = this._oldDashSpacer;
-        overviewControls.dash = this._oldDash;
-        this._oldDashSpacer = null;
+        if (!!this._oldDashSpacer) {
+            overviewControls._dashSpacer = this._oldDashSpacer;
+            overviewControls.insert_child_at_index(this._oldDashSpacer, 0);
+            this._oldDashSpacer = null;
+        }
 
-        overviewControls._dashSpacer.show();
+        overviewControls.dash = this._oldDash;
         Main.overview.dash.show();
         Main.overview.dash.set_width(-1); //reset default dash size
         // This force the recalculation of the icon size
