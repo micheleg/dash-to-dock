@@ -461,6 +461,11 @@ var DockedDash = GObject.registerClass({
 
         this._injectionsHandler.destroy();
 
+        if (this._marginLater) {
+            Meta.later_remove(this._marginLater);
+            delete this._marginLater;
+        }
+
         // Remove barrier timeout
         if (this._removeBarrierTimeoutId > 0)
             GLib.source_remove(this._removeBarrierTimeoutId);
@@ -1100,7 +1105,40 @@ var DockedDash = GObject.registerClass({
             this.x = pos_x;
             this.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
 
+            let overviewControls = null;
+            if (!Main.overview.isDummy && this._isPrimaryMonitor()) {
+                overviewControls = Main.overview._overview._controls;
+
+                if (this._oldSelectorMargin)
+                    overviewControls.margin_bottom = this._oldSelectorMargin;
+                else
+                    this._oldSelectorMargin = overviewControls.margin_bottom;
+            }
+
+            this._signalsHandler.removeWithLabel('verticalOffsetChecker');
+
             if (extendHeight) {
+                if (overviewControls) {
+                    // This is a workaround for bug #1007
+                    this._signalsHandler.addWithLabel('verticalOffsetChecker', [
+                        overviewControls.layout_manager,
+                        'allocation-changed',
+                        () => {
+                            let [, y] = overviewControls.get_transformed_position();
+                            let [, height] = overviewControls.get_transformed_size();
+                            let monitor = Main.layoutManager.primaryMonitor;
+                            let contentY2 = monitor.y + y + height;
+                            let offset = contentY2 - monitor.height;
+
+                            if (this._marginLater)
+                                Meta.later_remove(this._marginLater);
+                            this._marginLater = Meta.later_add(
+                                Meta.LaterType.BEFORE_REDRAW, () => {
+                                    Main.overview.viewSelector.margin_bottom = offset;
+                                });
+                        }]);
+                }
+
                 this.dash._container.set_height(this.height);
                 this.add_style_class_name('extended');
             }
@@ -1955,6 +1993,8 @@ var DockManager = class DashToDock_DockManager {
         this._restoreDash();
         this._deleteDocks();
         this._revertPanelCorners();
+        if (this._oldSelectorMargin)
+            Main.overview.viewSelector.margin_bottom = this._oldSelectorMargin;
         if (this._fm1Client) {
             this._fm1Client.destroy();
             this._fm1Client = null;
