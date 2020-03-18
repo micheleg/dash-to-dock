@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (67ubuntu20.04.3) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.3) focal; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * docking: Don't use non-existent Utils.DisplayWrapper.getWorkspaceManager()
@@ -37,7 +37,7 @@ gnome-shell-extension-ubuntu-dock (67ubuntu20.04.3) UNRELEASED; urgency=medium
   [ Jordan Christiansen ]
   * Update the screenshot to Gnome 3.34
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 18 Mar 2020 03:14:51 +0100
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 18 Mar 2020 03:22:28 +0100
 
 gnome-shell-extension-ubuntu-dock (67ubuntu20.04.2) focal; urgency=medium
 
