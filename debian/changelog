@@ -1,3 +1,44 @@
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.3) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * docking: Don't use non-existent Utils.DisplayWrapper.getWorkspaceManager()
+  * dash: Use clutter alignment to ensure we properly arrange the dash
+  * metadata: Set extension compatible with shell 3.36 only
+  * dash: Sync some more to the upstream cleanups
+  * docking: Properly replace default dash in all modes (LP: #1795703,
+    LP: #1865865)
+  * docking: Delay hide requests if we're currently showing
+  * docking: Don't sync overview's iconSize anymore
+  * docking: Reset old dash changes if something changes it (LP: #1795703)
+  * docking: Cleanup the docks destruction code
+  * docking: Use parent vfunc results to get slider container sizes
+  * docking: Add mainDock property to DockManager and use it
+  * docking: Don't pass allDocks to every child
+  * docking: Ignore key-repeat
+  * fileManager1API: Use a cancellable to stop proxy creation on destruction
+  * dash: Cleanup preferred width/height vfuncs reusing upstream code
+  * dash: Get content box from the themeNode
+  * dash: Some code cleanups to match Upstream code better
+  * appIcons: Redirect events from the showAppIcon toggleButton to the parent
+  * general: Don't use Gtk enum definitions for St widgets
+  * docking: Apply the height/width dash constraint after adding to main uiGroup
+  * docking: Delay toggling to group multiple requests
+  * docking: Consider theming when computing the sliderContainer space
+  * docking: Reimplement Clutter.BindConstraint to bind to Maximum size only
+  * docking: Replace the dashSpacer instance in default controls
+  * docking: Make sure we don't send the overview offscreen in extended mode
+    (LP: #1834967)
+  * launcherAPI: Actually keep track of the unity bus ID and replace it
+    (LP: #1756837)
+
+  [ Michele Gaio ]
+  * Fix bug with xscreensaver.
+
+  [ Jordan Christiansen ]
+  * Update the screenshot to Gnome 3.34
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 18 Mar 2020 03:14:51 +0100
+
 gnome-shell-extension-ubuntu-dock (67ubuntu20.04.2) focal; urgency=medium
 
   * general: Use Clutter.ActorAlign to set alignments
