@@ -5,7 +5,6 @@ const GdkPixbuf = imports.gi.GdkPixbuf
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
-const Gtk = imports.gi.Gtk;
 const Signals = imports.signals;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
@@ -310,7 +309,7 @@ class MyAppIcon extends Dash.DashIcon {
                                            position == St.Side.BOTTOM);
                     // If horizontal also remove the height of the dash
                     let fixedDock = Docking.DockManager.settings.get_boolean('dock-fixed');
-                    let additional_margin = this._isHorizontal && !fixedDock ? Main.overview._dash.height : 0;
+                    let additional_margin = this._isHorizontal && !fixedDock ? Main.overview.dash.height : 0;
                     let verticalMargins = this._menu.actor.margin_top + this._menu.actor.margin_bottom;
                     // Also set a max width to the menu, so long labels (long windows title) get truncated
                     this._menu.actor.style = ('max-height: ' + Math.round(workArea.height - additional_margin - verticalMargins) + 'px;' +
@@ -783,6 +782,11 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
     }
 
     _redisplay() {
+        // This will be removed by 3.36.1
+        return this._rebuildMenu();
+    }
+
+    _rebuildMenu() {
         this.removeAll();
 
         if (Docking.DockManager.settings.get_boolean('show-windows-preview')) {
@@ -880,7 +884,10 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
             }
 
         } else {
-            super._redisplay();
+            if (super._rebuildMenu)
+                super._rebuildMenu();
+            else
+                super._redisplay();
         }
 
         // quit menu
@@ -1035,6 +1042,10 @@ var MyShowAppsIcon = GObject.registerClass({
         this.toggleButton.connect('clicked',
             this._removeMenuTimeout.bind(this));
 
+        this.reactive = true;
+        this.toggleButton.popupMenu = () => this.popupMenu.call(this);
+        this.toggleButton._removeMenuTimeout = () => this._removeMenuTimeout.call(this);
+
         this._menu = null;
         this._menuManager = new PopupMenu.PopupMenuManager(this);
         this._menuTimeoutId = 0;
@@ -1042,20 +1053,20 @@ var MyShowAppsIcon = GObject.registerClass({
 
     vfunc_leave_event(leaveEvent)
     {
-        return AppDisplay.AppIcon.prototype.vfunc_leave_event.apply(this,
-            leaveEvent);
+        return AppDisplay.AppIcon.prototype.vfunc_leave_event.call(
+            this.toggleButton, leaveEvent);
     }
 
     vfunc_button_press_event(buttonPressEvent)
     {
-        return AppDisplay.AppIcon.prototype.vfunc_button_press_event.apply(this,
-            buttonPressEvent);
+        return AppDisplay.AppIcon.prototype.vfunc_button_press_event.call(
+            this.toggleButton, buttonPressEvent);
     }
 
     vfunc_touch_event(touchEvent)
     {
-        return AppDisplay.AppIcon.prototype.vfunc_touch_event.apply(this,
-            touchEvent);
+        return AppDisplay.AppIcon.prototype.vfunc_touch_event.call(
+            this.toggleButton, touchEvent);
     }
 
     showLabel() {
@@ -1075,8 +1086,6 @@ var MyShowAppsIcon = GObject.registerClass({
     }
 
     popupMenu() {
-        return false;
-
         this._removeMenuTimeout();
         this.toggleButton.fake_release();
 
@@ -1112,6 +1121,11 @@ var MyShowAppsIcon = GObject.registerClass({
  */
 var MyShowAppsIconMenu = class DashToDock_MyShowAppsIconMenu extends MyAppIconMenu {
     _redisplay() {
+        // This will be removed by 3.36.1
+        return this._rebuildMenu();
+    }
+
+    _rebuildMenu() {
         this.removeAll();
 
         /* Translators: %s is "Settings", which is automatically translated. You

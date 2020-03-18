@@ -4,8 +4,6 @@ const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
-const Gtk = imports.gi.Gtk;
-const Signals = imports.signals;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
@@ -70,7 +68,11 @@ class DashToDock_MyDashActor extends St.Widget {
             name: 'dash',
             layout_manager: layout,
             clip_to_allocation: true,
-            y_align: Clutter.ActorAlign.CENTER,
+            ...(this._isHorizontal ? {
+                x_align: Clutter.ActorAlign.CENTER,
+            } : {
+                y_align: Clutter.ActorAlign.CENTER,
+            })
         });
 
         // Since we are usually visible but not usually changing, make sure
@@ -80,14 +82,15 @@ class DashToDock_MyDashActor extends St.Widget {
     }
 
     vfunc_allocate(box, flags) {
-        this.set_allocation(box, flags);
-        let contentBox = box;
+        let contentBox = this.get_theme_node().get_content_box(box);
         let availWidth = contentBox.x2 - contentBox.x1;
         let availHeight = contentBox.y2 - contentBox.y1;
 
+        this.set_allocation(box, flags);
+
         let [appIcons, showAppsButton] = this.get_children();
-        let [showAppsMinHeight, showAppsNatHeight] = showAppsButton.get_preferred_height(availWidth);
-        let [showAppsMinWidth, showAppsNatWidth] = showAppsButton.get_preferred_width(availHeight);
+        let [, showAppsNatHeight] = showAppsButton.get_preferred_height(availWidth);
+        let [, showAppsNatWidth] = showAppsButton.get_preferred_width(availHeight);
 
         let offset_x = this._isHorizontal?showAppsNatWidth:0;
         let offset_y = this._isHorizontal?0:showAppsNatHeight;
@@ -108,8 +111,7 @@ class DashToDock_MyDashActor extends St.Widget {
             childBox.x2 = contentBox.x1 + showAppsNatWidth;
             childBox.y2 = contentBox.y1 + showAppsNatHeight;
             showAppsButton.allocate(childBox, flags);
-        }
-        else {
+        } else {
             childBox.x1 = contentBox.x1;
             childBox.y1 = contentBox.y1;
             childBox.x2 = contentBox.x2 - offset_x;
@@ -125,33 +127,24 @@ class DashToDock_MyDashActor extends St.Widget {
     }
 
     vfunc_get_preferred_width(forHeight) {
-        // We want to request the natural height of all our children
-        // as our natural height, so we chain up to StWidget (which
+        // We want to request the natural width of all our children
+        // as our natural width, so we chain up to StWidget (which
         // then calls BoxLayout), but we only request the showApps
         // button as the minimum size
 
-        let [, natWidth] = this.layout_manager.get_preferred_width(this, forHeight);
+        let [, natWidth] = super.vfunc_get_preferred_width(forHeight);
 
         let themeNode = this.get_theme_node();
+        let adjustedForHeight = themeNode.adjust_for_height(forHeight);
         let [, showAppsButton] = this.get_children();
-        let [minWidth, ] = showAppsButton.get_preferred_height(forHeight);
+        let [minWidth] = showAppsButton.get_preferred_width(adjustedForHeight);
+        [minWidth] = themeNode.adjust_preferred_width(minWidth, natWidth);
 
         return [minWidth, natWidth];
     }
 
     vfunc_get_preferred_height(forWidth) {
-        // We want to request the natural height of all our children
-        // as our natural height, so we chain up to StWidget (which
-        // then calls BoxLayout), but we only request the showApps
-        // button as the minimum size
-
-        let [, natHeight] = this.layout_manager.get_preferred_height(this, forWidth);
-
-        let themeNode = this.get_theme_node();
-        let [, showAppsButton] = this.get_children();
-        let [minHeight, ] = showAppsButton.get_preferred_height(forWidth);
-
-        return [minHeight, natHeight];
+        return Dash.DashActor.prototype.vfunc_get_preferred_height.call(this, forWidth);
     }
 });
 
@@ -205,8 +198,8 @@ var MyDash = GObject.registerClass({
         this._container = new MyDashActor();
         this._scrollView = new St.ScrollView({
             name: 'dashtodockDashScrollview',
-            hscrollbar_policy: Gtk.PolicyType.NEVER,
-            vscrollbar_policy: Gtk.PolicyType.NEVER,
+            hscrollbar_policy: St.PolicyType.NEVER,
+            vscrollbar_policy: St.PolicyType.NEVER,
             enable_mouse_scrolling: false
         });
 
@@ -543,17 +536,13 @@ var MyDash = GObject.registerClass({
         let firstButton = iconChildren[0].child;
         let firstIcon = firstButton.icon;
 
-        let minHeight, natHeight, minWidth, natWidth;
-
         // Enforce the current icon size during the size request
         firstIcon.setIconSize(this.iconSize);
-        [minHeight, natHeight] = firstButton.get_preferred_height(-1);
-        [minWidth, natWidth] = firstButton.get_preferred_width(-1);
+        let [, natHeight] = firstButton.get_preferred_height(-1);
+        let [, natWidth] = firstButton.get_preferred_width(-1);
 
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let iconSizes = this._availableIconSizes.map(function(s) {
-            return s * scaleFactor;
-        });
+        let iconSizes = this._availableIconSizes.map(s => s * scaleFactor);
 
         // Subtract icon padding and box spacing from the available height
         if (this._isHorizontal)
@@ -601,7 +590,6 @@ var MyDash = GObject.registerClass({
             icon.icon.set_size(icon.icon.width * scale,
                                icon.icon.height * scale);
 
-            icon.icon.remove_all_transitions();
             icon.icon.ease({
                 width: targetWidth,
                 height: targetHeight,

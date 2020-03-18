@@ -3,7 +3,6 @@
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
-const Gtk = imports.gi.Gtk;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
@@ -80,13 +79,14 @@ var DashSlideContainer = GObject.registerClass({
     }
 
     vfunc_allocate(box, flags) {
+        let contentBox = this.get_theme_node().get_content_box(box);
         this.set_allocation(box, flags);
 
         if (this.child == null)
             return;
 
-        let availWidth = box.x2 - box.x1;
-        let availHeight = box.y2 - box.y1;
+        let availWidth = contentBox.x2 - contentBox.x1;
+        let availHeight = contentBox.y2 - contentBox.y1;
         let [, , natChildWidth, natChildHeight] =
             this.child.get_preferred_size();
 
@@ -125,7 +125,7 @@ var DashSlideContainer = GObject.registerClass({
      * Just the child width but taking into account the slided out part
      */
     vfunc_get_preferred_width(forHeight) {
-        let [minWidth, natWidth] = this.child.get_preferred_width(forHeight);
+        let [minWidth, natWidth] = super.vfunc_get_preferred_width(forHeight);
         if ((this.side ==  St.Side.LEFT) || (this.side == St.Side.RIGHT)) {
             minWidth = (minWidth - this._slideoutSize) * this._slidex + this._slideoutSize;
             natWidth = (natWidth - this._slideoutSize) * this._slidex + this._slideoutSize;
@@ -137,7 +137,7 @@ var DashSlideContainer = GObject.registerClass({
      * Just the child height but taking into account the slided out part
      */
     vfunc_get_preferred_height(forWidth) {
-        let [minHeight, natHeight] = this.child.get_preferred_height(forWidth);
+        let [minHeight, natHeight] = super.vfunc_get_preferred_height(forWidth);
         if ((this.side ==  St.Side.TOP) || (this.side ==  St.Side.BOTTOM)) {
             minHeight = (minHeight - this._slideoutSize) * this._slidex + this._slideoutSize;
             natHeight = (natHeight - this._slideoutSize) * this._slidex + this._slideoutSize;
@@ -159,6 +159,39 @@ var DashSlideContainer = GObject.registerClass({
         return this._slidex;
     }
 });
+
+let DockBindConstraint = Clutter.BindConstraint;
+if (imports.system.version > 16501) {
+    DockBindConstraint = GObject.registerClass(
+    class DockBindConstraint extends Clutter.BindConstraint {
+
+        vfunc_update_preferred_size(_actor, direction, forSize, minimumSize, naturalSize) {
+            let getPreferredSize = null;
+
+            if (direction == Clutter.Orientation.HORIZONTAL) {
+                if (this.coordinate != Clutter.BindCoordinate.HEIGHT) {
+                    getPreferredSize = this.source.get_preferred_width.bind(
+                        this.source);
+                    }
+            } else if (direction == Clutter.Orientation.VERTICAL) {
+                if (this.coordinate != Clutter.BindCoordinate.WIDTH) {
+                    getPreferredSize = this.source.get_preferred_height.bind(
+                        this.source);
+                    }
+            }
+
+            if (getPreferredSize) {
+                let [prefMinimum, prefNatural] = getPreferredSize(forSize);
+                if (naturalSize < prefNatural)
+                    return [minimumSize, naturalSize];
+                else
+                    return [prefMinimum, prefNatural];
+            }
+
+            return super.vfunc_update_preferred_size(...arguments);
+        }
+    });
+}
 
 var DockedDash = GObject.registerClass({
     Signals: {
@@ -237,10 +270,11 @@ var DockedDash = GObject.registerClass({
         this._slider = new DashSlideContainer({
             side: this._position,
             slidex: 0,
-            x_align: this._isHorizontal ?
-                Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
-            y_align: this._isHorizontal ?
-                Clutter.ActorAlign.START : Clutter.ActorAlign.CENTER,
+            ...(this._isHorizontal ? {
+                x_align: Clutter.ActorAlign.CENTER,
+            } : {
+                y_align: Clutter.ActorAlign.CENTER,
+            })
         });
 
         // This is the actor whose hover status us tracked for autohide
@@ -250,13 +284,6 @@ var DockedDash = GObject.registerClass({
             track_hover: true
         });
         this._box.connect('notify::hover', this._hoverChanged.bind(this));
-
-        // Create and apply height constraint to the dash. It's controlled by this.height
-        this.constrainSize = new Clutter.BindConstraint({
-            source: this,
-            coordinate: this._isHorizontal?Clutter.BindCoordinate.WIDTH:Clutter.BindCoordinate.HEIGHT
-        });
-        this.dash.add_constraint(this.constrainSize);
 
         this._signalsHandler.add([
             // update when workarea changes, for instance if  other extensions modify the struts
@@ -273,11 +300,6 @@ var DockedDash = GObject.registerClass({
             this._intellihide,
             'status-changed',
             this._updateDashVisibility.bind(this)
-        ], [
-            // Keep dragged icon consistent in size with this dash
-            this.dash,
-            'icon-size-changed',
-            () => { Main.overview.dash.iconSize = this.dash.iconSize; }
         ], [
             // sync hover after a popupmenu is closed
             this.dash,
@@ -320,15 +342,6 @@ var DockedDash = GObject.registerClass({
                 Main.overview.viewSelector._showAppsButton,
                 'notify::checked',
                 this._syncShowAppsButtonToggled.bind(this)
-            ], [
-                // This duplicate the similar signal which is in owerview.js.
-                // Being connected and thus executed later this effectively
-                // overwrite any attempt to use the size of the default dash
-                //which given the customization is usually much smaller.
-                // I can't easily disconnect the original signal
-                Main.overview.dash,
-                'icon-size-changed',
-                () => { Main.overview.dash.iconSize = this.dash.iconSize; }
             ]);
         }
 
@@ -380,6 +393,8 @@ var DockedDash = GObject.registerClass({
 
         // Add aligning container without tracking it for input region
         Main.uiGroup.add_child(this);
+        if (Main.uiGroup.contains(global.top_window_group))
+            Main.uiGroup.set_child_below_sibling(this, global.top_window_group);
 
         if (settings.get_boolean('dock-fixed')) {
             // Note: tracking the fullscreen directly on the slider actor causes some hiccups when fullscreening
@@ -390,8 +405,16 @@ var DockedDash = GObject.registerClass({
         else
             Main.layoutManager._trackActor(this._slider);
 
+        // Create and apply height/width constraint to the dash.
+        // It's controlled by this.height or this.width
+        this._constrainSize = new DockBindConstraint({
+            source: this,
+            coordinate: this._isHorizontal ?
+                Clutter.BindCoordinate.WIDTH : Clutter.BindCoordinate.HEIGHT
+        });
+        this.dash.add_constraint(this._constrainSize);
+
         // Set initial position
-        this._resetDepth();
         this._resetPosition();
 
         this.connect('destroy', this._onDestroy.bind(this));
@@ -437,6 +460,11 @@ var DockedDash = GObject.registerClass({
         this._themeManager.destroy();
 
         this._injectionsHandler.destroy();
+
+        if (this._marginLater) {
+            Meta.later_remove(this._marginLater);
+            delete this._marginLater;
+        }
 
         // Remove barrier timeout
         if (this._removeBarrierTimeoutId > 0)
@@ -690,14 +718,15 @@ var DockedDash = GObject.registerClass({
         // If no hiding animation is running or queued
         if ((this._dockState == State.SHOWN) || (this._dockState == State.SHOWING)) {
             let settings = DockManager.settings;
-            let delay = settings.get_double('hide-delay');
+            let delay;
 
-            if (this._dockState == State.SHOWING) {
-                // if a show already started, let it finish; queue hide without removing the show.
-                // to obtain this, we wait for the animateIn animation to be completed
-                this._delayedHide = true;
-                return;
-            }
+            if (this._dockState == State.SHOWING)
+                //if a show already started, let it finish; queue hide without removing the show.
+                // to obtain this I increase the delay to avoid the overlap and interference
+                // between the animations
+                delay = settings.get_double('hide-delay') + settings.get_double('animation-time');
+            else
+                delay = settings.get_double('hide-delay');
 
             this.emit('hiding');
             this._animateOut(settings.get_double('animation-time'), delay);
@@ -706,7 +735,6 @@ var DockedDash = GObject.registerClass({
 
     _animateIn(time, delay) {
         this._dockState = State.SHOWING;
-        delete this._delayedHide;
 
         this._slider.ease_property('slidex', 1, {
             duration: time * 1000,
@@ -719,13 +747,8 @@ var DockedDash = GObject.registerClass({
                 // gives users an opportunity to hover over the dock
                 if (this._removeBarrierTimeoutId > 0)
                     GLib.source_remove(this._removeBarrierTimeoutId);
-
-                if (!this._delayedHide) {
-                    this._removeBarrierTimeoutId = GLib.timeout_add(
-                        GLib.PRIORITY_DEFAULT, 100, this._removeBarrier.bind(this));
-                } else {
-                    this._hide();
-                }
+                this._removeBarrierTimeoutId = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, 100, this._removeBarrier.bind(this));
             }
         });
     }
@@ -1082,7 +1105,40 @@ var DockedDash = GObject.registerClass({
             this.x = pos_x;
             this.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
 
+            let overviewControls = null;
+            if (!Main.overview.isDummy && this._isPrimaryMonitor()) {
+                overviewControls = Main.overview._overview._controls;
+
+                if (this._oldSelectorMargin)
+                    overviewControls.margin_bottom = this._oldSelectorMargin;
+                else
+                    this._oldSelectorMargin = overviewControls.margin_bottom;
+            }
+
+            this._signalsHandler.removeWithLabel('verticalOffsetChecker');
+
             if (extendHeight) {
+                if (overviewControls) {
+                    // This is a workaround for bug #1007
+                    this._signalsHandler.addWithLabel('verticalOffsetChecker', [
+                        overviewControls.layout_manager,
+                        'allocation-changed',
+                        () => {
+                            let [, y] = overviewControls.get_transformed_position();
+                            let [, height] = overviewControls.get_transformed_size();
+                            let monitor = Main.layoutManager.primaryMonitor;
+                            let contentY2 = monitor.y + y + height;
+                            let offset = contentY2 - monitor.height;
+
+                            if (this._marginLater)
+                                Meta.later_remove(this._marginLater);
+                            this._marginLater = Meta.later_add(
+                                Meta.LaterType.BEFORE_REDRAW, () => {
+                                    Main.overview.viewSelector.margin_bottom = offset;
+                                });
+                        }]);
+                }
+
                 this.dash._container.set_height(this.height);
                 this.add_style_class_name('extended');
             }
@@ -1091,12 +1147,6 @@ var DockedDash = GObject.registerClass({
                 this.remove_style_class_name('extended');
             }
         }
-    }
-
-    // Set the dash at the correct depth in z
-    _resetDepth() {
-        // Keep the dash below the modalDialogGroup
-        Main.layoutManager.uiGroup.set_child_below_sibling(this, Main.layoutManager.modalDialogGroup);
     }
 
     _updateStaticBox() {
@@ -1115,17 +1165,12 @@ var DockedDash = GObject.registerClass({
     }
 
     _onDragStart() {
-        // The dash need to be above the top_window_group, otherwise it doesn't
-        // accept dnd of app icons when not in overiew mode.
-        Main.layoutManager.uiGroup.set_child_above_sibling(this, global.top_window_group);
         this._oldignoreHover = this._ignoreHover;
         this._ignoreHover = true;
         this._animateIn(DockManager.settings.get_double('animation-time'), 0);
     }
 
     _onDragEnd() {
-        // Restore drag default dash stack order
-        this._resetDepth();
         if (this._oldignoreHover !== null)
             this._ignoreHover  = this._oldignoreHover;
         this._oldignoreHover = null;
@@ -1170,7 +1215,7 @@ var DockedDash = GObject.registerClass({
      * Show dock and give key focus to it
      */
     _onAccessibilityFocus() {
-        this._box.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
+        this._box.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
         this._animateIn(DockManager.settings.get_double('animation-time'), 0);
     }
 
@@ -1275,11 +1320,12 @@ var DockedDash = GObject.registerClass({
 
                 if (Main.wm._workspaceSwitcherPopup == null)
                     // Support Workspace Grid extension showing their custom Grid Workspace Switcher
-                    if (Utils.DisplayWrapper.getWorkspaceManager().workspace_grid !== undefined)
-                        Main.wm._workspaceSwitcherPopup = Utils.DisplayWrapper.getWorkspaceManager()
-                            .workspace_grid.getWorkspaceSwitcherPopup();
-                    else
+                    if (global.workspace_manager.workspace_grid !== undefined) {
+                        Main.wm._workspaceSwitcherPopup =
+                            global.workspace_manager.workspace_grid.getWorkspaceSwitcherPopup();
+                    } else {
                         Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+                    }
                     // Set the actor non reactive, so that it doesn't prevent the
                     // clicks events from reaching the dash actor. I can't see a reason
                     // why it should be reactive.
@@ -1289,9 +1335,8 @@ var DockedDash = GObject.registerClass({
                     });
 
                 // If Workspace Grid is installed, let them handle the scroll behaviour.
-                if (Utils.DisplayWrapper.getWorkspaceManager().workspace_grid !== undefined)
-                    ws = Utils.DisplayWrapper.getWorkspaceManager().workspace_grid
-                        .actionMoveWorkspace(direction);
+                if (global.workspace_manager.workspace_grid !== undefined)
+                    ws = global.workspace_manager.workspace_grid.actionMoveWorkspace(direction);
                 else
                     Main.wm.actionMoveWorkspace(ws);
 
@@ -1331,8 +1376,7 @@ const DashToDock_KeyboardShortcuts_NUM_HOTKEYS = 10;
 
 var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
 
-    constructor(allDocks){
-        this._allDocks = allDocks;
+    constructor() {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._hotKeysEnabled = false;
@@ -1370,10 +1414,10 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
             for (let i = 0; i < DashToDock_KeyboardShortcuts_NUM_HOTKEYS; i++) {
                 let appNum = i;
                 Main.wm.addKeybinding(key + (i + 1), DockManager.settings,
-                                      Meta.KeyBindingFlags.NONE,
+                                      Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
                                       Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                                       () => {
-                                          this._allDocks[0]._activateApp(appNum);
+                                          DockManager.getDefault().mainDock._activateApp(appNum);
                                           this._showOverlay();
                                       });
             }
@@ -1431,7 +1475,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
     _enableExtraShortcut() {
         if (!this._shortcutIsSet) {
             Main.wm.addKeybinding('shortcut', DockManager.settings,
-                                  Meta.KeyBindingFlags.NONE,
+                                  Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
                                   Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                                   this._showOverlay.bind(this));
             this._shortcutIsSet = true;
@@ -1446,8 +1490,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
     }
 
     _showOverlay() {
-        for (let i = 0; i < this._allDocks.length; i++) {
-            let dock = this._allDocks[i];
+        for (let dock of DockManager.allDocks) {
             if (DockManager.settings.get_boolean('hotkeys-overlay'))
                 dock.dash.toggleNumberOverlay(true);
 
@@ -1484,10 +1527,9 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
  */
 var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
 
-    constructor(allDocks) {
+    constructor() {
 
         let settings = DockManager.settings;
-        this._allDocks = allDocks;
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._injectionsHandler = new Utils.InjectionsHandler();
@@ -1496,9 +1538,8 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
             settings,
             'changed::isolate-workspaces',
             () => {
-                    this._allDocks.forEach(function(dock) {
-                        dock.dash.resetAppIcons();
-                    });
+                    DockManager.allDocks.forEach((dock) =>
+                        dock.dash.resetAppIcons());
                     if (settings.get_boolean('isolate-workspaces') ||
                         settings.get_boolean('isolate-monitors'))
                         this._enable.bind(this)();
@@ -1509,9 +1550,8 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
             settings,
             'changed::isolate-monitors',
             () => {
-                    this._allDocks.forEach(function(dock) {
-                        dock.dash.resetAppIcons();
-                    });
+                    DockManager.allDocks.forEach((dock) =>
+                        dock.dash.resetAppIcons());
                     if (settings.get_boolean('isolate-workspaces') ||
                         settings.get_boolean('isolate-monitors'))
                         this._enable.bind(this)();
@@ -1532,7 +1572,7 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
         // although it should never happen
         this._disable();
 
-        this._allDocks.forEach(function(dock) {
+        DockManager.allDocks.forEach((dock) => {
             this._signalsHandler.addWithLabel('isolation', [
                 global.display,
                 'restacked',
@@ -1597,8 +1637,10 @@ var DockManager = class DashToDock_DockManager {
         Me.imports.extension.dockManager = this;
 
         this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
-        this._oldDash = Main.overview._dash;
+        this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
+
         this._ensureFileManagerClient();
 
         /* Array of all the docks created */
@@ -1617,12 +1659,20 @@ var DockManager = class DashToDock_DockManager {
         return Me.imports.extension.dockManager
     }
 
+    static get allDocks() {
+        return DockManager.getDefault()._allDocks;
+    }
+
     static get settings() {
         return DockManager.getDefault()._settings;
     }
 
     get fm1Client() {
         return this._fm1Client;
+    }
+
+    get mainDock() {
+        return this._allDocks.length ? this._allDocks[0] : null;
     }
 
     _ensureFileManagerClient() {
@@ -1640,17 +1690,27 @@ var DockManager = class DashToDock_DockManager {
     }
 
     _toggle() {
-        this._deleteDocks();
-        this._createDocks();
-        this.emit('toggled');
+        if (this._toggleLater)
+            Meta.later_remove(this._toggleLater);
+
+        this._toggleLater = Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
+            delete this._toggleLater;
+            this._restoreDash();
+            this._deleteDocks();
+            this._createDocks();
+            this.emit('toggled');
+        });
     }
 
     _bindSettingsChanges() {
         // Connect relevant signals to the toggling function
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._signalsHandler.add([
             Meta.MonitorManager.get(),
             'monitors-changed',
+            this._toggle.bind(this)
+        ], [
+            Main.sessionMode,
+            'updated',
             this._toggle.bind(this)
         ], [
             this._settings,
@@ -1717,7 +1777,7 @@ var DockManager = class DashToDock_DockManager {
         // connect app icon into the view selector
         dock.dash.showAppsButton.connect('notify::checked', this._onShowAppsButtonToggled.bind(this));
 
-        // Make the necessary changes to Main.overview._dash
+        // Make the necessary changes to Main.overview.dash
         this._prepareMainDash();
 
         // Adjust corners if necessary
@@ -1737,23 +1797,30 @@ var DockManager = class DashToDock_DockManager {
 
         // Load optional features. We load *after* the docks are created, since
         // we need to connect the signals to all dock instances.
-        this._workspaceIsolation = new WorkspaceIsolation(this._allDocks);
-        this._keyboardShortcuts = new KeyboardShortcuts(this._allDocks);
+        this._workspaceIsolation = new WorkspaceIsolation();
+        this._keyboardShortcuts = new KeyboardShortcuts();
     }
 
     _prepareMainDash() {
-        // Pretend I'm the dash: meant to make appgrd swarm animation come from the
-        // right position of the appShowButton.
-        Main.overview._dash = this._allDocks[0].dash;
-
-        // set stored icon size  to the new dash
-        Main.overview.dash.iconSize = this._allDocks[0].dash.iconSize;
+        // Ensure Main.overview.dash is set to our dash in dummy mode
+        // while just use the default getter otherwise.
+        // The getter must be dynamic and not set only when we've a dummy
+        // overview because the mode can change dynamically.
+        let defaultDashGetter = Object.getOwnPropertyDescriptor(
+            Main.overview.constructor.prototype, 'dash').get;
+        Object.defineProperty(Main.overview, 'dash', {
+            configurable: true,
+            get: () => Main.overview.isDummy ?
+                this.mainDock.dash : defaultDashGetter.call(Main.overview),
+        });
 
         if (Main.overview.isDummy)
             return;
 
+        this._signalsHandler.removeWithLabel('old-dash-changes');
+
         // Hide usual Dash
-        Main.overview.dash.hide();
+        this._oldDash.hide();
 
         // Also set dash width to 1, so it's almost not taken into account by code
         // calculaing the reserved space in the overview. The reason to keep it at 1 is
@@ -1761,35 +1828,61 @@ var DockManager = class DashToDock_DockManager {
         // in turn is triggergin the appsIcon spring animation, required when no other
         // actors has this effect, i.e in horizontal mode and without the workspaceThumnails
         // 1 static workspace only)
-        Main.overview.dash.set_width(1);
+        this._oldDash.set_width(1);
+
+        this._signalsHandler.addWithLabel('old-dash-changes', [
+            this._oldDash,
+            'notify::visible',
+            () => this._prepareMainDash()
+        ], [
+            this._oldDash,
+            'notify::width',
+            () => this._prepareMainDash()
+        ]);
+
+        // Pretend I'm the dash: meant to make appgrid swarm animation come from
+        // the right position of the appShowButton.
+        let overviewControls = Main.overview._overview._controls;
+        overviewControls.dash = this.mainDock.dash;
+
+        this._oldDashSpacer = overviewControls._dashSpacer;
+        this._oldDashSpacer.hide();
+        overviewControls._dashSpacer = this.mainDock._dashSpacer;
     }
 
     _deleteDocks() {
+        if (!this._allDocks.length)
+            return;
+
         // Remove extra features
         this._workspaceIsolation.destroy();
         this._keyboardShortcuts.destroy();
 
         // Delete all docks
-        let nDocks = this._allDocks.length;
-        for (let i = nDocks-1; i >= 0; i--) {
-            this._allDocks[i].destroy();
-            this._allDocks.pop();
-        }
+        this._allDocks.forEach(d => d.destroy());
+        this._allDocks = [];
     }
 
     _restoreDash() {
-        if (Main.overview.isDummy)
-            return;
+        Object.defineProperty(Main.overview, 'dash',
+            Object.getOwnPropertyDescriptor(
+                Main.overview.constructor.prototype, 'dash'));
 
+        if (!this._oldDash)
+                return;
+
+        this._signalsHandler.removeWithLabel('old-dash-changes');
+
+        let overviewControls = Main.overview._overview._controls;
+        overviewControls._dashSpacer = this._oldDashSpacer;
+        overviewControls.dash = this._oldDash;
+        this._oldDashSpacer = null;
+
+        overviewControls._dashSpacer.show();
         Main.overview.dash.show();
         Main.overview.dash.set_width(-1); //reset default dash size
         // This force the recalculation of the icon size
         Main.overview.dash._maxHeight = -1;
-
-        // reset stored icon size  to the default dash
-        Main.overview.dash.iconSize = Main.overview.dash.iconSize;
-
-        Main.overview._dash = this._oldDash;
     }
 
     _onShowAppsButtonToggled(button) {
@@ -1841,7 +1934,7 @@ var DockManager = class DashToDock_DockManager {
                             Main.overview.disconnect(overviewShownId);
                             Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
                                 grid.opacity = 255;
-                                grid.animateSpring(IconGrid.AnimationDirection.IN, this._allDocks[0].dash.showAppsButton);
+                                grid.animateSpring(IconGrid.AnimationDirection.IN, this.mainDock.dash.showAppsButton);
                             });
                         });
                     }
@@ -1893,9 +1986,15 @@ var DockManager = class DashToDock_DockManager {
 
     destroy() {
         this._signalsHandler.destroy();
+        if (this._toggleLater) {
+            Meta.later_remove(this._toggleLater);
+            delete this._toggleLater;
+        }
+        this._restoreDash();
         this._deleteDocks();
         this._revertPanelCorners();
-        this._restoreDash();
+        if (this._oldSelectorMargin)
+            Main.overview.viewSelector.margin_bottom = this._oldSelectorMargin;
         if (this._fm1Client) {
             this._fm1Client.destroy();
             this._fm1Client = null;
@@ -1903,6 +2002,7 @@ var DockManager = class DashToDock_DockManager {
         this._remoteModel.destroy();
         this._settings.run_dispose();
         this._settings = null;
+        this._oldDash = null;
 
         Me.imports.extension.dockManager = null;
     }
