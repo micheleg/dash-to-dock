@@ -512,3 +512,11 @@ msgstr "Tiempo de aparición (s)"
 #: Settings.ui.h:107
 msgid "Pressure threshold"
 msgstr "Nivel de presión"
+
+#: Settings.ui.h:108
+msgid "Show trash can"
+msgstr "Mostrar el icono <i>Papelera</i>"
+
+#: Settings.ui.h:109
+msgid "Show mounted volumes and devices"
+msgstr "Mostrar los dispositivos montados"
