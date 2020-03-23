@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the dash-to-dock package.
 # tuhaihe <1132321739qq@gmail.com>, 2013.
 # 绿色圣光 <lishaohui.qd@163.com>, 2015, 2016, 2017.
+# zhmars <1403122061@qq.com>, 2019, 2020.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-22 03:28+0800\n"
+"POT-Creation-Date: 2020-03-23 15:33+0800\n"
 "PO-Revision-Date: 2017-08-03 22:49+0800\n"
-"Last-Translator: 绿色圣光 <lishaohui.qd@163.com>\n"
+"Last-Translator: zhmars <1403122061@qq.com>\n"
 "Language-Team: Chinese (Simplified) <>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
@@ -65,7 +66,7 @@ msgstr "所有窗口"
 
 #. Translators: %s is "Settings", which is automatically translated. You
 #. can also translate the full message if this fits better your language.
-#: appIcons.js:1127
+#: appIcons.js:1125
 #, javascript-format
 msgid "Dash to Dock %s"
 msgstr "Dash to Dock %s"
@@ -78,15 +79,15 @@ msgstr "回收站"
 msgid "Empty Trash"
 msgstr "清空回收站"
 
-#: locations.js:182
+#: locations.js:189
 msgid "Mount"
 msgstr "挂载"
 
-#: locations.js:225
+#: locations.js:232
 msgid "Eject"
 msgstr "弹出"
 
-#: locations.js:230
+#: locations.js:237
 msgid "Unmount"
 msgstr "卸载"
 
@@ -401,30 +402,30 @@ msgid "Opacity"
 msgstr "不透明度"
 
 #: Settings.ui.h:78
-msgid "Force straight corner\n"
-msgstr "强制边框直角\n"
+msgid "Force straight corner"
+msgstr "强制边框直角"
 
-#: Settings.ui.h:80
+#: Settings.ui.h:79
 msgid "Appearance"
 msgstr "外观"
 
-#: Settings.ui.h:81
+#: Settings.ui.h:80
 msgid "version: "
 msgstr "版本："
 
-#: Settings.ui.h:82
+#: Settings.ui.h:81
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "让 Dash 跳出概览之外，转化为一个 Dock"
 
-#: Settings.ui.h:83
+#: Settings.ui.h:82
 msgid "Created by"
 msgstr "作者："
 
-#: Settings.ui.h:84
+#: Settings.ui.h:83
 msgid "Webpage"
 msgstr "网站主页"
 
-#: Settings.ui.h:85
+#: Settings.ui.h:84
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
@@ -434,99 +435,99 @@ msgstr ""
 "参见 <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU "
 "通用公共许可证，第二版或更高版本</a>以了解更多细节。</span>"
 
-#: Settings.ui.h:87
+#: Settings.ui.h:86
 msgid "About"
 msgstr "关于"
 
-#: Settings.ui.h:88
+#: Settings.ui.h:87
 msgid "Customize minimum and maximum opacity values"
 msgstr "自定义窗口最小化和最大化时 Dock 的不透明度"
 
-#: Settings.ui.h:89
+#: Settings.ui.h:88
 msgid "Minimum opacity"
 msgstr "最小化不透明度"
 
-#: Settings.ui.h:90
+#: Settings.ui.h:89
 msgid "Maximum opacity"
 msgstr "最大化不透明度"
 
-#: Settings.ui.h:91
+#: Settings.ui.h:90
 msgid "Number overlay"
 msgstr "编号覆盖"
 
-#: Settings.ui.h:92
+#: Settings.ui.h:91
 msgid ""
 "Temporarily show the application numbers over the icons, corresponding to "
 "the shortcut."
 msgstr "临时显示与快捷键对应的图标上的应用程序编号。"
 
-#: Settings.ui.h:93
+#: Settings.ui.h:92
 msgid "Show the dock if it is hidden"
 msgstr "若 Dock 已隐藏，将其显示"
 
-#: Settings.ui.h:94
+#: Settings.ui.h:93
 msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
 msgstr "如果使用了自动隐藏，Dock 将在触发快捷键时短暂显示。"
 
-#: Settings.ui.h:95
+#: Settings.ui.h:94
 msgid "Shortcut for the options above"
 msgstr "以上选项的快捷键"
 
-#: Settings.ui.h:96
+#: Settings.ui.h:95
 msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
 msgstr "语法：<Shift>，<Ctrl>，<Alt>，<Super>"
 
-#: Settings.ui.h:97
+#: Settings.ui.h:96
 msgid "Hide timeout (s)"
 msgstr "隐藏超时时间（秒）"
 
-#: Settings.ui.h:98
+#: Settings.ui.h:97
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "鼠标移至屏幕边缘时显示 Dock。"
 
-#: Settings.ui.h:99
+#: Settings.ui.h:98
 msgid "Autohide"
 msgstr "自动隐藏"
 
-#: Settings.ui.h:100
+#: Settings.ui.h:99
 msgid "Push to show: require pressure to show the dock"
 msgstr "推压以显示：需要一定压力来显示 Dock"
 
-#: Settings.ui.h:101
+#: Settings.ui.h:100
 msgid "Enable in fullscreen mode"
 msgstr "在全屏模式下启用"
 
-#: Settings.ui.h:102
+#: Settings.ui.h:101
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "在不妨碍应用程序窗口时，显示 Dock。"
 
-#: Settings.ui.h:103
+#: Settings.ui.h:102
 msgid "Dodge windows"
 msgstr "避开窗口"
 
-#: Settings.ui.h:104
+#: Settings.ui.h:103
 msgid "All windows"
 msgstr "所有窗口"
 
-#: Settings.ui.h:105
+#: Settings.ui.h:104
 msgid "Only focused application's windows"
 msgstr "仅焦点程序窗口"
 
-#: Settings.ui.h:106
+#: Settings.ui.h:105
 msgid "Only maximized windows"
 msgstr "仅最大化窗口"
 
-#: Settings.ui.h:107
+#: Settings.ui.h:106
 msgid "Animation duration (s)"
 msgstr "动画持续时间（秒）"
 
-#: Settings.ui.h:108
+#: Settings.ui.h:107
 msgid "Show timeout (s)"
 msgstr "显示超时时间（秒）"
 
-#: Settings.ui.h:109
+#: Settings.ui.h:108
 msgid "Pressure threshold"
 msgstr "压力阈值"
 
