@@ -27,7 +27,8 @@ const PopupMenu = imports.ui.popupMenu;
 const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
+const ExtensionUtils = imports.misc.extensionUtils;
+const Me = ExtensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
@@ -1126,7 +1127,11 @@ var MyShowAppsIconMenu = class DashToDock_MyShowAppsIconMenu extends MyAppIconMe
         let item = this._appendMenuItem(name);
 
         item.connect('activate', function () {
-            Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
+            if (typeof ExtensionUtils.openPrefs === 'function') {
+                ExtensionUtils.openPrefs();
+            } else {
+                Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
+            }
         });
     }
 };
