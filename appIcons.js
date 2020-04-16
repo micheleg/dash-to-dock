@@ -1086,6 +1086,9 @@ var MyShowAppsIcon = GObject.registerClass({
     }
 
     popupMenu() {
+        if (Me.metadata.uuid === 'ubuntu-dock@ubuntu.com')
+            return false;
+
         this._removeMenuTimeout();
         this.toggleButton.fake_release();
 
