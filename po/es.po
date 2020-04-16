@@ -7,14 +7,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-06 01:57-0600\n"
-"PO-Revision-Date: 2019-03-06 01:59-0600\n"
+"PO-Revision-Date: 2020-03-23 11:25+0100\n"
 "Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
 "Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: prefs.js:264
@@ -360,8 +360,7 @@ msgstr "Personalizar el color del dock"
 msgid "Tune the dash background opacity."
 msgstr "Ajustar la opacidad del fondo del dock."
 
-#: prefs.js:792
-#: Settings.ui.h:72
+#: prefs.js:792 Settings.ui.h:72
 msgid "Customize opacity"
 msgstr "Personalizar opacidad"
 
@@ -378,8 +377,8 @@ msgid "Opacity"
 msgstr "Opacidad"
 
 #: Settings.ui.h:76
-msgid "Force straight corner\n"
-msgstr "Forzar esquinas rectas\n"
+msgid "Force straight corner"
+msgstr "Forzar esquinas rectas"
 
 #: Settings.ui.h:78
 msgid "Appearance"
@@ -512,3 +511,11 @@ msgstr "Tiempo de aparición (s)"
 #: Settings.ui.h:107
 msgid "Pressure threshold"
 msgstr "Nivel de presión"
+
+#: Settings.ui.h:108
+msgid "Show trash can"
+msgstr "Mostrar el icono Papelera"
+
+#: Settings.ui.h:109
+msgid "Show mounted volumes and devices"
+msgstr "Mostrar los dispositivos montados"

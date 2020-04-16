@@ -342,8 +342,73 @@ var MyDash = GObject.registerClass({
         return Dash.Dash.prototype._clearEmptyDropTarget.call(this, ...arguments);
     }
 
-    handleDragOver() {
-        return Dash.Dash.prototype.handleDragOver.call(this, ...arguments);
+    handleDragOver(source, actor, x, y, time) {
+        let ret;
+        if (!this._isHorizontal) {
+            Object.defineProperty(this._box, 'height', {
+                configurable: true,
+                get: () => this._box.get_children().reduce((a, c) => a + c.height, 0),
+            });
+
+            ret = Dash.Dash.prototype.handleDragOver.call(this, source, actor, x, y, time);
+
+            delete this._box.height;
+
+            if (ret == DND.DragMotionResult.CONTINUE)
+                return ret;
+        } else {
+            Object.defineProperty(this._box, 'height', {
+                configurable: true,
+                get: () => this._box.get_children().reduce((a, c) => a + c.width, 0),
+            });
+
+            let replacedPlaceholderHeight = false;
+            if (this._dragPlaceholder) {
+                replacedPlaceholderHeight = true;
+                Object.defineProperty(this._dragPlaceholder, 'height', {
+                    configurable: true,
+                    get: () => this._dragPlaceholder.width,
+                });
+            }
+
+            ret = Dash.Dash.prototype.handleDragOver.call(this, source, actor, y, x, time);
+
+            delete this._box.height;
+            if (replacedPlaceholderHeight && this._dragPlaceholder)
+                delete this._dragPlaceholder.height;
+
+            if (ret == DND.DragMotionResult.CONTINUE)
+                return ret;
+
+            if (this._dragPlaceholder) {
+                this._dragPlaceholder.child.set_width(this.iconSize / 2);
+                this._dragPlaceholder.child.set_height(this.iconSize);
+
+                let pos = this._dragPlaceholderPos;
+                if (this._isHorizontal && (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL))
+                    pos = this._box.get_children() - 1 - pos;
+
+                if (pos != this._dragPlaceholderPos) {
+                    this._dragPlaceholderPos = pos;
+                    this._box.set_child_at_index(this._dragPlaceholder,
+                        this._dragPlaceholderPos)
+                }
+            }
+        }
+
+        if (this._dragPlaceholder) {
+            // Ensure the next and previous icon are visible when moving the placeholder
+            // (I assume there's room for both of them)
+            if (this._dragPlaceholderPos > 0)
+                ensureActorVisibleInScrollView(this._scrollView,
+                    this._box.get_children()[this._dragPlaceholderPos - 1]);
+
+            if (this._dragPlaceholderPos < this._box.get_children().length - 1)
+                ensureActorVisibleInScrollView(this._scrollView,
+                    this._box.get_children()[this._dragPlaceholderPos + 1]);
+        }
+
+        return ret;
     }
 
     acceptDrop() {
@@ -468,7 +533,7 @@ var MyDash = GObject.registerClass({
         // the animation)
         let iconChildren = this._box.get_children().filter(function(actor) {
             return actor.child &&
-                   actor.child.icon &&
+                   !!actor.child.icon &&
                    !actor.animatingOut;
         });
 
@@ -504,7 +569,7 @@ var MyDash = GObject.registerClass({
         // the animation)
         let iconChildren = this._box.get_children().filter(function(actor) {
             return actor.child &&
-                   actor.child.icon &&
+                   !!actor.child.icon &&
                    !actor.animatingOut;
         });
 
@@ -617,7 +682,7 @@ var MyDash = GObject.registerClass({
 
         let children = this._box.get_children().filter(function(actor) {
             return actor.child &&
-                   actor.child.app;
+                   !!actor.child.app;
         });
         // Apps currently in the dash
         let oldApps = children.map(function(actor) {
@@ -849,7 +914,7 @@ var MyDash = GObject.registerClass({
     resetAppIcons() {
         let children = this._box.get_children().filter(function(actor) {
             return actor.child &&
-                actor.child.icon;
+                   !!actor.child.icon;
         });
         for (let i = 0; i < children.length; i++) {
             let item = children[i];

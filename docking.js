@@ -1132,7 +1132,7 @@ var DockedDash = GObject.registerClass({
                             let [, height] = overviewControls.get_transformed_size();
                             let monitor = Main.layoutManager.primaryMonitor;
                             let contentY2 = monitor.y + y + height;
-                            let offset = contentY2 - monitor.height;
+                            let offset = Math.max(0, contentY2 - monitor.height);
 
                             if (this._marginLater)
                                 Meta.later_remove(this._marginLater);
@@ -1828,9 +1828,9 @@ var DockManager = class DashToDock_DockManager {
         let overviewControls = Main.overview._overview._controls;
         overviewControls.dash = this.mainDock.dash;
 
-        if (!this.mainDock.dash._isHorizontal) {
+        if (!this.mainDock.dash._isHorizontal && !this._oldDashSpacer) {
             this._oldDashSpacer = overviewControls._dashSpacer;
-            overviewControls.remove_child(this._oldDashSpacer);
+            overviewControls._group.remove_child(this._oldDashSpacer);
             overviewControls._dashSpacer = this.mainDock._dashSpacer;
         }
     }
@@ -1861,7 +1861,7 @@ var DockManager = class DashToDock_DockManager {
         let overviewControls = Main.overview._overview._controls;
         if (!!this._oldDashSpacer) {
             overviewControls._dashSpacer = this._oldDashSpacer;
-            overviewControls.insert_child_at_index(this._oldDashSpacer, 0);
+            overviewControls._group.insert_child_at_index(this._oldDashSpacer, 0);
             this._oldDashSpacer = null;
         }
 
