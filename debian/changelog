@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (67ubuntu20.04.4) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.4) focal; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * appIcon: Don't show the ShowAppsIcon popup in ubuntu-dock (LP: #1869635)
@@ -19,7 +19,7 @@ gnome-shell-extension-ubuntu-dock (67ubuntu20.04.4) UNRELEASED; urgency=medium
   [ Robert Mader ]
   * Use new convenience function to open settings
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 16 Apr 2020 07:44:01 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 16 Apr 2020 07:48:51 +0200
 
 gnome-shell-extension-ubuntu-dock (67ubuntu20.04.3) focal; urgency=medium
 
