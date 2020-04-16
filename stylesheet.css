@@ -116,6 +116,12 @@ position. In the other cases the border are taken dynamically from the theme */
     */
 }
 
+#dashtodockContainer.top #dash .placeholder,
+#dashtodockContainer.bottom #dash .placeholder {
+    width: 32px;
+    height: 1px;
+}
+
 /*
  * This is applied to a dummy actor. Only the alpha value for the background and border color
  * and the transition-duration are used
