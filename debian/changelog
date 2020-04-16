@@ -1,3 +1,26 @@
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.4) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * appIcon: Don't show the ShowAppsIcon popup in ubuntu-dock (LP: #1869635)
+  * dash: Fix icons DnD when in horizontal mode and when the icons are using
+    a scrolled view (LP: #1867763, #1867613)
+  * stylesheet: Define width for top/bottom drop placeholder
+  * fixed various JS warnings and errors
+
+  [ jesusignacio ]
+  * Updated ES translation: show mounted devices + show trash icon
+
+  [ mars ]
+  * Update Simplified Chinese translation
+
+  [ Pavel Dvořák ]
+  * Update cs.po
+
+  [ Robert Mader ]
+  * Use new convenience function to open settings
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 16 Apr 2020 07:44:01 +0200
+
 gnome-shell-extension-ubuntu-dock (67ubuntu20.04.3) focal; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
