@@ -413,6 +413,17 @@ var DockedDash = GObject.registerClass({
         });
         this.dash.add_constraint(this._constrainSize);
 
+        if (this._isHorizontal) {
+            this.connect('notify::width', () => {
+                this.dash.setMaxHeight(this.width);
+            });
+        }
+        else {
+            this.connect('notify::height', () => {
+                this.dash.setMaxHeight(this.height)
+            });
+        }
+
         // Set initial position
         this._resetPosition();
 
