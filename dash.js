@@ -233,21 +233,6 @@ var MyDash = GObject.registerClass({
             y_align: Clutter.ActorAlign.START,
         });
 
-        if (this._isHorizontal) {
-            this.connect('notify::width', () => {
-                if (this._maxHeight != this.width)
-                    this._queueRedisplay();
-                this._maxHeight = this.width;
-            });
-        }
-        else {
-            this.connect('notify::height', () => {
-                if (this._maxHeight != this.height)
-                    this._queueRedisplay();
-                this._maxHeight = this.height;
-            });
-        }
-
         // Update minimization animation target position on allocation of the
         // container and on scrollview change.
         this._box.connect('notify::allocation', this._updateAppsIconGeometry.bind(this));
@@ -340,6 +325,12 @@ var MyDash = GObject.registerClass({
 
     _clearEmptyDropTarget() {
         return Dash.Dash.prototype._clearEmptyDropTarget.call(this, ...arguments);
+    }
+
+    setMaxHeight(maxHeight) {
+        if (this._maxHeight != maxHeight)
+            this._queueRedisplay();
+        this._maxHeight = maxHeight;
     }
 
     handleDragOver(source, actor, x, y, time) {
