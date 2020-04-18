@@ -160,39 +160,6 @@ var DashSlideContainer = GObject.registerClass({
     }
 });
 
-let DockBindConstraint = Clutter.BindConstraint;
-if (imports.system.version >= 16401) {
-    DockBindConstraint = GObject.registerClass(
-    class DockBindConstraint extends Clutter.BindConstraint {
-
-        vfunc_update_preferred_size(_actor, direction, forSize, minimumSize, naturalSize) {
-            let getPreferredSize = null;
-
-            if (direction == Clutter.Orientation.HORIZONTAL) {
-                if (this.coordinate != Clutter.BindCoordinate.HEIGHT) {
-                    getPreferredSize = this.source.get_preferred_width.bind(
-                        this.source);
-                    }
-            } else if (direction == Clutter.Orientation.VERTICAL) {
-                if (this.coordinate != Clutter.BindCoordinate.WIDTH) {
-                    getPreferredSize = this.source.get_preferred_height.bind(
-                        this.source);
-                    }
-            }
-
-            if (getPreferredSize) {
-                let [prefMinimum, prefNatural] = getPreferredSize(forSize);
-                if (naturalSize < prefNatural)
-                    return [minimumSize, naturalSize];
-                else
-                    return [prefMinimum, prefNatural];
-            }
-
-            return super.vfunc_update_preferred_size(...arguments);
-        }
-    });
-}
-
 var DockedDash = GObject.registerClass({
     Signals: {
         'showing': {},
@@ -405,14 +372,6 @@ var DockedDash = GObject.registerClass({
             Main.layoutManager._trackActor(this._slider);
 
         // Create and apply height/width constraint to the dash.
-        // It's controlled by this.height or this.width
-        this._constrainSize = new DockBindConstraint({
-            source: this,
-            coordinate: this._isHorizontal ?
-                Clutter.BindCoordinate.WIDTH : Clutter.BindCoordinate.HEIGHT
-        });
-        this.dash.add_constraint(this._constrainSize);
-
         if (this._isHorizontal) {
             this.connect('notify::width', () => {
                 this.dash.setMaxHeight(this.width);
