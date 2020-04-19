@@ -552,7 +552,7 @@ var MyDash = GObject.registerClass({
     }
 
     _itemMenuStateChanged(item, opened) {
-        Dash.Dash.prototype.acceptDrop.call(this, item, opened);
+        Dash.Dash.prototype._itemMenuStateChanged.call(this, item, opened);
 
         if (!opened) {
             // I want to listen from outside when a menu is closed. I used to
