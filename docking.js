@@ -1131,8 +1131,8 @@ var DockedDash = GObject.registerClass({
                             let [, y] = overviewControls.get_transformed_position();
                             let [, height] = overviewControls.get_transformed_size();
                             let monitor = Main.layoutManager.primaryMonitor;
-                            let contentY2 = monitor.y + y + height;
-                            let offset = Math.max(0, contentY2 - monitor.height);
+                            let contentY2 = y + height;
+                            let offset = Math.max(0, contentY2 - (monitor.y + monitor.height));
 
                             if (this._marginLater)
                                 Meta.later_remove(this._marginLater);
