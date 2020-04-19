@@ -4,6 +4,7 @@ const Clutter = imports.gi.Clutter;
 const GdkPixbuf = imports.gi.GdkPixbuf
 const Gio = imports.gi.Gio;
 const Gtk = imports.gi.Gtk;
+const Main = imports.ui.main;
 const Pango = imports.gi.Pango;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
@@ -119,7 +120,7 @@ var IndicatorBase = class DashToDock_IndicatorBase {
         this._source = source;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
-        this._sourceDestroyId = this._source.actor.connect('destroy', () => {
+        this._sourceDestroyId = this._source.connect('destroy', () => {
             this._signalsHandler.destroy();
         });
     }
@@ -128,7 +129,7 @@ var IndicatorBase = class DashToDock_IndicatorBase {
     }
 
     destroy() {
-        this._source.actor.disconnect(this._sourceDestroyId);
+        this._source.disconnect(this._sourceDestroyId);
         this._signalsHandler.destroy();
     }
 };
@@ -180,17 +181,17 @@ var RunningIndicatorBase = class DashToDock_RunningIndicatorBase extends Indicat
         for (let i = 1; i <= MAX_WINDOWS_CLASSES; i++) {
             let className = 'running' + i;
             if (i != this._nWindows)
-                this._source.actor.remove_style_class_name(className);
+                this._source.remove_style_class_name(className);
             else
-                this._source.actor.add_style_class_name(className);
+                this._source.add_style_class_name(className);
         }
     }
 
     _updateFocusClass() {
         if (this._isFocused)
-            this._source.actor.add_style_class_name('focused');
+            this._source.add_style_class_name('focused');
         else
-            this._source.actor.remove_style_class_name('focused');
+            this._source.remove_style_class_name('focused');
     }
 
     _updateDefaultDot() {
@@ -256,11 +257,11 @@ var RunningIndicatorDefault = class DashToDock_RunningIndicatorDefault extends R
 
     constructor(source) {
         super(source);
-        this._source.actor.add_style_class_name('default');
+        this._source.add_style_class_name('default');
     }
 
     destroy() {
-        this._source.actor.remove_style_class_name('default');
+        this._source.remove_style_class_name('default');
         super.destroy();
     }
 };
@@ -597,11 +598,11 @@ var RunningIndicatorMetro = class DashToDock_RunningIndicatorMetro extends Runni
 
     constructor(source) {
         super(source);
-        this._source.actor.add_style_class_name('metro');
+        this._source.add_style_class_name('metro');
     }
 
     destroy() {
-        this._source.actor.remove_style_class_name('metro');
+        this._source.remove_style_class_name('metro');
         super.destroy();
     }
 
@@ -659,15 +660,17 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         this._notificationBadgeLabel = new St.Label();
         this._notificationBadgeBin = new St.Bin({
             child: this._notificationBadgeLabel,
-            x_align: St.Align.END, y_align: St.Align.START,
+            x_align: Clutter.ActorAlign.END,
+            y_align: Clutter.ActorAlign.START,
             x_expand: true, y_expand: true
         });
         this._notificationBadgeLabel.add_style_class_name('notification-badge');
+        this._notificationBadgeLabel.clutter_text.ellipsize = Pango.EllipsizeMode.MIDDLE;
         this._notificationBadgeCount = 0;
         this._notificationBadgeBin.hide();
 
         this._source._iconContainer.add_child(this._notificationBadgeBin);
-        this._source._iconContainer.connect('allocation-changed', this.updateNotificationBadge.bind(this));
+        this.updateNotificationBadgeStyle();
 
         this._remoteEntries = [];
         this._source.remoteModel.lookupById(this._source.app.id).forEach(
@@ -684,6 +687,14 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
             this._source.remoteModel,
             'entry-removed',
             this._onLauncherEntryRemoteRemoved.bind(this)
+        ], [
+            St.ThemeContext.get_for_stage(global.stage),
+            'changed',
+            this.updateNotificationBadgeStyle.bind(this)
+        ], [
+            this._source._iconContainer,
+            'notify::size',
+            this.updateNotificationBadgeStyle.bind(this)
         ])
     }
 
@@ -704,20 +715,27 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         }
     }
 
-    updateNotificationBadge() {
-        let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let [minWidth, natWidth] = this._source._iconContainer.get_preferred_width(-1);
-        let logicalNatWidth = natWidth / scaleFactor;
-        let font_size = Math.max(10, Math.round(logicalNatWidth / 5));
-        let margin_left = Math.round(logicalNatWidth / 4);
+    updateNotificationBadgeStyle() {
+        let themeContext = St.ThemeContext.get_for_stage(global.stage);
+        let fontDesc = themeContext.get_font();
+        let defaultFontSize = fontDesc.get_size() / 1024;
+        let fontSize = defaultFontSize * 0.9;
+        let iconSize = Main.overview.dash.iconSize;
+        let defaultIconSize = Docking.DockManager.settings.get_default_value(
+            'dash-max-icon-size').unpack();
+
+        if (!fontDesc.get_size_is_absolute()) {
+            // fontSize was exprimed in points, so convert to pixel
+            fontSize /= 0.75;
+        }
+
+        fontSize = Math.round((iconSize / defaultIconSize) * fontSize);
+        let leftMargin = Math.round((iconSize / defaultIconSize) * 3);
 
         this._notificationBadgeLabel.set_style(
-           'font-size: ' + font_size + 'px;' +
-           'margin-left: ' + margin_left + 'px;'
+            'font-size: ' + fontSize + 'px;' +
+            'margin-left: ' + leftMargin + 'px'
         );
-
-        this._notificationBadgeBin.width = Math.round(logicalNatWidth - margin_left);
-        this._notificationBadgeLabel.clutter_text.ellipsize = Pango.EllipsizeMode.MIDDLE;
     }
 
     _notificationBadgeCountToText(count) {
@@ -748,10 +766,8 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
     }
 
     toggleNotificationBadge(activate) {
-        if (activate && this._notificationBadgeCount > 0) {
-            this.updateNotificationBadge();
+        if (activate && this._notificationBadgeCount > 0)
             this._notificationBadgeBin.show();
-        }
         else
             this._notificationBadgeBin.hide();
     }
