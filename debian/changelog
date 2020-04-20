@@ -1,10 +1,10 @@
-gnome-shell-extension-ubuntu-dock (67ubuntu20.04.5) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.5) focal; urgency=medium
 
   [ Michele Gaio ]
   * Fix regression (wrong parent method call).
   * Fix regression (wrong sign when computing position). (LP: #1869571)
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 20 Apr 2020 15:15:23 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 20 Apr 2020 15:36:21 +0200
 
 gnome-shell-extension-ubuntu-dock (67ubuntu20.04.4) focal; urgency=medium
 
