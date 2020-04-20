@@ -82,14 +82,18 @@ position. In the other cases the border are taken dynamically from the theme */
 
 #dashtodockContainer.extended.top #dash,
 #dashtodockContainer.extended.bottom #dash {
-    border-left:0px;
-    border-right:0px;
+    border-left: 0px;
+    border-right: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 #dashtodockContainer.extended.right #dash,
 #dashtodockContainer.extended.left #dash {
-    border-top:0px;
-    border-bottom:0px;
+    border-top: 0px;
+    border-bottom: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 /* Running and focused application style */
