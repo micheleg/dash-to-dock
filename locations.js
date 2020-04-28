@@ -142,6 +142,9 @@ var Removables = class DashToDock_Removables {
     }
 
     _getWorkingIconName(icon) {
+        if (icon instanceof Gio.EmblemedIcon) {
+            icon = icon.get_icon();
+        }
         if (icon instanceof Gio.ThemedIcon) {
             let iconTheme = Gtk.IconTheme.get_default();
             let names = icon.get_names();
