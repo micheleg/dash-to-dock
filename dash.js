@@ -233,21 +233,6 @@ var MyDash = GObject.registerClass({
             y_align: Clutter.ActorAlign.START,
         });
 
-        if (this._isHorizontal) {
-            this.connect('notify::width', () => {
-                if (this._maxHeight != this.width)
-                    this._queueRedisplay();
-                this._maxHeight = this.width;
-            });
-        }
-        else {
-            this.connect('notify::height', () => {
-                if (this._maxHeight != this.height)
-                    this._queueRedisplay();
-                this._maxHeight = this.height;
-            });
-        }
-
         // Update minimization animation target position on allocation of the
         // container and on scrollview change.
         this._box.connect('notify::allocation', this._updateAppsIconGeometry.bind(this));
@@ -292,6 +277,22 @@ var MyDash = GObject.registerClass({
         ]);
 
         this.connect('destroy', this._onDestroy.bind(this));
+    }
+
+    vfunc_get_preferred_height(forWidth) {
+        let [minHeight, natHeight] = super.vfunc_get_preferred_height.call(this, forWidth);
+        if (!this._isHorizontal && this._maxHeight !== -1 && natHeight > this._maxHeight)
+            return [minHeight, this._maxHeight]
+        else
+            return [minHeight, natHeight]
+    }
+
+    vfunc_get_preferred_width(forHeight) {
+        let [minWidth, natWidth] = super.vfunc_get_preferred_width.call(this, forHeight);
+        if (this._isHorizontal && this._maxHeight !== -1 && natWidth > this._maxHeight)
+            return [minWidth, this._maxHeight]
+        else
+            return [minWidth, natWidth]
     }
 
     _onDestroy() {
@@ -340,6 +341,12 @@ var MyDash = GObject.registerClass({
 
     _clearEmptyDropTarget() {
         return Dash.Dash.prototype._clearEmptyDropTarget.call(this, ...arguments);
+    }
+
+    setMaxHeight(maxHeight) {
+        if (this._maxHeight != maxHeight)
+            this._queueRedisplay();
+        this._maxHeight = maxHeight;
     }
 
     handleDragOver(source, actor, x, y, time) {

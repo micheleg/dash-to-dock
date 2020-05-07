@@ -405,13 +405,16 @@ var DockedDash = GObject.registerClass({
             Main.layoutManager._trackActor(this._slider);
 
         // Create and apply height/width constraint to the dash.
-        // It's controlled by this.height or this.width
-        this._constrainSize = new DockBindConstraint({
-            source: this,
-            coordinate: this._isHorizontal ?
-                Clutter.BindCoordinate.WIDTH : Clutter.BindCoordinate.HEIGHT
-        });
-        this.dash.add_constraint(this._constrainSize);
+        if (this._isHorizontal) {
+            this.connect('notify::width', () => {
+                this.dash.setMaxHeight(this.width);
+            });
+        }
+        else {
+            this.connect('notify::height', () => {
+                this.dash.setMaxHeight(this.height)
+            });
+        }
 
         // Set initial position
         this._resetPosition();
