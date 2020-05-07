@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (68ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (68ubuntu1) groovy; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * New upstream stable release
@@ -14,7 +14,7 @@ gnome-shell-extension-ubuntu-dock (68ubuntu1) UNRELEASED; urgency=medium
   [ ibaios ]
   * Added Basque localization.
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 07 May 2020 21:06:01 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 07 May 2020 23:02:27 +0200
 
 gnome-shell-extension-ubuntu-dock (67ubuntu20.04.5) focal; urgency=medium
 
