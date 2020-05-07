@@ -1,3 +1,21 @@
+gnome-shell-extension-ubuntu-dock (68ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream stable release
+
+  [ Michele Gaio ]
+  * Get dash max size from the container and drop the
+    bindcontraint machinery (LP: #1870847)
+  * Remove padding the dock ends in panel mode (LP: #1873321)
+
+  [ Philip Langdale ]
+  * locations: Handle emblemed mount icons
+
+  [ ibaios ]
+  * Added Basque localization.
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 07 May 2020 21:06:01 +0200
+
 gnome-shell-extension-ubuntu-dock (67ubuntu20.04.5) focal; urgency=medium
 
   [ Michele Gaio ]
