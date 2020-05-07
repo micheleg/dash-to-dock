@@ -1,3 +1,10 @@
+gnome-shell-extension-ubuntu-dock (68ubuntu1~20.04.1) UNRELEASED; urgency=medium
+
+  * No contents change upload to focal
+  * debian: Update control and gbp branch references to focal
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 07 May 2020 23:03:06 +0200
+
 gnome-shell-extension-ubuntu-dock (68ubuntu1) groovy; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
