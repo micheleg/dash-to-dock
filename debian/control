@@ -6,8 +6,8 @@ Build-Depends: debhelper (>= 10),
                dh-translations,
                libglib2.0-bin,
 Standards-Version: 4.1.1
-Vcs-Git: https://github.com/micheleg/dash-to-dock.git -b ubuntu-dock
-Vcs-Browser: https://github.com/micheleg/dash-to-dock/tree/ubuntu-dock
+Vcs-Git: https://github.com/micheleg/dash-to-dock.git -b ubuntu-dock-focal
+Vcs-Browser: https://github.com/micheleg/dash-to-dock/tree/ubuntu-dock-focal
 Homepage: https://github.com/micheleg/dash-to-dock/blob/ubuntu-dock/README.md
 
 Package: gnome-shell-extension-ubuntu-dock
