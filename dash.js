@@ -608,6 +608,10 @@ var MyDash = GObject.registerClass({
         let firstButton = iconChildren[0].child;
         let firstIcon = firstButton.icon;
 
+        // if no icons there's nothing to adjust
+        if (!firstIcon)
+        	return;
+
         // Enforce the current icon size during the size request
         firstIcon.setIconSize(this.iconSize);
         let [, natHeight] = firstButton.get_preferred_height(-1);
