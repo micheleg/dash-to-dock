@@ -805,7 +805,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                 let actions = appInfo.list_actions();
                 if (this._source.app.can_open_new_window() &&
                     actions.indexOf('new-window') == -1) {
-                    this._newWindowMenuItem = this._appendMenuItem(_("New Window"));
+                    this._newWindowMenuItem = this._appendMenuItem(_('New Window'));
                     this._newWindowMenuItem.connect('activate', () => {
                         if (this._source.app.state == Shell.AppState.STOPPED)
                             this._source.animateLaunch();
@@ -820,7 +820,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                 if (AppDisplay.discreteGpuAvailable &&
                     this._source.app.state == Shell.AppState.STOPPED &&
                     actions.indexOf('activate-discrete-gpu') == -1) {
-                    this._onDiscreteGpuMenuItem = this._appendMenuItem(_("Launch using Dedicated Graphics Card"));
+                    this._onDiscreteGpuMenuItem = this._appendMenuItem(_('Launch using Dedicated Graphics Card'));
                     this._onDiscreteGpuMenuItem.connect('activate', () => {
                         if (this._source.app.state == Shell.AppState.STOPPED)
                             this._source.animateLaunch();
@@ -848,13 +848,13 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                     let isFavorite = AppFavorites.getAppFavorites().isFavorite(this._source.app.get_id());
 
                     if (isFavorite) {
-                        let item = this._appendMenuItem(_("Remove from Favorites"));
+                        let item = this._appendMenuItem(_('Remove from Favorites'));
                         item.connect('activate', () => {
                             let favs = AppFavorites.getAppFavorites();
                             favs.removeFavorite(this._source.app.get_id());
                         });
                     } else {
-                        let item = this._appendMenuItem(_("Add to Favorites"));
+                        let item = this._appendMenuItem(_('Add to Favorites'));
                         item.connect('activate', () => {
                             let favs = AppFavorites.getAppFavorites();
                             favs.addFavorite(this._source.app.get_id());
@@ -865,7 +865,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                 if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop') &&
                     !this._source.isLocation()) {
                     this._appendSeparator();
-                    let item = this._appendMenuItem(_("Show Details"));
+                    let item = this._appendMenuItem(_('Show Details'));
                     item.connect('activate', () => {
                         let id = this._source.app.get_id();
                         let args = GLib.Variant.new('(ss)', [id, '']);
@@ -893,7 +893,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
 
         // quit menu
         this._appendSeparator();
-        this._quitfromDashMenuItem = this._appendMenuItem(_("Quit"));
+        this._quitfromDashMenuItem = this._appendMenuItem(_('Quit'));
         this._quitfromDashMenuItem.connect('activate', () => {
             this._source.closeAllWindows();
         });
@@ -911,9 +911,9 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
       if ( windows.length > 0) {
           let quitFromDashMenuText = "";
           if (windows.length == 1)
-              this._quitfromDashMenuItem.label.set_text(_("Quit"));
+              this._quitfromDashMenuItem.label.set_text(_('Quit'));
           else
-              this._quitfromDashMenuItem.label.set_text(_("Quit %d Windows").format(windows.length));
+              this._quitfromDashMenuItem.label.set_text(__('Quit %d Windows').format(windows.length));
 
           this._quitfromDashMenuItem.actor.show();
 
