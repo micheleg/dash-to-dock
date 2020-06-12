@@ -10,7 +10,8 @@
     <value value='6' nick='minimize-or-previews'/>
     <value value='7' nick='focus-or-previews'/>
     <value value='8' nick='focus-minimize-or-previews'/>
-    <value value='9' nick='quit'/>
+    <value value='9' nick='focus-minimize-or-appspread'/>
+    <value value='10' nick='quit'/>
   </enum>
   <enum id='org.gnome.shell.extensions.dash-to-dock.scrollAction'>
     <value value='0' nick='do-nothing'/>

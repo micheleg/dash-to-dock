@@ -7,7 +7,9 @@ BASE_MODULES = extension.js \
                README.md \
                $(NULL)
 
-EXTRA_MODULES = dash.js \
+EXTRA_MODULES = \
+                appSpread.js \
+                dash.js \
                 docking.js \
                 appIcons.js \
                 appIconIndicators.js \
