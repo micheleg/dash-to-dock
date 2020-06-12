@@ -36,6 +36,7 @@ const Docking = Me.imports.docking;
 const Locations = Me.imports.locations;
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
+const AppSpread = Me.imports.appSpread;
 const AppIconIndicators = Me.imports.appIconIndicators;
 const DbusmenuUtils = Me.imports.dbusmenuUtils;
 
@@ -57,7 +58,8 @@ const clickAction = {
     MINIMIZE_OR_PREVIEWS: 6,
     FOCUS_OR_PREVIEWS: 7,
     FOCUS_MINIMIZE_OR_PREVIEWS: 8,
-    QUIT: 9
+    APP_SPREAD: 9,
+    QUIT: 10
 };
 
 const scrollAction = {
@@ -112,6 +114,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         // a prefix is required to avoid conflicting with the parent class variable
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
+        this.appSpread = new AppSpread.AppSpread();
         this.iconAnimator = iconAnimator;
         this._indicator = new AppIconIndicators.AppIconIndicator(this);
 
@@ -509,9 +512,25 @@ var DockAbstractAppIcon = GObject.registerClass({
                 }
                 break;
 
+            case clickAction.APP_SPREAD:
+                const appSpreadCandidate = windows.length != 1 || !!modifiers || button != 1;
+                if (appSpreadCandidate) {
+                    const isClickedIconFocusedApp = this.app == tracker.focus_app;
+                    if (isClickedIconFocusedApp) {
+                        shouldHideOverview = false;
+                        this.appSpread.toggleAppSpread(windows);
+                    } else {
+                        // Clicked on another app or all app windows are minimized -> focus that
+                        let w = windows[0];
+                        Main.activateWindow(w);
+                    }
+                    break;
+                }
+                // fallthrough
+
             case clickAction.MINIMIZE_OR_OVERVIEW:
                 // When a single window is present, toggle minimization
-                // If only one windows is present toggle minimization, but only when trigggered with the
+                // If only one windows is present toggle minimization, but only when triggered with the
                 // simple click action (no modifiers, no middle click).
                 if (singleOrUrgentWindows && !modifiers && button == 1) {
                     let w = windows[0];
