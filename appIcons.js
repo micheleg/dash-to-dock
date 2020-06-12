@@ -31,6 +31,7 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
+const AppExposeOverview = Me.imports.appExposeOverview;
 const AppIconIndicators = Me.imports.appIconIndicators;
 const DbusmenuUtils = Me.imports.dbusmenuUtils;
 
@@ -42,10 +43,11 @@ const clickAction = {
     LAUNCH: 2,
     CYCLE_WINDOWS: 3,
     MINIMIZE_OR_OVERVIEW: 4,
-    PREVIEWS: 5,
-    MINIMIZE_OR_PREVIEWS: 6,
-    FOCUS_OR_PREVIEWS: 7,
-    QUIT: 8,
+    MINIMIZE_OR_OVERVIEW_APP: 5,
+    PREVIEWS: 6,
+    MINIMIZE_OR_PREVIEWS: 7,
+    FOCUS_OR_PREVIEWS: 8,
+    QUIT: 9,
 };
 
 const scrollAction = {
@@ -81,6 +83,7 @@ class MyAppIcon extends Dash.DashIcon {
         // a prefix is required to avoid conflicting with the parent class variable
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this.appExposeOverview = new AppExposeOverview.AppExposeOverview();
         this.remoteModel = remoteModel;
         this.iconAnimator = iconAnimator;
         this._indicator = null;
@@ -209,23 +212,7 @@ class MyAppIcon extends Dash.DashIcon {
                 this._optionalScrollCycleWindowsDeadTimeId = 0;
             });
 
-        let direction = null;
-
-        switch (scrollEvent.direction) {
-        case Clutter.ScrollDirection.UP:
-            direction = Meta.MotionDirection.UP;
-            break;
-        case Clutter.ScrollDirection.DOWN:
-            direction = Meta.MotionDirection.DOWN;
-            break;
-        case Clutter.ScrollDirection.SMOOTH:
-            let [, dy] = Clutter.get_current_event().get_scroll_delta();
-            if (dy < 0)
-                direction = Meta.MotionDirection.UP;
-            else if (dy > 0)
-                direction = Meta.MotionDirection.DOWN;
-            break;
-        }
+        let direction = unifyScrollDirection(event);
 
         let focusedApp = tracker.focus_app;
         if (!Main.overview._shown) {
@@ -416,9 +403,25 @@ class MyAppIcon extends Dash.DashIcon {
                 }
                 break;
 
+            case clickAction.MINIMIZE_OR_OVERVIEW_APP:
+                // make sure it is not the case described below
+                if (windows.length != 1 || !!modifiers || button != 1) {
+                    shouldHideOverview = false;
+                    if (this.app == focusedApp) {
+                        // Show overview with selected app windows only
+                        this.appExposeOverview.toggleAppExposeOverview(this.actor, windows);
+                    } else {
+                        // Another app is focused or all app windows are minimized -> show selected app window
+                        let w = windows[0];
+                        Main.activateWindow(w);
+                    }
+                    break;
+                }
+                // fallthrough
+
             case clickAction.MINIMIZE_OR_OVERVIEW:
                 // When a single window is present, toggle minimization
-                // If only one windows is present toggle minimization, but only when trigggered with the
+                // If only one windows is present toggle minimization, but only when triggered with the
                 // simple click action (no modifiers, no middle click).
                 if (windows.length == 1 && !modifiers && button == 1) {
                     let w = windows[0];
@@ -430,7 +433,6 @@ class MyAppIcon extends Dash.DashIcon {
                         Main.activateWindow(w);
                     }
                     // Launch overview when multiple windows are present
-                    // TODO: only show current app windows when gnome shell API will allow it
                 } else {
                     shouldHideOverview = false;
                     Main.overview.toggle();
@@ -1265,4 +1267,27 @@ function itemShowLabel()  {
         duration: Dash.DASH_ITEM_LABEL_SHOW_TIME,
         mode: Clutter.AnimationMode.EASE_OUT_QUAD
     });
+}
+
+/**
+ * This function is used appIcons and appExposeOverview
+ */
+function unifyScrollDirection(scrollEvent) {
+    let direction = null;
+    switch (scrollEvent.direction) {
+        case Clutter.ScrollDirection.UP:
+            direction = Meta.MotionDirection.UP;
+            break;
+        case Clutter.ScrollDirection.DOWN:
+            direction = Meta.MotionDirection.DOWN;
+            break;
+        case Clutter.ScrollDirection.SMOOTH:
+            let [, dy] = Clutter.get_current_event().get_scroll_delta();
+            if (dy < 0)
+                direction = Meta.MotionDirection.UP;
+            else if (dy > 0)
+                direction = Meta.MotionDirection.DOWN;
+            break;
+    }
+    return direction;
 }
