@@ -6,7 +6,6 @@ const Workspace = imports.ui.workspace;
 const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 const ViewSelector = imports.ui.viewSelector;
 const Layout = imports.ui.layout;
-const Tweener = imports.ui.tweener;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const AppIcons = Me.imports.appIcons;
@@ -20,8 +19,8 @@ var AppExposeOverview = new Lang.Class({
 		this.originalOverviewFunction = Workspace.Workspace.prototype._isOverviewWindow;
 		this.originalThumbnailFunction = WorkspaceThumbnail.WorkspaceThumbnail.prototype._isOverviewWindow;
 		this.originalHotCornerToggleFunction = Layout.HotCorner.prototype._toggleOverview;
-		this.hiddenId = Main.overview.connect('hidden', Lang.bind(this, this._onOverviewHidden));
-		this.pageChangeId = Main.overview.viewSelector.connect('page-changed', Lang.bind(this, this._onPageChanged));
+		this.hiddenId = Main.overview.connect('hidden', this._onOverviewHidden.bind(this));
+		this.pageChangeId = Main.overview.viewSelector.connect('page-changed', this._onPageChanged.bind(this));
 	},
 
 	disconnect: function() {
@@ -44,7 +43,7 @@ var AppExposeOverview = new Lang.Class({
 		this.isInAppExposeOverview = true;
 		// Temporary change app icon scroll to switch workspaces
 		this.actor = iconActor;
-		this.appIconScrollId = this.actor.connect('scroll-event', Lang.bind(this, this._onScrollInAppExposeOverview));
+		this.appIconScrollId = this.actor.connect('scroll-event', this._onScrollInAppExposeOverview.bind(this));
 
 		// Hide and disable search input
 		// now done in _onPageChanged
@@ -67,7 +66,7 @@ var AppExposeOverview = new Lang.Class({
 		};
 
 		// If second last app window closed in AppExposeOverview, activate remaining window (done in hidden event)
-		this.destroyWindowId = global.window_manager.connect('destroy', Lang.bind(this, function (wm, windowActor) {
+		this.destroyWindowId = global.window_manager.connect('destroy', (windowActor) => {
 			const metaWindow = windowActor.get_meta_window();
 			const index = appWindows.indexOf(metaWindow);
 			if (index > -1) {
@@ -76,7 +75,7 @@ var AppExposeOverview = new Lang.Class({
 			if (appWindows.length === 1) {
 				Main.overview.hide();
 			}
-		}));
+		});
 
 		Main.overview.show();
 
@@ -103,7 +102,7 @@ var AppExposeOverview = new Lang.Class({
 			this.actor.disconnect(this.appIconScrollId);
 			Layout.HotCorner.prototype._toggleOverview = this.originalHotCornerToggleFunction;
 			Main.layoutManager._updateHotCorners();
-			Main.overview._searchEntryBin.show();
+			Main.overview.searchEntry.show();
 			ViewSelector.ViewSelector.prototype._shouldTriggerSearch = this.originalTriggerSearchFunction;
 			Workspace.Workspace.prototype._isOverviewWindow = this.originalOverviewFunction;
 			WorkspaceThumbnail.WorkspaceThumbnail.prototype._isOverviewWindow = this.originalThumbnailFunction;
@@ -113,13 +112,13 @@ var AppExposeOverview = new Lang.Class({
 				Main.activateWindow(this.appWindows[0]);
 			}
 			// Add fade in when expose finished hiding,
-			// so non app expose windows dont suddenly pop up 
+			// so non app expose windows dont suddenly pop up
 			this._getNonExposeWindows().forEach(function (w) {
 				const originalX = w.x;
 				const originalY = w.y;
 
-				const monitorArea = global.screen.get_monitor_geometry(w.get_meta_window().get_monitor())
-				
+				const monitorArea = global.display.get_monitor_geometry(w.get_meta_window().get_monitor())
+
 				// version 1: start scaling non expose windows from monitor center
 				// const startScaleX = monitorArea.x + monitorArea.width/2;
 				// const startScaleY = monitorArea.y + monitorArea.height/2;
@@ -133,7 +132,14 @@ var AppExposeOverview = new Lang.Class({
 				w.x = startScaleX;
 				w.y = startScaleY;
 
-				Tweener.addTween(w, { time: 0.125, transition: "linear", scale_x: 1, scale_y: 1, x: originalX, y: originalY });
+				w.ease({
+					x: originalX,
+					y: originalY,
+					scale_x: 1,
+					scale_y: 1,
+					duration: 0.125 * 1000,
+					mode: Clutter.AnimationMode.LINEAR,
+				});
 			});
 		}
 	},
@@ -147,7 +153,7 @@ var AppExposeOverview = new Lang.Class({
 	_onScrollInAppExposeOverview: function(actor, event) {
 		if (this.isInAppExposeOverview) {
 			let direction = AppIcons.unifyScrollDirection(event);
-			let activeWs = global.screen.get_active_workspace();
+			let activeWs = global.workspace_manager.get_active_workspace();
 			let ws;
 			switch (direction) {
 				case Meta.MotionDirection.UP:
@@ -172,7 +178,7 @@ var AppExposeOverview = new Lang.Class({
 		let showSearch = (isAppsPage || isSearchPage);
 		if (this.isInAppExposeOverview) {
 			if (showSearch) {
-				Main.overview._searchEntryBin.show();
+				Main.overview.searchEntry.show();
 				ViewSelector.ViewSelector.prototype._shouldTriggerSearch = this.originalTriggerSearchFunction;
 			} else {
 				this._disableSearch();
@@ -181,7 +187,7 @@ var AppExposeOverview = new Lang.Class({
 	},
 
 	_disableSearch: function() {
-			Main.overview._searchEntryBin.hide();
+			Main.overview.searchEntry.hide();
 			ViewSelector.ViewSelector.prototype._shouldTriggerSearch = function(symbol) {
 				return false;
 			};
