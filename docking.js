@@ -317,7 +317,10 @@ var DockedDash = GObject.registerClass({
         this.connect('notify::allocation',
                      Main.layoutManager._queueUpdateRegions.bind(Main.layoutManager));
 
-        this.dash._container.connect('allocation-changed', this._updateStaticBox.bind(this));
+
+        // Since Clutter has no longer ClutterAllocationFlags,
+        // "allocation-changed" signal has been removed. MR !1245
+        this.dash._container.connect('notify::allocation', this._updateStaticBox.bind(this));
         this._slider.connect(this._isHorizontal ? 'notify::x' : 'notify::y', this._updateStaticBox.bind(this));
 
         // Load optional features that need to be activated for one dock only
@@ -1096,7 +1099,7 @@ var DockedDash = GObject.registerClass({
                     // This is a workaround for bug #1007
                     this._signalsHandler.addWithLabel('verticalOffsetChecker', [
                         overviewControls.layout_manager,
-                        'allocation-changed',
+                        'notify::allocation',
                         () => {
                             let [, y] = overviewControls.get_transformed_position();
                             let [, height] = overviewControls.get_transformed_size();

@@ -423,7 +423,7 @@ var Transparency = class DashToDock_Transparency {
 
     _onWindowActorAdded(container, metaWindowActor) {
         let signalIds = [];
-        ['allocation-changed', 'notify::visible'].forEach(s => {
+        ['notify::allocation', 'notify::visible'].forEach(s => {
             signalIds.push(metaWindowActor.connect(s, this._updateSolidStyle.bind(this)));
         });
         this._trackedWindows.set(metaWindowActor, signalIds);
