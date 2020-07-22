@@ -1,8 +1,8 @@
 /* Shrink the dash by reducing padding */
 #dashtodockContainer.shrink #dash,
 #dashtodockContainer.dashtodock #dash {
-    border:1px;
-    padding:0px;
+    border: 0px;
+    padding: 0px;
 }
 
 #dashtodockContainer.shrink.left #dash,
@@ -69,7 +69,7 @@ position. In the other cases the border are taken dynamically from the theme */
 
 #dashtodockContainer.shrink .dash-item-container > StButton,
 #dashtodockContainer.dashtodock .dash-item-container > StButton {
-   padding: 1px 2px;
+    padding: 1px 2px;
 }
 
 /* Dash height extended to the whole available vertical space */
@@ -100,12 +100,12 @@ position. In the other cases the border are taken dynamically from the theme */
 
 #dashtodockContainer.running-dots .app-well-app.running > .overview-icon,
 #dashtodockContainer.dashtodock .app-well-app.running > .overview-icon {
-	background-image:none;
+    background-image: none;
 }
 
 
-#dashtodockContainer.running-dots .app-well-app.focused  .overview-icon,
-#dashtodockContainer.dashtodock .app-well-app.focused  .overview-icon {
+#dashtodockContainer.running-dots .app-well-app.focused .overview-icon,
+#dashtodockContainer.dashtodock .app-well-app.focused .overview-icon {
     background-color: rgba(238, 238, 236, 0.2);
 }
 
@@ -153,14 +153,14 @@ position. In the other cases the border are taken dynamically from the theme */
 }
 
 #dashtodockContainer .number-overlay {
-    color: rgba(255,255,255,1);
-    background-color: rgba(0,0,0,0.8);
+    color: rgba(255, 255, 255, 1);
+    background-color: rgba(0, 0, 0, 0.8);
     text-align: center;
 }
 
 #dashtodockContainer .notification-badge {
-    color: rgba(255,255,255,1);
-    background-color: rgba(255,0,0,1.0);
+    color: rgba(255, 255, 255, 1);
+    background-color: rgba(255, 0, 0, 1.0);
     padding: 0.2em 0.5em;
     border-radius: 1em;
     font-weight: bold;
@@ -179,7 +179,7 @@ position. In the other cases the border are taken dynamically from the theme */
     padding: 1em 1em 0.5em 1em;
 }
 
-#dashtodockContainer .metro .overview-icon{
+#dashtodockContainer .metro .overview-icon {
     border-radius: 0px;
 }
 
