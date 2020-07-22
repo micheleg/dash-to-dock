@@ -4,8 +4,6 @@ const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
-const Gtk = imports.gi.Gtk;
-const Signals = imports.signals;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
@@ -69,7 +67,12 @@ class DashToDock_MyDashActor extends St.Widget {
         super._init({
             name: 'dash',
             layout_manager: layout,
-            clip_to_allocation: true
+            clip_to_allocation: true,
+            ...(this._isHorizontal ? {
+                x_align: Clutter.ActorAlign.CENTER,
+            } : {
+                y_align: Clutter.ActorAlign.CENTER,
+            })
         });
 
         // Since we are usually visible but not usually changing, make sure
@@ -79,14 +82,15 @@ class DashToDock_MyDashActor extends St.Widget {
     }
 
     vfunc_allocate(box, flags) {
-        this.set_allocation(box, flags);
-        let contentBox = box;
+        let contentBox = this.get_theme_node().get_content_box(box);
         let availWidth = contentBox.x2 - contentBox.x1;
         let availHeight = contentBox.y2 - contentBox.y1;
 
+        this.set_allocation(box, flags);
+
         let [appIcons, showAppsButton] = this.get_children();
-        let [showAppsMinHeight, showAppsNatHeight] = showAppsButton.get_preferred_height(availWidth);
-        let [showAppsMinWidth, showAppsNatWidth] = showAppsButton.get_preferred_width(availHeight);
+        let [, showAppsNatHeight] = showAppsButton.get_preferred_height(availWidth);
+        let [, showAppsNatWidth] = showAppsButton.get_preferred_width(availHeight);
 
         let offset_x = this._isHorizontal?showAppsNatWidth:0;
         let offset_y = this._isHorizontal?0:showAppsNatHeight;
@@ -107,8 +111,7 @@ class DashToDock_MyDashActor extends St.Widget {
             childBox.x2 = contentBox.x1 + showAppsNatWidth;
             childBox.y2 = contentBox.y1 + showAppsNatHeight;
             showAppsButton.allocate(childBox, flags);
-        }
-        else {
+        } else {
             childBox.x1 = contentBox.x1;
             childBox.y1 = contentBox.y1;
             childBox.x2 = contentBox.x2 - offset_x;
@@ -124,33 +127,24 @@ class DashToDock_MyDashActor extends St.Widget {
     }
 
     vfunc_get_preferred_width(forHeight) {
-        // We want to request the natural height of all our children
-        // as our natural height, so we chain up to StWidget (which
+        // We want to request the natural width of all our children
+        // as our natural width, so we chain up to StWidget (which
         // then calls BoxLayout), but we only request the showApps
         // button as the minimum size
 
-        let [, natWidth] = this.layout_manager.get_preferred_width(this, forHeight);
+        let [, natWidth] = super.vfunc_get_preferred_width(forHeight);
 
         let themeNode = this.get_theme_node();
+        let adjustedForHeight = themeNode.adjust_for_height(forHeight);
         let [, showAppsButton] = this.get_children();
-        let [minWidth, ] = showAppsButton.get_preferred_height(forHeight);
+        let [minWidth] = showAppsButton.get_preferred_width(adjustedForHeight);
+        [minWidth] = themeNode.adjust_preferred_width(minWidth, natWidth);
 
         return [minWidth, natWidth];
     }
 
     vfunc_get_preferred_height(forWidth) {
-        // We want to request the natural height of all our children
-        // as our natural height, so we chain up to StWidget (which
-        // then calls BoxLayout), but we only request the showApps
-        // button as the minimum size
-
-        let [, natHeight] = this.layout_manager.get_preferred_height(this, forWidth);
-
-        let themeNode = this.get_theme_node();
-        let [, showAppsButton] = this.get_children();
-        let [minHeight, ] = showAppsButton.get_preferred_height(forWidth);
-
-        return [minHeight, natHeight];
+        return Dash.DashActor.prototype.vfunc_get_preferred_height.call(this, forWidth);
     }
 });
 
@@ -204,17 +198,18 @@ var MyDash = GObject.registerClass({
         this._container = new MyDashActor();
         this._scrollView = new St.ScrollView({
             name: 'dashtodockDashScrollview',
-            hscrollbar_policy: Gtk.PolicyType.NEVER,
-            vscrollbar_policy: Gtk.PolicyType.NEVER,
+            hscrollbar_policy: St.PolicyType.NEVER,
+            vscrollbar_policy: St.PolicyType.NEVER,
             enable_mouse_scrolling: false
         });
 
         this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
 
+        let rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
         this._box = new St.BoxLayout({
             vertical: !this._isHorizontal,
             clip_to_allocation: false,
-            x_align: Clutter.ActorAlign.START,
+            x_align: rtl ? Clutter.ActorAlign.END : Clutter.ActorAlign.START,
             y_align: Clutter.ActorAlign.START
         });
         this._box._delegate = this;
@@ -232,27 +227,11 @@ var MyDash = GObject.registerClass({
 
         this._container.add_actor(this._showAppsIcon);
 
-        let rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
         super._init({
             child: this._container,
-            y_align: St.Align.START,
-            x_align: rtl ? St.Align.END : St.Align.START
+            x_align: Clutter.ActorAlign.START,
+            y_align: Clutter.ActorAlign.START,
         });
-
-        if (this._isHorizontal) {
-            this.connect('notify::width', () => {
-                if (this._maxHeight != this.width)
-                    this._queueRedisplay();
-                this._maxHeight = this.width;
-            });
-        }
-        else {
-            this.connect('notify::height', () => {
-                if (this._maxHeight != this.height)
-                    this._queueRedisplay();
-                this._maxHeight = this.height;
-            });
-        }
 
         // Update minimization animation target position on allocation of the
         // container and on scrollview change.
@@ -300,8 +279,147 @@ var MyDash = GObject.registerClass({
         this.connect('destroy', this._onDestroy.bind(this));
     }
 
+    vfunc_get_preferred_height(forWidth) {
+        let [minHeight, natHeight] = super.vfunc_get_preferred_height.call(this, forWidth);
+        if (!this._isHorizontal && this._maxHeight !== -1 && natHeight > this._maxHeight)
+            return [minHeight, this._maxHeight]
+        else
+            return [minHeight, natHeight]
+    }
+
+    vfunc_get_preferred_width(forHeight) {
+        let [minWidth, natWidth] = super.vfunc_get_preferred_width.call(this, forHeight);
+        if (this._isHorizontal && this._maxHeight !== -1 && natWidth > this._maxHeight)
+            return [minWidth, this._maxHeight]
+        else
+            return [minWidth, natWidth]
+    }
+
     _onDestroy() {
         this._signalsHandler.destroy();
+    }
+
+    _onDragBegin() {
+        return Dash.Dash.prototype._onDragBegin.call(this, ...arguments);
+    }
+
+    _onDragCancelled() {
+        return Dash.Dash.prototype._onDragCancelled.call(this, ...arguments);
+    }
+
+    _onDragEnd() {
+        return Dash.Dash.prototype._onDragEnd.call(this, ...arguments);
+    }
+
+    _endDrag() {
+        return Dash.Dash.prototype._endDrag.call(this, ...arguments);
+    }
+
+    _onDragMotion() {
+        return Dash.Dash.prototype._onDragMotion.call(this, ...arguments);
+    }
+
+    _appIdListToHash() {
+        return Dash.Dash.prototype._appIdListToHash.call(this, ...arguments);
+    }
+
+    _queueRedisplay() {
+        return Dash.Dash.prototype._queueRedisplay.call(this, ...arguments);
+    }
+
+    _hookUpLabel() {
+        return Dash.Dash.prototype._hookUpLabel.call(this, ...arguments);
+    }
+
+    _syncLabel() {
+        return Dash.Dash.prototype._syncLabel.call(this, ...arguments);
+    }
+
+    _clearDragPlaceholder() {
+        return Dash.Dash.prototype._clearDragPlaceholder.call(this, ...arguments);
+    }
+
+    _clearEmptyDropTarget() {
+        return Dash.Dash.prototype._clearEmptyDropTarget.call(this, ...arguments);
+    }
+
+    setMaxHeight(maxHeight) {
+        if (this._maxHeight != maxHeight)
+            this._queueRedisplay();
+        this._maxHeight = maxHeight;
+    }
+
+    handleDragOver(source, actor, x, y, time) {
+        let ret;
+        if (!this._isHorizontal) {
+            Object.defineProperty(this._box, 'height', {
+                configurable: true,
+                get: () => this._box.get_children().reduce((a, c) => a + c.height, 0),
+            });
+
+            ret = Dash.Dash.prototype.handleDragOver.call(this, source, actor, x, y, time);
+
+            delete this._box.height;
+
+            if (ret == DND.DragMotionResult.CONTINUE)
+                return ret;
+        } else {
+            Object.defineProperty(this._box, 'height', {
+                configurable: true,
+                get: () => this._box.get_children().reduce((a, c) => a + c.width, 0),
+            });
+
+            let replacedPlaceholderHeight = false;
+            if (this._dragPlaceholder) {
+                replacedPlaceholderHeight = true;
+                Object.defineProperty(this._dragPlaceholder, 'height', {
+                    configurable: true,
+                    get: () => this._dragPlaceholder.width,
+                });
+            }
+
+            ret = Dash.Dash.prototype.handleDragOver.call(this, source, actor, y, x, time);
+
+            delete this._box.height;
+            if (replacedPlaceholderHeight && this._dragPlaceholder)
+                delete this._dragPlaceholder.height;
+
+            if (ret == DND.DragMotionResult.CONTINUE)
+                return ret;
+
+            if (this._dragPlaceholder) {
+                this._dragPlaceholder.child.set_width(this.iconSize / 2);
+                this._dragPlaceholder.child.set_height(this.iconSize);
+
+                let pos = this._dragPlaceholderPos;
+                if (this._isHorizontal && (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL))
+                    pos = this._box.get_children() - 1 - pos;
+
+                if (pos != this._dragPlaceholderPos) {
+                    this._dragPlaceholderPos = pos;
+                    this._box.set_child_at_index(this._dragPlaceholder,
+                        this._dragPlaceholderPos)
+                }
+            }
+        }
+
+        if (this._dragPlaceholder) {
+            // Ensure the next and previous icon are visible when moving the placeholder
+            // (I assume there's room for both of them)
+            if (this._dragPlaceholderPos > 0)
+                ensureActorVisibleInScrollView(this._scrollView,
+                    this._box.get_children()[this._dragPlaceholderPos - 1]);
+
+            if (this._dragPlaceholderPos < this._box.get_children().length - 1)
+                ensureActorVisibleInScrollView(this._scrollView,
+                    this._box.get_children()[this._dragPlaceholderPos + 1]);
+        }
+
+        return ret;
+    }
+
+    acceptDrop() {
+        return Dash.Dash.prototype.acceptDrop.call(this, ...arguments);
     }
 
     _onScrollEvent(actor, event) {
@@ -349,100 +467,16 @@ var MyDash = GObject.registerClass({
         return Clutter.EVENT_STOP;
     }
 
-    _onDragBegin() {
-        this._dragCancelled = false;
-        this._dragMonitor = {
-            dragMotion: this._onDragMotion.bind(this)
-        };
-        DND.addDragMonitor(this._dragMonitor);
-
-        if (this._box.get_n_children() == 0) {
-            this._emptyDropTarget = new Dash.EmptyDropTargetItem();
-            this._box.insert_child_at_index(this._emptyDropTarget, 0);
-            this._emptyDropTarget.show(true);
-        }
-    }
-
-    _onDragCancelled() {
-        this._dragCancelled = true;
-        this._endDrag();
-    }
-
-    _onDragEnd() {
-        if (this._dragCancelled)
-            return;
-
-        this._endDrag();
-    }
-
-    _endDrag() {
-        this._clearDragPlaceholder();
-        this._clearEmptyDropTarget();
-        this._showAppsIcon.setDragApp(null);
-        DND.removeDragMonitor(this._dragMonitor);
-    }
-
-    _onDragMotion(dragEvent) {
-        let app = Dash.getAppFromSource(dragEvent.source);
-        if (app == null)
-            return DND.DragMotionResult.CONTINUE;
-
-        let showAppsHovered = this._showAppsIcon.contains(dragEvent.targetActor);
-
-        if (!this._box.contains(dragEvent.targetActor) || showAppsHovered)
-            this._clearDragPlaceholder();
-
-        if (showAppsHovered)
-            this._showAppsIcon.setDragApp(app);
-        else
-            this._showAppsIcon.setDragApp(null);
-
-        return DND.DragMotionResult.CONTINUE;
-    }
-
-    _appIdListToHash(apps) {
-        let ids = {};
-        for (let i = 0; i < apps.length; i++)
-            ids[apps[i].get_id()] = apps[i];
-        return ids;
-    }
-
-    _queueRedisplay() {
-        Main.queueDeferredWork(this._workId);
-    }
-
-    _hookUpLabel(item, appIcon) {
-        item.child.connect('notify::hover', () => {
-            this._syncLabel(item, appIcon);
-        });
-
-        let id = Main.overview.connect('hiding', () => {
-            this._labelShowing = false;
-            item.hideLabel();
-        });
-        item.child.connect('destroy', function() {
-            Main.overview.disconnect(id);
-        });
-
-        if (appIcon) {
-            appIcon.connect('sync-tooltip', () => {
-                this._syncLabel(item, appIcon);
-            });
-        }
-    }
-
     _createAppItem(app) {
         let appIcon = new AppIcons.MyAppIcon(this._remoteModel, app,
-                                             this._monitorIndex,
-                                             { setSizeManually: true,
-                                               showLabel: false });
+            this._monitorIndex);
 
         if (appIcon._draggable) {
             appIcon._draggable.connect('drag-begin', () => {
-                appIcon.actor.opacity = 50;
+                appIcon.opacity = 50;
             });
             appIcon._draggable.connect('drag-end', () => {
-                appIcon.actor.opacity = 255;
+                appIcon.opacity = 255;
             });
         }
 
@@ -451,13 +485,13 @@ var MyDash = GObject.registerClass({
         });
 
         let item = new MyDashItemContainer();
-        item.setChild(appIcon.actor);
+        item.setChild(appIcon);
 
-        appIcon.actor.connect('notify::hover', () => {
-            if (appIcon.actor.hover) {
+        appIcon.connect('notify::hover', () => {
+            if (appIcon.hover) {
                 this._ensureAppIconVisibilityTimeoutId = GLib.timeout_add(
                     GLib.PRIORITY_DEFAULT, 100, () => {
-                    ensureActorVisibleInScrollView(this._scrollView, appIcon.actor);
+                    ensureActorVisibleInScrollView(this._scrollView, appIcon);
                     this._ensureAppIconVisibilityTimeoutId = 0;
                     return GLib.SOURCE_REMOVE;
                 });
@@ -470,11 +504,11 @@ var MyDash = GObject.registerClass({
             }
         });
 
-        appIcon.actor.connect('clicked', (actor) => {
+        appIcon.connect('clicked', (actor) => {
             ensureActorVisibleInScrollView(this._scrollView, actor);
         });
 
-        appIcon.actor.connect('key-focus-in', (actor) => {
+        appIcon.connect('key-focus-in', (actor) => {
             let [x_shift, y_shift] = ensureActorVisibleInScrollView(this._scrollView, actor);
 
             // This signal is triggered also by mouse click. The popup menu is opened at the original
@@ -487,7 +521,7 @@ var MyDash = GObject.registerClass({
 
         // Override default AppIcon label_actor, now the
         // accessible_name is set at DashItemContainer.setLabelText
-        appIcon.actor.label_actor = null;
+        appIcon.label_actor = null;
         item.setLabelText(app.get_name());
 
         appIcon.icon.setIconSize(this.iconSize);
@@ -506,13 +540,12 @@ var MyDash = GObject.registerClass({
         // the animation)
         let iconChildren = this._box.get_children().filter(function(actor) {
             return actor.child &&
-                   actor.child._delegate &&
-                   actor.child._delegate.icon &&
+                   !!actor.child.icon &&
                    !actor.animatingOut;
         });
 
         let appIcons = iconChildren.map(function(actor) {
-            return actor.child._delegate;
+            return actor.child;
         });
 
       return appIcons;
@@ -526,65 +559,13 @@ var MyDash = GObject.registerClass({
     }
 
     _itemMenuStateChanged(item, opened) {
-        // When the menu closes, it calls sync_hover, which means
-        // that the notify::hover handler does everything we need to.
-        if (opened) {
-            if (this._showLabelTimeoutId > 0) {
-                GLib.source_remove(this._showLabelTimeoutId);
-                this._showLabelTimeoutId = 0;
-            }
+        Dash.Dash.prototype._itemMenuStateChanged.call(this, item, opened);
 
-            item.label.opacity = 0;
-            item.label.hide();
-        }
-        else {
+        if (!opened) {
             // I want to listen from outside when a menu is closed. I used to
             // add a custom signal to the appIcon, since gnome 3.8 the signal
             // calling this callback was added upstream.
             this.emit('menu-closed');
-        }
-    }
-
-    _syncLabel(item, appIcon) {
-        let shouldShow = appIcon ? appIcon.shouldShowTooltip() : item.child.get_hover();
-
-        if (shouldShow) {
-            if (this._showLabelTimeoutId == 0) {
-                let timeout = this._labelShowing ? 0 : DASH_ITEM_HOVER_TIMEOUT;
-                let actor = (item instanceof Clutter.Actor) ? item : item.actor;
-                let destroyId = actor.connect('destroy', () => {
-                    if (this._showLabelTimeoutId)
-                        GLib.source_remove(this._showLabelTimeoutId);
-                });
-                this._showLabelTimeoutId = GLib.timeout_add(
-                    GLib.PRIORITY_DEFAULT, timeout, () => {
-                    this._showLabelTimeoutId = 0;
-                    actor.disconnect(destroyId);
-                    this._labelShowing = true;
-                    item.showLabel();
-                    return GLib.SOURCE_REMOVE;
-                });
-                GLib.Source.set_name_by_id(this._showLabelTimeoutId, '[gnome-shell] item.showLabel');
-                if (this._resetHoverTimeoutId > 0) {
-                    GLib.source_remove(this._resetHoverTimeoutId);
-                    this._resetHoverTimeoutId = 0;
-                }
-            }
-        }
-        else {
-            if (this._showLabelTimeoutId > 0)
-                GLib.source_remove(this._showLabelTimeoutId);
-            this._showLabelTimeoutId = 0;
-            item.hideLabel();
-            if (this._labelShowing) {
-                this._resetHoverTimeoutId = GLib.timeout_add(
-                    GLib.PRIORITY_DEFAULT, DASH_ITEM_HOVER_TIMEOUT, () => {
-                    this._labelShowing = false;
-                    this._resetHoverTimeoutId = 0;
-                    return GLib.SOURCE_REMOVE;
-                });
-                GLib.Source.set_name_by_id(this._resetHoverTimeoutId, '[gnome-shell] this._labelShowing');
-            }
         }
     }
 
@@ -595,8 +576,7 @@ var MyDash = GObject.registerClass({
         // the animation)
         let iconChildren = this._box.get_children().filter(function(actor) {
             return actor.child &&
-                   actor.child._delegate &&
-                   actor.child._delegate.icon &&
+                   !!actor.child.icon &&
                    !actor.animatingOut;
         });
 
@@ -626,19 +606,19 @@ var MyDash = GObject.registerClass({
         let spacing = themeNode.get_length('spacing');
 
         let firstButton = iconChildren[0].child;
-        let firstIcon = firstButton._delegate.icon;
+        let firstIcon = firstButton.icon;
 
-        let minHeight, natHeight, minWidth, natWidth;
+        // if no icons there's nothing to adjust
+        if (!firstIcon)
+        	return;
 
         // Enforce the current icon size during the size request
         firstIcon.setIconSize(this.iconSize);
-        [minHeight, natHeight] = firstButton.get_preferred_height(-1);
-        [minWidth, natWidth] = firstButton.get_preferred_width(-1);
+        let [, natHeight] = firstButton.get_preferred_height(-1);
+        let [, natWidth] = firstButton.get_preferred_width(-1);
 
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let iconSizes = this._availableIconSizes.map(function(s) {
-            return s * scaleFactor;
-        });
+        let iconSizes = this._availableIconSizes.map(s => s * scaleFactor);
 
         // Subtract icon padding and box spacing from the available height
         if (this._isHorizontal)
@@ -666,7 +646,7 @@ var MyDash = GObject.registerClass({
 
         let scale = oldIconSize / newIconSize;
         for (let i = 0; i < iconChildren.length; i++) {
-            let icon = iconChildren[i].child._delegate.icon;
+            let icon = iconChildren[i].child.icon || iconChildren[i].icon;
 
             // Set the new size immediately, to keep the icons' sizes
             // in sync with this.iconSize
@@ -686,7 +666,6 @@ var MyDash = GObject.registerClass({
             icon.icon.set_size(icon.icon.width * scale,
                                icon.icon.height * scale);
 
-            icon.icon.remove_all_transitions();
             icon.icon.ease({
                 width: targetWidth,
                 height: targetHeight,
@@ -714,12 +693,11 @@ var MyDash = GObject.registerClass({
 
         let children = this._box.get_children().filter(function(actor) {
             return actor.child &&
-                   actor.child._delegate &&
-                   actor.child._delegate.app;
+                   !!actor.child.app;
         });
         // Apps currently in the dash
         let oldApps = children.map(function(actor) {
-            return actor.child._delegate.app;
+            return actor.child.app;
         });
         // Apps supposed to be in the dash
         let newApps = [];
@@ -831,7 +809,7 @@ var MyDash = GObject.registerClass({
             // App moved
             let insertHere = newApps[newIndex + 1] && (newApps[newIndex + 1] == oldApps[oldIndex]);
             let alreadyRemoved = removedActors.reduce(function(result, actor) {
-                let removedApp = actor.child._delegate.app;
+                let removedApp = actor.child.app;
                 return result || removedApp == newApps[newIndex];
             }, false);
 
@@ -947,8 +925,7 @@ var MyDash = GObject.registerClass({
     resetAppIcons() {
         let children = this._box.get_children().filter(function(actor) {
             return actor.child &&
-                actor.child._delegate &&
-                actor.child._delegate.icon;
+                   !!actor.child.icon;
         });
         for (let i = 0; i < children.length; i++) {
             let item = children[i];
@@ -959,168 +936,6 @@ var MyDash = GObject.registerClass({
         this._shownInitially = false;
         this._redisplay();
 
-    }
-
-    _clearDragPlaceholder() {
-        if (this._dragPlaceholder) {
-            this._animatingPlaceholdersCount++;
-            this._dragPlaceholder.animateOutAndDestroy();
-            this._dragPlaceholder.connect('destroy', () => {
-                this._animatingPlaceholdersCount--;
-            });
-            this._dragPlaceholder = null;
-        }
-        this._dragPlaceholderPos = -1;
-    }
-
-    _clearEmptyDropTarget() {
-        if (this._emptyDropTarget) {
-            this._emptyDropTarget.animateOutAndDestroy();
-            this._emptyDropTarget = null;
-        }
-    }
-
-    handleDragOver(source, actor, x, y, time) {
-        let app = Dash.getAppFromSource(source);
-
-        // Don't allow favoriting of transient apps
-        if (app == null || app.is_window_backed())
-            return DND.DragMotionResult.NO_DROP;
-
-        if (!this._shellSettings.is_writable('favorite-apps') ||
-            !Docking.DockManager.settings.get_boolean('show-favorites'))
-            return DND.DragMotionResult.NO_DROP;
-
-        let favorites = AppFavorites.getAppFavorites().getFavorites();
-        let numFavorites = favorites.length;
-
-        let favPos = favorites.indexOf(app);
-
-        let children = this._box.get_children();
-        let numChildren = children.length;
-        let boxHeight = 0;
-        for (let i = 0; i < numChildren; i++)
-            boxHeight += this._isHorizontal?children[i].width:children[i].height;
-
-        // Keep the placeholder out of the index calculation; assuming that
-        // the remove target has the same size as "normal" items, we don't
-        // need to do the same adjustment there.
-        if (this._dragPlaceholder) {
-            boxHeight -= this._isHorizontal?this._dragPlaceholder.width:this._dragPlaceholder.height;
-            numChildren--;
-        }
-
-        let pos;
-        if (!this._emptyDropTarget) {
-            pos = Math.floor((this._isHorizontal?x:y) * numChildren / boxHeight);
-            if (pos >  numChildren)
-                pos = numChildren;
-        }
-        else
-            pos = 0; // always insert at the top when dash is empty
-
-        // Take into account childredn position in rtl
-        if (this._isHorizontal && (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL))
-            pos = numChildren - pos;
-
-        if ((pos != this._dragPlaceholderPos) && (pos <= numFavorites) && (this._animatingPlaceholdersCount == 0)) {
-            this._dragPlaceholderPos = pos;
-
-            // Don't allow positioning before or after self
-            if ((favPos != -1) && (pos == favPos || pos == favPos + 1)) {
-                this._clearDragPlaceholder();
-                return DND.DragMotionResult.CONTINUE;
-            }
-
-            // If the placeholder already exists, we just move
-            // it, but if we are adding it, expand its size in
-            // an animation
-            let fadeIn;
-            if (this._dragPlaceholder) {
-                this._dragPlaceholder.destroy();
-                fadeIn = false;
-            }
-            else
-                fadeIn = true;
-
-            this._dragPlaceholder = new Dash.DragPlaceholderItem();
-            this._dragPlaceholder.child.set_width (this.iconSize);
-            this._dragPlaceholder.child.set_height (this.iconSize / 2);
-            this._box.insert_child_at_index(this._dragPlaceholder,
-                                            this._dragPlaceholderPos);
-            this._dragPlaceholder.show(fadeIn);
-            // Ensure the next and previous icon are visible when moving the placeholder
-            // (I assume there's room for both of them)
-            if (this._dragPlaceholderPos > 1)
-                ensureActorVisibleInScrollView(this._scrollView, this._box.get_children()[this._dragPlaceholderPos-1]);
-            if (this._dragPlaceholderPos < this._box.get_children().length-1)
-                ensureActorVisibleInScrollView(this._scrollView, this._box.get_children()[this._dragPlaceholderPos+1]);
-        }
-
-        // Remove the drag placeholder if we are not in the
-        // "favorites zone"
-        if (pos > numFavorites)
-            this._clearDragPlaceholder();
-
-        if (!this._dragPlaceholder)
-            return DND.DragMotionResult.NO_DROP;
-
-        let srcIsFavorite = (favPos != -1);
-
-        if (srcIsFavorite)
-            return DND.DragMotionResult.MOVE_DROP;
-
-        return DND.DragMotionResult.COPY_DROP;
-    }
-
-    /**
-     * Draggable target interface
-     */
-    acceptDrop(source, actor, x, y, time) {
-        let app = Dash.getAppFromSource(source);
-
-        // Don't allow favoriting of transient apps
-        if (app == null || app.is_window_backed())
-            return false;
-
-        if (!this._shellSettings.is_writable('favorite-apps') ||
-            !Docking.DockManager.settings.get_boolean('show-favorites'))
-            return false;
-
-        let id = app.get_id();
-
-        let favorites = AppFavorites.getAppFavorites().getFavoriteMap();
-
-        let srcIsFavorite = (id in favorites);
-
-        let favPos = 0;
-        let children = this._box.get_children();
-        for (let i = 0; i < this._dragPlaceholderPos; i++) {
-            if (this._dragPlaceholder && (children[i] == this._dragPlaceholder))
-                continue;
-
-            let childId = children[i].child._delegate.app.get_id();
-            if (childId == id)
-                continue;
-            if (childId in favorites)
-                favPos++;
-        }
-
-        // No drag placeholder means we don't wan't to favorite the app
-        // and we are dragging it to its original position
-        if (!this._dragPlaceholder)
-            return true;
-
-        Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
-            let appFavorites = AppFavorites.getAppFavorites();
-            if (srcIsFavorite)
-                appFavorites.moveFavoriteToPos(id, favPos);
-            else
-                appFavorites.addFavoriteAtPos(id, favPos);
-            return false;
-        });
-
-        return true;
     }
 
     get showAppsButton() {

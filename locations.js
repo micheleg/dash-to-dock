@@ -15,6 +15,8 @@ const N__ = function(e) { return e };
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 
+const UPDATE_TRASH_DELAY = 500;
+
 /**
  * This class maintains a Shell.App representing the Trash and keeps it
  * up-to-date as the trash fills and is emptied over time.
@@ -34,7 +36,8 @@ var Trash = class DashToDock_Trash {
         }
         this._lastEmpty = true;
         this._empty = true;
-        this._onTrashChange();
+        this._schedUpdateId = 0;
+        this._updateTrash();
     }
 
     destroy() {
@@ -46,6 +49,18 @@ var Trash = class DashToDock_Trash {
     }
 
     _onTrashChange() {
+        if (this._schedUpdateId) {
+            GLib.source_remove(this._schedUpdateId);
+        }
+        this._schedUpdateId = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, UPDATE_TRASH_DELAY, () => {
+            this._schedUpdateId = 0;
+            this._updateTrash();
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
+    _updateTrash() {
         try {
             let children = this._file.enumerate_children('*', 0, null);
             this._empty = children.next_file(null) == null;
@@ -142,6 +157,9 @@ var Removables = class DashToDock_Removables {
     }
 
     _getWorkingIconName(icon) {
+        if (icon instanceof Gio.EmblemedIcon) {
+            icon = icon.get_icon();
+        }
         if (icon instanceof Gio.ThemedIcon) {
             let iconTheme = Gtk.IconTheme.get_default();
             let names = icon.get_names();

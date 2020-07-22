@@ -193,7 +193,7 @@
     <key type="b" name="show-running">
       <default>true</default>
       <summary>Show running apps</summary>
-      <description>Show or hide running appplications icons in the dash</description>
+      <description>Show or hide running applications icons in the dash</description>
     </key>
     <key type="b" name="isolate-workspaces">
       <default>false</default>
@@ -213,7 +213,7 @@
     <key type="b" name="show-favorites">
       <default>true</default>
       <summary>Show favorites apps</summary>
-      <description>Show or hide favorite appplications icons in the dash</description>
+      <description>Show or hide favorite applications icons in the dash</description>
     </key>
     <key type="b" name="show-trash">
       <default>true</default>
@@ -228,12 +228,12 @@
     <key type="b" name="show-show-apps-button">
       <default>true</default>
       <summary>Show applications button</summary>
-      <description>Show appplications button in the dash</description>
+      <description>Show applications button in the dash</description>
     </key>
     <key type="b" name="show-apps-at-top">
       <default>false</default>
       <summary>Show application button at top</summary>
-      <description>Show appplication button at top of the dash</description>
+      <description>Show application button at top of the dash</description>
     </key>
     <key type="b" name="animate-show-apps">
       <default>true</default>

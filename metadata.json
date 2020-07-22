@@ -1,6 +1,6 @@
 {
 "shell-version": [
-    "3.34"
+    "3.36"
 ],
 "uuid": "dash-to-dock@micxgx.gmail.com",
 "name": "Dash to Dock",
@@ -8,5 +8,5 @@
 "original-author": "micxgx@gmail.com",
 "url": "https://micheleg.github.io/dash-to-dock/",
 "gettext-domain": "dashtodock",
-"version": 67
+"version": 68
 }
