@@ -53,7 +53,6 @@ const scrollAction = {
     SWITCH_WORKSPACE: 2
 };
 
-let recentlyClickedAppLoopId = 0;
 let recentlyClickedApp = null;
 let recentlyClickedAppWindows = null;
 let recentlyClickedAppIndex = 0;
@@ -182,6 +181,12 @@ class MyAppIcon extends Dash.DashIcon {
         let app = Shell.WindowTracker.get_default().get_window_app(metaWin);
         if (app && app.get_id() == this.app.get_id())
             this.onWindowsChanged();
+    }
+
+    vfunc_leave_event(crossingEvent) {
+        let ret = super.vfunc_leave_event(crossingEvent);
+        this._resetRecentlyClickedApp();
+        return ret;
     }
 
     vfunc_scroll_event(scrollEvent) {
@@ -691,19 +696,10 @@ class MyAppIcon extends Dash.DashIcon {
     }
 
     _cycleThroughWindows(reversed) {
-        // Store for a little amount of time last clicked app and its windows
-        // since the order changes upon window interaction
-        let MEMORY_TIME=3000;
-
         let app_windows = this.getInterestingWindows();
 
         if (app_windows.length <1)
             return
-
-        if (recentlyClickedAppLoopId > 0)
-            GLib.source_remove(recentlyClickedAppLoopId);
-        recentlyClickedAppLoopId = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT, MEMORY_TIME, this._resetRecentlyClickedApp);
 
         // If there isn't already a list of windows for the current app,
         // or the stored list is outdated, use the current windows list.
@@ -731,10 +727,7 @@ class MyAppIcon extends Dash.DashIcon {
     }
 
     _resetRecentlyClickedApp() {
-        if (recentlyClickedAppLoopId > 0)
-            GLib.source_remove(recentlyClickedAppLoopId);
-        recentlyClickedAppLoopId=0;
-        recentlyClickedApp =null;
+        recentlyClickedApp = null;
         recentlyClickedAppWindows = null;
         recentlyClickedAppIndex = 0;
         recentlyClickedAppMonitor = -1;
