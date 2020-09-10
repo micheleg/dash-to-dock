@@ -1,7 +1,11 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const Dbusmenu = imports.gi.Dbusmenu;
 const Gio = imports.gi.Gio;
+
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const DbusmenuUtils = Me.imports.dbusmenuUtils;
+
+const Dbusmenu = DbusmenuUtils.haveDBusMenu();
 
 var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
 
@@ -112,7 +116,7 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
             remoteMap.set(appId, remote = Object.assign({}, launcherEntryDefaults));
         }
         for (const name in properties) {
-            if (name === 'quicklist') {
+            if (name === 'quicklist' && Dbusmenu) {
                 const quicklistPath = properties[name].unpack();
                 if (quicklistPath && (!remote._quicklistMenuClient || remote._quicklistMenuClient.dbus_object !== quicklistPath)) {
                     remote.quicklist = null;
