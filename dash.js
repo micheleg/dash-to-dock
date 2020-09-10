@@ -81,12 +81,12 @@ class DashToDock_MyDashActor extends St.Widget {
         this.set_offscreen_redirect(Clutter.OffscreenRedirect.ALWAYS);
     }
 
-    vfunc_allocate(box, flags) {
+    vfunc_allocate(box) {
         let contentBox = this.get_theme_node().get_content_box(box);
         let availWidth = contentBox.x2 - contentBox.x1;
         let availHeight = contentBox.y2 - contentBox.y1;
 
-        this.set_allocation(box, flags);
+        this.set_allocation(box);
 
         let [appIcons, showAppsButton] = this.get_children();
         let [, showAppsNatHeight] = showAppsButton.get_preferred_height(availWidth);
@@ -104,25 +104,25 @@ class DashToDock_MyDashActor extends St.Widget {
             childBox.y1 = contentBox.y1 + offset_y;
             childBox.x2 = contentBox.x2;
             childBox.y2 = contentBox.y2;
-            appIcons.allocate(childBox, flags);
+            appIcons.allocate(childBox);
 
             childBox.y1 = contentBox.y1;
             childBox.x1 = contentBox.x1;
             childBox.x2 = contentBox.x1 + showAppsNatWidth;
             childBox.y2 = contentBox.y1 + showAppsNatHeight;
-            showAppsButton.allocate(childBox, flags);
+            showAppsButton.allocate(childBox);
         } else {
             childBox.x1 = contentBox.x1;
             childBox.y1 = contentBox.y1;
             childBox.x2 = contentBox.x2 - offset_x;
             childBox.y2 = contentBox.y2 - offset_y;
-            appIcons.allocate(childBox, flags);
+            appIcons.allocate(childBox);
 
             childBox.x2 = contentBox.x2;
             childBox.y2 = contentBox.y2;
             childBox.x1 = contentBox.x2 - showAppsNatWidth;
             childBox.y1 = contentBox.y2 - showAppsNatHeight;
-            showAppsButton.allocate(childBox, flags);
+            showAppsButton.allocate(childBox);
         }
     }
 

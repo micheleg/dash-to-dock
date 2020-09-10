@@ -78,9 +78,9 @@ var DashSlideContainer = GObject.registerClass({
         this._slideoutSize = 0; // minimum size when slided out
     }
 
-    vfunc_allocate(box, flags) {
+    vfunc_allocate(box) {
         let contentBox = this.get_theme_node().get_content_box(box);
-        this.set_allocation(box, flags);
+        this.set_allocation(box);
 
         if (this.child == null)
             return;
@@ -116,7 +116,7 @@ var DashSlideContainer = GObject.registerClass({
             childBox.y2 = slideoutSize + this._slidex * (childHeight - slideoutSize);
         }
 
-        this.child.allocate(childBox, flags);
+        this.child.allocate(childBox);
         this.child.set_clip(-childBox.x1, -childBox.y1,
                             -childBox.x1+availWidth, -childBox.y1 + availHeight);
     }
