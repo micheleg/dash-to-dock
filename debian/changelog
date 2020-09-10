@@ -1,3 +1,62 @@
+gnome-shell-extension-ubuntu-dock (68ubuntu20.10.1) UNRELEASED; urgency=medium
+
+  [ Michele Gaio ]
+  * Remove padding the dock ends in panel mode.
+
+  [ Philip Langdale ]
+  * locations: Handle emblemed mount icons
+
+  [ ibaios ]
+  * Added Basque localization.
+
+  [ AsciiWolf ]
+  * Update Czech translation.
+  * appIcons: Fix translatable strings
+  * Update Czech translation.
+
+  [ sorin ]
+  * Fix autohide glitches (#1188)
+
+  [ Ryan Hendrickson ]
+  * appIconIndicators: Rewrite Unity integration
+  * appIcons: Support Unity quicklists
+  * appIconIndicators: Support urgent property
+
+  [ Pedro Paulo ]
+  * Fixes typo on org.gnome.shell.extensions.dash-to-dock
+
+  [ sicklylife.jp ]
+  * Update Japanese translation.
+  * Update Japanese translation.
+
+  [ Yi-Jyun Pan ]
+  * i18n: zh_TW: update and improve translation
+
+  [ Luis López ]
+  * Fixes #1265 - Showing trash icon causes system lock when moving items
+    to trash or empting it.
+
+  [ aimproxy ]
+  * Remove allocation-changed signal
+
+  [ UA27 ]
+  * Fix #1232
+
+  [ Morgan Antonsson ]
+  * Update Swedish translation
+
+  [ Marco Trevisan (Treviño) ]
+  * debian/control: Bump dependency on newer gnome-shell
+  * appIcons: Set dependency on DBusmenu dynamic
+  * docking: Set the dash as the IconAnimator timeline actor
+  * docking: Replace anchor point with clutter translations
+  * docking: Disable the overview misplacement workaround
+  * docking: Make the overview visibleView code working in 3.38
+  * dash, docking: Update allocation method calls signature to upstream
+  * metadata: Add 3.38 to supported versions
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 11 Sep 2020 01:23:57 +0200
+
 gnome-shell-extension-ubuntu-dock (68ubuntu1) groovy; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
