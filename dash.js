@@ -172,7 +172,7 @@ var MyDash = GObject.registerClass({
     }
 }, class DashToDock_MyDash extends St.Bin {
 
-    _init(remoteModel, monitorIndex, iconAnimator) {
+    _init(remoteModel, monitorIndex) {
         // Initialize icon variables and size
         this._maxHeight = -1;
         this.iconSize = Docking.DockManager.settings.get_int('dash-max-icon-size');
@@ -247,7 +247,7 @@ var MyDash = GObject.registerClass({
 
         this._appSystem = Shell.AppSystem.get_default();
 
-        this._iconAnimator = iconAnimator;
+        this.iconAnimator = new Docking.IconAnimator(this);
 
         this._signalsHandler.add([
             this._appSystem,
@@ -298,6 +298,7 @@ var MyDash = GObject.registerClass({
     }
 
     _onDestroy() {
+        this.iconAnimator.destroy();
         this._signalsHandler.destroy();
     }
 
@@ -471,7 +472,7 @@ var MyDash = GObject.registerClass({
 
     _createAppItem(app) {
         let appIcon = new AppIcons.MyAppIcon(this._remoteModel, app,
-            this._monitorIndex, this._iconAnimator);
+            this._monitorIndex, this.iconAnimator);
 
         if (appIcon._draggable) {
             appIcon._draggable.connect('drag-begin', () => {
