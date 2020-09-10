@@ -419,6 +419,11 @@ var DockedDash = GObject.registerClass({
             });
         }
 
+        if (this._position == St.Side.RIGHT)
+            this.connect('notify::width', () => this.translation_x = -this.width);
+        else if (this._position == St.Side.BOTTOM)
+            this.connect('notify::height', () => this.translation_y = -this.height);
+
         // Set initial position
         this._resetPosition();
 
@@ -1082,22 +1087,13 @@ var DockedDash = GObject.registerClass({
         else if ((fraction < 0) || (fraction > 1))
             fraction = 0.95;
 
-        let anchor_point;
-
         if (this._isHorizontal) {
             this.width = Math.round(fraction * workArea.width);
 
-            let pos_y;
-            if (this._position == St.Side.BOTTOM) {
-                pos_y =  this._monitor.y + this._monitor.height;
-                anchor_point = Clutter.Gravity.SOUTH_WEST;
-            }
-            else {
-                pos_y = this._monitor.y;
-                anchor_point = Clutter.Gravity.NORTH_WEST;
-            }
+            let pos_y = this._monitor.y;
+            if (this._position == St.Side.BOTTOM)
+                pos_y += this._monitor.height;
 
-            this.move_anchor_point_from_gravity(anchor_point);
             this.x = workArea.x + Math.round((1 - fraction) / 2 * workArea.width);
             this.y = pos_y;
 
@@ -1113,17 +1109,10 @@ var DockedDash = GObject.registerClass({
         else {
             this.height = Math.round(fraction * workArea.height);
 
-            let pos_x;
-            if (this._position == St.Side.RIGHT) {
-                pos_x =  this._monitor.x + this._monitor.width;
-                anchor_point = Clutter.Gravity.NORTH_EAST;
-            }
-            else {
-                pos_x =  this._monitor.x;
-                anchor_point = Clutter.Gravity.NORTH_WEST;
-            }
+            let pos_x = this._monitor.x;
+            if (this._position == St.Side.RIGHT)
+                pos_x += this._monitor.width;
 
-            this.move_anchor_point_from_gravity(anchor_point);
             this.x = pos_x;
             this.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
 
