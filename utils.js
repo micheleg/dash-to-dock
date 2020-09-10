@@ -281,3 +281,28 @@ function drawRoundedLine(cr, x, y, width, height, isRoundLeft, isRoundRight, str
         cr.setSource(stroke);
     cr.stroke();
 }
+
+/**
+ * Convert a signal handler with n value parameters (that is, excluding the
+ * signal source parameter) to an array of n handlers that are each responsible
+ * for receiving one of the n values and calling the original handler with the
+ * most up-to-date arguments.
+ */
+function splitHandler(handler) {
+    if (handler.length > 30) {
+        throw new Error("too many parameters");
+    }
+    const count = handler.length - 1;
+    let missingValueBits = (1 << count) - 1;
+    const values = Array.from({ length: count });
+    return values.map((_ignored, i) => {
+        const mask = ~(1 << i);
+        return (obj, value) => {
+            values[i] = value;
+            missingValueBits &= mask;
+            if (missingValueBits === 0) {
+                handler(obj, ...values);
+            }
+        };
+    });
+}

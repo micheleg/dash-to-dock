@@ -32,6 +32,7 @@ const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
 const AppIconIndicators = Me.imports.appIconIndicators;
+const DbusmenuUtils = Me.imports.dbusmenuUtils;
 
 let tracker = Shell.WindowTracker.get_default();
 
@@ -74,13 +75,14 @@ let recentlyClickedAppMonitor = -1;
 var MyAppIcon = GObject.registerClass(
 class MyAppIcon extends Dash.DashIcon {
     // settings are required inside.
-    _init(remoteModel, app, monitorIndex) {
+    _init(remoteModel, app, monitorIndex, iconAnimator) {
         super._init(app);
 
         // a prefix is required to avoid conflicting with the parent class variable
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this.remoteModel = remoteModel;
+        this.iconAnimator = iconAnimator;
         this._indicator = null;
 
         let appInfo = app.get_app_info();
@@ -293,7 +295,7 @@ class MyAppIcon extends Dash.DashIcon {
         this._draggable.fakeRelease();
 
         if (!this._menu) {
-            this._menu = new MyAppIconMenu(this);
+            this._menu = new MyAppIconMenu(this, this.remoteModel);
             this._menu.connect('activate-window', (menu, window) => {
                 this.activateWindow(window);
             });
@@ -768,7 +770,7 @@ class MyAppIcon extends Dash.DashIcon {
  */
 const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconMenu {
 
-    constructor(source) {
+    constructor(source, remoteModel) {
         let side = Utils.getPosition();
 
         // Damm it, there has to be a proper way of doing this...
@@ -780,6 +782,33 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
         this._arrowSide = side;
         this._boxPointer._arrowSide = side;
         this._boxPointer._userArrowSide = side;
+
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
+
+        if (remoteModel) {
+            const [onQuicklist, onDynamicSection] = Utils.splitHandler((sender, { quicklist }, dynamicSection) => {
+                dynamicSection.removeAll();
+                if (quicklist) {
+                    quicklist.get_children().forEach(remoteItem =>
+                        dynamicSection.addMenuItem(DbusmenuUtils.makePopupMenuItem(remoteItem, false)));
+                }
+            });
+
+            this._signalsHandler.add([
+                remoteModel.lookupById(this._source.app.id),
+                'quicklist-changed',
+                onQuicklist
+            ], [
+                this,
+                'dynamic-section-changed',
+                onDynamicSection
+            ]);
+        }
+    }
+
+    destroy() {
+        this._signalsHandler.destroy();
+        super.destroy();
     }
 
     _redisplay() {
@@ -805,7 +834,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                 let actions = appInfo.list_actions();
                 if (this._source.app.can_open_new_window() &&
                     actions.indexOf('new-window') == -1) {
-                    this._newWindowMenuItem = this._appendMenuItem(_("New Window"));
+                    this._newWindowMenuItem = this._appendMenuItem(_('New Window'));
                     this._newWindowMenuItem.connect('activate', () => {
                         if (this._source.app.state == Shell.AppState.STOPPED)
                             this._source.animateLaunch();
@@ -820,7 +849,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                 if (AppDisplay.discreteGpuAvailable &&
                     this._source.app.state == Shell.AppState.STOPPED &&
                     actions.indexOf('activate-discrete-gpu') == -1) {
-                    this._onDiscreteGpuMenuItem = this._appendMenuItem(_("Launch using Dedicated Graphics Card"));
+                    this._onDiscreteGpuMenuItem = this._appendMenuItem(_('Launch using Dedicated Graphics Card'));
                     this._onDiscreteGpuMenuItem.connect('activate', () => {
                         if (this._source.app.state == Shell.AppState.STOPPED)
                             this._source.animateLaunch();
@@ -848,13 +877,13 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                     let isFavorite = AppFavorites.getAppFavorites().isFavorite(this._source.app.get_id());
 
                     if (isFavorite) {
-                        let item = this._appendMenuItem(_("Remove from Favorites"));
+                        let item = this._appendMenuItem(_('Remove from Favorites'));
                         item.connect('activate', () => {
                             let favs = AppFavorites.getAppFavorites();
                             favs.removeFavorite(this._source.app.get_id());
                         });
                     } else {
-                        let item = this._appendMenuItem(_("Add to Favorites"));
+                        let item = this._appendMenuItem(_('Add to Favorites'));
                         item.connect('activate', () => {
                             let favs = AppFavorites.getAppFavorites();
                             favs.addFavorite(this._source.app.get_id());
@@ -865,7 +894,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                 if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop') &&
                     !this._source.isLocation()) {
                     this._appendSeparator();
-                    let item = this._appendMenuItem(_("Show Details"));
+                    let item = this._appendMenuItem(_('Show Details'));
                     item.connect('activate', () => {
                         let id = this._source.app.get_id();
                         let args = GLib.Variant.new('(ss)', [id, '']);
@@ -891,9 +920,25 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                 super._redisplay();
         }
 
+        // dynamic menu
+        const items = this._getMenuItems();
+        let i = items.length;
+        if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop')) {
+            i -= 2;
+        }
+        if (global.settings.is_writable('favorite-apps')) {
+            i -= 2;
+        }
+        if (i < 0) {
+            i = 0;
+        }
+        const dynamicSection = new PopupMenu.PopupMenuSection();
+        this.addMenuItem(dynamicSection, i);
+        this.emit('dynamic-section-changed', dynamicSection);
+
         // quit menu
         this._appendSeparator();
-        this._quitfromDashMenuItem = this._appendMenuItem(_("Quit"));
+        this._quitfromDashMenuItem = this._appendMenuItem(_('Quit'));
         this._quitfromDashMenuItem.connect('activate', () => {
             this._source.closeAllWindows();
         });
@@ -911,9 +956,9 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
       if ( windows.length > 0) {
           let quitFromDashMenuText = "";
           if (windows.length == 1)
-              this._quitfromDashMenuItem.label.set_text(_("Quit"));
+              this._quitfromDashMenuItem.label.set_text(_('Quit'));
           else
-              this._quitfromDashMenuItem.label.set_text(_("Quit %d Windows").format(windows.length));
+              this._quitfromDashMenuItem.label.set_text(__('Quit %d Windows').format(windows.length));
 
           this._quitfromDashMenuItem.actor.show();
 
@@ -950,7 +995,11 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
       }
 
       // Update separators
-      this._getMenuItems().forEach(this._updateSeparatorVisibility.bind(this));
+      this._getMenuItems().forEach(item => {
+          if ('label' in item) {
+              this._updateSeparatorVisibility(item);
+          }
+      });
     }
 
     _populateAllWindowMenu(windows) {

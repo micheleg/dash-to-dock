@@ -671,27 +671,26 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         });
         this._notificationBadgeLabel.add_style_class_name('notification-badge');
         this._notificationBadgeLabel.clutter_text.ellipsize = Pango.EllipsizeMode.MIDDLE;
-        this._notificationBadgeCount = 0;
         this._notificationBadgeBin.hide();
 
         this._source._iconContainer.add_child(this._notificationBadgeBin);
         this.updateNotificationBadgeStyle();
 
-        this._remoteEntries = [];
-        this._source.remoteModel.lookupById(this._source.app.id).forEach(
-            (entry) => {
-                this.insertEntryRemote(entry);
-            }
-        );
-
+        const remoteEntry = this._source.remoteModel.lookupById(this._source.app.id);
         this._signalsHandler.add([
-            this._source.remoteModel,
-            'entry-added',
-            this._onLauncherEntryRemoteAdded.bind(this)
+            remoteEntry,
+            ['count-changed', 'count-visible-changed'],
+            (sender, { count, count_visible }) =>
+                this.setNotificationCount(count_visible ? count : 0)
         ], [
-            this._source.remoteModel,
-            'entry-removed',
-            this._onLauncherEntryRemoteRemoved.bind(this)
+            remoteEntry,
+            ['progress-changed', 'progress-visible-changed'],
+            (sender, { progress, progress_visible }) =>
+                this.setProgress(progress_visible ? progress : -1)
+        ], [
+            remoteEntry,
+            'urgent-changed',
+            (sender, { urgent }) => this.setUrgent(urgent)
         ], [
             St.ThemeContext.get_for_stage(global.stage),
             'changed',
@@ -700,24 +699,9 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
             this._source._iconContainer,
             'notify::size',
             this.updateNotificationBadgeStyle.bind(this)
-        ])
-    }
+        ]);
 
-    _onLauncherEntryRemoteAdded(remoteModel, entry) {
-        if (!entry || !entry.appId())
-            return;
-        if (this._source && this._source.app && this._source.app.id == entry.appId()) {
-            this.insertEntryRemote(entry);
-        }
-    }
-
-    _onLauncherEntryRemoteRemoved(remoteModel, entry) {
-        if (!entry || !entry.appId())
-            return;
-
-        if (this._source && this._source.app && this._source.app.id == entry.appId()) {
-            this.removeEntryRemote(entry);
-        }
+        this._isUrgent = false;
     }
 
     updateNotificationBadgeStyle() {
@@ -764,17 +748,14 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         }
     }
 
-    setNotificationBadge(count) {
-        this._notificationBadgeCount = count;
-        let text = this._notificationBadgeCountToText(count);
-        this._notificationBadgeLabel.set_text(text);
-    }
-
-    toggleNotificationBadge(activate) {
-        if (activate && this._notificationBadgeCount > 0)
+    setNotificationCount(count) {
+        if (count > 0) {
+            let text = this._notificationBadgeCountToText(count);
+            this._notificationBadgeLabel.set_text(text);
             this._notificationBadgeBin.show();
-        else
+        } else {
             this._notificationBadgeBin.hide();
+        }
     }
 
     _showProgressOverlay() {
@@ -881,80 +862,29 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
     }
 
     setProgress(progress) {
-        this._progress = Math.min(Math.max(progress, 0.0), 1.0);
-        this._updateProgressOverlay();
-    }
-
-    toggleProgressOverlay(activate) {
-        if (activate) {
+        if (progress < 0) {
+            this._hideProgressOverlay();
+        } else {
+            this._progress = Math.min(progress, 1.0);
             this._showProgressOverlay();
         }
-        else {
-            this._hideProgressOverlay();
-        }
     }
 
-    insertEntryRemote(remote) {
-        if (!remote || this._remoteEntries.indexOf(remote) !== -1)
-            return;
-
-        this._remoteEntries.push(remote);
-        this._selectEntryRemote(remote);
-    }
-
-    removeEntryRemote(remote) {
-        if (!remote || this._remoteEntries.indexOf(remote) == -1)
-            return;
-
-        this._remoteEntries.splice(this._remoteEntries.indexOf(remote), 1);
-
-        if (this._remoteEntries.length > 0) {
-            this._selectEntryRemote(this._remoteEntries[this._remoteEntries.length-1]);
+    setUrgent(urgent) {
+        const icon = this._source.icon._iconBin;
+        if (urgent) {
+            if (!this._isUrgent) {
+                icon.set_pivot_point(0.5, 0.5);
+                this._source.iconAnimator.addAnimation(icon, 'dance');
+                this._isUrgent = true;
+            }
         } else {
-            this.setNotificationBadge(0);
-            this.toggleNotificationBadge(false);
-            this.setProgress(0);
-            this.toggleProgressOverlay(false);
+            if (this._isUrgent) {
+                this._source.iconAnimator.removeAnimation(icon, 'dance');
+                this._isUrgent = false;
+            }
+            icon.rotation_angle_z = 0;
         }
-    }
-
-    _selectEntryRemote(remote) {
-        if (!remote)
-            return;
-
-        this._signalsHandler.removeWithLabel('entry-remotes');
-
-        this._signalsHandler.addWithLabel('entry-remotes',
-        [
-            remote,
-            'count-changed',
-            (remote, value) => {
-                this.setNotificationBadge(value);
-            }
-        ], [
-            remote,
-            'count-visible-changed',
-            (remote, value) => {
-                this.toggleNotificationBadge(value);
-            }
-        ], [
-            remote,
-            'progress-changed',
-            (remote, value) => {
-                this.setProgress(value);
-            }
-        ], [
-            remote,
-            'progress-visible-changed',
-            (remote, value) => {
-                this.toggleProgressOverlay(value);
-            }
-        ]);
-
-        this.setNotificationBadge(remote.count());
-        this.toggleNotificationBadge(remote.countVisible());
-        this.setProgress(remote.progress());
-        this.toggleProgressOverlay(remote.progressVisible());
     }
 }
 
