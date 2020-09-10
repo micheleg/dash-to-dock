@@ -1,6 +1,7 @@
 {
 "shell-version": [
-    "3.36"
+    "3.36",
+    "3.38"
 ],
 "uuid": "ubuntu-dock@ubuntu.com",
 "name": "Ubuntu Dock",
