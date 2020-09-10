@@ -1857,24 +1857,23 @@ var DockManager = class DashToDock_DockManager {
         let selector = Main.overview.viewSelector;
 
         if (selector._showAppsButton.checked !== button.checked) {
-            // find visible view
             let visibleView;
-            Main.overview.viewSelector.appDisplay._views.every(function(v, index) {
-                if (v.view.visible) {
-                    visibleView = index;
-                    return false;
-                }
-                else
-                    return true;
-            });
+            let overviewViews = Main.overview.viewSelector.appDisplay._views;
+
+            if (overviewViews) {
+                // find visible view in gnome-shell pre 3.38
+                visibleView = overviewViews.find(v => v.view.visible);
+                visibleView = visibleView ? visibleView.view : null;
+            } else {
+                visibleView = Main.overview.viewSelector.appDisplay;
+            }
 
             if (button.checked) {
                 // force spring animation triggering.By default the animation only
                 // runs if we are already inside the overview.
                 if (!Main.overview._shown) {
                     this._forcedOverview = true;
-                    let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
-                    let grid = view._grid;
+                    let grid = visibleView._grid;
                     if (animate) {
                         // Animate in the the appview, hide the appGrid to avoiud flashing
                         // Go to the appView before entering the overview, skipping the workspaces.
@@ -1919,8 +1918,7 @@ var DockManager = class DashToDock_DockManager {
                         // Manually trigger springout animation without activating the
                         // workspaceView to avoid the zoomout animation. Hide the appPage
                         // onComplete to avoid ugly flashing of original icons.
-                        let view = Main.overview.viewSelector.appDisplay._views[visibleView].view;
-                        view.animate(IconGrid.AnimationDirection.OUT, () => {
+                        visibleView.animate(IconGrid.AnimationDirection.OUT, () => {
                             Main.overview.viewSelector._appsPage.hide();
                             Main.overview.hide();
                             selector._showAppsButton.checked = false;
