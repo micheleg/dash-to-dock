@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (68ubuntu20.10.1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (68ubuntu20.10.1) groovy; urgency=medium
 
   [ Michele Gaio ]
   * Remove padding the dock ends in panel mode.
@@ -55,7 +55,7 @@ gnome-shell-extension-ubuntu-dock (68ubuntu20.10.1) UNRELEASED; urgency=medium
   * dash, docking: Update allocation method calls signature to upstream
   * metadata: Add 3.38 to supported versions
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 11 Sep 2020 01:23:57 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 11 Sep 2020 01:47:20 +0200
 
 gnome-shell-extension-ubuntu-dock (68ubuntu1) groovy; urgency=medium
 
