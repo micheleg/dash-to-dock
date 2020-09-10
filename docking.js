@@ -1129,8 +1129,8 @@ var DockedDash = GObject.registerClass({
             this._signalsHandler.removeWithLabel('verticalOffsetChecker');
 
             if (extendHeight) {
-                if (overviewControls) {
-                    // This is a workaround for bug #1007
+                if (overviewControls && Main.overview.viewSelector.appDisplay._views) {
+                    // This is a workaround for bug #1007, only in versions before 3.38
                     this._signalsHandler.addWithLabel('verticalOffsetChecker', [
                         overviewControls.layout_manager,
                         'notify::allocation',
