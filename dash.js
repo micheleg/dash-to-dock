@@ -86,7 +86,8 @@ class DashToDock_MyDashActor extends St.Widget {
         let availWidth = contentBox.x2 - contentBox.x1;
         let availHeight = contentBox.y2 - contentBox.y1;
 
-        this.set_allocation(box, flags);
+        Docking.DockManager.useNewAllocation ?
+            this.set_allocation(box) : this.set_allocation(box, flags);
 
         let [appIcons, showAppsButton] = this.get_children();
         let [, showAppsNatHeight] = showAppsButton.get_preferred_height(availWidth);
@@ -104,25 +105,29 @@ class DashToDock_MyDashActor extends St.Widget {
             childBox.y1 = contentBox.y1 + offset_y;
             childBox.x2 = contentBox.x2;
             childBox.y2 = contentBox.y2;
-            appIcons.allocate(childBox, flags);
+            Docking.DockManager.useNewAllocation ?
+                appIcons.allocate(childBox) : appIcons.allocate(childBox, flags);
 
             childBox.y1 = contentBox.y1;
             childBox.x1 = contentBox.x1;
             childBox.x2 = contentBox.x1 + showAppsNatWidth;
             childBox.y2 = contentBox.y1 + showAppsNatHeight;
-            showAppsButton.allocate(childBox, flags);
+            Docking.DockManager.useNewAllocation ?
+                showAppsButton.allocate(childBox) : showAppsButton.allocate(childBox, flags);
         } else {
             childBox.x1 = contentBox.x1;
             childBox.y1 = contentBox.y1;
             childBox.x2 = contentBox.x2 - offset_x;
             childBox.y2 = contentBox.y2 - offset_y;
-            appIcons.allocate(childBox, flags);
+            Docking.DockManager.useNewAllocation ?
+                appIcons.allocate(childBox) : appIcons.allocate(childBox, flags);
 
             childBox.x2 = contentBox.x2;
             childBox.y2 = contentBox.y2;
             childBox.x1 = contentBox.x2 - showAppsNatWidth;
             childBox.y1 = contentBox.y2 - showAppsNatHeight;
-            showAppsButton.allocate(childBox, flags);
+            Docking.DockManager.useNewAllocation ?
+                showAppsButton.allocate(childBox) : showAppsButton.allocate(childBox, flags);
         }
     }
 
