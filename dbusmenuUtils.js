@@ -2,7 +2,7 @@
 
 const Atk = imports.gi.Atk;
 const Clutter = imports.gi.Clutter;
-const Dbusmenu = imports.gi.Dbusmenu;
+let Dbusmenu = null; /* Dynamically imported */
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const St = imports.gi.St;
@@ -34,6 +34,19 @@ const Utils = Me.imports.utils;
 //     have to query these aggressively and not wait for the DBus menu to be
 //     mapped to a popup menu. A shortcut key that only works once the popup
 //     menu is open and has key focus is possibly of marginal value.
+
+function haveDBusMenu() {
+    if (Dbusmenu)
+        return Dbusmenu;
+
+    try {
+        Dbusmenu = imports.gi.Dbusmenu;
+        return Dbusmenu;
+    } catch (e) {
+        log(`Failed to import DBusMenu, quicklists are not avaialble: ${e}`);
+        return null;
+    }
+}
 
 
 function makePopupMenuItem(dbusmenuItem, deep) {

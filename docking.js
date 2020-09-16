@@ -216,10 +216,8 @@ var DockedDash = GObject.registerClass({
         this._dockDwellUserTime = 0;
         this._dockDwellTimeoutId = 0
 
-        this._iconAnimator = new IconAnimator();
-
         // Create a new dash object
-        this.dash = new MyDash.MyDash(this._remoteModel, this._monitorIndex, this._iconAnimator);
+        this.dash = new MyDash.MyDash(this._remoteModel, this._monitorIndex);
 
         if (Main.overview.isDummy || !settings.get_boolean('show-show-apps-button'))
             this.dash.hideShowAppsButton();
@@ -455,8 +453,6 @@ var DockedDash = GObject.registerClass({
 
         // Remove the dashSpacer
         this._dashSpacer.destroy();
-
-        this._iconAnimator.destroy();
     }
 
     _bindSettingsChanges() {
@@ -712,7 +708,7 @@ var DockedDash = GObject.registerClass({
 
     _animateIn(time, delay) {
         this._dockState = State.SHOWING;
-        this._iconAnimator.start();
+        this.dash.iconAnimator.start();
 
       this._slider.ease_property('slidex', 1, {
             duration: time * 1000,
@@ -751,7 +747,7 @@ var DockedDash = GObject.registerClass({
                 if (this._removeBarrierTimeoutId > 0)
                     GLib.source_remove(this._removeBarrierTimeoutId);
                 this._updateBarrier();
-                this._iconAnimator.pause();
+                this.dash.iconAnimator.pause();
             }
         });
     }
@@ -2012,7 +2008,7 @@ Signals.addSignalMethods(DockManager.prototype);
 // This class drives long-running icon animations, to keep them running in sync
 // with each other, and to save CPU by pausing them when the dock is hidden.
 var IconAnimator = class DashToDock_IconAnimator {
-    constructor() {
+    constructor(actor) {
         this._count = 0;
         this._started = false;
         this._animations = {
@@ -2022,6 +2018,11 @@ var IconAnimator = class DashToDock_IconAnimator {
             duration: 3000,
             repeat_count: -1,
         });
+
+        /* Just use the construction property when no need to support 3.36 */
+        if (this._timeline.set_actor)
+            this._timeline.set_actor(actor);
+
         this._timeline.connect('new-frame', () => {
             const progress = this._timeline.get_progress();
             const danceRotation = progress < 1/6 ? 15*Math.sin(progress*24*Math.PI) : 0;

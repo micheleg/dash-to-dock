@@ -785,7 +785,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
-        if (remoteModel) {
+        if (remoteModel && DbusmenuUtils.haveDBusMenu()) {
             const [onQuicklist, onDynamicSection] = Utils.splitHandler((sender, { quicklist }, dynamicSection) => {
                 dynamicSection.removeAll();
                 if (quicklist) {
