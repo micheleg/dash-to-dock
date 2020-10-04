@@ -686,6 +686,7 @@ var DockedDash = GObject.registerClass({
     }
 
     _show() {
+        this._delayedHide = false;
         if ((this._dockState == State.HIDDEN) || (this._dockState == State.HIDING)) {
             if (this._dockState == State.HIDING)
                 // suppress all potential queued transitions - i.e. added but not started,
@@ -718,7 +719,7 @@ var DockedDash = GObject.registerClass({
     _animateIn(time, delay) {
         this._dockState = State.SHOWING;
         this.dash.iconAnimator.start();
-        delete this._delayedHide;
+        this._delayedHide = false;
 
       this._slider.ease_property('slidex', 1, {
             duration: time * 1000,
