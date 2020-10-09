@@ -49,6 +49,11 @@ var ThemeManager = class DashToDock_ThemeManager {
         this._customizedBorder = {red: 0, green: 0, blue: 0, alpha: 0};
         this._transparency = new Transparency(dock);
 
+        this._border_radius = 100;
+        this._floating_margin = 4;
+
+        this._dock_position = 3
+
         this._signalsHandler.add([
             // When theme changes re-obtain default background color
             St.ThemeContext.get_for_stage (global.stage),
@@ -194,16 +199,6 @@ var ThemeManager = class DashToDock_ThemeManager {
             this._actor.add_style_class_name('running-dots');
         else
             this._actor.remove_style_class_name('running-dots');
-
-        // If not the built-in theme option is not selected
-        if (!settings.get_boolean('apply-custom-theme')) {
-            if (settings.get_boolean('force-straight-corner'))
-                this._actor.add_style_class_name('straight-corner');
-            else
-                this._actor.remove_style_class_name('straight-corner');
-        } else {
-            this._actor.remove_style_class_name('straight-corner');
-        }
     }
 
     updateCustomTheme() {
@@ -229,57 +224,39 @@ var ThemeManager = class DashToDock_ThemeManager {
         this._dash._container.set_style(null);
         this._transparency.disable();
 
-        // If built-in theme is enabled do nothing else
-        if (settings.get_boolean('apply-custom-theme'))
-            return;
-
-        let newStyle = '';
-        let position = Utils.getPosition(settings);
-
+        // let position = Utils.getPosition(settings);
+        
         // obtain theme border settings
-        let themeNode = this._dash._container.get_theme_node();
-        let borderColor = themeNode.get_border_color(St.Side.TOP);
-        let borderWidth = themeNode.get_border_width(St.Side.TOP);
-        let borderRadius = themeNode.get_border_radius(St.Corner.TOPRIGHT);
+        // let themeNode = this._dash._container.get_theme_node();
+        // let borderColor = themeNode.get_border_color(St.Side.TOP);
+        
+        this._border_radius = settings.get_int('border-radius');
+        this._floating_margin = settings.get_int('floating-margin');
+        
+        this._dock_position = settings.get_enum('dock-position')
+        let pos_string = ""
 
-        // We're copying border and corner styles to left border and top-left
-        // corner, also removing bottom border and bottom-right corner styles
-        let borderInner = '';
-        let borderRadiusValue = '';
-        let borderMissingStyle = '';
-
-        if (this._rtl && (position != St.Side.RIGHT))
-            borderMissingStyle = 'border-right: ' + borderWidth + 'px solid ' +
-                   borderColor.to_string() + ';';
-        else if (!this._rtl && (position != St.Side.LEFT))
-            borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
-                   borderColor.to_string() + ';';
-
-        switch (position) {
-        case St.Side.LEFT:
-            borderInner = 'border-left';
-            borderRadiusValue = '0 ' + borderRadius + 'px ' + borderRadius + 'px 0;';
-            break;
-        case St.Side.RIGHT:
-            borderInner = 'border-right';
-            borderRadiusValue = borderRadius + 'px 0 0 ' + borderRadius + 'px;';
-            break;
-        case St.Side.TOP:
-            borderInner = 'border-top';
-            borderRadiusValue = '0 0 ' + borderRadius + 'px ' + borderRadius + 'px;';
-            break;
-        case St.Side.BOTTOM:
-            borderInner = 'border-bottom';
-            borderRadiusValue = borderRadius + 'px ' + borderRadius + 'px 0 0;';
-            break;
+        if (this._dock_position == 0) {
+            pos_string = "top";
         }
 
-        newStyle = borderInner + ': none;' +
-            'border-radius: ' + borderRadiusValue +
-            borderMissingStyle;
+        if (this._dock_position == 1) {
+            pos_string = "right";
+        }
 
-        // I do call set_style possibly twice so that only the background gets the transition.
-        // The transition-property css rules seems to be unsupported
+        if (this._dock_position == 2) {
+            pos_string = "bottom";
+        }
+
+        if (this._dock_position == 3) {
+            pos_string = "left";
+        }
+        
+        let newStyle = '';
+        newStyle = 'border: none;' + 
+                   'border-radius: ' + this._border_radius + "px;" +
+                   "margin-" + pos_string + ": " + this._floating_margin + "px; ";
+
         this._dash._container.set_style(newStyle);
 
         // Customize background
@@ -290,25 +267,28 @@ var ThemeManager = class DashToDock_ThemeManager {
         }
         else if (!defaultTransparency || settings.get_boolean('custom-background-color')) {
             newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
-                       'border-color:'+ this._customizedBorder + '; ' +
+                       'border-color: transparent; '+
                        'transition-delay: 0s; transition-duration: 0.250s;';
             this._dash._container.set_style(newStyle);
         }
     }
 
     _bindSettingsChanges() {
-        let keys = ['transparency-mode',
-                    'customize-alphas',
-                    'min-alpha',
-                    'max-alpha',
-                    'background-opacity',
-                    'custom-background-color',
-                    'background-color',
-                    'apply-custom-theme',
-                    'custom-theme-shrink',
-                    'custom-theme-running-dots',
-                    'extend-height',
-                    'force-straight-corner'];
+        let keys = [
+            'transparency-mode',
+            'customize-alphas',
+            'min-alpha',
+            'max-alpha',
+            'background-opacity',
+            'custom-background-color',
+            'background-color',
+            'apply-custom-theme',
+            'custom-theme-shrink',
+            'custom-theme-running-dots',
+            'extend-height',
+            'border-radius',
+            'floating-margin'
+        ];
 
         keys.forEach(function(key) {
             this._signalsHandler.add([

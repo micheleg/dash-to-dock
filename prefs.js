@@ -106,6 +106,9 @@ var Settings = class DashToDock_Settings {
         this._dock_size_timeout = 0;
         this._icon_size_timeout = 0;
         this._opacity_timeout = 0;
+        this._border_radius_timeout = 0;
+        this._floating_margin_timeout = 0;
+
 
         this._bindSettings();
 
@@ -182,6 +185,38 @@ var Settings = class DashToDock_Settings {
                 });
             },
 
+            custom_radius_scale_format_value_cb(scale, value) {
+                return value + ' px'
+            },
+            custom_radius_scale_value_changed_cb(scale) {
+                // Avoid settings the size consinuosly
+                if (this._border_radius_timeout > 0)
+                    GLib.source_remove(this._border_radius_timeout);
+
+                this._border_radius_timeout = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+                    this._settings.set_int('border-radius', scale.get_value());
+                    this._border_radius_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                });
+            },
+
+            custom_margin_scale_format_value_cb(scale, value) {
+                return value + ' px';
+            },
+            custom_margin_scale_value_changed_cb(scale) {
+                // Avoid settings the size consinuosly
+                if (this._floating_margin_timeout > 0)
+                    GLib.source_remove(this._floating_margin_timeout);
+
+                this._floating_margin_timeout = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+                    this._settings.set_int('floating-margin', scale.get_value());
+                    this._floating_margin_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                });
+            },
+
             custom_opacity_scale_value_changed_cb(scale) {
                 // Avoid settings the opacity consinuosly as it's change is animated
                 if (this._opacity_timeout > 0)
@@ -224,6 +259,7 @@ var Settings = class DashToDock_Settings {
             custom_opacity_scale_format_value_cb(scale, value) {
                 return Math.round(value * 100) + ' %';
             },
+
 
             min_opacity_scale_format_value_cb(scale, value) {
                 return Math.round(value * 100) + ' %';
@@ -441,6 +477,8 @@ var Settings = class DashToDock_Settings {
         DEFAULT_ICONS_SIZES.forEach(function(val) {
              icon_size_scale.add_mark(val, Gtk.PositionType.TOP, val.toString());
         });
+
+        this._builder.get_object('')
 
         // Corrent for rtl languages
         if (this._rtl) {
@@ -773,6 +811,11 @@ var Settings = class DashToDock_Settings {
             }
         );
 
+
+        this._builder.get_object('custom_radius_scale').set_value(this._settings.get_int('border-radius'));
+        
+        this._builder.get_object('custom_margin_scale').set_value(this._settings.get_int('floating-margin'));
+
         this._builder.get_object('custom_opacity_scale').set_value(this._settings.get_double('background-opacity'));
 
         if (this._settings.get_enum('transparency-mode') !== TransparencyMode.FIXED)
@@ -797,6 +840,7 @@ var Settings = class DashToDock_Settings {
                 this._builder.get_object('dynamic_opacity_button').set_sensitive(true);
             }
         });
+
 
         // Create dialog for transparency advanced settings
         this._builder.get_object('dynamic_opacity_button').connect('clicked', () => {
@@ -850,10 +894,7 @@ var Settings = class DashToDock_Settings {
             this._builder.get_object('unity_backlit_items_switch'),
             'active', Gio.SettingsBindFlags.DEFAULT
         );
-
-        this._settings.bind('force-straight-corner',
-            this._builder.get_object('force_straight_corner_switch'),
-            'active', Gio.SettingsBindFlags.DEFAULT);
+        
 
         // About Panel
 

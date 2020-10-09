@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.20.0 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.18"/>
   <object class="GtkAdjustment" id="animation_time_adjustment">
@@ -258,10 +258,20 @@
       </packing>
     </child>
   </object>
+  <object class="GtkAdjustment" id="custom_margin_adjustment">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="custom_opacity_adjustement">
     <property name="upper">1</property>
     <property name="step_increment">0.01</property>
     <property name="page_increment">0.10000000000000001</property>
+  </object>
+  <object class="GtkAdjustment" id="custom_radius_adjustment">
+    <property name="upper">100</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
   <object class="GtkAdjustment" id="dock_size_adjustment">
     <property name="lower">0.33000000000000002</property>
@@ -578,6 +588,8 @@
     <property name="margin_right">6</property>
     <property name="margin_top">6</property>
     <property name="margin_bottom">6</property>
+    <property name="tab_pos">left</property>
+    <property name="enable_popup">True</property>
     <child>
       <object class="GtkBox" id="position_and_size">
         <property name="visible">True</property>
@@ -587,7 +599,7 @@
         <property name="margin_top">24</property>
         <property name="margin_bottom">24</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">24</property>
+        <property name="spacing">10</property>
         <child>
           <object class="GtkFrame" id="dock_display">
             <property name="visible">True</property>
@@ -1086,7 +1098,7 @@
         <property name="margin_top">24</property>
         <property name="margin_bottom">24</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">24</property>
+        <property name="spacing">10</property>
         <child>
           <object class="GtkFrame" id="customize_theme1">
             <property name="visible">True</property>
@@ -1459,7 +1471,7 @@
         <property name="margin_top">24</property>
         <property name="margin_bottom">24</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">24</property>
+        <property name="spacing">10</property>
         <child>
           <object class="GtkFrame" id="hot_keys_frame">
             <property name="visible">True</property>
@@ -1832,7 +1844,7 @@
         <property name="margin_top">24</property>
         <property name="margin_bottom">24</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">24</property>
+        <property name="spacing">10</property>
         <child>
           <object class="GtkFrame" id="built_in_theme_frame">
             <property name="visible">True</property>
@@ -1923,7 +1935,7 @@
             <property name="label_xalign">0</property>
             <property name="shadow_type">in</property>
             <child>
-              <object class="GtkListBox" id="listbox2">
+              <object class="GtkListBox" id="customize_theme_list">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="selection_mode">none</property>
@@ -1958,7 +1970,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="hexpand">True</property>
-                            <property name="label" translatable="yes">Save space reducing padding and border radius.</property>
+                            <property name="label" translatable="yes">Remove padding around icons container</property>
                             <property name="xalign">0</property>
                             <style>
                               <class name="dim-label"/>
@@ -1974,7 +1986,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="hexpand">True</property>
-                            <property name="label" translatable="yes">Shrink the dash</property>
+                            <property name="label" translatable="yes">Padding</property>
                             <property name="xalign">0</property>
                           </object>
                           <packing>
@@ -2095,7 +2107,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="hexpand">True</property>
-                            <property name="label" translatable="yes">Set the background color for the dash.</property>
+                            <property name="label" translatable="yes">Set the background color for the dock.</property>
                             <property name="wrap">True</property>
                             <property name="xalign">0</property>
                             <style>
@@ -2187,7 +2199,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <property name="hexpand">True</property>
-                                <property name="label" translatable="yes">Tune the dash background opacity.</property>
+                                <property name="label" translatable="yes">Tune the background opacity.</property>
                                 <property name="xalign">0</property>
                                 <style>
                                   <class name="dim-label"/>
@@ -2279,7 +2291,7 @@
                             <property name="margin_right">12</property>
                             <property name="margin_top">12</property>
                             <property name="margin_bottom">12</property>
-                            <property name="spacing">32</property>
+                            <property name="spacing">10</property>
                             <child>
                               <object class="GtkLabel" id="custom_opacity_label">
                                 <property name="visible">True</property>
@@ -2324,43 +2336,108 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkListBoxRow" id="listboxrow_rnd_border">
-                    <property name="width_request">100</property>
-                    <property name="height_request">80</property>
+                  <object class="GtkListBoxRow" id="custom_theme_scales">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="boxtheme">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="spacing">32</property>
+                        <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkLabel" id="force_straight_corner_label">
+                          <object class="GtkBox" id="custom_radius">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="valign">center</property>
-                            <property name="xpad">12</property>
-                            <property name="label" translatable="yes">Force straight corner</property>
-                            <property name="xalign">0</property>
-                          </object>
-                          <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSwitch" id="force_straight_corner_switch">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="valign">center</property>
-                            <property name="margin_left">3</property>
+                            <property name="margin_left">12</property>
+                            <property name="margin_right">12</property>
+                            <property name="margin_top">12</property>
+                            <property name="margin_bottom">12</property>
+                            <property name="spacing">10</property>
+                            <child>
+                              <object class="GtkLabel" id="custom_radius_label">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Roundness</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkScale" id="custom_radius_scale">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="adjustment">custom_radius_adjustment</property>
+                                <property name="lower_stepper_sensitivity">on</property>
+                                <property name="restrict_to_fill_level">False</property>
+                                <property name="fill_level">0</property>
+                                <property name="round_digits">0</property>
+                                <property name="digits">0</property>
+                                <property name="value_pos">right</property>
+                                <signal name="format-value" handler="custom_radius_scale_format_value_cb" swapped="no"/>
+                                <signal name="value-changed" handler="custom_radius_scale_value_changed_cb" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="padding">12</property>
                             <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkBox" id="custom_margin">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="margin_left">12</property>
+                            <property name="margin_right">12</property>
+                            <property name="margin_top">12</property>
+                            <property name="margin_bottom">12</property>
+                            <property name="spacing">10</property>
+                            <child>
+                              <object class="GtkLabel" id="custom_margin_label">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Floating margin </property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkScale" id="custom_margin_scale">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="adjustment">custom_margin_adjustment</property>
+                                <property name="lower_stepper_sensitivity">on</property>
+                                <property name="restrict_to_fill_level">False</property>
+                                <property name="fill_level">0</property>
+                                <property name="round_digits">0</property>
+                                <property name="digits">0</property>
+                                <property name="value_pos">right</property>
+                                <signal name="format-value" handler="custom_margin_scale_format_value_cb" swapped="no"/>
+                                <signal name="value-changed" handler="custom_margin_scale_value_changed_cb" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">2</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">2</property>
                           </packing>
                         </child>
                       </object>
@@ -2408,7 +2485,7 @@
           <object class="GtkImage" id="logo">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="pixbuf">./media/logo.svg</property>
+            <property name="pixbuf">media/logo.svg</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -2421,7 +2498,7 @@
           <object class="GtkLabel" id="extension_name">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label">&lt;b&gt;Dash to Dock&lt;/b&gt;</property>
+            <property name="label">&lt;b&gt;Floating Dock&lt;/b&gt;</property>
             <property name="use_markup">True</property>
           </object>
           <packing>
@@ -2472,7 +2549,7 @@
           <object class="GtkLabel" id="extension_description">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="label" translatable="yes">Moves the dash out of the overview transforming it in a dock</property>
+            <property name="label" translatable="yes">An minimalist dash to dock</property>
             <property name="justify">center</property>
             <property name="wrap">True</property>
           </object>
@@ -2492,7 +2569,7 @@
               <object class="GtkLabel" id="label15">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Created by</property>
+                <property name="label" translatable="yes">Fork made by</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -2504,7 +2581,7 @@
               <object class="GtkLabel" id="label16">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="label">Michele (&lt;a href="mailto:micxgx@gmail.com"&gt;micxgx@gmail.com&lt;/a&gt;)</property>
+                <property name="label">Fernando Ferreira (&lt;a href="https://twitter.com/nando_ferreira2"&gt;Twitter&lt;/a&gt;)</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -2521,27 +2598,11 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLinkButton" id="homepage_link">
-            <property name="label" translatable="yes">Webpage</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="events"/>
-            <property name="halign">center</property>
-            <property name="relief">none</property>
-            <property name="uri">https://micheleg.github.io/dash-to-dock/</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">5</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkLabel" id="label1">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="valign">end</property>
+            <property name="margin_top">10</property>
             <property name="label" translatable="yes">&lt;span size="small"&gt;This program comes with ABSOLUTELY NO WARRANTY.
 See the &lt;a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;GNU General Public License, version 2 or later&lt;/a&gt; for details.&lt;/span&gt;</property>
             <property name="use_markup">True</property>
@@ -2549,9 +2610,49 @@ See the &lt;a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;G
             <property name="wrap">True</property>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">6</property>
+            <property name="pack_type">end</property>
+            <property name="position">5</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="box5">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="halign">center</property>
+            <property name="spacing">5</property>
+            <child>
+              <object class="GtkLabel" id="label5">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Original Dash to dock By</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label6">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="label">Michele (&lt;a href="mailto:micxgx@gmail.com"&gt;micxgx@gmail.com&lt;/a&gt;)</property>
+                <property name="use_markup">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">7</property>
           </packing>
         </child>
       </object>
@@ -2653,54 +2754,6 @@ See the &lt;a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;G
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox" id="min_alpha_box">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="margin_left">12</property>
-                        <property name="margin_right">12</property>
-                        <property name="margin_top">12</property>
-                        <property name="margin_bottom">12</property>
-                        <property name="spacing">32</property>
-                        <child>
-                          <object class="GtkLabel" id="min_alpha_label">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Minimum opacity</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkScale" id="min_alpha_scale">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="adjustment">min_opacity_adjustement</property>
-                            <property name="lower_stepper_sensitivity">on</property>
-                            <property name="restrict_to_fill_level">False</property>
-                            <property name="fill_level">0</property>
-                            <property name="round_digits">0</property>
-                            <property name="digits">2</property>
-                            <property name="value_pos">right</property>
-                            <signal name="format-value" handler="min_opacity_scale_format_value_cb" swapped="no"/>
-                            <signal name="value-changed" handler="min_opacity_scale_value_changed_cb" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkBox" id="max_alpha_box">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -2734,6 +2787,54 @@ See the &lt;a href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"&gt;G
                             <property name="value_pos">right</property>
                             <signal name="format-value" handler="max_opacity_scale_format_value_cb" swapped="no"/>
                             <signal name="value-changed" handler="max_opacity_scale_value_changed_cb" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="min_alpha_box">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="margin_left">12</property>
+                        <property name="margin_right">12</property>
+                        <property name="margin_top">12</property>
+                        <property name="margin_bottom">12</property>
+                        <property name="spacing">32</property>
+                        <child>
+                          <object class="GtkLabel" id="min_alpha_label">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Minimum opacity</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkScale" id="min_alpha_scale">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">min_opacity_adjustement</property>
+                            <property name="lower_stepper_sensitivity">on</property>
+                            <property name="restrict_to_fill_level">False</property>
+                            <property name="fill_level">0</property>
+                            <property name="round_digits">0</property>
+                            <property name="digits">2</property>
+                            <property name="value_pos">right</property>
+                            <signal name="format-value" handler="min_opacity_scale_format_value_cb" swapped="no"/>
+                            <signal name="value-changed" handler="min_opacity_scale_value_changed_cb" swapped="no"/>
                           </object>
                           <packing>
                             <property name="expand">True</property>

@@ -27,27 +27,14 @@
     border-bottom: 0px;
 }
 
-#dashtodockContainer.straight-corner #dash,
-#dashtodockContainer.shrink.straight-corner #dash {
-    border-radius: 0px;
-}
 
 /* for the built-in theme only, we control border radius directly for each
 position. In the other cases the border are taken dynamically from the theme */
-#dashtodockContainer.dashtodock.top #dash {
-    border-radius: 0px 0px 9px 9px;
-}
-
-#dashtodockContainer.dashtodock.bottom #dash {
-    border-radius: 9px 9px 0px 0px;
-}
-
-#dashtodockContainer.dashtodock.left #dash {
-    border-radius: 0px 9px 9px 0px;
-}
-
+#dashtodockContainer.dashtodock.top #dash,
+#dashtodockContainer.dashtodock.bottom #dash,
+#dashtodockContainer.dashtodock.left #dash,
 #dashtodockContainer.dashtodock.right #dash {
-    border-radius: 9px 0px 0px 9px;
+    border-radius: 9px;
 }
 
 /* Scrollview style */
@@ -73,12 +60,11 @@ position. In the other cases the border are taken dynamically from the theme */
 }
 
 /* Dash height extended to the whole available vertical space */
-#dashtodockContainer.extended.top #dash,
+/* #dashtodockContainer.extended.top #dash,
 #dashtodockContainer.extended.right #dash,
-#dashtodockContainer.extended.bottom #dash,
-#dashtodockContainer.extended.left #dash {
-    border-radius: 0;
-}
+#dashtodockContainer.extended.bottom #dash, */
+/* #dashtodockContainer.extended.left #dash { */
+/* } */
 
 #dashtodockContainer.extended.top #dash,
 #dashtodockContainer.extended.bottom #dash {
@@ -114,10 +100,9 @@ position. In the other cases the border are taken dynamically from the theme */
 }
 
 #dashtodockContainer.dashtodock .progress-bar {
-    /* Customization of the progress bar style, e.g.:
-      -progress-bar-background: rgba(0.8, 0.8, 0.8, 1);
-      -progress-bar-border: rgba(0.9, 0.9, 0.9, 1);
-    */
+    /* Customization of the progress bar style, e.g.: */
+    -progress-bar-background: rgba(0.8, 0.8, 0.8, 1);
+    -progress-bar-border: rgba(0.9, 0.9, 0.9, 1);
 }
 
 #dashtodockContainer.top #dash .placeholder,
