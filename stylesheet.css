@@ -1,7 +1,7 @@
 /* Shrink the dash by reducing padding */
 #dashtodockContainer.shrink #dash,
 #dashtodockContainer.dashtodock #dash {
-    border:1px;
+    border:0px;
     padding:0px;
 }
 
