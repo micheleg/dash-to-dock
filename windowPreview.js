@@ -320,13 +320,15 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this._window = window;
         this._destroyId = 0;
         this._windowAddedId = 0;
+        [this._width, this._height, this._scale] = this._getWindowPreviewSize(); // This gets the actual windows size for the preview
 
         // We don't want this: it adds spacing on the left of the item.
         this.remove_child(this._ornamentLabel);
         this.add_style_class_name('dashtodock-app-well-preview-menu-item');
 
+        // Now we don't have to set PREVIEW_MAX_WIDTH and PREVIEW_MAX_HEIGHT as preview size - that made all kinds of windows either stretched or squished (aspect ratio problem)
         this._cloneBin = new St.Bin();
-        this._cloneBin.set_size(PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT);
+        this._cloneBin.set_size(this._width*this._scale, this._height*this._scale);
 
         // TODO: improve the way the closebutton is layout. Just use some padding
         // for the moment.
@@ -370,6 +372,13 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this.connect('destroy', this._onDestroy.bind(this));
     }
 
+    _getWindowPreviewSize() {
+        let mutterWindow = this._window.get_compositor_private();
+        let [width, height] = mutterWindow.get_size();
+        let scale = Math.min(1.0, PREVIEW_MAX_WIDTH/width, PREVIEW_MAX_HEIGHT/height);
+        return [width, height, scale];
+    }
+
     _cloneTexture(metaWin){
 
         let mutterWindow = metaWin.get_compositor_private();
@@ -390,12 +399,10 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             return;
         }
 
-        let [width, height] = mutterWindow.get_size();
-        let scale = Math.min(1.0, PREVIEW_MAX_WIDTH/width, PREVIEW_MAX_HEIGHT/height);
         let clone = new Clutter.Clone ({ source: mutterWindow,
                                          reactive: true,
-                                         width: width * scale,
-                                         height: height * scale });
+                                         width: this._width * this._scale,
+                                         height: this._height * this._scale });
 
         // when the source actor is destroyed, i.e. the window closed, first destroy the clone
         // and then destroy the menu item (do this animating out)
