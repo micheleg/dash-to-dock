@@ -345,7 +345,7 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this.closeButton.opacity = 0;
         this.closeButton.connect('clicked', this._closeWindow.bind(this));
 
-        let overlayGroup = new Clutter.Actor({layout_manager: new Clutter.BinLayout() });
+        let overlayGroup = new Clutter.Actor({layout_manager: new Clutter.BinLayout(), y_expand: true });
 
         overlayGroup.add_actor(this._cloneBin);
         overlayGroup.add_actor(this.closeButton);
