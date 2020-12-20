@@ -932,7 +932,7 @@ var DockedDash = GObject.registerClass({
 
         // In case the mouse move away from the dock area before hovering it, in such case the leave event
         // would never be triggered and the dock would stay visible forever.
-        this._triggerTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => { 
+        this._triggerTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => {
             if (!this._isPointerInZone()) {
                 this._hoverChanged();
                 return GLib.SOURCE_REMOVE;
@@ -1893,27 +1893,20 @@ var DockManager = class DashToDock_DockManager {
                     this._forcedOverview = true;
                     let grid = visibleView._grid;
                     if (animate) {
-                        // Animate in the the appview, hide the appGrid to avoiud flashing
-                        // Go to the appView before entering the overview, skipping the workspaces.
-                        // Do this manually avoiding opacity in transitions so that the setting of the opacity
-                        // to 0 doesn't get overwritten.
-                        Main.overview.viewSelector._activePage.opacity = 0;
-                        Main.overview.viewSelector._activePage.hide();
-                        Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
-                        Main.overview.viewSelector._activePage.show();
-                        grid.opacity = 0;
-
                         // The animation has to be trigered manually because the AppDisplay.animate
                         // method is waiting for an allocation not happening, as we skip the workspace view
                         // and the appgrid could already be allocated from previous shown.
                         // It has to be triggered after the overview is shown as wrong coordinates are obtained
                         // otherwise.
-                        let overviewShownId = Main.overview.connect('shown', () => {
-                            Main.overview.disconnect(overviewShownId);
-                            Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
-                                grid.opacity = 255;
-                                grid.animateSpring(IconGrid.AnimationDirection.IN, this.mainDock.dash.showAppsButton);
-                            });
+
+                        // There was another issue in gnome 3.38 causing flickering every time using the previous
+                        // workaround. Because it is no longer needed, only the part that prevents it from freezing
+                        // on first opening is used.
+
+                        Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
+                        Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
+                            grid.opacity = 255;
+                            grid.animateSpring(IconGrid.AnimationDirection.IN, this.mainDock.dash.showAppsButton);
                         });
                     }
                     else {
