@@ -86,6 +86,7 @@
                           <item translatable="yes">Show window previews</item>
                           <item translatable="yes">Minimize or show previews</item>
                           <item translatable="yes">Focus or show previews</item>
+                          <item translatable="yes">Focus, minimize or show previews</item>
                           <item translatable="yes">Quit</item>
                         </items>
                       </object>
@@ -159,6 +160,7 @@
                           <item translatable="yes">Show window previews</item>
                           <item translatable="yes">Minimize or show previews</item>
                           <item translatable="yes">Focus or show previews</item>
+                          <item translatable="yes">Focus, minimize or show previews</item>
                           <item translatable="yes">Quit</item>
                         </items>
                       </object>
@@ -232,6 +234,7 @@
                           <item translatable="yes">Show window previews</item>
                           <item translatable="yes">Minimize or show previews</item>
                           <item translatable="yes">Focus or show previews</item>
+                          <item translatable="yes">Focus, minimize or show previews</item>
                           <item translatable="yes">Quit</item>
                         </items>
                       </object>
@@ -1677,6 +1680,7 @@
                                   <item translatable="yes">Show window previews</item>
                                   <item translatable="yes">Minimize or show previews</item>
                                   <item translatable="yes">Focus or show previews</item>
+                                  <item translatable="yes">Focus, minimize or show previews</item>
                                 </items>
                               </object>
                               <packing>

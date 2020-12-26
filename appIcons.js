@@ -45,7 +45,8 @@ const clickAction = {
     PREVIEWS: 5,
     MINIMIZE_OR_PREVIEWS: 6,
     FOCUS_OR_PREVIEWS: 7,
-    QUIT: 8,
+    FOCUS_MINIMIZE_OR_PREVIEWS: 8,
+    QUIT: 9
 };
 
 const scrollAction = {
@@ -455,6 +456,19 @@ class MyAppIcon extends Dash.DashIcon {
                 if (this.app == focusedApp &&
                     (windows.length > 1 || modifiers || button != 1)) {
                     this._windowPreviews();
+                } else {
+                    // Activate the first window
+                    let w = windows[0];
+                    Main.activateWindow(w);
+                }
+                break;
+
+            case clickAction.FOCUS_MINIMIZE_OR_PREVIEWS:
+                if (this.app == focusedApp) {
+                    if (windows.length > 1 || modifiers || button != 1)
+                        this._windowPreviews();
+                    else if (!Main.overview.visible)
+                        this._minimizeWindow();
                 } else {
                     // Activate the first window
                     let w = windows[0];
