@@ -632,11 +632,12 @@ var DockedDash = GObject.registerClass({
                 this._ignoreHover = false;
                 // Do not hide if autohide is enabled and mouse is hover
                 if (!this._box.hover || !this._autohideIsEnabled)
-                    this._hide();
+                    this._animateOut(settings.get_double('animation-time'), 0);
             }
             else {
                 this._ignoreHover = true;
-                this._show();
+                this._removeAnimations();
+                this._animateIn(settings.get_double('animation-time'), 0);
             }
         }
         else {
@@ -668,16 +669,16 @@ var DockedDash = GObject.registerClass({
     }
 
     _hoverChanged() {
-        // Skip if dock is not in autohide mode for instance because it is shown by intellihide or
-        // if the dock's `_ignoreHover` value is set to true.
-        if (this._ignoreHover || !this._autohideIsEnabled) {
-            return;
+        if (!this._ignoreHover) {
+            // Skip if dock is not in autohide mode for instance because it is shown
+            // by intellihide.
+            if (this._autohideIsEnabled) {
+                if (this._box.hover)
+                    this._show();
+                else
+                    this._hide();
+            }
         }
-
-        if (this._triggerTimeoutId)
-            this._isPointerInZone() || this._box.hover ? this._show() : this._hide();
-        else
-            this._box.hover ? this._show() : this._hide();
     }
 
     getDockState() {
@@ -685,9 +686,7 @@ var DockedDash = GObject.registerClass({
     }
 
     _show() {
-        // Remove any delayed hide animation.
-        delete this._delayedHide;
-
+        this._delayedHide = false;
         if ((this._dockState == State.HIDDEN) || (this._dockState == State.HIDING)) {
             if (this._dockState == State.HIDING)
                 // suppress all potential queued transitions - i.e. added but not started,
@@ -720,6 +719,7 @@ var DockedDash = GObject.registerClass({
     _animateIn(time, delay) {
         this._dockState = State.SHOWING;
         this.dash.iconAnimator.start();
+        this._delayedHide = false;
 
       this._slider.ease_property('slidex', 1, {
             duration: time * 1000,
@@ -737,9 +737,7 @@ var DockedDash = GObject.registerClass({
                     this._removeBarrierTimeoutId = GLib.timeout_add(
                         GLib.PRIORITY_DEFAULT, 100, this._removeBarrier.bind(this));
                 } else {
-                    // If an animate-out transition was delayed, check if
-                    // it is still necessary.
-                    this._hoverChanged();
+                    this._hide();
                 }
             }
         });
@@ -879,51 +877,6 @@ var DockedDash = GObject.registerClass({
     }
 
     /**
-     * Returns whether the global pointer is considered inside of the dock
-     * area or not.
-     */
-    _isPointerInZone() {
-        let [x, y, mods] = global.get_pointer();
-
-            switch (this._position) {
-            case St.Side.LEFT:
-                if (x <= this.staticBox.x2 &&
-                    x >= this._monitor.x &&
-                    y >= this._monitor.y &&
-                    y <= this._monitor.y + this._monitor.height) {
-                    return true;
-                }
-                break;
-            case St.Side.RIGHT:
-                if (x >= this.staticBox.x1 &&
-                    x <= this._monitor.x + this._monitor.width &&
-                    y >= this._monitor.y &&
-                    y <= this._monitor.y + this._monitor.height) {
-                    return true;
-                }
-                break;
-            case St.Side.TOP:
-                if (x >= this._monitor.x &&
-                    x <= this._monitor.x + this._monitor.width &&
-                    y <= this.staticBox.y2 &&
-                    y >= this._monitor.y) {
-                    return true;
-                }
-                break;
-            case St.Side.BOTTOM:
-                if (x >= this._monitor.x &&
-                    x <= this._monitor.x + this._monitor.width &&
-                    y >= this.staticBox.y1 &&
-                    y <= this._monitor.y + this._monitor.height) {
-                    return true;
-                }
-                break;
-            }
-
-        return false;
-    }
-
-    /**
      * handler for mouse pressure sensed
      */
     _onPressureSensed() {
@@ -932,14 +885,52 @@ var DockedDash = GObject.registerClass({
 
         // In case the mouse move away from the dock area before hovering it, in such case the leave event
         // would never be triggered and the dock would stay visible forever.
-        this._triggerTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => { 
-            if (!this._isPointerInZone()) {
+        let triggerTimeoutId =  GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => {
+            triggerTimeoutId = 0;
+
+            let [x, y, mods] = global.get_pointer();
+            let shouldHide = true;
+            switch (this._position) {
+            case St.Side.LEFT:
+                if (x <= this.staticBox.x2 &&
+                    x >= this._monitor.x &&
+                    y >= this._monitor.y &&
+                    y <= this._monitor.y + this._monitor.height) {
+                    shouldHide = false;
+                }
+                break;
+            case St.Side.RIGHT:
+                if (x >= this.staticBox.x1 &&
+                    x <= this._monitor.x + this._monitor.width &&
+                    y >= this._monitor.y &&
+                    y <= this._monitor.y + this._monitor.height) {
+                    shouldHide = false;
+                }
+                break;
+            case St.Side.TOP:
+                if (x >= this._monitor.x &&
+                    x <= this._monitor.x + this._monitor.width &&
+                    y <= this.staticBox.y2 &&
+                    y >= this._monitor.y) {
+                    shouldHide = false;
+                }
+                break;
+            case St.Side.BOTTOM:
+                if (x >= this._monitor.x &&
+                    x <= this._monitor.x + this._monitor.width &&
+                    y >= this.staticBox.y1 &&
+                    y <= this._monitor.y + this._monitor.height) {
+                    shouldHide = false;
+                }
+            }
+            if (shouldHide) {
                 this._hoverChanged();
                 return GLib.SOURCE_REMOVE;
             }
             else {
                 return GLib.SOURCE_CONTINUE;
             }
+
         });
 
         this._show();
