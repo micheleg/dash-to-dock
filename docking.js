@@ -2024,7 +2024,7 @@ var IconAnimator = class DashToDock_IconAnimator {
             const danceRotation = progress < 1/6 ? 15*Math.sin(progress*24*Math.PI) : 0;
             const dancers = this._animations.dance;
             for (let i = 0, iMax = dancers.length; i < iMax; i++) {
-                dancers[i].rotation_angle_z = danceRotation;
+                dancers[i].target.rotation_angle_z = danceRotation;
             }
         });
     }
@@ -2032,6 +2032,13 @@ var IconAnimator = class DashToDock_IconAnimator {
     destroy() {
         this._timeline.stop();
         this._timeline = null;
+        for (const name in this._animations) {
+            const pairs = this._animations[name];
+            for (let i = 0, iMax = pairs.length; i < iMax; i++) {
+                const pair = pairs[i];
+                pair.target.disconnect(pair.targetDestroyId);
+            }
+        }
         this._animations = null;
     }
 
@@ -2050,7 +2057,8 @@ var IconAnimator = class DashToDock_IconAnimator {
     }
 
     addAnimation(target, name) {
-        this._animations[name].push(target);
+        const targetDestroyId = target.connect('destroy', () => this.removeAnimation(target, name));
+        this._animations[name].push({ target, targetDestroyId });
         if (this._started && this._count === 0) {
             this._timeline.start();
         }
@@ -2058,12 +2066,17 @@ var IconAnimator = class DashToDock_IconAnimator {
     }
 
     removeAnimation(target, name) {
-        const index = this._animations[name].indexOf(target);
-        if (index >= 0) {
-            this._animations[name].splice(index, 1);
-            this._count--;
-            if (this._started && this._count === 0) {
-                this._timeline.stop();
+        const pairs = this._animations[name];
+        for (let i = 0, iMax = pairs.length; i < iMax; i++) {
+            const pair = pairs[i];
+            if (pair.target === target) {
+                target.disconnect(pair.targetDestroyId);
+                pairs.splice(i, 1);
+                this._count--;
+                if (this._started && this._count === 0) {
+                    this._timeline.stop();
+                }
+                return;
             }
         }
     }
