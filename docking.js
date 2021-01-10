@@ -1883,36 +1883,18 @@ var DockManager = class DashToDock_DockManager {
                 if (!Main.overview._shown) {
                     this._forcedOverview = true;
                     let grid = visibleView._grid;
-                    if (animate) {
-                        // Animate in the the appview, hide the appGrid to avoiud flashing
-                        // Go to the appView before entering the overview, skipping the workspaces.
-                        // Do this manually avoiding opacity in transitions so that the setting of the opacity
-                        // to 0 doesn't get overwritten.
-                        Main.overview.viewSelector._activePage.opacity = 0;
-                        Main.overview.viewSelector._activePage.hide();
-                        Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
-                        Main.overview.viewSelector._activePage.show();
-                        grid.opacity = 0;
 
-                        // The animation has to be trigered manually because the AppDisplay.animate
-                        // method is waiting for an allocation not happening, as we skip the workspace view
-                        // and the appgrid could already be allocated from previous shown.
-                        // It has to be triggered after the overview is shown as wrong coordinates are obtained
-                        // otherwise.
+                    if (animate) {
+                        // hide app grid until animation end
+                        grid.opacity = 0;
                         let overviewShownId = Main.overview.connect('shown', () => {
                             Main.overview.disconnect(overviewShownId);
-                            Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
-                                grid.opacity = 255;
-                                grid.animateSpring(IconGrid.AnimationDirection.IN, this.mainDock.dash.showAppsButton);
+                            selector.appDisplay.animate(
+                                IconGrid.AnimationDirection.IN, () => {
+                                    grid.opacity = 255;
                             });
                         });
                     }
-                    else {
-                        Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
-                        Main.overview.viewSelector._activePage.show();
-                        grid.opacity = 255;
-                    }
-
                 }
 
                 // Finally show the overview
