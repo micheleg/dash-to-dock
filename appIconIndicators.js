@@ -938,11 +938,14 @@ var DominantColorExtractor = class DashToDock_DominantColorExtractor {
         }
 
         // Get the pixel buffer from the icon theme
-        let icon_info = themeLoader.lookup_icon(iconTexture.get_names()[0], DOMINANT_COLOR_ICON_SIZE, 0);
-        if (icon_info !== null)
-            return icon_info.load_icon();
-        else
-            return null;
+        // sometime function  iconTexture.get_names does not exist:  JS ERROR: TypeError: iconTexture.get_names is not a function
+        if (iconTexture.get_names) {
+            let icon_info = themeLoader.lookup_icon(iconTexture.get_names()[0], DOMINANT_COLOR_ICON_SIZE, 0);
+            if (icon_info !== null)
+                return icon_info.load_icon();
+            else
+                return null;
+        }
     }
 
     /**
