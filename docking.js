@@ -31,6 +31,8 @@ const FileManager1API = Me.imports.fileManager1API;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 
+let USE_NEW_ALLOCATION;
+
 var State = {
     HIDDEN:  0,
     SHOWING: 1,
@@ -80,7 +82,9 @@ var DashSlideContainer = GObject.registerClass({
 
     vfunc_allocate(box) {
         let contentBox = this.get_theme_node().get_content_box(box);
-        this.set_allocation(box);
+
+        DockManager.useNewAllocation ?
+            this.set_allocation(box) : this.set_allocation(box, flags);
 
         if (this.child == null)
             return;
@@ -116,7 +120,9 @@ var DashSlideContainer = GObject.registerClass({
             childBox.y2 = slideoutSize + this._slidex * (childHeight - slideoutSize);
         }
 
-        this.child.allocate(childBox);
+        DockManager.useNewAllocation ?
+            this.child.allocate(childBox) : this.child.allocate(childBox, flags);
+
         this.child.set_clip(-childBox.x1, -childBox.y1,
                             -childBox.x1+availWidth, -childBox.y1 + availHeight);
     }
@@ -1129,7 +1135,7 @@ var DockedDash = GObject.registerClass({
             this._signalsHandler.removeWithLabel('verticalOffsetChecker');
 
             if (extendHeight) {
-                if (overviewControls && Main.overview.viewSelector.appDisplay._views) {
+                if (overviewControls && !DockManager.useNewAllocation) {
                     // This is a workaround for bug #1007, only in versions before 3.38
                     this._signalsHandler.addWithLabel('verticalOffsetChecker', [
                         overviewControls.layout_manager,
@@ -1655,6 +1661,18 @@ var DockManager = class DashToDock_DockManager {
 
     static get settings() {
         return DockManager.getDefault()._settings;
+    }
+
+    static get useNewAllocation() {
+        /* Remove this when version prior to 3.38 are not supported anymore */
+        if (USE_NEW_ALLOCATION === undefined) {
+            /* We only support 3.36 and 3.38 right now, so no much to check */
+            USE_NEW_ALLOCATION = ExtensionUtils.versionCheck(
+                ['3.37.91', '3.37.92', '3.38'],
+                imports.misc.config.PACKAGE_VERSION);
+        }
+
+        return USE_NEW_ALLOCATION;
     }
 
     get fm1Client() {
