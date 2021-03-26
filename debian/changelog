@@ -1,3 +1,46 @@
+gnome-shell-extension-ubuntu-dock (69ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * appIcons: Set dependency on DBusmenu dynamic
+  * docking: Set the dash as the IconAnimator timeline actor
+  * Makefile: Include dbusmenuUtils.js
+  * docking: Replace anchor point with clutter translations
+  * docking: Disable the overview misplacement workaround
+  * docking: Make the overview visibleView code working in 3.38
+  * dash, docking: Update allocation method calls signature to upstream
+  * DockManager: Make allocation code to work in both 3.38 and 3.36
+  * metadata: Add 3.38 to supported versions
+
+  [ Mike DePaulo ]
+  * Update to latest wording of the GPLv2 license
+
+  [ UA27 ]
+  * Fix autohide glitches explainations
+
+  [ Недко Николов ]
+  * Fix getWindows for a location in the dock
+  * Make sure that location doesn't end with a '/'
+
+  [ Michele Gaio ]
+  * Bump version (v69).
+  * Revert "Fix #1232".
+  * Fix #1232 again.
+
+  [ Jan Němec ]
+  * windowPreviews now scale properly
+  * windowPreviews are now properly Y-centered on horizontal docks
+
+  [ l3nn4rt ]
+  * appIcons: Add 'Focus, minimize or show previews'
+
+  [ Michael Suhodolov ]
+  * Fix flickering on show-apps (LP: #11919972)
+
+  [ Ryan Hendrickson ]
+  * Do not animate disposed icons (LP: #1905519)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 26 Mar 2021 07:53:28 +0100
+
 gnome-shell-extension-ubuntu-dock (68ubuntu20.10.1) groovy; urgency=medium
 
   [ Michele Gaio ]
