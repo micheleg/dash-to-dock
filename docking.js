@@ -15,7 +15,7 @@ const Overview = imports.ui.overview;
 const OverviewControls = imports.ui.overviewControls;
 const PointerWatcher = imports.ui.pointerWatcher;
 const Signals = imports.signals;
-const ViewSelector = imports.ui.viewSelector;
+const SearchController = imports.ui.searchController;
 const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
 const Layout = imports.ui.layout;
 const LayoutManager = imports.ui.main.layoutManager;
@@ -30,8 +30,6 @@ const LauncherAPI = Me.imports.launcherAPI;
 const FileManager1API = Me.imports.fileManager1API;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
-
-let USE_NEW_ALLOCATION;
 
 var State = {
     HIDDEN:  0,
@@ -83,8 +81,7 @@ var DashSlideContainer = GObject.registerClass({
     vfunc_allocate(box, flags) {
         let contentBox = this.get_theme_node().get_content_box(box);
 
-        DockManager.useNewAllocation ?
-            this.set_allocation(box) : this.set_allocation(box, flags);
+        this.set_allocation(box);
 
         if (this.child == null)
             return;
@@ -120,8 +117,7 @@ var DashSlideContainer = GObject.registerClass({
             childBox.y2 = slideoutSize + this._slidex * (childHeight - slideoutSize);
         }
 
-        DockManager.useNewAllocation ?
-            this.child.allocate(childBox) : this.child.allocate(childBox, flags);
+        this.child.allocate(childBox);
 
         this.child.set_clip(-childBox.x1, -childBox.y1,
                             -childBox.x1+availWidth, -childBox.y1 + availHeight);
@@ -302,13 +298,8 @@ var DockedDash = GObject.registerClass({
                 'hiding',
                 this._onOverviewHiding.bind(this)
             ], [
-                // Hide on appview
-                Main.overview.viewSelector,
-                'page-changed',
-                this._pageChanged.bind(this)
-            ], [
                 // Ensure the ShowAppsButton status is kept in sync
-                Main.overview.viewSelector._showAppsButton,
+                Main.overview._overview.controls._searchController._showAppsButton,
                 'notify::checked',
                 this._syncShowAppsButtonToggled.bind(this)
             ]);
@@ -338,28 +329,9 @@ var DockedDash = GObject.registerClass({
          // Delay operations that require the shell to be fully loaded and with
          // user theme applied.
 
-        this._paintId = this.connect('paint', this._initialize.bind(this));
+        this._paintId = global.stage.connect('after-paint', this._initialize.bind(this));
 
-        // Manage the  which is used to reserve space in the overview for the dock
-        // Add and additional dashSpacer positioned according to the dash positioning.
-        // It gets restored on extension unload.
-        this._dashSpacer = new OverviewControls.DashSpacer();
-        this._dashSpacer.setDashActor(this._box);
 
-        if (!Main.overview.isDummy) {
-            const overviewActor = Main.overview._overview;
-            if (this._position == St.Side.LEFT)
-                overviewActor._controls._group.insert_child_at_index(this._dashSpacer, this._rtl ? -1 : 0); // insert on first
-            else if (this._position ==  St.Side.RIGHT)
-                overviewActor._controls._group.insert_child_at_index(this._dashSpacer, this._rtl ? 0 : -1); // insert on last
-            else if (this._position == St.Side.TOP)
-                overviewActor.insert_child_at_index(this._dashSpacer, 0);
-            else if (this._position == St.Side.BOTTOM)
-                overviewActor.insert_child_at_index(this._dashSpacer, -1);
-
-            if (this._isHorizontal)
-                this._dashSpacer.visible = true;
-        }
 
         // Add dash container actor and the container to the Chrome.
         this.set_child(this._slider);
@@ -405,17 +377,12 @@ var DockedDash = GObject.registerClass({
 
     _initialize() {
         if (this._paintId > 0) {
-            this.disconnect(this._paintId);
-            this._paintId=0;
+            global.stage.disconnect(this._paintId);
+            this._paintId = 0;
         }
 
         // Apply custome css class according to the settings
         this._themeManager.updateCustomTheme();
-
-        // Since Gnome 3.8 dragging an app without having opened the overview before cause the attemp to
-        //animate a null target since some variables are not initialized when the viewSelector is created
-        if (!Main.overview.isDummy && Main.overview.viewSelector._activePage == null)
-            Main.overview.viewSelector._activePage = Main.overview.viewSelector._workspacesPage;
 
         this._updateVisibilityMode();
 
@@ -423,7 +390,6 @@ var DockedDash = GObject.registerClass({
         // for instance on unlocking the screen if it was locked with the overview open.
         if (Main.overview.visibleTarget) {
             this._onOverviewShowing();
-            this._pageChanged();
         }
 
         // Setup pressure barrier (GS38+ only)
@@ -461,9 +427,6 @@ var DockedDash = GObject.registerClass({
             PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
             this._dockWatch = null;
         }
-
-        // Remove the dashSpacer
-        this._dashSpacer.destroy();
     }
 
     _bindSettingsChanges() {
@@ -643,7 +606,6 @@ var DockedDash = GObject.registerClass({
         else {
             if (this._autohideIsEnabled) {
                 this._ignoreHover = false;
-                global.sync_pointer();
 
                 if (this._box.hover)
                     this._animateIn(settings.get_double('animation-time'), 0);
@@ -1036,13 +998,6 @@ var DockedDash = GObject.registerClass({
         // fixed dock.
         let workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitorIndex);
 
-        // Reserve space for the dash on the overview
-        // if the dock is on the primary monitor
-        if (this._isPrimaryMonitor())
-            this._dashSpacer.show();
-        else
-            // No space is required in the overview of the dash
-            this._dashSpacer.hide();
 
         let fraction = DockManager.settings.get_double('height-fraction');
 
@@ -1093,31 +1048,9 @@ var DockedDash = GObject.registerClass({
             this._signalsHandler.removeWithLabel('verticalOffsetChecker');
 
             if (extendHeight) {
-                if (overviewControls && !DockManager.useNewAllocation) {
-                    // This is a workaround for bug #1007, only in versions before 3.38
-                    this._signalsHandler.addWithLabel('verticalOffsetChecker', [
-                        overviewControls.layout_manager,
-                        'notify::allocation',
-                        () => {
-                            let [, y] = overviewControls.get_transformed_position();
-                            let [, height] = overviewControls.get_transformed_size();
-                            let monitor = Main.layoutManager.primaryMonitor;
-                            let contentY2 = y + height;
-                            let offset = Math.max(0, contentY2 - (monitor.y + monitor.height));
-
-                            if (this._marginLater)
-                                Meta.later_remove(this._marginLater);
-                            this._marginLater = Meta.later_add(
-                                Meta.LaterType.BEFORE_REDRAW, () => {
-                                    Main.overview.viewSelector.margin_bottom = offset;
-                                });
-                        }]);
-                }
-
                 this.dash._container.set_height(this.height);
                 this.add_style_class_name('extended');
-            }
-            else {
+            } else {
                 this.dash._container.set_height(-1);
                 this.remove_style_class_name('extended');
             }
@@ -1150,19 +1083,6 @@ var DockedDash = GObject.registerClass({
             this._ignoreHover  = this._oldignoreHover;
         this._oldignoreHover = null;
         this._box.sync_hover();
-        if (Main.overview._shown)
-            this._pageChanged();
-    }
-
-    _pageChanged() {
-        let activePage = Main.overview.viewSelector.getActivePage();
-        let dashVisible = (activePage == ViewSelector.ViewPage.WINDOWS ||
-                           activePage == ViewSelector.ViewPage.APPS);
-
-        if (dashVisible)
-            this._animateIn(DockManager.settings.get_double('animation-time'), 0);
-        else
-            this._animateOut(DockManager.settings.get_double('animation-time'), 0);
     }
 
     /**
@@ -1177,7 +1097,7 @@ var DockedDash = GObject.registerClass({
      * Keep ShowAppsButton status in sync with the overview status
      */
     _syncShowAppsButtonToggled() {
-        let status = Main.overview.viewSelector._showAppsButton.checked;
+        let status = Main.overview._overview.controls._searchController._showAppsButton.checked;
         if (this.dash.showAppsButton.checked !== status)
             this.dash.showAppsButton.checked = status;
     }
@@ -1231,8 +1151,8 @@ var DockedDash = GObject.registerClass({
 
         // This was inspired to desktop-scroller@obsidien.github.com
         function onScrollEvent(actor, event) {
-            // When in overview change workscape only in windows view
-            if (Main.overview.visible && Main.overview.viewSelector.getActivePage() !== ViewSelector.ViewPage.WINDOWS)
+            // When in overview change workspace only in windows view
+            if (Main.overview.visible)
                 return false;
 
             let activeWs = global.workspace_manager.get_active_workspace();
@@ -1621,18 +1541,6 @@ var DockManager = class DashToDock_DockManager {
         return DockManager.getDefault()._settings;
     }
 
-    static get useNewAllocation() {
-        /* Remove this when version prior to 3.38 are not supported anymore */
-        if (USE_NEW_ALLOCATION === undefined) {
-            /* We only support 3.36 and 3.38 right now, so no much to check */
-            USE_NEW_ALLOCATION = ExtensionUtils.versionCheck(
-                ['3.37.91', '3.37.92', '3.38'],
-                imports.misc.config.PACKAGE_VERSION);
-        }
-
-        return USE_NEW_ALLOCATION;
-    }
-
     get fm1Client() {
         return this._fm1Client;
     }
@@ -1811,11 +1719,11 @@ var DockManager = class DashToDock_DockManager {
         let overviewControls = Main.overview._overview._controls;
         overviewControls.dash = this.mainDock.dash;
 
-        if (!this.mainDock.dash._isHorizontal && !this._oldDashSpacer) {
-            this._oldDashSpacer = overviewControls._dashSpacer;
-            overviewControls._group.remove_child(this._oldDashSpacer);
-            overviewControls._dashSpacer = this.mainDock._dashSpacer;
-        }
+        // if (!this.mainDock.dash._isHorizontal && !this._oldDashSpacer) {
+        //     this._oldDashSpacer = overviewControls._dashSpacer;
+        //     overviewControls._group.remove_child(this._oldDashSpacer);
+        //     overviewControls._dashSpacer = this.mainDock._dashSpacer;
+        // }
     }
 
     _deleteDocks() {
@@ -1842,11 +1750,6 @@ var DockManager = class DashToDock_DockManager {
         this._signalsHandler.removeWithLabel('old-dash-changes');
 
         let overviewControls = Main.overview._overview._controls;
-        if (!!this._oldDashSpacer) {
-            overviewControls._dashSpacer = this._oldDashSpacer;
-            overviewControls._group.insert_child_at_index(this._oldDashSpacer, 0);
-            this._oldDashSpacer = null;
-        }
 
         overviewControls.dash = this._oldDash;
         Main.overview.dash.show();
@@ -1861,88 +1764,18 @@ var DockManager = class DashToDock_DockManager {
         // application button, cutomize the behaviour. Otherwise the shell has changed the
         // status (due to the _syncShowAppsButtonToggled function below) and it
         // has already performed the desired action.
-
-        let animate = this._settings.get_boolean('animate-show-apps');
-        let selector = Main.overview.viewSelector;
+        let selector = Main.overview._overview.controls._searchController;
 
         if (selector._showAppsButton.checked !== button.checked) {
-            let visibleView;
-            let overviewViews = Main.overview.viewSelector.appDisplay._views;
-
-            if (overviewViews) {
-                // find visible view in gnome-shell pre 3.38
-                visibleView = overviewViews.find(v => v.view.visible);
-                visibleView = visibleView ? visibleView.view : null;
-            } else {
-                visibleView = Main.overview.viewSelector.appDisplay;
-            }
 
             if (button.checked) {
-                // force spring animation triggering.By default the animation only
-                // runs if we are already inside the overview.
-                if (!Main.overview._shown) {
-                    this._forcedOverview = true;
-                    let grid = visibleView._grid;
-                    if (animate) {
-                        // The animation has to be trigered manually because the AppDisplay.animate
-                        // method is waiting for an allocation not happening, as we skip the workspace view
-                        // and the appgrid could already be allocated from previous shown.
-                        // It has to be triggered after the overview is shown as wrong coordinates are obtained
-                        // otherwise.
-
-                        // There was another issue in gnome 3.38 causing flickering every time using the previous
-                        // workaround. Because it is no longer needed, only the part that prevents it from freezing
-                        // on first opening is used.
-
-                        Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
-                        Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
-                            grid.opacity = 255;
-                            grid.animateSpring(IconGrid.AnimationDirection.IN, this.mainDock.dash.showAppsButton);
-                        });
-                    }
-                    else {
-                        Main.overview.viewSelector._activePage = Main.overview.viewSelector._appsPage;
-                        Main.overview.viewSelector._activePage.show();
-                        grid.opacity = 255;
-                    }
-
-                }
-
                 // Finally show the overview
                 selector._showAppsButton.checked = true;
                 Main.overview.show();
-            }
-            else {
-                if (this._forcedOverview) {
-                    // force exiting overview if needed
-
-                    if (animate) {
-                        // Manually trigger springout animation without activating the
-                        // workspaceView to avoid the zoomout animation. Hide the appPage
-                        // onComplete to avoid ugly flashing of original icons.
-                        visibleView.animate(IconGrid.AnimationDirection.OUT, () => {
-                            Main.overview.viewSelector._appsPage.hide();
-                            Main.overview.hide();
-                            selector._showAppsButton.checked = false;
-                            this._forcedOverview = false;
-                        });
-                    }
-                    else {
-                        Main.overview.hide();
-                        this._forcedOverview = false;
-                    }
-                }
-                else {
-                    selector._showAppsButton.checked = false;
-                    this._forcedOverview = false;
-                }
+            } else {
+                selector._showAppsButton.checked = false;
             }
         }
-
-        // whenever the button is unactivated even if not by the user still reset the
-        // forcedOverview flag
-        if (button.checked == false)
-            this._forcedOverview = false;
     }
 
     destroy() {
@@ -1955,7 +1788,7 @@ var DockManager = class DashToDock_DockManager {
         this._deleteDocks();
         this._revertPanelCorners();
         if (this._oldSelectorMargin)
-            Main.overview.viewSelector.margin_bottom = this._oldSelectorMargin;
+            Main.overview._overview.controls._searchController.margin_bottom = this._oldSelectorMargin;
         if (this._fm1Client) {
             this._fm1Client.destroy();
             this._fm1Client = null;
@@ -2006,11 +1839,8 @@ var IconAnimator = class DashToDock_IconAnimator {
         this._timeline = new Clutter.Timeline({
             duration: 3000,
             repeat_count: -1,
+            actor
         });
-
-        /* Just use the construction property when no need to support 3.36 */
-        if (this._timeline.set_actor)
-            this._timeline.set_actor(actor);
 
         this._timeline.connect('new-frame', () => {
             const progress = this._timeline.get_progress();

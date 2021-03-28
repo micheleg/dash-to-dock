@@ -825,11 +825,6 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
         super.destroy();
     }
 
-    _redisplay() {
-        // This will be removed by 3.36.1
-        return this._rebuildMenu();
-    }
-
     _rebuildMenu() {
         this.removeAll();
 
@@ -1184,11 +1179,6 @@ var MyShowAppsIcon = GObject.registerClass({
  * A menu for the showAppsIcon
  */
 var MyShowAppsIconMenu = class DashToDock_MyShowAppsIconMenu extends MyAppIconMenu {
-    _redisplay() {
-        // This will be removed by 3.36.1
-        return this._rebuildMenu();
-    }
-
     _rebuildMenu() {
         this.removeAll();
 
