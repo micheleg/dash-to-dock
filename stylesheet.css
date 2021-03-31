@@ -1,52 +1,52 @@
 /* Shrink the dash by reducing padding */
-#dashtodockContainer.shrink #dash,
-#dashtodockContainer.dashtodock #dash {
+#dashtodockContainer.shrink #dash .dash-background,
+#dashtodockContainer.dashtodock #dash .dash-background {
     border:1px;
     padding:0px;
 }
 
-#dashtodockContainer.shrink.left #dash,
-#dashtodockContainer.dashtodock.left #dash {
+#dashtodockContainer.shrink.left #dash .dash-background,
+#dashtodockContainer.dashtodock.left #dash .dash-background {
     border-left: 0px;
 }
 
 
-#dashtodockContainer.shrink.right #dash,
-#dashtodockContainer.dashtodock.right #dash {
+#dashtodockContainer.shrink.right #dash .dash-background,
+#dashtodockContainer.dashtodock.right #dash .dash-background {
     border-right: 0px;
 }
 
 
-#dashtodockContainer.shrink.top #dash,
-#dashtodockContainer.dashtodock.top #dash {
+#dashtodockContainer.shrink.top #dash .dash-background,
+#dashtodockContainer.dashtodock.top #dash .dash-background {
     border-top: 0px;
 }
 
-#dashtodockContainer.shrink.bottom #dash,
-#dashtodockContainer.dashtodock.bottom #dash {
+#dashtodockContainer.shrink.bottom #dash .dash-background,
+#dashtodockContainer.dashtodock.bottom #dash .dash-background {
     border-bottom: 0px;
 }
 
-#dashtodockContainer.straight-corner #dash,
-#dashtodockContainer.shrink.straight-corner #dash {
+#dashtodockContainer.straight-corner #dash .dash-background,
+#dashtodockContainer.shrink.straight-corner #dash .dash-background {
     border-radius: 0px;
 }
 
 /* for the built-in theme only, we control border radius directly for each
 position. In the other cases the border are taken dynamically from the theme */
-#dashtodockContainer.dashtodock.top #dash {
+#dashtodockContainer.dashtodock.top #dash .dash-background {
     border-radius: 0px 0px 9px 9px;
 }
 
-#dashtodockContainer.dashtodock.bottom #dash {
+#dashtodockContainer.dashtodock.bottom #dash .dash-background {
     border-radius: 9px 9px 0px 0px;
 }
 
-#dashtodockContainer.dashtodock.left #dash {
+#dashtodockContainer.dashtodock.left #dash .dash-background {
     border-radius: 0px 9px 9px 0px;
 }
 
-#dashtodockContainer.dashtodock.right #dash {
+#dashtodockContainer.dashtodock.right #dash .dash-background {
     border-radius: 9px 0px 0px 9px;
 }
 
@@ -73,23 +73,23 @@ position. In the other cases the border are taken dynamically from the theme */
 }
 
 /* Dash height extended to the whole available vertical space */
-#dashtodockContainer.extended.top #dash,
-#dashtodockContainer.extended.right #dash,
-#dashtodockContainer.extended.bottom #dash,
-#dashtodockContainer.extended.left #dash {
+#dashtodockContainer.extended.top #dash .dash-background,
+#dashtodockContainer.extended.right #dash .dash-background,
+#dashtodockContainer.extended.bottom #dash .dash-background,
+#dashtodockContainer.extended.left #dash .dash-background {
     border-radius: 0;
 }
 
-#dashtodockContainer.extended.top #dash,
-#dashtodockContainer.extended.bottom #dash {
+#dashtodockContainer.extended.top #dash .dash-background,
+#dashtodockContainer.extended.bottom #dash .dash-background {
     border-left: 0px;
     border-right: 0px;
     padding-top: 0px;
     padding-bottom: 0px;
 }
 
-#dashtodockContainer.extended.right #dash,
-#dashtodockContainer.extended.left #dash {
+#dashtodockContainer.extended.right #dash .dash-background,
+#dashtodockContainer.extended.left #dash .dash-background {
     border-top: 0px;
     border-bottom: 0px;
     padding-top: 0px;
@@ -109,7 +109,7 @@ position. In the other cases the border are taken dynamically from the theme */
     background-color: rgba(238, 238, 236, 0.2);
 }
 
-#dashtodockContainer.dashtodock #dash {
+#dashtodockContainer.dashtodock #dash .dash-background {
     background: #2e3436;
 }
 
