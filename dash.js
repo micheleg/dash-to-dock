@@ -122,6 +122,7 @@ var MyDash = GObject.registerClass({
             vertical: !this._isHorizontal,
             y_expand: this._isHorizontal,
             x_expand: !this._isHorizontal,
+            pack_start: Docking.DockManager.settings.get_boolean('show-apps-at-top')
         });
 
         this._scrollView = new St.ScrollView({
@@ -965,6 +966,14 @@ var MyDash = GObject.registerClass({
         this._maxWidth = maxWidth;
         this._maxHeight = maxHeight;
         this._queueRedisplay();
+    }
+
+    updateShowAppsButton() {
+        if (Docking.DockManager.settings.get_boolean('show-apps-at-top')) {
+            this._dashContainer.pack_start = true;
+        } else {
+            this._dashContainer.pack_start = false;
+        }
     }
 });
 

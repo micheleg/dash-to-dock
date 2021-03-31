@@ -464,7 +464,7 @@ var DockedDash = GObject.registerClass({
         ], [
             settings,
             'changed::show-apps-at-top',
-            () => { this.dash.resetAppIcons(); }
+            () => { this.dash.updateShowAppsButton(); }
         ], [
             settings,
             'changed::show-show-apps-button',
