@@ -220,13 +220,13 @@ var ThemeManager = class DashToDock_ThemeManager {
     _adjustTheme() {
         // Prevent shell crash if the actor is not on the stage.
         // It happens enabling/disabling repeatedly the extension
-        if (!this._dash._container.get_stage())
+        if (!this._dash._background.get_stage())
             return;
 
         let settings = Docking.DockManager.settings;
 
         // Remove prior style edits
-        this._dash._container.set_style(null);
+        this._dash._background.set_style(null);
         this._transparency.disable();
 
         // If built-in theme is enabled do nothing else
@@ -237,15 +237,13 @@ var ThemeManager = class DashToDock_ThemeManager {
         let position = Utils.getPosition(settings);
 
         // obtain theme border settings
-        let themeNode = this._dash._container.get_theme_node();
+        let themeNode = this._dash._background.get_theme_node();
         let borderColor = themeNode.get_border_color(St.Side.TOP);
         let borderWidth = themeNode.get_border_width(St.Side.TOP);
-        let borderRadius = themeNode.get_border_radius(St.Corner.TOPRIGHT);
 
         // We're copying border and corner styles to left border and top-left
         // corner, also removing bottom border and bottom-right corner styles
         let borderInner = '';
-        let borderRadiusValue = '';
         let borderMissingStyle = '';
 
         if (this._rtl && (position != St.Side.RIGHT))
@@ -255,32 +253,14 @@ var ThemeManager = class DashToDock_ThemeManager {
             borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
                    borderColor.to_string() + ';';
 
-        switch (position) {
-        case St.Side.LEFT:
-            borderInner = 'border-left';
-            borderRadiusValue = '0 ' + borderRadius + 'px ' + borderRadius + 'px 0;';
-            break;
-        case St.Side.RIGHT:
-            borderInner = 'border-right';
-            borderRadiusValue = borderRadius + 'px 0 0 ' + borderRadius + 'px;';
-            break;
-        case St.Side.TOP:
-            borderInner = 'border-top';
-            borderRadiusValue = '0 0 ' + borderRadius + 'px ' + borderRadius + 'px;';
-            break;
-        case St.Side.BOTTOM:
-            borderInner = 'border-bottom';
-            borderRadiusValue = borderRadius + 'px ' + borderRadius + 'px 0 0;';
-            break;
-        }
 
         newStyle = borderInner + ': none;' +
-            'border-radius: ' + borderRadiusValue +
+            // TODO: 'border-radius: ' + borderRadiusValue +
             borderMissingStyle;
 
         // I do call set_style possibly twice so that only the background gets the transition.
         // The transition-property css rules seems to be unsupported
-        this._dash._container.set_style(newStyle);
+        this._dash._background.set_style(newStyle);
 
         // Customize background
         let fixedTransparency = settings.get_enum('transparency-mode') == TransparencyMode.FIXED;
@@ -292,7 +272,7 @@ var ThemeManager = class DashToDock_ThemeManager {
             newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
                        'border-color:'+ this._customizedBorder + '; ' +
                        'transition-delay: 0s; transition-duration: 0.250s;';
-            this._dash._container.set_style(newStyle);
+            this._dash._background.set_style(newStyle);
         }
     }
 
