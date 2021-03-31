@@ -47,7 +47,7 @@
   </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key name="dock-position" enum="org.gnome.shell.extensions.dash-to-dock.position">
-      <default>'LEFT'</default>
+      <default>'BOTTOM'</default>
       <summary>Dock position</summary>
       <description>Dock is shown on the Left, Right, Top or Bottom side of the screen.</description>
     </key>
@@ -238,8 +238,8 @@
     </key>
     <key type="b" name="show-apps-at-top">
       <default>false</default>
-      <summary>Show application button at top</summary>
-      <description>Show application button at top of the dash</description>
+      <summary>Show application button on the left</summary>
+      <description>Show application button on the left of the dash</description>
     </key>
     <key type="b" name="animate-show-apps">
       <default>true</default>
