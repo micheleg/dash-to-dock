@@ -297,11 +297,6 @@ var DockedDash = GObject.registerClass({
                 Main.overview,
                 'hiding',
                 this._onOverviewHiding.bind(this)
-            ], [
-                // Ensure the ShowAppsButton status is kept in sync
-                Main.overview._overview.controls._searchController._showAppsButton,
-                'notify::checked',
-                this._syncShowAppsButtonToggled.bind(this)
             ]);
         }
 
@@ -1093,15 +1088,6 @@ var DockedDash = GObject.registerClass({
         this._animateIn(DockManager.settings.get_double('animation-time'), 0);
     }
 
-    /**
-     * Keep ShowAppsButton status in sync with the overview status
-     */
-    _syncShowAppsButtonToggled() {
-        let status = Main.overview._overview.controls._searchController._showAppsButton.checked;
-        if (this.dash.showAppsButton.checked !== status)
-            this.dash.showAppsButton.checked = status;
-    }
-
     // Optional features to be enabled only for the main Dock
     _enableExtraFeatures() {
         // Restore dash accessibility
@@ -1718,6 +1704,7 @@ var DockManager = class DashToDock_DockManager {
         // the right position of the appShowButton.
         let overviewControls = Main.overview._overview._controls;
         overviewControls.dash = this.mainDock.dash;
+        overviewControls._searchController._showAppsButton = this.mainDock.dash.showAppsButton;
 
         // if (!this.mainDock.dash._isHorizontal && !this._oldDashSpacer) {
         //     this._oldDashSpacer = overviewControls._dashSpacer;
@@ -1752,30 +1739,42 @@ var DockManager = class DashToDock_DockManager {
         let overviewControls = Main.overview._overview._controls;
 
         overviewControls.dash = this._oldDash;
+        overviewControls._searchController._showAppsButton = this._oldDash.showAppsButton;
         Main.overview.dash.show();
         Main.overview.dash.set_width(-1); //reset default dash size
         // This force the recalculation of the icon size
         Main.overview.dash._maxHeight = -1;
     }
 
+    get searchController() {
+        return Main.overview._overview.controls._searchController;
+    }
+
     _onShowAppsButtonToggled(button) {
-        // Sync the status of the default appButtons. Only if the two statuses are
-        // different, that means the user interacted with the extension provided
-        // application button, cutomize the behaviour. Otherwise the shell has changed the
-        // status (due to the _syncShowAppsButtonToggled function below) and it
-        // has already performed the desired action.
-        let selector = Main.overview._overview.controls._searchController;
+        const checked = button.checked;
+        const overviewControls = Main.overview._overview.controls;
 
-        if (selector._showAppsButton.checked !== button.checked) {
-
-            if (button.checked) {
-                // Finally show the overview
-                selector._showAppsButton.checked = true;
-                Main.overview.show();
+        if (!Main.overview.visible) {
+            this.mainDock.dash.showAppsButton._fromDesktop = true;
+            Main.overview.show(OverviewControls.ControlsState.APP_GRID);
+        } else {
+            if (!checked && this.mainDock.dash.showAppsButton._fromDesktop) {
+                Main.overview.hide();
+                this.mainDock.dash.showAppsButton._fromDesktop = false;
             } else {
-                selector._showAppsButton.checked = false;
+                // TODO: I'm not sure how reliable this is, we might need to move the
+                // _onShowAppsButtonToggled logic into the extension.
+                if (!checked) {
+                    this.mainDock.dash.showAppsButton._fromDesktop = false;
+                }
+
+                // Instead of "syncing" the stock button, let's call its callback directly.
+                overviewControls._onShowAppsButtonToggled.call(overviewControls);
             }
         }
+
+        // Because we "disconnected" from the search controller, we have to manage its state.
+        this.searchController._setSearchActive(false);
     }
 
     destroy() {
