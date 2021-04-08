@@ -1016,13 +1016,11 @@ var DockedDash = GObject.registerClass({
             if (extendHeight) {
                 this.dash._container.set_width(this.width);
                 this.add_style_class_name('extended');
-            }
-            else {
+            } else {
                 this.dash._container.set_width(-1);
                 this.remove_style_class_name('extended');
             }
-        }
-        else {
+        } else {
             this.height = Math.round(fraction * workArea.height);
 
             let pos_x = this._monitor.x;
@@ -1031,16 +1029,6 @@ var DockedDash = GObject.registerClass({
 
             this.x = pos_x;
             this.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
-
-            let overviewControls = null;
-            if (!Main.overview.isDummy && this._isPrimaryMonitor()) {
-                overviewControls = Main.overview._overview._controls;
-
-                if (this._oldSelectorMargin)
-                    overviewControls.margin_bottom = this._oldSelectorMargin;
-                else
-                    this._oldSelectorMargin = overviewControls.margin_bottom;
-            }
 
             this._signalsHandler.removeWithLabel('verticalOffsetChecker');
 
