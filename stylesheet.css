@@ -94,6 +94,7 @@ position. In the other cases the border are taken dynamically from the theme */
     border-bottom: 0px;
     padding-top: 0px;
     padding-bottom: 0px;
+    margin-top: 0px;
 }
 
 /* Running and focused application style */
