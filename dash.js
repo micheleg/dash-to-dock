@@ -528,6 +528,70 @@ var DockDash = GObject.registerClass({
             }
         });
 
+        let switchTimerId = { id: 0 };
+        let isDndTarget = false;
+
+        // Detect dragging over icon (Wayland)
+        appIcon.connect('motion-event', (obj, event) => {
+            let [modifier] = event.get_state_full();
+            let mask = Clutter.ModifierType.BUTTON1_MASK;
+
+            if ((modifier & mask) && !isDndTarget) {
+                isDndTarget = true;
+                switchTimerId = this._setWindowSwitchTimeout(appIcon);
+            }
+        });
+
+        appIcon.connect('leave-event', () => {
+            resetTimer(switchTimerId);
+            isDndTarget = false;
+        });
+
+        appIcon.globalDnd.connect('dnd-enter', () => {
+            resetTimer(switchTimerId);
+            isDndTarget = false;
+        });
+
+        appIcon.globalDnd.connect('dnd-leave', () => {
+            resetTimer(switchTimerId);
+            isDndTarget = false;
+        });
+
+        // Detect dragging over icon (X11)
+        appIcon.globalDnd.connect('dnd-position-change', (obj, x, y) => {
+            if (isCoordsInActor(x, y, this._scrollView) && isCoordsInActor(x, y, item)) {
+
+                if (isDndTarget)
+                    return
+                isDndTarget = true;
+
+                switchTimerId = this._setWindowSwitchTimeout(appIcon);
+
+                this._ensureAppIconVisibilityTimeoutId = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, 100, () => {
+                        ensureActorVisibleInScrollView(this._scrollView, appIcon);
+                        this._ensureAppIconVisibilityTimeoutId = 0;
+                        return GLib.SOURCE_REMOVE;
+                    });
+
+            } else {
+                resetTimer(switchTimerId);
+                isDndTarget = false;
+            }
+        });
+
+        function resetTimer(timerIdObj) {
+            if (timerIdObj.id > 0) {
+                GLib.source_remove(timerIdObj.id);
+                timerIdObj.id = 0;
+            }
+        }
+
+        function isCoordsInActor(x, y, actor) {
+            let [gotPos, lx, ly] = actor.transform_stage_point(x, y);
+            return gotPos && lx > 0 && lx < actor.width && ly > 0 && ly < actor.height;
+        }
+
         // Override default AppIcon label_actor, now the
         // accessible_name is set at DashItemContainer.setLabelText
         appIcon.label_actor = null;
@@ -537,6 +601,40 @@ var DockDash = GObject.registerClass({
         this._hookUpLabel(item, appIcon);
 
         return item;
+    }
+
+    _setWindowSwitchTimeout(appIconObj) {
+        const windowSwitchTimeout = 1000;
+        let windows = appIconObj.getInterestingWindows();
+        let index = windows.length > 0 && windows[0].has_focus() ? 1 : 0;
+        let timerIdObj = { id: 0 };
+
+        timerIdObj.id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, windowSwitchTimeout, function timeoutHandler() {
+            if (windows.length > 1) {
+                if (windows[index])
+                    Main.activateWindow(windows[index]);
+
+                if (++index < windows.length) {
+                    timerIdObj.id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, windowSwitchTimeout, timeoutHandler);
+                } else {
+                    timerIdObj.id = 0;
+                }
+            } else {
+                timerIdObj.id = 0;
+                let appIsRunning = appIconObj && appIconObj.app && appIconObj.app.state == Shell.AppState.RUNNING
+                    && windows.length > 0;
+
+                if (appIsRunning) {
+                    appIconObj.activate();
+                } else {
+                    appIconObj.launchNewWindow();
+                }
+            }
+
+            return GLib.SOURCE_REMOVE;
+        });
+
+        return timerIdObj;
     }
 
     _requireVisibility() {

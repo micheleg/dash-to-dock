@@ -191,6 +191,19 @@ var DockAbstractAppIcon = GObject.registerClass({
 
         this._previewMenuManager = null;
         this._previewMenu = null;
+
+        let globalDnd = Meta.get_backend().get_dnd();
+        let globalDndSignals = [];
+
+        this.globalDnd = {
+            connect: function (s, f) {
+                globalDndSignals.push(globalDnd.connect(s, f))
+            },
+
+            disconnectIcon: function () {
+                globalDndSignals.forEach((e) => globalDnd.disconnect(e))
+            }
+        }
     }
 
     _onDestroy() {
@@ -201,6 +214,8 @@ var DockAbstractAppIcon = GObject.registerClass({
         // It can be safely removed once it get solved upstrea.
         if (this._menu)
             this._menu.close(false);
+
+        this.globalDnd.disconnectIcon();
     }
 
     ownsWindow(window) {
