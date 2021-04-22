@@ -308,12 +308,6 @@ var MyDash = GObject.registerClass({
         return Dash.Dash.prototype._clearEmptyDropTarget.call(this, ...arguments);
     }
 
-    setMaxHeight(maxHeight) {
-        if (this._maxHeight != maxHeight)
-            this._queueRedisplay();
-        this._maxHeight = maxHeight;
-    }
-
     handleDragOver(source, actor, x, y, time) {
         let ret;
         if (this._isHorizontal) {
@@ -548,7 +542,7 @@ var MyDash = GObject.registerClass({
 
         iconChildren.push(this._showAppsIcon);
 
-        if (this._maxWidth === -1 || this._maxHeight === -1)
+        if (this._maxWidth === -1 && this._maxHeight === -1)
             return;
 
         // Check if the container is present in the stage. This avoids critical
@@ -560,7 +554,7 @@ var MyDash = GObject.registerClass({
         const maxAllocation = new Clutter.ActorBox({
             x1: 0,
             y1: 0,
-            x2: this._isHorizontal ? this._maxHeight : 42 /* whatever */,
+            x2: this._isHorizontal ? this._maxWidth : 42 /* whatever */,
             y2: this._isHorizontal ? 42 : this._maxHeight
         });
         let maxContent = themeNode.get_content_box(maxAllocation);
@@ -592,7 +586,7 @@ var MyDash = GObject.registerClass({
             availWidth -= iconChildren.length * (buttonHeight - iconHeight) +
                            (iconChildren.length - 1) * spacing;
 
-        let availHeight = this._maxHeight;
+        let availHeight = this._isHorizontal ? 42 : this._maxHeight;
         availHeight -= this._background.get_theme_node().get_vertical_padding();
         availHeight -= themeNode.get_vertical_padding();
         availHeight -= buttonHeight - iconHeight;
@@ -904,7 +898,6 @@ var MyDash = GObject.registerClass({
     }
 
     _initializeIconSize(max_size) {
-        log("initializing icon size...." + max_size);
         let max_allowed = baseIconSizes[baseIconSizes.length-1];
         max_size = Math.min(max_size, max_allowed);
 
