@@ -119,6 +119,7 @@ var MyDash = GObject.registerClass({
 
         this._dashContainer = new St.BoxLayout({
             x_align: Clutter.ActorAlign.CENTER,
+            y_align: this._isHorizontal ? Clutter.ActorAlign.CENTER: Clutter.ActorAlign.START,
             vertical: !this._isHorizontal,
             y_expand: this._isHorizontal,
             x_expand: !this._isHorizontal,
@@ -145,7 +146,7 @@ var MyDash = GObject.registerClass({
                 orientation: this._isHorizontal ? Clutter.Orientation.HORIZONTAL : Clutter.Orientation.VERTICAL
             }),
             x_align: rtl ? Clutter.ActorAlign.END : Clutter.ActorAlign.START,
-            y_align: Clutter.ActorAlign.START,
+            y_align: this._isHorizontal ? Clutter.ActorAlign.CENTER: Clutter.ActorAlign.START,
         });
         this._box._delegate = this;
         this._dashContainer.add_actor(this._scrollView);
@@ -155,7 +156,7 @@ var MyDash = GObject.registerClass({
         this._showAppsIcon.show(false);
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._showAppsIcon.x_expand = false;
-        this._showAppsIcon.y_expand = false;
+        this._showAppsIcon.y_expand = !this._isHorizontal;
         this._hookUpLabel(this._showAppsIcon);
         this._showAppsIcon.connect('menu-state-changed', (_icon, opened) => {
             this._itemMenuStateChanged(this._showAppsIcon, opened);
@@ -165,6 +166,8 @@ var MyDash = GObject.registerClass({
 
         this._background = new St.Widget({
             style_class: 'dash-background',
+            y_expand: this._isHorizontal,
+            x_expand: !this._isHorizontal,
         });
 
         const sizerBox = new Clutter.Actor();
@@ -312,86 +315,65 @@ var MyDash = GObject.registerClass({
     }
 
     handleDragOver(source, actor, x, y, time) {
-        let app = getAppFromSource(source);
+        let ret;
+        if (this._isHorizontal) {
+            ret = Dash.Dash.prototype.handleDragOver.call(this, source, actor, x, y, time);
 
-        // Don't allow favoriting of transient apps
-        if (app == null || app.is_window_backed())
-            return DND.DragMotionResult.NO_DROP;
+            if (ret == DND.DragMotionResult.CONTINUE)
+                return ret;
+        } else {
+            Object.defineProperty(this._box, 'height', {
+                configurable: true,
+                get: () => this._box.get_children().reduce((a, c) => a + c.height, 0),
+            });
 
-        if (!global.settings.is_writable('favorite-apps'))
-            return DND.DragMotionResult.NO_DROP;
-
-        let favorites = AppFavorites.getAppFavorites().getFavorites();
-        let numFavorites = favorites.length;
-
-        let favPos = favorites.indexOf(app);
-
-        let children = this._box.get_children();
-        let numChildren = children.length;
-        let boxWidth = this._box.width;
-
-        // Keep the placeholder out of the index calculation; assuming that
-        // the remove target has the same size as "normal" items, we don't
-        // need to do the same adjustment there.y_align: Clutter.ActorAlign.START
-        if (this._dragPlaceholder) {
-            boxWidth -= this._dragPlaceholder.width;
-            numChildren--;
-        }
-
-        // Same with the separator
-        if (this._separator) {
-            boxWidth -= this._separator.width;
-            numChildren--;
-        }
-
-        let pos;
-        if (!this._emptyDropTarget)
-            pos = Math.floor(x * numChildren / boxWidth);
-        else
-            pos = 0; // always insert at the top when dash is empty
-
-        // Put the placeholder after the last favorite if we are not
-        // in the favorites zone
-        if (pos > numFavorites)
-            pos = numFavorites;
-
-        if (pos !== this._dragPlaceholderPos && this._animatingPlaceholdersCount === 0) {
-            this._dragPlaceholderPos = pos;
-
-            // Don't allow positioning before or after self
-            if (favPos != -1 && (pos == favPos || pos == favPos + 1)) {
-                this._clearDragPlaceholder();
-                return DND.DragMotionResult.CONTINUE;
-            }
-
-            // If the placeholder already exists, we just move
-            // it, but if we are adding it, expand its size in
-            // an animation
-            let fadeIn;
+            let replacedPlaceholderWidth = false;
             if (this._dragPlaceholder) {
-                this._dragPlaceholder.destroy();
-                fadeIn = false;
-            } else {
-                fadeIn = true;
+                replacedPlaceholderWidth = true;
+                Object.defineProperty(this._dragPlaceholder, 'width', {
+                    configurable: true,
+                    get: () => this._dragPlaceholder.height,
+                });
             }
 
-            this._dragPlaceholder = new DragPlaceholderItem();
-            this._dragPlaceholder.child.set_width(this.iconSize);
-            this._dragPlaceholder.child.set_height(this.iconSize / 2);
-            this._box.insert_child_at_index(this._dragPlaceholder,
-                                            this._dragPlaceholderPos);
-            this._dragPlaceholder.show(fadeIn);
+            ret = Dash.Dash.prototype.handleDragOver.call(this, source, actor, y, x, time);
+
+            delete this._box.height;
+            if (replacedPlaceholderWidth && this._dragPlaceholder)
+                delete this._dragPlaceholder.width;
+
+            if (ret == DND.DragMotionResult.CONTINUE)
+                return ret;
+
+            if (this._dragPlaceholder) {
+                this._dragPlaceholder.child.set_width(this.iconSize / 2);
+                this._dragPlaceholder.child.set_height(this.iconSize);
+
+                let pos = this._dragPlaceholderPos;
+                if (this._isHorizontal && (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL))
+                    pos = this._box.get_children() - 1 - pos;
+
+                if (pos != this._dragPlaceholderPos) {
+                    this._dragPlaceholderPos = pos;
+                    this._box.set_child_at_index(this._dragPlaceholder,
+                        this._dragPlaceholderPos)
+                }
+            }
         }
 
-        if (!this._dragPlaceholder)
-            return DND.DragMotionResult.NO_DROP;
+        if (this._dragPlaceholder) {
+            // Ensure the next and previous icon are visible when moving the placeholder
+            // (I assume there's room for both of them)
+            if (this._dragPlaceholderPos > 0)
+                ensureActorVisibleInScrollView(this._scrollView,
+                    this._box.get_children()[this._dragPlaceholderPos - 1]);
 
-        let srcIsFavorite = favPos != -1;
+            if (this._dragPlaceholderPos < this._box.get_children().length - 1)
+                ensureActorVisibleInScrollView(this._scrollView,
+                    this._box.get_children()[this._dragPlaceholderPos + 1]);
+        }
 
-        if (srcIsFavorite)
-            return DND.DragMotionResult.MOVE_DROP;
-
-        return DND.DragMotionResult.COPY_DROP;
+        return ret;
     }
 
     acceptDrop() {
@@ -909,6 +891,7 @@ var MyDash = GObject.registerClass({
     }
 
     _initializeIconSize(max_size) {
+        log("initializing icon size...." + max_size);
         let max_allowed = baseIconSizes[baseIconSizes.length-1];
         max_size = Math.min(max_size, max_allowed);
 

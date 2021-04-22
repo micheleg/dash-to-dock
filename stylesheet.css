@@ -72,6 +72,25 @@ position. In the other cases the border are taken dynamically from the theme */
    padding: 1px 2px;
 }
 
+#dashtodockContainer.extended #dash .app-well-app,
+#dashtodockContainer.extended #dash .show-apps {
+	padding: 2px;
+    margin: 2px;
+}
+
+#dashtodockContainer.extended #dash .dash-background {
+    padding: 2px;
+}
+
+#dashtodockContainer.extended.bottom #dash .dash-background {
+    margin-bottom: 0px;
+}
+
+#dashtodockContainer.extended.left #dash,
+#dashtodockContainer.extended.right #dash {
+    margin-top: 0px;
+}
+ 
 /* Dash height extended to the whole available vertical space */
 #dashtodockContainer.extended.top #dash .dash-background,
 #dashtodockContainer.extended.right #dash .dash-background,
@@ -80,20 +99,27 @@ position. In the other cases the border are taken dynamically from the theme */
     border-radius: 0;
 }
 
-#dashtodockContainer.extended.top #dash .dash-background,
-#dashtodockContainer.extended.bottom #dash .dash-background {
-    border-left: 0px;
-    border-right: 0px;
+#dashtodockContainer.extended.top #dash,
+#dashtodockContainer.extended.bottom #dash,
+#dashtodockContainer.extended.left #dash,
+#dashtodockContainer.extended.right #dash {
     padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
     padding-bottom: 0px;
 }
 
-#dashtodockContainer.extended.right #dash .dash-background,
-#dashtodockContainer.extended.left #dash .dash-background {
+#dashtodockContainer.extended.top #dash,
+#dashtodockContainer.extended.bottom #dash {
+    border-left: 0px;
+    border-right: 0px;
+}
+
+
+#dashtodockContainer.extended.left #dash,
+#dashtodockContainer.extended.right #dash {
     border-top: 0px;
     border-bottom: 0px;
-    padding-top: 0px;
-    padding-bottom: 0px;
 }
 
 /* Running and focused application style */
