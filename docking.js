@@ -1136,17 +1136,17 @@ var DockedDash = GObject.registerClass({
 
             switch (event.get_scroll_direction()) {
             case Clutter.ScrollDirection.UP:
-                direction = Meta.MotionDirection.UP;
+                direction = Meta.MotionDirection.LEFT;
                 break;
             case Clutter.ScrollDirection.DOWN:
-                direction = Meta.MotionDirection.DOWN;
+                direction = Meta.MotionDirection.RIGHT;
                 break;
             case Clutter.ScrollDirection.SMOOTH:
                 let [dx, dy] = event.get_scroll_delta();
                 if (dy < 0)
-                    direction = Meta.MotionDirection.UP;
+                    direction = Meta.MotionDirection.LEFT;
                 else if (dy > 0)
-                    direction = Meta.MotionDirection.DOWN;
+                    direction = Meta.MotionDirection.RIGHT;
                 break;
             }
 
