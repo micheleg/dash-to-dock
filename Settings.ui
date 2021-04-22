@@ -3,8 +3,8 @@
   <requires lib="gtk" version="4.0"/>
   <object class="GtkAdjustment" id="animation_time_adjustment">
     <property name="upper">1</property>
-    <property name="step_increment">0.050000000000000003</property>
-    <property name="page_increment">0.25</property>
+    <property name="step-increment">0.050000000000000003</property>
+    <property name="page-increment">0.25</property>
   </object>
   <object class="GtkBox" id="box_middle_click_options">
     <property name="can_focus">0</property>
@@ -234,19 +234,19 @@
   </object>
   <object class="GtkAdjustment" id="custom_opacity_adjustement">
     <property name="upper">1</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
+    <property name="step-increment">0.01</property>
+    <property name="page-increment">0.10</property>
   </object>
   <object class="GtkAdjustment" id="dock_size_adjustment">
-    <property name="lower">0.33000000000000002</property>
+    <property name="lower">0.33</property>
     <property name="upper">1</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
+    <property name="step-increment">0.01</property>
+    <property name="page-increment">0.10</property>
   </object>
   <object class="GtkAdjustment" id="dot_border_width_adjustment">
     <property name="upper">10</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">5</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">5</property>
   </object>
   <object class="GtkBox" id="running_dots_advance_settings_box">
     <property name="can_focus">0</property>
@@ -418,14 +418,14 @@
   </object>
   <object class="GtkAdjustment" id="hide_timeout_adjustment">
     <property name="upper">1</property>
-    <property name="step_increment">0.050000000000000003</property>
-    <property name="page_increment">0.25</property>
+    <property name="step-increment">0.050000000000000003</property>
+    <property name="page-increment">0.25</property>
   </object>
   <object class="GtkAdjustment" id="icon_size_adjustment">
     <property name="lower">16</property>
     <property name="upper">128</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
   </object>
   <object class="GtkAdjustment" id="preview_size_adjustment">
     <property name="lower">0.0</property>
@@ -720,7 +720,6 @@
                                 <property name="round_digits">0</property>
                                 <property name="digits">2</property>
                                 <property name="value_pos">right</property>
-                                <!-- <signal name="format-value" handler="dock_size_scale_format_value_cb" /> -->
                                 <signal name="value-changed" handler="dock_size_scale_value_changed_cb" />
                                 <layout>
                                   <property name="column">1</property>
@@ -774,7 +773,6 @@
                                 <property name="round_digits">1</property>
                                 <property name="digits">0</property>
                                 <property name="value_pos">right</property>
-                                <!-- <signal name="format-value" handler="icon_size_scale_format_value_cb" /> -->
                                 <signal name="value-changed" handler="icon_size_scale_value_changed_cb" />
                                 <layout>
                                   <property name="column">1</property>
@@ -1869,7 +1867,6 @@
                                     <property name="round_digits">0</property>
                                     <property name="digits">2</property>
                                     <property name="value_pos">right</property>
-                                    <!-- <signal name="format-value" handler="custom_opacity_scale_format_value_cb" /> -->
                                     <signal name="value-changed" handler="custom_opacity_scale_value_changed_cb" />
                                   </object>
                                 </child>
@@ -2030,13 +2027,13 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
   </object>
   <object class="GtkAdjustment" id="max_opacity_adjustement">
     <property name="upper">1</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
+    <property name="step-increment">0.01</property>
+    <property name="page-increment">0.10000000000000001</property>
   </object>
   <object class="GtkAdjustment" id="min_opacity_adjustement">
     <property name="upper">1</property>
-    <property name="step_increment">0.01</property>
-    <property name="page_increment">0.10000000000000001</property>
+    <property name="step-increment">0.01</property>
+    <property name="page-increment">0.10000000000000001</property>
   </object>
   <object class="GtkBox" id="advanced_transparency_dialog">
     <property name="can_focus">0</property>
@@ -2118,7 +2115,6 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                             <property name="round_digits">0</property>
                             <property name="digits">2</property>
                             <property name="value_pos">right</property>
-                            <!-- <signal name="format-value" handler="min_opacity_scale_format_value_cb" /> -->
                             <signal name="value-changed" handler="min_opacity_scale_value_changed_cb" />
                           </object>
                         </child>
@@ -2149,7 +2145,6 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                             <property name="round_digits">0</property>
                             <property name="digits">2</property>
                             <property name="value_pos">right</property>
-                            <!-- <signal name="format-value" handler="max_opacity_scale_format_value_cb" /> -->
                             <signal name="value-changed" handler="max_opacity_scale_value_changed_cb" />
                           </object>
                         </child>
@@ -2169,13 +2164,13 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
   </object>
   <object class="GtkAdjustment" id="pressure_threshold_adjustment">
     <property name="upper">1000</property>
-    <property name="step_increment">50</property>
-    <property name="page_increment">250</property>
+    <property name="step-increment">50</property>
+    <property name="page-increment">250</property>
   </object>
   <object class="GtkAdjustment" id="shortcut_time_adjustment">
     <property name="upper">10</property>
-    <property name="step_increment">0.25</property>
-    <property name="page_increment">1</property>
+    <property name="step-increment">0.25</property>
+    <property name="page-increment">1</property>
   </object>
   <object class="GtkBox" id="box_overlay_shortcut">
     <property name="can_focus">0</property>
@@ -2410,8 +2405,8 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
   </object>
   <object class="GtkAdjustment" id="show_timeout_adjustment">
     <property name="upper">1</property>
-    <property name="step_increment">0.050000000000000003</property>
-    <property name="page_increment">0.25</property>
+    <property name="step-increment">0.050000000000000003</property>
+    <property name="page-increment">0.25</property>
   </object>
   <object class="GtkBox" id="intelligent_autohide_advanced_settings_box">
     <property name="can_focus">0</property>
