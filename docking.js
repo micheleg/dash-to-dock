@@ -435,12 +435,7 @@ var DockedDash = GObject.registerClass({
             this._onOverviewShowing();
         }
 
-        // Setup pressure barrier (GS38+ only)
-        this._updatePressureBarrier();
-        this._updateBarrier();
-
-        // setup dwelling system if pressure barriers are not available
-        this._setupDockDwellIfNeeded();
+        this._updateAutoHideBarriers();
     }
 
     _onDestroy() {
@@ -466,6 +461,21 @@ var DockedDash = GObject.registerClass({
             PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
             this._dockWatch = null;
         }
+    }
+
+    _updateAutoHideBarriers() {
+        // Remove pointer watcher
+        if (this._dockWatch) {
+            PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
+            this._dockWatch = null;
+        }
+
+        // Setup pressure barrier (GS38+ only)
+        this._updatePressureBarrier();
+        this._updateBarrier();
+
+        // setup dwelling system if pressure barriers are not available
+        this._setupDockDwellIfNeeded();
     }
 
     _bindSettingsChanges() {
@@ -527,10 +537,7 @@ var DockedDash = GObject.registerClass({
                 this._trackDock();
 
                     this._resetPosition();
-
-                    // Add or remove barrier depending on if dock-fixed
-                    this._updateBarrier();
-
+                    this._updateAutoHideBarriers();
                     this._updateVisibilityMode();
             }
         ], [
@@ -545,8 +552,8 @@ var DockedDash = GObject.registerClass({
             settings,
             'changed::autohide',
             () => {
-                    this._updateVisibilityMode();
-                    this._updateBarrier();
+                this._updateVisibilityMode();
+                this._updateAutoHideBarriers();
             }
         ], [
             settings,
@@ -564,15 +571,7 @@ var DockedDash = GObject.registerClass({
         ], [
             settings,
             'changed::require-pressure-to-show',
-            () => {
-                    // Remove pointer watcher
-                    if (this._dockWatch) {
-                        PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
-                        this._dockWatch = null;
-                    }
-                    this._setupDockDwellIfNeeded();
-                    this._updateBarrier();
-            }
+            () => this._updateAutoHideBarriers(),
         ], [
             settings,
             'changed::pressure-threshold',
@@ -774,8 +773,9 @@ var DockedDash = GObject.registerClass({
     _setupDockDwellIfNeeded() {
         // If we don't have extended barrier features, then we need
         // to support the old tray dwelling mechanism.
-        if (!global.display.supports_extended_barriers() ||
-            !DockManager.settings.get_boolean('require-pressure-to-show')) {
+        if (this._autohideIsEnabled &&
+            (!global.display.supports_extended_barriers() ||
+            !DockManager.settings.get_boolean('require-pressure-to-show'))) {
             let pointerWatcher = PointerWatcher.getPointerWatcher();
             this._dockWatch = pointerWatcher.addWatch(DOCK_DWELL_CHECK_INTERVAL, this._checkDockDwell.bind(this));
             this._dockDwelling = false;
@@ -872,7 +872,8 @@ var DockedDash = GObject.registerClass({
         }
 
         // Create new pressure barrier based on pressure threshold setting
-        if (this._canUsePressure) {
+        if (this._canUsePressure && this._autohideIsEnabled &&
+            DockManager.settings.get_boolean('require-pressure-to-show')) {
             this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, settings.get_double('show-delay')*1000,
                                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
             this._pressureBarrier.connect('trigger', (barrier) => {
