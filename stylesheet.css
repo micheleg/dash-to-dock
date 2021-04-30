@@ -5,6 +5,11 @@
     padding:0px;
 }
 
+#dashtodockContainer.bottom.shrink #dash .dash-background {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 #dashtodockContainer.shrink.left #dash .dash-background,
 #dashtodockContainer.dashtodock.left #dash .dash-background {
     border-left: 0px;
@@ -72,23 +77,66 @@ position. In the other cases the border are taken dynamically from the theme */
    padding: 1px 2px;
 }
 
-#dashtodockContainer.extended #dash .app-well-app,
-#dashtodockContainer.extended #dash .show-apps {
-	padding: 2px;
-    margin: 2px;
+#dashtodockContainer.bottom #dash .dash-item-container .app-well-app,
+#dashtodockContainer.bottom #dash .dash-item-container .show-apps {
+    /* In vertical we don't want to add additional padding below the button. */
+	padding-bottom: 12px;
+    padding-top: 12px;
 }
 
-#dashtodockContainer.extended #dash .dash-background {
-    padding: 2px;
+#dashtodockContainer.bottom.shrink #dash .dash-item-container .app-well-app,
+#dashtodockContainer.bottom.shrink #dash .dash-item-container .show-apps {
+    /* In vertical we don't want to add additional padding below the button. */
+	padding-bottom: 6px;
+    padding-top: 6px;
+}
+
+#dashtodockContainer.left #dash .dash-item-container .app-well-app,
+#dashtodockContainer.left #dash .dash-item-container .show-apps,
+#dashtodockContainer.right #dash .dash-item-container .app-well-app,
+#dashtodockContainer.right #dash .dash-item-container .show-apps {
+    /* In vertical we don't want to add additional padding below the button. */
+	padding-bottom: 6px;
+    padding-top: 6px;
+}
+
+#dashtodockContainer #dash .dash-separator  {
+    margin-bottom: 0;
+}
+
+#dashtodockContainer.bottom #dash .dash-background {
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+#dashtodockContainer.left #dash,
+#dashtodockContainer.right #dash {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+#dashtodockContainer.left.shrink #dash,
+#dashtodockContainer.right.shrink #dash {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 #dashtodockContainer.extended.bottom #dash .dash-background {
+    margin-top: 0;
     margin-bottom: 0px;
+}
+
+#dashtodockContainer.bottom #dash {
+    margin-top: 0px;
 }
 
 #dashtodockContainer.extended.left #dash,
 #dashtodockContainer.extended.right #dash {
     margin-top: 0px;
+}
+
+#dashtodockContainer.top #dash {
+    margin-bottom: 0px;
 }
  
 /* Dash height extended to the whole available vertical space */
@@ -106,7 +154,7 @@ position. In the other cases the border are taken dynamically from the theme */
     padding-top: 0px;
     padding-bottom: 0px;
     padding-left: 0px;
-    padding-bottom: 0px;
+    padding-right: 0px;
 }
 
 #dashtodockContainer.extended.top #dash,
