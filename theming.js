@@ -1,12 +1,12 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Signals = imports.signals;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
+const Clutter = imports.gi.Clutter;
 
 const AppDisplay = imports.ui.appDisplay;
 const AppFavorites = imports.ui.appFavorites;
@@ -165,16 +165,21 @@ var ThemeManager = class DashToDock_ThemeManager {
             if (settings.get_enum('transparency-mode') == TransparencyMode.FIXED)
                 newAlpha = settings.get_double('background-opacity');
 
-            backgroundColor = Clutter.color_from_string(settings.get_string('background-color'))[1];
-            this._customizedBackground = 'rgba(' +
-                backgroundColor.red + ',' +
-                backgroundColor.green + ',' +
-                backgroundColor.blue + ',' +
-                newAlpha + ')';
+            backgroundColor = settings.get_string('background-color');
+          
+            this._customizedBackground = backgroundColor;
 
             this._customizedBorder = this._customizedBackground;
+
+            // backgroundColor is a string like rgb(0,0,0)
+            const color = Clutter.Color.from_string(backgroundColor);
+            color.alpha = newAlpha;
+
+            this._transparency.setColor(color);
+        } else { 
+            // backgroundColor is a Clutter.Color object
+            this._transparency.setColor(backgroundColor);
         }
-        this._transparency.setColor(backgroundColor);
     }
 
     _updateCustomStyleClasses() {
@@ -253,10 +258,7 @@ var ThemeManager = class DashToDock_ThemeManager {
             borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
                    borderColor.to_string() + ';';
 
-
-        newStyle = borderInner + ': none;' +
-            // TODO: 'border-radius: ' + borderRadiusValue +
-            borderMissingStyle;
+        newStyle = borderMissingStyle;
 
         // I do call set_style possibly twice so that only the background gets the transition.
         // The transition-property css rules seems to be unsupported
@@ -310,6 +312,7 @@ var Transparency = class DashToDock_Transparency {
     constructor(dock) {
         this._dash = dock.dash;
         this._actor = this._dash._container;
+        this._backgroundActor = this._dash._background;
         this._dockActor = dock;
         this._dock = dock;
         this._panel = Main.panel;
@@ -423,12 +426,12 @@ var Transparency = class DashToDock_Transparency {
     _updateSolidStyle() {
         let isNear = this._dockIsNear();
         if (isNear) {
-            this._actor.set_style(this._opaque_style);
+            this._backgroundActor.set_style(this._opaque_style);
             this._dockActor.remove_style_class_name('transparent');
             this._dockActor.add_style_class_name('opaque');
         }
         else {
-            this._actor.set_style(this._transparent_style);
+            this._backgroundActor.set_style(this._transparent_style);
             this._dockActor.remove_style_class_name('opaque');
             this._dockActor.add_style_class_name('transparent');
         }

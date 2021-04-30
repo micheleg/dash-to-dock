@@ -45,6 +45,44 @@ const scrollAction = {
 };
 
 /**
+ * Ported from GNOME Shell 3.38
+ * 
+ * In GNOME Shell 40+ the dash is always visible,
+ * we need to re-include a spacer because our dash 
+ * is not always visible.
+ */
+var DashSpacer = GObject.registerClass(
+    class DashSpacer extends Clutter.Actor {
+        _init(source) {
+            super._init();
+    
+            this._bindConstraint = new Clutter.BindConstraint({
+                source,
+                coordinate: Clutter.BindCoordinate.SIZE,
+            });
+            this.add_constraint(this._bindConstraint);
+        }
+        
+        setMaxSize(size) {
+            log(`setMaxSize: ${size}`);
+        }
+    
+        vfunc_get_preferred_width(forHeight) {
+            if (this._bindConstraint)
+                return this._bindConstraint.source.get_preferred_width(forHeight);
+            return super.vfunc_get_preferred_width(forHeight);
+        }
+    
+        vfunc_get_preferred_height(forWidth) {
+            if (this._bindConstraint)
+                return this._bindConstraint.source.get_preferred_height(forWidth);
+            return super.vfunc_get_preferred_height(forWidth);
+        }
+    }
+);
+    
+
+/**
  * A simple St.Widget with one child whose allocation takes into account the
  * slide out of its child via the _slidex parameter ([0:1]).
  *
@@ -326,7 +364,8 @@ var DockedDash = GObject.registerClass({
 
         this._paintId = global.stage.connect('after-paint', this._initialize.bind(this));
 
-
+        // Reserve space for the dash in the overview.
+        this._dashSpacer = new DashSpacer(this._box);
 
         // Add dash container actor and the container to the Chrome.
         this.set_child(this._slider);
@@ -1678,7 +1717,7 @@ var DockManager = class DashToDock_DockManager {
         // in turn is triggergin the appsIcon spring animation, required when no other
         // actors has this effect, i.e in horizontal mode and without the workspaceThumnails
         // 1 static workspace only)
-        this._oldDash.set_width(1);
+        this._oldDash.set_height(1);
 
         this._signalsHandler.addWithLabel('old-dash-changes', [
             this._oldDash,
@@ -1696,11 +1735,11 @@ var DockManager = class DashToDock_DockManager {
         overviewControls.dash = this.mainDock.dash;
         overviewControls._searchController._showAppsButton = this.mainDock.dash.showAppsButton;
 
-        // if (!this.mainDock.dash._isHorizontal && !this._oldDashSpacer) {
-        //     this._oldDashSpacer = overviewControls._dashSpacer;
-        //     overviewControls._group.remove_child(this._oldDashSpacer);
-        //     overviewControls._dashSpacer = this.mainDock._dashSpacer;
-        // }
+        if (this.mainDock.dash._isHorizontal) {
+            overviewControls._dashSpacer = this.mainDock._dashSpacer;
+            Main.overview._overview._controls.add_child(this.mainDock._dashSpacer);
+            Main.overview._overview._controls.layout_manager._dash = this.mainDock._dashSpacer;
+        }
     }
 
     _deleteDocks() {
@@ -1727,6 +1766,10 @@ var DockManager = class DashToDock_DockManager {
         this._signalsHandler.removeWithLabel('old-dash-changes');
 
         let overviewControls = Main.overview._overview._controls;
+        Main.overview._overview._controls.layout_manager._dash = this._oldDash;
+        if (this.mainDock._dashSpacer) {
+            Main.overview._overview._controls.remove_child(this.mainDock._dashSpacer);
+        }
 
         overviewControls.dash = this._oldDash;
         overviewControls._searchController._showAppsButton = this._oldDash.showAppsButton;
