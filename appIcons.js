@@ -1096,6 +1096,7 @@ var MyShowAppsIcon = GObject.registerClass({
 
         // Re-use appIcon methods
         let appIconPrototype = AppDisplay.AppIcon.prototype;
+        this.toggleButton.y_expand = false;
         this.toggleButton.connect('popup-menu',
             appIconPrototype._onKeyboardPopupMenu.bind(this));
         this.toggleButton.connect('clicked',
