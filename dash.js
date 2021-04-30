@@ -136,6 +136,14 @@ var MyDash = GObject.registerClass({
             enable_mouse_scrolling: false
         });
 
+        if (Docking.DockManager.settings.get_boolean('extend-height')) {
+            if (!this._isHorizontal) {
+                this._scrollView.y_align = Clutter.ActorAlign.START;
+            } else {
+                this._scrollView.x_align = Clutter.ActorAlign.START;
+            }
+        }
+
         this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
 
         let rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
@@ -147,6 +155,8 @@ var MyDash = GObject.registerClass({
             }),
             x_align: rtl ? Clutter.ActorAlign.END : Clutter.ActorAlign.START,
             y_align: this._isHorizontal ? Clutter.ActorAlign.CENTER: Clutter.ActorAlign.START,
+            y_expand: !this._isHorizontal,
+            x_expand: this._isHorizontal
         });
         this._box._delegate = this;
         this._dashContainer.add_actor(this._scrollView);
@@ -156,7 +166,9 @@ var MyDash = GObject.registerClass({
         this._showAppsIcon.show(false);
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._showAppsIcon.x_expand = false;
-        this._showAppsIcon.y_expand = !this._isHorizontal;
+        this._showAppsIcon.y_expand = false;
+        if (!this._isHorizontal)
+            this._showAppsIcon.y_align = Clutter.ActorAlign.START;
         this._hookUpLabel(this._showAppsIcon);
         this._showAppsIcon.connect('menu-state-changed', (_icon, opened) => {
             this._itemMenuStateChanged(this._showAppsIcon, opened);

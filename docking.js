@@ -44,6 +44,7 @@ const scrollAction = {
     SWITCH_WORKSPACE: 2
 };
 
+
 /**
  * A simple St.Widget with one child whose allocation takes into account the
  * slide out of its child via the _slidex parameter ([0:1]).
@@ -325,8 +326,6 @@ var DockedDash = GObject.registerClass({
          // user theme applied.
 
         this._paintId = global.stage.connect('after-paint', this._initialize.bind(this));
-
-
 
         // Add dash container actor and the container to the Chrome.
         this.set_child(this._slider);
@@ -1676,7 +1675,7 @@ var DockManager = class DashToDock_DockManager {
         // in turn is triggergin the appsIcon spring animation, required when no other
         // actors has this effect, i.e in horizontal mode and without the workspaceThumnails
         // 1 static workspace only)
-        this._oldDash.set_width(1);
+        this._oldDash.set_height(1);
 
         this._signalsHandler.addWithLabel('old-dash-changes', [
             this._oldDash,
@@ -1725,7 +1724,7 @@ var DockManager = class DashToDock_DockManager {
         this._signalsHandler.removeWithLabel('old-dash-changes');
 
         let overviewControls = Main.overview._overview._controls;
-
+        Main.overview._overview._controls.layout_manager._dash = this._oldDash;
         overviewControls.dash = this._oldDash;
         overviewControls._searchController._showAppsButton = this._oldDash.showAppsButton;
         Main.overview.dash.show();
