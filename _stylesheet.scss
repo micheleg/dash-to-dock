@@ -1,0 +1,303 @@
+// From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/c17dc9c8ecba0b542aab75f13da238f7b0690031/data/theme/gnome-shell-sass/_common.scss#L28
+$base_padding: 6px;
+$base_margin: 4px;
+$base_spacing: 6px;
+
+$base_border_radius: 8px;
+$modal_radius: $base_border_radius * 2;
+
+// From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/c17dc9c8ecba0b542aab75f13da238f7b0690031/data/theme/gnome-shell-sass/widgets/_dash.scss
+$dash_background_color: #3b3b3b;
+$dash_placeholder_size: 32px;
+$dash_padding: $base_padding + 4px; // 10px
+$dash_spacing: $base_padding / 4;
+$dash_bottom_margin: $base_margin * 4;
+$dash_border_radius: $modal_radius * 1.5;
+
+// Stock
+$dash_top_margin: $base_spacing * 2;
+
+$dock_bottom_margin: $dash_bottom_margin / 2;
+
+// Adapted to $dock_bottom_margin
+$adjusted_dash_top_margin: $base_spacing / 2;
+
+@function shrink($val) {
+    @return $val / 4;
+}
+
+/* Shrink the dash by reducing padding */
+
+@each $side in bottom, top, left, right {
+    #dashtodockContainer.#{$side} {
+        &.shrink {
+            #dash {
+                .dash-background {
+                    border: 1px;
+                    padding: shrink($dash_padding);
+                    border-#{$side}: 0px;
+                }
+
+                .dash-item-container {
+                    .app-well-app,
+                    .show-apps {
+                        padding: shrink($dash_padding);
+                    }
+                }
+            }
+        }
+
+        &.extended #dash {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+    }
+}
+
+#dashtodockContainer.bottom.shrink #dash .dash-background {
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+#dashtodockContainer.straight-corner #dash .dash-background,
+#dashtodockContainer.shrink.straight-corner #dash .dash-background {
+    border-radius: 0px;
+}
+
+/* Scrollview style */
+.bottom #dashtodockDashScrollview,
+.top #dashtodockDashScrollview {
+    -st-hfade-offset: 24px;
+}
+
+.left #dashtodockDashScrollview,
+.right #dashtodockDashScrollview {
+    -st-vfade-offset: 24px;
+}
+
+#dashtodockContainer.running-dots .dash-item-container > StButton,
+#dashtodockContainer.dashtodock .dash-item-container > StButton {
+    transition-duration: 250;
+    background-size: contain;
+}
+
+#dashtodockContainer {
+    #dash .dash-separator {
+        margin-bottom: 0;
+    }
+}
+
+#dashtodockContainer.bottom {
+    #dash {
+        margin-top: 0;
+
+        .dash-background {
+            margin-bottom: $dock_bottom_margin;
+        }
+
+        .dash-item-container {
+            .app-well-app,
+            .show-apps {
+                padding: $dash_padding $dash_spacing $dash_padding + $dock_bottom_margin;
+            }
+        }
+    }
+
+    &.overview #dash {
+        margin-top: $dash_top_margin;
+    }
+
+    &.extended,
+    &.shrink {
+        #dash .dash-background {
+            margin-bottom: 0;
+        }
+    }
+
+    &.extended #dash {
+        .dash-item-container {
+            .app-well-app,
+            .show-apps {
+                padding-bottom: $dash_padding;
+            }
+        }
+    }
+
+    &.shrink #dash {
+        .dash-item-container {
+            .app-well-app,
+            .show-apps {
+                padding-bottom: shrink($dash_padding);
+            }
+        }
+    }
+}
+
+#dashtodockContainer.left,
+#dashtodockContainer.right {
+    #dash {
+        padding-left: $base_margin;
+        padding-right: $base_margin;
+
+        .dash-item-container {
+            .app-well-app,
+            .show-apps {
+                /* In vertical we don't want to add additional padding below the button. */
+                padding-bottom: 6px;
+                padding-top: 6px;
+            }
+        }
+    }
+
+    &.shrink #dash {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    &.expanded #dash {
+        margin-top: 0px;
+    }
+}
+
+#dashtodockContainer.top {
+    #dash {
+        margin-bottom: 0px;
+    }
+}
+
+/* Dash height extended to the whole available vertical space */
+#dashtodockContainer.extended {
+    &.left,
+    &.right,
+    &.top,
+    &.bottom {
+        #dash {
+            padding-top: 0px;
+            padding-bottom: 0px;
+            padding-left: 0px;
+            padding-right: 0px;
+
+            .dash-background {
+                border-radius: 0;
+            }
+        }
+    }
+
+    &.top,
+    &.bottom {
+        #dash {
+            border-left: 0px;
+            border-right: 0px;
+        }
+    }
+
+    &.left,
+    &.right {
+        #dash {
+            border-top: 0px;
+            border-bottom: 0px;
+        }
+    }
+}
+
+/* Running and focused application style */
+
+#dashtodockContainer.running-dots .app-well-app.running > .overview-icon,
+#dashtodockContainer.dashtodock .app-well-app.running > .overview-icon {
+    background-image: none;
+}
+
+#dashtodockContainer.running-dots .app-well-app.focused .overview-icon,
+#dashtodockContainer.dashtodock .app-well-app.focused .overview-icon {
+    background-color: rgba(238, 238, 236, 0.2);
+}
+
+#dashtodockContainer.dashtodock #dash .dash-background {
+    background: #2e3436;
+}
+
+#dashtodockContainer.dashtodock .progress-bar {
+    /* Customization of the progress bar style, e.g.:
+      -progress-bar-background: rgba(0.8, 0.8, 0.8, 1);
+      -progress-bar-border: rgba(0.9, 0.9, 0.9, 1);
+    */
+}
+
+#dashtodockContainer.top #dash .placeholder,
+#dashtodockContainer.bottom #dash .placeholder {
+    width: 32px;
+    height: 1px;
+}
+
+/*
+ * This is applied to a dummy actor. Only the alpha value for the background and border color
+ * and the transition-duration are used
+ */
+#dashtodockContainer.dummy-opaque {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-color: rgba(0, 0, 0, 0.4);
+    transition-duration: 300ms;
+}
+
+/*
+ * This is applied to a dummy actor. Only the alpha value for the background and border color
+ * and the transition-duration are used
+ */
+#dashtodockContainer.dummy-transparent {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-color: rgba(0, 0, 0, 0.1);
+    transition-duration: 500ms;
+}
+
+#dashtodockContainer .number-overlay {
+    color: rgba(255, 255, 255, 1);
+    background-color: rgba(0, 0, 0, 0.8);
+    text-align: center;
+}
+
+#dashtodockContainer .notification-badge {
+    color: rgba(255, 255, 255, 1);
+    background-color: rgba(255, 0, 0, 1);
+    padding: 0.2em 0.5em;
+    border-radius: 1em;
+    font-weight: bold;
+    text-align: center;
+    margin: 2px;
+}
+
+#dashtodockPreviewSeparator.popup-separator-menu-item-horizontal {
+    width: 1px;
+    height: auto;
+    border-right-width: 1px;
+    margin: 32px 0px;
+}
+
+.dashtodock-app-well-preview-menu-item {
+    padding: 1em 1em 0.5em 1em;
+}
+
+#dashtodockContainer .metro .overview-icon {
+    border-radius: 0px;
+}
+
+#dashtodockContainer.bottom .metro.running2.focused,
+#dashtodockContainer.bottom .metro.running3.focused,
+#dashtodockContainer.bottom .metro.running4.focused,
+#dashtodockContainer.top .metro.running2.focused,
+#dashtodockContainer.top .metro.running3.focused,
+#dashtodockContainer.top .metro.running4.focused {
+    background-image: url("./media/highlight_stacked_bg.svg");
+    background-position: 0px 0px;
+    background-size: contain;
+}
+
+#dashtodockContainer.left .metro.running2.focused,
+#dashtodockContainer.left .metro.running3.focused,
+#dashtodockContainer.left .metro.running4.focused,
+#dashtodockContainer.right .metro.running2.focused,
+#dashtodockContainer.right .metro.running3.focused,
+#dashtodockContainer.right .metro.running4.focused {
+    background-image: url("./media/highlight_stacked_bg_h.svg");
+    background-position: 0px 0px;
+    background-size: contain;
+}
