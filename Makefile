@@ -1,7 +1,7 @@
 # Basic Makefile
 
 UUID = dash-to-dock@micxgx.gmail.com
-BASE_MODULES = extension.js stylesheet.css metadata.json COPYING README.md
+BASE_MODULES = extension.js metadata.json COPYING README.md
 EXTRA_MODULES = dash.js docking.js appIcons.js appIconIndicators.js fileManager1API.js launcherAPI.js locations.js windowPreview.js intellihide.js prefs.js theming.js utils.js dbusmenuUtils.js Settings.ui
 EXTRA_MEDIA = logo.svg glossy.svg highlight_stacked_bg.svg highlight_stacked_bg_h.svg
 TOLOCALIZE =  prefs.js appIcons.js locations.js
@@ -31,8 +31,10 @@ all: extension
 
 clean:
 	rm -f ./schemas/gschemas.compiled
+	rm -f stylesheet.css
+	rm -rf _build
 
-extension: ./schemas/gschemas.compiled $(MSGSRC:.po=.mo)
+extension: ./schemas/gschemas.compiled ./stylesheet.css $(MSGSRC:.po=.mo)
 
 ./schemas/gschemas.compiled: ./schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml
 	glib-compile-schemas ./schemas/
@@ -52,6 +54,15 @@ mergepo: potfile
 
 ./po/%.mo: ./po/%.po
 	msgfmt -c $< -o $@
+
+./stylesheet.css: ./_stylesheet.scss
+ifeq ($(SASS), sassc)
+	sassc --omit-map-comment _stylesheet.scss stylesheet.css
+else ifeq ($(SASS), ruby)
+	sass --sourcemap=none --no-cache --scss _stylesheet.scss stylesheet.css
+else
+	sass --no-source-map _stylesheet.scss stylesheet.css
+endif
 
 install: install-local
 
@@ -79,6 +90,7 @@ _build: all
 	-rm -fR ./_build
 	mkdir -p _build
 	cp $(BASE_MODULES) $(EXTRA_MODULES) _build
+	cp stylesheet.css _build
 	mkdir -p _build/media
 	cd media ; cp $(EXTRA_MEDIA) ../_build/media/
 	mkdir -p _build/schemas
