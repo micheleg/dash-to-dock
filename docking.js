@@ -298,6 +298,11 @@ var DockedDash = GObject.registerClass({
                 Main.overview,
                 'hiding',
                 this._onOverviewHiding.bind(this)
+            ],
+            [
+                Main.overview,
+                'hidden',
+                this._onOverviewHidden.bind(this)
             ]);
         }
 
@@ -367,6 +372,20 @@ var DockedDash = GObject.registerClass({
         this._resetPosition();
 
         this.connect('destroy', this._onDestroy.bind(this));
+    }
+
+    _untrackDock() {
+        Main.layoutManager._untrackActor(this);
+        Main.layoutManager._untrackActor(this._slider);
+    }
+
+    _trackDock() {
+        if (DockManager.settings.get_boolean('dock-fixed')) {
+            Main.layoutManager._trackActor(this, { affectsInputRegion: false, trackFullscreen: true });
+            Main.layoutManager._trackActor(this._slider, { affectsStruts: true });
+        } else {
+            Main.layoutManager._trackActor(this._slider);
+        }
     }
 
     _initialize() {
@@ -473,16 +492,8 @@ var DockedDash = GObject.registerClass({
             settings,
             'changed::dock-fixed',
             () => {
-                    if (settings.get_boolean('dock-fixed')) {
-                        Main.layoutManager._untrackActor(this);
-                        Main.layoutManager._trackActor(this, {affectsInputRegion: false, trackFullscreen: true});
-                        Main.layoutManager._untrackActor(this._slider);
-                        Main.layoutManager._trackActor(this._slider, {affectsStruts: true});
-                    } else {
-                        Main.layoutManager._untrackActor(this);
-                        Main.layoutManager._untrackActor(this._slider);
-                        Main.layoutManager._trackActor(this._slider);
-                    }
+                this._untrackDock();
+                this._trackDock();
 
                     this._resetPosition();
 
@@ -558,6 +569,11 @@ var DockedDash = GObject.registerClass({
             this._intellihideIsEnabled = settings.get_boolean('intellihide')
         }
 
+        if (this._autohideIsEnabled)
+            this.add_style_class_name('autohide');
+        else
+            this.remove_style_class_name('autohide');
+
         if (this._intellihideIsEnabled)
             this._intellihide.enable();
         else
@@ -612,6 +628,8 @@ var DockedDash = GObject.registerClass({
     }
 
     _onOverviewShowing() {
+        this.add_style_class_name('overview');
+
         this._ignoreHover = true;
         this._intellihide.disable();
         this._removeAnimations();
@@ -622,6 +640,10 @@ var DockedDash = GObject.registerClass({
         this._ignoreHover = false;
         this._intellihide.enable();
         this._updateDashVisibility();
+    }
+
+    _onOverviewHidden() {
+        this.remove_style_class_name('overview');
     }
 
     _hoverChanged() {
@@ -1587,7 +1609,7 @@ var DockManager = class DashToDock_DockManager {
             this._settings,
             'changed::show-mounts',
             () => this._ensureFileManagerClient()
-        ], );
+        ]);
     }
 
     _createDocks() {
@@ -1728,7 +1750,7 @@ var DockManager = class DashToDock_DockManager {
         overviewControls.dash = this._oldDash;
         overviewControls._searchController._showAppsButton = this._oldDash.showAppsButton;
         Main.overview.dash.show();
-        Main.overview.dash.set_width(-1); //reset default dash size
+        Main.overview.dash.set_height(-1); // reset default dash size
         // This force the recalculation of the icon size
         Main.overview.dash._maxHeight = -1;
     }
