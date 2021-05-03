@@ -671,11 +671,19 @@ var MyDash = GObject.registerClass({
         }
 
         if (this._separator) {
-            this._separator.ease({
-                height: this.iconSize,
-                duration: DASH_ANIMATION_TIME,
-                mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-            });
+            if (this._isHorizontal) {
+                this._separator.ease({
+                    height: this.iconSize,
+                    duration: DASH_ANIMATION_TIME,
+                    mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+                });
+            } else {
+                this._separator.ease({
+                    width: this.iconSize,
+                    duration: DASH_ANIMATION_TIME,
+                    mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+                });
+            }
         }
     }
 
@@ -856,7 +864,7 @@ var MyDash = GObject.registerClass({
             if (!this._separator) {
                 if (!this._isHorizontal) {
                     this._separator = new St.Widget({
-                        style_class: 'dash-separator',
+                        style_class: 'vertical-dash-separator',
                         x_align: Clutter.ActorAlign.CENTER,
                         width: this.iconSize,
                     });

@@ -81,9 +81,20 @@ $adjusted_dash_top_margin: $base_spacing / 2;
     background-size: contain;
 }
 
+// TODO
+$osd_fg_color: #eeeeec;
+
 #dashtodockContainer {
     #dash .dash-separator {
         margin-bottom: 0;
+    }
+
+    // TODO: See if we can re-use the dash-separator styling
+    #dash .vertical-dash-separator {
+        height: 1px;
+        margin: ($dash_spacing + ($dash_padding / 2)) 0;
+        background-color: transparentize($osd_fg_color,0.7);
+      
     }
 }
 
