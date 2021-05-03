@@ -64,7 +64,7 @@ var DashSpacer = GObject.registerClass(
         }
         
         setMaxSize(size) {
-            log(`setMaxSize: ${size}`);
+            // Handles overview controls trying to set the dash' max size.
         }
     
         vfunc_get_preferred_width(forHeight) {
@@ -394,11 +394,11 @@ var DockedDash = GObject.registerClass({
         // Create and apply height/width constraint to the dash.
         if (this._isHorizontal) {
             this.connect('notify::width', () => {
-                this.dash.setMaxSize(this.width, -1);
+                this.dash.setMaxSize(this.width, this.height);
             });
         } else {
             this.connect('notify::height', () => {
-                this.dash.setMaxSize(-1, this.height)
+                this.dash.setMaxSize(this.width, this.height)
             });
         }
 
