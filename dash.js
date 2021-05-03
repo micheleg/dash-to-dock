@@ -418,11 +418,9 @@ var MyDash = GObject.registerClass({
             switch (event.get_scroll_direction()) {
                 case Clutter.ScrollDirection.LEFT:
                     delta = -increment;
-                    log(delta)
                     break;
                 case Clutter.ScrollDirection.RIGHT:
                     delta = +increment;
-                    log(delta)
                     break;
                 case Clutter.ScrollDirection.SMOOTH:
                     let [dx, dy] = event.get_scroll_delta();
@@ -619,12 +617,13 @@ var MyDash = GObject.registerClass({
             availWidth -= iconChildren.length * (buttonHeight - iconHeight) +
                            (iconChildren.length - 1) * spacing;
 
-        let availHeight = this._isHorizontal ? 42 : this._maxHeight;
-        availHeight -= this._background.get_theme_node().get_vertical_padding();
-        availHeight -= themeNode.get_vertical_padding();
-        availHeight -= buttonHeight - iconHeight;
+        // let availHeight = this._maxHeight;
+        // availHeight -= this._background.get_theme_node().get_vertical_padding();
+        // availHeight -= themeNode.get_vertical_padding();
+        // availHeight -= buttonHeight - iconHeight;
 
-        const maxIconSize = Math.min(availWidth / iconChildren.length, availHeight);
+        const maxIconSize = // TODO: Math.min(
+              availWidth / iconChildren.length // ); , availHeight);
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         let iconSizes = this._availableIconSizes.map(s => s * scaleFactor);
 
