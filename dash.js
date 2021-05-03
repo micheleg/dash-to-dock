@@ -671,8 +671,11 @@ var MyDash = GObject.registerClass({
         }
 
         if (this._separator) {
+            const animateProperties = this._isHorizontal ?
+                { height: this.iconSize } : { width: this.iconSize };
+
             this._separator.ease({
-                height: this.iconSize,
+                ...animateProperties,
                 duration: DASH_ANIMATION_TIME,
                 mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             });
@@ -869,7 +872,7 @@ var MyDash = GObject.registerClass({
             if (!this._separator) {
                 if (!this._isHorizontal) {
                     this._separator = new St.Widget({
-                        style_class: 'dash-separator',
+                        style_class: 'vertical-dash-separator',
                         x_align: Clutter.ActorAlign.CENTER,
                         width: this.iconSize,
                     });
