@@ -42,17 +42,12 @@ class DashToDock_MyDashItemContainer extends Dash.DashItemContainer {
     }
 });
 
-const MyDashIconsLayout = GObject.registerClass(
-    class DashToDock_MyDashIconsLayout extends Clutter.BoxLayout {
-        _init({ orientation }) {
+const MyDashIconsVerticalLayout = GObject.registerClass(
+    class DashToDock_MyDashIconsVerticalLayout extends Clutter.BoxLayout {
+        _init() {
             super._init({
-                orientation
+                orientation: Clutter.Orientation.VERTICAL,
             });
-        }
-
-        vfunc_get_preferred_width(container, forHeight) {
-            const [, natWidth] = super.vfunc_get_preferred_width(container, forHeight);
-            return [0, natWidth];
         }
 
         vfunc_get_preferred_height(container, forWidth) {
@@ -150,9 +145,7 @@ var MyDash = GObject.registerClass({
         this._box = new St.BoxLayout({
             vertical: !this._isHorizontal,
             clip_to_allocation: false,
-            layout_manager: new MyDashIconsLayout({
-                orientation: this._isHorizontal ? Clutter.Orientation.HORIZONTAL : Clutter.Orientation.VERTICAL
-            }),
+            ...(!this._isHorizontal ? { layout_manager: new MyDashIconsVerticalLayout() } : {}),
             x_align: rtl ? Clutter.ActorAlign.END : Clutter.ActorAlign.START,
             y_align: this._isHorizontal ? Clutter.ActorAlign.CENTER: Clutter.ActorAlign.START,
             y_expand: !this._isHorizontal,
@@ -260,8 +253,8 @@ var MyDash = GObject.registerClass({
 
     vfunc_get_preferred_width(forHeight) {
         let [minWidth, natWidth] = super.vfunc_get_preferred_width.call(this, forHeight);
-        if (this._isHorizontal && this._maxHeight !== -1 && natWidth > this._maxHeight)
-            return [minWidth, this._maxHeight]
+        if (this._isHorizontal && this._maxWidth !== -1 && natWidth > this._maxWidth)
+            return [minWidth, this._maxWidth]
         else
             return [minWidth, natWidth]
     }
@@ -406,10 +399,13 @@ var MyDash = GObject.registerClass({
         }
 
         // Skip to avoid double events mouse
-        if (event.is_pointer_emulated())
+        // TODO: Horizontal events are emulated, potentially due to a conflict
+        // with the workspace switching gesture.
+        if (!this._isHorizontal && event.is_pointer_emulated()) {
             return Clutter.EVENT_STOP;
+        }
 
-        let adjustment, delta;
+        let adjustment, delta = 0;
 
         if (this._isHorizontal)
             adjustment = this._scrollView.get_hscroll_bar().get_adjustment();
@@ -418,23 +414,48 @@ var MyDash = GObject.registerClass({
 
         let increment = adjustment.step_increment;
 
-        switch (event.get_scroll_direction()) {
-        case Clutter.ScrollDirection.UP:
-            delta = -increment;
-            break;
-        case Clutter.ScrollDirection.DOWN:
-            delta = +increment;
-            break;
-        case Clutter.ScrollDirection.SMOOTH:
-            let [dx, dy] = event.get_scroll_delta();
-            delta = dy * increment;
-            // Also consider horizontal component, for instance touchpad
-            if (this._isHorizontal)
-                delta += dx * increment;
-            break;
+        if (this._isHorizontal) {
+            switch (event.get_scroll_direction()) {
+                case Clutter.ScrollDirection.LEFT:
+                    delta = -increment;
+                    log(delta)
+                    break;
+                case Clutter.ScrollDirection.RIGHT:
+                    delta = +increment;
+                    log(delta)
+                    break;
+                case Clutter.ScrollDirection.SMOOTH:
+                    let [dx, dy] = event.get_scroll_delta();
+                    // TODO: Handle y
+                    //delta = dy * increment;
+                    // Also consider horizontal component, for instance touchpad
+                    delta = dx * increment;
+                    break;
+            }
+        } else {
+            switch (event.get_scroll_direction()) {
+                case Clutter.ScrollDirection.UP:
+                    delta = -increment;
+                    break;
+                case Clutter.ScrollDirection.DOWN:
+                    delta = +increment;
+                    break;
+                case Clutter.ScrollDirection.SMOOTH:
+                    let [, dy] = event.get_scroll_delta();
+                    delta = dy * increment;
+                    break;
+            }
         }
 
-        adjustment.set_value(adjustment.get_value() + delta);
+        const value = adjustment.get_value();
+
+        // TODO: Remove this if possible.
+        if (Number.isNaN(value)) {
+            adjustment.set_value(delta);
+        } else {
+            adjustment.set_value(value + delta);
+        }
+
         return Clutter.EVENT_STOP;
     }
 
