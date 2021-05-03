@@ -396,8 +396,7 @@ var DockedDash = GObject.registerClass({
             this.connect('notify::width', () => {
                 this.dash.setMaxSize(this.width, -1);
             });
-        }
-        else {
+        } else {
             this.connect('notify::height', () => {
                 this.dash.setMaxSize(-1, this.height)
             });
@@ -422,10 +421,13 @@ var DockedDash = GObject.registerClass({
 
     _trackDock() {
         if (DockManager.settings.get_boolean('dock-fixed')) {
-            Main.layoutManager._trackActor(this, { affectsInputRegion: false, trackFullscreen: true });
-            Main.layoutManager._trackActor(this._slider, { affectsStruts: true });
+            if (Main.layoutManager._findActor(this) == -1)
+                Main.layoutManager._trackActor(this, { affectsInputRegion: false, trackFullscreen: true });
+            if (Main.layoutManager._findActor(this._slider) == -1)
+                Main.layoutManager._trackActor(this._slider, { affectsStruts: true });
         } else {
-            Main.layoutManager._trackActor(this._slider);
+            if (Main.layoutManager._findActor(this._slider) == -1)
+                Main.layoutManager._trackActor(this._slider);
         }
     }
 
@@ -1256,7 +1258,7 @@ var DockedDash = GObject.registerClass({
                 else
                     Main.wm.actionMoveWorkspace(ws);
 
-                // Do not show wokspaceSwithcer in overview
+                // Do not show workspaceSwitcher in overview
                 if (!Main.overview.visible)
                     Main.wm._workspaceSwitcherPopup.display(direction, ws.index());
 
