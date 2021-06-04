@@ -235,27 +235,33 @@ var ThemeManager = class DashToDock_ThemeManager {
         
         this._dock_position = settings.get_enum('dock-position')
         let pos_string = ""
+        let opposite_pos_string = ""
 
         if (this._dock_position == 0) {
             pos_string = "top";
+            opposite_pos_string = "bottom";
         }
 
         if (this._dock_position == 1) {
             pos_string = "right";
+            opposite_pos_string = "left";
         }
 
         if (this._dock_position == 2) {
             pos_string = "bottom";
+            opposite_pos_string = "top";
         }
 
         if (this._dock_position == 3) {
             pos_string = "left";
+            opposite_pos_string = "right";
         }
         
         let newStyle = '';
         newStyle = 'border: none;' + 
                    'border-radius: ' + this._border_radius + "px;" +
-                   "margin-" + pos_string + ": " + this._floating_margin + "px; ";
+                   "margin-" + pos_string + ": " + this._floating_margin + "px; " + 
+                   "margin-" + opposite_pos_string + ": " + this._floating_margin + "px; ";
 
         this._dash._container.set_style(newStyle);
 
