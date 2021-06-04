@@ -182,6 +182,14 @@ var Settings = class DashToDock_Settings {
                 });
             },
 
+            preview_size_scale_format_value_cb(scale, value) {
+                return value == 0 ? 'auto' : value;
+            },
+
+            preview_size_scale_value_changed_cb(scale) {
+                this._settings.set_double('preview-size-scale', scale.get_value());
+            },
+
             custom_opacity_scale_value_changed_cb(scale) {
                 // Avoid settings the opacity consinuosly as it's change is animated
                 if (this._opacity_timeout > 0)
@@ -441,6 +449,7 @@ var Settings = class DashToDock_Settings {
         DEFAULT_ICONS_SIZES.forEach(function(val) {
              icon_size_scale.add_mark(val, Gtk.PositionType.TOP, val.toString());
         });
+        this._builder.get_object('preview_size_scale').set_value(this._settings.get_double('preview-size-scale'));
 
         // Corrent for rtl languages
         if (this._rtl) {
