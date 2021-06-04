@@ -249,6 +249,10 @@ function getPosition() {
     return position;
 }
 
+function getPreviewScale() {
+    return Docking.DockManager.settings.get_double('preview-size-scale');
+}
+
 function drawRoundedLine(cr, x, y, width, height, isRoundLeft, isRoundRight, stroke, fill) {
     if (height > width) {
         y += Math.floor((height - width) / 2.0);

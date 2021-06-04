@@ -375,7 +375,20 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     _getWindowPreviewSize() {
         let mutterWindow = this._window.get_compositor_private();
         let [width, height] = mutterWindow.get_size();
-        let scale = Math.min(1.0, PREVIEW_MAX_WIDTH/width, PREVIEW_MAX_HEIGHT/height);
+
+        let scale;
+
+        if (Utils.getPreviewScale()) {
+            scale = Utils.getPreviewScale();
+        } else {
+            // a simple example with 1680x1050:
+            // * 250/1680 = 0,1488
+            // * 150/1050 = 0,1429
+            // => scale is 0,1429
+            scale = Math.min(1.0, PREVIEW_MAX_WIDTH/width, PREVIEW_MAX_HEIGHT/height)
+        }
+
+        // width and height that we wanna multiply by scale
         return [width, height, scale];
     }
 
