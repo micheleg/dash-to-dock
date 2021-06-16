@@ -19,6 +19,7 @@ const SearchController = imports.ui.searchController;
 const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
 const Layout = imports.ui.layout;
 const LayoutManager = imports.ui.main.layoutManager;
+const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -1759,6 +1760,20 @@ var DockManager = class DashToDock_DockManager {
                     return workspaceBox;
                 }
             });
+
+        // Always show the thumbnails box if have workspaces enabled in vertical mode
+        if (!this.mainDock.isHorizontal) {
+            this._methodInjections.addWithLabel('main-dash',
+                WorkspaceThumbnail.ThumbnailsBox.prototype, '_updateShouldShow',
+                function () {
+                    const shouldShow = global.workspace_manager.nWorkspaces > 1;
+                    if (this._shouldShow === shouldShow)
+                        return;
+
+                    this._shouldShow = shouldShow;
+                    this.notify('should-show');
+                });
+        }
     }
 
     _deleteDocks() {
