@@ -328,7 +328,6 @@ var Transparency = class DashToDock_Transparency {
         this._base_actor_style = "";
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
-        this._injectionsHandler = new Utils.InjectionsHandler();
         this._trackedWindows = new Map();
     }
 
@@ -400,7 +399,6 @@ var Transparency = class DashToDock_Transparency {
     destroy() {
         this.disable();
         this._signalsHandler.destroy();
-        this._injectionsHandler.destroy();
     }
 
     _onWindowActorAdded(container, metaWindowActor) {
