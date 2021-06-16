@@ -291,13 +291,11 @@ var ThemeManager = class DashToDock_ThemeManager {
                     'extend-height',
                     'force-straight-corner'];
 
-        keys.forEach(function(key) {
-            this._signalsHandler.add([
-                Docking.DockManager.settings,
-                'changed::' + key,
-                this.updateCustomTheme.bind(this)
-           ]);
-        }, this);
+        this._signalsHandler.add(...keys.map(key => [
+            Docking.DockManager.settings,
+            `changed::${key}`,
+            () => this.updateCustomTheme(),
+        ]));
     }
 };
 
