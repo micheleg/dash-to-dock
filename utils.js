@@ -224,13 +224,11 @@ var InjectionsHandler = class DashToDock_InjectionsHandler extends BasicHandler 
         let original = object[name];
 
         object[name] = injectedFunction;
-        return [object, name, injectedFunction, original];
+        return [object, name, original];
     }
 
     _remove(item) {
-        let object = item[0];
-        let name = item[1];
-        let original = item[3];
+        const [object, name, original] = item;
         object[name] = original;
     }
 };
