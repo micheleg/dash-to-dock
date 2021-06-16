@@ -20,10 +20,10 @@ const BasicHandler = class DashToDock_BasicHandler {
         this._storage = new Object();
     }
 
-    add(/* unlimited 3-long array arguments */) {
+    add(...args) {
         // Convert arguments object to array, concatenate with generic
         // Call addWithLabel with ags as if they were passed arguments
-        this.addWithLabel('generic', ...arguments);
+        this.addWithLabel('generic', ...args);
     }
 
     destroy() {
@@ -31,15 +31,21 @@ const BasicHandler = class DashToDock_BasicHandler {
             this.removeWithLabel(label);
     }
 
-    addWithLabel(label /* plus unlimited 3-long array arguments*/) {
+    addWithLabel(label, ...args) {
+        let argsArray = [...args];
+        if (argsArray.every(arg => !Array.isArray(arg)))
+            argsArray = [argsArray];
+
         if (this._storage[label] == undefined)
             this._storage[label] = new Array();
 
         // Skip first element of the arguments
-        for (let i = 1; i < arguments.length; i++) {
+        for (const argArray of argsArray) {
+            if (argArray.length < 3)
+                throw new Error('Unexpected number of arguments');
             let item = this._storage[label];
             try {
-                item.push(this._create(arguments[i]));
+                item.push(this._create(...argArray));
             } catch (e) {
                 logError(e);
             }
@@ -60,14 +66,14 @@ const BasicHandler = class DashToDock_BasicHandler {
     /**
      * Create single element to be stored in the storage structure
      */
-    _create(item) {
+    _create(_object, _element, _callback) {
         throw new GObject.NotImplementedError(`_create in ${this.constructor.name}`);
     }
 
     /**
      * Correctly delete single element
      */
-    _remove(item) {
+    _remove(_item) {
         throw new GObject.NotImplementedError(`_remove in ${this.constructor.name}`);
     }
 };
@@ -77,12 +83,7 @@ const BasicHandler = class DashToDock_BasicHandler {
  */
 var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHandler {
 
-    _create(item) {
-        let object = item[0];
-        let event = item[1];
-        let callback = item[2]
-        let flags = item.length > 3 ? item[3] : SignalsHandlerFlags.NONE;
-
+    _create(object, event, callback, flags = SignalsHandlerFlags.NONE) {
         if (!object)
             throw new Error('Impossible to connect to an invalid object');
 
@@ -101,7 +102,8 @@ var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHan
     }
 
     _remove(item) {
-         item[0].disconnect(item[1]);
+        const [object, id] = item;
+        object.disconnect(id);
     }
 };
 
@@ -217,10 +219,7 @@ var ColorUtils = class DashToDock_ColorUtils {
  */
 var InjectionsHandler = class DashToDock_InjectionsHandler extends BasicHandler {
 
-    _create(item) {
-        let object = item[0];
-        let name = item[1];
-        let injectedFunction = item[2];
+    _create(object, name, injectedFunction) {
         let original = object[name];
 
         object[name] = injectedFunction;
