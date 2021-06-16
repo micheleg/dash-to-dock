@@ -306,7 +306,6 @@ var DockedDash = GObject.registerClass({
             ]);
         }
 
-        this._injectionsHandler = new Utils.InjectionsHandler();
         this._themeManager = new Theming.ThemeManager(this);
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
@@ -422,8 +421,6 @@ var DockedDash = GObject.registerClass({
         this.dash.destroy();
         this._intellihide.destroy();
         this._themeManager.destroy();
-
-        this._injectionsHandler.destroy();
 
         if (this._marginLater) {
             Meta.later_remove(this._marginLater);
