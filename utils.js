@@ -237,7 +237,10 @@ var InjectionsHandler = class DashToDock_InjectionsHandler extends BasicHandler 
     _create(object, name, injectedFunction) {
         let original = object[name];
 
-        object[name] = injectedFunction;
+        if (!(original instanceof Function))
+            throw new Error(`Virtual function ${name} is not available for ${prototype}`);
+
+        object[name] = function(...args) { return injectedFunction.call(this, original, ...args) };
         return [object, name, original];
     }
 
