@@ -111,11 +111,10 @@ class MyAppIcon extends Dash.DashIcon {
         if (Docking.DockManager.settings.get_boolean('isolate-monitors') &&
             Main.layoutManager.monitors.length > 1) {
             this._signalsHandler.removeWithLabel('isolate-monitors');
-            this._signalsHandler.addWithLabel('isolate-monitors', [
+            this._signalsHandler.addWithLabel('isolate-monitors',
                 global.display,
                 'window-entered-monitor',
-                this._onWindowEntered.bind(this)
-            ]);
+                this._onWindowEntered.bind(this));
         }
 
         this._progressOverlayArea = null;
@@ -126,19 +125,19 @@ class MyAppIcon extends Dash.DashIcon {
                     ];
 
         keys.forEach(function(key) {
-            this._signalsHandler.add([
+            this._signalsHandler.add(
                 Docking.DockManager.settings,
                 'changed::' + key,
                 this._updateIndicatorStyle.bind(this)
-            ]);
+            );
         }, this);
 
         if (this._location) {
-            this._signalsHandler.add([
+            this._signalsHandler.add(
                 Docking.DockManager.getDefault().fm1Client,
                 'windows-changed',
                 this.onWindowsChanged.bind(this)
-            ]);
+            );
         }
 
         this._numberOverlay();

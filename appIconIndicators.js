@@ -317,11 +317,11 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
                    'running-indicator-dominant-color'];
 
         keys.forEach(function(key) {
-            this._signalsHandler.add([
+            this._signalsHandler.add(
                 Docking.DockManager.settings,
                 'changed::' + key,
                 this.update.bind(this)
-            ]);
+            );
         }, this);
 
         // Apply glossy background

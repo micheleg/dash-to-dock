@@ -261,7 +261,7 @@ function makePopupMenuItem(dbusmenuItem, deep) {
         item.icon.icon_size = 16;
     }
 
-    signalsHandler.add([dbusmenuItem, Dbusmenu.MENUITEM_SIGNAL_PROPERTY_CHANGED, onPropertyChanged]);
+    signalsHandler.add(dbusmenuItem, Dbusmenu.MENUITEM_SIGNAL_PROPERTY_CHANGED, onPropertyChanged);
 
     // Connections on item will be lost when item is disposed; there's no need
     // to add them to signalsHandler.

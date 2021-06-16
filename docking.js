@@ -1134,11 +1134,10 @@ var DockedDash = GObject.registerClass({
         function enable() {
             this._signalsHandler.removeWithLabel(label);
 
-            this._signalsHandler.addWithLabel(label, [
+            this._signalsHandler.addWithLabel(label,
                 this._box,
                 'scroll-event',
-                onScrollEvent.bind(this)
-            ]);
+                onScrollEvent.bind(this));
         }
 
         function disable() {
@@ -1470,12 +1469,10 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
             // This last signal is only needed for monitor isolation, as windows
             // might migrate from one monitor to another without triggering 'restacked'
             if (DockManager.settings.get_boolean('isolate-monitors'))
-                this._signalsHandler.addWithLabel('isolation', [
+                this._signalsHandler.addWithLabel('isolation',
                     global.display,
                     'window-entered-monitor',
-                    dock.dash._queueRedisplay.bind(dock.dash)
-                ]);
-
+                    dock.dash._queueRedisplay.bind(dock.dash));
         }, this);
 
         // here this is the Shell.App
@@ -1493,11 +1490,10 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
             return this.open_new_window(-1);
         }
 
-        this._injectionsHandler.addWithLabel('isolation', [
+        this._injectionsHandler.addWithLabel('isolation',
             Shell.App.prototype,
             'activate',
-            IsolatedOverview
-        ]);
+            IsolatedOverview);
     }
 
     _disable () {
