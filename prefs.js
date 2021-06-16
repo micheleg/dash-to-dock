@@ -502,6 +502,10 @@ var Settings = class DashToDock_Settings {
                             this._builder.get_object('show_mounts_switch'),
                             'active',
                             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('hide-mounts-regex',
+                            this._builder.get_object('hide_mounts_regex_entry'),
+                            'text',
+                            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-show-apps-button',
                             this._builder.get_object('show_applications_button_switch'),
                             'active',

@@ -13,6 +13,7 @@ const __ = Gettext.gettext;
 const N__ = function(e) { return e };
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 
 const UPDATE_TRASH_DELAY = 500;
@@ -117,8 +118,12 @@ var Removables = class DashToDock_Removables {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._monitor = Gio.VolumeMonitor.get();
+        this._settings = Docking.DockManager.settings;
         this._volumeApps = []
         this._mountApps = []
+
+        const regex_str = this._settings.get_string('hide-mounts-regex');
+        this._regex = regex_str ? new RegExp(regex_str) : null;
 
         this._monitor.get_volumes().forEach(
             (volume) => {
@@ -148,6 +153,10 @@ var Removables = class DashToDock_Removables {
             this._monitor,
             'volume-removed',
             this._onVolumeRemoved.bind(this)
+        ], [
+            this._settings,
+            'changed::hide-mounts-regex',
+            this._onRegexChanged.bind(this)
         ]);
     }
 
@@ -175,6 +184,39 @@ var Removables = class DashToDock_Removables {
         }
     }
 
+   _isLocationHidden(name) {
+        const regex = this._regex;
+        return regex ? regex.exec(name) : false;
+    }
+
+    _onRegexChanged(settings, key) {
+        const regex_str = settings.get_string(key);
+        this._regex = regex_str ? new RegExp(regex_str) : null;
+
+        this._monitor.get_volumes().forEach(
+            (volume) => {
+                this._onVolumeRemoved(this._monitor, volume);
+            }
+        );
+
+        this._monitor.get_mounts().forEach(
+            (mount) => {
+                this._onMountRemoved(this._monitor, mount);
+            }
+        );
+        this._monitor.get_volumes().forEach(
+            (volume) => {
+                this._onVolumeAdded(this._monitor, volume);
+            }
+        );
+
+        this._monitor.get_mounts().forEach(
+            (mount) => {
+                this._onMountAdded(this._monitor, mount);
+            }
+        );
+    }
+
     _onVolumeAdded(monitor, volume) {
         if (!volume.can_mount()) {
             return;
@@ -190,6 +232,10 @@ var Removables = class DashToDock_Removables {
             // where to mount it.
             // These devices are usually ejectable so you
             // don't normally unmount them anyway.
+            return;
+        }
+
+        if (this._isLocationHidden(volume.get_name())) {
             return;
         }
 
@@ -231,6 +277,10 @@ var Removables = class DashToDock_Removables {
 
         let volume = mount.get_volume();
         if (!volume || volume.get_identifier('class') == 'network') {
+            return;
+        }
+
+        if (this._isLocationHidden(mount.get_name())) {
             return;
         }
 
