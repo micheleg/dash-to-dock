@@ -248,6 +248,37 @@ var InjectionsHandler = class DashToDock_InjectionsHandler extends BasicHandler 
 };
 
 /**
+ * Manage properties injection: both instances and prototype can be overridden
+ * and restored
+ */
+var PropertyInjectionsHandler = class DashToDock_PropertyInjectionsHandler extends BasicHandler {
+
+    _create(instance, name, injectedPropertyDescriptor) {
+        if (!(name in instance))
+            throw new Error(`Object ${instance} has no '${name}' property`);
+
+        const prototype = instance.constructor.prototype;
+        const originalPropertyDescriptor = Object.getOwnPropertyDescriptor(prototype, name) ??
+            Object.getOwnPropertyDescriptor(instance, name);
+
+        Object.defineProperty(instance, name, {
+            ...originalPropertyDescriptor,
+            ...injectedPropertyDescriptor,
+            ...{ configurable: true },
+        });
+        return [instance, name, originalPropertyDescriptor];
+    }
+
+    _remove(item) {
+        const [instance, name, originalPropertyDescriptor] = item;
+        if (originalPropertyDescriptor)
+            Object.defineProperty(instance, name, originalPropertyDescriptor);
+        else
+            delete instance[name];
+    }
+};
+
+/**
  * Return the actual position reverseing left and right in rtl
  */
 function getPosition() {
