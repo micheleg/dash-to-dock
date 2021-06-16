@@ -44,7 +44,6 @@ const scrollAction = {
     SWITCH_WORKSPACE: 2
 };
 
-
 /**
  * A simple St.Widget with one child whose allocation takes into account the
  * slide out of its child via the _slidex parameter ([0:1]).
@@ -368,6 +367,10 @@ var DockedDash = GObject.registerClass({
         this._resetPosition();
 
         this.connect('destroy', this._onDestroy.bind(this));
+    }
+
+    get isHorizontal() {
+        return this._isHorizontal;
     }
 
     _untrackDock() {
@@ -1514,6 +1517,7 @@ var DockManager = class DashToDock_DockManager {
 
         this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
+        this._methodInjections = new Utils.InjectionsHandler(this);
         this._propertyInjections = new Utils.PropertyInjectionsHandler(this);
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
@@ -1721,11 +1725,40 @@ var DockManager = class DashToDock_DockManager {
         overviewControls.dash = this.mainDock.dash;
         overviewControls._searchController._showAppsButton = this.mainDock.dash.showAppsButton;
 
-        // if (!this.mainDock.dash._isHorizontal && !this._oldDashSpacer) {
-        //     this._oldDashSpacer = overviewControls._dashSpacer;
-        //     overviewControls._group.remove_child(this._oldDashSpacer);
-        //     overviewControls._dashSpacer = this.mainDock._dashSpacer;
-        // }
+        // We also need to ignore max-size changes
+        this._methodInjections.addWithLabel('main-dash', this._oldDash,
+            'setMaxSize', () => {});
+        // And to return the preferred height depending on the state
+        this._methodInjections.addWithLabel('main-dash', this._oldDash,
+            'get_preferred_height', (_originalMethod, ...args) => {
+                if (this.mainDock.isHorizontal)
+                    return this.mainDock.get_preferred_height(...args);
+                return [0, 0];
+            });
+
+        const { ControlsManagerLayout } = OverviewControls;
+        this._methodInjections.addWithLabel('main-dash',
+            ControlsManagerLayout.prototype,
+            '_computeWorkspacesBoxForState',
+            function (originalFunction, state, box, ...args) {
+                const [, height] = box.get_size();
+                const { mainDock } = DockManager.getDefault();
+                if (mainDock.isHorizontal) {
+                    return originalFunction.call(this, state, box, ...args);
+                } else {
+                    const [, dashWidth] = mainDock.get_preferred_width(height);
+                    const workspaceBox = originalFunction.call(this, state, box, ...args);
+                    const [x, y] = workspaceBox.get_origin();
+                    const [workspaceWidth, workspaceHeight] = workspaceBox.get_size();
+                    if (mainDock.position == St.Side.LEFT) {
+                        workspaceBox.set_origin(x + dashWidth, y);
+                        workspaceBox.set_size(workspaceWidth - dashWidth, workspaceHeight);
+                    } else {
+                        workspaceBox.set_size(workspaceWidth - dashWidth, workspaceHeight);
+                    }
+                    return workspaceBox;
+                }
+            });
     }
 
     _deleteDocks() {
@@ -1742,12 +1775,12 @@ var DockManager = class DashToDock_DockManager {
     }
 
     _restoreDash() {
-        this._propertyInjections.removeWithLabel('main-dash');
-
         if (!this._oldDash)
                 return;
 
         this._signalsHandler.removeWithLabel('old-dash-changes');
+        [this._methodInjections, this._propertyInjections].forEach(
+            injections => injections.removeWithLabel('main-dash'));
 
         let overviewControls = Main.overview._overview._controls;
         Main.overview._overview._controls.layout_manager._dash = this._oldDash;
