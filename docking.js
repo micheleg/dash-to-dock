@@ -1514,6 +1514,7 @@ var DockManager = class DashToDock_DockManager {
 
         this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
+        this._propertyInjections = new Utils.PropertyInjectionsHandler(this);
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
 
@@ -1682,10 +1683,10 @@ var DockManager = class DashToDock_DockManager {
         // while just use the default getter otherwise.
         // The getter must be dynamic and not set only when we've a dummy
         // overview because the mode can change dynamically.
+        this._propertyInjections.removeWithLabel('main-dash');
         let defaultDashGetter = Object.getOwnPropertyDescriptor(
             Main.overview.constructor.prototype, 'dash').get;
-        Object.defineProperty(Main.overview, 'dash', {
-            configurable: true,
+        this._propertyInjections.addWithLabel('main-dash', Main.overview, 'dash', {
             get: () => Main.overview.isDummy ?
                 this.mainDock.dash : defaultDashGetter.call(Main.overview),
         });
@@ -1741,9 +1742,7 @@ var DockManager = class DashToDock_DockManager {
     }
 
     _restoreDash() {
-        Object.defineProperty(Main.overview, 'dash',
-            Object.getOwnPropertyDescriptor(
-                Main.overview.constructor.prototype, 'dash'));
+        this._propertyInjections.removeWithLabel('main-dash');
 
         if (!this._oldDash)
                 return;
