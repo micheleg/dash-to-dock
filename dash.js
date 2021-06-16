@@ -363,13 +363,15 @@ var MyDash = GObject.registerClass({
         if (this._dragPlaceholder) {
             // Ensure the next and previous icon are visible when moving the placeholder
             // (I assume there's room for both of them)
+            const children = this._box.get_children();
             if (this._dragPlaceholderPos > 0)
                 ensureActorVisibleInScrollView(this._scrollView,
-                    this._box.get_children()[this._dragPlaceholderPos - 1]);
+                    children[this._dragPlaceholderPos - 1]);
 
-            if (this._dragPlaceholderPos < this._box.get_children().length - 1)
+            if (this._dragPlaceholderPos >= -1 &&
+                this._dragPlaceholderPos < children.length - 1)
                 ensureActorVisibleInScrollView(this._scrollView,
-                    this._box.get_children()[this._dragPlaceholderPos + 1]);
+                    children[this._dragPlaceholderPos + 1]);
         }
 
         return ret;
