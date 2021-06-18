@@ -104,9 +104,8 @@ var Settings = GObject.registerClass({
 
         // Set a reasonable initial window height
         this.widget.connect('realize', () => {
-            let window = this.widget.get_root();
-            let [default_width, default_height] = window.get_default_size();
-            window.resize(default_width, 650);
+            const window = this.widget.get_root();
+            window.set_size_request(-1, 750);
         });
 
         // Timeout to delay the update of the settings
