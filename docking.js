@@ -1693,8 +1693,6 @@ var DockManager = class DashToDock_DockManager {
         if (Main.overview.isDummy)
             return;
 
-        this._signalsHandler.removeWithLabel('old-dash-changes');
-
         // Hide usual Dash
         this._oldDash.hide();
 
@@ -1709,11 +1707,11 @@ var DockManager = class DashToDock_DockManager {
         this._signalsHandler.addWithLabel('old-dash-changes', [
             this._oldDash,
             'notify::visible',
-            () => this._prepareMainDash()
+            () => this._oldDash.hide()
         ], [
             this._oldDash,
-            'notify::width',
-            () => this._prepareMainDash()
+            'notify::height',
+            () => this._oldDash.set_height(1)
         ]);
 
         // Pretend I'm the dash: meant to make appgrid swarm animation come from
