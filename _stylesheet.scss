@@ -15,48 +15,102 @@ $dash_bottom_margin: $base_margin * 4;
 $dash_border_radius: $modal_radius * 1.5;
 
 // Stock
-$dash_top_margin: $base_spacing * 2;
-
-$dock_bottom_margin: $dash_bottom_margin / 2;
+$dock_side_margin: $dash_bottom_margin / 2;
 
 // Adapted to $dock_bottom_margin
-$adjusted_dash_top_margin: $base_spacing / 2;
 
 @function shrink($val) {
     @return $val / 4;
 }
 
-/* Shrink the dash by reducing padding */
+@function opposite($val) {
+    @return map-get(
+        (
+            left: right,
+            right: left,
+            top: bottom,
+            bottom: top,
+        ),
+        $val
+    );
+}
 
 @each $side in bottom, top, left, right {
     #dashtodockContainer.#{$side} {
+        #dash {
+            margin: 0px;
+            padding: 0px;
+
+            .dash-background {
+                margin: 0;
+                margin-#{$side}: $dock_side_margin;
+                padding: $dash_padding
+
+            }
+
+            .dash-item-container {
+                .app-well-app,
+                .show-apps {
+                    padding: $dash_spacing;
+                    padding-#{$side}: $dash_padding + $dock_side_margin;
+                    padding-#{opposite($side)}: $dash_padding;
+                }
+            }
+        }
+
         &.shrink {
             #dash {
                 .dash-background {
-                    border: 1px;
+                    margin-#{$side}: shrink($dock_side_margin);
                     padding: shrink($dash_padding);
-                    border-#{$side}: 0px;
+                    border-radius: $dash_border_radius / 2;
                 }
 
                 .dash-item-container {
                     .app-well-app,
                     .show-apps {
-                        padding: shrink($dash_padding);
+                        padding: shrink($dash_spacing);
+                        padding-#{$side}: shrink($dash_padding + $dock_side_margin);
+                        padding-#{opposite($side)}: shrink($dash_padding);
                     }
                 }
             }
         }
-
-        &.extended #dash {
-            margin-top: 0;
-            margin-bottom: 0;
-        }
     }
 }
 
-#dashtodockContainer.bottom.shrink #dash .dash-background {
-    margin-top: 0;
-    margin-bottom: 4px;
+@each $side in bottom, top, left, right {
+    #dashtodockContainer.extended.#{$side} {
+        #dash {
+            .dash-background {
+                margin: 0;
+                padding: 0;
+                border-radius: 0;
+            }
+
+            .dash-item-container {
+                .app-well-app,
+                .show-apps {
+                    padding: $dash_spacing;
+                    padding-#{$side}: $dash_padding;
+                    padding-#{opposite($side)}: $dash_padding;
+                }
+            }
+        }
+
+        &.shrink {
+            #dash {
+                .dash-item-container {
+                    .app-well-app,
+                    .show-apps {
+                        padding: shrink($dash_spacing);
+                        padding-#{$side}: shrink($dash_padding);
+                        padding-#{opposite($side)}: shrink($dash_padding);
+                    }
+                }
+            }
+        }
+    }
 }
 
 #dashtodockContainer.straight-corner #dash .dash-background,
@@ -93,122 +147,7 @@ $osd_fg_color: #eeeeec;
     #dash .vertical-dash-separator {
         height: 1px;
         margin: ($dash_spacing + ($dash_padding / 2)) 0;
-        background-color: transparentize($osd_fg_color,0.7);
-      
-    }
-}
-
-#dashtodockContainer.bottom {
-    #dash {
-        margin-top: 0;
-
-        .dash-background {
-            margin-bottom: $dock_bottom_margin;
-        }
-
-        .dash-item-container {
-            .app-well-app,
-            .show-apps {
-                padding: $dash_padding $dash_spacing $dash_padding + $dock_bottom_margin;
-            }
-        }
-    }
-
-    &.overview #dash {
-        margin-top: $dash_top_margin;
-    }
-
-    &.extended,
-    &.shrink {
-        #dash .dash-background {
-            margin-bottom: 0;
-        }
-    }
-
-    &.extended #dash {
-        .dash-item-container {
-            .app-well-app,
-            .show-apps {
-                padding-bottom: $dash_padding;
-            }
-        }
-    }
-
-    &.shrink #dash {
-        .dash-item-container {
-            .app-well-app,
-            .show-apps {
-                padding-bottom: shrink($dash_padding);
-            }
-        }
-    }
-}
-
-#dashtodockContainer.left,
-#dashtodockContainer.right {
-    #dash {
-        padding-left: $base_margin;
-        padding-right: $base_margin;
-
-        .dash-item-container {
-            .app-well-app,
-            .show-apps {
-                /* In vertical we don't want to add additional padding below the button. */
-                padding-bottom: 6px;
-                padding-top: 6px;
-            }
-        }
-    }
-
-    &.shrink #dash {
-        padding-left: 0;
-        padding-right: 0;
-    }
-}
-
-#dashtodockContainer.top {
-    #dash {
-        margin-bottom: 0px;
-    }
-}
-
-/* Dash height extended to the whole available vertical space */
-#dashtodockContainer.extended {
-    &.left,
-    &.right,
-    &.top,
-    &.bottom {
-        #dash {
-            padding-top: 0;
-            padding-bottom: 0;
-            padding-left: 0;
-            padding-right: 0;
-
-            .dash-background {
-                border-radius: 0;
-            }
-        }
-    }
-
-    &.top,
-    &.bottom {
-        #dash {
-            border-left: 0px;
-            border-right: 0px;
-
-            .dash-background {
-                padding-left: 0;
-                padding-right: 0;
-            }
-        }
-    }
-
-    &.left,
-    &.right {
-        #dash {
-            border-top: 0px;
-            border-bottom: 0px;
-        }
+        background-color: transparentize($osd_fg_color, 0.7);
     }
 }
 
