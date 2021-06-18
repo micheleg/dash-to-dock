@@ -738,10 +738,6 @@
                                 <property name="digits">2</property>
                                 <property name="value_pos">right</property>
                                 <signal name="value-changed" handler="dock_size_scale_value_changed_cb" />
-                                <layout>
-                                  <property name="column">1</property>
-                                  <property name="row">0</property>
-                                </layout>
                               </object>
                             </child>
                             <child>
