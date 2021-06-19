@@ -2569,15 +2569,12 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                             <property name="label" translatable="yes">All windows</property>
                             <property name="margin_top">12</property>
 
-                            <property name="active">1</property>
                             <signal name="toggled" handler="all_windows_radio_button_toggled_cb" />
                           </object>
                         </child>
                         <child>
                           <object class="GtkCheckButton" id="focus_application_windows_radio_button">
                             <property name="label" translatable="yes">Only focused application&apos;s windows</property>
-
-                            <property name="active">1</property>
                             <property name="group">all_windows_radio_button</property>
                             <signal name="toggled" handler="focus_application_windows_radio_button_toggled_cb" />
                           </object>
@@ -2585,8 +2582,6 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <child>
                           <object class="GtkCheckButton" id="maximized_windows_radio_button">
                             <property name="label" translatable="yes">Only maximized windows</property>
-
-                            <property name="active">1</property>
                             <property name="group">all_windows_radio_button</property>
                             <signal name="toggled" handler="maximized_windows_radio_button_toggled_cb" />
                           </object>
