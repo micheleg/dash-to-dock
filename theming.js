@@ -171,9 +171,13 @@ var ThemeManager = class DashToDock_ThemeManager {
             this._customizedBorder = this._customizedBackground;
 
             // backgroundColor is a string like rgb(0,0,0)
-            const color = Clutter.Color.from_string(backgroundColor);
-            color.alpha = newAlpha;
+            const [ret, color] = Clutter.Color.from_string(backgroundColor);
+            if (!ret) {
+                logError(new Error(`${backgroundColor} is not a valid color string`));
+                return;
+            }
 
+            color.alpha = newAlpha * 255;
             this._transparency.setColor(color);
         } else {
             // backgroundColor is a Clutter.Color object
