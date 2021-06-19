@@ -1,5 +1,8 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+imports.gi.versions.Gtk = '4.0';
+imports.gi.versions.Gdk = '4.0';
+
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
@@ -11,6 +14,15 @@ const Gdk = imports.gi.Gdk;
 const Gettext = imports.gettext.domain('dashtodock');
 const __ = Gettext.gettext;
 const N__ = function (e) { return e };
+
+try {
+    imports.misc.extensionUtils;
+} catch (e) {
+    const resource = Gio.Resource.load(
+        '/usr/share/gnome-shell/org.gnome.Extensions.src.gresource');
+    resource._register();
+    imports.searchPath.push('resource:///org/gnome/Extensions/js');
+}
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -56,14 +68,21 @@ var Settings = GObject.registerClass({
     _init() {
         super._init();
 
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
+        if (Me)
+            this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
+        else
+            this._settings = new Gio.Settings({schema_id: 'org.gnome.shell.extensions.dash-to-dock'});
 
         this._rtl = (Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL);
 
         this._builder = new Gtk.Builder();
         this._builder.set_scope(this);
-        this._builder.set_translation_domain(Me.metadata['gettext-domain']);
-        this._builder.add_from_file(Me.path + '/Settings.ui');
+        if (Me) {
+            this._builder.set_translation_domain(Me.metadata['gettext-domain']);
+            this._builder.add_from_file(Me.path + '/Settings.ui');
+        } else {
+            this._builder.add_from_file('./Settings.ui');
+        }
 
         this.widget = new Gtk.ScrolledWindow({ hscrollbar_policy: Gtk.PolicyType.NEVER });
         this._notebook = this._builder.get_object('settings_notebook');
@@ -840,7 +859,10 @@ var Settings = GObject.registerClass({
 
         // About Panel
 
-        this._builder.get_object('extension_version').set_label(Me.metadata.version.toString());
+        if (Me)
+            this._builder.get_object('extension_version').set_label(Me.metadata.version.toString());
+        else
+            this._builder.get_object('extension_version').set_label('Unknown');
     }
 });
 
@@ -852,4 +874,17 @@ function buildPrefsWidget() {
     let settings = new Settings();
     let widget = settings.widget;
     return widget;
+}
+
+if (!Me) {
+    GLib.setenv('GSETTINGS_SCHEMA_DIR', './schemas', true);
+    Gtk.init();
+
+    const loop = GLib.MainLoop.new(null, false);
+    const win = new Gtk.Window();
+    win.set_child(buildPrefsWidget());
+    win.connect('close-request', () => loop.quit());
+    win.present();
+
+    loop.run();
 }
