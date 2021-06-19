@@ -40,6 +40,7 @@
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">When set to minimize, double clicking minimizes all the windows of the application.</property>
                         <property name="wrap">1</property>
+                        <property name="xalign">0</property>
                         <property name="max_width_chars">40</property>
 
                         <style>
@@ -56,6 +57,7 @@
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Shift+Click action</property>
+                        <property name="xalign">0</property>
 
                         <layout>
                           <property name="column">0</property>
@@ -108,6 +110,7 @@
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Behavior for Middle-Click.</property>
                         <property name="wrap">1</property>
+                        <property name="xalign">0</property>
                         <property name="max_width_chars">40</property>
 
                         <style>
@@ -124,6 +127,7 @@
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Middle-Click action</property>
+                        <property name="xalign">0</property>
 
                         <layout>
                           <property name="column">0</property>
@@ -176,6 +180,7 @@
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Behavior for Shift+Middle-Click.</property>
                         <property name="wrap">1</property>
+                        <property name="xalign">0</property>
                         <property name="max_width_chars">40</property>
 
                         <style>
@@ -192,6 +197,7 @@
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Shift+Middle-Click action</property>
+                        <property name="xalign">0</property>
 
                         <layout>
                           <property name="column">0</property>
@@ -287,6 +293,7 @@
                         <child>
                           <object class="GtkLabel" id="unity_backlit_items_label">
                             <property name="hexpand">1</property>
+                            <property name="xalign">0</property>
                             <property name="can_focus">0</property>
                             <property name="valign">center</property>
                             <property name="label" translatable="yes">Enable Unity7 like glossy backlit items</property>
@@ -306,6 +313,7 @@
                         <child>
                           <object class="GtkLabel" id="dominant_color_label">
                             <property name="hexpand">1</property>
+                            <property name="xalign">0</property>
                             <property name="can_focus">0</property>
                             <property name="halign">start</property>
                             <property name="label" translatable="yes">Use dominant color</property>
@@ -332,6 +340,7 @@
                           <object class="GtkLabel" id="label4">
                             <property name="can_focus">0</property>
                             <property name="hexpand">1</property>
+                            <property name="xalign">0</property>
                             <property name="label" translatable="yes">Customize indicator style</property>
                             <property name="justify">fill</property>
 
@@ -356,6 +365,7 @@
                             <child>
                               <object class="GtkLabel" id="dot_color_label">
                                 <property name="hexpand">1</property>
+                                <property name="xalign">0</property>
                                 <property name="can_focus">0</property>
                                 <property name="label" translatable="yes">Color</property>
 
@@ -375,6 +385,7 @@
                             <child>
                               <object class="GtkLabel" id="dot_border_color_label">
                                 <property name="hexpand">1</property>
+                                <property name="xalign">0</property>
                                 <property name="can_focus">0</property>
                                 <property name="label" translatable="yes">Border color</property>
 
@@ -394,6 +405,7 @@
                             <child>
                               <object class="GtkLabel" id="dot_border_width_label">
                                 <property name="hexpand">1</property>
+                                <property name="xalign">0</property>
                                 <property name="can_focus">0</property>
                                 <property name="label" translatable="yes">Border width</property>
 
@@ -531,6 +543,7 @@
                               <object class="GtkLabel" id="dock_position_label">
                                 <property name="can_focus">0</property>
                                 <property name="hexpand">1</property>
+                                <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Position on screen</property>
 
                               </object>
@@ -616,7 +629,7 @@
                                 <property name="halign">start</property>
                                 <property name="label" translatable="yes">Hide the dock when it obstructs a window of the current application. More refined settings are available.</property>
                                 <property name="wrap">1</property>
-
+                                <property name="xalign">0</property>
                                 <style>
                                   <class name="dim-label"/>
                                 </style>
@@ -980,14 +993,7 @@
                             <child>
                               <object class="GtkCheckButton" id="windows_preview_button">
                                 <property name="margin_top">3</property>
-
-                                <child>
-                                  <object class="GtkLabel" id="windows_previews_label">
-                                    <property name="can_focus">0</property>
-                                    <property name="label" translatable="yes">Show open windows previews.</property>
-                                    <property name="use_markup">1</property>
-                                  </object>
-                                </child>
+                                <property name="label" translatable="yes">Show open windows previews.</property>
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">1</property>
@@ -1026,7 +1032,7 @@
                                 <property name="hexpand">1</property>
                                 <property name="label" translatable="yes">If disabled, these settings are accessible from gnome-tweak-tool or the extension website.</property>
                                 <property name="wrap">1</property>
-
+                                <property name="xalign">0</property>
                                 <style>
                                   <class name="dim-label"/>
                                 </style>
@@ -1065,9 +1071,10 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="application_button_animation_button">
+                                <style>
+                                <class name="text-button"/>
+                                </style>
                                 <property name="margin_top">3</property>
-
-
                                 <child>
                                   <object class="GtkLabel" id="label3">
                                     <property name="can_focus">0</property>
@@ -1216,6 +1223,7 @@
                                 <property name="label" translatable="yes">Enable Super+(0-9) as shortcuts to activate apps. It can also be used together with Shift and Ctrl.</property>
                                 <property name="use_markup">1</property>
                                 <property name="wrap">1</property>
+                                <property name="xalign">0</property>
 
                                 <style>
                                   <class name="dim-label"/>
@@ -1309,6 +1317,7 @@
                                 <property name="halign">start</property>
                                 <property name="label" translatable="yes">Behaviour when clicking on the icon of a running application.</property>
                                 <property name="wrap">1</property>
+                                <property name="xalign">0</property>
 
                                 <style>
                                   <class name="dim-label"/>
@@ -1325,6 +1334,7 @@
                                 <property name="hexpand">1</property>
                                 <property name="halign">start</property>
                                 <property name="label" translatable="yes">Click action</property>
+                                <property name="xalign">0</property>
 
                                 <layout>
                                   <property name="column">0</property>
@@ -1411,6 +1421,7 @@
                                 <property name="halign">start</property>
                                 <property name="label" translatable="yes">Behaviour when scrolling on the icon of an application.</property>
                                 <property name="wrap">1</property>
+                                <property name="xalign">0</property>
 
                                 <style>
                                   <class name="dim-label"/>
@@ -1514,6 +1525,7 @@
                                 <property name="halign">start</property>
                                 <property name="label" translatable="yes">Few customizations meant to integrate the dock with the default GNOME theme. Alternatively, specific options can be enabled below.</property>
                                 <property name="wrap">1</property>
+                                <property name="xalign">0</property>
 
                                 <style>
                                   <class name="dim-label"/>
@@ -1711,6 +1723,7 @@
                                 <property name="halign">start</property>
                                 <property name="label" translatable="yes">Set the background color for the dash.</property>
                                 <property name="wrap">1</property>
+                                <property name="xalign">0</property>
 
                                 <style>
                                   <class name="dim-label"/>
@@ -1888,6 +1901,10 @@
                           <object class="GtkBox">
                             <property name="can_focus">0</property>
                             <property name="spacing">32</property>
+                            <property name="margin_start">12</property>
+                            <property name="margin_end">12</property>
+                            <property name="margin_top">12</property>
+                            <property name="margin_bottom">12</property>
                             <child>
                               <object class="GtkLabel" id="force_straight_corner_label">
                                 <property name="hexpand">1</property>
@@ -1977,6 +1994,7 @@
                 <property name="label" translatable="yes">Moves the dash out of the overview transforming it in a dock</property>
                 <property name="justify">center</property>
                 <property name="wrap">1</property>
+                <property name="xalign">0</property>
               </object>
             </child>
             <child>
@@ -2016,6 +2034,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                 <property name="use_markup">1</property>
                 <property name="justify">center</property>
                 <property name="wrap">1</property>
+                <property name="xalign">0</property>
               </object>
             </child>
           </object>
@@ -2070,28 +2089,24 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                     <property name="orientation">vertical</property>
                     <property name="spacing">12</property>
                     <child>
-                      <object class="GtkGrid" id="advanced_transparency_grid">
+                      <object class="GtkBox" id="min_alpha_box_1">
                         <property name="can_focus">0</property>
-                        <property name="column_spacing">32</property>
-                        <child>
-                          <object class="GtkSwitch" id="customize_alphas_switch">
-                            <layout>
-                              <property name="column">1</property>
-                              <property name="row">0</property>
-                            </layout>
-                          </object>
-                        </child>
+                        <property name="margin_start">12</property>
+                        <property name="margin_end">12</property>
+                        <property name="margin_top">12</property>
+                        <property name="margin_bottom">12</property>
+                        <property name="spacing">32</property>
                         <child>
                           <object class="GtkLabel" id="customize_alphas_label">
                             <property name="can_focus">0</property>
                             <property name="hexpand">1</property>
                             <property name="label" translatable="yes">Customize minimum and maximum opacity values</property>
                             <property name="justify">fill</property>
-
-                            <layout>
-                              <property name="column">0</property>
-                              <property name="row">0</property>
-                            </layout>
+                            <property name="xalign">0</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkSwitch" id="customize_alphas_switch">
                           </object>
                         </child>
                       </object>
@@ -2235,6 +2250,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="can_focus">0</property>
                         <property name="label" translatable="yes">Temporarily show the application numbers over the icons, corresponding to the shortcut.</property>
                         <property name="wrap">1</property>
+                        <property name="xalign">0</property>
                         <property name="max_width_chars">40</property>
 
                         <style>
@@ -2291,6 +2307,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="can_focus">0</property>
                         <property name="label" translatable="yes">If using autohide, the dock will appear for a short time when triggering the shortcut.</property>
                         <property name="wrap">1</property>
+                        <property name="xalign">0</property>
                         <property name="max_width_chars">40</property>
 
                         <style>
@@ -2346,6 +2363,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="can_focus">0</property>
                         <property name="label" translatable="yes">Syntax: &lt;Shift&gt;, &lt;Ctrl&gt;, &lt;Alt&gt;, &lt;Super&gt;</property>
                         <property name="wrap">1</property>
+                        <property name="xalign">0</property>
                         <property name="max_width_chars">40</property>
 
                         <style>
@@ -2450,6 +2468,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">Show the dock by mouse hover on the screen edge.</property>
                         <property name="wrap">1</property>
+                        <property name="xalign">0</property>
 
                         <style>
                           <class name="dim-label"/>
@@ -2527,6 +2546,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">Show the dock when it doesn&apos;t obstruct application windows.</property>
                         <property name="wrap">1</property>
+                        <property name="xalign">0</property>
 
                         <style>
                           <class name="dim-label"/>
