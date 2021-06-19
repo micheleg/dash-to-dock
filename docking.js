@@ -19,6 +19,7 @@ const SearchController = imports.ui.searchController;
 const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
 const Layout = imports.ui.layout;
 const LayoutManager = imports.ui.main.layoutManager;
+const Workspace = imports.ui.workspace;
 const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 
 const ExtensionUtils = imports.misc.extensionUtils;
@@ -368,6 +369,14 @@ var DockedDash = GObject.registerClass({
         this._resetPosition();
 
         this.connect('destroy', this._onDestroy.bind(this));
+    }
+
+    get monitorIndex() {
+        return this._monitorIndex;
+    }
+
+    get position() {
+        return this._position;
     }
 
     get isHorizontal() {
@@ -1519,6 +1528,7 @@ var DockManager = class DashToDock_DockManager {
         this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._methodInjections = new Utils.InjectionsHandler(this);
+        this._vfuncInjections = new Utils.VFuncInjectionsHandler(this);
         this._propertyInjections = new Utils.PropertyInjectionsHandler(this);
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
@@ -1555,6 +1565,10 @@ var DockManager = class DashToDock_DockManager {
 
     get mainDock() {
         return this._allDocks.length ? this._allDocks[0] : null;
+    }
+
+    getDockByMonitor(monitorIndex) {
+        return this._allDocks.find(d => (d.monitorIndex === monitorIndex));
     }
 
     _ensureFileManagerClient() {
@@ -1761,6 +1775,38 @@ var DockManager = class DashToDock_DockManager {
                 }
             });
 
+        this._vfuncInjections.addWithLabel('main-dash', Workspace.WorkspaceBackground.prototype,
+            'allocate', function (box) {
+            this.vfunc_allocate(box);
+
+            const dock = DockManager.getDefault().getDockByMonitor(this._monitorIndex);
+            if (dock && DockManager.settings.get_boolean('dock-fixed')) {
+                const [contentWidth, contentHeight] = this._bin.get_content_box().get_size();
+
+                const contentBox = this._backgroundGroup.get_allocation_box();
+                let [x, y] = contentBox.get_origin();
+                const widthRatio = contentWidth / this._workarea.width;
+                const heightRatio = contentHeight / this._workarea.height;
+                let xOff = -x;
+                let yOff = -y;
+                switch (dock.position) {
+                    case St.Side.TOP:
+                        yOff += heightRatio * dock.height;
+                        y -= heightRatio * dock.height;
+                        break;
+                    case St.Side.BOTTOM:
+                        yOff += heightRatio * dock.height;
+                        break;
+                    case St.Side.RIGHT:
+                        xOff += widthRatio * dock.width;
+                        break;
+                }
+                contentBox.set_origin(x, y);
+                contentBox.set_size(xOff + contentWidth, yOff + contentHeight);
+                this._backgroundGroup.allocate(contentBox);
+            }
+        });
+
         // Always show the thumbnails box if have workspaces enabled in vertical mode
         if (!this.mainDock.isHorizontal) {
             this._methodInjections.addWithLabel('main-dash',
@@ -1791,10 +1837,10 @@ var DockManager = class DashToDock_DockManager {
 
     _restoreDash() {
         if (!this._oldDash)
-                return;
+            return;
 
         this._signalsHandler.removeWithLabel('old-dash-changes');
-        [this._methodInjections, this._propertyInjections].forEach(
+        [this._methodInjections, this._vfuncInjections, this._propertyInjections].forEach(
             injections => injections.removeWithLabel('main-dash'));
 
         let overviewControls = Main.overview._overview._controls;
