@@ -15,7 +15,8 @@ $dash_bottom_margin: $base_margin * 4;
 $dash_border_radius: $modal_radius * 1.5;
 
 // Stock
-$dock_side_margin: $dash_bottom_margin / 2;
+$dock_side_margin: $dash_bottom_margin / 4;
+$dock_fixed_inner_margin: $dock_side_margin;
 
 // Adapted to $dock_bottom_margin
 
@@ -84,6 +85,36 @@ $dock_side_margin: $dash_bottom_margin / 2;
                     }
                 }
             }
+
+            &.fixed {
+                #dash {
+                    .dash-background {
+                        margin-#{opposite($side)}: shrink($dock_fixed_inner_margin);
+                    }
+
+                    .dash-item-container {
+                        .app-well-app,
+                        .show-apps {
+                            padding-#{opposite($side)}: shrink($dash_padding + $dock_fixed_inner_margin);
+                        }
+                    }
+                }
+            }
+        }
+
+        &.fixed {
+            #dash {
+                .dash-background {
+                    margin-#{opposite($side)}: $dock_fixed_inner_margin;
+                }
+
+                .dash-item-container {
+                    .app-well-app,
+                    .show-apps {
+                        padding-#{opposite($side)}: $dash_padding + $dock_fixed_inner_margin;
+                    }
+                }
+            }
         }
     }
 }
@@ -128,6 +159,14 @@ $dock_side_margin: $dash_bottom_margin / 2;
                         padding-#{$side}: shrink($dash_padding);
                         padding-#{opposite($side)}: shrink($dash_padding);
                     }
+                }
+            }
+        }
+
+        &.shrink.fixed {
+            #dash {
+                .dash-background {
+                    margin-#{opposite($side)}: 0;
                 }
             }
         }
