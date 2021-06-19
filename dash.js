@@ -113,6 +113,7 @@ var MyDash = GObject.registerClass({
         });
 
         this._dashContainer = new St.BoxLayout({
+            name: "dashtodockDashContainer",
             x_align: Clutter.ActorAlign.CENTER,
             y_align: Clutter.ActorAlign.CENTER,
             vertical: !this._isHorizontal,

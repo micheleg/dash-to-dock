@@ -44,8 +44,13 @@ $dock_side_margin: $dash_bottom_margin / 2;
             .dash-background {
                 margin: 0;
                 margin-#{$side}: $dock_side_margin;
-                padding: $dash_padding
+                padding: 0;
+            }
 
+            #dashtodockDashContainer {
+                padding: $dash_padding;
+                padding-#{$side}: 0;
+                padding-#{opposite($side)}: 0;
             }
 
             .dash-item-container {
@@ -64,6 +69,10 @@ $dock_side_margin: $dash_bottom_margin / 2;
                     margin-#{$side}: shrink($dock_side_margin);
                     padding: shrink($dash_padding);
                     border-radius: $dash_border_radius / 2;
+                }
+
+                #dashtodockDashContainer {
+                    padding: shrink($dash_padding);
                 }
 
                 .dash-item-container {
@@ -88,6 +97,12 @@ $dock_side_margin: $dash_bottom_margin / 2;
                 border-radius: 0;
             }
 
+            #dashtodockDashContainer {
+                padding: $dash_padding - $dash_spacing;
+                padding-#{$side}: 0;
+                padding-#{opposite($side)}: 0;
+            }
+
             .dash-item-container {
                 .app-well-app,
                 .show-apps {
@@ -100,6 +115,12 @@ $dock_side_margin: $dash_bottom_margin / 2;
 
         &.shrink {
             #dash {
+                #dashtodockDashContainer {
+                    padding: shrink($dash_padding - $dash_spacing);
+                    padding-#{$side}: 0;
+                    padding-#{opposite($side)}: 0;
+                }
+
                 .dash-item-container {
                     .app-well-app,
                     .show-apps {
