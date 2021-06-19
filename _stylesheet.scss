@@ -10,7 +10,7 @@ $modal_radius: $base_border_radius * 2;
 $dash_background_color: #3b3b3b;
 $dash_placeholder_size: 32px;
 $dash_padding: $base_padding + 4px; // 10px
-$dash_spacing: $base_padding / 4;
+$dash_spacing: round($base_padding / 4);
 $dash_bottom_margin: $base_margin * 4;
 $dash_border_radius: $modal_radius * 1.5;
 
@@ -20,7 +20,7 @@ $dock_side_margin: $dash_bottom_margin / 2;
 // Adapted to $dock_bottom_margin
 
 @function shrink($val) {
-    @return $val / 4;
+    @return round($val / 4);
 }
 
 @function opposite($val) {
