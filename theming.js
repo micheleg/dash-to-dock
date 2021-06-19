@@ -263,9 +263,11 @@ var ThemeManager = class DashToDock_ThemeManager {
 
         newStyle = borderMissingStyle;
 
-        // I do call set_style possibly twice so that only the background gets the transition.
-        // The transition-property css rules seems to be unsupported
-        this._dash._background.set_style(newStyle);
+        if (newStyle) {
+            // I do call set_style possibly twice so that only the background gets the transition.
+            // The transition-property css rules seems to be unsupported
+            this._dash._background.set_style(newStyle);
+        }
 
         // Customize background
         let fixedTransparency = settings.get_enum('transparency-mode') == TransparencyMode.FIXED;
