@@ -498,6 +498,7 @@
                             <child>
                               <object class="GtkComboBoxText" id="dock_monitor_combo">
                                 <property name="can_focus">0</property>
+                                <property name="width_request">400</property>
                                 <property name="valign">center</property>
                                 <signal name="changed" handler="dock_display_combo_changed_cb" />
                                 <layout>
