@@ -8,6 +8,7 @@ const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
+const Signals = imports.signals;
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
@@ -46,6 +47,123 @@ const RunningIndicatorStyle = {
     CILIORA: 6,
     METRO: 7
 };
+
+class MonitorsConfig {
+    static XML_INTERFACE =
+        '<node>\
+            <interface name="org.gnome.Mutter.DisplayConfig">\
+                <method name="GetCurrentState">\
+                <arg name="serial" direction="out" type="u" />\
+                <arg name="monitors" direction="out" type="a((ssss)a(siiddada{sv})a{sv})" />\
+                <arg name="logical_monitors" direction="out" type="a(iiduba(ssss)a{sv})" />\
+                <arg name="properties" direction="out" type="a{sv}" />\
+                </method>\
+                <signal name="MonitorsChanged" />\
+            </interface>\
+        </node>';
+
+    static ProxyWrapper = Gio.DBusProxy.makeProxyWrapper(MonitorsConfig.XML_INTERFACE);
+
+    constructor() {
+        this._monitorsConfigProxy = new MonitorsConfig.ProxyWrapper(
+            Gio.DBus.session,
+            "org.gnome.Mutter.DisplayConfig",
+            "/org/gnome/Mutter/DisplayConfig"
+        );
+
+        // Connecting to a D-Bus signal
+        this._monitorsConfigProxy.connectSignal("MonitorsChanged",
+            () => this._updateResources());
+
+        this._primaryMonitor = null;
+        this._monitors = [];
+        this._logicalMonitors = [];
+
+        this._updateResources();
+    }
+
+    _updateResources() {
+        this._monitorsConfigProxy.GetCurrentStateRemote((resources, err) => {
+            if (err) {
+                logError(err);
+                return;
+            }
+
+            const [_serial, monitors, logicalMonitors] = resources;
+            let index = 0;
+            for (const monitor of monitors) {
+                const [monitorSpecs, _modes, props] = monitor;
+                const [connector, vendor, product, serial] = monitorSpecs;
+                this._monitors.push({
+                    index: index++,
+                    active: false,
+                    connector, vendor, product, serial,
+                    displayName: props['display-name'].unpack(),
+                });
+            }
+
+            for (const logicalMonitor of logicalMonitors) {
+                const [_x, _y, _scale, _transform, isPrimary, monitorsSpecs] =
+                    logicalMonitor;
+
+                // We only care about the first one really
+                for (const monitorSpecs of monitorsSpecs) {
+                    const [connector, vendor, product, serial] = monitorSpecs;
+                    const monitor = this._monitors.find(m =>
+                        m.connector === connector && m.vendor === vendor &&
+                        m.product === product && m.serial === serial);
+
+                    if (monitor) {
+                        monitor.active = true;
+                        monitor.isPrimary = isPrimary;
+                        if (monitor.isPrimary)
+                            this._primaryMonitor = monitor;
+                        break;
+                    }
+                }
+            }
+
+            const activeMonitors = this._monitors.filter(m => m.active);
+            if (activeMonitors.length > 1 && logicalMonitors.length == 1) {
+                // We're in cloning mode, so let's just activate the primary monitor
+                this._monitors.forEach(m => (m.active = false));
+                this._primaryMonitor.active = true;
+            }
+
+            this._updateMonitorsIndexes();
+            this.emit('updated');
+        });
+    }
+
+    _updateMonitorsIndexes() {
+        // This function ensures that we follow the old Gdk indexing strategy
+        // for monitors, it can be removed when we don't care about breaking
+        // old user configurations or external apps configuring this extension
+        // such as ubuntu's gnome-control-center.
+        const { index: primaryMonitorIndex } = this._primaryMonitor;
+        for (const monitor of this._monitors) {
+            let { index } = monitor;
+            // The The dock uses the Gdk index for monitors, where the primary monitor
+            // always has index 0, so let's follow what dash-to-dock does in docking.js
+            // (as part of _createDocks), but using inverted math
+            index -= primaryMonitorIndex;
+
+            if (index < 0)
+                index += this._monitors.length;
+
+            monitor.index = index;
+        }
+    }
+
+    get primaryMonitor() {
+        return this._primaryMonitor;
+    }
+
+    get monitors() {
+        return this._monitors;
+    }
+}
+Signals.addSignalMethods(MonitorsConfig.prototype);
 
 // TODO:
 // function setShortcut(settings) {
@@ -99,6 +217,7 @@ var Settings = GObject.registerClass({
         this._icon_size_timeout = 0;
         this._opacity_timeout = 0;
 
+        this._monitorsConfig = new MonitorsConfig();
         this._bindSettings();
     }
 
@@ -113,7 +232,11 @@ var Settings = GObject.registerClass({
     }
 
     dock_display_combo_changed_cb(combo) {
-        this._settings.set_int('preferred-monitor', this._monitors[combo.get_active()]);
+        if (!this._monitors?.length)
+            return;
+
+        const preferredMonitor = this._monitors[combo.get_active()].index;
+        this._settings.set_int('preferred-monitor', preferredMonitor);
     }
 
     position_top_button_toggled_cb(button) {
@@ -219,41 +342,43 @@ var Settings = GObject.registerClass({
             this._settings.set_enum('intellihide-mode', 2);
     }
 
+    _updateMonitorsSettings() {
+        // Monitor options
+        const preferredMonitor = this._settings.get_int('preferred-monitor');
+        const dockMonitorCombo = this._builder.get_object('dock_monitor_combo');
+
+        this._monitors = [];
+        dockMonitorCombo.remove_all();
+
+        // Add connected monitors
+        for (const monitor of this._monitorsConfig.monitors) {
+            if (!monitor.active && monitor.index !== preferredMonitor)
+                continue;
+
+            if (monitor.isPrimary) {
+                dockMonitorCombo.append_text(
+                    /* Translators: This will be followed by Display Name - Connector. */
+                    __('Primary monitor: ') + monitor.displayName + ' - ' +
+                        monitor.connector);
+            } else {
+                dockMonitorCombo.append_text(
+                    /* Translators: Followed by monitor index, Display Name - Connector. */
+                    __('Secondary monitor ') + (monitor.index + 1) + ' - ' +
+                        monitor.displayName + ' - ' + monitor.connector);
+            }
+
+            this._monitors.push(monitor);
+
+            if (monitor.index === preferredMonitor)
+                dockMonitorCombo.set_active(this._monitors.length - 1);
+        }
+    }
 
     _bindSettings() {
         // Position and size panel
 
-        // Monitor options
-
-        this._monitors = [];
-        // Build options based on the number of monitors and the current settings.
-        let monitors = Gdk.Display.get_default().get_monitors();
-        let n_monitors = monitors.length;
-        let primary_monitor = 0; // Gdk.Screen.get_default().get_primary_monitor();
-
-        let monitor = this._settings.get_int('preferred-monitor');
-
-        // Add primary monitor with index 0, because in GNOME Shell the primary monitor is always 0
-        this._builder.get_object('dock_monitor_combo').append_text(__('Primary monitor'));
-        this._monitors.push(0);
-
-        // Add connected monitors
-        let ctr = 0;
-        for (let i = 0; i < n_monitors; i++) {
-            if (i !== primary_monitor) {
-                ctr++;
-                this._monitors.push(ctr);
-                this._builder.get_object('dock_monitor_combo').append_text(__('Secondary monitor ') + ctr);
-            }
-        }
-
-        // If one of the external monitor is set as preferred, show it even if not attached
-        if ((monitor >= n_monitors) && (monitor !== primary_monitor)) {
-            this._monitors.push(monitor)
-            this._builder.get_object('dock_monitor_combo').append_text(__('Secondary monitor ') + ++ctr);
-        }
-
-        this._builder.get_object('dock_monitor_combo').set_active(this._monitors.indexOf(monitor));
+        this._updateMonitorsSettings();
+        this._monitorsConfig.connect('updated', () => this._updateMonitorsSettings());
 
         // Position option
         let position = this._settings.get_enum('dock-position');
