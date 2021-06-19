@@ -1189,11 +1189,7 @@ var MyShowAppsIconMenu = class DashToDock_MyShowAppsIconMenu extends MyAppIconMe
         let item = this._appendMenuItem(name);
 
         item.connect('activate', function () {
-            if (typeof ExtensionUtils.openPrefs === 'function') {
-                ExtensionUtils.openPrefs();
-            } else {
-                Util.spawn(["gnome-shell-extension-prefs", Me.metadata.uuid]);
-            }
+            ExtensionUtils.openPrefs();
         });
     }
 };
