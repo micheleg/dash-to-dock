@@ -1743,6 +1743,8 @@ var DockManager = class DashToDock_DockManager {
         // We also need to ignore max-size changes
         this._methodInjections.addWithLabel('main-dash', this._oldDash,
             'setMaxSize', () => {});
+        this._methodInjections.addWithLabel('main-dash', this._oldDash,
+            'allocate', () => {});
         // And to return the preferred height depending on the state
         this._methodInjections.addWithLabel('main-dash', this._oldDash,
             'get_preferred_height', (_originalMethod, ...args) => {
