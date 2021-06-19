@@ -1057,6 +1057,13 @@ var DockedDash = GObject.registerClass({
         this._updateVisibilityMode();
 
         let extendHeight = DockManager.settings.get_boolean('extend-height');
+        let fixedIsEnabled = DockManager.settings.get_boolean('dock-fixed');
+
+        if (fixedIsEnabled) {
+            this.add_style_class_name('fixed');
+        } else {
+            this.remove_style_class_name('fixed');
+        }
 
         // Note: do not use the workarea coordinates in the direction on which the dock is placed,
         // to avoid a loop [position change -> workArea change -> position change] with
