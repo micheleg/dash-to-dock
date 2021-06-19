@@ -19,6 +19,8 @@
         <property name="child">
           <object class="GtkListBox" id="listbox_middle_click_options">
             <property name="can_focus">0</property>
+            <property name="hexpand">1</property>
+            <property name="vexpand">1</property>
             <property name="selection_mode">none</property>
             <child>
               <object class="GtkListBoxRow" id="listboxrow11">
@@ -249,6 +251,8 @@
     <property name="page-increment">5</property>
   </object>
   <object class="GtkBox" id="running_dots_advance_settings_box">
+    <property name="hexpand">1</property>
+    <property name="vexpand">1</property>
     <property name="can_focus">0</property>
     <property name="margin_start">12</property>
     <property name="margin_end">12</property>
@@ -2036,6 +2040,8 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
     <property name="page-increment">0.10000000000000001</property>
   </object>
   <object class="GtkBox" id="advanced_transparency_dialog">
+    <property name="hexpand">1</property>
+    <property name="vexpand">1</property>
     <property name="can_focus">0</property>
     <property name="margin_start">12</property>
     <property name="margin_end">12</property>
@@ -2173,6 +2179,8 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
     <property name="page-increment">1</property>
   </object>
   <object class="GtkBox" id="box_overlay_shortcut">
+    <property name="hexpand">1</property>
+    <property name="vexpand">1</property>
     <property name="can_focus">0</property>
     <property name="margin_start">12</property>
     <property name="margin_end">12</property>
@@ -2409,6 +2417,8 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
     <property name="page-increment">0.25</property>
   </object>
   <object class="GtkBox" id="intelligent_autohide_advanced_settings_box">
+    <property name="hexpand">1</property>
+    <property name="vexpand">1</property>
     <property name="can_focus">0</property>
     <property name="margin_start">12</property>
     <property name="margin_end">12</property>
