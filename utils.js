@@ -1,3 +1,6 @@
+
+const Gi = imports._gi;
+
 const Clutter = imports.gi.Clutter;
 const GObject = imports.gi.GObject;
 const Meta = imports.gi.Meta;
@@ -247,6 +250,40 @@ var InjectionsHandler = class DashToDock_InjectionsHandler extends BasicHandler 
     _remove(item) {
         const [object, name, original] = item;
         object[name] = original;
+    }
+};
+
+/**
+ * Manage vfunction injection: both instances and prototype can be overridden
+ * and restored
+ */
+var VFuncInjectionsHandler = class DashToDock_VFuncInjectionsHandler extends BasicHandler {
+
+    _create(prototype, name, injectedFunction) {
+        const original = prototype[`vfunc_${name}`];
+        if (!(original instanceof Function))
+            throw new Error(`Virtual function ${name} is not available for ${prototype}`);
+        prototype[Gi.hook_up_vfunc_symbol](name, injectedFunction);
+        return [prototype, name];
+    }
+
+    _remove(item) {
+        const [prototype, name] = item;
+        const originalVFunc = prototype[`vfunc_${name}`];
+        try {
+            // This may fail if trying to reset to a never-overridden vfunc
+            // as gjs doesn't consider it a function, even if it's true that
+            // originalVFunc instanceof Function.
+            prototype[Gi.hook_up_vfunc_symbol](name, originalVFunc);
+        } catch {
+            try {
+                prototype[Gi.hook_up_vfunc_symbol](name, function (...args) {
+                    return originalVFunc.call(this, ...args);
+                });
+            } catch (e) {
+                logError(e, `Removing vfunc_${name}`);
+            }
+        }
     }
 };
 
