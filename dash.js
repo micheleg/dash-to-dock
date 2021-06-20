@@ -322,7 +322,7 @@ var MyDash = GObject.registerClass({
             if (ret == DND.DragMotionResult.CONTINUE)
                 return ret;
         } else {
-            Object.defineProperty(this._box, 'height', {
+            Object.defineProperty(this._box, 'width', {
                 configurable: true,
                 get: () => this._box.get_children().reduce((a, c) => a + c.height, 0),
             });
@@ -338,7 +338,7 @@ var MyDash = GObject.registerClass({
 
             ret = Dash.Dash.prototype.handleDragOver.call(this, source, actor, y, x, time);
 
-            delete this._box.height;
+            delete this._box.width;
             if (replacedPlaceholderWidth && this._dragPlaceholder)
                 delete this._dragPlaceholder.width;
 
