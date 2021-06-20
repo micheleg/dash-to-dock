@@ -679,18 +679,31 @@ var MyDash = GObject.registerClass({
         // Apps supposed to be in the dash
         let newApps = [];
 
-        if (settings.get_boolean('show-favorites')) {
+        const showFavorites = settings.get_boolean('show-favorites');
+        if (showFavorites) {
             for (let id in favorites)
                 newApps.push(favorites[id]);
         }
 
         if (settings.get_boolean('show-running')) {
-            for (let i = 0; i < running.length; i++) {
-                let app = running[i];
-                if (settings.get_boolean('show-favorites') && app.get_id() in favorites)
-                    continue;
-                newApps.push(app);
-            }
+            // We reorder the running apps so that they don't change position on the
+            // dash with every redisplay() call
+
+            // First: add the apps from the oldApps list that are still running
+            oldApps.forEach(oldApp => {
+                const index = running.indexOf(oldApp);
+                if (index > -1) {
+                    const [app] = running.splice(index, 1);
+                    if (!showFavorites || !(app.get_id() in favorites))
+                        newApps.push(app);
+                }
+            });
+
+            // Second: add the new apps
+            running.forEach(app => {
+                if (!showFavorites || !(app.get_id() in favorites))
+                    newApps.push(app);
+            });
         }
 
         if (settings.get_boolean('show-mounts')) {
