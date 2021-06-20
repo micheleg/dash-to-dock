@@ -720,6 +720,21 @@ var MyDash = GObject.registerClass({
         }
 
         if (settings.get_boolean('show-running')) {
+
+            // We reorder the running apps so that they don't change position on the
+            // dash with every redisplay() call
+
+            // First: add the apps from the oldApps list that are still running
+            for (let i = 0; i < oldApps.length; i++) {
+                let index = running.indexOf(oldApps[i]);
+                if (index > -1) {
+                    let app = running.splice(index, 1)[0];
+                    if (settings.get_boolean('show-favorites') && (app.get_id() in favorites))
+                        continue;
+                    newApps.push(app);
+                }
+            }
+            // Second: add the new apps
             for (let i = 0; i < running.length; i++) {
                 let app = running[i];
                 if (settings.get_boolean('show-favorites') && app.get_id() in favorites)
