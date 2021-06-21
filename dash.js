@@ -97,7 +97,6 @@ var MyDash = GObject.registerClass({
         this._position = Utils.getPosition();
         this._isHorizontal = ((this._position == St.Side.TOP) ||
                                (this._position == St.Side.BOTTOM));
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._dragPlaceholder = null;
         this._dragPlaceholderPos = -1;
@@ -200,6 +199,7 @@ var MyDash = GObject.registerClass({
 
         this.iconAnimator = new Docking.IconAnimator(this);
 
+        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._signalsHandler.add([
             this._appSystem,
             'installed-changed',
@@ -266,7 +266,6 @@ var MyDash = GObject.registerClass({
 
     _onDestroy() {
         this.iconAnimator.destroy();
-        this._signalsHandler.destroy();
     }
 
 

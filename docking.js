@@ -177,11 +177,6 @@ var DockedDash = GObject.registerClass({
         let settings = DockManager.settings;
         this._remoteModel = remoteModel;
         this._monitorIndex = monitorIndex;
-        // Connect global signals
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
-
-        this._bindSettingsChanges();
-
         this._position = Utils.getPosition();
         this._isHorizontal = ((this._position == St.Side.TOP) || (this._position == St.Side.BOTTOM));
 
@@ -255,6 +250,9 @@ var DockedDash = GObject.registerClass({
         });
         this._box.connect('notify::hover', this._hoverChanged.bind(this));
 
+        // Connect global signals
+        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
+        this._bindSettingsChanges();
         this._signalsHandler.add([
             // update when workarea changes, for instance if  other extensions modify the struts
             //(like moving th panel at the bottom)
@@ -415,8 +413,6 @@ var DockedDash = GObject.registerClass({
     }
 
     _onDestroy() {
-        // Disconnect global signals
-        this._signalsHandler.destroy();
         // The dash, intellihide and themeManager have global signals as well internally
         this.dash.destroy();
         this._intellihide.destroy();
@@ -1517,7 +1513,7 @@ var DockManager = class DashToDock_DockManager {
         Me.imports.extension.dockManager = this;
 
         this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
 
@@ -1798,7 +1794,7 @@ var DockManager = class DashToDock_DockManager {
     }
 
     destroy() {
-        this._signalsHandler.destroy();
+        this.emit('destroy');
         if (this._toggleLater) {
             Meta.later_remove(this._toggleLater);
             delete this._toggleLater;
