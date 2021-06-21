@@ -1772,6 +1772,7 @@ var DockManager = class DashToDock_DockManager {
         this._methodInjections.addWithLabel('main-dash', ControlsManager.prototype,
             'runStartupAnimation', async function (originalMethod, callback) {
                 const injections = new Utils.InjectionsHandler();
+                DockManager.allDocks.forEach(dock => (dock.opacity = 0));
                 injections.add(DockManager.getDefault().mainDock.dash, 'ease', () => {});
                 let callbackArgs = [];
                 const ret = await originalMethod.call(this,
@@ -1793,9 +1794,11 @@ var DockManager = class DashToDock_DockManager {
                     const { dash } = dock;
 
                     dash.set({
+                        opacity: 0,
                         translation_x: 0,
                         translation_y: 0,
                     });
+                    dock.opacity = 255;
 
                     switch (dock.position) {
                         case St.Side.LEFT:
@@ -1818,6 +1821,7 @@ var DockManager = class DashToDock_DockManager {
 
                     const { STARTUP_ANIMATION_TIME } = Layout;
                     dash.ease({
+                        opacity: 255,
                         translation_x: 0,
                         translation_y: 0,
                         delay: STARTUP_ANIMATION_TIME,
