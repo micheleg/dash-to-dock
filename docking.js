@@ -48,14 +48,14 @@ const scrollAction = {
 
 /**
  * A simple St.Widget with one child whose allocation takes into account the
- * slide out of its child via the _slidex parameter ([0:1]).
+ * slide out of its child via the slide-x property ([0:1]).
  *
  * Required since I want to track the input region of this container which is
  * based on its allocation even if the child overlows the parent actor. By doing
  * this the region of the dash that is slideout is not steling anymore the input
  * regions making the extesion usable when the primary monitor is the right one.
  *
- * The slidex parameter can be used to directly animate the sliding. The parent
+ * The slide-x parameter can be used to directly animate the sliding. The parent
  * must have a WEST (SOUTH) anchor_point to achieve the sliding to the RIGHT (BOTTOM)
  * side.
 */
@@ -69,8 +69,8 @@ var DashSlideContainer = GObject.registerClass({
             'side', 'side', 'side',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
             St.Side, St.Side.LEFT),
-        'slidex': GObject.ParamSpec.double(
-            'slidex', 'slidex', 'slidex',
+        'slide-x': GObject.ParamSpec.double(
+            'slide-x', 'slide-x', 'slide-x',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
             0, 1, 1),
     }
@@ -79,9 +79,8 @@ var DashSlideContainer = GObject.registerClass({
     _init(params = {}) {
         super._init(params);
 
-        // slide parameter: 1 = visible, 0 = hidden.
-        this._slidex = params.slidex || 1;
         this._slideoutSize = 0; // minimum size when slided out
+        this.connect('notify::slide-x', () => this.queue_relayout());
 
         if (this.side == St.Side.TOP && DockManager.settings.get_boolean('dock-fixed')) {
             this._signalsHandler = new Utils.GlobalSignalsHandler(this);
@@ -111,8 +110,8 @@ var DashSlideContainer = GObject.registerClass({
         let slideoutSize = this._slideoutSize;
 
         if (this.side == St.Side.LEFT) {
-            childBox.x1 = (this._slidex -1) * (childWidth - slideoutSize);
-            childBox.x2 = slideoutSize + this._slidex*(childWidth - slideoutSize);
+            childBox.x1 = (this.slideX -1) * (childWidth - slideoutSize);
+            childBox.x2 = slideoutSize + this.slideX * (childWidth - slideoutSize);
             childBox.y1 = 0;
             childBox.y2 = childBox.y1 + childHeight;
         }
@@ -130,8 +129,8 @@ var DashSlideContainer = GObject.registerClass({
                 yOffset = Main.panel.height;
             childBox.x1 = 0;
             childBox.x2 = childWidth;
-            childBox.y1 = (this._slidex - 1) * (childHeight - slideoutSize) + yOffset;
-            childBox.y2 = slideoutSize + this._slidex * (childHeight - slideoutSize) + yOffset;
+            childBox.y1 = (this.slideX - 1) * (childHeight - slideoutSize) + yOffset;
+            childBox.y2 = slideoutSize + this.slideX * (childHeight - slideoutSize) + yOffset;
             availHeight += yOffset;
         }
 
@@ -147,8 +146,8 @@ var DashSlideContainer = GObject.registerClass({
     vfunc_get_preferred_width(forHeight) {
         let [minWidth, natWidth] = super.vfunc_get_preferred_width(forHeight);
         if ((this.side ==  St.Side.LEFT) || (this.side == St.Side.RIGHT)) {
-            minWidth = (minWidth - this._slideoutSize) * this._slidex + this._slideoutSize;
-            natWidth = (natWidth - this._slideoutSize) * this._slidex + this._slideoutSize;
+            minWidth = (minWidth - this._slideoutSize) * this.slideX + this._slideoutSize;
+            natWidth = (natWidth - this._slideoutSize) * this.slideX + this._slideoutSize;
         }
         return [minWidth, natWidth];
     }
@@ -159,8 +158,8 @@ var DashSlideContainer = GObject.registerClass({
     vfunc_get_preferred_height(forWidth) {
         let [minHeight, natHeight] = super.vfunc_get_preferred_height(forWidth);
         if ((this.side ==  St.Side.TOP) || (this.side ==  St.Side.BOTTOM)) {
-            minHeight = (minHeight - this._slideoutSize) * this._slidex + this._slideoutSize;
-            natHeight = (natHeight - this._slideoutSize) * this._slidex + this._slideoutSize;
+            minHeight = (minHeight - this._slideoutSize) * this.slideX + this._slideoutSize;
+            natHeight = (natHeight - this._slideoutSize) * this.slideX + this._slideoutSize;
 
             if (this.side == St.Side.TOP && DockManager.settings.get_boolean('dock-fixed')) {
                 const monitor = Main.layoutManager.monitors[this.monitorIndex];
@@ -171,20 +170,6 @@ var DashSlideContainer = GObject.registerClass({
             }
         }
         return [minHeight, natHeight];
-    }
-
-    set slidex(value) {
-        if (value == this._slidex)
-            return;
-
-        this._slidex = value;
-        this.notify('slidex');
-
-        this.queue_relayout();
-    }
-
-    get slidex() {
-        return this._slidex;
     }
 });
 
@@ -260,7 +245,7 @@ var DockedDash = GObject.registerClass({
         this._slider = new DashSlideContainer({
             monitor_index: this._monitor.index,
             side: this._position,
-            slidex: 0,
+            slide_x: 0,
             ...(this._isHorizontal ? {
                 x_align: Clutter.ActorAlign.CENTER,
             } : {
@@ -732,7 +717,7 @@ var DockedDash = GObject.registerClass({
         this.dash.iconAnimator.start();
         this._delayedHide = false;
 
-      this._slider.ease_property('slidex', 1, {
+      this._slider.ease_property('slide-x', 1, {
             duration: time * 1000,
             delay: delay * 1000,
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
@@ -757,7 +742,7 @@ var DockedDash = GObject.registerClass({
     _animateOut(time, delay) {
         this._dockState = State.HIDING;
 
-        this._slider.ease_property('slidex', 0, {
+        this._slider.ease_property('slide-x', 0, {
             duration: time * 1000,
             delay: delay * 1000,
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
