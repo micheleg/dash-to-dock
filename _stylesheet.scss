@@ -173,6 +173,11 @@ $dock_fixed_inner_margin: $dock_side_margin;
     }
 }
 
+#dashtodockContainer.top.shrink #dash .dash-background {
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
 #dashtodockContainer.straight-corner #dash .dash-background,
 #dashtodockContainer.shrink.straight-corner #dash .dash-background {
     border-radius: 0px;
