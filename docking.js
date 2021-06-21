@@ -1707,6 +1707,8 @@ var DockManager = class DashToDock_DockManager {
         // we need to connect the signals to all dock instances.
         this._workspaceIsolation = new WorkspaceIsolation();
         this._keyboardShortcuts = new KeyboardShortcuts();
+
+        this.emit('docks-ready');
     }
 
     _prepareMainDash() {
@@ -1765,7 +1767,68 @@ var DockManager = class DashToDock_DockManager {
                 return [0, 0];
             });
 
-        const { ControlsManagerLayout } = OverviewControls;
+        const { ControlsManager, ControlsManagerLayout } = OverviewControls;
+
+        this._methodInjections.addWithLabel('main-dash', ControlsManager.prototype,
+            'runStartupAnimation', async function (originalMethod, callback) {
+                const injections = new Utils.InjectionsHandler();
+                injections.add(DockManager.getDefault().mainDock.dash, 'ease', () => {});
+                let callbackArgs = [];
+                const ret = await originalMethod.call(this,
+                    (...args) => (callbackArgs = [...args]));
+                injections.destroy();
+
+                if (!DockManager.allDocks.length) {
+                    // Docks may have been destroyed, let's wait till we've one again
+                    const readyPromise = new Promise(resolve => {
+                        const id = DockManager.getDefault().connect('docks-ready', () => {
+                            DockManager.getDefault().disconnect(id);
+                            resolve();
+                        });
+                    })
+                    await readyPromise;
+                }
+
+                DockManager.allDocks.forEach(dock => {
+                    const { dash } = dock;
+
+                    dash.set({
+                        translation_x: 0,
+                        translation_y: 0,
+                    });
+
+                    switch (dock.position) {
+                        case St.Side.LEFT:
+                            dash.translation_x = -dash.width;
+                            break;
+                        case St.Side.RIGHT:
+                            dash.translation_x = dash.width;
+                            break;
+                        case St.Side.BOTTOM:
+                            dash.translation_y = dash.height;
+                            break;
+                        case St.Side.TOP:
+                            dash.translation_y = -dash.height;
+                            break;
+                    }
+
+                    const mainDockProperties = {};
+                    if (dock === DockManager.getDefault().mainDock)
+                        mainDockProperties.onComplete = callback(...callbackArgs);
+
+                    const { STARTUP_ANIMATION_TIME } = Layout;
+                    dash.ease({
+                        translation_x: 0,
+                        translation_y: 0,
+                        delay: STARTUP_ANIMATION_TIME,
+                        duration: STARTUP_ANIMATION_TIME,
+                        mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+                        ...mainDockProperties,
+                    });
+                });
+                return ret;
+            });
+
         this._methodInjections.addWithLabel('main-dash',
             ControlsManagerLayout.prototype,
             '_computeWorkspacesBoxForState',
