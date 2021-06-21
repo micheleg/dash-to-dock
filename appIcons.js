@@ -81,7 +81,7 @@ class MyAppIcon extends Dash.DashIcon {
 
         // a prefix is required to avoid conflicting with the parent class variable
         this.monitorIndex = monitorIndex;
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this.remoteModel = remoteModel;
         this.iconAnimator = iconAnimator;
         this._indicator = null;
@@ -165,8 +165,6 @@ class MyAppIcon extends Dash.DashIcon {
             tracker.disconnect(this._focusAppChangeId);
             this._focusAppChangeId = 0;
         }
-
-        this._signalsHandler.destroy();
     }
 
     // TOOD Rename this function
@@ -796,7 +794,7 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
         this._boxPointer._arrowSide = side;
         this._boxPointer._userArrowSide = side;
 
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
 
         if (remoteModel && DbusmenuUtils.haveDBusMenu()) {
             const [onQuicklist, onDynamicSection] = Utils.splitHandler((sender, { quicklist }, dynamicSection) => {
@@ -817,11 +815,6 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
                 onDynamicSection
             ]);
         }
-    }
-
-    destroy() {
-        this._signalsHandler.destroy();
-        super.destroy();
     }
 
     _rebuildMenu() {

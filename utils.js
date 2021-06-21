@@ -1,4 +1,5 @@
 const Clutter = imports.gi.Clutter;
+const GObject = imports.gi.GObject;
 const Meta = imports.gi.Meta;
 const St = imports.gi.St;
 
@@ -16,8 +17,19 @@ var SignalsHandlerFlags = {
  */
 const BasicHandler = class DashToDock_BasicHandler {
 
-    constructor() {
+    constructor(parentObject) {
         this._storage = new Object();
+
+        if (parentObject) {
+            if (!(parentObject.connect instanceof Function))
+                throw new TypeError('Not a valid parent object');
+
+            if (!(parentObject instanceof GObject.Object) ||
+                GObject.signal_lookup('destroy', parentObject.constructor.$gtype)) {
+                this._parentObject = parentObject;
+                this._destroyId = parentObject.connect('destroy', () => this.destroy());
+            }
+        }
     }
 
     add(...args) {
@@ -27,6 +39,9 @@ const BasicHandler = class DashToDock_BasicHandler {
     }
 
     destroy() {
+        this._parentObject?.disconnect(this._destroyId);
+        this._parentObject = null;
+
         for( let label in this._storage )
             this.removeWithLabel(label);
     }
