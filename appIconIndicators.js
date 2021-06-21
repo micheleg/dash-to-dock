@@ -118,19 +118,16 @@ var IndicatorBase = class DashToDock_IndicatorBase {
 
     constructor(source) {
         this._source = source;
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
-
-        this._sourceDestroyId = this._source.connect('destroy', () => {
-            this._signalsHandler.destroy();
-        });
+        this._signalsHandler = new Utils.GlobalSignalsHandler(this._source);
     }
 
     update() {
     }
 
     destroy() {
-        this._source.disconnect(this._sourceDestroyId);
+        this._source = null;
         this._signalsHandler.destroy();
+        this._signalsHandler = null;
     }
 };
 
