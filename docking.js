@@ -1762,7 +1762,7 @@ var DockManager = class DashToDock_DockManager {
         // And to return the preferred height depending on the state
         this._methodInjections.addWithLabel('main-dash', this._oldDash,
             'get_preferred_height', (_originalMethod, ...args) => {
-                if (this.mainDock.isHorizontal)
+                if (this.mainDock.isHorizontal && !this._settings.get_boolean('dock-fixed'))
                     return this.mainDock.get_preferred_height(...args);
                 return [0, 0];
             });
@@ -1833,63 +1833,98 @@ var DockManager = class DashToDock_DockManager {
                 return ret;
             });
 
-        this._methodInjections.addWithLabel('main-dash',
+        this._vfuncInjections.addWithLabel('main-dash', ControlsManagerLayout.prototype,
+            'allocate', function (container) {
+                const oldPostAllocation = this._runPostAllocation;
+                this._runPostAllocation = () => {};
+
+                const monitor = Main.layoutManager.findMonitorForActor(this._container);
+                const workArea = Main.layoutManager.getWorkAreaForMonitor(monitor.index);
+                const startX = workArea.x - monitor.x;
+                const startY = workArea.y - monitor.y;
+                const workAreaBox = new Clutter.ActorBox();
+                workAreaBox.set_origin(startX, startY);
+                workAreaBox.set_size(workArea.width, workArea.height);
+
+                const propertyInjections = new Utils.PropertyInjectionsHandler();
+                propertyInjections.add(Main.layoutManager.panelBox, 'height', { value: workAreaBox.y1 });
+
+                if (Main.layoutManager.panelBox.y === Main.layoutManager.primaryMonitor.y)
+                    workAreaBox.y1 -= startY;
+
+                this.vfunc_allocate(container, workAreaBox);
+
+                propertyInjections.destroy();
+                workAreaBox.y1 = startY;
+
+                const adjustActorHorizontalAllocation = actor => {
+                    if (!actor.visible || !workAreaBox.x1)
+                        return;
+
+                    const contentBox = actor.get_allocation_box();
+                    contentBox.set_size(workAreaBox.get_width(), contentBox.get_height());
+                    contentBox.set_origin(workAreaBox.x1, contentBox.y1);
+                    actor.allocate(contentBox);
+                };
+
+                [this._searchEntry, this._workspacesThumbnails, this._searchController].forEach(
+                    actor => adjustActorHorizontalAllocation(actor));
+
+                this._runPostAllocation = oldPostAllocation;
+                this._runPostAllocation();
+            });
+
+        // This can be removed or bypassed when GNOME/gnome-shell!1892 will be merged
+        function workspaceBoxOriginFixer(originalFunction, state, workAreaBox, ...args) {
+            const workspaceBox = originalFunction.call(this, state, workAreaBox, ...args);
+            workspaceBox.set_origin(workAreaBox.x1, workspaceBox.y1);
+            return workspaceBox;
+        };
+
+        this._methodInjections.addWithLabel('main-dash', [
             ControlsManagerLayout.prototype,
             '_computeWorkspacesBoxForState',
-            function (originalFunction, state, box, ...args) {
-                const [, height] = box.get_size();
-                const { mainDock } = DockManager.getDefault();
-                if (mainDock.isHorizontal) {
-                    return originalFunction.call(this, state, box, ...args);
-                } else {
-                    const [, dashWidth] = mainDock.get_preferred_width(height);
-                    const workspaceBox = originalFunction.call(this, state, box, ...args);
-                    const [x, y] = workspaceBox.get_origin();
-                    const [workspaceWidth, workspaceHeight] = workspaceBox.get_size();
-                    if (mainDock.position == St.Side.LEFT) {
-                        workspaceBox.set_origin(x + dashWidth, y);
-                        workspaceBox.set_size(workspaceWidth - dashWidth, workspaceHeight);
-                    } else {
-                        workspaceBox.set_size(workspaceWidth - dashWidth, workspaceHeight);
-                    }
-                    return workspaceBox;
-                }
-            });
+            workspaceBoxOriginFixer
+        ], [
+            ControlsManagerLayout.prototype,
+            '_getAppDisplayBoxForState',
+            workspaceBoxOriginFixer
+        ]);
 
         this._vfuncInjections.addWithLabel('main-dash', Workspace.WorkspaceBackground.prototype,
             'allocate', function (box) {
             this.vfunc_allocate(box);
 
-            const dock = DockManager.getDefault().getDockByMonitor(this._monitorIndex);
-            if (dock && DockManager.settings.get_boolean('dock-fixed')) {
-                const [contentWidth, contentHeight] = this._bin.get_content_box().get_size();
+            // This code has been submitted upstream via GNOME/gnome-shell!1892
+            // so can be removed when that gets merged (or bypassed on newer shell
+            // versions).
+            const monitor = Main.layoutManager.monitors[this._monitorIndex];
+            const [contentWidth, contentHeight] = this._bin.get_content_box().get_size();
+            const [mX1, mX2] = [monitor.x, monitor.x + monitor.width];
+            const [mY1, mY2] = [monitor.y, monitor.y + monitor.height];
+            const [wX1, wX2] = [this._workarea.x, this._workarea.x + this._workarea.width];
+            const [wY1, wY2] = [this._workarea.y, this._workarea.y + this._workarea.height];
+            const xScale = contentWidth / this._workarea.width;
+            const yScale = contentHeight / this._workarea.height;
+            const leftOffset = wX1 - mX1;
+            const topOffset = wY1 - mY1;
+            const rightOffset = mX2 - wX2;
+            const bottomOffset = mY2 - wY2;
 
-                const contentBox = this._backgroundGroup.get_allocation_box();
-                let [x, y] = contentBox.get_origin();
-                const widthRatio = contentWidth / this._workarea.width;
-                const heightRatio = contentHeight / this._workarea.height;
-                let xOff = -x;
-                let yOff = -y;
-                switch (dock.position) {
-                    case St.Side.TOP:
-                        yOff += heightRatio * dock.height;
-                        y -= heightRatio * dock.height;
-                        break;
-                    case St.Side.BOTTOM:
-                        yOff += heightRatio * dock.height;
-                        break;
-                    case St.Side.RIGHT:
-                        xOff += widthRatio * dock.width;
-                        break;
-                }
-                contentBox.set_origin(x, y);
-                contentBox.set_size(xOff + contentWidth, yOff + contentHeight);
-                this._backgroundGroup.allocate(contentBox);
-            }
+            const contentBox = new Clutter.ActorBox();
+            contentBox.set_origin(-leftOffset * xScale, -topOffset * yScale);
+            contentBox.set_size(
+                contentWidth + (leftOffset + rightOffset) * xScale,
+                contentHeight + (topOffset + bottomOffset) * yScale);
+
+            this._backgroundGroup.allocate(contentBox);
         });
 
-        // Always show the thumbnails box if have workspaces enabled in vertical mode
-        if (!this.mainDock.isHorizontal) {
+        // Always show the thumbnails box in fixed mode, so that we'll reduce the
+        // vertical space, causing the Workspace layout to show more workspaces.
+        // We might get the same also reducing the height of the workspace boxes
+        // in _computeWorkspacesBoxForState, but it would just waste vertical space
+        if (!this.mainDock.isHorizontal || this._settings.get_boolean('dock-fixed')) {
             this._methodInjections.addWithLabel('main-dash',
                 WorkspaceThumbnail.ThumbnailsBox.prototype, '_updateShouldShow',
                 function () {
