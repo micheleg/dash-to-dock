@@ -83,6 +83,10 @@ var MyAppIcon = GObject.registerClass({
             'running', 'running', 'running',
             GObject.ParamFlags.READWRITE,
             false),
+        'urgent': GObject.ParamSpec.boolean(
+            'urgent', 'urgent', 'urgent',
+            GObject.ParamFlags.READWRITE,
+            false),
         'windows-count': GObject.ParamSpec.uint(
             'windows-count', 'windows-count', 'windows-count',
             GObject.ParamFlags.READWRITE,
@@ -127,6 +131,17 @@ var MyAppIcon = GObject.registerClass({
                 'window-entered-monitor',
                 this._onWindowEntered.bind(this));
         }
+
+        this.connect('notify::urgent', () => {
+            const icon = this.icon._iconBin;
+            if (this.urgent) {
+                icon.set_pivot_point(0.5, 0.5);
+                this.iconAnimator.addAnimation(icon, 'dance');
+            } else {
+                this.iconAnimator.removeAnimation(icon, 'dance');
+                icon.rotation_angle_z = 0;
+            }
+        });
 
         this._progressOverlayArea = null;
         this._progress = 0;
@@ -259,10 +274,12 @@ var MyAppIcon = GObject.registerClass({
     _updateFocusState() {
         this.focused = (tracker.focus_app === this.app && this.running);
 
-        if (this.focused)
+        if (this.focused) {
+            this.urgent = false;
             this.add_style_class_name('focused');
-        else
+        } else {
             this.remove_style_class_name('focused');
+        }
     }
 
     /**
