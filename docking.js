@@ -1162,19 +1162,28 @@ var DockedDash = GObject.registerClass({
             let activeWs = global.workspace_manager.get_active_workspace();
             let direction = null;
 
+            let prev_direction, next_direction;
+            if (global.workspace_manager.layout_columns > global.workspace_manager.layout_rows) {
+                prev_direction = Meta.MotionDirection.UP;
+                next_direction = Meta.MotionDirection.DOWN;
+            } else {
+                prev_direction = Meta.MotionDirection.LEFT;
+                next_direction = Meta.MotionDirection.RIGHT;
+            }
+
             switch (event.get_scroll_direction()) {
             case Clutter.ScrollDirection.UP:
-                direction = Meta.MotionDirection.LEFT;
+                direction = prev_direction;
                 break;
             case Clutter.ScrollDirection.DOWN:
-                direction = Meta.MotionDirection.RIGHT;
+                direction = next_direction;
                 break;
             case Clutter.ScrollDirection.SMOOTH:
                 let [dx, dy] = event.get_scroll_delta();
                 if (dy < 0)
-                    direction = Meta.MotionDirection.LEFT;
+                    direction = prev_direction;
                 else if (dy > 0)
-                    direction = Meta.MotionDirection.RIGHT;
+                    direction = next_direction;
                 break;
             }
 
