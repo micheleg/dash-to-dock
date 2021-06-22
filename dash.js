@@ -1008,27 +1008,22 @@ var MyDash = GObject.registerClass({
 
 /**
  * This is a copy of the same function in utils.js, but also adjust horizontal scrolling
- * and perform few further cheks on the current value to avoid changing the values when
+ * and perform few further checks on the current value to avoid changing the values when
  * it would be clamp to the current one in any case.
  * Return the amount of shift applied
  */
 function ensureActorVisibleInScrollView(scrollView, actor) {
-    let adjust_v = true;
-    let adjust_h = true;
-
-    let vadjustment = scrollView.get_vscroll_bar().get_adjustment();
-    let hadjustment = scrollView.get_hscroll_bar().get_adjustment();
-    let [vvalue, vlower, vupper, vstepIncrement, vpageIncrement, vpageSize] = vadjustment.get_values();
-    let [hvalue, hlower, hupper, hstepIncrement, hpageIncrement, hpageSize] = hadjustment.get_values();
-
-    let [hvalue0, vvalue0] = [hvalue, vvalue];
-
-    let voffset = 0;
-    let hoffset = 0;
+    const { adjustment: vAdjustment } = scrollView.vscroll;
+    const { adjustment: hAdjustment } = scrollView.hscroll;
+    const { value: vValue0, pageSize: vPageSize, upper: vUpper } = vAdjustment;
+    const { value: hValue0, pageSize: hPageSize, upper: hUpper } = hAdjustment;
+    let [hValue, vValue] = [hValue0, vValue0];
+    let vOffset = 0;
+    let hOffset = 0;
     let fade = scrollView.get_effect('fade');
     if (fade) {
-        voffset = fade.fade_margins.top;
-        hoffset = fade.fade_margins.left;
+        vOffset = fade.fade_margins.top;
+        hOffset = fade.fade_margins.left;
     }
 
     let box = actor.get_allocation_box();
@@ -1047,29 +1042,29 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
         parent = parent.get_parent();
     }
 
-    if (y1 < vvalue + voffset)
-        vvalue = Math.max(0, y1 - voffset);
-    else if (vvalue < vupper - vpageSize && y2 > vvalue + vpageSize - voffset)
-        vvalue = Math.min(vupper -vpageSize, y2 + voffset - vpageSize);
+    if (y1 < vValue + vOffset)
+        vValue = Math.max(0, y1 - vOffset);
+    else if (vValue < vUpper - vPageSize && y2 > vValue + vPageSize - vOffset)
+        vValue = Math.min(vUpper -vPageSize, y2 + vOffset - vPageSize);
 
-    if (x1 < hvalue + hoffset)
-        hvalue = Math.max(0, x1 - hoffset);
-    else if (hvalue < hupper - hpageSize && x2 > hvalue + hpageSize - hoffset)
-        hvalue = Math.min(hupper - hpageSize, x2 + hoffset - hpageSize);
+    if (x1 < hValue + hOffset)
+        hValue = Math.max(0, x1 - hOffset);
+    else if (hValue < hUpper - hPageSize && x2 > hValue + hPageSize - hOffset)
+        hValue = Math.min(hUpper - hPageSize, x2 + hOffset - hPageSize);
 
-    if (vvalue !== vvalue0) {
-        vadjustment.ease(vvalue, {
+    if (vValue !== vValue0) {
+        vAdjustment.ease(vValue, {
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             duration: Util.SCROLL_TIME
         });
     }
 
-    if (hvalue !== hvalue0) {
-        hadjustment.ease(hvalue, {
+    if (hValue !== hValue0) {
+        hAdjustment.ease(hValue, {
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             duration: Util.SCROLL_TIME
         });
     }
 
-    return [hvalue- hvalue0, vvalue - vvalue0];
+    return [hValue - hValue0, vValue - vValue0];
 }
