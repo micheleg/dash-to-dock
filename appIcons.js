@@ -73,8 +73,22 @@ let recentlyClickedAppMonitor = -1;
  * - Update minimization animation target
  * - Update menu if open on windows change
  */
-var MyAppIcon = GObject.registerClass(
-class MyAppIcon extends Dash.DashIcon {
+var MyAppIcon = GObject.registerClass({
+    Properties: {
+        'focused': GObject.ParamSpec.boolean(
+            'focused', 'focused', 'focused',
+            GObject.ParamFlags.READWRITE,
+            false),
+        'running': GObject.ParamSpec.boolean(
+            'running', 'running', 'running',
+            GObject.ParamFlags.READWRITE,
+            false),
+        'windows-count': GObject.ParamSpec.uint(
+            'windows-count', 'windows-count', 'windows-count',
+            GObject.ParamFlags.READWRITE,
+            0, GLib.MAXUINT32, 0),
+    }
+}, class MyAppIcon extends Dash.DashIcon {
     // settings are required inside.
     _init(remoteModel, app, monitorIndex, iconAnimator) {
         super._init(app);
@@ -84,12 +98,10 @@ class MyAppIcon extends Dash.DashIcon {
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this.remoteModel = remoteModel;
         this.iconAnimator = iconAnimator;
-        this._indicator = null;
+        this._indicator = new AppIconIndicators.AppIconIndicator(this);
 
         let appInfo = app.get_app_info();
         this._location = appInfo ? appInfo.get_string('XdtdUri') : null;
-
-        this._updateIndicatorStyle();
 
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
@@ -98,10 +110,9 @@ class MyAppIcon extends Dash.DashIcon {
             this._stateChangedId = 0;
         }
 
-        this._windowsChangedId = this.app.connect('windows-changed',
-                                                  this.onWindowsChanged.bind(this));
-        this._focusAppChangeId = tracker.connect('notify::focus-app',
-                                                 this._onFocusAppChanged.bind(this));
+        this._signalsHandler.add(this.app, 'windows-changed', () => this.onWindowsChanged());
+        this._signalsHandler.add(this.app, 'notify::state', () => this._updateRunningState());
+        this._signalsHandler.add(tracker, 'notify::focus-app', () => this._updateFocusState());
 
         // In Wayland sessions, this signal is needed to track the state of windows dragged
         // from one monitor to another. As this is triggered quite often (whenever a new winow
@@ -124,13 +135,15 @@ class MyAppIcon extends Dash.DashIcon {
                    'running-indicator-style',
                     ];
 
-        keys.forEach(function(key) {
+        keys.forEach(key => {
             this._signalsHandler.add(
                 Docking.DockManager.settings,
-                'changed::' + key,
-                this._updateIndicatorStyle.bind(this)
+                'changed::' + key, () => {
+                    this._indicator.destroy();
+                    this._indicator = new AppIconIndicators.AppIconIndicator(this);
+                }
             );
-        }, this);
+        });
 
         if (this._location) {
             this._signalsHandler.add(
@@ -140,6 +153,7 @@ class MyAppIcon extends Dash.DashIcon {
             );
         }
 
+        this._updateState();
         this._numberOverlay();
 
         this._previewMenuManager = null;
@@ -154,28 +168,6 @@ class MyAppIcon extends Dash.DashIcon {
         // It can be safely removed once it get solved upstrea.
         if (this._menu)
             this._menu.close(false);
-
-        // Disconect global signals
-
-        if (this._windowsChangedId > 0)
-            this.app.disconnect(this._windowsChangedId);
-        this._windowsChangedId = 0;
-
-        if (this._focusAppChangeId > 0) {
-            tracker.disconnect(this._focusAppChangeId);
-            this._focusAppChangeId = 0;
-        }
-    }
-
-    // TOOD Rename this function
-    _updateIndicatorStyle() {
-
-        if (this._indicator !== null) {
-            this._indicator.destroy();
-            this._indicator = null;
-        }
-        this._indicator = new AppIconIndicators.AppIconIndicator(this);
-        this._indicator.update();
     }
 
     _onWindowEntered(metaScreen, monitorIndex, metaWin) {
@@ -193,10 +185,7 @@ class MyAppIcon extends Dash.DashIcon {
         // We only activate windows of running applications, i.e. we never open new windows
         // We check if the app is running, and that the # of windows is > 0 in
         // case we use workspace isolation,
-        let appIsRunning = this.app.state == Shell.AppState.RUNNING
-            && this.getInterestingWindows().length > 0;
-
-        if (!appIsRunning)
+        if (!this.running)
             return Clutter.EVENT_PROPAGATE;
 
         if (this._optionalScrollCycleWindowsDeadTimeId)
@@ -225,10 +214,9 @@ class MyAppIcon extends Dash.DashIcon {
             break;
         }
 
-        let focusedApp = tracker.focus_app;
         if (!Main.overview._shown) {
             let reversed = direction === Meta.MotionDirection.UP;
-            if (this.app == focusedApp)
+            if (this.focused)
                 this._cycleThroughWindows(reversed);
             else {
                 // Activate the first window
@@ -245,12 +233,36 @@ class MyAppIcon extends Dash.DashIcon {
     }
 
     onWindowsChanged() {
-
         if (this._menu && this._menu.isOpen)
             this._menu.update();
 
-        this._indicator.update();
+        this._updateState();
         this.updateIconGeometry();
+    }
+
+    _updateState() {
+        this.windowsCount = this.getInterestingWindows().length;
+        this._updateRunningState();
+        this._updateFocusState();
+    }
+
+    _updateRunningState() {
+        this.running = (this.app.state === Shell.AppState.RUNNING || this.isLocation()) &&
+            this.windowsCount;
+
+        if (this.running)
+            this.add_style_class_name('running');
+        else
+            this.remove_style_class_name('running');
+    }
+
+    _updateFocusState() {
+        this.focused = (tracker.focus_app === this.app && this.running);
+
+        if (this.focused)
+            this.add_style_class_name('focused');
+        else
+            this.remove_style_class_name('focused');
     }
 
     /**
@@ -337,14 +349,9 @@ class MyAppIcon extends Dash.DashIcon {
         return false;
     }
 
-    _onFocusAppChanged() {
-        this._indicator.update();
-    }
-
     activate(button) {
         let event = Clutter.get_current_event();
         let modifiers = event ? event.get_state() : 0;
-        let focusedApp = tracker.focus_app;
 
         // Only consider SHIFT and CONTROL as modifiers (exclude SUPER, CAPS-LOCK, etc.)
         modifiers = modifiers & (Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CONTROL_MASK);
@@ -380,15 +387,13 @@ class MyAppIcon extends Dash.DashIcon {
         // We check if the app is running, and that the # of windows is > 0 in
         // case we use workspace isolation.
         let windows = this.getInterestingWindows();
-        let appIsRunning = (this.app.state == Shell.AppState.RUNNING || this.isLocation())
-            && windows.length > 0;
 
         // Some action modes (e.g. MINIMIZE_OR_OVERVIEW) require overview to remain open
         // This variable keeps track of this
         let shouldHideOverview = true;
 
         // We customize the action only when the application is already running
-        if (appIsRunning) {
+        if (this.running) {
             switch (buttonAction) {
             case clickAction.MINIMIZE:
                 // In overview just activate the app, unless the acion is explicitely
@@ -396,7 +401,7 @@ class MyAppIcon extends Dash.DashIcon {
                 if (!Main.overview._shown || modifiers){
                     // If we have button=2 or a modifier, allow minimization even if
                     // the app is not focused
-                    if (this.app == focusedApp || button == 2 || modifiers & Clutter.ModifierType.SHIFT_MASK) {
+                    if (this.focused || button === 2 || modifiers & Clutter.ModifierType.SHIFT_MASK) {
                         // minimize all windows on double click and always in the case of primary click without
                         // additional modifiers
                         let click_count = 0;
@@ -420,7 +425,7 @@ class MyAppIcon extends Dash.DashIcon {
                 // simple click action (no modifiers, no middle click).
                 if (windows.length == 1 && !modifiers && button == 1) {
                     let w = windows[0];
-                    if (this.app == focusedApp) {
+                    if (this.focused) {
                         // Window is raised, minimize it
                         this._minimizeWindow(w);
                     } else {
@@ -437,7 +442,7 @@ class MyAppIcon extends Dash.DashIcon {
 
             case clickAction.CYCLE_WINDOWS:
                 if (!Main.overview._shown){
-                    if (this.app == focusedApp)
+                    if (this.focused)
                         this._cycleThroughWindows();
                     else {
                         // Activate the first window
@@ -450,7 +455,7 @@ class MyAppIcon extends Dash.DashIcon {
                 break;
 
             case clickAction.FOCUS_OR_PREVIEWS:
-                if (this.app == focusedApp &&
+                if (this.focused &&
                     (windows.length > 1 || modifiers || button != 1)) {
                     this._windowPreviews();
                 } else {
@@ -461,7 +466,7 @@ class MyAppIcon extends Dash.DashIcon {
                 break;
 
             case clickAction.FOCUS_MINIMIZE_OR_PREVIEWS:
-                if (this.app == focusedApp) {
+                if (this.focused) {
                     if (windows.length > 1 || modifiers || button != 1)
                         this._windowPreviews();
                     else if (!Main.overview.visible)
@@ -499,7 +504,7 @@ class MyAppIcon extends Dash.DashIcon {
                 if (!Main.overview._shown){
                     if (windows.length == 1 && !modifiers && button == 1) {
                         let w = windows[0];
-                        if (this.app == focusedApp) {
+                        if (this.focused) {
                             // Window is raised, minimize it
                             this._minimizeWindow(w);
                         } else {
@@ -950,16 +955,13 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
     // update menu content when application windows change. This is desirable as actions
     // acting on windows (closing) are performed while the menu is shown.
     update() {
-
-      let windows = this._source.getInterestingWindows();
-
       // update, show or hide the quit menu
-      if ( windows.length > 0) {
+      if (this._source.windowsCount > 0) {
           let quitFromDashMenuText = "";
-          if (windows.length == 1)
+          if (this._source.windowsCount == 1)
               this._quitfromDashMenuItem.label.set_text(_('Quit'));
           else
-              this._quitfromDashMenuItem.label.set_text(__('Quit %d Windows').format(windows.length));
+              this._quitfromDashMenuItem.label.set_text(__('Quit %d Windows').format(this._source.windowsCount));
 
           this._quitfromDashMenuItem.actor.show();
 
@@ -967,7 +969,8 @@ const MyAppIconMenu = class DashToDock_MyAppIconMenu extends AppDisplay.AppIconM
           this._quitfromDashMenuItem.actor.hide();
       }
 
-      if(Docking.DockManager.settings.get_boolean('show-windows-preview')){
+      if (Docking.DockManager.settings.get_boolean('show-windows-preview')){
+          const windows = this._source.getInterestingWindows();
 
           // update, show, or hide the allWindows menu
           // Check if there are new windows not already displayed. In such case, repopulate the allWindows
