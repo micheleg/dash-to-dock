@@ -510,6 +510,11 @@ var MyDash = GObject.registerClass({
                 ensureActorVisibleInScrollView(this._scrollView, item);
         });
 
+        appIcon.connect('notify::urgent', () => {
+            if (appIcon.urgent)
+                ensureActorVisibleInScrollView(this._scrollView, item);
+        });
+
         // Override default AppIcon label_actor, now the
         // accessible_name is set at DashItemContainer.setLabelText
         appIcon.label_actor = null;
