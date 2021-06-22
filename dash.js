@@ -27,6 +27,7 @@ const Locations = Me.imports.locations;
 const DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
 const DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME;
 const DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
+const DASH_VISIBILITY_TIMEOUT = 3;
 
 /**
  * Extend DashItemContainer
@@ -75,6 +76,12 @@ const baseIconSizes = [16, 22, 24, 32, 48, 64, 96, 128];
  * - keep running apps ordered.
  */
 var MyDash = GObject.registerClass({
+    Properties: {
+        'requires-visibility': GObject.ParamSpec.boolean(
+            'requires-visibility', 'requires-visibility', 'requires-visibility',
+            GObject.ParamFlags.READWRITE,
+            false),
+    },
     Signals: {
         'menu-closed': {},
         'icon-size-changed': {},
@@ -265,6 +272,9 @@ var MyDash = GObject.registerClass({
 
     _onDestroy() {
         this.iconAnimator.destroy();
+
+        if (this._requiresVisibilityTimeout)
+            GLib.source_remove(this._requiresVisibilityTimeout);
     }
 
 
@@ -524,6 +534,19 @@ var MyDash = GObject.registerClass({
         this._hookUpLabel(item, appIcon);
 
         return item;
+    }
+
+    _requireVisibility() {
+        this.requiresVisibility = true;
+
+        if (this._requiresVisibilityTimeout)
+            GLib.source_remove(this._requiresVisibilityTimeout);
+
+        this._requiresVisibilityTimeout = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT,
+            DASH_VISIBILITY_TIMEOUT, () => {
+                this._requiresVisibilityTimeout = 0;
+                this.requiresVisibility = false;
+            });
     }
 
     /**

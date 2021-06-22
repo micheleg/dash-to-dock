@@ -284,6 +284,10 @@ var DockedDash = GObject.registerClass({
             this.dash,
             'menu-closed',
             () => { this._box.sync_hover() }
+        ], [
+            this.dash,
+            'notify::requires-visibility',
+            () => this._updateDashVisibility(),
         ]);
 
         if (!Main.overview.isDummy) {
@@ -620,7 +624,7 @@ var DockedDash = GObject.registerClass({
             this._animateIn(settings.get_double('animation-time'), 0);
         }
         else if (this._intellihideIsEnabled) {
-            if (this._intellihide.getOverlapStatus()) {
+            if (!this.dash.requiresVisibility && this._intellihide.getOverlapStatus()) {
                 this._ignoreHover = false;
                 // Do not hide if autohide is enabled and mouse is hover
                 if (!this._box.hover || !this._autohideIsEnabled)
@@ -636,7 +640,7 @@ var DockedDash = GObject.registerClass({
             if (this._autohideIsEnabled) {
                 this._ignoreHover = false;
 
-                if (this._box.hover)
+                if (this._box.hover || this.dash.requiresVisibility)
                     this._animateIn(settings.get_double('animation-time'), 0);
                 else
                     this._animateOut(settings.get_double('animation-time'), 0);
