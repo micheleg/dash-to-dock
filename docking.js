@@ -2033,16 +2033,43 @@ var DockManager = class DashToDock_DockManager {
     }
 
     _onShowAppsButtonToggled(button) {
-        const checked = button.checked;
+        const { checked } = button;
         const overviewControls = Main.overview._overview.controls;
 
         if (!Main.overview.visible) {
             this.mainDock.dash.showAppsButton._fromDesktop = true;
-            Main.overview.show(OverviewControls.ControlsState.APP_GRID);
+            if (this._settings.get_boolean('animate-show-apps')) {
+                Main.overview.show(OverviewControls.ControlsState.APP_GRID);
+            } else {
+                GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                    const oldAnimationTime = OverviewControls.SIDE_CONTROLS_ANIMATION_TIME;
+                    Overview.ANIMATION_TIME = 1;
+                    const id = Main.overview.connect('shown', () => {
+                        Overview.ANIMATION_TIME = oldAnimationTime;
+                        Main.overview.disconnect(id);
+                    });
+                    Main.overview.show(OverviewControls.ControlsState.APP_GRID);
+                    return GLib.SOURCE_REMOVE;
+                });
+            }
         } else {
             if (!checked && this.mainDock.dash.showAppsButton._fromDesktop) {
-                Main.overview.hide();
-                this.mainDock.dash.showAppsButton._fromDesktop = false;
+                if (this._settings.get_boolean('animate-show-apps')) {
+                    Main.overview.hide();
+                    this.mainDock.dash.showAppsButton._fromDesktop = false;
+                } else {
+                    GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                        const oldAnimationTime = Overview.ANIMATION_TIME;
+                        Overview.ANIMATION_TIME = 1;
+                        const id = Main.overview.connect('hidden', () => {
+                            Overview.ANIMATION_TIME = oldAnimationTime;
+                            Main.overview.disconnect(id);
+                        });
+                        Main.overview.hide();
+                        this.mainDock.dash.showAppsButton._fromDesktop = false;
+                        return GLib.SOURCE_REMOVE;
+                    });
+                }
             } else {
                 // TODO: I'm not sure how reliable this is, we might need to move the
                 // _onShowAppsButtonToggled logic into the extension.
