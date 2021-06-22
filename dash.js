@@ -123,7 +123,6 @@ var MyDash = GObject.registerClass({
 
         this._scrollView = new St.ScrollView({
             name: 'dashtodockDashScrollview',
-            // TODO: Fix scrolling
             hscrollbar_policy: this._isHorizontal ? St.PolicyType.EXTERNAL : St.PolicyType.NEVER,
             vscrollbar_policy: this._isHorizontal ?  St.PolicyType.NEVER : St.PolicyType.EXTERNAL,
             x_expand: this._isHorizontal,
@@ -1028,8 +1027,8 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
     let hoffset = 0;
     let fade = scrollView.get_effect('fade');
     if (fade) {
-        voffset = fade.vfade_offset;
-        hoffset = fade.hfade_offset;
+        voffset = fade.fade_margins.top;
+        hoffset = fade.fade_margins.left;
     }
 
     let box = actor.get_allocation_box();
