@@ -34,7 +34,7 @@ const WindowPreview = Me.imports.windowPreview;
 const AppIconIndicators = Me.imports.appIconIndicators;
 const DbusmenuUtils = Me.imports.dbusmenuUtils;
 
-let tracker = Shell.WindowTracker.get_default();
+const tracker = Shell.WindowTracker.get_default();
 
 const clickAction = {
     SKIP: 0,
@@ -190,8 +190,8 @@ var MyAppIcon = GObject.registerClass({
     }
 
     _onWindowEntered(metaScreen, monitorIndex, metaWin) {
-        let app = Shell.WindowTracker.get_default().get_window_app(metaWin);
-        if (app && app.get_id() == this.app.get_id())
+        const app = tracker.get_window_app(metaWin);
+        if (app?.get_id() == this.app.get_id())
             this.onWindowsChanged();
     }
 
