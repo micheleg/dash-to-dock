@@ -504,6 +504,12 @@ var MyDash = GObject.registerClass({
             }
         });
 
+        appIcon.connect('notify::focused', () => {
+            const { settings } = Docking.DockManager;
+            if (appIcon.focused && settings.get_boolean('scroll-to-focused-application'))
+                ensureActorVisibleInScrollView(this._scrollView, item);
+        });
+
         // Override default AppIcon label_actor, now the
         // accessible_name is set at DashItemContainer.setLabelText
         appIcon.label_actor = null;

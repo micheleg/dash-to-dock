@@ -620,6 +620,10 @@ var Settings = GObject.registerClass({
             this._builder.get_object('application_button_animation_button'),
             'sensitive',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('scroll-to-focused-application',
+            this._builder.get_object('scroll_to_icon_switch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
 
 
         // Behavior panel
