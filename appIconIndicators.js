@@ -664,8 +664,6 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
             'notify::size',
             this.updateNotificationBadgeStyle.bind(this)
         ]);
-
-        this._isUrgent = false;
     }
 
     updateNotificationBadgeStyle() {
@@ -835,20 +833,13 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
     }
 
     setUrgent(urgent) {
-        const icon = this._source.icon._iconBin;
-        if (urgent) {
-            if (!this._isUrgent) {
-                icon.set_pivot_point(0.5, 0.5);
-                this._source.iconAnimator.addAnimation(icon, 'dance');
-                this._isUrgent = true;
-            }
-        } else {
-            if (this._isUrgent) {
-                this._source.iconAnimator.removeAnimation(icon, 'dance');
-                this._isUrgent = false;
-            }
-            icon.rotation_angle_z = 0;
-        }
+        if (urgent || this._isUrgent !== undefined)
+            this._source.urgent = urgent;
+
+        if (urgent)
+            this._isUrgent = urgent;
+        else
+            delete this._isUrgent;
     }
 }
 
