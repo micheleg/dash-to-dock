@@ -521,8 +521,10 @@ var MyDash = GObject.registerClass({
         });
 
         appIcon.connect('notify::urgent', () => {
-            if (appIcon.urgent)
+            if (appIcon.urgent) {
                 ensureActorVisibleInScrollView(this._scrollView, item);
+                this._requireVisibility();
+            }
         });
 
         // Override default AppIcon label_actor, now the
