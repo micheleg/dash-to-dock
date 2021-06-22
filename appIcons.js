@@ -117,6 +117,10 @@ var MyAppIcon = GObject.registerClass({
         this._signalsHandler.add(this.app, 'windows-changed', () => this.onWindowsChanged());
         this._signalsHandler.add(this.app, 'notify::state', () => this._updateRunningState());
         this._signalsHandler.add(tracker, 'notify::focus-app', () => this._updateFocusState());
+        this._signalsHandler.add(global.display, 'window-demands-attention', (_dpy, window) =>
+            this._onWindowDemandsAttention(window));
+        this._signalsHandler.add(global.display, 'window-marked-urgent', (_dpy, window) =>
+            this._onWindowDemandsAttention(window));
 
         // In Wayland sessions, this signal is needed to track the state of windows dragged
         // from one monitor to another. As this is triggered quite often (whenever a new winow
@@ -280,6 +284,13 @@ var MyAppIcon = GObject.registerClass({
         } else {
             this.remove_style_class_name('focused');
         }
+    }
+
+    _onWindowDemandsAttention(window) {
+        if (window.has_focus() || tracker.get_window_app(window) !== this.app)
+            return;
+
+        this.urgent = true;
     }
 
     /**
