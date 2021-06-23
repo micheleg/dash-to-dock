@@ -23,30 +23,45 @@ const UPDATE_TRASH_DELAY = 500;
  * up-to-date as the trash fills and is emptied over time.
  */
 var Trash = class DashToDock_Trash {
+    _promisified = false;
+
+    static initPromises() {
+        if (Trash._promisified)
+            return;
+
+        Gio._promisify(Gio.FileEnumerator.prototype, 'close_async', 'close_finish');
+        Gio._promisify(Gio.FileEnumerator.prototype, 'next_files_async', 'next_files_finish');
+        Gio._promisify(Gio.file_new_for_uri('trash://').constructor.prototype,
+            'enumerate_children_async', 'enumerate_children_finish');
+        Trash._promisified = true;
+    }
 
     constructor() {
+        Trash.initPromises();
+        this._cancellable = new Gio.Cancellable();
         this._file = Gio.file_new_for_uri('trash://');
         try {
-            this._monitor = this._file.monitor_directory(0, null);
+            this._monitor = this._file.monitor_directory(0, this._cancellable);
             this._signalId = this._monitor.connect(
                 'changed',
                 this._onTrashChange.bind(this)
             );
         } catch (e) {
-            log(`Impossible to monitor trash: ${e}`)
+            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                return;
+            log(`Impossible to monitor trash: ${e}`);
         }
-        this._lastEmpty = true;
         this._empty = true;
         this._schedUpdateId = 0;
         this._updateTrash();
     }
 
     destroy() {
-        if (this._monitor) {
-            this._monitor.disconnect(this._signalId);
-            this._monitor.run_dispose();
-        }
-        this._file.run_dispose();
+        this._cancellable.cancel();
+        this._cancellable = null;
+        this._monitor?.disconnect(this._signalId);
+        this._monitor = null;
+        this._file = null;
     }
 
     _onTrashChange() {
@@ -54,29 +69,35 @@ var Trash = class DashToDock_Trash {
             GLib.source_remove(this._schedUpdateId);
         }
         this._schedUpdateId = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT, UPDATE_TRASH_DELAY, () => {
+            GLib.PRIORITY_LOW, UPDATE_TRASH_DELAY, () => {
             this._schedUpdateId = 0;
             this._updateTrash();
             return GLib.SOURCE_REMOVE;
         });
     }
 
-    _updateTrash() {
+    async _updateTrash() {
         try {
-            let children = this._file.enumerate_children('*', 0, null);
-            this._empty = children.next_file(null) == null;
-            children.close(null);
-        } catch (e) {
-            log(`Impossible to enumerate trash children: ${e}`)
-            return;
-        }
+            const priority = GLib.PRIORITY_LOW;
+            const cancellable = this._cancellable;
+            const childrenEnumerator = await this._file.enumerate_children_async(
+                Gio.FILE_ATTRIBUTE_STANDARD_TYPE, Gio.FileQueryInfoFlags.NONE,
+                priority, cancellable);
+            const children = await childrenEnumerator.next_files_async(1,
+                priority, cancellable);
+            this._empty = !children.length;
+            this._ensureApp();
 
-        this._ensureApp();
+            await childrenEnumerator.close_async(priority, null);
+        } catch (e) {
+            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                log(`Impossible to enumerate trash children: ${e}`);
+        }
     }
 
     _ensureApp() {
         if (this._trashApp == null ||
-            this._lastEmpty != this._empty) {
+            this._lastEmpty !== this._empty) {
             let trashKeys = new GLib.KeyFile();
             trashKeys.set_string('Desktop Entry', 'Name', __('Trash'));
             trashKeys.set_string('Desktop Entry', 'Icon',
