@@ -69,13 +69,13 @@ var ThemeManager = class DashToDock_ThemeManager {
 
         // destroy themeManager when the managed actor is destroyed (e.g. extension unload)
         // in order to disconnect signals
-        this._actor.connect('destroy', this.destroy.bind(this));
-
+        this._signalsHandler.add(this._actor, 'destroy', () => this.destroy());
     }
 
     destroy() {
         this._signalsHandler.destroy();
         this._transparency.destroy();
+        this._destroyed = true;
     }
 
     _onOverviewShowing() {
@@ -215,6 +215,8 @@ var ThemeManager = class DashToDock_ThemeManager {
     }
 
     updateCustomTheme() {
+        if (this._destroyed)
+            throw new Error(`Impossible to update a destroyed ${this.constructor.name}`);
         this._updateCustomStyleClasses();
         this._updateDashOpacity();
         this._updateDashColor();
@@ -304,6 +306,7 @@ var ThemeManager = class DashToDock_ThemeManager {
         ]));
     }
 };
+Signals.addSignalMethods(ThemeManager.prototype);
 
 /**
  * The following class is based on the following upstream commit:
