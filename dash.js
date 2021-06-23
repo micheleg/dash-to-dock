@@ -576,7 +576,7 @@ var MyDash = GObject.registerClass({
         if (!this._container.get_stage())
             return;
 
-        const themeNode = this.get_theme_node();
+        const themeNode = this._dashContainer.get_theme_node();
         const maxAllocation = new Clutter.ActorBox({
             x1: 0,
             y1: 0,
@@ -584,15 +584,16 @@ var MyDash = GObject.registerClass({
             y2: this._isHorizontal ? 42 : this._maxHeight
         });
         let maxContent = themeNode.get_content_box(maxAllocation);
-        let availWidth;
+        let availSpace;
         if (this._isHorizontal)
-            availWidth = maxContent.x2 - maxContent.x1;
+            availSpace = maxContent.get_width();
         else
-            availWidth = maxContent.y2 - maxContent.y1;
+            availSpace = maxContent.get_height();
+
         let spacing = themeNode.get_length('spacing');
 
-        let firstButton = iconChildren[0].child;
-        let firstIcon = firstButton.icon;
+        const [{ child: firstButton }] = iconChildren;
+        const { child: firstIcon } = firstButton.icon;
 
         // if no icons there's nothing to adjust
         if (!firstIcon)
@@ -603,22 +604,27 @@ var MyDash = GObject.registerClass({
         const [, , iconWidth, iconHeight] = firstIcon.get_preferred_size();
         const [, , buttonWidth, buttonHeight] = firstButton.get_preferred_size();
 
-        // Subtract icon padding and box spacing from the available height
-        if (this._isHorizontal)
+        if (this._isHorizontal) {
             // Subtract icon padding and box spacing from the available width
-            availWidth -= iconChildren.length * (buttonWidth - iconWidth) +
-                           (iconChildren.length - 1) * spacing;
-        else
-            availWidth -= iconChildren.length * (buttonHeight - iconHeight) +
+            availSpace -= iconChildren.length * (buttonWidth - iconWidth) +
                            (iconChildren.length - 1) * spacing;
 
-        // let availHeight = this._maxHeight;
-        // availHeight -= this._background.get_theme_node().get_vertical_padding();
-        // availHeight -= themeNode.get_vertical_padding();
-        // availHeight -= buttonHeight - iconHeight;
+            if (this._separator) {
+                const [, , separatorWidth] = this._separator.get_preferred_size();
+                availSpace -= separatorWidth + spacing;
+            }
+        } else {
+            // Subtract icon padding and box spacing from the available height
+            availSpace -= iconChildren.length * (buttonHeight - iconHeight) +
+                           (iconChildren.length - 1) * spacing;
 
-        const maxIconSize = // TODO: Math.min(
-              availWidth / iconChildren.length // ); , availHeight);
+            if (this._separator) {
+                const [, , , separatorHeight] = this._separator.get_preferred_size();
+                availSpace -= separatorHeight + spacing;
+            }
+        }
+
+        const maxIconSize = availSpace / iconChildren.length;
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         let iconSizes = this._availableIconSizes.map(s => s * scaleFactor);
 
