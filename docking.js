@@ -338,7 +338,8 @@ var DockedDash = GObject.registerClass({
          // Delay operations that require the shell to be fully loaded and with
          // user theme applied.
 
-        this._paintId = global.stage.connect('after-paint', this._initialize.bind(this));
+        this._signalsHandler.addWithLabel('initialize', global.stage,
+            'after-paint', () => this._initialize());
 
         // Add dash container actor and the container to the Chrome.
         this.set_child(this._slider);
@@ -411,10 +412,7 @@ var DockedDash = GObject.registerClass({
     }
 
     _initialize() {
-        if (this._paintId > 0) {
-            global.stage.disconnect(this._paintId);
-            this._paintId = 0;
-        }
+        this._signalsHandler.removeWithLabel('initialize');
 
         // Apply custome css class according to the settings
         this._themeManager.updateCustomTheme();
