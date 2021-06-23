@@ -138,15 +138,24 @@ var MyAppIcon = GObject.registerClass({
 
         this.connect('notify::urgent', () => {
             const icon = this.icon._iconBin;
+            this._signalsHandler.removeWithLabel('urgent-windows')
             if (this.urgent) {
                 icon.set_pivot_point(0.5, 0.5);
                 this.iconAnimator.addAnimation(icon, 'dance');
+                if (!this._urgentWindows.size) {
+                    const urgentWindows = this.getInterestingWindows();
+                    urgentWindows.forEach(w => (w._manualUrgency = true));
+                    this._updateUrgentWindows(urgentWindows);
+                }
             } else {
                 this.iconAnimator.removeAnimation(icon, 'dance');
                 icon.rotation_angle_z = 0;
+                this._urgentWindows.forEach(w => (delete w._manualUrgency));
+                this._updateUrgentWindows();
             }
         });
 
+        this._urgentWindows = new Set();
         this._progressOverlayArea = null;
         this._progress = 0;
 
@@ -260,9 +269,12 @@ var MyAppIcon = GObject.registerClass({
     }
 
     _updateState() {
-        this.windowsCount = this.getInterestingWindows().length;
+        this._urgentWindows.clear();
+        const interestingWindows = this.getInterestingWindows();
+        this.windowsCount = interestingWindows.length;
         this._updateRunningState();
         this._updateFocusState();
+        this._updateUrgentWindows(interestingWindows);
     }
 
     _updateRunningState() {
@@ -279,18 +291,59 @@ var MyAppIcon = GObject.registerClass({
         this.focused = (tracker.focus_app === this.app && this.running);
 
         if (this.focused) {
-            this.urgent = false;
             this.add_style_class_name('focused');
         } else {
             this.remove_style_class_name('focused');
         }
     }
 
+    _updateUrgentWindows(interestingWindows) {
+        this._signalsHandler.removeWithLabel('urgent-windows')
+        this._urgentWindows.clear();
+        if (interestingWindows === undefined)
+            interestingWindows = this.getInterestingWindows();
+        interestingWindows.forEach(win => {
+            if (win.urgent || win.demandsAttention || win._manualUrgency)
+                this._addUrgentWindow(win);
+        });
+        this.urgent = !!this._urgentWindows.size;
+    }
+
     _onWindowDemandsAttention(window) {
-        if (window.has_focus() || tracker.get_window_app(window) !== this.app)
+        if (tracker.get_window_app(window) === this.app)
+            this._addUrgentWindow(window);
+    }
+
+    _addUrgentWindow(window) {
+        if (this._urgentWindows.has(window))
             return;
 
+        if (window._manualUrgency && window.has_focus()) {
+            delete window._manualUrgency;
+            return;
+        }
+
+        this._urgentWindows.add(window);
         this.urgent = true;
+
+        const onDemandsAttentionChanged = () => {
+            if (!window.demandsAttention && !window.urgent && !window._manualUrgency)
+                this._updateUrgentWindows();
+        };
+
+        if (window.demandsAttention)
+            this._signalsHandler.addWithLabel('urgent-windows', window,
+                'notify::demands-attention', () => onDemandsAttentionChanged());
+        if (window.urgent)
+            this._signalsHandler.addWithLabel('urgent-windows', window,
+                'notify::urgent', () => onDemandsAttentionChanged());
+        if (window._manualUrgency) {
+            this._signalsHandler.addWithLabel('urgent-windows', window,
+                'focus', () => {
+                    delete window._manualUrgency;
+                    onDemandsAttentionChanged()
+                });
+        }
     }
 
     /**
