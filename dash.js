@@ -723,7 +723,8 @@ var MyDash = GObject.registerClass({
         let favorites = AppFavorites.getAppFavorites().getFavoriteMap();
 
         let running = this._appSystem.get_running();
-        let settings = Docking.DockManager.settings;
+        const dockManager = Docking.DockManager.getDefault();
+        const { settings } = dockManager;
 
         if (settings.get_boolean('isolate-workspaces') ||
             settings.get_boolean('isolate-monitors')) {
@@ -772,30 +773,18 @@ var MyDash = GObject.registerClass({
             });
         }
 
-        if (settings.get_boolean('show-mounts')) {
-            if (!this._removables) {
-                this._removables = new Locations.Removables();
-                this._signalsHandler.addWithLabel('show-mounts',
-                    this._removables, 'changed', this._queueRedisplay.bind(this));
-            }
-            Array.prototype.push.apply(newApps, this._removables.getApps());
-        } else if (this._removables) {
-            this._signalsHandler.removeWithLabel('show-mounts');
-            this._removables.destroy();
-            this._removables = null;
+        this._signalsHandler.removeWithLabel('show-mounts');
+        if (dockManager.removables) {
+            this._signalsHandler.addWithLabel('show-mounts',
+                dockManager.removables, 'changed', this._queueRedisplay.bind(this));
+            Array.prototype.push.apply(newApps, dockManager.removables.getApps());
         }
 
-        if (settings.get_boolean('show-trash')) {
-            if (!this._trash) {
-                this._trash = new Locations.Trash();
-                this._signalsHandler.addWithLabel('show-trash', this._trash,
-                    'changed', this._queueRedisplay.bind(this));
-            }
-            newApps.push(this._trash.getApp());
-        } else if (this._trash) {
-            this._signalsHandler.removeWithLabel('show-trash');
-            this._trash.destroy();
-            this._trash = null;
+        this._signalsHandler.removeWithLabel('show-trash');
+        if (dockManager.trash) {
+            this._signalsHandler.addWithLabel('show-trash',
+                dockManager.trash, 'changed', this._queueRedisplay.bind(this));
+            newApps.push(dockManager.trash.getApp());
         }
 
         // Figure out the actual changes to the list of items; we iterate
