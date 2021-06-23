@@ -777,14 +777,23 @@ var MyDash = GObject.registerClass({
         if (dockManager.removables) {
             this._signalsHandler.addWithLabel('show-mounts',
                 dockManager.removables, 'changed', this._queueRedisplay.bind(this));
-            Array.prototype.push.apply(newApps, dockManager.removables.getApps());
+            dockManager.removables.getApps().forEach(removable => {
+                if (!newApps.includes(removable))
+                    newApps.push(removable);
+            });
+        } else {
+            oldApps = oldApps.filter(app => !app.location || app.isTrash)
         }
 
         this._signalsHandler.removeWithLabel('show-trash');
         if (dockManager.trash) {
             this._signalsHandler.addWithLabel('show-trash',
                 dockManager.trash, 'changed', this._queueRedisplay.bind(this));
-            newApps.push(dockManager.trash.getApp());
+            const trashApp = dockManager.trash.getApp();
+            if (!newApps.includes(trashApp))
+                newApps.push(trashApp);
+        } else {
+            oldApps = oldApps.filter(app => !app.isTrash)
         }
 
         // Figure out the actual changes to the list of items; we iterate
