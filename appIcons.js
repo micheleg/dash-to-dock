@@ -244,7 +244,7 @@ var MyAppIcon = GObject.registerClass({
 
         if (!Main.overview.visible) {
             let reversed = direction === Meta.MotionDirection.UP;
-            if (this.focused)
+            if (this.focused && !this._urgentWindows.size)
                 this._cycleThroughWindows(reversed);
             else {
                 // Activate the first window
@@ -475,6 +475,8 @@ var MyAppIcon = GObject.registerClass({
 
         // We customize the action only when the application is already running
         if (this.running) {
+            const hasUrgentWindows = !!this._urgentWindows.size;
+            const singleOrUrgentWindows = windows.length === 1 || !hasUrgentWindows;
             switch (buttonAction) {
             case clickAction.MINIMIZE:
                 // In overview just activate the app, unless the acion is explicitely
@@ -482,7 +484,7 @@ var MyAppIcon = GObject.registerClass({
                 if (!Main.overview.visible || modifiers){
                     // If we have button=2 or a modifier, allow minimization even if
                     // the app is not focused
-                    if (this.focused || button === 2 || modifiers & Clutter.ModifierType.SHIFT_MASK) {
+                    if ((this.focused && !hasUrgentWindows) || button === 2 || modifiers & Clutter.ModifierType.SHIFT_MASK) {
                         // minimize all windows on double click and always in the case of primary click without
                         // additional modifiers
                         let click_count = 0;
@@ -504,7 +506,7 @@ var MyAppIcon = GObject.registerClass({
                 // When a single window is present, toggle minimization
                 // If only one windows is present toggle minimization, but only when trigggered with the
                 // simple click action (no modifiers, no middle click).
-                if (windows.length == 1 && !modifiers && button == 1) {
+                if (singleOrUrgentWindows && !modifiers && button == 1) {
                     let w = windows[0];
                     if (this.focused) {
                         // Window is raised, minimize it
@@ -523,7 +525,7 @@ var MyAppIcon = GObject.registerClass({
 
             case clickAction.CYCLE_WINDOWS:
                 if (!Main.overview.visible) {
-                    if (this.focused)
+                    if (this.focused && !hasUrgentWindows)
                         this._cycleThroughWindows();
                     else {
                         // Activate the first window
@@ -536,7 +538,7 @@ var MyAppIcon = GObject.registerClass({
                 break;
 
             case clickAction.FOCUS_OR_PREVIEWS:
-                if (this.focused &&
+                if (this.focused && !hasUrgentWindows &&
                     (windows.length > 1 || modifiers || button != 1)) {
                     this._windowPreviews();
                 } else {
@@ -547,7 +549,7 @@ var MyAppIcon = GObject.registerClass({
                 break;
 
             case clickAction.FOCUS_MINIMIZE_OR_PREVIEWS:
-                if (this.focused) {
+                if (this.focused && !hasUrgentWindows) {
                     if (windows.length > 1 || modifiers || button != 1)
                         this._windowPreviews();
                     else if (!Main.overview.visible)
@@ -567,7 +569,7 @@ var MyAppIcon = GObject.registerClass({
                 if (!Main.overview.visible) {
                     // If only one windows is present just switch to it, but only when trigggered with the
                     // simple click action (no modifiers, no middle click).
-                    if (windows.length == 1 && !modifiers && button == 1) {
+                    if (singleOrUrgentWindows && !modifiers && button == 1) {
                         let w = windows[0];
                         Main.activateWindow(w);
                     } else
@@ -583,7 +585,7 @@ var MyAppIcon = GObject.registerClass({
                 // If only one windows is present toggle minimization, but only when trigggered with the
                 // simple click action (no modifiers, no middle click).
                 if (!Main.overview.visible) {
-                    if (windows.length == 1 && !modifiers && button == 1) {
+                    if (singleOrUrgentWindows && !modifiers && button == 1) {
                         let w = windows[0];
                         if (this.focused) {
                             // Window is raised, minimize it
@@ -848,7 +850,13 @@ var MyAppIcon = GObject.registerClass({
     // Filter out unnecessary windows, for instance
     // nautilus desktop window.
     getInterestingWindows() {
-        return getInterestingWindows(this.app, this.monitorIndex, this._location);
+        const interestingWindows = getInterestingWindows(this.app,
+            this.monitorIndex, this._location);
+
+        if (!this._urgentWindows.size)
+            return interestingWindows;
+
+        return [...new Set([...this._urgentWindows, ...interestingWindows])];
     }
 
     // Does the Icon represent a location rather than an App
