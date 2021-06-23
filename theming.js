@@ -221,7 +221,7 @@ var ThemeManager = class DashToDock_ThemeManager {
         this._updateDashOpacity();
         this._updateDashColor();
         this._adjustTheme();
-        this._dash._redisplay();
+        this.emit('updated');
     }
 
     /**
