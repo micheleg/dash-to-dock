@@ -39,7 +39,7 @@ const TransparencyMode = {
 var ThemeManager = class DashToDock_ThemeManager {
 
     constructor(dock) {
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._bindSettingsChanges();
         this._actor = dock;
         this._dash = dock.dash;
@@ -73,7 +73,7 @@ var ThemeManager = class DashToDock_ThemeManager {
     }
 
     destroy() {
-        this._signalsHandler.destroy();
+        this.emit('destroy');
         this._transparency.destroy();
         this._destroyed = true;
     }
