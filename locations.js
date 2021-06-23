@@ -89,7 +89,9 @@ var Trash = class DashToDock_Trash {
                 trashKeys.set_string('Desktop Entry', 'Actions', 'empty-trash;');
                 trashKeys.set_string('Desktop Action empty-trash', 'Name', __('Empty Trash'));
                 trashKeys.set_string('Desktop Action empty-trash', 'Exec',
-                                     'dbus-send --print-reply --dest=org.gnome.Nautilus /org/gnome/Nautilus org.gnome.Nautilus.FileOperations.EmptyTrash');
+                    'gdbus call --session --dest org.gnome.Nautilus \
+                    --object-path /org/gnome/Nautilus/FileOperations2 \
+                    --method org.gnome.Nautilus.FileOperations2.EmptyTrash true {}');
             }
 
             let trashAppInfo = Gio.DesktopAppInfo.new_from_keyfile(trashKeys);
