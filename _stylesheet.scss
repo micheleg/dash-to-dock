@@ -36,6 +36,8 @@ $dock_fixed_inner_margin: $dock_side_margin;
     );
 }
 
+$osd_fg_color: #eeeeec;
+
 @each $side in bottom, top, left, right {
     #dashtodockContainer.#{$side} {
         #dash {
@@ -46,6 +48,16 @@ $dock_fixed_inner_margin: $dock_side_margin;
                 margin: 0;
                 margin-#{$side}: $dock_side_margin;
                 padding: 0;
+            }
+
+            .dash-separator {
+                @if $side == top or $side == bottom {
+                    margin-bottom: 0;
+                } @else {
+                    height: 1px;
+                    margin: ($dash_spacing + ($dash_padding / 2)) 0;
+                    background-color: transparentize($osd_fg_color, 0.7);
+                }
             }
 
             #dashtodockDashContainer {
@@ -198,22 +210,6 @@ $dock_fixed_inner_margin: $dock_side_margin;
 #dashtodockContainer.dashtodock .dash-item-container > StButton {
     transition-duration: 250;
     background-size: contain;
-}
-
-// TODO
-$osd_fg_color: #eeeeec;
-
-#dashtodockContainer {
-    #dash .dash-separator {
-        margin-bottom: 0;
-    }
-
-    // TODO: See if we can re-use the dash-separator styling
-    #dash .vertical-dash-separator {
-        height: 1px;
-        margin: ($dash_spacing + ($dash_padding / 2)) 0;
-        background-color: transparentize($osd_fg_color, 0.7);
-    }
 }
 
 /* Running and focused application style */
