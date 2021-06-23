@@ -316,6 +316,8 @@ var DockedDash = GObject.registerClass({
         }
 
         this._themeManager = new Theming.ThemeManager(this);
+        this._signalsHandler.add(this._themeManager, 'updated',
+            () => this.dash.resetAppIcons());
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
