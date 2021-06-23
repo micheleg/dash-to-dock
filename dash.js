@@ -861,20 +861,15 @@ var MyDash = GObject.registerClass({
         const nIcons = children.length + addedItems.length - removedActors.length;
         if (nFavorites > 0 && nFavorites < nIcons) {
             if (!this._separator) {
-                if (!this._isHorizontal) {
-                    this._separator = new St.Widget({
-                        style_class: 'vertical-dash-separator',
-                        x_align: Clutter.ActorAlign.CENTER,
-                        width: this.iconSize,
-                    });
-                } else {
-                    this._separator = new St.Widget({
-                        style_class: 'dash-separator',
-                        y_align: Clutter.ActorAlign.CENTER,
-                        height: this.iconSize,
-                    });
-                }
-
+                this._separator = new St.Widget({
+                    style_class: 'dash-separator',
+                    x_align: this._isHorizontal ?
+                        Clutter.ActorAlign.FILL : Clutter.ActorAlign.CENTER,
+                    y_align: this._isHorizontal ?
+                        Clutter.ActorAlign.CENTER : Clutter.ActorAlign.FILL,
+                    width: this._isHorizontal ? -1 : this.iconSize,
+                    height: this._isHorizontal ? this.iconSize : -1,
+                });
                 this._box.add_child(this._separator);
             }
             let pos = nFavorites;
