@@ -13,6 +13,7 @@ const __ = Gettext.gettext;
 const N__ = function(e) { return e };
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 
 const UPDATE_TRASH_DELAY = 500;
@@ -161,7 +162,7 @@ var Removables = class DashToDock_Removables {
             icon = icon.get_icon();
         }
         if (icon instanceof Gio.ThemedIcon) {
-            let iconTheme = Gtk.IconTheme.get_default();
+            const { iconTheme } = Docking.DockManager.getDefault();
             let names = icon.get_names();
             for (let i = 0; i < names.length; i++) {
                 let iconName = names[i];

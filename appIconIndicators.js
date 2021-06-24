@@ -853,10 +853,6 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
 }
 
 
-// We need an icons theme object, this is the only way I managed to get
-// pixel buffers that can be used for calculating the backlight color
-let themeLoader = null;
-
 // Global icon cache. Used for Unity7 styling.
 let iconCacheMap = new Map();
 // Max number of items to store
@@ -881,13 +877,7 @@ var DominantColorExtractor = class DashToDock_DominantColorExtractor {
      */
     _getIconPixBuf() {
         let iconTexture = this._app.create_icon_texture(16);
-
-        if (themeLoader === null) {
-            let ifaceSettings = new Gio.Settings({ schema: "org.gnome.desktop.interface" });
-
-            themeLoader = new Gtk.IconTheme(),
-            themeLoader.set_custom_theme(ifaceSettings.get_string('icon-theme')); // Make sure the correct theme is loaded
-        }
+        const themeLoader = Docking.DockManager.iconTheme;
 
         // Unable to load the icon texture, use fallback
         if (iconTexture instanceof St.Icon === false) {
