@@ -3,6 +3,7 @@ const Gi = imports._gi;
 
 const Clutter = imports.gi.Clutter;
 const GObject = imports.gi.GObject;
+const Gtk = imports.gi.Gtk;
 const Meta = imports.gi.Meta;
 const St = imports.gi.St;
 
@@ -392,4 +393,24 @@ function splitHandler(handler) {
             }
         };
     });
+}
+
+var IconTheme = class DashToDockIconTheme {
+    constructor() {
+        const settings = St.Settings.get();
+        this._iconTheme = new Gtk.IconTheme();
+        this._iconTheme.set_custom_theme(settings.gtkIconTheme);
+        this._changesId = settings.connect('notify::gtk-icon-theme', () => {
+            this._iconTheme.set_custom_theme(settings.gtkIconTheme);
+        });
+    }
+
+    get iconTheme() {
+        return this._iconTheme;
+    }
+
+    destroy() {
+        St.Settings.get().disconnect(this._changesId);
+        this._iconTheme = null;
+    }
 }
