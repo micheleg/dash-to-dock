@@ -35,16 +35,16 @@ const DASH_VISIBILITY_TIMEOUT = 3;
  * - set label position based on dash orientation
  *
  */
-let MyDashItemContainer = GObject.registerClass(
-class DashToDock_MyDashItemContainer extends Dash.DashItemContainer {
+var DockDashItemContainer = GObject.registerClass(
+class DockDashItemContainer extends Dash.DashItemContainer {
 
     showLabel() {
         return AppIcons.itemShowLabel.call(this);
     }
 });
 
-const MyDashIconsVerticalLayout = GObject.registerClass(
-    class DashToDock_MyDashIconsVerticalLayout extends Clutter.BoxLayout {
+const DockDashIconsVerticalLayout = GObject.registerClass(
+    class DockDashIconsVerticalLayout extends Clutter.BoxLayout {
         _init() {
             super._init({
                 orientation: Clutter.Orientation.VERTICAL,
@@ -75,7 +75,7 @@ const baseIconSizes = [16, 22, 24, 32, 48, 64, 96, 128];
  * - sync minimization application target position.
  * - keep running apps ordered.
  */
-var MyDash = GObject.registerClass({
+var DockDash = GObject.registerClass({
     Properties: {
         'requires-visibility': GObject.ParamSpec.boolean(
             'requires-visibility', 'requires-visibility', 'requires-visibility',
@@ -86,7 +86,7 @@ var MyDash = GObject.registerClass({
         'menu-closed': {},
         'icon-size-changed': {},
     }
-}, class DashToDock_MyDash extends St.Widget {
+}, class DockDash extends St.Widget {
 
     _init(monitorIndex) {
         // Initialize icon variables and size
@@ -150,7 +150,7 @@ var MyDash = GObject.registerClass({
         this._box = new St.BoxLayout({
             vertical: !this._isHorizontal,
             clip_to_allocation: false,
-            ...(!this._isHorizontal ? { layout_manager: new MyDashIconsVerticalLayout() } : {}),
+            ...(!this._isHorizontal ? { layout_manager: new DockDashIconsVerticalLayout() } : {}),
             x_align: rtl ? Clutter.ActorAlign.END : Clutter.ActorAlign.START,
             y_align: this._isHorizontal ? Clutter.ActorAlign.CENTER: Clutter.ActorAlign.START,
             y_expand: !this._isHorizontal,
@@ -160,7 +160,7 @@ var MyDash = GObject.registerClass({
         this._dashContainer.add_actor(this._scrollView);
         this._scrollView.add_actor(this._box);
 
-        this._showAppsIcon = new AppIcons.MyShowAppsIcon();
+        this._showAppsIcon = new AppIcons.DockShowAppsIcon();
         this._showAppsIcon.show(false);
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._showAppsIcon.x_expand = false;
@@ -477,7 +477,7 @@ var MyDash = GObject.registerClass({
             this._itemMenuStateChanged(item, opened);
         });
 
-        let item = new MyDashItemContainer();
+        const item = new DockDashItemContainer();
         item.setChild(appIcon);
 
         appIcon.connect('notify::hover', () => {
