@@ -462,7 +462,7 @@ var MyDash = GObject.registerClass({
     }
 
     _createAppItem(app) {
-        const appIcon = new AppIcons.MyAppIcon(app, this._monitorIndex, this.iconAnimator);
+        const appIcon = new AppIcons.makeAppIcon(app, this._monitorIndex, this.iconAnimator);
 
         if (appIcon._draggable) {
             appIcon._draggable.connect('drag-begin', () => {
@@ -729,9 +729,8 @@ var MyDash = GObject.registerClass({
             // When using isolation, we filter out apps that have no windows in
             // the current workspace
             let monitorIndex = this._monitorIndex;
-            running = running.filter(function(_app) {
-                return AppIcons.getInterestingWindows(_app, monitorIndex).length != 0;
-            });
+            running = running.filter(app =>
+                AppIcons.getInterestingWindows(app.get_windows(), monitorIndex).length);
         }
 
         let children = this._box.get_children().filter(actor => {
