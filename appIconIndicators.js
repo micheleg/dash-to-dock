@@ -640,7 +640,8 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         this._source._iconContainer.add_child(this._notificationBadgeBin);
         this.updateNotificationBadgeStyle();
 
-        const remoteEntry = this._source.remoteModel.lookupById(this._source.app.id);
+        const { remoteModel } = Docking.DockManager.getDefault();
+        const remoteEntry = remoteModel.lookupById(this._source.app.id);
         this._signalsHandler.add([
             remoteEntry,
             ['count-changed', 'count-visible-changed'],

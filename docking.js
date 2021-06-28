@@ -182,12 +182,11 @@ var DockedDash = GObject.registerClass({
     }
 }, class DashToDock extends St.Bin {
 
-    _init(remoteModel, monitorIndex) {
+    _init(monitorIndex) {
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
         // Load settings
         let settings = DockManager.settings;
-        this._remoteModel = remoteModel;
         this._monitorIndex = monitorIndex;
         this._position = Utils.getPosition();
         this._isHorizontal = ((this._position == St.Side.TOP) || (this._position == St.Side.BOTTOM));
@@ -226,7 +225,7 @@ var DockedDash = GObject.registerClass({
         this._dockDwellTimeoutId = 0
 
         // Create a new dash object
-        this.dash = new MyDash.MyDash(this._remoteModel, this._monitorIndex);
+        this.dash = new MyDash.MyDash(this._monitorIndex);
 
         if (Main.overview.isDummy || !settings.get_boolean('show-show-apps-button'))
             this.dash.hideShowAppsButton();
@@ -1595,6 +1594,10 @@ var DockManager = class DashToDock_DockManager {
         return this._fm1Client;
     }
 
+    get remoteModel() {
+        return this._remoteModel;
+    }
+
     get mainDock() {
         return this._allDocks.length ? this._allDocks[0] : null;
     }
@@ -1734,7 +1737,7 @@ var DockManager = class DashToDock_DockManager {
         }
 
         // First we create the main Dock, to get the extra features to bind to this one
-        let dock = new DockedDash(this._remoteModel, this._preferredMonitorIndex);
+        let dock = new DockedDash(this._preferredMonitorIndex);
         this._allDocks.push(dock);
 
         // connect app icon into the view selector
@@ -1751,7 +1754,7 @@ var DockManager = class DashToDock_DockManager {
             for (let iMon = 0; iMon < nMon; iMon++) {
                 if (iMon == this._preferredMonitorIndex)
                     continue;
-                let dock = new DockedDash(this._remoteModel, iMon);
+                let dock = new DockedDash(iMon);
                 this._allDocks.push(dock);
                 // connect app icon into the view selector
                 dock.dash.showAppsButton.connect('notify::checked', this._onShowAppsButtonToggled.bind(this));
