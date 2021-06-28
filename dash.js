@@ -88,7 +88,7 @@ var MyDash = GObject.registerClass({
     }
 }, class DashToDock_MyDash extends St.Widget {
 
-    _init(remoteModel, monitorIndex) {
+    _init(monitorIndex) {
         // Initialize icon variables and size
         this._maxWidth = -1;
         this._maxHeight = -1;
@@ -99,7 +99,6 @@ var MyDash = GObject.registerClass({
 
         this._separator = null;
 
-        this._remoteModel = remoteModel;
         this._monitorIndex = monitorIndex;
         this._position = Utils.getPosition();
         this._isHorizontal = ((this._position == St.Side.TOP) ||
@@ -463,8 +462,7 @@ var MyDash = GObject.registerClass({
     }
 
     _createAppItem(app) {
-        let appIcon = new AppIcons.MyAppIcon(this._remoteModel, app,
-            this._monitorIndex, this.iconAnimator);
+        const appIcon = new AppIcons.MyAppIcon(app, this._monitorIndex, this.iconAnimator);
 
         if (appIcon._draggable) {
             appIcon._draggable.connect('drag-begin', () => {
