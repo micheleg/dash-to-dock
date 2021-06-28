@@ -28,7 +28,7 @@ const Me = ExtensionUtils.getCurrentExtension();
 const Utils = Me.imports.utils;
 const Intellihide = Me.imports.intellihide;
 const Theming = Me.imports.theming;
-const MyDash = Me.imports.dash;
+const DockDash = Me.imports.dash;
 const Locations = Me.imports.locations;
 const LauncherAPI = Me.imports.launcherAPI;
 const FileManager1API = Me.imports.fileManager1API;
@@ -76,7 +76,7 @@ var DashSlideContainer = GObject.registerClass({
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT,
             0, 1, 1),
     }
-}, class DashToDock_DashSlideContainer extends St.Bin {
+}, class DashSlideContainer extends St.Bin {
 
     _init(params = {}) {
         super._init(params);
@@ -225,7 +225,7 @@ var DockedDash = GObject.registerClass({
         this._dockDwellTimeoutId = 0
 
         // Create a new dash object
-        this.dash = new MyDash.MyDash(this._monitorIndex);
+        this.dash = new DockDash.DockDash(this._monitorIndex);
 
         if (Main.overview.isDummy || !settings.get_boolean('show-show-apps-button'))
             this.dash.hideShowAppsButton();

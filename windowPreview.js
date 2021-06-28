@@ -313,7 +313,7 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
 };
 
 var WindowPreviewMenuItem = GObject.registerClass(
-class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
+class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     _init(window, params) {
         super._init(params);
 
