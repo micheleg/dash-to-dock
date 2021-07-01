@@ -457,7 +457,7 @@ var Transparency = class DashToDock_Transparency {
          * up when it slides out. This is avoid an ugly transition.
          * */
         let factor = 0;
-        if (!Docking.DockManager.settings.get_boolean('dock-fixed') &&
+        if (!Docking.DockManager.settings.dockFixed &&
             this._dock.getDockState() == Docking.State.HIDDEN)
             factor = 1;
         let [leftCoord, topCoord] = this._actor.get_transformed_position();
