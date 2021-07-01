@@ -1833,6 +1833,18 @@ var DockManager = class DashToDock_DockManager {
                 return ret;
             });
 
+        const maybeAdjustBoxToDock = box => {
+            if (this.mainDock.isHorizontal || DockManager.settings.get_boolean('dock-fixed'))
+                return box;
+
+            const [, preferredWidth] = this.mainDock.get_preferred_width(box.get_height());
+            box.x2 -= preferredWidth;
+            if (this.mainDock.position === St.Side.LEFT)
+                box.set_origin(box.x1 + preferredWidth, box.y1);
+
+            return box;
+        }
+
         this._vfuncInjections.addWithLabel('main-dash', ControlsManagerLayout.prototype,
             'allocate', function (container) {
                 const oldPostAllocation = this._runPostAllocation;
@@ -1856,6 +1868,7 @@ var DockManager = class DashToDock_DockManager {
 
                 propertyInjections.destroy();
                 workAreaBox.y1 = startY;
+                maybeAdjustBoxToDock(workAreaBox);
 
                 const adjustActorHorizontalAllocation = actor => {
                     if (!actor.visible || !workAreaBox.x1)
@@ -1884,11 +1897,18 @@ var DockManager = class DashToDock_DockManager {
         this._methodInjections.addWithLabel('main-dash', [
             ControlsManagerLayout.prototype,
             '_computeWorkspacesBoxForState',
-            workspaceBoxOriginFixer
+            function (originalFunction, state, ...args) {
+                const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
+                if (state !== OverviewControls.ControlsState.HIDDEN)
+                    maybeAdjustBoxToDock(box);
+                return box;
+            }
         ], [
             ControlsManagerLayout.prototype,
             '_getAppDisplayBoxForState',
-            workspaceBoxOriginFixer
+            function (...args) {
+                return maybeAdjustBoxToDock(workspaceBoxOriginFixer.call(this, ...args));
+            }
         ]);
 
         this._vfuncInjections.addWithLabel('main-dash', Workspace.WorkspaceBackground.prototype,
