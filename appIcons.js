@@ -309,7 +309,7 @@ class MyAppIcon extends Dash.DashIcon {
                     this._isHorizontal = ( position == St.Side.TOP ||
                                            position == St.Side.BOTTOM);
                     // If horizontal also remove the height of the dash
-                    let fixedDock = Docking.DockManager.settings.get_boolean('dock-fixed');
+                    const { dockFixed: fixedDock } = Docking.DockManager.settings;
                     let additional_margin = this._isHorizontal && !fixedDock ? Main.overview.dash.height : 0;
                     let verticalMargins = this._menu.actor.margin_top + this._menu.actor.margin_bottom;
                     // Also set a max width to the menu, so long labels (long windows title) get truncated

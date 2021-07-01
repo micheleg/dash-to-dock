@@ -83,7 +83,7 @@ var DashSlideContainer = GObject.registerClass({
         this._slideoutSize = 0; // minimum size when slided out
         this.connect('notify::slide-x', () => this.queue_relayout());
 
-        if (this.side == St.Side.TOP && DockManager.settings.get_boolean('dock-fixed')) {
+        if (this.side == St.Side.TOP && DockManager.settings.dockFixed) {
             this._signalsHandler = new Utils.GlobalSignalsHandler(this);
             this._signalsHandler.add(Main.panel, 'notify::height',
                 () => this.queue_relayout());
@@ -126,7 +126,7 @@ var DashSlideContainer = GObject.registerClass({
             const monitor = Main.layoutManager.monitors[this.monitorIndex];
             let yOffset = 0;
             if (Main.panel.x === monitor.x && Main.panel.y === monitor.y &&
-                DockManager.settings.get_boolean('dock-fixed'))
+                DockManager.settings.dockFixed)
                 yOffset = Main.panel.height;
             childBox.x1 = 0;
             childBox.x2 = childWidth;
@@ -162,7 +162,7 @@ var DashSlideContainer = GObject.registerClass({
             minHeight = (minHeight - this._slideoutSize) * this.slideX + this._slideoutSize;
             natHeight = (natHeight - this._slideoutSize) * this.slideX + this._slideoutSize;
 
-            if (this.side == St.Side.TOP && DockManager.settings.get_boolean('dock-fixed')) {
+            if (this.side == St.Side.TOP && DockManager.settings.dockFixed) {
                 const monitor = Main.layoutManager.monitors[this.monitorIndex];
                 if (Main.panel.x === monitor.x && Main.panel.y === monitor.y) {
                     minHeight += Main.panel.height;
@@ -198,7 +198,6 @@ var DockedDash = GObject.registerClass({
         // being temporary disable. Get set by _updateVisibilityMode;
         this._autohideIsEnabled = null;
         this._intellihideIsEnabled = null;
-        this._fixedIsEnabled = null;
 
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.Intellihide(this._monitorIndex);
@@ -400,7 +399,7 @@ var DockedDash = GObject.registerClass({
     }
 
     _trackDock() {
-        if (DockManager.settings.get_boolean('dock-fixed')) {
+        if (DockManager.settings.dockFixed) {
             if (Main.layoutManager._findActor(this) == -1)
                 Main.layoutManager._trackActor(this, { affectsInputRegion: false, trackFullscreen: true });
             if (Main.layoutManager._findActor(this._slider) == -1)
@@ -577,13 +576,11 @@ var DockedDash = GObject.registerClass({
      */
     _updateVisibilityMode() {
         let settings = DockManager.settings;
-        if (settings.get_boolean('dock-fixed')) {
-            this._fixedIsEnabled = true;
+        if (DockManager.settings.dockFixed) {
             this._autohideIsEnabled = false;
             this._intellihideIsEnabled = false;
         }
         else {
-            this._fixedIsEnabled = false;
             this._autohideIsEnabled = settings.get_boolean('autohide')
             this._intellihideIsEnabled = settings.get_boolean('intellihide')
         }
@@ -615,7 +612,7 @@ var DockedDash = GObject.registerClass({
 
         let settings = DockManager.settings;
 
-        if (this._fixedIsEnabled) {
+        if (DockManager.settings.dockFixed) {
             this._removeAnimations();
             this._animateIn(settings.get_double('animation-time'), 0);
         }
@@ -1026,8 +1023,7 @@ var DockedDash = GObject.registerClass({
         // Ensure variables linked to settings are updated.
         this._updateVisibilityMode();
 
-        let extendHeight = DockManager.settings.get_boolean('extend-height');
-        const fixedIsEnabled = DockManager.settings.get_boolean('dock-fixed');
+        const { dockFixed: fixedIsEnabled, dockExtended: extendHeight } = DockManager.settings;
 
         if (fixedIsEnabled) {
             this.add_style_class_name('fixed');
@@ -1544,6 +1540,9 @@ var DockManager = class DashToDock_DockManager {
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
 
+        // Connect relevant signals to the toggling function
+        this._bindSettingsChanges();
+
         this._ensureFileManagerClient();
 
         /* Array of all the docks created */
@@ -1553,9 +1552,6 @@ var DockManager = class DashToDock_DockManager {
         // status variable: true when the overview is shown through the dash
         // applications button.
         this._forcedOverview = false;
-
-        // Connect relevant signals to the toggling function
-        this._bindSettingsChanges();
     }
 
     static getDefault() {
@@ -1568,6 +1564,10 @@ var DockManager = class DashToDock_DockManager {
 
     static get settings() {
         return DockManager.getDefault()._settings;
+    }
+
+    get settings() {
+        return this._settings;
     }
 
     get fm1Client() {
@@ -1610,6 +1610,18 @@ var DockManager = class DashToDock_DockManager {
     }
 
     _bindSettingsChanges() {
+        this.settings.settingsSchema.list_keys().forEach(key => {
+            const camelKey = key.replace(/-([a-z\d])/g, k => k[1].toUpperCase());
+            const updateSetting = () =>
+                (this.settings[camelKey] = this.settings.get_value(key).recursiveUnpack());
+            updateSetting();
+            this._signalsHandler.addWithLabel('settings', this.settings,
+                `changed::${key}`, updateSetting);
+        });
+        Object.defineProperties(this.settings, {
+            dockExtended: { get: () => this.settings.extendHeight },
+        });
+
         // Connect relevant signals to the toggling function
         this._signalsHandler.add([
             Meta.MonitorManager.get(),
@@ -1634,11 +1646,11 @@ var DockManager = class DashToDock_DockManager {
         ], [
             this._settings,
             'changed::extend-height',
-            this._adjustPanelCorners.bind(this)
+            () => this._adjustPanelCorners()
         ], [
             this._settings,
             'changed::dock-fixed',
-            this._adjustPanelCorners.bind(this)
+            () => this._adjustPanelCorners()
         ], [
             this._settings,
             'changed::show-trash',
@@ -1763,7 +1775,7 @@ var DockManager = class DashToDock_DockManager {
         // And to return the preferred height depending on the state
         this._methodInjections.addWithLabel('main-dash', this._oldDash,
             'get_preferred_height', (_originalMethod, ...args) => {
-                if (this.mainDock.isHorizontal && !this._settings.get_boolean('dock-fixed'))
+                if (this.mainDock.isHorizontal && !this.settings.dockFixed)
                     return this.mainDock.get_preferred_height(...args);
                 return [0, 0];
             });
@@ -1835,7 +1847,7 @@ var DockManager = class DashToDock_DockManager {
             });
 
         const maybeAdjustBoxToDock = box => {
-            if (this.mainDock.isHorizontal || DockManager.settings.get_boolean('dock-fixed'))
+            if (this.mainDock.isHorizontal || this.settings.dockFixed)
                 return box;
 
             const [, preferredWidth] = this.mainDock.get_preferred_width(box.get_height());
@@ -1945,7 +1957,7 @@ var DockManager = class DashToDock_DockManager {
         // vertical space, causing the Workspace layout to show more workspaces.
         // We might get the same also reducing the height of the workspace boxes
         // in _computeWorkspacesBoxForState, but it would just waste vertical space
-        if (!this.mainDock.isHorizontal || this._settings.get_boolean('dock-fixed')) {
+        if (!this.mainDock.isHorizontal || this.settings.dockFixed) {
             this._methodInjections.addWithLabel('main-dash',
                 WorkspaceThumbnail.ThumbnailsBox.prototype, '_updateShouldShow',
                 function () {
@@ -1962,7 +1974,7 @@ var DockManager = class DashToDock_DockManager {
         this._methodInjections.addWithLabel('main-dash', WorkspacesView.WorkspacesView.prototype,
             '_getFirstFitAllWorkspaceBox', function (originalFunction, ...args) {
                 const box = originalFunction.call(this, ...args);
-                if (DockManager.settings.isFixed ||
+                if (DockManager.settings.dockFixed ||
                     this._monitorIndex === Main.layoutManager.primaryIndex)
                     return box;
 
@@ -2076,12 +2088,10 @@ var DockManager = class DashToDock_DockManager {
     _adjustPanelCorners() {
         let position = Utils.getPosition();
         let isHorizontal = ((position == St.Side.TOP) || (position == St.Side.BOTTOM));
-        let extendHeight   = this._settings.get_boolean('extend-height');
-        let fixedIsEnabled = this._settings.get_boolean('dock-fixed');
         let dockOnPrimary  = this._settings.get_boolean('multi-monitor') ||
                              this._preferredMonitorIndex == Main.layoutManager.primaryIndex;
 
-        if (!isHorizontal && dockOnPrimary && extendHeight && fixedIsEnabled) {
+        if (!isHorizontal && dockOnPrimary && this.settings.dockExtended && this.settings.dockFixed) {
             Main.panel._rightCorner.hide();
             Main.panel._leftCorner.hide();
         }

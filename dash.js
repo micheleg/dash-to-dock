@@ -131,7 +131,7 @@ var MyDash = GObject.registerClass({
             enable_mouse_scrolling: false
         });
 
-        if (Docking.DockManager.settings.get_boolean('extend-height')) {
+        if (Docking.DockManager.settings.dockExtended) {
             if (!this._isHorizontal) {
                 this._scrollView.y_align = Clutter.ActorAlign.START;
             } else {
