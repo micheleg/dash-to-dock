@@ -20,6 +20,7 @@ const WorkspaceSwitcherPopup= imports.ui.workspaceSwitcherPopup;
 const Layout = imports.ui.layout;
 const LayoutManager = imports.ui.main.layoutManager;
 const Workspace = imports.ui.workspace;
+const WorkspacesView = imports.ui.workspacesView;
 const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 
 const ExtensionUtils = imports.misc.extensionUtils;
@@ -1956,6 +1957,32 @@ var DockManager = class DashToDock_DockManager {
                     this.notify('should-show');
                 });
         }
+
+        // Reduce the space that the workspaces can use in secondary monitors
+        this._methodInjections.addWithLabel('main-dash', WorkspacesView.WorkspacesView.prototype,
+            '_getFirstFitAllWorkspaceBox', function (originalFunction, ...args) {
+                const box = originalFunction.call(this, ...args);
+                if (DockManager.settings.isFixed ||
+                    this._monitorIndex === Main.layoutManager.primaryIndex)
+                    return box;
+
+                const dock = DockManager.getDefault().getDockByMonitor(this._monitorIndex);
+                if (!dock)
+                    return box;
+
+                if (dock.isHorizontal) {
+                    const [, preferredHeight] = dock.get_preferred_height(box.get_width());
+                    box.y2 -= preferredHeight;
+                    if (dock.position === St.Side.TOP)
+                        box.set_origin(box.x1, box.y1 + preferredHeight);
+                } else {
+                    const [, preferredWidth] = dock.get_preferred_width(box.get_height());
+                    box.x2 -= preferredWidth / 2;
+                    if (dock.position === St.Side.LEFT)
+                        box.set_origin(box.x1 + preferredWidth, box.y1);
+                }
+                return box;
+            });
     }
 
     _deleteDocks() {
