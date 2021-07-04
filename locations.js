@@ -47,7 +47,7 @@ var Trash = class DashToDock_Trash {
                 this._onTrashChange.bind(this)
             );
         } catch (e) {
-            log(`Impossible to monitor trash: ${e}`)
+            logError(e, 'Impossible to monitor trash');
         }
         this._empty = true;
         this._schedUpdateId = 0;
@@ -88,7 +88,7 @@ var Trash = class DashToDock_Trash {
 
             await childrenEnumerator.close_async(priority, null);
         } catch (e) {
-            log(`Impossible to enumerate trash children: ${e}`)
+            logError(e, 'Impossible to enumerate trash children');
         }
     }
 
