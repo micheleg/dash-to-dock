@@ -49,7 +49,7 @@ var Trash = class DashToDock_Trash {
         } catch (e) {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
                 return;
-            log(`Impossible to monitor trash: ${e}`);
+            logError(e, 'Impossible to monitor trash');
         }
         this._empty = true;
         this._schedUpdateId = 0;
@@ -91,7 +91,7 @@ var Trash = class DashToDock_Trash {
             await childrenEnumerator.close_async(priority, null);
         } catch (e) {
             if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
-                log(`Impossible to enumerate trash children: ${e}`);
+                logError(e, 'Impossible to enumerate trash children');
         }
     }
 
