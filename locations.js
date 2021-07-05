@@ -28,6 +28,7 @@ function makeLocationApp(params) {
     delete params.location;
 
     const shellApp = new Shell.App(params);
+    shellApp.appInfo.customId = 'location:%s'.format(location);
 
     Object.defineProperties(shellApp, {
         location: { value: location },
@@ -66,17 +67,24 @@ function makeLocationApp(params) {
             this._windows.some((win, index) => win !== oldWindows[index]))
             this.emit('windows-changed');
 
-        if (oldState !== this.state)
+        if (oldState !== this.state) {
+            Shell.AppSystem.get_default().emit('app-state-changed', this);
             this.notify('state');
+        }
     };
 
-    shellApp._updateWindows();
+    let updateWindowsIdle = GLib.idle_add(GLib.DEFAULT_PRIORITY, () => {
+        shellApp._updateWindows();
+        updateWindowsIdle = undefined;
+        return GLib.SOURCE_REMOVE;
+    });
     const windowsChangedId = fm1Client.connect('windows-changed', () =>
         shellApp._updateWindows());
 
     shellApp.destroy = function () {
         this._windows = [];
         fm1Client.disconnect(windowsChangedId);
+        updateWindowsIdle && GLib.source_remove(updateWindowsIdle);
     }
 
     return shellApp;
