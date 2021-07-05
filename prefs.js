@@ -165,19 +165,17 @@ class MonitorsConfig {
 }
 Signals.addSignalMethods(MonitorsConfig.prototype);
 
-// TODO:
-// function setShortcut(settings) {
-//     let shortcut_text = settings.get_string('shortcut-text');
-//     let [key, mods] = Gtk.accelerator_parse(shortcut_text);
+function setShortcut(settings) {
+    const shortcutText = settings.get_string('shortcut-text');
+    const [success, key, mods] = Gtk.accelerator_parse(shortcutText);
 
-//     if (Gtk.accelerator_valid(key, mods)) {
-//         let shortcut = Gtk.accelerator_name(key, mods);
-//         settings.set_strv('shortcut', [shortcut]);
-//     }
-//     else {
-//         settings.set_strv('shortcut', []);
-//     }
-// }
+    if (success && Gtk.accelerator_valid(key, mods)) {
+        let shortcut = Gtk.accelerator_name(key, mods);
+        settings.set_strv('shortcut', [shortcut]);
+    } else {
+        settings.set_strv('shortcut', []);
+    }
+}
 
 var Settings = GObject.registerClass({
     Implements: [Gtk.BuilderScope],
@@ -677,7 +675,7 @@ var Settings = GObject.registerClass({
             this._builder.get_object('show_dock_switch').set_active(this._settings.get_boolean('hotkeys-show-dock'));
 
             // We need to update the shortcut 'strv' when the text is modified
-            this._settings.connect('changed::shortcut-text', () => { setShortcut(this._settings); });
+            this._settings.connect('changed::shortcut-text', () => setShortcut(this._settings));
             this._settings.bind('shortcut-text',
                 this._builder.get_object('shortcut_entry'),
                 'text',
