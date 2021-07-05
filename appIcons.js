@@ -111,6 +111,8 @@ var DockAbstractAppIcon = GObject.registerClass({
             this._stateChangedId = 0;
         }
 
+        this._signalsHandler.add(this.app, 'windows-changed', () => this._updateWindows());
+        this._signalsHandler.add(this.app, 'notify::state', () => this._updateRunningState());
         this._signalsHandler.add(global.display, 'window-demands-attention', (_dpy, window) =>
             this._onWindowDemandsAttention(window));
         this._signalsHandler.add(global.display, 'window-marked-urgent', (_dpy, window) =>
@@ -281,7 +283,7 @@ var DockAbstractAppIcon = GObject.registerClass({
     }
 
     _updateRunningState() {
-        this.running = !!this.windowsCount;
+        this.running = (this.app.state === Shell.AppState.RUNNING) && this.windowsCount;
     }
 
     _updateFocusState() {
@@ -836,8 +838,7 @@ var DockAbstractAppIcon = GObject.registerClass({
     }
 
     getWindows() {
-        throw new GObject.NotImplementedError('getWindows in %s'.format(
-            this.constructor.name));
+        return this.app.get_windows();
     }
 
     // Filter out unnecessary windows, for instance
@@ -858,61 +859,39 @@ var DockAppIcon = GObject.registerClass({
     _init(app, monitorIndex, iconAnimator) {
         super._init(app, monitorIndex, iconAnimator);
 
-        this._signalsHandler.add(this.app, 'windows-changed', () => this._updateWindows());
-        this._signalsHandler.add(this.app, 'notify::state', () => this._updateRunningState());
         this._signalsHandler.add(tracker, 'notify::focus-app', () => this._updateFocusState());
-    }
-
-    _updateRunningState() {
-        this.running = (this.app.state === Shell.AppState.RUNNING) && this.windowsCount;
     }
 
     _updateFocusState() {
         this.focused = (tracker.focus_app === this.app && this.running);
     }
-
-    getWindows() {
-        return this.app.get_windows();
-    }
 });
 
 var DockLocationAppIcon = GObject.registerClass({
 }, class DockLocationAppIcon extends DockAbstractAppIcon {
-    _init(app, location, monitorIndex, iconAnimator) {
-        if (!location)
+    _init(app, monitorIndex, iconAnimator) {
+        if (!app.location)
             throw new Error('Provided application %s has no location'.format(app));
 
-        this._location = location;
         super._init(app, monitorIndex, iconAnimator);
 
         this._signalsHandler.add(global.display, 'notify::focus-window',
             () => this._updateFocusState());
-        this._signalsHandler.add(Docking.DockManager.getDefault().fm1Client,
-            'windows-changed', () => this._updateWindows());
     }
 
     get location() {
-        return this._location;
+        return this.app.location;
     }
 
     _updateFocusState() {
         this.focused = (this.getWindows().some(w => w.has_focus()) && this.running);
     }
-
-    getWindows() {
-        return Docking.DockManager.getDefault().fm1Client.getWindows(this.location);
-    }
-
-    ownsWindow(window) {
-        return this.getWindows().includes(window);
-    }
 });
 
 function makeAppIcon(app, monitorIndex, iconAnimator) {
-    const location = app.appInfo?.get_string('XdtdUri');
+    if (app.location)
+        return new DockLocationAppIcon(app, monitorIndex, iconAnimator);
 
-    if (location)
-        return new DockLocationAppIcon(app, location, monitorIndex, iconAnimator);
 
     return new DockAppIcon(app, monitorIndex, iconAnimator);
 }

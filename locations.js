@@ -19,6 +19,66 @@ const Utils = Me.imports.utils;
 const TRASH_URI = 'trash://';
 const UPDATE_TRASH_DELAY = 500;
 
+// We can't inherit from Shell.App as it's a final type, so let's patch it
+function makeLocationApp(params) {
+    if (!params.location)
+        throw new TypeError('Invalid location');
+
+    location = params.location;
+    delete params.location;
+
+    const shellApp = new Shell.App(params);
+
+    Object.defineProperties(shellApp, {
+        location: { value: location },
+        isTrash: { value: location.startsWith(TRASH_URI) },
+        state: { get: () => shellApp.get_state() },
+    });
+
+    shellApp._windows = [];
+    shellApp.get_state = () =>
+        shellApp._windows.length ? Shell.AppState.RUNNING : Shell.AppState.STOPPED;
+    shellApp.get_windows = () => shellApp._windows;
+    shellApp.get_n_windows = () => shellApp.get_windows().length;
+    shellApp.get_pids = () => shellApp.get_windows().reduce((pids, w) => {
+        if (w.get_pid() > 0 && !pids.includes(w.get_pid()))
+            pids.push(w.get_pid());
+        return pids;
+    }, []);
+    shellApp.is_on_workspace = workspace => shellApp.get_windows().some(w =>
+        w.get_workspace() === workspace);
+    shellApp.request_quit = () => shellApp.get_windows().filter(w =>
+        w.can_close()).forEach(w => w.delete(global.get_current_time()));
+
+    const defaultToString = shellApp.toString;
+    shellApp.toString = () => '[LocationApp - %s]'.format(defaultToString.call(shellApp));
+
+    const { fm1Client } = Docking.DockManager.getDefault();
+    shellApp._updateWindows = function () {
+        const oldState = this.state;
+        const oldWindows = this._windows;
+        this._windows = fm1Client.getWindows(this.location);
+
+        if (this._windows.length !== oldWindows.length ||
+            this._windows.some((win, index) => win !== oldWindows[index]))
+            this.emit('windows-changed');
+
+        if (oldState !== this.state)
+            this.notify('state');
+    };
+
+    shellApp._updateWindows();
+    const windowsChangedId = fm1Client.connect('windows-changed', () =>
+        shellApp._updateWindows());
+
+    shellApp.destroy = function () {
+        this._windows = [];
+        fm1Client.disconnect(windowsChangedId);
+    }
+
+    return shellApp;
+}
+
 /**
  * This class maintains a Shell.App representing the Trash and keeps it
  * up-to-date as the trash fills and is emptied over time.
@@ -61,6 +121,7 @@ var Trash = class DashToDock_Trash {
         this._monitor?.disconnect(this._signalId);
         this._monitor = null;
         this._file = null;
+        this._trashApp?.destroy();
     }
 
     _onTrashChange() {
@@ -103,7 +164,6 @@ var Trash = class DashToDock_Trash {
             trashKeys.set_string('Desktop Entry', 'Type', 'Application');
             trashKeys.set_string('Desktop Entry', 'Exec', 'gio open %s'.format(TRASH_URI));
             trashKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
-            trashKeys.set_string('Desktop Entry', 'XdtdUri', TRASH_URI + '/');
             if (!this._empty) {
                 trashKeys.set_string('Desktop Entry', 'Actions', 'empty-trash;');
                 trashKeys.set_string('Desktop Action empty-trash', 'Name', __('Empty Trash'));
@@ -114,9 +174,11 @@ var Trash = class DashToDock_Trash {
             }
 
             let trashAppInfo = Gio.DesktopAppInfo.new_from_keyfile(trashKeys);
-            this._trashApp = new Shell.App({appInfo: trashAppInfo});
-            this.location = TRASH_URI;
-            this.isTrash = true;
+            this._trashApp?.destroy();
+            this._trashApp = makeLocationApp({
+                location: TRASH_URI + '/',
+                appInfo: trashAppInfo,
+            });
             this._lastEmpty = this._empty;
 
             this.emit('changed');
@@ -226,13 +288,14 @@ var Removables = class DashToDock_Removables {
         volumeKeys.set_string('Desktop Entry', 'Type', 'Application');
         volumeKeys.set_string('Desktop Entry', 'Exec', 'gio open "' + uri + '"');
         volumeKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
-        volumeKeys.set_string('Desktop Entry', 'XdtdUri', escapedUri);
         volumeKeys.set_string('Desktop Entry', 'Actions', 'mount;');
         volumeKeys.set_string('Desktop Action mount', 'Name', __('Mount'));
         volumeKeys.set_string('Desktop Action mount', 'Exec', 'gio mount "' + uri + '"');
         let volumeAppInfo = Gio.DesktopAppInfo.new_from_keyfile(volumeKeys);
-        let volumeApp = new Shell.App({appInfo: volumeAppInfo});
-        volumeApp.location = escapedUri;
+        const volumeApp = makeLocationApp({
+            location: escapedUri,
+            appInfo: volumeAppInfo,
+        });
         this._volumeApps.push(volumeApp);
         this.emit('changed');
     }
@@ -241,7 +304,8 @@ var Removables = class DashToDock_Removables {
         for (let i = 0; i < this._volumeApps.length; i++) {
             let app = this._volumeApps[i];
             if (app.get_name() == volume.get_name()) {
-                this._volumeApps.splice(i, 1);
+                const [volumeApp] = this._volumeApps.splice(i, 1);
+                volumeApp.destroy();
             }
         }
         this.emit('changed');
@@ -269,7 +333,6 @@ var Removables = class DashToDock_Removables {
         mountKeys.set_string('Desktop Entry', 'Type', 'Application');
         mountKeys.set_string('Desktop Entry', 'Exec', 'gio open "' + uri + '"');
         mountKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
-        mountKeys.set_string('Desktop Entry', 'XdtdUri', escapedUri);
         mountKeys.set_string('Desktop Entry', 'Actions', 'unmount;');
         if (mount.can_eject()) {
             mountKeys.set_string('Desktop Action unmount', 'Name', __('Eject'));
@@ -282,8 +345,10 @@ var Removables = class DashToDock_Removables {
                                  'gio mount -u "' + uri + '"');
         }
         let mountAppInfo = Gio.DesktopAppInfo.new_from_keyfile(mountKeys);
-        let mountApp = new Shell.App({appInfo: mountAppInfo});
-        mountApp.location = escapedUri;
+        const mountApp = makeLocationApp({
+            appInfo: mountAppInfo,
+            location: escapedUri,
+        });
         this._mountApps.push(mountApp);
         this.emit('changed');
     }
@@ -292,7 +357,8 @@ var Removables = class DashToDock_Removables {
         for (let i = 0; i < this._mountApps.length; i++) {
             let app = this._mountApps[i];
             if (app.get_name() == mount.get_name()) {
-                this._mountApps.splice(i, 1);
+                const [mountApp] = this._mountApps.splice(i, 1);
+                mountApp.destroy();
             }
         }
         this.emit('changed');
