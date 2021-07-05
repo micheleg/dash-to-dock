@@ -2193,7 +2193,6 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
   <object class="GtkBox" id="box_overlay_shortcut">
     <property name="hexpand">1</property>
     <property name="vexpand">1</property>
-    <property name="can_focus">0</property>
     <property name="margin_start">12</property>
     <property name="margin_end">12</property>
     <property name="margin_top">12</property>
@@ -2201,11 +2200,8 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
     <property name="orientation">vertical</property>
     <child>
       <object class="GtkFrame" id="frame_overlay_show_dock">
-        <property name="can_focus">0</property>
-
         <property name="child">
           <object class="GtkListBox" id="listbox_overlay_shortcut">
-            <property name="can_focus">0</property>
             <property name="selection_mode">none</property>
             <child>
               <object class="GtkListBoxRow" id="listboxrow_overlay_shortcut">
@@ -2326,7 +2322,6 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                 <property name="height_request">80</property>
                 <property name="child">
                   <object class="GtkGrid" id="grid_shortcut">
-                    <property name="can_focus">0</property>
                     <property name="margin_start">12</property>
                     <property name="margin_end">12</property>
                     <property name="margin_top">12</property>
@@ -2334,7 +2329,6 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                     <property name="column_spacing">32</property>
                     <child>
                       <object class="GtkEntry" id="shortcut_entry">
-                        <property name="visible">0</property>
                         <property name="valign">center</property>
                         <property name="width_chars">12</property>
                         <layout>
@@ -2383,7 +2377,6 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
               <object class="GtkListBoxRow" id="listboxrow_timeout">
                 <property name="child">
                   <object class="GtkGrid" id="grid_timeout">
-                    <property name="can_focus">0</property>
                     <property name="margin_start">12</property>
                     <property name="margin_end">12</property>
                     <property name="margin_top">12</property>
