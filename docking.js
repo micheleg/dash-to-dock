@@ -2,6 +2,7 @@
 
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
+const Gio = imports.gi.Gio;
 const GObject = imports.gi.GObject;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
@@ -1638,6 +1639,13 @@ var DockManager = class DashToDock_DockManager {
         } else if (!showTrash && this._trash) {
             this._trash.destroy();
             this._trash = null;
+        }
+
+        this._vfuncInjections.removeWithLabel('locations');
+
+        if (showMounts || showTrash) {
+            this._vfuncInjections.addWithLabel('locations', Gio.DesktopAppInfo.prototype,
+                'get_id', function () { return this.customId ?? this.vfunc_get_id() });
         }
     }
 
