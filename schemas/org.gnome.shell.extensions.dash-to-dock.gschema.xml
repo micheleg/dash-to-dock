@@ -236,6 +236,11 @@
       <summary>Show mounted volumes and devices</summary>
       <description>Show or hide mounted volume and device icons in the dash</description>
     </key>
+    <key type="b" name="isolate-locations">
+      <default>true</default>
+      <summary>Isolate volumes, devices and trash windows</summary>
+      <description>Consider volume, devices and trash as different application windows and not part of the file manager</description>
+    </key>
     <key type="b" name="show-show-apps-button">
       <default>true</default>
       <summary>Show applications button</summary>

@@ -1641,11 +1641,25 @@ var DockManager = class DashToDock_DockManager {
             this._trash = null;
         }
 
-        this._vfuncInjections.removeWithLabel('locations');
+        [this._vfuncInjections, this._propertyInjections].forEach(
+            injections => injections.removeWithLabel('locations'));
 
         if (showMounts || showTrash) {
             this._vfuncInjections.addWithLabel('locations', Gio.DesktopAppInfo.prototype,
                 'get_id', function () { return this.customId ?? this.vfunc_get_id() });
+
+            if (this.settings.isolateLocations) {
+                const { get: defaultFocusAppGetter } = Object.getOwnPropertyDescriptor(
+                    Shell.WindowTracker.prototype, 'focus_app');
+                this._propertyInjections.addWithLabel('locations',
+                    Shell.WindowTracker.prototype, 'focus_app', {
+                    get: function () {
+                        const locationApp = Locations.getRunningApps().find(a =>
+                            a.get_windows().some(w => w.has_focus()));
+                        return locationApp ?? defaultFocusAppGetter.call(this);
+                    }
+                });
+            }
         }
     }
 
@@ -1711,6 +1725,10 @@ var DockManager = class DashToDock_DockManager {
         ], [
             this._settings,
             'changed::show-mounts',
+            () => this._ensureLocations()
+        ], [
+            this._settings,
+            'changed::isolate-locations',
             () => this._ensureLocations()
         ]);
     }

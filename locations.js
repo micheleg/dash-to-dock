@@ -70,6 +70,7 @@ function makeLocationApp(params) {
         if (oldState !== this.state) {
             Shell.AppSystem.get_default().emit('app-state-changed', this);
             this.notify('state');
+            this._checkFocused();
         }
     };
 
@@ -386,11 +387,20 @@ var Removables = class DashToDock_Removables {
            apps.set(app.get_name(), app);
         });
 
-        let ret = [];
-        for (let app of apps.values()) {
-            ret.push(app);
-        }
-        return ret;
+        return [...apps.values()];
     }
 }
 Signals.addSignalMethods(Removables.prototype);
+
+function getRunningApps() {
+    const dockManager = Docking.DockManager.getDefault();
+    const locationApps = [];
+
+    if (dockManager.removables)
+        locationApps.push(...dockManager.removables.getApps());
+
+    if (dockManager.trash)
+        locationApps.push(dockManager.trash.getApp());
+
+    return locationApps.filter(a => a.state === Shell.AppState.RUNNING);
+}
