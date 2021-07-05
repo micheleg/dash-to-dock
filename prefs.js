@@ -600,6 +600,18 @@ var Settings = GObject.registerClass({
             this._builder.get_object('show_mounts_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('isolate-locations',
+            this._builder.get_object('isolate_locations_switch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        const isolateLocationsBindings = ['show_trash_switch', 'show_mounts_switch'];
+        const updateIsolateLocations = () => {
+            this._builder.get_object('isolate_locations_row').sensitive =
+                isolateLocationsBindings.some(s => this._builder.get_object(s).active);
+        };
+        updateIsolateLocations();
+        isolateLocationsBindings.forEach(s => this._builder.get_object(s).connect(
+            'notify::active', () => updateIsolateLocations()));
         this._settings.bind('show-show-apps-button',
             this._builder.get_object('show_applications_button_switch'),
             'active',
