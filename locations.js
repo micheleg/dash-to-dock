@@ -21,6 +21,48 @@ const FILE_MANAGER_DESKTOP_APP_ID = 'org.gnome.Nautilus.desktop';
 const TRASH_URI = 'trash://';
 const UPDATE_TRASH_DELAY = 500;
 
+const NautilusFileOperations2Interface = '<node>\
+    <interface name="org.gnome.Nautilus.FileOperations2">\
+        <method name="EmptyTrash">\
+            <arg type="b" name="ask_confirmation" direction="in"/>\
+            <arg type="a{sv}" name="platform_data" direction="in"/>\
+        </method>\
+    </interface>\
+</node>';
+
+const NautilusFileOperations2ProxyInterface = Gio.DBusProxy.makeProxyWrapper(NautilusFileOperations2Interface);
+
+function makeNautilusFileOperationsProxy() {
+    const proxy = new NautilusFileOperations2ProxyInterface(
+        Gio.DBus.session,
+        'org.gnome.Nautilus',
+        '/org/gnome/Nautilus/FileOperations2', (_p, error) => {
+            if (error)
+                logError(error, 'Error connecting to Nautilus');
+        }
+    );
+
+    proxy.platformData = params => {
+        const defaultParams = {
+            parentHandle: '',
+            timestamp: global.get_current_time(),
+            windowPosition: 'center',
+        };
+        const { parentHandle, timestamp, windowPosition } = {
+            ...defaultParams,
+            ...params,
+        };
+
+        return {
+            'parent-handle': new GLib.Variant('s', parentHandle),
+            'timestamp': new GLib.Variant('u', timestamp),
+            'window-position': new GLib.Variant('s', windowPosition),
+        };
+    };
+
+    return proxy;
+}
+
 function wrapWindowsBackedApp(shellApp) {
     if (shellApp._dtdData)
         throw new Error('%s has been already wrapped'.format(shellApp));
@@ -376,10 +418,7 @@ var Trash = class DashToDock_Trash {
             if (!this._empty) {
                 trashKeys.set_string('Desktop Entry', 'Actions', 'empty-trash;');
                 trashKeys.set_string('Desktop Action empty-trash', 'Name', __('Empty Trash'));
-                trashKeys.set_string('Desktop Action empty-trash', 'Exec',
-                    'gdbus call --session --dest org.gnome.Nautilus \
-                    --object-path /org/gnome/Nautilus/FileOperations2 \
-                    --method org.gnome.Nautilus.FileOperations2.EmptyTrash true {}');
+                trashKeys.set_string('Desktop Action empty-trash', 'Exec', 'true');
             }
 
             let trashAppInfo = Gio.DesktopAppInfo.new_from_keyfile(trashKeys);
@@ -388,6 +427,24 @@ var Trash = class DashToDock_Trash {
                 location: TRASH_URI + '/',
                 appInfo: trashAppInfo,
             });
+
+            if (!this._empty) {
+                this._trashApp._mi('launch_action',
+                    (launchAction, actionName, timestamp, ...args) => {
+                        if (actionName === 'empty-trash') {
+                            const nautilus = makeNautilusFileOperationsProxy();
+                            const askConfirmation = true;
+                            nautilus.EmptyTrashRemote(askConfirmation,
+                                nautilus.platformData({ timestamp }), (_p, error) => {
+                                    if (error)
+                                        logError(error, 'Empty trash failed');
+                                });
+                            return;
+                        }
+
+                        return launchAction.call(this, actionName, timestamp, ...args);
+                });
+            }
             this._lastEmpty = this._empty;
 
             this.emit('changed');
