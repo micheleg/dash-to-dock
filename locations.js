@@ -2,6 +2,7 @@
 
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
+const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Shell = imports.gi.Shell;
 const Signals = imports.signals;
@@ -16,62 +17,48 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 
+const FILE_MANAGER_DESKTOP_APP_ID = 'org.gnome.Nautilus.desktop';
 const TRASH_URI = 'trash://';
 const UPDATE_TRASH_DELAY = 500;
 
-// We can't inherit from Shell.App as it's a final type, so let's patch it
-function makeLocationApp(params) {
-    if (!params.location)
-        throw new TypeError('Invalid location');
+function wrapWindowsBackedApp(shellApp) {
+    if (shellApp._dtdData)
+        throw new Error('%s has been already wrapped'.format(shellApp));
 
-    location = params.location;
-    delete params.location;
+    shellApp._dtdData = {
+        windows: [],
+        methodInjections: new Utils.InjectionsHandler(),
+        propertyInjections: new Utils.PropertyInjectionsHandler(),
+        destroy: function () {
+            this.windows = [];
+            this.methodInjections.destroy();
+            this.propertyInjections.destroy();
+        }
+    };
 
-    const shellApp = new Shell.App(params);
-    shellApp.appInfo.customId = 'location:%s'.format(location);
+    const m = (...args) => shellApp._dtdData.methodInjections.add(shellApp, ...args);
+    const p = (...args) => shellApp._dtdData.propertyInjections.add(shellApp, ...args);
+    shellApp._mi = m;
+    shellApp._pi = p;
 
-    Object.defineProperties(shellApp, {
-        location: { value: location },
-        isTrash: { value: location.startsWith(TRASH_URI) },
-        state: { get: () => shellApp.get_state() },
-    });
+    m('get_state', () =>
+        shellApp.get_windows().length ? Shell.AppState.RUNNING : Shell.AppState.STOPPED);
+    p('state', { get: () => shellApp.get_state() });
 
-    shellApp._windows = [];
-    shellApp.get_state = () =>
-        shellApp._windows.length ? Shell.AppState.RUNNING : Shell.AppState.STOPPED;
-    shellApp.get_windows = () => shellApp._windows;
-    shellApp.get_n_windows = () => shellApp.get_windows().length;
-    shellApp.get_pids = () => shellApp.get_windows().reduce((pids, w) => {
+    m('get_windows', () => shellApp._dtdData.windows);
+    m('get_n_windows', () => shellApp.get_windows().length);
+    m('get_pids', () => shellApp.get_windows().reduce((pids, w) => {
         if (w.get_pid() > 0 && !pids.includes(w.get_pid()))
             pids.push(w.get_pid());
         return pids;
-    }, []);
-    shellApp.is_on_workspace = workspace => shellApp.get_windows().some(w =>
-        w.get_workspace() === workspace);
-    shellApp.request_quit = () => shellApp.get_windows().filter(w =>
-        w.can_close()).forEach(w => w.delete(global.get_current_time()));
+    }, []));
+    m('is_on_workspace', (_om, workspace) => shellApp.get_windows().some(w =>
+        w.get_workspace() === workspace));
+    m('request_quit', () => shellApp.get_windows().filter(w =>
+        w.can_close()).forEach(w => w.delete(global.get_current_time())));
 
-    // FIXME: We need to add a new API to Nautilus to open new windows
-    shellApp.can_open_new_window = () => false;
-
-    const defaultToString = shellApp.toString;
-    shellApp.toString = () => '[LocationApp - %s]'.format(defaultToString.call(shellApp));
-
-    const { fm1Client } = Docking.DockManager.getDefault();
     shellApp._updateWindows = function () {
-        const oldState = this.state;
-        const oldWindows = this._windows;
-        this._windows = fm1Client.getWindows(this.location);
-
-        if (this._windows.length !== oldWindows.length ||
-            this._windows.some((win, index) => win !== oldWindows[index]))
-            this.emit('windows-changed');
-
-        if (oldState !== this.state) {
-            Shell.AppSystem.get_default().emit('app-state-changed', this);
-            this.notify('state');
-            this._checkFocused();
-        }
+        throw new GObject.NotImplementedError(`_updateWindows in ${this.constructor.name}`);
     };
 
     let updateWindowsIdle = GLib.idle_add(GLib.DEFAULT_PRIORITY, () => {
@@ -79,8 +66,6 @@ function makeLocationApp(params) {
         updateWindowsIdle = undefined;
         return GLib.SOURCE_REMOVE;
     });
-    const windowsChangedId = fm1Client.connect('windows-changed', () =>
-        shellApp._updateWindows());
 
     const windowTracker = Shell.WindowTracker.get_default();
     shellApp._checkFocused = function () {
@@ -98,7 +83,7 @@ function makeLocationApp(params) {
         shellApp._checkFocused());
 
     // Re-implements shell_app_activate_window for generic activation and alt-tab support
-    shellApp.activate_window = function (window, timestamp) {
+    m('activate_window', function (_om, window, timestamp) {
         if (!window)
             [window] = this.get_windows();
         else if (!this.get_windows().includes(window))
@@ -114,18 +99,157 @@ function makeLocationApp(params) {
             workspace.activate_with_focus(window, timestamp);
         else
             window.activate(timestamp);
-    }
+    });
 
-    shellApp.compare = other => shellAppCompare(shellApp, other);
+    // Re-implements shell_app_activate_full for generic activation and dash support
+    m('activate_full', function (_om, workspace, timestamp) {
+        if (!timestamp)
+            timestamp = global.get_current_time();
 
-    shellApp.destroy = function () {
-        this._windows = [];
-        fm1Client.disconnect(windowsChangedId);
+        switch (this.state) {
+            case Shell.AppState.STOPPED:
+                try {
+                    this.launch(timestamp, workspace, Shell.AppLaunchGpu.APP_PREF);
+                } catch (e) {
+                    global.notify_error(__("Failed to launch “%s”".format(
+                        this.get_name())), e.message);
+                }
+                break;
+            case Shell.AppState.RUNNING:
+                this.activate_window(null, timestamp);
+                break;
+        }
+    });
+
+    m('activate', () => shellApp.activate_full(-1, 0));
+
+    m('compare', (_om, other) => shellAppCompare(shellApp, other));
+
+    shellApp.destroy = function() {
         global.display.disconnect(focusWindowNotifyId);
         updateWindowsIdle && GLib.source_remove(updateWindowsIdle);
+        this._dtdData.destroy();
+        this._dtdData = undefined;
+        this.destroy = undefined;
     }
 
     return shellApp;
+}
+
+// We can't inherit from Shell.App as it's a final type, so let's patch it
+function makeLocationApp(params) {
+    if (!params.location)
+        throw new TypeError('Invalid location');
+
+    location = params.location;
+    delete params.location;
+
+    const shellApp = new Shell.App(params);
+    wrapWindowsBackedApp(shellApp);
+    shellApp.appInfo.customId = 'location:%s'.format(location);
+
+    Object.defineProperties(shellApp, {
+        location: { value: location },
+        isTrash: { value: location.startsWith(TRASH_URI) },
+    });
+
+    shellApp._mi('toString', defaultToString =>
+        '[LocationApp - %s]'.format(defaultToString.call(shellApp)));
+
+    // FIXME: We need to add a new API to Nautilus to open new windows
+    shellApp._mi('can_open_new_window', () => false);
+
+    const { fm1Client } = Docking.DockManager.getDefault();
+    shellApp._updateWindows = function () {
+        const oldState = this.state;
+        const oldWindows = this.get_windows();
+        this._dtdData.windows = fm1Client.getWindows(this.location);
+
+        if (this.get_windows().length !== oldWindows.length ||
+            this.get_windows().some((win, index) => win !== oldWindows[index]))
+            this.emit('windows-changed');
+
+        if (oldState !== this.state) {
+            Shell.AppSystem.get_default().emit('app-state-changed', this);
+            this.notify('state');
+            this._checkFocused();
+        }
+    };
+
+    const windowsChangedId = fm1Client.connect('windows-changed', () =>
+        shellApp._updateWindows());
+
+    const parentDestroy = shellApp.destroy;
+    shellApp.destroy = function () {
+        fm1Client.disconnect(windowsChangedId);
+        parentDestroy.call(this);
+    }
+
+    return shellApp;
+}
+
+function getFileManagerApp() {
+    return Shell.AppSystem.get_default().lookup_app(FILE_MANAGER_DESKTOP_APP_ID);
+}
+
+function wrapWindowsManagerApp() {
+    const fileManagerApp = getFileManagerApp();
+    if (!fileManagerApp)
+        return null;
+
+    if (fileManagerApp._dtdData)
+        return fileManagerApp;
+
+    const originalGetWindows = fileManagerApp.get_windows;
+    wrapWindowsBackedApp(fileManagerApp);
+
+    const { fm1Client } = Docking.DockManager.getDefault();
+    const windowsChangedId = fileManagerApp.connect('windows-changed', () =>
+        fileManagerApp._updateWindows());
+    const fm1WindowsChangedId = fm1Client.connect('windows-changed', () =>
+        fileManagerApp._updateWindows());
+
+    fileManagerApp._updateWindows = function () {
+        const oldState = this.state;
+        const oldWindows = this.get_windows();
+        const locationWindows = [];
+        getRunningApps().forEach(a => locationWindows.push(...a.get_windows()));
+        this._dtdData.windows = originalGetWindows.call(this).filter(w =>
+            !locationWindows.includes(w));
+
+        if (this.get_windows().length !== oldWindows.length ||
+            this.get_windows().some((win, index) => win !== oldWindows[index])) {
+            this.block_signal_handler(windowsChangedId);
+            this.emit('windows-changed');
+            this.unblock_signal_handler(windowsChangedId);
+        }
+
+        if (oldState !== this.state) {
+            Shell.AppSystem.get_default().emit('app-state-changed', this);
+            this.notify('state');
+            this._checkFocused();
+        }
+    };
+
+    fileManagerApp._mi('toString', defaultToString =>
+        '[FileManagerApp - %s]'.format(defaultToString.call(fileManagerApp)));
+
+    const parentDestroy = fileManagerApp.destroy;
+    fileManagerApp.destroy = function () {
+        fileManagerApp.disconnect(windowsChangedId);
+        fm1Client.disconnect(fm1WindowsChangedId);
+        parentDestroy.call(this);
+    }
+
+    return fileManagerApp;
+}
+
+function unWrapWindowsManagerApp() {
+    const fileManagerApp = getFileManagerApp();
+    if (!fileManagerApp || !fileManagerApp._dtdData)
+        return;
+
+    fileManagerApp.destroy();
 }
 
 // Re-implements shell_app_compare so that can be used to resort running apps
