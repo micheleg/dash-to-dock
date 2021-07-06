@@ -1646,7 +1646,7 @@ var DockManager = class DashToDock_DockManager {
             this._trash = null;
         }
 
-        [this._vfuncInjections, this._propertyInjections].forEach(
+        [this._methodInjections, this._vfuncInjections, this._propertyInjections].forEach(
             injections => injections.removeWithLabel('locations'));
 
         if (showMounts || showTrash) {
@@ -1654,6 +1654,34 @@ var DockManager = class DashToDock_DockManager {
                 'get_id', function () { return this.customId ?? this.vfunc_get_id() });
 
             if (this.settings.isolateLocations) {
+                this._methodInjections.addWithLabel('locations', [
+                    Shell.AppSystem.prototype, 'get_running',
+                    function (originalMethod, ...args) {
+                        const runningApps = originalMethod.call(this, ...args);
+                        const locationApps = Locations.getRunningApps();
+                        if (!locationApps.length)
+                            return runningApps;
+
+                        return [...runningApps, ...locationApps].sort(Locations.shellAppCompare);
+                    }
+                ],
+                [
+                    Shell.WindowTracker.prototype, 'get_window_app',
+                    function (originalMethod, window) {
+                        const locationApp = Locations.getRunningApps().find(a =>
+                            a.get_windows().includes(window));
+                        return locationApp ?? originalMethod.call(this, window);
+                    }
+                ],
+                [
+                    Shell.WindowTracker.prototype, 'get_app_from_pid',
+                    function (originalMethod, pid) {
+                        const locationApp = Locations.getRunningApps().find(a =>
+                            a.get_pids().includes(pid));
+                        return locationApp ?? originalMethod.call(this, pid);
+                    }
+                ]);
+
                 const { get: defaultFocusAppGetter } = Object.getOwnPropertyDescriptor(
                     Shell.WindowTracker.prototype, 'focus_app');
                 this._propertyInjections.addWithLabel('locations',
