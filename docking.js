@@ -1646,6 +1646,7 @@ var DockManager = class DashToDock_DockManager {
             this._trash = null;
         }
 
+        Locations.unWrapWindowsManagerApp();
         [this._methodInjections, this._vfuncInjections, this._propertyInjections].forEach(
             injections => injections.removeWithLabel('locations'));
 
@@ -1654,6 +1655,8 @@ var DockManager = class DashToDock_DockManager {
                 'get_id', function () { return this.customId ?? this.vfunc_get_id() });
 
             if (this.settings.isolateLocations) {
+                const fileManagerApp = Locations.wrapWindowsManagerApp();
+
                 this._methodInjections.addWithLabel('locations', [
                     Shell.AppSystem.prototype, 'get_running',
                     function (originalMethod, ...args) {
@@ -1661,6 +1664,10 @@ var DockManager = class DashToDock_DockManager {
                         const locationApps = Locations.getRunningApps();
                         if (!locationApps.length)
                             return runningApps;
+
+                        const fileManagerIdx = runningApps.indexOf(fileManagerApp);
+                        if (fileManagerIdx > -1 && fileManagerApp?.state !== Shell.AppState.RUNNING)
+                            runningApps.splice(fileManagerIdx, 1);
 
                         return [...runningApps, ...locationApps].sort(Locations.shellAppCompare);
                     }
