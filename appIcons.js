@@ -287,8 +287,7 @@ var DockAbstractAppIcon = GObject.registerClass({
     }
 
     _updateFocusState() {
-        throw new GObject.NotImplementedError('_updateFocusState in %s'.format(
-            this.constructor.name));
+        this.focused = (tracker.focus_app === this.app && this.running);
     }
 
     _updateUrgentWindows(interestingWindows) {
@@ -861,10 +860,6 @@ var DockAppIcon = GObject.registerClass({
 
         this._signalsHandler.add(tracker, 'notify::focus-app', () => this._updateFocusState());
     }
-
-    _updateFocusState() {
-        this.focused = (tracker.focus_app === this.app && this.running);
-    }
 });
 
 var DockLocationAppIcon = GObject.registerClass({
@@ -875,8 +870,12 @@ var DockLocationAppIcon = GObject.registerClass({
 
         super._init(app, monitorIndex, iconAnimator);
 
-        this._signalsHandler.add(global.display, 'notify::focus-window',
-            () => this._updateFocusState());
+        if (Docking.DockManager.settings.isolateLocations) {
+            this._signalsHandler.add(tracker, 'notify::focus-app', () => this._updateFocusState());
+        } else {
+            this._signalsHandler.add(global.display, 'notify::focus-window',
+                () => this._updateFocusState());
+        }
     }
 
     get location() {
@@ -884,7 +883,10 @@ var DockLocationAppIcon = GObject.registerClass({
     }
 
     _updateFocusState() {
-        this.focused = (this.getWindows().some(w => w.has_focus()) && this.running);
+        if (Docking.DockManager.settings.isolateLocations)
+            return super._updateFocusState();
+
+        this.focused = (this.app.isFocused && this.running);
     }
 });
 
