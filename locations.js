@@ -50,6 +50,9 @@ function makeLocationApp(params) {
     shellApp.request_quit = () => shellApp.get_windows().filter(w =>
         w.can_close()).forEach(w => w.delete(global.get_current_time()));
 
+    // FIXME: We need to add a new API to Nautilus to open new windows
+    shellApp.can_open_new_window = () => false;
+
     const defaultToString = shellApp.toString;
     shellApp.toString = () => '[LocationApp - %s]'.format(defaultToString.call(shellApp));
 
