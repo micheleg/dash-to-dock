@@ -97,6 +97,27 @@ function makeLocationApp(params) {
     const focusWindowNotifyId = global.display.connect('notify::focus-window', () =>
         shellApp._checkFocused());
 
+    // Re-implements shell_app_activate_window for generic activation and alt-tab support
+    shellApp.activate_window = function (window, timestamp) {
+        if (!window)
+            [window] = this.get_windows();
+        else if (!this.get_windows().includes(window))
+            return;
+
+        const currentWorkspace = global.workspace_manager.get_active_workspace();
+        const workspace = window.get_workspace();
+        const sameWorkspaceWindows = this.get_windows().filter(w =>
+            w.get_workspace() === workspace);
+        sameWorkspaceWindows.forEach(w => w.raise());
+
+        if (workspace !== currentWorkspace)
+            workspace.activate_with_focus(window, timestamp);
+        else
+            window.activate(timestamp);
+    }
+
+    shellApp.compare = other => shellAppCompare(shellApp, other);
+
     shellApp.destroy = function () {
         this._windows = [];
         fm1Client.disconnect(windowsChangedId);
@@ -105,6 +126,39 @@ function makeLocationApp(params) {
     }
 
     return shellApp;
+}
+
+// Re-implements shell_app_compare so that can be used to resort running apps
+function shellAppCompare(app, other) {
+    if (app.state !== other.state) {
+        if (app.state === Shell.AppState.RUNNING)
+            return -1;
+        return 1;
+    }
+
+    const windows = app.get_windows();
+    const otherWindows = other.get_windows();
+
+    const isMinimized = windows => !windows.some(w => w.showing_on_its_workspace());
+    const otherMinimized = isMinimized(otherWindows);
+    if (isMinimized(windows) != otherMinimized) {
+        if (otherMinimized)
+            return -1;
+        return 1;
+    }
+
+    if (app.state === Shell.AppState.RUNNING) {
+        if (windows.length && !otherWindows.length)
+            return -1;
+        else if (!windows.length && otherWindows.length)
+            return 1;
+
+        const lastUserTime = windows =>
+            Math.max(...windows.map(w => w.get_user_time()));
+        return lastUserTime(otherWindows) - lastUserTime(windows);
+    }
+
+    return 0;
 }
 
 /**
