@@ -82,9 +82,25 @@ function makeLocationApp(params) {
     const windowsChangedId = fm1Client.connect('windows-changed', () =>
         shellApp._updateWindows());
 
+    const windowTracker = Shell.WindowTracker.get_default();
+    shellApp._checkFocused = function () {
+        if (this.get_windows().some(w => w.has_focus())) {
+            this.isFocused = true;
+            windowTracker.notify('focus-app');
+        } else if (this.isFocused) {
+            this.isFocused = false;
+            windowTracker.notify('focus-app');
+        }
+    }
+
+    shellApp._checkFocused();
+    const focusWindowNotifyId = global.display.connect('notify::focus-window', () =>
+        shellApp._checkFocused());
+
     shellApp.destroy = function () {
         this._windows = [];
         fm1Client.disconnect(windowsChangedId);
+        global.display.disconnect(focusWindowNotifyId);
         updateWindowsIdle && GLib.source_remove(updateWindowsIdle);
     }
 

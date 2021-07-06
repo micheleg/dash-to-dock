@@ -498,6 +498,11 @@ var DockedDash = GObject.registerClass({
             Utils.SignalsHandlerFlags.CONNECT_AFTER
         ], [
             settings,
+            'changed::isolate-locations',
+            () => this.dash.resetAppIcons(),
+            Utils.SignalsHandlerFlags.CONNECT_AFTER
+        ], [
+            settings,
             'changed::show-running',
             () => { this.dash.resetAppIcons(); }
         ], [
@@ -1654,8 +1659,7 @@ var DockManager = class DashToDock_DockManager {
                 this._propertyInjections.addWithLabel('locations',
                     Shell.WindowTracker.prototype, 'focus_app', {
                     get: function () {
-                        const locationApp = Locations.getRunningApps().find(a =>
-                            a.get_windows().some(w => w.has_focus()));
+                        const locationApp = Locations.getRunningApps().find(a => a.isFocused);
                         return locationApp ?? defaultFocusAppGetter.call(this);
                     }
                 });
