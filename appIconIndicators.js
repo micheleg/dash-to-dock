@@ -1,8 +1,8 @@
-const Cogl = imports.gi.Cogl;
 const Cairo = imports.cairo;
 const Clutter = imports.gi.Clutter;
 const GdkPixbuf = imports.gi.GdkPixbuf
 const Gio = imports.gi.Gio;
+const Graphene = imports.gi.Graphene;
 const Gtk = imports.gi.Gtk;
 const Main = imports.ui.main;
 const Pango = imports.gi.Pango;
@@ -118,19 +118,16 @@ var IndicatorBase = class DashToDock_IndicatorBase {
 
     constructor(source) {
         this._source = source;
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
-
-        this._sourceDestroyId = this._source.connect('destroy', () => {
-            this._signalsHandler.destroy();
-        });
+        this._signalsHandler = new Utils.GlobalSignalsHandler(this._source);
     }
 
     update() {
     }
 
     destroy() {
-        this._source.disconnect(this._sourceDestroyId);
+        this._source = null;
         this._signalsHandler.destroy();
+        this._signalsHandler = null;
     }
 };
 
@@ -145,57 +142,30 @@ var RunningIndicatorBase = class DashToDock_RunningIndicatorBase extends Indicat
         super(source)
 
         this._side = Utils.getPosition();
-        this._nWindows = 0;
-
         this._dominantColorExtractor = new DominantColorExtractor(this._source.app);
-
-        // These statuses take into account the workspace/monitor isolation
-        this._isFocused = false;
-        this._isRunning = false;
+        this._signalsHandler.add(this._source, 'notify::running', () => this.update());
+        this._signalsHandler.add(this._source, 'notify::focused', () => this.update());
+        this._signalsHandler.add(this._source, 'notify::windows-count', () => this._updateCounterClass());
+        this.update();
     }
 
     update() {
-        // Limit to 1 to MAX_WINDOWS_CLASSES  windows classes
-        this._nWindows = Math.min(this._source.getInterestingWindows().length, MAX_WINDOWS_CLASSES);
-
-        // We need to check the number of windows, as the focus might be
-        // happening on another monitor if using isolation
-        if (tracker.focus_app == this._source.app && this._nWindows > 0)
-            this._isFocused = true;
-        else
-            this._isFocused = false;
-
-        // In the case of workspace isolation, we need to hide the dots of apps with
-        // no windows in the current workspace
-        if ((this._source.app.state != Shell.AppState.STOPPED || this._source.isLocation()) && this._nWindows > 0)
-            this._isRunning = true;
-        else
-            this._isRunning = false;
-
         this._updateCounterClass();
-        this._updateFocusClass();
         this._updateDefaultDot();
     }
 
     _updateCounterClass() {
         for (let i = 1; i <= MAX_WINDOWS_CLASSES; i++) {
             let className = 'running' + i;
-            if (i != this._nWindows)
+            if (i != this._source.windowsCount)
                 this._source.remove_style_class_name(className);
             else
                 this._source.add_style_class_name(className);
         }
     }
 
-    _updateFocusClass() {
-        if (this._isFocused)
-            this._source.add_style_class_name('focused');
-        else
-            this._source.remove_style_class_name('focused');
-    }
-
     _updateDefaultDot() {
-        if (this._isRunning)
+        if (this._source.running)
             this._source._dot.show();
         else
             this._source._dot.hide();
@@ -279,13 +249,15 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
         //set center of rotatoins to the center
         this._area.set_pivot_point(0.5, 0.5);
         // prepare transformation matrix
-        let m = new Cogl.Matrix();
+        let m = new Graphene.Matrix();
         m.init_identity();
+        let v = new Graphene.Vec3();
+        v.init(0, 0, 1);
 
         switch (this._side) {
         case St.Side.TOP:
             m.xx = -1;
-            m.rotate(180, 0, 0, 1);
+            m.rotate(180, v);
             break
 
         case St.Side.BOTTOM:
@@ -294,11 +266,11 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
 
         case St.Side.LEFT:
             m.yy = -1;
-            m.rotate(90, 0, 0, 1);
+            m.rotate(90, v);
             break;
 
         case St.Side.RIGHT:
-            m.rotate(-90, 0, 0, 1);
+            m.rotate(-90, v);
             break
         }
 
@@ -316,11 +288,11 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
                    'running-indicator-dominant-color'];
 
         keys.forEach(function(key) {
-            this._signalsHandler.add([
+            this._signalsHandler.add(
                 Docking.DockManager.settings,
                 'changed::' + key,
                 this.update.bind(this)
-            ]);
+            );
         }, this);
 
         // Apply glossy background
@@ -341,7 +313,7 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
             else
                 this._source._iconContainer.get_children()[1].set_style(null);
 
-            if (this._isRunning)
+            if (this._source.running)
                 this._enableBacklight();
             else
                 this._disableBacklight();
@@ -422,7 +394,7 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
 
     _drawIndicator(cr) {
         // Draw the required numbers of dots
-        let n = this._nWindows;
+        let n = this._source.windowsCount;
 
         cr.setLineWidth(this._borderWidth);
         Clutter.cairo_set_source_color(cr, this._borderColor);
@@ -450,11 +422,10 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
 var RunningIndicatorCiliora = class DashToDock_RunningIndicatorCiliora extends RunningIndicatorDots {
 
     _drawIndicator(cr) {
-        if (this._isRunning) {
-
+        if (this._source.running) {
             let size =  Math.max(this._width/20, this._borderWidth);
             let spacing = size; // separation between the dots
-            let lineLength = this._width - (size*(this._nWindows-1)) - (spacing*(this._nWindows-1));
+            let lineLength = this._width - (size*(this._source.windowsCount-1)) - (spacing*(this._source.windowsCount-1));
             let padding = this._borderWidth;
             // For the backlit case here we don't want the outer border visible
             if (Docking.DockManager.settings.get_boolean('unity-backlit-items') &&
@@ -468,7 +439,7 @@ var RunningIndicatorCiliora = class DashToDock_RunningIndicatorCiliora extends R
             cr.translate(0, yOffset);
             cr.newSubPath();
             cr.rectangle(0, 0, lineLength, size);
-            for (let i = 1; i < this._nWindows; i++) {
+            for (let i = 1; i < this._source.windowsCount; i++) {
                 cr.newSubPath();
                 cr.rectangle(lineLength + (i*spacing) + ((i-1)*size), 0, size, size);
             }
@@ -485,11 +456,11 @@ var RunningIndicatorCiliora = class DashToDock_RunningIndicatorCiliora extends R
 var RunningIndicatorSegmented = class DashToDock_RunningIndicatorSegmented extends RunningIndicatorDots {
 
     _drawIndicator(cr) {
-        if (this._isRunning) {
+        if (this._source.running) {
             let size =  Math.max(this._width/20, this._borderWidth);
             let spacing = Math.ceil(this._width/18); // separation between the dots
-            let dashLength = Math.ceil((this._width - ((this._nWindows-1)*spacing))/this._nWindows);
-            let lineLength = this._width - (size*(this._nWindows-1)) - (spacing*(this._nWindows-1));
+            let dashLength = Math.ceil((this._width - ((this._source.windowsCount-1)*spacing))/this._source.windowsCount);
+            let lineLength = this._width - (size*(this._source.windowsCount-1)) - (spacing*(this._source.windowsCount-1));
             let padding = this._borderWidth;
             // For the backlit case here we don't want the outer border visible
             if (Docking.DockManager.settings.get_boolean('unity-backlit-items') &&
@@ -501,7 +472,7 @@ var RunningIndicatorSegmented = class DashToDock_RunningIndicatorSegmented exten
             Clutter.cairo_set_source_color(cr, this._borderColor);
 
             cr.translate(0, yOffset);
-            for (let i = 0; i < this._nWindows; i++) {
+            for (let i = 0; i < this._source.windowsCount; i++) {
                 cr.newSubPath();
                 cr.rectangle(i*dashLength + i*spacing, 0, dashLength, size);
             }
@@ -518,8 +489,7 @@ var RunningIndicatorSegmented = class DashToDock_RunningIndicatorSegmented exten
 var RunningIndicatorSolid = class DashToDock_RunningIndicatorSolid extends RunningIndicatorDots {
 
     _drawIndicator(cr) {
-        if (this._isRunning) {
-
+        if (this._source.running) {
             let size =  Math.max(this._width/20, this._borderWidth);
             let padding = this._borderWidth;
             // For the backlit case here we don't want the outer border visible
@@ -538,7 +508,6 @@ var RunningIndicatorSolid = class DashToDock_RunningIndicatorSolid extends Runni
             cr.strokePreserve();
             Clutter.cairo_set_source_color(cr, this._bodyColor);
             cr.fill();
-
         }
     }
 };
@@ -548,7 +517,7 @@ var RunningIndicatorSolid = class DashToDock_RunningIndicatorSolid extends Runni
 var RunningIndicatorSquares = class DashToDock_RunningIndicatorSquares extends RunningIndicatorDots {
 
     _drawIndicator(cr) {
-        if (this._isRunning) {
+        if (this._source.running) {
             let size =  Math.max(this._width/11, this._borderWidth);
             let padding = this._borderWidth;
             let spacing = Math.ceil(this._width/18); // separation between the dots
@@ -557,8 +526,8 @@ var RunningIndicatorSquares = class DashToDock_RunningIndicatorSquares extends R
             cr.setLineWidth(this._borderWidth);
             Clutter.cairo_set_source_color(cr, this._borderColor);
 
-            cr.translate(Math.floor((this._width - this._nWindows*size - (this._nWindows-1)*spacing)/2), yOffset);
-            for (let i = 0; i < this._nWindows; i++) {
+            cr.translate(Math.floor((this._width - this._source.windowsCount*size - (this._source.windowsCount-1)*spacing)/2), yOffset);
+            for (let i = 0; i < this._source.windowsCount; i++) {
                 cr.newSubPath();
                 cr.rectangle(i*size + i*spacing, 0, size, size);
             }
@@ -574,7 +543,7 @@ var RunningIndicatorSquares = class DashToDock_RunningIndicatorSquares extends R
 var RunningIndicatorDashes = class DashToDock_RunningIndicatorDashes extends RunningIndicatorDots {
 
     _drawIndicator(cr) {
-        if (this._isRunning) {
+        if (this._source.running) {
             let size =  Math.max(this._width/20, this._borderWidth);
             let padding = this._borderWidth;
             let spacing = Math.ceil(this._width/18); // separation between the dots
@@ -584,8 +553,8 @@ var RunningIndicatorDashes = class DashToDock_RunningIndicatorDashes extends Run
             cr.setLineWidth(this._borderWidth);
             Clutter.cairo_set_source_color(cr, this._borderColor);
 
-            cr.translate(Math.floor((this._width - this._nWindows*dashLength - (this._nWindows-1)*spacing)/2), yOffset);
-            for (let i = 0; i < this._nWindows; i++) {
+            cr.translate(Math.floor((this._width - this._source.windowsCount*dashLength - (this._source.windowsCount-1)*spacing)/2), yOffset);
+            for (let i = 0; i < this._source.windowsCount; i++) {
                 cr.newSubPath();
                 cr.rectangle(i*dashLength + i*spacing, 0, dashLength, size);
             }
@@ -612,7 +581,7 @@ var RunningIndicatorMetro = class DashToDock_RunningIndicatorMetro extends Runni
     }
 
     _drawIndicator(cr) {
-        if (this._isRunning) {
+        if (this._source.running) {
             let size =  Math.max(this._width/20, this._borderWidth);
             let padding = 0;
             // For the backlit case here we don't want the outer border visible
@@ -621,7 +590,7 @@ var RunningIndicatorMetro = class DashToDock_RunningIndicatorMetro extends Runni
                 padding = 0;
             let yOffset = this._height - padding - size;
 
-            let n = this._nWindows;
+            let n = this._source.windowsCount;
             if(n <= 1) {
                 cr.translate(0, yOffset);
                 Clutter.cairo_set_source_color(cr, this._bodyColor);
@@ -630,7 +599,7 @@ var RunningIndicatorMetro = class DashToDock_RunningIndicatorMetro extends Runni
                 cr.fill();
             } else {
                 let blackenedLength = (1/48)*this._width; // need to scale with the SVG for the stacked highlight
-                let darkenedLength = this._isFocused ? (2/48)*this._width : (10/48)*this._width;
+                let darkenedLength = this._source.focused ? (2/48)*this._width : (10/48)*this._width;
                 let blackenedColor = this._bodyColor.shade(.3);
                 let darkenedColor = this._bodyColor.shade(.7);
 
@@ -676,7 +645,8 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         this._source._iconContainer.add_child(this._notificationBadgeBin);
         this.updateNotificationBadgeStyle();
 
-        const remoteEntry = this._source.remoteModel.lookupById(this._source.app.id);
+        const { remoteModel } = Docking.DockManager.getDefault();
+        const remoteEntry = remoteModel.lookupById(this._source.app.id);
         this._signalsHandler.add([
             remoteEntry,
             ['count-changed', 'count-visible-changed'],
@@ -700,8 +670,6 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
             'notify::size',
             this.updateNotificationBadgeStyle.bind(this)
         ]);
-
-        this._isUrgent = false;
     }
 
     updateNotificationBadgeStyle() {
@@ -871,27 +839,16 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
     }
 
     setUrgent(urgent) {
-        const icon = this._source.icon._iconBin;
-        if (urgent) {
-            if (!this._isUrgent) {
-                icon.set_pivot_point(0.5, 0.5);
-                this._source.iconAnimator.addAnimation(icon, 'dance');
-                this._isUrgent = true;
-            }
-        } else {
-            if (this._isUrgent) {
-                this._source.iconAnimator.removeAnimation(icon, 'dance');
-                this._isUrgent = false;
-            }
-            icon.rotation_angle_z = 0;
-        }
+        if (urgent || this._isUrgent !== undefined)
+            this._source.urgent = urgent;
+
+        if (urgent)
+            this._isUrgent = urgent;
+        else
+            delete this._isUrgent;
     }
 }
 
-
-// We need an icons theme object, this is the only way I managed to get
-// pixel buffers that can be used for calculating the backlight color
-let themeLoader = null;
 
 // Global icon cache. Used for Unity7 styling.
 let iconCacheMap = new Map();
@@ -917,13 +874,7 @@ var DominantColorExtractor = class DashToDock_DominantColorExtractor {
      */
     _getIconPixBuf() {
         let iconTexture = this._app.create_icon_texture(16);
-
-        if (themeLoader === null) {
-            let ifaceSettings = new Gio.Settings({ schema: "org.gnome.desktop.interface" });
-
-            themeLoader = new Gtk.IconTheme(),
-            themeLoader.set_custom_theme(ifaceSettings.get_string('icon-theme')); // Make sure the correct theme is loaded
-        }
+        const themeLoader = Docking.DockManager.iconTheme;
 
         // Unable to load the icon texture, use fallback
         if (iconTexture instanceof St.Icon === false) {

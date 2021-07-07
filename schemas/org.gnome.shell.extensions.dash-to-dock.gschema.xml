@@ -47,7 +47,7 @@
   </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key name="dock-position" enum="org.gnome.shell.extensions.dash-to-dock.position">
-      <default>'LEFT'</default>
+      <default>'BOTTOM'</default>
       <summary>Dock position</summary>
       <description>Dock is shown on the Left, Right, Top or Bottom side of the screen.</description>
     </key>
@@ -156,6 +156,11 @@
       <summary>Maximum dash icon size</summary>
       <description>Set the allowed maximum dash icon size. Allowed range: 16..64.</description>
     </key>
+    <key type="d" name="preview-size-scale">
+      <default>0</default>
+      <summary>Preview size scale</summary>
+      <description>Set the allowed maximum dash preview size scale. Allowed range: 0,00..1,00.</description>
+    </key>
     <key type="b" name="icon-size-fixed">
       <default>false</default>
       <summary>Fixed icon size</summary>
@@ -206,6 +211,11 @@
       <summary>Provide monitor isolation</summary>
       <description>Dash shows only windows from the monitor</description>
     </key>
+    <key type="b" name="scroll-to-focused-application">
+      <default>true</default>
+      <summary>Scroll to focused application</summary>
+      <description>Ensure that the focused application icon is always visible in the dash</description>
+    </key>
     <key type="b" name="show-windows-preview">
       <default>true</default>
       <summary>Show preview of the open windows</summary>
@@ -226,6 +236,11 @@
       <summary>Show mounted volumes and devices</summary>
       <description>Show or hide mounted volume and device icons in the dash</description>
     </key>
+    <key type="b" name="isolate-locations">
+      <default>true</default>
+      <summary>Isolate volumes, devices and trash windows</summary>
+      <description>Consider volume, devices and trash as different application windows and not part of the file manager</description>
+    </key>
     <key type="b" name="show-show-apps-button">
       <default>true</default>
       <summary>Show applications button</summary>
@@ -233,8 +248,8 @@
     </key>
     <key type="b" name="show-apps-at-top">
       <default>false</default>
-      <summary>Show application button at top</summary>
-      <description>Show application button at top of the dash</description>
+      <summary>Show application button on the left</summary>
+      <description>Show application button on the left of the dash</description>
     </key>
     <key type="b" name="animate-show-apps">
       <default>true</default>
