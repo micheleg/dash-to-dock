@@ -1,3 +1,126 @@
+gnome-shell-extension-ubuntu-dock (70~ubuntu1) UNRELEASED; urgency=medium
+
+  [ Philipp Kitzberger ]
+  * Add new setting: preview size scale
+
+  [ Evan Welsh ]
+  * Initial port to GNOME 40.
+  * theming: Fix various theming issues
+  * Fix showing app icon at the start
+  * Use Graphene for indicator rendering.
+  * Fix show apps button toggling.
+  * Start fixing panel mode...
+  * Fix drag and drop and panel mode.
+  * Fix workspace scrolling.
+  * Fix icon scaling and size changes.
+  * Cleanup preferences.
+  * More theming and style fixes
+  * Convert stylesheet to SCSS.
+  * Improve overview animation and styling.
+  * Fix regression in panel mode padding.
+  * Avoid errors if already tracking the dock
+  * Make sassc the default sass compiler
+  * Initial fixes for horizontal scrolling.
+  * Initial fix for dynamic icon sizing...
+  * dash: Fix separator in vertical mode.
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream pre-release (LP: #1912211, LP: #1903582, LP: #1847650)
+  * prefs: Port code for the initial size request
+  * dash: Do not try to use an invalid value of dragPlaceholderPos
+  * cleanup: Remove the unused InjectionsHandler instances
+  * utils: Don't store the InjectedFunction on InjectionsHandler
+  * utils: Modernize BasicHandler making it possible to use non-array arguments
+  * cleanup: Connect to signals with non-array arguments when possible
+  * BasicHandler: Support auto-destruction when using a parent Object
+  * docking: Avoid recursion on _prepareMainDash()
+  * utils: Add PropertyInjectionsHandler to manage property overrides
+  * cleanup: Use PropertyInjectionsHandler
+  * Utils: Pass the original function to InjectionsHandler callback
+  * docking: Replace DashSpacer by overriding ControlsManagerLayout logic
+  * docking: Always show the thumbnails box in vertical mode
+  * Utils: Add class to inject virtual functions
+  * docking: Replace WorkspaceBackground allocation code taking care of the dock
+  * docking: Also ignore allocation requests on the original dash
+  * Settings: Fix dock size scale selector
+  * prefs: Disable monitor selection combo when multi-monitor is enabled
+  * theming: Properly parse color from string and set its alpha value
+  * theming: Do not try to set the background style with no style
+  * prefs: Support running as a standalone application
+  * prefs: Use Mutter DBus API to manage per-monitors configuration
+  * docking: Properly handle top-positioned dock
+  * docking: Use implicit properties features for slide-x
+  * docking: Adapt dash(es) startup animation effect to our positioning
+  * docking: Do not show the dash before startup animation has completed
+  * docking: Use workarea-based allocation in ControlsManagerLayout and
+    WorkspaceBackground
+  * docking: Adjust overview with vertical auto-hide dock
+  * docking: Adjust the AllWorkspaceBox size in secondary monitors
+  * docking: Keep cached settings values used during allocation
+  * appIcons: Move logic for computing the focused / running state here
+  * dash: Fix ensureActorVisibleInScrollView as per upstream changes
+  * cleanup: Modernize the code ensureActorVisibleInScrollView a bit
+  * docking: Add back support to disable animation on show-applications
+  * docking: Add and use property to access to upstream overviewControls
+  * dash: Cleanup the dash-separator styling, using a single scss definition
+  * dash: Include paddings and separator to compute available space
+  * prefs: Add back support for changing the overlay shortcut
+  * docking: Disconnect from after-paint signal if we destroy earlier
+  * theming: Never try to access to members when destroyed
+  * theming: Use signals handler auto-destruction
+  * theming: Never access to dash private member, move the logic in the dock
+  * docking: Define a global GtkIconTheme bound to the St's default
+  * fileManager1API: Drop XUbuntuOpenLocationsXids support
+  * locations: use org.Nautilus.FileOperations2 API to empty the trash
+  * dash: Optionally keep the focused application always visible in the dash
+  * appIcons: Use public visibile getter for Overview
+  * appIcons: Move urgency logic to the AppIcon
+  * dash: Ensure urgent applications are visible
+  * appIcons: Mark urgent apps whose windows are urgent or demands attention
+  * appIcons: Cleanup window-entered callback code
+  * dash: Add property to require visibility
+  * dash: Require visibility when an appicon is urgent
+  * locations: Use fully async and cancellable async operations
+  * locations: Do not use template literals as they may break translations
+  * docking: Move ownership of Removable locations and Trash to DockManager
+  * appIcons: Manage app-urgency per windows
+  * appIcons: Give urgent windows more priority on activation
+  * dash: Do not potentially duplicate location icons and really remove them
+  * docking: Do not pass LauncherRemoteModel around, but get from DockManager
+  * appIcons: Split Dock icons by type using sub-classing
+  * cleanup: Use "Dock" prefix for our implementations
+  * locations: Patch Shell.App to make location apps to behave as normal apps
+  * locations: Disable ability for opening new windows in location apps
+  * locations: Update app-system status on app state changed
+  * locations: Initial support for full location apps isolation from filemanager
+  * locations: Keep app focus state cached and notify tracker on changes
+  * locations: Add alt-tab and overview support for location applications
+  * locations: Ignore location windows in file manager in isolation mode
+  * locations: Use Nautilus FileOperations2 DBus API to empty the trash
+  * locations: Do not log errors on cancellations
+  * Makefile: Support localizing from utf-8 strings
+  * debian/control: Build-depend on sassc and bump dependency on gnome-shell 40
+  * schemas/10_ubuntu-dock.gschema.override: Set default position to the left
+  * schemas/10_ubuntu-dock.gschema.override: Show trash in the dock
+    (LP: #1711753)
+
+  [ Michele Gaio ]
+  * Add back the logic to prevent apps reordering.
+  * Fix drag and drop in vertical mode.
+  * Fix alignement in vertical mode.
+  * dash: Better support panel mode.
+  * Apply rounding to scss math.
+  * Add a gap between the dash and windows in fixed mode.
+  * Drop old compatibility code.
+  * pref.js: fix advance setitings dialogs.
+  * pref.js: fix dodge windows settings.
+  * pref.js: fix a bunch of label and button alignments issues.
+
+  [ Mildred Ki'Lya ]
+  * Make dash-to-dock work with both horizontal and vertical workspaces
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 07 Jul 2021 08:52:19 +0200
+
 gnome-shell-extension-ubuntu-dock (69ubuntu1) hirsute; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
