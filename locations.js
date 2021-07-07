@@ -356,6 +356,8 @@ var Trash = class DashToDock_Trash {
                 this._onTrashChange.bind(this)
             );
         } catch (e) {
+            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                return;
             logError(e, 'Impossible to monitor trash');
         }
         this._empty = true;
@@ -398,7 +400,8 @@ var Trash = class DashToDock_Trash {
 
             await childrenEnumerator.close_async(priority, null);
         } catch (e) {
-            logError(e, 'Impossible to enumerate trash children');
+            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                logError(e, 'Impossible to enumerate trash children');
         }
     }
 
