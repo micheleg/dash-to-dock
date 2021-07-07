@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (70~ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (70~ubuntu1) impish; urgency=medium
 
   [ Philipp Kitzberger ]
   * Add new setting: preview size scale
@@ -119,7 +119,7 @@ gnome-shell-extension-ubuntu-dock (70~ubuntu1) UNRELEASED; urgency=medium
   [ Mildred Ki'Lya ]
   * Make dash-to-dock work with both horizontal and vertical workspaces
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 07 Jul 2021 08:52:19 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 07 Jul 2021 09:22:12 +0200
 
 gnome-shell-extension-ubuntu-dock (69ubuntu1) hirsute; urgency=medium
 
