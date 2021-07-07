@@ -1,4 +1,5 @@
 [org.gnome.shell.extensions.dash-to-dock:ubuntu]
+dock-position='LEFT'
 dock-fixed=true
 intellihide-mode='ALL_WINDOWS'
 intellihide=true
