@@ -166,7 +166,7 @@ const baseIconSizes = [16, 22, 24, 32, 48, 64, 96, 128];
  * - hide showApps label when the custom menu is shown.
  * - add scrollview
  *   ensure actor is visible on keyfocus inseid the scrollview
- * - add 128px icon size, might be usefull for hidpi display
+ * - add 128px icon size, might be useful for hidpi display
  * - sync minimization application target position.
  * - keep running apps ordered.
  */
@@ -927,7 +927,7 @@ var MyDash = GObject.registerClass({
     }
 
     /**
-     * Reset the displayed apps icon to mantain the correct order when changing
+     * Reset the displayed apps icon to maintain the correct order when changing
      * show favorites/show running settings
      */
     resetAppIcons() {
@@ -966,7 +966,7 @@ var MyDash = GObject.registerClass({
 
 /**
  * This is a copy of the same function in utils.js, but also adjust horizontal scrolling
- * and perform few further cheks on the current value to avoid changing the values when
+ * and perform few further checks on the current value to avoid changing the values when
  * it would be clamp to the current one in any case.
  * Return the amount of shift applied
  */
