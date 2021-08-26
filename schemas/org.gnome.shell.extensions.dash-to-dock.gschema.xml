@@ -164,7 +164,7 @@
     <key type="b" name="icon-size-fixed">
       <default>false</default>
       <summary>Fixed icon size</summary>
-      <description>Keep the icon size fived by scrolling the dock.</description>
+      <description>Keep the icon size fixed by scrolling the dock.</description>
     </key>
     <key type="b" name="apply-custom-theme">
       <default>false</default>
