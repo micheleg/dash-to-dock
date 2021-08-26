@@ -1,3 +1,12 @@
+gnome-shell-extension-ubuntu-dock (70~ubuntu2) impish; urgency=medium
+
+  [ Daniel van Vugt ]
+  * extension: Disable starting in the overview
+    - We don't need it when the GNOME dash is being replaced.
+    - Applied upstream PR #1512 (LP: #1940925).
+
+ -- Gunnar Hjalmarsson <gunnarhj@ubuntu.com>  Thu, 26 Aug 2021 20:04:01 +0200
+
 gnome-shell-extension-ubuntu-dock (70~ubuntu1) impish; urgency=medium
 
   [ Philipp Kitzberger ]
