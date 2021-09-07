@@ -1,3 +1,11 @@
+gnome-shell-extension-ubuntu-dock (70~ubuntu3) impish; urgency=medium
+
+  [ Daniel van Vugt ]
+  * docking: Generalize the startup animation
+    - Applied addition to upstream PR #1512 (LP: #1942843).
+
+ -- Gunnar Hjalmarsson <gunnarhj@ubuntu.com>  Tue, 07 Sep 2021 12:18:14 +0200
+
 gnome-shell-extension-ubuntu-dock (70~ubuntu2) impish; urgency=medium
 
   [ Daniel van Vugt ]
