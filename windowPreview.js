@@ -10,6 +10,7 @@ const GObject = imports.gi.GObject;
 const St = imports.gi.St;
 const Main = imports.ui.main;
 
+const BoxPointer = imports.ui.boxpointer;
 const Params = imports.misc.params;
 const PopupMenu = imports.ui.popupMenu;
 const Workspace = imports.ui.workspace;
@@ -69,7 +70,7 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
         let windows = this._source.getInterestingWindows();
         if (windows.length > 0) {
             this._redisplay();
-            this.open();
+            this.open(BoxPointer.PopupAnimation.FULL);
             this.actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
             this._source.emit('sync-tooltip');
         }
