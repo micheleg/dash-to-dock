@@ -1,6 +1,7 @@
 {
 "shell-version": [
-    "40"
+    "40",
+    "41"
 ],
 "uuid": "dash-to-dock@micxgx.gmail.com",
 "name": "Dash to Dock",

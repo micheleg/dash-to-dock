@@ -26,8 +26,7 @@ const PREVIEW_ANIMATION_DURATION = 250;
 var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.PopupMenu {
 
     constructor(source) {
-        let side = Utils.getPosition();
-        super(source, 0.5, side);
+        super(source, 0.5, Utils.getPosition());
 
         // We want to keep the item hovered while the menu is up
         this.blockSourceEvents = true;
@@ -37,6 +36,7 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
         let monitorIndex = this._source.monitorIndex;
 
         this.actor.add_style_class_name('app-well-menu');
+        this.actor.add_style_class_name('app-menu');
         this.actor.set_style('max-width: '  + (Main.layoutManager.monitors[monitorIndex].width  - 22) + 'px; ' +
                              'max-height: ' + (Main.layoutManager.monitors[monitorIndex].height - 22) + 'px;');
         this.actor.hide();
@@ -49,11 +49,6 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
         this._destroyId = this._source.connect('destroy', this.destroy.bind(this));
 
         Main.uiGroup.add_actor(this.actor);
-
-        // Change the initialized side where required.
-        this._arrowSide = side;
-        this._boxPointer._arrowSide = side;
-        this._boxPointer._userArrowSide = side;
 
         this.connect('destroy', this._onDestroy.bind(this));
     }
