@@ -185,6 +185,7 @@ var DockAbstractAppIcon = GObject.registerClass({
 
         this._updateState();
         this._numberOverlay();
+        this.updateIconGeometry();
 
         this._previewMenuManager = null;
         this._previewMenu = null;
