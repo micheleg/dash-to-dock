@@ -30,6 +30,7 @@ const Workspace = imports.ui.workspace;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
+const AppMenu = Me.imports.appMenu;
 const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
@@ -382,6 +383,7 @@ var DockAbstractAppIcon = GObject.registerClass({
 
         if (!this._menu) {
             this._menu = new DockAppIconMenu(this);
+            this._menu.setApp(this.app);
             this._menu.connect('activate-window', (menu, window) => {
                 Main.activateWindow(window);
             });
@@ -782,6 +784,10 @@ var DockAbstractAppIcon = GObject.registerClass({
     //This closes all windows of the app.
     closeAllWindows() {
         let windows = this.getInterestingWindows();
+        // if (this.getWindows().length === windows.length) {
+        //     if (this.app.request_quit())
+        //         return
+        // }
         const time = global.get_current_time();
         windows.forEach(w => w.delete(time));
     }
@@ -900,8 +906,6 @@ function makeAppIcon(app, monitorIndex, iconAnimator) {
     return new DockAppIcon(app, monitorIndex, iconAnimator);
 }
 
-let discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
-
 /**
  * DockAppIconMenu
  *
@@ -911,34 +915,44 @@ let discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
  * - Add open windows thumbnails instead of list
  * - update menu when application windows change
  */
-const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
+const DockAppIconMenu = class DockAppIconMenu extends AppMenu.AppMenu {
 
     constructor(source) {
-        super(source, 0.5, Utils.getPosition());
+        super(source, Utils.getPosition(), {
+            favoritesSection: true,
+            showSingleWindows: true,
+        });
 
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
 
         // We want to keep the item hovered while the menu is up
         this.blockSourceEvents = true;
 
-        this._source = source;
-        this._parentalControlsManager = ParentalControlsManager.getDefault();
-
-        this.actor.add_style_class_name('app-menu');
         this.actor.add_style_class_name('app-well-menu');
         this.actor.add_style_class_name('dock-app-menu');
 
-        // Chain our visibility and lifecycle to that of the source
-        this._signalsHandler.add(source, 'notify::mapped', () => {
-            if (!source.mapped)
-                this.close();
-        });
-        source.connect('destroy', () => this.destroy());
+        // // Chain our visibility and lifecycle to that of the source
+        // this._signalsHandler.add(source, 'notify::mapped', () => {
+        //     if (!source.mapped)
+        //         this.close();
+        // });
+        // source.connect('destroy', () => this.destroy());
+        this._signalsHandler.add(Docking.DockManager.settings,
+            'changed::show-windows-preview', () => this._updateWindowsSection());
+
+        this._allWindowsMenuItem = new PopupMenu.PopupSubMenuMenuItem(
+            __('All Windows'), false);
+        this._allWindowsMenuItem.hide();
+        this.addMenuItem(this._allWindowsMenuItem, 0);
+
+        this._quitItem.destroy();
+        this._quitItem =
+            this.addAction(_('Quit'), () => this._app.closeAllWindows());
 
         Main.uiGroup.add_actor(this.actor);
 
         const { remoteModel } = Docking.DockManager.getDefault();
-        const remoteModelApp = remoteModel?.lookupById(this._source?.app?.id);
+        const remoteModelApp = remoteModel?.lookupById(this.sourceActor?.app?.id);
         if (remoteModelApp && DbusmenuUtils.haveDBusMenu()) {
             const [onQuicklist, onDynamicSection] = Utils.splitHandler((sender, { quicklist }, dynamicSection) => {
                 dynamicSection.removeAll();
@@ -958,20 +972,60 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 onDynamicSection
             ]);
         }
+    }
 
-        if (discreteGpuAvailable === undefined) {
-            const updateDiscreteGpuAvailable = () => {
-                const switcherooProxy = global.get_switcheroo_control();
-                if (switcherooProxy) {
-                    const prop = switcherooProxy.get_cached_property('HasDualGpu');
-                    discreteGpuAvailable = prop?.unpack() ?? false;
-                } else {
-                    discreteGpuAvailable = false;
-                }
+    _updateWindowsSection() {
+        if (this._updateWindowsLaterId)
+            Meta.later_remove(this._updateWindowsLaterId);
+        this._updateWindowsLaterId = 0;
+
+        this._windowSection.removeAll();
+        this._openWindowsHeader.hide();
+
+        if (!this._app)
+            return;
+
+        const windows = this.sourceActor.getInterestingWindows();
+
+        if (Docking.DockManager.settings.get_boolean('show-windows-preview')) {
+            // update, show, or hide the allWindows menu
+            // Check if there are new windows not already displayed. In such case, repopulate the allWindows
+            // menu. Windows removal is already handled by each preview being connected to the destroy signal
+            let old_windows = this._allWindowsMenuItem.menu._getMenuItems().map(function (item) {
+                return item._window;
+            });
+
+            let new_windows = windows.filter(function (w) { return old_windows.indexOf(w) < 0; });
+            if (new_windows.length > 0) {
+                this._populateAllWindowMenu(windows);
+
+                // Try to set the width to that of the submenu.
+                // TODO: can't get the actual size, getting a bit less.
+                // Temporary workaround: add 15px to compensate
+                this._allWindowsMenuItem.width = this._allWindowsMenuItem.menu.actor.width + 15;
             }
-            updateDiscreteGpuAvailable();
-            global.connect('notify::switcheroo-control',
-                () => updateDiscreteGpuAvailable());
+
+            // The menu is created hidden and never hidded after being shown. Instead, a singlal
+            // connected to its items destroy will set is insensitive if no more windows preview are shown.
+            if (windows.length) {
+                this._allWindowsMenuItem.show();
+                this._allWindowsMenuItem.setSensitive(true);
+            } else {
+                this._allWindowsMenuItem.hide();
+            }
+        } else {
+            this._openWindowsHeader.show();
+
+            windows.forEach(window => {
+                const title = window.title || this._app.get_name();
+                const item = this._windowSection.addAction(title, event => {
+                    Main.activateWindow(window, event.get_time());
+                });
+                const id = window.connect('notify::title', () => {
+                    item.label.text = window.title || this._app.get_name();
+                });
+                item.connect('destroy', () => window.disconnect(id));
+            });
         }
     }
 
@@ -986,7 +1040,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
     }
 
     popup(_activatingButton) {
-        this._rebuildMenu();
+        // this._rebuildMenu();
         this.open(BoxPointer.PopupAnimation.FULL);
     }
 
@@ -1135,58 +1189,32 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         this.update();
     }
 
+    _updateQuitItem() {
+        // update, show or hide the quit menu
+        if (this.sourceActor.windowsCount > 0) {
+            if (this.sourceActor.windowsCount == 1)
+                this._quitItem.label.set_text(_('Quit'));
+            else
+                this._quitItem.label.set_text(
+                    __('Quit %d Windows').format(this.sourceActor.windowsCount));
+
+            this._quitItem.actor.show();
+        } else {
+            this._quitItem.actor.hide();
+        }
+    }
+
     // update menu content when application windows change. This is desirable as actions
     // acting on windows (closing) are performed while the menu is shown.
     update() {
-      // update, show or hide the quit menu
-      if (this._source.windowsCount > 0) {
-          let quitFromDashMenuText = "";
-          if (this._source.windowsCount == 1)
-              this._quitfromDashMenuItem.label.set_text(_('Quit'));
-          else
-              this._quitfromDashMenuItem.label.set_text(__('Quit %d Windows').format(this._source.windowsCount));
+        this._updateWindowsSection();
+        this._updateQuitItem();
 
-          this._quitfromDashMenuItem.actor.show();
-
-      } else {
-          this._quitfromDashMenuItem.actor.hide();
-      }
-
-      if (Docking.DockManager.settings.get_boolean('show-windows-preview')){
-          const windows = this._source.getInterestingWindows();
-
-          // update, show, or hide the allWindows menu
-          // Check if there are new windows not already displayed. In such case, repopulate the allWindows
-          // menu. Windows removal is already handled by each preview being connected to the destroy signal
-          let old_windows = this._allWindowsMenuItem.menu._getMenuItems().map(function(item){
-              return item._window;
-          });
-
-          let new_windows = windows.filter(function(w) {return old_windows.indexOf(w) < 0;});
-          if (new_windows.length > 0) {
-              this._populateAllWindowMenu(windows);
-
-              // Try to set the width to that of the submenu.
-              // TODO: can't get the actual size, getting a bit less.
-              // Temporary workaround: add 15px to compensate
-              this._allWindowsMenuItem.width =  this._allWindowsMenuItem.menu.actor.width + 15;
-
-          }
-
-          // The menu is created hidden and never hidded after being shown. Instead, a singlal
-          // connected to its items destroy will set is insensitive if no more windows preview are shown.
-          if (windows.length > 0){
-              this._allWindowsMenuItem.show();
-              this._allWindowsMenuItem.setSensitive(true);
-          }
-      }
-
-      // Update separators
-      this._getMenuItems().forEach(item => {
-          if ('label' in item) {
-              this._updateSeparatorVisibility(item);
-          }
-      });
+        // Update separators
+        this._getMenuItems().forEach(item => {
+            if ('label' in item)
+                this._updateSeparatorVisibility(item);
+        });
     }
 
     _populateAllWindowMenu(windows) {
