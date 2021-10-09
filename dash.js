@@ -124,7 +124,6 @@ var DockDash = GObject.registerClass({
             vertical: !this._isHorizontal,
             y_expand: this._isHorizontal,
             x_expand: !this._isHorizontal,
-            pack_start: Docking.DockManager.settings.get_boolean('show-apps-at-top')
         });
 
         this._scrollView = new St.ScrollView({
@@ -172,7 +171,11 @@ var DockDash = GObject.registerClass({
             this._itemMenuStateChanged(this._showAppsIcon, opened);
         });
 
-        this._dashContainer.add_child(this._showAppsIcon);
+        if (Docking.DockManager.settings.get_boolean('show-apps-at-top')) {
+            this._dashContainer.insert_child_below(this._showAppsIcon, null);
+        } else {
+            this._dashContainer.insert_child_above(this._showAppsIcon, null);
+        }
 
         this._background = new St.Widget({
             style_class: 'dash-background',
@@ -1027,11 +1030,27 @@ var DockDash = GObject.registerClass({
     }
 
     updateShowAppsButton() {
+        const notifiedProperties = [];
+        this._signalsHandler.addWithLabel('first-last-child-workaround',
+            this._dashContainer, 'notify',
+            (_obj, pspec) => notifiedProperties.push(pspec.name));
+
         if (Docking.DockManager.settings.get_boolean('show-apps-at-top')) {
-            this._dashContainer.pack_start = true;
+            this._dashContainer.set_child_below_sibling(this._showAppsIcon, null);
         } else {
-            this._dashContainer.pack_start = false;
+            this._dashContainer.set_child_above_sibling(this._showAppsIcon, null);
         }
+
+        this._signalsHandler.removeWithLabel('first-last-child-workaround');
+
+        // This is indeed ugly, but we need to ensure that the last and first
+        // visible widgets are re-computed by St, that is buggy because of a
+        // mutter issue that is being fixed:
+        // https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/2047
+        if (!notifiedProperties.includes('first-child'))
+            this._dashContainer.notify('first-child');
+        if (!notifiedProperties.includes('last-child'))
+            this._dashContainer.notify('last-child');
     }
 });
 
