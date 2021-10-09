@@ -1008,8 +1008,6 @@ var DockDash = GObject.registerClass({
     }
 
     hideShowAppsButton() {
-        //this.showAppsButton.hide()
-
         // The height and width of the button is bound to the background.
         if (this._isHorizontal) {
             this.showAppsButton.set_width(0)
