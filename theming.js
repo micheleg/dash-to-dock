@@ -247,58 +247,35 @@ var ThemeManager = class DashToDock_ThemeManager {
         let pos_string = ""
         let opposite_pos_string = ""
 
-        if (this._dock_position == 0) {
-            pos_string = "top";
-            opposite_pos_string = "bottom";
+        switch (this._dock_position) {
+            case St.Side.TOP:
+                pos_string = "top";
+                opposite_pos_string = "bottom";
+                break;
+            case St.Side.BOTTOM:
+                pos_string = "bottom";
+                opposite_pos_string = "top";
+                break;
+            case St.Side.LEFT:
+                pos_string = "left";
+                opposite_pos_string = "right";
+                break;
+            case St.Side.RIGHT:
+                pos_string = "right";
+                opposite_pos_string = "left";
+                break;
         }
 
-        if (this._dock_position == 1) {
-            pos_string = "right";
-            opposite_pos_string = "left";
-        }
-
-        if (this._dock_position == 2) {
-            pos_string = "bottom";
-            opposite_pos_string = "top";
-        }
-
-        if (this._dock_position == 3) {
-            pos_string = "left";
-            opposite_pos_string = "right";
-        }
-        
-        let newStyle = '';
-        newStyle = 'border: none;' + 
+        let borderStyle = 'border: none;' + 
                    'border-radius: ' + this._border_radius + "px;" +
-                   "margin-" + pos_string + ": " + this._floating_margin + "px; " + 
-                   "margin-" + opposite_pos_string + ": " + this._floating_margin + "px; ";
-
                    
-        this._dash._container.set_style(newStyle);
-        // obtain theme border settings
-        let themeNode = this._dash._background.get_theme_node();
-        let borderColor = themeNode.get_border_color(St.Side.TOP);
-        let borderWidth = themeNode.get_border_width(St.Side.TOP);
+        this._dash._background.set_style(borderStyle);
 
-        // We're copying border and corner styles to left border and top-left
-        // corner, also removing bottom border and bottom-right corner styles
-        let borderInner = '';
-        let borderMissingStyle = '';
+        let marginStyle = "margin-" + pos_string + ": " + this._floating_margin + "px; " + 
+        "margin-" + opposite_pos_string + ": " + this._floating_margin + "px; ";
 
-        if (this._rtl && (position != St.Side.RIGHT))
-            borderMissingStyle = 'border-right: ' + borderWidth + 'px solid ' +
-                   borderColor.to_string() + ';';
-        else if (!this._rtl && (position != St.Side.LEFT))
-            borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
-                   borderColor.to_string() + ';';
+        this._dash._container.set_style(marginStyle);
 
-        newStyle = borderMissingStyle;
-
-        if (newStyle) {
-            // I do call set_style possibly twice so that only the background gets the transition.
-            // The transition-property css rules seems to be unsupported
-            this._dash._background.set_style(newStyle);
-        }
 
         // Customize background
         let fixedTransparency = settings.get_enum('transparency-mode') == TransparencyMode.FIXED;

@@ -240,9 +240,14 @@ var Settings = GObject.registerClass({
         this._settings.set_int('preferred-monitor', preferredMonitor);
     }
 
-    custom_radius_scale_format_value_cb(scale, value) {
-        return value + ' px'
-    }
+    // custom_radius_scale_format_value_cb(scale, value) {
+    //     return value + ' px'
+    // }
+
+    // custom_margin_scale_format_value_cb(scale, value) {
+    //     return value + ' px';
+    // }
+
     custom_radius_scale_value_changed_cb(scale) {
         // Avoid settings the size consinuosly
         if (this._border_radius_timeout > 0)
@@ -255,10 +260,7 @@ var Settings = GObject.registerClass({
             return GLib.SOURCE_REMOVE;
         });
     }
-
-    custom_margin_scale_format_value_cb(scale, value) {
-        return value + ' px';
-    }
+    
     custom_margin_scale_value_changed_cb(scale) {
         // Avoid settings the size consinuosly
         if (this._floating_margin_timeout > 0)
@@ -593,6 +595,18 @@ var Settings = GObject.registerClass({
 
             dialog.present();
 
+        });
+
+        // Custom Border Formatter
+        const custom_margin_scale = this._builder.get_object('custom_margin_scale');
+        custom_margin_scale.set_format_value_func((_, value) => {
+            return value + ' px';
+        });
+
+        // Custom Margin Formatter
+        const custom_radius_scale = this._builder.get_object('custom_radius_scale');
+        custom_radius_scale.set_format_value_func((_, value) => {
+            return value + ' px';
         });
 
         // size options

@@ -72,6 +72,14 @@ $osd_fg_color: #eeeeec;
                     padding: $dash_spacing;
                     padding-#{$side}: $dash_padding + $dock_side_margin;
                     padding-#{opposite($side)}: $dash_padding;
+
+                    border-radius: 100px;
+                }
+
+                .app-well-app {
+                    StWidget {
+                        border-radius: 100px;
+                    }
                 }
             }
         }

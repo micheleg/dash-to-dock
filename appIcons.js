@@ -182,12 +182,31 @@ var DockAbstractAppIcon = GObject.registerClass({
                 }
             );
         });
-
+''
         this._updateState();
         this._numberOverlay();
 
         this._previewMenuManager = null;
         this._previewMenu = null;
+
+
+        let effector_keys = [
+            'border-radius',
+        ];
+        
+        this._signalsHandler.add(...effector_keys.map(key => [
+            Docking.DockManager.settings,
+            `changed::${key}`,
+            () => this.updateIconTheming(),
+        ]));
+    }
+
+    updateIconTheming() 
+    {
+        let settings = Docking.DockManager.settings;
+        this._border_radius = settings.get_int('border-radius');
+        let newStyle = 'border-radius: ' + this._border_radius + "px;";
+        this.get_children()[0].set_style(newStyle);
     }
 
     _onDestroy() {
@@ -945,6 +964,9 @@ const DockAppIconMenu = class DockAppIconMenu extends AppDisplay.AppIconMenu {
                 onDynamicSection
             ]);
         }
+
+
+
     }
 
     _rebuildMenu() {
