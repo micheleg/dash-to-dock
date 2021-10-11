@@ -136,7 +136,6 @@ $osd_fg_color: #eeeeec;
         #dash {
             .dash-background {
                 margin: 0;
-                padding: 0;
                 border-radius: 0;
             }
 
@@ -149,9 +148,7 @@ $osd_fg_color: #eeeeec;
             .dash-item-container {
                 .app-well-app,
                 .show-apps {
-                    padding: $dash_spacing;
                     padding-#{$side}: $dash_padding;
-                    padding-#{opposite($side)}: $dash_padding;
                 }
             }
         }
@@ -160,16 +157,12 @@ $osd_fg_color: #eeeeec;
             #dash {
                 #dashtodockDashContainer {
                     padding: shrink($dash_padding - $dash_spacing);
-                    padding-#{$side}: 0;
-                    padding-#{opposite($side)}: 0;
                 }
 
                 .dash-item-container {
                     .app-well-app,
                     .show-apps {
-                        padding: shrink($dash_spacing);
                         padding-#{$side}: shrink($dash_padding);
-                        padding-#{opposite($side)}: shrink($dash_padding);
                     }
                 }
             }
