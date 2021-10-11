@@ -166,13 +166,16 @@ var ThemeManager = class DashToDock_ThemeManager {
             // if not the opacity will always be overridden by the color below.
             // Note that if using 'dynamic' transparency modes,
             // the opacity will be set by the opaque/transparent styles anyway.
-            let newAlpha = Math.round(backgroundColor.alpha/2.55)/100;
-            if (settings.get_enum('transparency-mode') == TransparencyMode.FIXED)
+            let newAlpha = 155;
+
+            if (settings.get_enum('transparency-mode') == TransparencyMode.FIXED) {
                 newAlpha = settings.get_double('background-opacity');
+            } else {
+                newAlpha = Math.round(backgroundColor.alpha/2.55)/100;
+            }
 
             backgroundColor = settings.get_string('background-color');
             this._customizedBackground = backgroundColor;
-
             this._customizedBorder = this._customizedBackground;
 
             // backgroundColor is a string like rgb(0,0,0)
@@ -181,8 +184,9 @@ var ThemeManager = class DashToDock_ThemeManager {
                 logError(new Error(`${backgroundColor} is not a valid color string`));
                 return;
             }
-
+            
             color.alpha = newAlpha * 255;
+
             this._transparency.setColor(color);
         } else {
             // backgroundColor is a Clutter.Color object
@@ -236,12 +240,6 @@ var ThemeManager = class DashToDock_ThemeManager {
 
         let newStyle = "";
 
-        // let position = Utils.getPosition(settings);
-        
-        // obtain theme border settings
-        // let themeNode = this._dash._container.get_theme_node();
-        // let borderColor = themeNode.get_border_color(St.Side.TOP);
-        
         this._border_radius   = settings.get_int('border-radius');
         this._floating_margin = settings.get_int('floating-margin');
         this._dock_position   = settings.get_enum('dock-position')
@@ -262,16 +260,28 @@ var ThemeManager = class DashToDock_ThemeManager {
         let marginStyle = `margin-${pos_string}: ${this._floating_margin}px;`;
         this._dash.set_style(marginStyle);
 
-        // Customize background
+
         let fixedTransparency = settings.get_enum('transparency-mode') == TransparencyMode.FIXED;
         let defaultTransparency = settings.get_enum('transparency-mode') == TransparencyMode.DEFAULT;
+
         if (!defaultTransparency && !fixedTransparency) {
             this._transparency.enable();
-        }
-        else if (!defaultTransparency || settings.get_boolean('custom-background-color')) {
-            customStyle = `background-color: ${this._customizedBackground}; border-color: ${this._customizedBorder}; transition-delay: 0s; transition-duration: 0.250s;`
-            newStyle = newStyle + customStyle;
+        } else {
+            let custom_opacity = settings.get_double('background-opacity');
+            let use_custom_background = settings.get_boolean('custom-background-color');
+            let background_color = "";
+
+            if(use_custom_background) {
+                const [ret, color] = Clutter.Color.from_string(settings.get_string('background-color'));
+                background_color = `rgba(${color.red}, ${color.green}, ${color.blue}, ${custom_opacity})`;
+            } else {
+                let themenode = this._dash._background.get_theme_node();
+                let themeColor = themenode.get_background_color();
+                
+                background_color = `rgba(${themeColor.red}, ${themeColor.green}, ${themeColor.blue}, ${custom_opacity})`;
+            }
             
+            newStyle = newStyle + `background-color: ${background_color}; transition-delay: 0s; transition-duration: 0.250s;`;
             this._dash._background.set_style(newStyle);
         }
     }

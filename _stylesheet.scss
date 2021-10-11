@@ -315,3 +315,15 @@ $osd_fg_color: #eeeeec;
     background-position: 0px 0px;
     background-size: contain;
 }
+
+.app-well-app {
+    border-radius: 100px; 
+  }
+  
+.app-well-app * {
+    border-radius: 100px; 
+}
+  
+.show-apps * {
+    border-radius: 100px;
+}
