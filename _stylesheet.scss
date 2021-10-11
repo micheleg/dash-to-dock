@@ -11,6 +11,7 @@ $dash_background_color: #3b3b3b;
 $dash_placeholder_size: 32px;
 $dash_padding: $base_padding + 4px; // 10px
 $dash_spacing: round($base_padding / 4);
+$dash_edge_items_padding: $dash_padding - $dash_spacing;
 $dash_bottom_margin: $base_margin * 4;
 $dash_border_radius: $modal_radius * 1.5;
 
@@ -22,6 +23,10 @@ $dock_fixed_inner_margin: $dock_side_margin;
 
 @function shrink($val) {
     @return round($val / 4);
+}
+
+@function is_horizontal($side) {
+    @return $side == top or $side == bottom;
 }
 
 @function opposite($val) {
@@ -51,7 +56,7 @@ $osd_fg_color: #eeeeec;
             }
 
             .dash-separator {
-                @if $side == top or $side == bottom {
+                @if is_horizontal($side) {
                     margin-bottom: 0;
                 } @else {
                     height: 1px;
@@ -131,6 +136,49 @@ $osd_fg_color: #eeeeec;
     }
 }
 
+@mixin padded-edge-child($chid, $side, $padding) {
+    @if $chid == first {
+        @if is_horizontal($side) {
+            padding-left: $padding;
+        } @else {
+            padding-top: $padding;
+        }
+    } @else if $chid == last {
+        @if is_horizontal($side) {
+            padding-right: $padding;
+        } @else {
+            padding-bottom: $padding;
+        }
+    } @else {
+        @error "Invalid rule";
+    }
+}
+
+/* In extended mode we need to use the first and last .dash-item-container's
+ * to apply the padding on the dock, to ensure that the actual first or last
+ * child show-apps item will actually include the padding area so that it will
+ * be clickable up to the dock edge, and make Fitts happy.
+ * I don't think the same should happen for normal icons, so in the other side
+ * the padding will be applied via the scrolled area, given we can't get the
+ * parent of the first/last app-well-app icon to apply a rule there.
+ */
+@mixin padded-dash-edge-items($side, $padding) {
+    @each $child_pos in first, last {
+        > :#{$child_pos}-child {
+            /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */
+            // .dash-item-container:#{$child_pos}-child .app-well-app,
+            .show-apps {
+                @include padded-edge-child($child_pos, $side, $padding);
+            }
+        }
+
+        #dashtodockDashScrollview:#{$child_pos}-child {
+            @include padded-edge-child($child_pos, $side, $padding);
+        }
+    }
+}
+
 @each $side in bottom, top, left, right {
     #dashtodockContainer.extended.#{$side} {
         #dash {
@@ -140,9 +188,11 @@ $osd_fg_color: #eeeeec;
             }
 
             #dashtodockDashContainer {
-                padding: $dash_padding - $dash_spacing;
+                padding: 0;
                 padding-#{$side}: 0;
                 padding-#{opposite($side)}: 0;
+
+                @include padded-dash-edge-items($side, $dash_edge_items_padding);
             }
 
             .dash-item-container {
@@ -156,7 +206,9 @@ $osd_fg_color: #eeeeec;
         &.shrink {
             #dash {
                 #dashtodockDashContainer {
-                    padding: shrink($dash_padding - $dash_spacing);
+                    padding: 0;
+
+                    @include padded-dash-edge-items($side, shrink($dash_edge_items_padding));
                 }
 
                 .dash-item-container {

@@ -1005,20 +1005,12 @@ var DockDash = GObject.registerClass({
     }
 
     showShowAppsButton() {
-        this.showAppsButton.visible = true
-        this.showAppsButton.opacity = 255;
-        this.showAppsButton.set_width(-1)
-        this.showAppsButton.set_height(-1)
+        this._showAppsIcon.visible = true;
+        this._showAppsIcon.show(true);
     }
 
     hideShowAppsButton() {
-        // The height and width of the button is bound to the background.
-        this.showAppsButton.opacity = 0;
-        if (this._isHorizontal) {
-            this.showAppsButton.set_width(0)
-        } else {
-            this.showAppsButton.set_height(0)
-        }
+        this._showAppsIcon.visible = false;
     }
 
     setMaxSize(maxWidth, maxHeight) {
