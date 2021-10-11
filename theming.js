@@ -234,48 +234,33 @@ var ThemeManager = class DashToDock_ThemeManager {
         this._dash._background.set_style(null);
         this._transparency.disable();
 
+        let newStyle = "";
+
         // let position = Utils.getPosition(settings);
         
         // obtain theme border settings
         // let themeNode = this._dash._container.get_theme_node();
         // let borderColor = themeNode.get_border_color(St.Side.TOP);
         
-        this._border_radius = settings.get_int('border-radius');
+        this._border_radius   = settings.get_int('border-radius');
         this._floating_margin = settings.get_int('floating-margin');
+        this._dock_position   = settings.get_enum('dock-position')
         
-        this._dock_position = settings.get_enum('dock-position')
-        let pos_string = ""
-        let opposite_pos_string = ""
 
-        switch (this._dock_position) {
-            case St.Side.TOP:
-                pos_string = "top";
-                opposite_pos_string = "bottom";
-                break;
-            case St.Side.BOTTOM:
-                pos_string = "bottom";
-                opposite_pos_string = "top";
-                break;
-            case St.Side.LEFT:
-                pos_string = "left";
-                opposite_pos_string = "right";
-                break;
-            case St.Side.RIGHT:
-                pos_string = "right";
-                opposite_pos_string = "left";
-                break;
-        }
+        let position_keys = [
+            "top",
+            "right",
+            "bottom",
+            "left"
+        ]
+        
+        let pos_string = position_keys[this._dock_position];
 
-        let borderStyle = 'border: none;' + 
-                   'border-radius: ' + this._border_radius + "px;" +
-                   
-        this._dash._background.set_style(borderStyle);
+        newStyle = newStyle + `border-radius: ${this._border_radius}px;`;
+        this._dash._background.set_style(newStyle);
 
-        let marginStyle = "margin-" + pos_string + ": " + this._floating_margin + "px; " + 
-        "margin-" + opposite_pos_string + ": " + this._floating_margin + "px; ";
-
-        this._dash._container.set_style(marginStyle);
-
+        let marginStyle = `margin-${pos_string}: ${this._floating_margin}px;`;
+        this._dash.set_style(marginStyle);
 
         // Customize background
         let fixedTransparency = settings.get_enum('transparency-mode') == TransparencyMode.FIXED;
@@ -284,9 +269,9 @@ var ThemeManager = class DashToDock_ThemeManager {
             this._transparency.enable();
         }
         else if (!defaultTransparency || settings.get_boolean('custom-background-color')) {
-            newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
-                       'border-color: transparent; '+
-                       'transition-delay: 0s; transition-duration: 0.250s;';
+            customStyle = `background-color: ${this._customizedBackground}; border-color: ${this._customizedBorder}; transition-delay: 0s; transition-duration: 0.250s;`
+            newStyle = newStyle + customStyle;
+            
             this._dash._background.set_style(newStyle);
         }
     }

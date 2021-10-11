@@ -597,13 +597,13 @@ var Settings = GObject.registerClass({
 
         });
 
-        // Custom Border Formatter
+        // Custom Margin Formatter
         const custom_margin_scale = this._builder.get_object('custom_margin_scale');
         custom_margin_scale.set_format_value_func((_, value) => {
             return value + ' px';
         });
-
-        // Custom Margin Formatter
+        
+        // Custom Border Formatter
         const custom_radius_scale = this._builder.get_object('custom_radius_scale');
         custom_radius_scale.set_format_value_func((_, value) => {
             return value + ' px';
