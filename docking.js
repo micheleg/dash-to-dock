@@ -34,6 +34,7 @@ const DockDash = Me.imports.dash;
 const Locations = Me.imports.locations;
 const LauncherAPI = Me.imports.launcherAPI;
 const FileManager1API = Me.imports.fileManager1API;
+const DesktopIconsIntegration = Me.imports.desktopIconsIntegration;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 
@@ -548,7 +549,10 @@ var DockedDash = GObject.registerClass({
         ], [
             settings,
             'changed::intellihide',
-            this._updateVisibilityMode.bind(this)
+            () => {
+                this._updateVisibilityMode();
+                this._updateVisibleDesktop();
+            }
         ], [
             settings,
             'changed::intellihide-mode',
@@ -1102,6 +1106,21 @@ var DockedDash = GObject.registerClass({
         }
     }
 
+    _updateVisibleDesktop() {
+        if (!this._intellihideIsEnabled)
+            return;
+
+        const { desktopIconsUsableArea } = DockManager.getDefault();
+        if (this._position === St.Side.BOTTOM)
+            desktopIconsUsableArea.setMargins(this._monitorIndex, 0, this._box.height, 0, 0);
+        else if (this._position === St.Side.TOP)
+            desktopIconsUsableArea.setMargins(this._monitorIndex, this._box.height, 0, 0, 0);
+        else if (this._position === St.Side.RIGHT)
+            desktopIconsUsableArea.setMargins(this._monitorIndex, 0, 0, 0, this._box.width);
+        else if (this._position === St.Side.LEFT)
+            desktopIconsUsableArea.setMargins(this._monitorIndex, 0, 0, this._box.width, 0);
+    }
+
     _updateStaticBox() {
         this.staticBox.init_rect(
             this.x + this._slider.x - (this._position == St.Side.RIGHT ? this._box.width : 0),
@@ -1111,6 +1130,7 @@ var DockedDash = GObject.registerClass({
         );
 
         this._intellihide.updateTargetBox(this.staticBox);
+        this._updateVisibleDesktop();
     }
 
     _removeAnimations() {
@@ -1545,6 +1565,7 @@ var DockManager = class DashToDock_DockManager {
         this._vfuncInjections = new Utils.VFuncInjectionsHandler(this);
         this._propertyInjections = new Utils.PropertyInjectionsHandler(this);
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
+        this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass();
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
 
@@ -2201,6 +2222,7 @@ var DockManager = class DashToDock_DockManager {
         // Remove extra features
         this._workspaceIsolation.destroy();
         this._keyboardShortcuts.destroy();
+        this._desktopIconsUsableArea.resetMargins();
 
         // Delete all docks
         this._allDocks.forEach(d => d.destroy());
@@ -2312,6 +2334,8 @@ var DockManager = class DashToDock_DockManager {
         this._settings = null;
         this._oldDash = null;
 
+        this._desktopIconsUsableArea.destroy();
+        this._desktopIconsUsableArea = null;
         Me.imports.extension.dockManager = null;
     }
 
