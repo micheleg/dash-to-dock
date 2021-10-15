@@ -246,7 +246,7 @@ var DockedDash = GObject.registerClass({
         this._slider = new DashSlideContainer({
             monitor_index: this._monitor.index,
             side: this._position,
-            slide_x: 0,
+            slide_x: Main.layoutManager._startingUp ? 0 : 1,
             ...(this._isHorizontal ? {
                 x_align: Clutter.ActorAlign.CENTER,
             } : {
