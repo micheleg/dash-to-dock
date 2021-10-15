@@ -279,7 +279,7 @@ var DockedDash = GObject.registerClass({
         this._slider = new DashSlideContainer({
             monitor_index: this._monitor.index,
             side: this._position,
-            slide_x: 0,
+            slide_x: Main.layoutManager._startingUp ? 0 : 1,
             ...(this._isHorizontal ? {
                 x_align: Clutter.ActorAlign.CENTER,
             } : {
@@ -1966,14 +1966,12 @@ var DockManager = class DashToDock_DockManager {
 
         const { ControlsManager, ControlsManagerLayout } = OverviewControls;
 
-        this._prepareStartupAnimation();
         if (Main.layoutManager._startingUp) {
+            this._prepareStartupAnimation();
             let id = Main.layoutManager.connect('startup-complete', () => {
                 this._runStartupAnimation();
                 Main.layoutManager.disconnect(id);
             });
-        } else {
-            this._runStartupAnimation();
         }
 
         const maybeAdjustBoxToDock = box => {
