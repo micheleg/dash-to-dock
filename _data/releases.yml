@@ -1,3 +1,24 @@
+- version: 70
+  date: 17-10-2021
+  shell_version: ["40"]
+  zip_url: https://extensions.gnome.org/extension-data/dash-to-dockmicxgx.gmail.com.v70.shell-extension.zip
+  notes:
+    - Introducing support for Gnome Shell 40 and dropping support for previous versions.
+
+- version: 69
+  date: 04-10-2020
+  shell_version: ["3.36", "3.38"]
+  zip_url: https://extensions.gnome.org/extension-data/dash-to-dockmicxgx.gmail.com.v69.shell-extension.zip
+  notes:
+    - Introducing support for Gnome Shell 3.38.
+
+- version: 68
+  date: 20-04-2020
+  shell_version: ["3.36"]
+  zip_url: https://extensions.gnome.org/extension-data/dash-to-dockmicxgx.gmail.com.v68.shell-extension.zip
+  notes:
+    - Introducing support for Gnome Shell 3.36 and dropping support for previous versions.
+
 - version: 67
   date: 06-10-2019
   shell_version: ["3.34"]
