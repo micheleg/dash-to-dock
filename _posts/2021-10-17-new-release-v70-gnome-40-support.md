@@ -2,7 +2,7 @@
 layout: post
 title: "v70: new release available (introducing support for GNOME Shell 40)"
 author: Michele
-date: Sun 17 Oct 20:21:01 BST 2020
+date: Sun 17 Oct 20:21:01 BST 2021
 category: Release
 ---
 
