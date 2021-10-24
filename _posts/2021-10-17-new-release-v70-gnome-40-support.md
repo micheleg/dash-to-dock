@@ -22,4 +22,4 @@ Most credits for this release go to [Marco Trevisan](https://github.com/3v1n0) a
 
 **Release notes (v70)**
 
-- Introducing support for Gnome Shell 3.34 and dropping support for previous versions.
+- Introducing support for Gnome Shell 40 and dropping support for previous versions.
