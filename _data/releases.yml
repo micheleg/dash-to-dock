@@ -1,3 +1,10 @@
+- version: 71
+  date: 24-10-2021
+  shell_version: ["40", "41"]
+  zip_url: https://extensions.gnome.org/extension-data/dash-to-dockmicxgx.gmail.com.v71.shell-extension.zip
+  notes:
+    - Introducing support for Gnome Shell 40 and dropping support for previous versions.
+
 - version: 70
   date: 17-10-2021
   shell_version: ["40"]
