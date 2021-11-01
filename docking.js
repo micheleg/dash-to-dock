@@ -1448,31 +1448,20 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._injectionsHandler = new Utils.InjectionsHandler();
 
-        this._signalsHandler.add([
-            settings,
-            'changed::isolate-workspaces',
-            () => {
-                    DockManager.allDocks.forEach((dock) =>
-                        dock.dash.resetAppIcons());
-                    if (settings.get_boolean('isolate-workspaces') ||
-                        settings.get_boolean('isolate-monitors'))
-                        this._enable.bind(this)();
-                    else
-                        this._disable.bind(this)();
-            }
-        ],[
-            settings,
-            'changed::isolate-monitors',
-            () => {
-                    DockManager.allDocks.forEach((dock) =>
-                        dock.dash.resetAppIcons());
-                    if (settings.get_boolean('isolate-workspaces') ||
-                        settings.get_boolean('isolate-monitors'))
-                        this._enable.bind(this)();
-                    else
-                        this._disable.bind(this)();
-            }
-        ]);
+        const updateAllDocks = () => {
+            DockManager.allDocks.forEach((dock) =>
+                dock.dash.resetAppIcons());
+            if (settings.get_boolean('isolate-workspaces') ||
+                settings.get_boolean('isolate-monitors'))
+                this._enable.bind(this)();
+            else
+                this._disable.bind(this)();
+        };
+        this._signalsHandler.add(
+            [ settings, 'changed::isolate-workspaces', updateAllDocks ],
+            [ settings, 'changed::show-urgent-windows', updateAllDocks ],
+            [ settings, 'changed::isolate-monitors', updateAllDocks ]
+        );
 
         if (settings.get_boolean('isolate-workspaces') ||
             settings.get_boolean('isolate-monitors'))
@@ -1487,15 +1476,13 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
         this._disable();
 
         DockManager.allDocks.forEach((dock) => {
-            this._signalsHandler.addWithLabel('isolation', [
-                global.display,
-                'restacked',
-                dock.dash._queueRedisplay.bind(dock.dash)
-            ], [
-                global.window_manager,
-                'switch-workspace',
-                dock.dash._queueRedisplay.bind(dock.dash)
-            ]);
+            this._signalsHandler.addWithLabel(
+                'isolation',
+                [ global.display, 'restacked', dock.dash._queueRedisplay.bind(dock.dash) ],
+                [ global.display, 'window-marked-urgent', dock.dash._queueRedisplay.bind(dock.dash) ],
+                [ global.display, 'window-demands-attention', dock.dash._queueRedisplay.bind(dock.dash) ],
+                [ global.window_manager, 'switch-workspace', dock.dash._queueRedisplay.bind(dock.dash) ]
+            );
 
             // This last signal is only needed for monitor isolation, as windows
             // might migrate from one monitor to another without triggering 'restacked'

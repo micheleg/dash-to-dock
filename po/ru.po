@@ -223,6 +223,10 @@ msgid "Isolate workspaces."
 msgstr "Для текущего рабочего стола."
 
 #: Settings.ui.h:39
+msgid "Show urgent windows despite current workspace."
+msgstr "Показывать срочные окна независимо от текущего рабочего стола."
+
+#: Settings.ui.h:39
 msgid "Isolate monitors."
 msgstr "Изолировать мониторы."
 

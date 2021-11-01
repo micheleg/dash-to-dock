@@ -576,6 +576,10 @@ var Settings = GObject.registerClass({
             this._builder.get_object('application_button_isolation_button'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-urgent-windows',
+            this._builder.get_object('application_button_urgent_button'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('isolate-monitors',
             this._builder.get_object('application_button_monitor_isolation_button'),
             'active',
