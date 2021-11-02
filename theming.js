@@ -174,7 +174,7 @@ var ThemeManager = class DashToDock_ThemeManager {
             if (settings.get_enum('transparency-mode') == TransparencyMode.FIXED) {
                 newAlpha = settings.get_double('background-opacity');
                 this._customizedBackground =
-                    `rgba(${color.red}, ${color.blue}, ${color.green}, ${newAlpha})`;
+                    `rgba(${color.red}, ${color.green}, ${color.blue}, ${newAlpha})`;
             } else {
                 this._customizedBackground = backgroundColor;
             }
