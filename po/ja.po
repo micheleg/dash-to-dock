@@ -1,4 +1,4 @@
-# Dash to Dock master ja.po
+# Floating Dock master ja.po
 # Copyright (C) 2013-2017, 2019-2020 THE dash-to-dock'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the dash-to-dock package.
 # Jiro Matsuzawa <jmatsuzawa@gnome.org>, 2013.
@@ -59,8 +59,8 @@ msgstr "%d 個のウィンドウを終了"
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1134
 #, javascript-format
-msgid "Dash to Dock %s"
-msgstr "Dash to Dock の%s"
+msgid "Floating Dock %s"
+msgstr "Floating Dock の%s"
 
 #: appIcons.js:1134
 msgid "Settings"

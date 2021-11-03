@@ -70,8 +70,8 @@ msgstr "Wszystkie okna"
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1126
 #, javascript-format
-msgid "Dash to Dock %s"
-msgstr "%s Dash to Dock"
+msgid "Floating Dock %s"
+msgstr "%s Floating Dock"
 
 #: locations.js:65
 msgid "Trash"

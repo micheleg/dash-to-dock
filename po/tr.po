@@ -74,8 +74,8 @@ msgstr "Tüm Pencereler"
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1126
 #, javascript-format
-msgid "Dash to Dock %s"
-msgstr "Dash to Dock %sı"
+msgid "Floating Dock %s"
+msgstr "Floating Dock %sı"
 
 #: Settings.ui.h:1
 msgid "When set to minimize, double clicking minimizes all the windows of the application."

@@ -7,7 +7,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Dash to Dock\n"
+"Project-Id-Version: Floating Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-04 12:35+0100\n"
 "PO-Revision-Date: 2017-09-29 21:48+0300\n"

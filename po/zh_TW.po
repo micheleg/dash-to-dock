@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Dash to Dock\n"
+"Project-Id-Version: Floating Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-23 23:49+0800\n"
 "PO-Revision-Date: 2020-05-24 00:08+0800\n"
@@ -71,8 +71,8 @@ msgstr "結束 %d 個視窗"
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1134
 #, javascript-format
-msgid "Dash to Dock %s"
-msgstr "Dash to Dock %s"
+msgid "Floating Dock %s"
+msgstr "Floating Dock %s"
 
 #: locations.js:65
 msgid "Trash"

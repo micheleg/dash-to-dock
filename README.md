@@ -19,9 +19,9 @@ now you can edit the margin and border-radius from the dock
 
 ### Build Dependencies
 
-To compile the stylesheet you'll need an implementation of SASS. Dash to Dock supports `dart-sass` (`sass`), `sassc`, and `ruby-sass`. Every distro should have at least one of these implementations, we recommend using `dart-sass` (`sass`) or `sassc` over `ruby-sass` as `ruby-sass` is deprecated.
+To compile the stylesheet you'll need an implementation of SASS. Floating Dock supports `dart-sass` (`sass`), `sassc`, and `ruby-sass`. Every distro should have at least one of these implementations, we recommend using `dart-sass` (`sass`) or `sassc` over `ruby-sass` as `ruby-sass` is deprecated.
 
-By default, Dash to Dock will attempt to build with `dart-sass`. To change this behavior set the `SASS` environment variable to either `sassc` or `ruby`.
+By default, Floating Dock will attempt to build with `dart-sass`. To change this behavior set the `SASS` environment variable to either `sassc` or `ruby`.
 
 ```bash
 export SASS=sassc
@@ -46,5 +46,5 @@ make install
 Bugs should be reported to the Github bug tracker [https://github.com/micheleg/dash-to-dock/issues](https://github.com/micheleg/dash-to-dock/issues).
 
 ## License
-Dash to Dock Gnome Shell extension is distributed under the terms of the GNU General Public License,
+Floating Dock Gnome Shell extension is distributed under the terms of the GNU General Public License,
 version 2 or later. See the COPYING file for details.
