@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Dash to Dock\n"
+"Project-Id-Version: Floating Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-05-16 13:48+0200\n"
 "PO-Revision-Date: 2020-05-16 13:54+0200\n"
@@ -71,8 +71,8 @@ msgstr "Ukončit %d oken"
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1134
 #, javascript-format
-msgid "Dash to Dock %s"
-msgstr "%s Dash to Docku"
+msgid "Floating Dock %s"
+msgstr "%s Floating Docku"
 
 #: locations.js:65
 msgid "Trash"

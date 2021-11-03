@@ -3,11 +3,11 @@
     "40",
     "41"
 ],
-"uuid": "dash-to-dock@micxgx.gmail.com",
-"name": "Dash to Dock",
-"description": "A dock for the Gnome Shell. This extension moves the dash out of the overview transforming it in a dock for an easier launching of applications and a faster switching between windows and desktops. Side and bottom placement options are available.",
+"uuid": "floating-dock@nandoferreira_prof@hotmail.com",
+"name": "Floating Dock",
+"description": "A Custom Floating Dock fork, now you can change the margin and border radius of the dock.",
 "original-author": "micxgx@gmail.com",
-"url": "https://micheleg.github.io/dash-to-dock/",
-"gettext-domain": "dashtodock",
-"version": 71
+"url": "https://github.com/fer-moreira/floating-dock",
+"gettext-domain": "floatingdock",
+"version": 3
 }

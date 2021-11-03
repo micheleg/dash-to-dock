@@ -214,6 +214,9 @@ var Settings = GObject.registerClass({
         this._dock_size_timeout = 0;
         this._icon_size_timeout = 0;
         this._opacity_timeout = 0;
+        this._border_radius_timeout = 0;
+        this._floating_margin_timeout = 0;
+
 
         this._monitorsConfig = new MonitorsConfig();
         this._bindSettings();
@@ -235,6 +238,46 @@ var Settings = GObject.registerClass({
 
         const preferredMonitor = this._monitors[combo.get_active()].index;
         this._settings.set_int('preferred-monitor', preferredMonitor);
+    }
+
+    // custom_radius_scale_format_value_cb(scale, value) {
+    //     return value + ' px'
+    // }
+
+    // custom_margin_scale_format_value_cb(scale, value) {
+    //     return value + ' px';
+    // }
+
+    custom_radius_scale_value_changed_cb(scale) {
+        // Avoid settings the size consinuosly
+        if (this._border_radius_timeout > 0)
+            GLib.source_remove(this._border_radius_timeout);
+
+        this._border_radius_timeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+            this._settings.set_int('border-radius', scale.get_value());
+            this._border_radius_timeout = 0;
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+    
+    custom_margin_scale_value_changed_cb(scale) {
+        // Avoid settings the size consinuosly
+        if (this._floating_margin_timeout > 0)
+            GLib.source_remove(this._floating_margin_timeout);
+
+        this._floating_margin_timeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+            this._settings.set_int('floating-margin', scale.get_value());
+            this._floating_margin_timeout = 0;
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
+    custom_opacity_scale_value_changed_cb(scale) {
+        // Avoid settings the opacity consinuosly as it's change is animated
+        if (this._opacity_timeout > 0)
+            GLib.source_remove(this._opacity_timeout);
     }
 
     position_top_button_toggled_cb(button) {
@@ -273,6 +316,34 @@ var Settings = GObject.registerClass({
                     return GLib.SOURCE_REMOVE;
                 }
             });
+    }
+
+    custom_opacity_scale_format_value_cb(scale, value) {
+        return Math.round(value * 100) + ' %';
+    }
+
+
+    min_opacity_scale_format_value_cb(scale, value) {
+        return Math.round(value * 100) + ' %';
+    }
+
+    max_opacity_scale_format_value_cb(scale, value) {
+        return Math.round(value * 100) + ' %';
+    }
+
+    all_windows_radio_button_toggled_cb(button) {
+        if (button.get_active())
+            this._settings.set_enum('intellihide-mode', 0);
+    }
+
+    focus_application_windows_radio_button_toggled_cb(button) {
+        if (button.get_active())
+            this._settings.set_enum('intellihide-mode', 1);
+    }
+
+    maximized_windows_radio_button_toggled_cb(button) {
+        if (button.get_active())
+            this._settings.set_enum('intellihide-mode', 2);
     }
 
     icon_size_scale_value_changed_cb(scale) {
@@ -526,6 +597,18 @@ var Settings = GObject.registerClass({
 
         });
 
+        // Custom Margin Formatter
+        const custom_margin_scale = this._builder.get_object('custom_margin_scale');
+        custom_margin_scale.set_format_value_func((_, value) => {
+            return value + ' px';
+        });
+        
+        // Custom Border Formatter
+        const custom_radius_scale = this._builder.get_object('custom_radius_scale');
+        custom_radius_scale.set_format_value_func((_, value) => {
+            return value + ' px';
+        });
+
         // size options
         const dock_size_scale = this._builder.get_object('dock_size_scale');
         dock_size_scale.set_value(this._settings.get_double('height-fraction'));
@@ -543,6 +626,8 @@ var Settings = GObject.registerClass({
             return value + ' px';
         });
         this._builder.get_object('preview_size_scale').set_value(this._settings.get_double('preview-size-scale'));
+
+        this._builder.get_object('')
 
         // Corrent for rtl languages
         if (this._rtl) {
@@ -899,6 +984,12 @@ var Settings = GObject.registerClass({
             }
         );
 
+
+        this._builder.get_object('custom_radius_scale').set_value(this._settings.get_int('border-radius'));
+        
+        this._builder.get_object('custom_margin_scale').set_value(this._settings.get_int('floating-margin'));
+
+
         const custom_opacity_scale = this._builder.get_object('custom_opacity_scale');
         custom_opacity_scale.set_value(this._settings.get_double('background-opacity'));
         custom_opacity_scale.set_format_value_func((_, value) => {
@@ -927,6 +1018,7 @@ var Settings = GObject.registerClass({
                 this._builder.get_object('dynamic_opacity_button').set_sensitive(true);
             }
         });
+
 
         // Create dialog for transparency advanced settings
         this._builder.get_object('dynamic_opacity_button').connect('clicked', () => {
@@ -991,10 +1083,7 @@ var Settings = GObject.registerClass({
             this._builder.get_object('unity_backlit_items_switch'),
             'active', Gio.SettingsBindFlags.DEFAULT
         );
-
-        this._settings.bind('force-straight-corner',
-            this._builder.get_object('force_straight_corner_switch'),
-            'active', Gio.SettingsBindFlags.DEFAULT);
+        
 
         // About Panel
 

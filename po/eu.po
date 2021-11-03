@@ -1,5 +1,5 @@
-# Dash to Dock Basque translation.
-# This file is distributed under the same license as the Dash to Dock package.
+# Floating Dock Basque translation.
+# This file is distributed under the same license as the Floating Dock package.
 # Ibai Oihanguren Sala <ibai@oihanguren.com>, 2020.
 #
 msgid ""
@@ -63,8 +63,8 @@ msgstr "Leiho guztiak"
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1119
 #, javascript-format
-msgid "Dash to Dock %s"
-msgstr "Dash to Dock %s"
+msgid "Floating Dock %s"
+msgstr "Floating Dock %s"
 
 #: locations.js:65
 msgid "Trash"

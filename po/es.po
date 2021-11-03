@@ -1,5 +1,5 @@
-# Dash to Dock spanish translation.
-# This file is distributed under the same license as the Dash to Dock package.
+# Floating Dock spanish translation.
+# This file is distributed under the same license as the Floating Dock package.
 # Hugo Olabera <hugolabe@gmail.com>, 2015.
 #
 msgid ""
@@ -61,8 +61,8 @@ msgstr "Todas las ventanas"
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1092
 #, javascript-format
-msgid "Dash to Dock %s"
-msgstr "%s • Dash to Dock"
+msgid "Floating Dock %s"
+msgstr "%s • Floating Dock"
 
 #: Settings.ui.h:1
 msgid ""

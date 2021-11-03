@@ -184,13 +184,32 @@ var DockAbstractAppIcon = GObject.registerClass({
                 }
             );
         });
-
+''
         this._updateState();
         this._numberOverlay();
         this.updateIconGeometry();
 
         this._previewMenuManager = null;
         this._previewMenu = null;
+
+
+        let effector_keys = [
+            'border-radius',
+        ];
+        
+        this._signalsHandler.add(...effector_keys.map(key => [
+            Docking.DockManager.settings,
+            `changed::${key}`,
+            () => this.updateIconTheming(),
+        ]));
+    }
+
+    updateIconTheming() 
+    {
+        let settings = Docking.DockManager.settings;
+        this._border_radius = settings.get_int('border-radius');
+        let newStyle = 'border-radius: ' + this._border_radius + "px;";
+        this.get_children()[0].set_style(newStyle);
     }
 
     _onDestroy() {
@@ -1351,7 +1370,7 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
 
         /* Translators: %s is "Settings", which is automatically translated. You
            can also translate the full message if this fits better your language. */
-        let name = __('Dash to Dock %s').format(_('Settings'))
+        let name = __('Floating Dock %s').format(_('Settings'))
         let item = this._appendMenuItem(name);
 
         item.connect('activate', function () {

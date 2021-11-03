@@ -1,22 +1,26 @@
-# Dash to Dock
-![screenshot](https://github.com/micheleg/dash-to-dock/raw/master/media/screenshot.jpg)
+# Floating Dock
 
-## A dock for the GNOME Shell
-This extension enhances the dash moving it out of the overview and transforming it in a dock for an easier launching of applications and a faster switching between windows and desktops without having to leave the desktop view.
+Floating dock is just a dash-to-dock fork, originaly made by Michele Gaio
 
-[<img src="https://micheleg.github.io/dash-to-dock/media/get-it-on-ego.png" height="100">](https://extensions.gnome.org/extension/307/dash-to-dock)
+now you can edit the margin and border-radius from the dock
 
-For additional installation instructions and more information visit [https://micheleg.github.io/dash-to-dock/](https://micheleg.github.io/dash-to-dock/).
+![Floating Dock](./media/github_preview.png)
 
-## Installation from source
 
-The extension can be installed directly from source, either for the convenience of using git or to test the latest development version. Clone the desired branch with git
+# TODO
+
+- add hook to Dash to Panel
+- add abillity to use blur-provider
+- option to disable notification bubble
+- option to remove the application indicators
+- More customization like, border-radius of app icon, zoom on hover icons
+
 
 ### Build Dependencies
 
-To compile the stylesheet you'll need an implementation of SASS. Dash to Dock supports `dart-sass` (`sass`), `sassc`, and `ruby-sass`. Every distro should have at least one of these implementations, we recommend using `dart-sass` (`sass`) or `sassc` over `ruby-sass` as `ruby-sass` is deprecated.
+To compile the stylesheet you'll need an implementation of SASS. Floating Dock supports `dart-sass` (`sass`), `sassc`, and `ruby-sass`. Every distro should have at least one of these implementations, we recommend using `dart-sass` (`sass`) or `sassc` over `ruby-sass` as `ruby-sass` is deprecated.
 
-By default, Dash to Dock will attempt to build with `dart-sass`. To change this behavior set the `SASS` environment variable to either `sassc` or `ruby`.
+By default, Floating Dock will attempt to build with `dart-sass`. To change this behavior set the `SASS` environment variable to either `sassc` or `ruby`.
 
 ```bash
 export SASS=sassc
@@ -31,15 +35,15 @@ Clone the repository or download the branch from github. A simple Makefile is in
 Next use `make` to install the extension into your home directory. A Shell reload is required `Alt+F2 r Enter` under Xorg or under Wayland you may have to logout and login. The extension has to be enabled  with *gnome-extensions-app* (GNOME Extensions) or with *dconf*.
 
 ```bash
-git clone https://github.com/micheleg/dash-to-dock.git
+git clone https://github.com/fer-moreira/floating-dock.git
 make
 make install
 ```
 
 ## Bug Reporting
 
-Bugs should be reported to the Github bug tracker [https://github.com/micheleg/dash-to-dock/issues](https://github.com/micheleg/dash-to-dock/issues).
+Bugs should be reported to the Github bug tracker [https://github.com/fer-moreira/floating-dock/issues](https://github.com/fer-moreira/floating-dock/issues).
 
 ## License
-Dash to Dock Gnome Shell extension is distributed under the terms of the GNU General Public License,
+Floating Dock Gnome Shell extension is distributed under the terms of the GNU General Public License,
 version 2 or later. See the COPYING file for details.

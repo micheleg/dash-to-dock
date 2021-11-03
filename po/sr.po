@@ -63,7 +63,7 @@ msgstr "Сви прозори"
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1450
 #, javascript-format
-msgid "Dash to Dock %s"
+msgid "Floating Dock %s"
 msgstr "%s плоче/панела"
 
 #: Settings.ui.h:1

@@ -156,6 +156,18 @@
       <summary>Maximum dash icon size</summary>
       <description>Set the allowed maximum dash icon size. Allowed range: 16..64.</description>
     </key>
+
+    <key type="i" name="border-radius">
+      <default>30</default>
+      <summary>Dock border radius</summary>
+      <description>Set floating dock border radius.</description>
+    </key>
+    <key type="i" name="floating-margin">
+      <default>4</default>
+      <summary>Dash floating distance from the edge</summary>
+      <description>Set floating dock margin.</description>
+    </key>
+    
     <key type="d" name="preview-size-scale">
       <default>0</default>
       <summary>Preview size scale</summary>
@@ -551,11 +563,6 @@
       <description>
         Keybinding to either show or launch the 10th application in the dash.
       </description>
-    </key>
-    <key name="force-straight-corner" type="b">
-      <default>false</default>
-      <summary>Force straight corners in dash</summary>
-      <description>Make the borders in the dash non rounded</description>
     </key>
     <key name="unity-backlit-items" type="b">
       <default>false</default>
