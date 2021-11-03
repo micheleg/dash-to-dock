@@ -64,7 +64,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
     destroy() {
         this._cancellable.cancel();
         this._signalsHandler.destroy();
-        this._proxy.run_dispose();
+        this._proxy = null;
     }
 
     /**
