@@ -589,7 +589,7 @@ var Removables = class DashToDock_Removables {
             return;
         }
 
-        let escapedUri = mount.get_root().get_uri()
+        const escapedUri = mount.get_default_location().get_uri()
         let uri = GLib.uri_unescape_string(escapedUri, null);
 
         let mountKeys = new GLib.KeyFile();

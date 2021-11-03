@@ -18,10 +18,12 @@ const N__ = function(e) { return e };
 
 const AppDisplay = imports.ui.appDisplay;
 const AppFavorites = imports.ui.appFavorites;
+const BoxPointer = imports.ui.boxpointer;
 const Dash = imports.ui.dash;
 const DND = imports.ui.dnd;
 const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
+const ParentalControlsManager = imports.misc.parentalControlsManager;
 const PopupMenu = imports.ui.popupMenu;
 const Util = imports.misc.util;
 const Workspace = imports.ui.workspace;
@@ -185,6 +187,7 @@ var DockAbstractAppIcon = GObject.registerClass({
 ''
         this._updateState();
         this._numberOverlay();
+        this.updateIconGeometry();
 
         this._previewMenuManager = null;
         this._previewMenu = null;
@@ -400,7 +403,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         if (!this._menu) {
             this._menu = new DockAppIconMenu(this);
             this._menu.connect('activate-window', (menu, window) => {
-                this.activateWindow(window);
+                Main.activateWindow(window);
             });
             this._menu.connect('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
@@ -799,8 +802,8 @@ var DockAbstractAppIcon = GObject.registerClass({
     //This closes all windows of the app.
     closeAllWindows() {
         let windows = this.getInterestingWindows();
-        for (let i = 0; i < windows.length; i++)
-            windows[i].delete(global.get_current_time());
+        const time = global.get_current_time();
+        windows.forEach(w => w.delete(time));
     }
 
     _cycleThroughWindows(reversed) {
@@ -917,8 +920,10 @@ function makeAppIcon(app, monitorIndex, iconAnimator) {
     return new DockAppIcon(app, monitorIndex, iconAnimator);
 }
 
+let discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
+
 /**
- * Extend AppIconMenu
+ * DockAppIconMenu
  *
  * - set popup arrow side based on dash orientation
  * - Add close windows option based on quitfromdash extension
@@ -926,22 +931,31 @@ function makeAppIcon(app, monitorIndex, iconAnimator) {
  * - Add open windows thumbnails instead of list
  * - update menu when application windows change
  */
-const DockAppIconMenu = class DockAppIconMenu extends AppDisplay.AppIconMenu {
+const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
 
     constructor(source) {
-        let side = Utils.getPosition();
-
-        // Damm it, there has to be a proper way of doing this...
-        // As I can't call the parent parent constructor (?) passing the side
-        // parameter, I overwite what I need later
-        super(source);
-
-        // Change the initialized side where required.
-        this._arrowSide = side;
-        this._boxPointer._arrowSide = side;
-        this._boxPointer._userArrowSide = side;
+        super(source, 0.5, Utils.getPosition());
 
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
+
+        // We want to keep the item hovered while the menu is up
+        this.blockSourceEvents = true;
+
+        this._source = source;
+        this._parentalControlsManager = ParentalControlsManager.getDefault();
+
+        this.actor.add_style_class_name('app-menu');
+        this.actor.add_style_class_name('app-well-menu');
+        this.actor.add_style_class_name('dock-app-menu');
+
+        // Chain our visibility and lifecycle to that of the source
+        this._signalsHandler.add(source, 'notify::mapped', () => {
+            if (!source.mapped)
+                this.close();
+        });
+        source.connect('destroy', () => this.destroy());
+
+        Main.uiGroup.add_actor(this.actor);
 
         const { remoteModel } = Docking.DockManager.getDefault();
         const remoteModelApp = remoteModel?.lookupById(this._source?.app?.id);
@@ -965,8 +979,35 @@ const DockAppIconMenu = class DockAppIconMenu extends AppDisplay.AppIconMenu {
             ]);
         }
 
+        if (discreteGpuAvailable === undefined) {
+            const updateDiscreteGpuAvailable = () => {
+                const switcherooProxy = global.get_switcheroo_control();
+                if (switcherooProxy) {
+                    const prop = switcherooProxy.get_cached_property('HasDualGpu');
+                    discreteGpuAvailable = prop?.unpack() ?? false;
+                } else {
+                    discreteGpuAvailable = false;
+                }
+            }
+            updateDiscreteGpuAvailable();
+            global.connect('notify::switcheroo-control',
+                () => updateDiscreteGpuAvailable());
+        }
+    }
 
+    _appendSeparator() {
+        this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
+    }
 
+    _appendMenuItem(labelText) {
+        const item = new PopupMenu.PopupMenuItem(labelText);
+        this.addMenuItem(item);
+        return item;
+    }
+
+    popup(_activatingButton) {
+        this._rebuildMenu();
+        this.open(BoxPointer.PopupAnimation.FULL);
     }
 
     _rebuildMenu() {
@@ -979,97 +1020,113 @@ const DockAppIconMenu = class DockAppIconMenu extends AppDisplay.AppIconMenu {
             this._allWindowsMenuItem = new PopupMenu.PopupSubMenuMenuItem(__('All Windows'), false);
             this._allWindowsMenuItem.hide();
             this.addMenuItem(this._allWindowsMenuItem);
+        } else {
+            const windows = this._source.getInterestingWindows().filter(
+                w => !w.skip_taskbar);
 
-            if (!this._source.app.is_window_backed()) {
+            if (windows.length > 0) {
+                this.addMenuItem(
+                    /* Translators: This is the heading of a list of open windows */
+                    new PopupMenu.PopupSeparatorMenuItem(_('Open Windows')));
+            }
+
+            windows.forEach(window => {
+                let title = window.title
+                    ? window.title : this._source.app.get_name();
+                let item = this._appendMenuItem(title);
+                item.connect('activate', () => {
+                    this.emit('activate-window', window);
+                });
+            });
+        }
+
+        if (!this._source.app.is_window_backed()) {
+            this._appendSeparator();
+
+            let appInfo = this._source.app.get_app_info();
+            let actions = appInfo.list_actions();
+            if (this._source.app.can_open_new_window() &&
+                actions.indexOf('new-window') == -1) {
+                this._newWindowMenuItem = this._appendMenuItem(_('New Window'));
+                this._newWindowMenuItem.connect('activate', () => {
+                    if (this._source.app.state == Shell.AppState.STOPPED)
+                        this._source.animateLaunch();
+
+                    this._source.app.open_new_window(-1);
+                    this.emit('activate-window', null);
+                });
+                this._appendSeparator();
+            }
+
+            if (discreteGpuAvailable &&
+                this._source.app.state == Shell.AppState.STOPPED) {
+                const appPrefersNonDefaultGPU = appInfo.get_boolean('PrefersNonDefaultGPU');
+                const gpuPref = appPrefersNonDefaultGPU
+                    ? Shell.AppLaunchGpu.DEFAULT
+                    : Shell.AppLaunchGpu.DISCRETE;
+                this._onGpuMenuItem = this._appendMenuItem(appPrefersNonDefaultGPU
+                    ? _('Launch using Integrated Graphics Card')
+                    : _('Launch using Discrete Graphics Card'));
+                this._onGpuMenuItem.connect('activate', () => {
+                    this._source.animateLaunch();
+                    this._source.app.launch(0, -1, gpuPref);
+                    this.emit('activate-window', null);
+                });
+            }
+
+            for (let i = 0; i < actions.length; i++) {
+                let action = actions[i];
+                let item = this._appendMenuItem(appInfo.get_action_name(action));
+                item.connect('activate', (emitter, event) => {
+                    this._source.app.launch_action(action, event.get_time(), -1);
+                    this.emit('activate-window', null);
+                });
+            }
+
+            let canFavorite = global.settings.is_writable('favorite-apps') &&
+                (this._source instanceof DockAppIcon) &&
+                this._parentalControlsManager.shouldShowApp(this._source.app.app_info);
+
+            if (canFavorite) {
                 this._appendSeparator();
 
-                let appInfo = this._source.app.get_app_info();
-                let actions = appInfo.list_actions();
-                if (this._source.app.can_open_new_window() &&
-                    actions.indexOf('new-window') == -1) {
-                    this._newWindowMenuItem = this._appendMenuItem(_('New Window'));
-                    this._newWindowMenuItem.connect('activate', () => {
-                        if (this._source.app.state == Shell.AppState.STOPPED)
-                            this._source.animateLaunch();
+                let isFavorite = AppFavorites.getAppFavorites().isFavorite(this._source.app.get_id());
 
-                        this._source.app.open_new_window(-1);
-                        this.emit('activate-window', null);
-                    });
-                    this._appendSeparator();
-                }
-
-
-                if (AppDisplay.discreteGpuAvailable &&
-                    this._source.app.state == Shell.AppState.STOPPED &&
-                    actions.indexOf('activate-discrete-gpu') == -1) {
-                    this._onDiscreteGpuMenuItem = this._appendMenuItem(_('Launch using Dedicated Graphics Card'));
-                    this._onDiscreteGpuMenuItem.connect('activate', () => {
-                        if (this._source.app.state == Shell.AppState.STOPPED)
-                            this._source.animateLaunch();
-
-                        this._source.app.launch(0, -1, true);
-                        this.emit('activate-window', null);
-                    });
-                }
-
-                for (let i = 0; i < actions.length; i++) {
-                    let action = actions[i];
-                    let item = this._appendMenuItem(appInfo.get_action_name(action));
-                    item.connect('activate', (emitter, event) => {
-                        this._source.app.launch_action(action, event.get_time(), -1);
-                        this.emit('activate-window', null);
-                    });
-                }
-
-                let canFavorite = global.settings.is_writable('favorite-apps') &&
-                                  (this._source instanceof DockAppIcon);
-
-                if (canFavorite) {
-                    this._appendSeparator();
-
-                    let isFavorite = AppFavorites.getAppFavorites().isFavorite(this._source.app.get_id());
-
-                    if (isFavorite) {
-                        let item = this._appendMenuItem(_('Remove from Favorites'));
-                        item.connect('activate', () => {
-                            let favs = AppFavorites.getAppFavorites();
-                            favs.removeFavorite(this._source.app.get_id());
-                        });
-                    } else {
-                        let item = this._appendMenuItem(_('Add to Favorites'));
-                        item.connect('activate', () => {
-                            let favs = AppFavorites.getAppFavorites();
-                            favs.addFavorite(this._source.app.get_id());
-                        });
-                    }
-                }
-
-                if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop') &&
-                    (this._source instanceof DockAppIcon)) {
-                    this._appendSeparator();
-                    let item = this._appendMenuItem(_('Show Details'));
+                if (isFavorite) {
+                    let item = this._appendMenuItem(_('Remove from Favorites'));
                     item.connect('activate', () => {
-                        let id = this._source.app.get_id();
-                        let args = GLib.Variant.new('(ss)', [id, '']);
-                        Gio.DBus.get(Gio.BusType.SESSION, null,
-                            function(o, res) {
-                                let bus = Gio.DBus.get_finish(res);
-                                bus.call('org.gnome.Software',
-                                         '/org/gnome/Software',
-                                         'org.gtk.Actions', 'Activate',
-                                         GLib.Variant.new('(sava{sv})',
-                                                          ['details', [args], null]),
-                                         null, 0, -1, null, null);
-                                Main.overview.hide();
-                            });
+                        let favs = AppFavorites.getAppFavorites();
+                        favs.removeFavorite(this._source.app.get_id());
+                    });
+                } else {
+                    let item = this._appendMenuItem(_('Add to Favorites'));
+                    item.connect('activate', () => {
+                        let favs = AppFavorites.getAppFavorites();
+                        favs.addFavorite(this._source.app.get_id());
                     });
                 }
             }
-        } else {
-            if (super._rebuildMenu)
-                super._rebuildMenu();
-            else
-                super._redisplay();
+
+            if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop') &&
+                (this._source instanceof DockAppIcon)) {
+                this._appendSeparator();
+                let item = this._appendMenuItem(_('Show Details'));
+                item.connect('activate', () => {
+                    let id = this._source.app.get_id();
+                    let args = GLib.Variant.new('(ss)', [id, '']);
+                    Gio.DBus.get(Gio.BusType.SESSION, null,
+                        function(o, res) {
+                            let bus = Gio.DBus.get_finish(res);
+                            bus.call('org.gnome.Software',
+                                        '/org/gnome/Software',
+                                        'org.gtk.Actions', 'Activate',
+                                        GLib.Variant.new('(sava{sv})',
+                                                        ['details', [args], null]),
+                                        null, 0, -1, null, null);
+                            Main.overview.hide();
+                        });
+                });
+            }
         }
 
         // dynamic menu
@@ -1183,7 +1240,6 @@ const DockAppIconMenu = class DockAppIconMenu extends AppDisplay.AppIconMenu {
             }
     }
 };
-Signals.addSignalMethods(DockAppIconMenu.prototype);
 
 // Filter out unnecessary windows, for instance
 // nautilus desktop window.
