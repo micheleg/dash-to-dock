@@ -11,10 +11,9 @@ now you can edit the margin and border-radius from the dock
 
 - add hook to Dash to Panel
 - add abillity to use blur-provider
-[...] update to Gnome 40
 - option to disable notification bubble
 - option to remove the application indicators
-- refact the css from original dock
+- More customization like, border-radius of app icon, zoom on hover icons
 
 
 ### Build Dependencies
@@ -36,14 +35,14 @@ Clone the repository or download the branch from github. A simple Makefile is in
 Next use `make` to install the extension into your home directory. A Shell reload is required `Alt+F2 r Enter` under Xorg or under Wayland you may have to logout and login. The extension has to be enabled  with *gnome-extensions-app* (GNOME Extensions) or with *dconf*.
 
 ```bash
-git clone https://github.com/micheleg/dash-to-dock.git
+git clone https://github.com/fer-moreira/floating-dock.git
 make
 make install
 ```
 
 ## Bug Reporting
 
-Bugs should be reported to the Github bug tracker [https://github.com/micheleg/dash-to-dock/issues](https://github.com/micheleg/dash-to-dock/issues).
+Bugs should be reported to the Github bug tracker [https://github.com/fer-moreira/floating-dock/issues](https://github.com/fer-moreira/floating-dock/issues).
 
 ## License
 Floating Dock Gnome Shell extension is distributed under the terms of the GNU General Public License,
