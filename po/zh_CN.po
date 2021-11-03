@@ -7,7 +7,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Dash to Dock\n"
+"Project-Id-Version: Floating Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-03-23 15:33+0800\n"
 "PO-Revision-Date: 2017-08-03 22:49+0800\n"
@@ -68,8 +68,8 @@ msgstr "所有窗口"
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1125
 #, javascript-format
-msgid "Dash to Dock %s"
-msgstr "Dash to Dock %s"
+msgid "Floating Dock %s"
+msgstr "Floating Dock %s"
 
 #: locations.js:65
 msgid "Trash"

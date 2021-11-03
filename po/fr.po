@@ -5,7 +5,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Dash to Dock\n"
+"Project-Id-Version: Floating Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-12-07 16:40+0900\n"
 "PO-Revision-Date: 2019-12-07 16:52+0900\n"
@@ -65,8 +65,8 @@ msgstr "Toutes les fenêtres"
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1127
 #, javascript-format
-msgid "Dash to Dock %s"
-msgstr "Dash to Dock %s"
+msgid "Floating Dock %s"
+msgstr "Floating Dock %s"
 
 #: Settings.ui.h:1
 msgid ""

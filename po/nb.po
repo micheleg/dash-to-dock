@@ -1,4 +1,4 @@
-# Norwegian Bokmål translation for Dash to Dock.
+# Norwegian Bokmål translation for Floating Dock.
 # Copyright (C) 2018 Michele
 # This file is distributed under the same license as the dash-to-dock package.
 # Harald H. <harald@fsfe.org>, 2018.
@@ -67,8 +67,8 @@ msgstr "Alle vinduer"
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1069
 #, javascript-format
-msgid "Dash to Dock %s"
-msgstr "Dash to Dock %s"
+msgid "Floating Dock %s"
+msgstr "Floating Dock %s"
 
 #: Settings.ui.h:1
 msgid ""
