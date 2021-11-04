@@ -354,3 +354,15 @@ $osd_fg_color: #eeeeec;
         background-size: contain;
     }
 }
+
+.app-well-app {
+    border-radius: 13px; 
+  }
+  
+.app-well-app * {
+    border-radius: 13px; 
+}
+  
+.show-apps * {
+    border-radius: 13px;
+}
