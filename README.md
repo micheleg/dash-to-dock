@@ -4,8 +4,9 @@ Floating dock is just a dash-to-dock fork, originaly made by Michele Gaio
 
 now you can edit the margin and border-radius from the dock
 
-![Floating Dock](./media/github_preview.png)
-
+![Floating Dock Left](./media/dock_left.png)
+<br></br>
+![Floating Dock Bottom](./media/dock_bottom.png)
 
 # TODO
 
