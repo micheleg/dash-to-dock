@@ -1230,12 +1230,13 @@ function getInterestingWindows(windows, monitorIndex) {
     // When using workspace isolation, we filter out windows
     // that are neither in the current workspace nor marked urgent
     if (settings.get_boolean('isolate-workspaces')) {
-		const showUrgent = settings.get_boolean('show-urgent-windows');
+        const showUrgent = settings.get_boolean('workspace-agnostic-urgent-windows');
+        const activeWorkspace = global.workspace_manager.get_active_workspace_index();
         windows = windows.filter(function(w) {
-            return w.get_workspace().index() == global.workspace_manager.get_active_workspace_index()
+            return w.get_workspace().index() == activeWorkspace
                 || (showUrgent && (w.urgent || w.demandsAttention || w._manualUrgency));
         });
-	}
+    }
 
     if (settings.get_boolean('isolate-monitors'))
         windows = windows.filter(function(w) {

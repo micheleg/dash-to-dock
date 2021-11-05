@@ -206,7 +206,7 @@
       <summary>Provide workspace isolation</summary>
       <description>Dash shows only windows from the currentworkspace</description>
     </key>
-    <key type="b" name="show-urgent-windows">
+    <key type="b" name="workspace-agnostic-urgent-windows">
       <default>true</default>
       <summary>Show urgent windows on each workspace</summary>
       <description>Show or hide urgent windows on each workspace in the dash</description>

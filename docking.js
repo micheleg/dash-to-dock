@@ -1459,7 +1459,7 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
         };
         this._signalsHandler.add(
             [ settings, 'changed::isolate-workspaces', updateAllDocks ],
-            [ settings, 'changed::show-urgent-windows', updateAllDocks ],
+            [ settings, 'changed::workspace-agnostic-urgent-windows', updateAllDocks ],
             [ settings, 'changed::isolate-monitors', updateAllDocks ]
         );
 
@@ -1478,10 +1478,10 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
         DockManager.allDocks.forEach((dock) => {
             this._signalsHandler.addWithLabel(
                 'isolation',
-                [ global.display, 'restacked', dock.dash._queueRedisplay.bind(dock.dash) ],
-                [ global.display, 'window-marked-urgent', dock.dash._queueRedisplay.bind(dock.dash) ],
-                [ global.display, 'window-demands-attention', dock.dash._queueRedisplay.bind(dock.dash) ],
-                [ global.window_manager, 'switch-workspace', dock.dash._queueRedisplay.bind(dock.dash) ]
+                [ global.display, 'restacked', () => dock.dash._queueRedisplay() ],
+                [ global.display, 'window-marked-urgent', () => dock.dash._queueRedisplay() ],
+                [ global.display, 'window-demands-attention', () => dock.dash._queueRedisplay() ],
+                [ global.window_manager, 'switch-workspace', () => dock.dash._queueRedisplay() ]
             );
 
             // This last signal is only needed for monitor isolation, as windows
