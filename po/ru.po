@@ -1,5 +1,6 @@
 # Russian translation for dash-to-dock GNOME Shell extension
 # Ivan Komaritsyn <vantu5z@mail.ru>, 2015-2020.
+# Eduard Minasyan <mreditor@mail.ru>, 2021.
 #
 msgid ""
 msgstr ""
@@ -7,7 +8,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-07 15:44+0300\n"
 "PO-Revision-Date: 2021-11-07 16:19+0300\n"
-"Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
+"Last-Translator: Eduard Minasyan <mreditor@mail.ru>\n"
 "Language-Team: \n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
