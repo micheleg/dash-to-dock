@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-07 15:44+0300\n"
-"PO-Revision-Date: 2021-11-07 15:44+0300\n"
+"PO-Revision-Date: 2021-11-07 16:19+0300\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -243,7 +243,7 @@ msgstr ""
 
 #: Settings.ui.h:36
 msgid "Preview size scale"
-msgstr "Масштаб превью"
+msgstr "Масштаб миниатюр"
 
 #: Settings.ui.h:37
 msgid "Position and size"
