@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-07 15:44+0300\n"
-"PO-Revision-Date: 2020-01-31 14:40+0300\n"
+"PO-Revision-Date: 2021-11-07 15:44+0300\n"
 "Last-Translator: Ivan Komaritsyn <vantu5z@mail.ru>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -77,7 +77,7 @@ msgstr ""
 #: locations.js:156
 #, javascript-format
 msgid "Failed to launch “%s”"
-msgstr "Ошибка запуска "%s""
+msgstr "Ошибка запуска «%s»"
 
 #: locations.js:412
 msgid "Trash"
