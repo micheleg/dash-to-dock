@@ -308,6 +308,11 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkCheckButton" id="apply_gloss_effect_checkbutton">
+                        <property name="label" translatable="yes">Apply glossy effect.</property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkBox">
                         <property name="can_focus">0</property>
                         <child>

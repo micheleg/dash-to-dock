@@ -995,6 +995,15 @@ var Settings = GObject.registerClass({
             this._builder.get_object('unity_backlit_items_switch'),
             'active', Gio.SettingsBindFlags.DEFAULT
         );
+        this._settings.bind('apply-glossy-effect',
+            this._builder.get_object('apply_gloss_effect_checkbutton'),
+            'active', Gio.SettingsBindFlags.DEFAULT
+        );
+        this._settings.bind('unity-backlit-items',
+            this._builder.get_object('apply_gloss_effect_checkbutton'),
+            'sensitive',
+            Gio.SettingsBindFlags.DEFAULT
+        );
 
         this._settings.bind('force-straight-corner',
             this._builder.get_object('force_straight_corner_switch'),
