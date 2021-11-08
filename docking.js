@@ -10,6 +10,7 @@ const St = imports.gi.St;
 const Params = imports.misc.params;
 
 const Main = imports.ui.main;
+const AppDisplay = imports.ui.appDisplay;
 const Dash = imports.ui.dash;
 const IconGrid = imports.ui.iconGrid;
 const Overview = imports.ui.overview;
@@ -175,39 +176,6 @@ var DashSlideContainer = GObject.registerClass({
         return [minHeight, natHeight];
     }
 });
-
-let DockBindConstraint = Clutter.BindConstraint;
-if (imports.system.version > 16501) {
-    DockBindConstraint = GObject.registerClass(
-    class DockBindConstraint extends Clutter.BindConstraint {
-
-        vfunc_update_preferred_size(_actor, direction, forSize, minimumSize, naturalSize) {
-            let getPreferredSize = null;
-
-            if (direction == Clutter.Orientation.HORIZONTAL) {
-                if (this.coordinate != Clutter.BindCoordinate.HEIGHT) {
-                    getPreferredSize = this.source.get_preferred_width.bind(
-                        this.source);
-                    }
-            } else if (direction == Clutter.Orientation.VERTICAL) {
-                if (this.coordinate != Clutter.BindCoordinate.WIDTH) {
-                    getPreferredSize = this.source.get_preferred_height.bind(
-                        this.source);
-                    }
-            }
-
-            if (getPreferredSize) {
-                let [prefMinimum, prefNatural] = getPreferredSize(forSize);
-                if (naturalSize < prefNatural)
-                    return [minimumSize, naturalSize];
-                else
-                    return [prefMinimum, prefNatural];
-            }
-
-            return super.vfunc_update_preferred_size(...arguments);
-        }
-    });
-}
 
 var DockedDash = GObject.registerClass({
     Signals: {
@@ -468,12 +436,7 @@ var DockedDash = GObject.registerClass({
             this._onOverviewShowing();
         }
 
-        // Setup pressure barrier (GS38+ only)
-        this._updatePressureBarrier();
-        this._updateBarrier();
-
-        // setup dwelling system if pressure barriers are not available
-        this._setupDockDwellIfNeeded();
+        this._updateAutoHideBarriers();
     }
 
     _onDestroy() {
@@ -499,6 +462,21 @@ var DockedDash = GObject.registerClass({
             PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
             this._dockWatch = null;
         }
+    }
+
+    _updateAutoHideBarriers() {
+        // Remove pointer watcher
+        if (this._dockWatch) {
+            PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
+            this._dockWatch = null;
+        }
+
+        // Setup pressure barrier (GS38+ only)
+        this._updatePressureBarrier();
+        this._updateBarrier();
+
+        // setup dwelling system if pressure barriers are not available
+        this._setupDockDwellIfNeeded();
     }
 
     _bindSettingsChanges() {
@@ -560,10 +538,7 @@ var DockedDash = GObject.registerClass({
                 this._trackDock();
 
                     this._resetPosition();
-
-                    // Add or remove barrier depending on if dock-fixed
-                    this._updateBarrier();
-
+                    this._updateAutoHideBarriers();
                     this._updateVisibilityMode();
             }
         ], [
@@ -578,8 +553,8 @@ var DockedDash = GObject.registerClass({
             settings,
             'changed::autohide',
             () => {
-                    this._updateVisibilityMode();
-                    this._updateBarrier();
+                this._updateVisibilityMode();
+                this._updateAutoHideBarriers();
             }
         ], [
             settings,
@@ -597,15 +572,7 @@ var DockedDash = GObject.registerClass({
         ], [
             settings,
             'changed::require-pressure-to-show',
-            () => {
-                    // Remove pointer watcher
-                    if (this._dockWatch) {
-                        PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
-                        this._dockWatch = null;
-                    }
-                    this._setupDockDwellIfNeeded();
-                    this._updateBarrier();
-            }
+            () => this._updateAutoHideBarriers(),
         ], [
             settings,
             'changed::pressure-threshold',
@@ -807,8 +774,9 @@ var DockedDash = GObject.registerClass({
     _setupDockDwellIfNeeded() {
         // If we don't have extended barrier features, then we need
         // to support the old tray dwelling mechanism.
-        if (!global.display.supports_extended_barriers() ||
-            !DockManager.settings.get_boolean('require-pressure-to-show')) {
+        if (this._autohideIsEnabled &&
+            (!global.display.supports_extended_barriers() ||
+            !DockManager.settings.get_boolean('require-pressure-to-show'))) {
             let pointerWatcher = PointerWatcher.getPointerWatcher();
             this._dockWatch = pointerWatcher.addWatch(DOCK_DWELL_CHECK_INTERVAL, this._checkDockDwell.bind(this));
             this._dockDwelling = false;
@@ -905,7 +873,8 @@ var DockedDash = GObject.registerClass({
         }
 
         // Create new pressure barrier based on pressure threshold setting
-        if (this._canUsePressure) {
+        if (this._canUsePressure && this._autohideIsEnabled &&
+            DockManager.settings.get_boolean('require-pressure-to-show')) {
             this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, settings.get_double('show-delay')*1000,
                                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
             this._pressureBarrier.connect('trigger', (barrier) => {
@@ -1479,31 +1448,20 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._injectionsHandler = new Utils.InjectionsHandler();
 
-        this._signalsHandler.add([
-            settings,
-            'changed::isolate-workspaces',
-            () => {
-                    DockManager.allDocks.forEach((dock) =>
-                        dock.dash.resetAppIcons());
-                    if (settings.get_boolean('isolate-workspaces') ||
-                        settings.get_boolean('isolate-monitors'))
-                        this._enable.bind(this)();
-                    else
-                        this._disable.bind(this)();
-            }
-        ],[
-            settings,
-            'changed::isolate-monitors',
-            () => {
-                    DockManager.allDocks.forEach((dock) =>
-                        dock.dash.resetAppIcons());
-                    if (settings.get_boolean('isolate-workspaces') ||
-                        settings.get_boolean('isolate-monitors'))
-                        this._enable.bind(this)();
-                    else
-                        this._disable.bind(this)();
-            }
-        ]);
+        const updateAllDocks = () => {
+            DockManager.allDocks.forEach((dock) =>
+                dock.dash.resetAppIcons());
+            if (settings.get_boolean('isolate-workspaces') ||
+                settings.get_boolean('isolate-monitors'))
+                this._enable.bind(this)();
+            else
+                this._disable.bind(this)();
+        };
+        this._signalsHandler.add(
+            [ settings, 'changed::isolate-workspaces', updateAllDocks ],
+            [ settings, 'changed::workspace-agnostic-urgent-windows', updateAllDocks ],
+            [ settings, 'changed::isolate-monitors', updateAllDocks ]
+        );
 
         if (settings.get_boolean('isolate-workspaces') ||
             settings.get_boolean('isolate-monitors'))
@@ -1518,15 +1476,13 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
         this._disable();
 
         DockManager.allDocks.forEach((dock) => {
-            this._signalsHandler.addWithLabel('isolation', [
-                global.display,
-                'restacked',
-                dock.dash._queueRedisplay.bind(dock.dash)
-            ], [
-                global.window_manager,
-                'switch-workspace',
-                dock.dash._queueRedisplay.bind(dock.dash)
-            ]);
+            this._signalsHandler.addWithLabel(
+                'isolation',
+                [ global.display, 'restacked', () => dock.dash._queueRedisplay() ],
+                [ global.display, 'window-marked-urgent', () => dock.dash._queueRedisplay() ],
+                [ global.display, 'window-demands-attention', () => dock.dash._queueRedisplay() ],
+                [ global.window_manager, 'switch-workspace', () => dock.dash._queueRedisplay() ]
+            );
 
             // This last signal is only needed for monitor isolation, as windows
             // might migrate from one monitor to another without triggering 'restacked'
@@ -1964,11 +1920,11 @@ var DockManager = class DashToDock_DockManager {
                 return [0, 0];
             });
 
-        const { ControlsManager, ControlsManagerLayout } = OverviewControls;
+        const { ControlsManagerLayout } = OverviewControls;
 
         if (Main.layoutManager._startingUp) {
             this._prepareStartupAnimation();
-            let id = Main.layoutManager.connect('startup-complete', () => {
+            const id = Main.layoutManager.connect('startup-complete', () => {
                 this._runStartupAnimation();
                 Main.layoutManager.disconnect(id);
             });
@@ -2123,6 +2079,15 @@ var DockManager = class DashToDock_DockManager {
                 }
                 return box;
             });
+
+        // Ensure we handle Dnd events happening on the dock when we're dragging from AppDisplay
+        // Remove when merged https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2002
+        this._methodInjections.addWithLabel('main-dash', AppDisplay.BaseAppView.prototype,
+            '_pageForCoords', function (originalFunction, ...args) {
+                if (!this._scrollView.has_pointer)
+                    return AppDisplay.SidePages.NONE;
+                return originalFunction.call(this, ...args);
+            });
     }
 
     _deleteDocks() {
@@ -2234,6 +2199,7 @@ var DockManager = class DashToDock_DockManager {
         }
         this._trash?.destroy();
         this._trash = null;
+        Locations.unWrapWindowsManagerApp();
         this._removables?.destroy();
         this._removables = null;
         this._iconTheme.destroy();

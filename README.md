@@ -12,7 +12,7 @@ The extension can be installed directly from source, either for the convenience 
 
 <pre>git clone https://github.com/micheleg/dash-to-dock.git -b ubuntu-dock</pre>
 or download the branch from github. A simple Makefile is included. Then run
-<pre>make
+<pre>make</pre>
 
 ### Build Dependencies
 

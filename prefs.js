@@ -20,7 +20,8 @@ try {
     imports.misc.extensionUtils;
 } catch (e) {
     const resource = Gio.Resource.load(
-        '/usr/share/gnome-shell/org.gnome.Extensions.src.gresource');
+        (GLib.getenv('JHBUILD_PREFIX') || '/usr') +
+        '/share/gnome-shell/org.gnome.Extensions.src.gresource');
     resource._register();
     imports.searchPath.push('resource:///org/gnome/Extensions/js');
 }
@@ -576,6 +577,10 @@ var Settings = GObject.registerClass({
             this._builder.get_object('application_button_isolation_button'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('workspace-agnostic-urgent-windows',
+            this._builder.get_object('application_button_urgent_button'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('isolate-monitors',
             this._builder.get_object('application_button_monitor_isolation_button'),
             'active',
@@ -992,11 +997,11 @@ var Settings = GObject.registerClass({
             'active', Gio.SettingsBindFlags.DEFAULT
         );
         this._settings.bind('apply-glossy-effect',
-            this._builder.get_object('apply_gloss_effect_button'),
+            this._builder.get_object('apply_gloss_effect_checkbutton'),
             'active', Gio.SettingsBindFlags.DEFAULT
         );
         this._settings.bind('unity-backlit-items',
-            this._builder.get_object('apply_gloss_effect_button'),
+            this._builder.get_object('apply_gloss_effect_checkbutton'),
             'sensitive',
             Gio.SettingsBindFlags.DEFAULT
         );

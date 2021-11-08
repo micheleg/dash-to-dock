@@ -149,6 +149,10 @@ var RunningIndicatorBase = class DashToDock_RunningIndicatorBase extends Indicat
         this.update();
     }
 
+    get _number() {
+        return Math.min(this._source.windowsCount, MAX_WINDOWS_CLASSES);
+    }
+
     update() {
         this._updateCounterClass();
         this._updateDefaultDot();
@@ -157,7 +161,7 @@ var RunningIndicatorBase = class DashToDock_RunningIndicatorBase extends Indicat
     _updateCounterClass() {
         for (let i = 1; i <= MAX_WINDOWS_CLASSES; i++) {
             let className = 'running' + i;
-            if (i != this._source.windowsCount)
+            if (i != this._number)
                 this._source.remove_style_class_name(className);
             else
                 this._source.add_style_class_name(className);
@@ -308,11 +312,10 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
         // Enable / Disable the backlight of running apps
         if (!Docking.DockManager.settings.get_boolean('apply-custom-theme') &&
             Docking.DockManager.settings.get_boolean('unity-backlit-items')) {
-            if (Docking.DockManager.settings.get_boolean('apply-glossy-effect'))
-                this._source._iconContainer.get_children()[1].set_style(this._glossyBackgroundStyle);
-            else
-                this._source._iconContainer.get_children()[1].set_style(null);
-
+            const [icon] = this._source._iconContainer.get_children();
+            icon.set_style(
+                Docking.DockManager.settings.get_boolean('apply-glossy-effect') ?
+                this._glossyBackgroundStyle : null);
             if (this._source.running)
                 this._enableBacklight();
             else
@@ -394,7 +397,7 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
 
     _drawIndicator(cr) {
         // Draw the required numbers of dots
-        let n = this._source.windowsCount;
+        let n = this._number;
 
         cr.setLineWidth(this._borderWidth);
         Clutter.cairo_set_source_color(cr, this._borderColor);
@@ -425,7 +428,7 @@ var RunningIndicatorCiliora = class DashToDock_RunningIndicatorCiliora extends R
         if (this._source.running) {
             let size =  Math.max(this._width/20, this._borderWidth);
             let spacing = size; // separation between the dots
-            let lineLength = this._width - (size*(this._source.windowsCount-1)) - (spacing*(this._source.windowsCount-1));
+            let lineLength = this._width - (size*(this._number-1)) - (spacing*(this._number-1));
             let padding = this._borderWidth;
             // For the backlit case here we don't want the outer border visible
             if (Docking.DockManager.settings.get_boolean('unity-backlit-items') &&
@@ -439,7 +442,7 @@ var RunningIndicatorCiliora = class DashToDock_RunningIndicatorCiliora extends R
             cr.translate(0, yOffset);
             cr.newSubPath();
             cr.rectangle(0, 0, lineLength, size);
-            for (let i = 1; i < this._source.windowsCount; i++) {
+            for (let i = 1; i < this._number; i++) {
                 cr.newSubPath();
                 cr.rectangle(lineLength + (i*spacing) + ((i-1)*size), 0, size, size);
             }
@@ -459,8 +462,8 @@ var RunningIndicatorSegmented = class DashToDock_RunningIndicatorSegmented exten
         if (this._source.running) {
             let size =  Math.max(this._width/20, this._borderWidth);
             let spacing = Math.ceil(this._width/18); // separation between the dots
-            let dashLength = Math.ceil((this._width - ((this._source.windowsCount-1)*spacing))/this._source.windowsCount);
-            let lineLength = this._width - (size*(this._source.windowsCount-1)) - (spacing*(this._source.windowsCount-1));
+            let dashLength = Math.ceil((this._width - ((this._number-1)*spacing))/this._number);
+            let lineLength = this._width - (size*(this._number-1)) - (spacing*(this._number-1));
             let padding = this._borderWidth;
             // For the backlit case here we don't want the outer border visible
             if (Docking.DockManager.settings.get_boolean('unity-backlit-items') &&
@@ -472,7 +475,7 @@ var RunningIndicatorSegmented = class DashToDock_RunningIndicatorSegmented exten
             Clutter.cairo_set_source_color(cr, this._borderColor);
 
             cr.translate(0, yOffset);
-            for (let i = 0; i < this._source.windowsCount; i++) {
+            for (let i = 0; i < this._number; i++) {
                 cr.newSubPath();
                 cr.rectangle(i*dashLength + i*spacing, 0, dashLength, size);
             }
@@ -526,8 +529,8 @@ var RunningIndicatorSquares = class DashToDock_RunningIndicatorSquares extends R
             cr.setLineWidth(this._borderWidth);
             Clutter.cairo_set_source_color(cr, this._borderColor);
 
-            cr.translate(Math.floor((this._width - this._source.windowsCount*size - (this._source.windowsCount-1)*spacing)/2), yOffset);
-            for (let i = 0; i < this._source.windowsCount; i++) {
+            cr.translate(Math.floor((this._width - this._number*size - (this._number-1)*spacing)/2), yOffset);
+            for (let i = 0; i < this._number; i++) {
                 cr.newSubPath();
                 cr.rectangle(i*size + i*spacing, 0, size, size);
             }
@@ -553,8 +556,8 @@ var RunningIndicatorDashes = class DashToDock_RunningIndicatorDashes extends Run
             cr.setLineWidth(this._borderWidth);
             Clutter.cairo_set_source_color(cr, this._borderColor);
 
-            cr.translate(Math.floor((this._width - this._source.windowsCount*dashLength - (this._source.windowsCount-1)*spacing)/2), yOffset);
-            for (let i = 0; i < this._source.windowsCount; i++) {
+            cr.translate(Math.floor((this._width - this._number*dashLength - (this._number-1)*spacing)/2), yOffset);
+            for (let i = 0; i < this._number; i++) {
                 cr.newSubPath();
                 cr.rectangle(i*dashLength + i*spacing, 0, dashLength, size);
             }
@@ -590,7 +593,7 @@ var RunningIndicatorMetro = class DashToDock_RunningIndicatorMetro extends Runni
                 padding = 0;
             let yOffset = this._height - padding - size;
 
-            let n = this._source.windowsCount;
+            let n = this._number;
             if(n <= 1) {
                 cr.translate(0, yOffset);
                 Clutter.cairo_set_source_color(cr, this._bodyColor);

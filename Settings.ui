@@ -287,9 +287,9 @@
                     <property name="orientation">vertical</property>
                     <property name="spacing">12</property>
                     <child>
-                      <object class="GtkGrid">
-                        <property name="can_focus">False</property>
-                        <property name="column_spacing">32</property>
+                      <object class="GtkBox">
+                        <property name="can_focus">0</property>
+                        <property name="spacing">32</property>
                         <child>
                           <object class="GtkLabel" id="unity_backlit_items_label">
                             <property name="hexpand">1</property>
@@ -305,16 +305,11 @@
                             <property name="valign">center</property>
                           </object>
                         </child>
-                        <child>
-                          <object class="GtkCheckButton" id="apply_gloss_effect_button">
-                            <property name="label" translatable="yes">Apply glossy effect.</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="margin_top">12</property>
-                            <property name="valign">center</property>
-                          </object>
-                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="apply_gloss_effect_checkbutton">
+                        <property name="label" translatable="yes">Apply glossy effect.</property>
                       </object>
                     </child>
                     <child>
@@ -985,6 +980,19 @@
                               </object>
                             </child>
                             <child>
+                              <object class="GtkCheckButton" id="application_button_urgent_button">
+                                <property name="label" translatable="yes">Show urgent windows despite current workspace.</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">12</property>
+
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">3</property>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
                               <object class="GtkCheckButton" id="application_button_monitor_isolation_button">
                                 <property name="label" translatable="yes">Isolate monitors.</property>
                                 <property name="halign">start</property>
@@ -992,7 +1000,7 @@
 
                                 <layout>
                                   <property name="column">0</property>
-                                  <property name="row">3</property>
+                                  <property name="row">4</property>
                                   <property name="column-span">2</property>
                                 </layout>
                               </object>

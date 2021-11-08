@@ -162,20 +162,24 @@ var ThemeManager = class DashToDock_ThemeManager {
             // Note that if using 'dynamic' transparency modes,
             // the opacity will be set by the opaque/transparent styles anyway.
             let newAlpha = Math.round(backgroundColor.alpha/2.55)/100;
-            if (settings.get_enum('transparency-mode') == TransparencyMode.FIXED)
-                newAlpha = settings.get_double('background-opacity');
 
             backgroundColor = settings.get_string('background-color');
-            this._customizedBackground = backgroundColor;
-
-            this._customizedBorder = this._customizedBackground;
-
             // backgroundColor is a string like rgb(0,0,0)
             const [ret, color] = Clutter.Color.from_string(backgroundColor);
             if (!ret) {
                 logError(new Error(`${backgroundColor} is not a valid color string`));
                 return;
             }
+
+            if (settings.get_enum('transparency-mode') == TransparencyMode.FIXED) {
+                newAlpha = settings.get_double('background-opacity');
+                this._customizedBackground =
+                    `rgba(${color.red}, ${color.green}, ${color.blue}, ${newAlpha})`;
+            } else {
+                this._customizedBackground = backgroundColor;
+            }
+
+            this._customizedBorder = this._customizedBackground;
 
             color.alpha = newAlpha * 255;
             this._transparency.setColor(color);

@@ -164,7 +164,7 @@
     <key type="b" name="icon-size-fixed">
       <default>false</default>
       <summary>Fixed icon size</summary>
-      <description>Keep the icon size fived by scrolling the dock.</description>
+      <description>Keep the icon size fixed by scrolling the dock.</description>
     </key>
     <key type="b" name="apply-custom-theme">
       <default>false</default>
@@ -205,6 +205,11 @@
       <default>false</default>
       <summary>Provide workspace isolation</summary>
       <description>Dash shows only windows from the currentworkspace</description>
+    </key>
+    <key type="b" name="workspace-agnostic-urgent-windows">
+      <default>true</default>
+      <summary>Show urgent windows on each workspace</summary>
+      <description>Show or hide urgent windows on each workspace in the dash</description>
     </key>
     <key type="b" name="isolate-monitors">
       <default>false</default>
@@ -563,6 +568,11 @@
       <description>Emulate the unity7 backlit glossy items behaviour</description>
   </key>
       <key name="apply-glossy-effect" type="b">
+      <default>true</default>
+      <summary>Enable glossy effect</summary>
+      <description>Toggle the glossy effect of the unity7 backlit feature.</description>
+    </key>
+    <key name="apply-glossy-effect" type="b">
       <default>true</default>
       <summary>Enable glossy effect</summary>
       <description>Toggle the glossy effect of the unity7 backlit feature.</description>
