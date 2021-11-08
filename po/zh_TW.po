@@ -40,7 +40,7 @@ msgstr "自訂智慧型自動隱藏"
 
 #: prefs.js:367 prefs.js:560 prefs.js:616
 msgid "Reset to defaults"
-msgstr "重設回預設值"
+msgstr "重設預設值"
 
 #: prefs.js:553
 msgid "Show dock and application numbers"
@@ -533,7 +533,7 @@ msgid "Pressure threshold"
 msgstr "壓力閾值"
 
 #~ msgid "Adaptive"
-#~ msgstr "自適應"
+#~ msgstr "動態"
 
 #~ msgid "Show a dot for each windows of the application."
 #~ msgstr "為應用程式的每個視窗顯示圓點。"
