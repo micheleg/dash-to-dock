@@ -1946,7 +1946,7 @@ var DockManager = class DashToDock_DockManager {
 
                     const mainDockProperties = {};
                     if (dock === DockManager.getDefault().mainDock)
-                        mainDockProperties.onComplete = callback(...callbackArgs);
+                        mainDockProperties.onComplete = () => callback(...callbackArgs);
 
                     const { STARTUP_ANIMATION_TIME } = Layout;
                     dash.ease({
