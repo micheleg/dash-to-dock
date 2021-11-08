@@ -49,7 +49,6 @@ function conditionallyenabledock() {
 
     // enable or disable dock depending on dock status and to_enable state
     if (to_enable && !dockManager) {
-        Main.layoutManager.startInOverview = false;
         dockManager = new Docking.DockManager();
     } else if (!to_enable && dockManager) {
         dockManager.destroy();
