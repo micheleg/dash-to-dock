@@ -2213,6 +2213,7 @@ var DockManager = class DashToDock_DockManager {
         }
         this._trash?.destroy();
         this._trash = null;
+        Locations.unWrapWindowsManagerApp();
         this._removables?.destroy();
         this._removables = null;
         this._iconTheme.destroy();
