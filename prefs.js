@@ -20,7 +20,8 @@ try {
     imports.misc.extensionUtils;
 } catch (e) {
     const resource = Gio.Resource.load(
-        '/usr/share/gnome-shell/org.gnome.Extensions.src.gresource');
+        (GLib.getenv('JHBUILD_PREFIX') || '/usr') +
+        '/share/gnome-shell/org.gnome.Extensions.src.gresource');
     resource._register();
     imports.searchPath.push('resource:///org/gnome/Extensions/js');
 }
