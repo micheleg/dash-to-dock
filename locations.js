@@ -90,6 +90,18 @@ function wrapWindowsBackedApp(shellApp, params = {}) {
     shellApp._pi = p; // Property injector
     shellApp._aMi = aM; // appInfo method Injector
 
+    shellApp._setActions = function(actionsGetter) {
+        aM('list_actions', () => Object.keys(actionsGetter()));
+        aM('get_action_name', (_om, name) => actionsGetter()[name]?.name);
+        m('launch_action', (launchAction, actionName, ...args) => {
+            const actions = actionsGetter();
+            if (actionName in actions)
+                actions[actionName].exec(...args);
+            else
+                return launchAction.call(shellApp, actionName, ...args);
+        });
+    };
+
     m('get_state', () =>
         shellApp.get_windows().length ? Shell.AppState.RUNNING : Shell.AppState.STOPPED);
     p('state', { get: () => shellApp.get_state() });
@@ -422,7 +434,7 @@ var Trash = class DashToDock_Trash {
             const children = await childrenEnumerator.next_files_async(1,
                 priority, cancellable);
             this._empty = !children.length;
-            this._ensureApp();
+            this._updateApp();
 
             await childrenEnumerator.close_async(priority, null);
         } catch (e) {
@@ -431,49 +443,50 @@ var Trash = class DashToDock_Trash {
         }
     }
 
+    _updateApp() {
+        if (this._lastEmpty === this._empty)
+            return
+
+        this._lastEmpty = this._empty;
+        this._trashApp?.notify('icon');
+    }
+
     _ensureApp() {
-        if (this._trashApp == null ||
-            this._lastEmpty !== this._empty) {
-            let trashKeys = new GLib.KeyFile();
-            trashKeys.set_string('Desktop Entry', 'Name', __('Trash'));
-            trashKeys.set_string('Desktop Entry', 'Type', 'Application');
-            trashKeys.set_string('Desktop Entry', 'Exec', 'gio open %s'.format(TRASH_URI));
-            trashKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
-            if (!this._empty) {
-                trashKeys.set_string('Desktop Entry', 'Actions', 'empty-trash;');
-                trashKeys.set_string('Desktop Action empty-trash', 'Name', __('Empty Trash'));
-                trashKeys.set_string('Desktop Action empty-trash', 'Exec', 'true');
-            }
+        if (this._trashApp)
+            return;
 
-            let trashAppInfo = Gio.DesktopAppInfo.new_from_keyfile(trashKeys);
-            this._trashApp?.destroy();
-            this._trashApp = makeLocationApp({
-                location: TRASH_URI + '/',
-                appInfo: trashAppInfo,
-                gicon: Gio.ThemedIcon.new(this._empty ? 'user-trash' : 'user-trash-full'),
-            });
+        const trashKeys = new GLib.KeyFile();
+        trashKeys.set_string('Desktop Entry', 'Name', __('Trash'));
+        trashKeys.set_string('Desktop Entry', 'Type', 'Application');
+        trashKeys.set_string('Desktop Entry', 'Exec', 'gio open %s'.format(TRASH_URI));
+        trashKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
 
-            if (!this._empty) {
-                this._trashApp._mi('launch_action',
-                    (launchAction, actionName, timestamp, ...args) => {
-                        if (actionName === 'empty-trash') {
-                            const nautilus = makeNautilusFileOperationsProxy();
-                            const askConfirmation = true;
-                            nautilus.EmptyTrashRemote(askConfirmation,
-                                nautilus.platformData({ timestamp }), (_p, error) => {
-                                    if (error)
-                                        logError(error, 'Empty trash failed');
-                                });
-                            return;
-                        }
+        const trashAppInfo = Gio.DesktopAppInfo.new_from_keyfile(trashKeys);
+        const trashIcon = () => Gio.ThemedIcon.new(this._empty ?
+            'user-trash' : 'user-trash-full');
 
-                        return launchAction.call(this, actionName, timestamp, ...args);
-                });
-            }
-            this._lastEmpty = this._empty;
+        this._trashApp = makeLocationApp({
+            location: TRASH_URI + '/',
+            appInfo: trashAppInfo,
+            gicon: trashIcon(),
+        });
 
-            this.emit('changed');
-        }
+        this._trashApp._mi('get_icon', () => trashIcon());
+
+        this._trashApp._setActions(() => (this._empty ? {} : {
+            'empty-trash': {
+                name: __('Empty Trash'),
+                exec: timestamp => {
+                    const nautilus = makeNautilusFileOperationsProxy();
+                    const askConfirmation = true;
+                    nautilus.EmptyTrashRemote(askConfirmation,
+                        nautilus.platformData({ timestamp }), (_p, error) => {
+                            if (error)
+                                logError(error, 'Empty trash failed');
+                        });
+                    }
+                }
+            }));
     }
 
     getApp() {
@@ -481,7 +494,6 @@ var Trash = class DashToDock_Trash {
         return this._trashApp;
     }
 }
-Signals.addSignalMethods(Trash.prototype);
 
 /**
  * This class maintains Shell.App representations for removable devices
