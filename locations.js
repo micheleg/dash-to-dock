@@ -583,18 +583,18 @@ var Removables = class DashToDock_Removables {
             appInfo: volumeAppInfo,
             gicon: volume.get_icon() || Gio.ThemedIcon.new(FALLBACK_REMOVABLE_MEDIA_ICON),
         });
+        volumeApp.appInfo.volume = volume;
         this._volumeApps.push(volumeApp);
         this.emit('changed');
     }
 
     _onVolumeRemoved(monitor, volume) {
-        for (let i = 0; i < this._volumeApps.length; i++) {
-            let app = this._volumeApps[i];
-            if (app.get_name() == volume.get_name()) {
-                const [volumeApp] = this._volumeApps.splice(i, 1);
-                volumeApp.destroy();
-                this.emit('changed');
-            }
+        const volumeIndex = this._volumeApps.findIndex(({ appInfo }) =>
+            appInfo.volume === volume);
+        if (volumeIndex !== -1) {
+            const [volumeApp] = this._volumeApps.splice(volumeIndex, 1);
+            volumeApp.destroy();
+            this.emit('changed');
         }
     }
 
@@ -635,18 +635,18 @@ var Removables = class DashToDock_Removables {
             location: escapedUri,
             gicon: mount.get_icon() || new Gio.ThemedIcon(FALLBACK_REMOVABLE_MEDIA_ICON),
         });
+        mountApp.appInfo.mount = mount;
         this._mountApps.push(mountApp);
         this.emit('changed');
     }
 
     _onMountRemoved(monitor, mount) {
-        for (let i = 0; i < this._mountApps.length; i++) {
-            let app = this._mountApps[i];
-            if (app.get_name() == mount.get_name()) {
-                const [mountApp] = this._mountApps.splice(i, 1);
-                mountApp.destroy();
-                this.emit('changed');
-            }
+        const mountIndex = this._mountApps.findIndex(({ appInfo }) =>
+            appInfo.mount === mount);
+        if (mountIndex !== -1) {
+            const [mountApp] = this._mountApps.splice(mountIndex, 1);
+            mountApp.destroy();
+            this.emit('changed');
         }
     }
 
