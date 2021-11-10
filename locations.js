@@ -88,6 +88,7 @@ function wrapWindowsBackedApp(shellApp, params = {}) {
     }
     shellApp._mi = m; // Method injector
     shellApp._pi = p; // Property injector
+    shellApp._aMi = aM; // appInfo method Injector
 
     m('get_state', () =>
         shellApp.get_windows().length ? Shell.AppState.RUNNING : Shell.AppState.STOPPED);
