@@ -21,7 +21,7 @@ const Utils = Me.imports.utils;
 const FALLBACK_REMOVABLE_MEDIA_ICON = 'drive-removable-media';
 const FILE_MANAGER_DESKTOP_APP_ID = 'org.gnome.Nautilus.desktop';
 const TRASH_URI = 'trash://';
-const UPDATE_TRASH_DELAY = 500;
+const UPDATE_TRASH_DELAY = 1000;
 
 const NautilusFileOperations2Interface = '<node>\
     <interface name="org.gnome.Nautilus.FileOperations2">\
@@ -373,10 +373,8 @@ var Trash = class DashToDock_Trash {
         this._file = Gio.file_new_for_uri(TRASH_URI);
         try {
             this._monitor = this._file.monitor_directory(0, this._cancellable);
-            this._signalId = this._monitor.connect(
-                'changed',
-                this._onTrashChange.bind(this)
-            );
+            this._monitor.set_rate_limit(UPDATE_TRASH_DELAY);
+            this._signalId = this._monitor.connect('changed', () => this._onTrashChange());
         } catch (e) {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
                 return;
@@ -397,15 +395,18 @@ var Trash = class DashToDock_Trash {
     }
 
     _onTrashChange() {
-        if (this._schedUpdateId) {
-            GLib.source_remove(this._schedUpdateId);
-        }
+        if (this._schedUpdateId)
+            return;
+
+        if (this._monitor.is_cancelled())
+            return;
+
         this._schedUpdateId = GLib.timeout_add(
             GLib.PRIORITY_LOW, UPDATE_TRASH_DELAY, () => {
-            this._schedUpdateId = 0;
-            this._updateTrash();
-            return GLib.SOURCE_REMOVE;
-        });
+                this._schedUpdateId = 0;
+                this._updateTrash();
+                return GLib.SOURCE_REMOVE;
+            });
     }
 
     async _updateTrash() {
