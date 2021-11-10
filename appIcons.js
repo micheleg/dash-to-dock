@@ -864,6 +864,8 @@ var DockLocationAppIcon = GObject.registerClass({
             this._signalsHandler.add(global.display, 'notify::focus-window',
                 () => this._updateFocusState());
         }
+
+        this._signalsHandler.add(this.app, 'notify::icon', () => this.icon.update());
     }
 
     get location() {
