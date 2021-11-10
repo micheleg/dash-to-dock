@@ -385,7 +385,12 @@ var DockAbstractAppIcon = GObject.registerClass({
         if (!this._menu) {
             this._menu = new DockAppIconMenu(this);
             this._menu.connect('activate-window', (menu, window) => {
-                Main.activateWindow(window);
+                if (window) {
+                    Main.activateWindow(window);
+                } else {
+                    Main.overview.hide();
+                    Main.panel.closeCalendar();
+                }
             });
             this._menu.connect('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
