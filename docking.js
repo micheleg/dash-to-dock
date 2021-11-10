@@ -1723,7 +1723,7 @@ var DockManager = class DashToDock_DockManager {
 
     _toggle() {
         if (this._toggleLater)
-            Meta.later_remove(this._toggleLater);
+            return;
 
         this._toggleLater = Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
             delete this._toggleLater;
