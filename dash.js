@@ -400,10 +400,7 @@ var DockDash = GObject.registerClass({
             return Clutter.EVENT_PROPAGATE;
 
         // reset timeout to avid conflicts with the mousehover event
-        if (this._ensureAppIconVisibilityTimeoutId > 0) {
-            GLib.source_remove(this._ensureAppIconVisibilityTimeoutId);
-            this._ensureAppIconVisibilityTimeoutId = 0;
-        }
+        this._ensureItemVisibility(null);
 
         // Skip to avoid double events mouse
         // TODO: Horizontal events are emulated, potentially due to a conflict
@@ -464,6 +461,20 @@ var DockDash = GObject.registerClass({
         return Clutter.EVENT_STOP;
     }
 
+    _ensureItemVisibility(actor) {
+        if (actor?.hover) {
+            this._ensureActorVisibilityTimeoutId = GLib.timeout_add(
+                GLib.PRIORITY_DEFAULT, 100, () => {
+                    ensureActorVisibleInScrollView(this._scrollView, actor);
+                    this._ensureActorVisibilityTimeoutId = 0;
+                    return GLib.SOURCE_REMOVE;
+                });
+        } else if (this._ensureActorVisibilityTimeoutId) {
+            GLib.source_remove(this._ensureActorVisibilityTimeoutId);
+            this._ensureActorVisibilityTimeoutId = 0;
+        }
+    }
+
     _createAppItem(app) {
         const appIcon = new AppIcons.makeAppIcon(app, this._monitorIndex, this.iconAnimator);
 
@@ -483,23 +494,7 @@ var DockDash = GObject.registerClass({
         const item = new DockDashItemContainer();
         item.setChild(appIcon);
 
-        appIcon.connect('notify::hover', () => {
-            if (appIcon.hover) {
-                this._ensureAppIconVisibilityTimeoutId = GLib.timeout_add(
-                    GLib.PRIORITY_DEFAULT, 100, () => {
-                    ensureActorVisibleInScrollView(this._scrollView, appIcon);
-                    this._ensureAppIconVisibilityTimeoutId = 0;
-                    return GLib.SOURCE_REMOVE;
-                });
-            }
-            else {
-                if (this._ensureAppIconVisibilityTimeoutId > 0) {
-                    GLib.source_remove(this._ensureAppIconVisibilityTimeoutId);
-                    this._ensureAppIconVisibilityTimeoutId = 0;
-                }
-            }
-        });
-
+        appIcon.connect('notify::hover', a => this._ensureItemVisibility(a));
         appIcon.connect('clicked', (actor) => {
             ensureActorVisibleInScrollView(this._scrollView, actor);
         });
@@ -909,7 +904,10 @@ var DockDash = GObject.registerClass({
                         Clutter.ActorAlign.CENTER : Clutter.ActorAlign.FILL,
                     width: this._isHorizontal ? -1 : this.iconSize,
                     height: this._isHorizontal ? this.iconSize : -1,
+                    reactive: true,
+                    track_hover: true,
                 });
+                this._separator.connect('notify::hover', a => this._ensureItemVisibility(a));
                 this._box.add_child(this._separator);
             }
             let pos = nFavorites;
