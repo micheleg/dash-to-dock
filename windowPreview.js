@@ -396,6 +396,14 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         // the compositor finds out about them...
         // Moreover sometimes they return an empty texture, thus as a workarounf also check for it size
         if (!mutterWindow || !mutterWindow.get_texture() || !mutterWindow.get_size()[0]) {
+            if (this._cloneAttempt === undefined)
+                this._cloneAttempt = 1;
+            else {
+                this._cloneAttempt++;
+                if (this._cloneAttempt > 3)
+                    return;
+            }
+
             this._cloneTextureId = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
                 // Check if there's still a point in getting the texture,
                 // otherwise this could go on indefinitely
