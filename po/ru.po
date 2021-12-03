@@ -1,14 +1,15 @@
 # Russian translation for dash-to-dock GNOME Shell extension
 # Ivan Komaritsyn <vantu5z@mail.ru>, 2015-2020.
 # Eduard Minasyan <mreditor@mail.ru>, 2021.
+# Timofey Hrapovitskiy <vuki03@mail.ru>, 2021
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-11-07 15:44+0300\n"
-"PO-Revision-Date: 2021-11-07 16:19+0300\n"
-"Last-Translator: Eduard Minasyan <mreditor@mail.ru>\n"
+"PO-Revision-Date: 2021-12-03 21:48+0300\n"
+"Last-Translator: Timofey Hrapovitskiy <vuki03@mail.ru>\n"
 "Language-Team: \n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -46,7 +47,7 @@ msgstr "Сбросить настройки"
 
 #: prefs.js:681
 msgid "Show dock and application numbers"
-msgstr "Показывать количество запущенных приложений"
+msgstr "Показывать номера приложений"
 
 #: prefs.js:739
 msgid "Customize middle-click behavior"
@@ -54,7 +55,7 @@ msgstr "Настройка действий для средней кнопки �
 
 #: prefs.js:824
 msgid "Customize running indicators"
-msgstr "Настройка индикаторов запуска"
+msgstr "Настройка индикаторов запущенных приложений"
 
 #: prefs.js:939 Settings.ui.h:79
 msgid "Customize opacity"
@@ -65,6 +66,7 @@ msgid "All Windows"
 msgstr "Все окна"
 
 #: appIcons.js:1148
+#, javascript-format
 msgid "Quit %d Windows"
 msgstr "Закрыть %d окон"
 
@@ -73,7 +75,7 @@ msgstr "Закрыть %d окон"
 #: appIcons.js:1358
 #, javascript-format
 msgid "Dash to Dock %s"
-msgstr ""
+msgstr "Dash to Dock %s"
 
 #: locations.js:156
 #, javascript-format
@@ -142,11 +144,11 @@ msgstr "Минимизация или показ миниатюр"
 
 #: Settings.ui.h:10
 msgid "Focus or show previews"
-msgstr "Минимизация или показ миниатюр"
+msgstr "Фокус или показ миниатюр"
 
 #: Settings.ui.h:11
 msgid "Focus, minimize or show previews"
-msgstr "Фокусирование, минимизация или показ миниатюр"
+msgstr "Фокус, минимизация или показ миниатюр"
 
 #: Settings.ui.h:12
 msgid "Quit"
@@ -194,7 +196,7 @@ msgstr "Ширина границы"
 
 #: Settings.ui.h:23
 msgid "Show the dock on"
-msgstr "Показывать Док на"
+msgstr "Показывать Док на:"
 
 #: Settings.ui.h:24
 msgid "Show on all monitors."
@@ -230,7 +232,7 @@ msgstr "Ограничение размера Дока"
 
 #: Settings.ui.h:33
 msgid "Panel mode: extend to the screen edge"
-msgstr "Режим панели: Док растянут по всей стороне экрана"
+msgstr "Режим панели: растянуть по всей стороне экрана"
 
 #: Settings.ui.h:34
 msgid "Icon size limit"
@@ -260,7 +262,7 @@ msgstr "Показывать запущенные приложения"
 
 #: Settings.ui.h:40
 msgid "Isolate workspaces."
-msgstr "Для текущего рабочего стола."
+msgstr "Изолировать рабочие столы."
 
 #: Settings.ui.h:39
 msgid "Show urgent windows despite current workspace."
@@ -276,7 +278,7 @@ msgstr "Показывать миниатюры открытых окон."
 
 #: Settings.ui.h:44
 msgid "Keep the focused application always visible in the dash"
-msgstr "Всегда оставлять приложение в фокусе также видимым в доке"
+msgstr "Оставлять приложение в фокусе видимым в Доке"
 
 #: Settings.ui.h:45
 msgid ""
@@ -312,7 +314,7 @@ msgstr "Изолировать окна носителей, устройств �
 
 #: Settings.ui.h:52
 msgid "Launchers"
-msgstr "Команды"
+msgstr "Иконки"
 
 #: Settings.ui.h:53
 msgid ""
@@ -410,11 +412,11 @@ msgstr "Слитно"
 
 #: Settings.ui.h:74
 msgid "Ciliora"
-msgstr ""
+msgstr "Ciliora"
 
 #: Settings.ui.h:75
 msgid "Metro"
-msgstr "Метро"
+msgstr "Metro"
 
 #: Settings.ui.h:76
 msgid "Set the background color for the dash."
@@ -454,7 +456,7 @@ msgstr "версия: "
 
 #: Settings.ui.h:86
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr "Показывает панель из режима «Обзор» в виде дока"
+msgstr "Превращает панель из режима «Обзор» в полноценный док"
 
 #: Settings.ui.h:87
 msgid "Created by"
@@ -486,15 +488,15 @@ msgstr "Настройка минимального и максимальног�
 
 #: Settings.ui.h:93
 msgid "Minimum opacity"
-msgstr "Минимальная прозрачность"
+msgstr "Минимальная непрозрачность"
 
 #: Settings.ui.h:94
 msgid "Maximum opacity"
-msgstr "Максимальная прозрачность"
+msgstr "Максимальная непрозрачность"
 
 #: Settings.ui.h:95
 msgid "Number overlay"
-msgstr "Отображение номера"
+msgstr "Показать номера"
 
 #: Settings.ui.h:96
 msgid ""
@@ -530,19 +532,19 @@ msgstr "Задержка скрытия (сек.)"
 
 #: Settings.ui.h:102
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr "Показывать Док при подведении мыши к стороне экрана."
+msgstr "Показать Док при подведении мыши к стороне экрана."
 
 #: Settings.ui.h:103
 msgid "Autohide"
-msgstr "Автоматическое скрытие"
+msgstr "Автоматически скрывать"
 
 #: Settings.ui.h:104
 msgid "Push to show: require pressure to show the dock"
-msgstr "Давление для появления: требуется давление для открытия Дока"
+msgstr "Надавить для появления: требуется давление для открытия Дока"
 
 #: Settings.ui.h:105
 msgid "Enable in fullscreen mode"
-msgstr "Включить для полноэкранного режима"
+msgstr "Включить в полноэкранном режиме"
 
 #: Settings.ui.h:106
 msgid "Show the dock when it doesn't obstruct application windows."
