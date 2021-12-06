@@ -16,7 +16,8 @@ $dash_bottom_margin: $base_margin * 4;
 $dash_border_radius: $modal_radius * 1.5;
 
 // Stock
-$dock_side_margin: $dash_bottom_margin / 4;
+$dock_start_margin: $dash_bottom_margin;
+$dock_side_margin: $dock_start_margin / 4;
 $dock_fixed_inner_margin: $dock_side_margin;
 
 // Adapted to $dock_bottom_margin
