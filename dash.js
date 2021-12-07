@@ -463,8 +463,11 @@ var DockDash = GObject.registerClass({
 
     _ensureItemVisibility(actor) {
         if (actor?.hover) {
+            const destroyId =
+                actor.connect('destroy', () => this._ensureItemVisibility(null));
             this._ensureActorVisibilityTimeoutId = GLib.timeout_add(
                 GLib.PRIORITY_DEFAULT, 100, () => {
+                    actor.disconnect(destroyId);
                     ensureActorVisibleInScrollView(this._scrollView, actor);
                     this._ensureActorVisibilityTimeoutId = 0;
                     return GLib.SOURCE_REMOVE;
