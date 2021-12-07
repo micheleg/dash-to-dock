@@ -78,6 +78,20 @@ $osd_fg_color: #eeeeec;
                     padding-#{$side}: $dash_padding + $dash_start_margin;
                     padding-#{opposite($side)}: $dash_padding;
                 }
+
+                .app-well-app {
+                    &.running .overview-icon {
+                        background-image: none;
+                    }
+                    &.focused .overview-icon {
+                        background-color: rgba(238, 238, 236, 0.2);
+                    }
+                }
+
+                > StButton {
+                    transition-duration: 250;
+                    background-size: contain;
+                }
             }
         }
 
@@ -249,24 +263,6 @@ $osd_fg_color: #eeeeec;
 .left #dashtodockDashScrollview,
 .right #dashtodockDashScrollview {
     -st-vfade-offset: 24px;
-}
-
-#dashtodockContainer.running-dots .dash-item-container > StButton,
-#dashtodockContainer.dashtodock .dash-item-container > StButton {
-    transition-duration: 250;
-    background-size: contain;
-}
-
-/* Running and focused application style */
-
-#dashtodockContainer.running-dots .app-well-app.running > .overview-icon,
-#dashtodockContainer.dashtodock .app-well-app.running > .overview-icon {
-    background-image: none;
-}
-
-#dashtodockContainer.running-dots .app-well-app.focused .overview-icon,
-#dashtodockContainer.dashtodock .app-well-app.focused .overview-icon {
-    background-color: rgba(238, 238, 236, 0.2);
 }
 
 #dashtodockContainer.dashtodock #dash .dash-background {
