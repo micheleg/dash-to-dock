@@ -66,6 +66,11 @@
       <summary>Show delay</summary>
       <description>Sets the delay after the mouse left the dock before hiding it.</description>
     </key>
+    <key type="b" name="disable-overview-on-startup">
+      <default>false</default>
+      <summary>Do not show overview on startup</summary>
+      <description>Whether to show or not the overview during startup animation.</description>
+    </key>
     <key type="b" name="custom-background-color">
       <default>false</default>
       <summary>Set a custom dash background background color</summary>
