@@ -1546,6 +1546,22 @@ var DockManager = class DashToDock_DockManager {
         this._propertyInjections = new Utils.PropertyInjectionsHandler(this);
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
+        this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
+
+        if (this._discreteGpuAvailable === undefined) {
+            const updateDiscreteGpuAvailable = () => {
+                const switcherooProxy = global.get_switcheroo_control();
+                if (switcherooProxy) {
+                    const prop = switcherooProxy.get_cached_property('HasDualGpu');
+                    this._discreteGpuAvailable = prop?.unpack() ?? false;
+                } else {
+                    this._discreteGpuAvailable = false;
+                }
+            }
+            this._signalsHandler.add(global, 'notify::switcheroo-control',
+                () => updateDiscreteGpuAvailable());
+            updateDiscreteGpuAvailable();
+        }
 
         // Connect relevant signals to the toggling function
         this._bindSettingsChanges();
@@ -1607,6 +1623,10 @@ var DockManager = class DashToDock_DockManager {
 
     get trash() {
         return this._trash;
+    }
+
+    get discreteGpuAvailable() {
+        return AppDisplay.discreteGpuAvailable || this._discreteGpuAvailable;
     }
 
     getDockByMonitor(monitorIndex) {
