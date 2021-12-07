@@ -1874,6 +1874,56 @@ var DockManager = class DashToDock_DockManager {
         this.emit('docks-ready');
     }
 
+    _prepareStartupAnimation() {
+        DockManager.allDocks.forEach(dock => {
+            const { dash } = dock;
+
+            dock.opacity = 255;
+            dash.set({
+                opacity: 0,
+                translation_x: 0,
+                translation_y: 0,
+            });
+        });
+    }
+
+    _runStartupAnimation(callback) {
+        const { STARTUP_ANIMATION_TIME } = Layout;
+
+        DockManager.allDocks.forEach(dock => {
+            const { dash } = dock;
+
+            switch (dock.position) {
+                case St.Side.LEFT:
+                    dash.translation_x = -dash.width;
+                    break;
+                case St.Side.RIGHT:
+                    dash.translation_x = dash.width;
+                    break;
+                case St.Side.BOTTOM:
+                    dash.translation_y = dash.height;
+                    break;
+                case St.Side.TOP:
+                    dash.translation_y = -dash.height;
+                    break;
+            }
+
+            const mainDockProperties = {};
+            if (dock === this.mainDock)
+                mainDockProperties.onComplete = callback;
+
+            dash.ease({
+                opacity: 255,
+                translation_x: 0,
+                translation_y: 0,
+                delay: STARTUP_ANIMATION_TIME,
+                duration: STARTUP_ANIMATION_TIME,
+                mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+                ...mainDockProperties,
+            });
+        });
+    }
+
     _prepareMainDash() {
         // Ensure Main.overview.dash is set to our dash in dummy mode
         // while just use the default getter otherwise.
@@ -1934,8 +1984,9 @@ var DockManager = class DashToDock_DockManager {
         this._methodInjections.addWithLabel('main-dash', ControlsManager.prototype,
             'runStartupAnimation', async function (originalMethod, callback) {
                 const injections = new Utils.InjectionsHandler();
+                const dockManager = DockManager.getDefault();
                 DockManager.allDocks.forEach(dock => (dock.opacity = 0));
-                injections.add(DockManager.getDefault().mainDock.dash, 'ease', () => {});
+                injections.add(dockManager.mainDock.dash, 'ease', () => {});
                 let callbackArgs = [];
                 const ret = await originalMethod.call(this,
                     (...args) => (callbackArgs = [...args]));
@@ -1944,54 +1995,16 @@ var DockManager = class DashToDock_DockManager {
                 if (!DockManager.allDocks.length) {
                     // Docks may have been destroyed, let's wait till we've one again
                     const readyPromise = new Promise(resolve => {
-                        const id = DockManager.getDefault().connect('docks-ready', () => {
-                            DockManager.getDefault().disconnect(id);
+                        const id = dockManager.connect('docks-ready', () => {
+                            dockManager.disconnect(id);
                             resolve();
                         });
                     })
                     await readyPromise;
                 }
 
-                DockManager.allDocks.forEach(dock => {
-                    const { dash } = dock;
-
-                    dash.set({
-                        opacity: 0,
-                        translation_x: 0,
-                        translation_y: 0,
-                    });
-                    dock.opacity = 255;
-
-                    switch (dock.position) {
-                        case St.Side.LEFT:
-                            dash.translation_x = -dash.width;
-                            break;
-                        case St.Side.RIGHT:
-                            dash.translation_x = dash.width;
-                            break;
-                        case St.Side.BOTTOM:
-                            dash.translation_y = dash.height;
-                            break;
-                        case St.Side.TOP:
-                            dash.translation_y = -dash.height;
-                            break;
-                    }
-
-                    const mainDockProperties = {};
-                    if (dock === DockManager.getDefault().mainDock)
-                        mainDockProperties.onComplete = () => callback(...callbackArgs);
-
-                    const { STARTUP_ANIMATION_TIME } = Layout;
-                    dash.ease({
-                        opacity: 255,
-                        translation_x: 0,
-                        translation_y: 0,
-                        delay: STARTUP_ANIMATION_TIME,
-                        duration: STARTUP_ANIMATION_TIME,
-                        mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-                        ...mainDockProperties,
-                    });
-                });
+                dockManager._prepareStartupAnimation();
+                dockManager._runStartupAnimation(() => callback(...callbackArgs));
                 return ret;
             });
 
@@ -2153,6 +2166,40 @@ var DockManager = class DashToDock_DockManager {
                     return AppDisplay.SidePages.NONE;
                 return originalFunction.call(this, ...args);
             });
+
+        if (Main.layoutManager._startingUp && Main.sessionMode.hasOverview &&
+            this._settings.disableOverviewOnStartup) {
+            this._methodInjections.addWithLabel('main-dash',
+                Overview.Overview.prototype,
+                'runStartupAnimation', (_originalFunction, callback) => {
+                    const monitor = Main.layoutManager.primaryMonitor;
+                    const x = monitor.x + monitor.width / 2.0;
+                    const y = monitor.y + monitor.height / 2.0;
+                    const { STARTUP_ANIMATION_TIME } = Layout;
+
+                    this._prepareStartupAnimation();
+                    Main.uiGroup.set_pivot_point(
+                        x / global.screen_width,
+                        y / global.screen_height);
+                    Main.uiGroup.set({
+                        scale_x: 0.75,
+                        scale_y: 0.75,
+                        opacity: 0,
+                    });
+
+                    Main.uiGroup.ease({
+                        scale_x: 1,
+                        scale_y: 1,
+                        opacity: 255,
+                        duration: STARTUP_ANIMATION_TIME,
+                        mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+                        onComplete: () => {
+                            callback();
+                            this._runStartupAnimation();
+                        },
+                    });
+                });
+        }
     }
 
     _deleteDocks() {
