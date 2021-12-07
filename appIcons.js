@@ -906,8 +906,6 @@ function makeAppIcon(app, monitorIndex, iconAnimator) {
     return new DockAppIcon(app, monitorIndex, iconAnimator);
 }
 
-let discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
-
 /**
  * DockAppIconMenu
  *
@@ -963,21 +961,6 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 'dynamic-section-changed',
                 onDynamicSection
             ]);
-        }
-
-        if (discreteGpuAvailable === undefined) {
-            const updateDiscreteGpuAvailable = () => {
-                const switcherooProxy = global.get_switcheroo_control();
-                if (switcherooProxy) {
-                    const prop = switcherooProxy.get_cached_property('HasDualGpu');
-                    discreteGpuAvailable = prop?.unpack() ?? false;
-                } else {
-                    discreteGpuAvailable = false;
-                }
-            }
-            updateDiscreteGpuAvailable();
-            global.connect('notify::switcheroo-control',
-                () => updateDiscreteGpuAvailable());
         }
     }
 
@@ -1043,7 +1026,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 this._appendSeparator();
             }
 
-            if (discreteGpuAvailable &&
+            if (Docking.DockManager.getDefault().discreteGpuAvailable &&
                 this._source.app.state == Shell.AppState.STOPPED) {
                 const appPrefersNonDefaultGPU = appInfo.get_boolean('PrefersNonDefaultGPU');
                 const gpuPref = appPrefersNonDefaultGPU
