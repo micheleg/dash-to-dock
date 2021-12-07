@@ -5,6 +5,7 @@ const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Shell = imports.gi.Shell;
+const ShellMountOperation = imports.ui.shellMountOperation;
 const Signals = imports.signals;
 const St = imports.gi.St;
 
@@ -19,7 +20,9 @@ const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 
 const FALLBACK_REMOVABLE_MEDIA_ICON = 'drive-removable-media';
+const FALLBACK_TRASH_ICON = 'user-trash';
 const FILE_MANAGER_DESKTOP_APP_ID = 'org.gnome.Nautilus.desktop';
+const ATTRIBUTE_METADATA_CUSTOM_ICON = 'metadata::custom-icon';
 const TRASH_URI = 'trash://';
 const UPDATE_TRASH_DELAY = 1000;
 
@@ -65,7 +68,390 @@ function makeNautilusFileOperationsProxy() {
     return proxy;
 }
 
-function wrapWindowsBackedApp(shellApp, params = {}) {
+var LocationAppInfo = GObject.registerClass({
+    Implements: [Gio.AppInfo],
+    Properties: {
+        'location': GObject.ParamSpec.object(
+            'location', 'location', 'location',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            Gio.File.$gtype),
+        'name': GObject.ParamSpec.string(
+            'name', 'name', 'name',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            null),
+        'icon': GObject.ParamSpec.object(
+            'icon', 'icon', 'icon',
+            GObject.ParamFlags.READWRITE,
+            Gio.Icon.$gtype),
+        'cancellable': GObject.ParamSpec.object(
+            'cancellable', 'cancellable', 'cancellable',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            Gio.Cancellable.$gtype),
+    },
+}, class LocationAppInfo extends Gio.DesktopAppInfo {
+    list_actions() {
+        return [];
+    }
+
+    get_action_name() {
+        return null
+    }
+
+    get_boolean() {
+        return false;
+    }
+
+    vfunc_dup() {
+        return new LocationAppInfo({
+            location: this.location,
+            name: this.name,
+            icon: this.icon,
+            cancellable: this.cancellable,
+        });
+    }
+
+    vfunc_equal(other) {
+        if (this.location)
+            return this.location.equal(other?.location);
+
+        return this.name === other.name &&
+            (this.icon ? this.icon.equal(other?.icon) : !other?.icon);
+    }
+
+    vfunc_get_id() {
+        return 'location:%s'.format(this.location?.get_uri());
+    }
+
+    vfunc_get_name() {
+        return this.name;
+    }
+
+    vfunc_get_description() {
+        return null;
+    }
+
+    vfunc_get_executable() {
+        return null;
+    }
+
+    vfunc_get_icon() {
+        return this.icon;
+    }
+
+    vfunc_launch(files, context) {
+        if (files?.length) {
+            throw new GLib.Error(Gio.IOErrorEnum,
+                Gio.IOErrorEnum.NOT_SUPPORTED, 'Launching with files not supported');
+        }
+
+        const [ret] = GLib.spawn_async(null, this.get_commandline().split(' '),
+            context?.get_environment() || null, GLib.SpawnFlags.SEARCH_PATH, null);
+        return ret;
+    }
+
+    vfunc_supports_uris() {
+        return false;
+    }
+
+    vfunc_supports_files() {
+        return false;
+    }
+
+    vfunc_launch_uris(uris, context) {
+        return this.launch(uris, context);
+    }
+
+    vfunc_should_show() {
+        return true;
+    }
+
+    vfunc_set_as_default_for_type() {
+        throw new GLib.Error(Gio.IOErrorEnum,
+            Gio.IOErrorEnum.NOT_SUPPORTED, 'Not supported');
+    }
+
+    vfunc_set_as_default_for_extension() {
+        throw new GLib.Error(Gio.IOErrorEnum,
+            Gio.IOErrorEnum.NOT_SUPPORTED, 'Not supported');
+    }
+
+    vfunc_add_supports_type() {
+        throw new GLib.Error(Gio.IOErrorEnum,
+            Gio.IOErrorEnum.NOT_SUPPORTED, 'Not supported');
+    }
+
+    vfunc_can_remove_supports_type() {
+        return false;
+    }
+
+    vfunc_remove_supports_type() {
+        return false;
+    }
+
+    vfunc_can_delete() {
+        return false;
+    }
+
+    vfunc_do_delete() {
+        return false;
+    }
+
+    vfunc_get_commandline() {
+        return 'gio open %s'.format(this.location?.get_uri());
+    }
+
+    vfunc_get_display_name() {
+        return this.name;
+    }
+
+    vfunc_set_as_last_used_for_type() {
+        throw new GLib.Error(Gio.IOErrorEnum,
+            Gio.IOErrorEnum.NOT_SUPPORTED, 'Not supported');
+    }
+
+    vfunc_get_supported_types() {
+        return [];
+    }
+});
+
+const VolumeAppInfo = GObject.registerClass({
+    Implements: [Gio.AppInfo],
+    Properties: {
+        'volume': GObject.ParamSpec.object(
+            'volume', 'volume', 'volume',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            Gio.Volume.$gtype),
+    },
+},
+class VolumeAppInfo extends LocationAppInfo {
+    _init(volume, cancellable = null) {
+        super._init({
+            volume,
+            location: volume.get_activation_root(),
+            name: volume.get_name(),
+            icon: volume.get_icon(),
+            cancellable,
+        });
+    }
+
+    vfunc_dup() {
+        return new VolumeAppInfo({
+            volume: this.volume,
+            cancellable: this.cancellable,
+        });
+    }
+
+    vfunc_get_id() {
+        const uuid = this.volume.get_uuid();
+        return uuid ? 'volume:%s'.format(uuid) : super.vfunc_get_id();
+    }
+
+    vfunc_equal(other) {
+        if (this.volume === other?.volume)
+            return true;
+
+        return this.get_id() === other?.get_id();
+    }
+
+    list_actions() {
+        const actions = [];
+
+        if (this.volume.can_mount())
+            actions.push('mount');
+        if (this.volume.can_eject())
+            actions.push('eject');
+
+        return actions;
+    }
+
+    get_action_name(action) {
+        switch (action) {
+            case 'mount':
+                return __('Mount');
+            case 'eject':
+                return __('Eject');
+            default:
+                return null;
+        }
+    }
+
+    async launchAction(action) {
+        if (!this.list_actions().includes(action))
+            throw new Error('Action %s is not supported by %s', action, this);
+
+        const operation = new ShellMountOperation.ShellMountOperation(this.volume);
+        try {
+            if (action === 'mount') {
+                await this.volume.mount(Gio.MountMountFlags.NONE, operation.mountOp,
+                    this.cancellable);
+            } else if (action === 'eject') {
+                await this.volume.eject_with_operation(Gio.MountUnmountFlags.FORCE,
+                    operation.mountOp, this.cancellable);
+            }
+        } catch (e) {
+            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.FAILED)) {
+                if (action === 'mount') {
+                    global.notify_error(__("Failed to mount “%s”".format(
+                        this.get_name())), e.message);
+                } else if (action === 'eject') {
+                    global.notify_error(__("Failed to eject “%s”".format(
+                        this.get_name())), e.message);
+                }
+            }
+
+            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
+                logError(e, 'Impossible to %s volume %s'.format(action,
+                    volume.get_name()));
+            }
+        } finally {
+            operation.close();
+        }
+    }
+});
+
+const MountAppInfo = GObject.registerClass({
+    Implements: [Gio.AppInfo],
+    Properties: {
+        'mount': GObject.ParamSpec.object(
+            'mount', 'mount', 'mount',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            Gio.Mount.$gtype),
+    },
+},
+class MountAppInfo extends LocationAppInfo {
+    _init(mount, cancellable = null) {
+        super._init({
+            mount,
+            location: mount.get_default_location(),
+            name: mount.get_name(),
+            icon: mount.get_icon(),
+            cancellable,
+        });
+    }
+
+    vfunc_dup() {
+        return new MountAppInfo({
+            mount: this.mount,
+            cancellable: this.cancellable,
+        });
+    }
+
+    vfunc_get_id() {
+        const uuid = this.mount.get_uuid() ?? this.mount.get_volume()?.get_uuid();
+        return uuid ? 'mount:%s'.format(uuid) : super.vfunc_get_id();
+    }
+
+    vfunc_equal(other) {
+        if (this.mount === other?.mount)
+            return true;
+
+        return this.get_id() === other?.get_id();
+    }
+
+    list_actions() {
+        const actions = [];
+
+        if (this.mount.can_unmount())
+            actions.push('unmount');
+        if (this.mount.can_eject())
+            actions.push('eject');
+
+        return actions;
+    }
+
+    get_action_name(action) {
+        switch (action) {
+            case 'unmount':
+                return __('Unmount');
+            case 'eject':
+                return __('Eject');
+            default:
+                return null;
+        }
+    }
+
+    async launchAction(action) {
+        if (!this.list_actions().includes(action))
+            throw new Error('Action %s is not supported by %s', action, this);
+
+        const operation = new ShellMountOperation.ShellMountOperation(this.mount);
+        try {
+            if (action === 'unmount') {
+                await this.mount.unmount_with_operation(Gio.MountUnmountFlags.FORCE,
+                    operation.mountOp, this.cancellable);
+            } else if (action === 'eject') {
+                await this.mount.eject_with_operation(Gio.MountUnmountFlags.FORCE,
+                    operation.mountOp, this.cancellable);
+            }
+        } catch (e) {
+            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.FAILED)) {
+                if (action === 'unmount') {
+                    global.notify_error(__("Failed to umount “%s”".format(
+                        this.get_name())), e.message);
+                } else if (action === 'eject') {
+                    global.notify_error(__("Failed to eject “%s”".format(
+                        this.get_name())), e.message);
+                }
+            }
+            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
+                logError(e, 'Impossible to %s mount %s'.format(action,
+                    this.mount.get_name()));
+            }
+        } finally {
+            operation.close();
+        }
+    }
+});
+
+const TrashAppInfo = GObject.registerClass({
+    Implements: [Gio.AppInfo],
+    Properties: {
+        'empty': GObject.ParamSpec.boolean(
+            'empty', 'empty', 'empty',
+            GObject.ParamFlags.READWRITE,
+            true),
+    },
+},
+class TrashAppInfo extends LocationAppInfo {
+    _init(cancellable = null) {
+        super._init({
+            location: Gio.file_new_for_uri(TRASH_URI),
+            name: __('Trash'),
+            cancellable,
+        });
+        this.connect('notify::empty', () =>
+            (this.icon = Gio.ThemedIcon.new(this.empty ? 'user-trash' : 'user-trash-full')));
+        this.notify('empty');
+    }
+
+    list_actions() {
+        return this.empty ? [] : ['empty-trash'];
+    }
+
+    get_action_name(action) {
+        switch (action) {
+            case 'empty-trash':
+                return __('Empty Trash');
+            default:
+                return null;
+        }
+    }
+
+    launchAction(action, timestamp) {
+        if (!this.list_actions().includes(action))
+            throw new Error('Action %s is not supported by %s', action, this);
+
+        const nautilus = makeNautilusFileOperationsProxy();
+        const askConfirmation = true;
+        nautilus.EmptyTrashRemote(askConfirmation,
+            nautilus.platformData({ timestamp }), (_p, error) => {
+                if (error)
+                    logError(error, 'Empty trash failed');
+        }, this.cancellable);
+    }
+});
+
+function wrapWindowsBackedApp(shellApp) {
     if (shellApp._dtdData)
         throw new Error('%s has been already wrapped'.format(shellApp));
 
@@ -82,42 +468,12 @@ function wrapWindowsBackedApp(shellApp, params = {}) {
 
     const m = (...args) => shellApp._dtdData.methodInjections.add(shellApp, ...args);
     const p = (...args) => shellApp._dtdData.propertyInjections.add(shellApp, ...args);
-    const aM = (...args) => {
-        if (shellApp.appInfo)
-            shellApp._dtdData.methodInjections.add(shellApp.appInfo, ...args);
-    }
     shellApp._mi = m;
     shellApp._pi = p;
-    shellApp._aMi = aM;
-
-    shellApp._setActions = function(actionsGetter) {
-        aM('list_actions', () => Object.keys(actionsGetter()));
-        aM('get_action_name', (_om, name) => actionsGetter()[name]?.name);
-        m('launch_action', (launchAction, actionName, ...args) => {
-            const actions = actionsGetter();
-            if (actionName in actions)
-                actions[actionName].exec(...args);
-            else
-                return launchAction.call(shellApp, actionName, ...args);
-        });
-    };
 
     m('get_state', () =>
         shellApp.get_windows().length ? Shell.AppState.RUNNING : Shell.AppState.STOPPED);
     p('state', { get: () => shellApp.get_state() });
-
-    if (params.gicon) {
-        const { gicon } = params;
-        m('get_icon', () => gicon);
-        p('icon', { get: () => shellApp.get_icon() });
-        aM('get_icon', () => shellApp.get_icon());
-
-        m('create_icon_texture', (_om, icon_size) => new St.Icon({
-            icon_size,
-            gicon: shellApp.icon,
-            fallback_icon_name: FALLBACK_REMOVABLE_MEDIA_ICON,
-        }));
-    }
 
     m('get_windows', () => shellApp._dtdData.windows);
     m('get_n_windows', () => shellApp.get_windows().length);
@@ -212,25 +568,35 @@ function wrapWindowsBackedApp(shellApp, params = {}) {
 
 // We can't inherit from Shell.App as it's a final type, so let's patch it
 function makeLocationApp(params) {
-    if (!params.location)
+    if (!(params?.appInfo instanceof LocationAppInfo))
         throw new TypeError('Invalid location');
 
-    const location = params.location;
-    const gicon = params.gicon;
-    delete params.location;
-    delete params.gicon;
+    const { fallbackIconName } = params;
+    delete params.fallbackIconName;
 
     const shellApp = new Shell.App(params);
-    wrapWindowsBackedApp(shellApp, { gicon });
-    shellApp.appInfo.customId = 'location:%s'.format(location);
+    wrapWindowsBackedApp(shellApp);
 
     Object.defineProperties(shellApp, {
-        location: { value: location },
-        isTrash: { value: location.startsWith(TRASH_URI) },
+        location: { get: () => shellApp.appInfo.location },
+        isTrash: { get: () => shellApp.appInfo instanceof TrashAppInfo },
     });
 
     shellApp._mi('toString', defaultToString =>
         '[LocationApp - %s]'.format(defaultToString.call(shellApp)));
+
+    shellApp._mi('launch', (_om, timestamp, workspace, _gpuPref) =>
+        shellApp.appInfo.launch([],
+            global.create_app_launch_context(timestamp, workspace)));
+
+    shellApp._mi('launch_action', (_om, actionName, ...args) =>
+        shellApp.appInfo.launchAction(actionName, ...args));
+
+    shellApp._mi('create_icon_texture', (_om, iconSize) => new St.Icon({
+        iconSize,
+        gicon: shellApp.icon,
+        fallbackIconName,
+    }));
 
     // FIXME: We need to add a new API to Nautilus to open new windows
     shellApp._mi('can_open_new_window', () => false);
@@ -239,7 +605,7 @@ function makeLocationApp(params) {
     shellApp._updateWindows = function () {
         const oldState = this.state;
         const oldWindows = this.get_windows();
-        this._dtdData.windows = fm1Client.getWindows(this.location);
+        this._dtdData.windows = fm1Client.getWindows(this.location?.get_uri());
 
         if (this.get_windows().length !== oldWindows.length ||
             this.get_windows().some((win, index) => win !== oldWindows[index]))
@@ -256,11 +622,14 @@ function makeLocationApp(params) {
         shellApp._updateWindows());
     const workspaceChangedId = global.workspaceManager.connect('workspace-switched',
         () => shellApp.emit('windows-changed'));
+    const iconChangedId = shellApp.appInfo.connect('notify::icon', () =>
+        shellApp.notify('icon'));
 
     const parentDestroy = shellApp.destroy;
     shellApp.destroy = function () {
         fm1Client.disconnect(windowsChangedId);
         global.workspaceManager.disconnect(workspaceChangedId);
+        shellApp.appInfo.disconnect(iconChangedId);
         parentDestroy.call(this);
     }
 
@@ -395,7 +764,6 @@ var Trash = class DashToDock_Trash {
                 return;
             logError(e, 'Impossible to monitor trash');
         }
-        this._empty = true;
         this._schedUpdateId = 0;
         this._updateTrash();
     }
@@ -433,8 +801,7 @@ var Trash = class DashToDock_Trash {
                 priority, cancellable);
             const children = await childrenEnumerator.next_files_async(1,
                 priority, cancellable);
-            this._empty = !children.length;
-            this._updateApp();
+            this._updateApp(!children.length);
 
             await childrenEnumerator.close_async(priority, null);
         } catch (e) {
@@ -443,50 +810,21 @@ var Trash = class DashToDock_Trash {
         }
     }
 
-    _updateApp() {
-        if (this._lastEmpty === this._empty)
+    _updateApp(isEmpty) {
+        if (!this._trashApp)
             return
 
-        this._lastEmpty = this._empty;
-        this._trashApp?.notify('icon');
+        this._trashApp.appInfo.empty = isEmpty;
     }
 
     _ensureApp() {
         if (this._trashApp)
             return;
 
-        const trashKeys = new GLib.KeyFile();
-        trashKeys.set_string('Desktop Entry', 'Name', __('Trash'));
-        trashKeys.set_string('Desktop Entry', 'Type', 'Application');
-        trashKeys.set_string('Desktop Entry', 'Exec', 'gio open %s'.format(TRASH_URI));
-        trashKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
-
-        const trashAppInfo = Gio.DesktopAppInfo.new_from_keyfile(trashKeys);
-        const trashIcon = () => Gio.ThemedIcon.new(this._empty ?
-            'user-trash' : 'user-trash-full');
-
         this._trashApp = makeLocationApp({
-            location: TRASH_URI + '/',
-            appInfo: trashAppInfo,
-            gicon: trashIcon(),
+            appInfo: new TrashAppInfo(this._cancellable),
+            fallbackIconName: FALLBACK_TRASH_ICON,
         });
-
-        this._trashApp._mi('get_icon', () => trashIcon());
-
-        this._trashApp._setActions(() => (this._empty ? {} : {
-            'empty-trash': {
-                name: __('Empty Trash'),
-                exec: timestamp => {
-                    const nautilus = makeNautilusFileOperationsProxy();
-                    const askConfirmation = true;
-                    nautilus.EmptyTrashRemote(askConfirmation,
-                        nautilus.platformData({ timestamp }), (_p, error) => {
-                            if (error)
-                                logError(error, 'Empty trash failed');
-                        });
-                    }
-                }
-            }));
     }
 
     getApp() {
@@ -502,10 +840,38 @@ var Trash = class DashToDock_Trash {
  */
 var Removables = class DashToDock_Removables {
 
+    _promisified = false;
+
+    static initVolumePromises(object) {
+        // TODO: This can be simplified using actual interface type when we
+        // can depend on gjs 1.72
+        if (!(object instanceof Gio.Volume) || object.constructor.prototype._d2dPromisified)
+            return;
+
+        Gio._promisify(object.constructor.prototype, 'mount', 'mount_finish');
+        Gio._promisify(object.constructor.prototype, 'eject_with_operation',
+            'eject_with_operation_finish');
+        object.constructor.prototype._d2dPromisified = true;
+    }
+
+    static initMountPromises(object) {
+        // TODO: This can be simplified using actual interface type when we
+        // can depend on gjs 1.72
+        if (!(object instanceof Gio.Mount) || object.constructor.prototype._d2dPromisified)
+            return;
+
+        Gio._promisify(object.constructor.prototype, 'eject_with_operation',
+            'eject_with_operation_finish');
+        Gio._promisify(object.constructor.prototype, 'unmount_with_operation',
+            'unmount_with_operation_finish');
+        object.constructor.prototype._d2dPromisified = true;
+    }
+
     constructor() {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._monitor = Gio.VolumeMonitor.get();
+        this._cancellable = new Gio.Cancellable();
         this._volumeApps = []
         this._mountApps = []
 
@@ -544,12 +910,19 @@ var Removables = class DashToDock_Removables {
         [...this._volumeApps, ...this._mountApps].forEach(a => a.destroy());
         this._volumeApps = [];
         this._mountApps = [];
+        this._cancellable.cancel();
+        this._cancellable = null;
         this._signalsHandler.destroy();
         this._monitor = null;
     }
 
     _onVolumeAdded(monitor, volume) {
-        if (!volume.can_mount()) {
+        Removables.initVolumePromises(volume);
+
+        if (volume.get_mount())
+            return;
+
+        if (!volume.can_mount() && !volume.can_eject()) {
             return;
         }
 
@@ -557,8 +930,7 @@ var Removables = class DashToDock_Removables {
             return;
         }
 
-        let activationRoot = volume.get_activation_root();
-        if (!activationRoot) {
+        if (!volume.get_activation_root()) {
             // Can't offer to mount a device if we don't know
             // where to mount it.
             // These devices are usually ejectable so you
@@ -566,24 +938,11 @@ var Removables = class DashToDock_Removables {
             return;
         }
 
-        let escapedUri = activationRoot.get_uri()
-        let uri = GLib.uri_unescape_string(escapedUri, null);
-
-        let volumeKeys = new GLib.KeyFile();
-        volumeKeys.set_string('Desktop Entry', 'Name', volume.get_name());
-        volumeKeys.set_string('Desktop Entry', 'Type', 'Application');
-        volumeKeys.set_string('Desktop Entry', 'Exec', 'gio open "' + uri + '"');
-        volumeKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
-        volumeKeys.set_string('Desktop Entry', 'Actions', 'mount;');
-        volumeKeys.set_string('Desktop Action mount', 'Name', __('Mount'));
-        volumeKeys.set_string('Desktop Action mount', 'Exec', 'gio mount "' + uri + '"');
-        let volumeAppInfo = Gio.DesktopAppInfo.new_from_keyfile(volumeKeys);
+        const appInfo = new VolumeAppInfo(volume, this._cancellable);
         const volumeApp = makeLocationApp({
-            location: escapedUri,
-            appInfo: volumeAppInfo,
-            gicon: volume.get_icon() || Gio.ThemedIcon.new(FALLBACK_REMOVABLE_MEDIA_ICON),
+            appInfo,
+            fallbackIconName: FALLBACK_REMOVABLE_MEDIA_ICON,
         });
-        volumeApp.appInfo.volume = volume;
         this._volumeApps.push(volumeApp);
         this.emit('changed');
     }
@@ -599,6 +958,8 @@ var Removables = class DashToDock_Removables {
     }
 
     _onMountAdded(monitor, mount) {
+        Removables.initMountPromises(mount);
+
         // Filter out uninteresting mounts
         if (!mount.can_eject() && !mount.can_unmount())
             return;
@@ -610,32 +971,11 @@ var Removables = class DashToDock_Removables {
             return;
         }
 
-        const escapedUri = mount.get_default_location().get_uri()
-        let uri = GLib.uri_unescape_string(escapedUri, null);
-
-        let mountKeys = new GLib.KeyFile();
-        mountKeys.set_string('Desktop Entry', 'Name', mount.get_name());
-        mountKeys.set_string('Desktop Entry', 'Type', 'Application');
-        mountKeys.set_string('Desktop Entry', 'Exec', 'gio open "' + uri + '"');
-        mountKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
-        mountKeys.set_string('Desktop Entry', 'Actions', 'unmount;');
-        if (mount.can_eject()) {
-            mountKeys.set_string('Desktop Action unmount', 'Name', __('Eject'));
-            mountKeys.set_string('Desktop Action unmount', 'Exec',
-                                 'gio mount -e "' + uri + '"');
-        } else {
-            mountKeys.set_string('Desktop Entry', 'Actions', 'unmount;');
-            mountKeys.set_string('Desktop Action unmount', 'Name', __('Unmount'));
-            mountKeys.set_string('Desktop Action unmount', 'Exec',
-                                 'gio mount -u "' + uri + '"');
-        }
-        let mountAppInfo = Gio.DesktopAppInfo.new_from_keyfile(mountKeys);
+        const appInfo = new MountAppInfo(mount, this._cancellable);
         const mountApp = makeLocationApp({
-            appInfo: mountAppInfo,
-            location: escapedUri,
-            gicon: mount.get_icon() || new Gio.ThemedIcon(FALLBACK_REMOVABLE_MEDIA_ICON),
+            appInfo,
+            fallbackIconName: FALLBACK_REMOVABLE_MEDIA_ICON,
         });
-        mountApp.appInfo.mount = mount;
         this._mountApps.push(mountApp);
         this.emit('changed');
     }

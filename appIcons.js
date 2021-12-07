@@ -31,6 +31,7 @@ const Workspace = imports.ui.workspace;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
+const Locations = Me.imports.locations;
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
 const AppIconIndicators = Me.imports.appIconIndicators;
@@ -868,8 +869,8 @@ var DockAppIcon = GObject.registerClass({
 var DockLocationAppIcon = GObject.registerClass({
 }, class DockLocationAppIcon extends DockAbstractAppIcon {
     _init(app, monitorIndex, iconAnimator) {
-        if (!app.location)
-            throw new Error('Provided application %s has no location'.format(app));
+        if (!(app.appInfo instanceof Locations.LocationAppInfo))
+            throw new Error('Provided application %s is not a Location'.format(app));
 
         super._init(app, monitorIndex, iconAnimator);
 
@@ -896,9 +897,8 @@ var DockLocationAppIcon = GObject.registerClass({
 });
 
 function makeAppIcon(app, monitorIndex, iconAnimator) {
-    if (app.location)
+    if (app.appInfo instanceof Locations.LocationAppInfo)
         return new DockLocationAppIcon(app, monitorIndex, iconAnimator);
-
 
     return new DockAppIcon(app, monitorIndex, iconAnimator);
 }

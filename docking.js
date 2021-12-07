@@ -1640,13 +1640,10 @@ var DockManager = class DashToDock_DockManager {
         }
 
         Locations.unWrapFileManagerApp();
-        [this._methodInjections, this._vfuncInjections, this._propertyInjections].forEach(
+        [this._methodInjections, this._propertyInjections].forEach(
             injections => injections.removeWithLabel('locations'));
 
         if (showMounts || showTrash) {
-            this._vfuncInjections.addWithLabel('locations', Gio.DesktopAppInfo.prototype,
-                'get_id', function () { return this.customId ?? this.vfunc_get_id() });
-
             if (this.settings.isolateLocations) {
                 const fileManagerApp = Locations.wrapFileManagerApp();
 
