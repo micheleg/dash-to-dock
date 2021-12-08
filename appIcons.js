@@ -1115,10 +1115,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
 
         // quit menu
         this._appendSeparator();
-        this._quitfromDashMenuItem = this._appendMenuItem(_('Quit'));
-        this._quitfromDashMenuItem.connect('activate', () => {
-            this._source.closeAllWindows();
-        });
+        this._quitMenuItem = this._appendMenuItem(_('Quit'));
+        this._quitMenuItem.connect('activate', () => this._source.closeAllWindows());
 
         this.update();
     }
@@ -1128,16 +1126,15 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
     update() {
       // update, show or hide the quit menu
       if (this._source.windowsCount > 0) {
-          let quitFromDashMenuText = "";
           if (this._source.windowsCount == 1)
-              this._quitfromDashMenuItem.label.set_text(_('Quit'));
+              this._quitMenuItem.label.set_text(_('Quit'));
           else
-              this._quitfromDashMenuItem.label.set_text(__('Quit %d Windows').format(this._source.windowsCount));
+              this._quitMenuItem.label.set_text(__('Quit %d Windows').format(
+                  this._source.windowsCount));
 
-          this._quitfromDashMenuItem.actor.show();
-
+          this._quitMenuItem.actor.show();
       } else {
-          this._quitfromDashMenuItem.actor.hide();
+          this._quitMenuItem.actor.hide();
       }
 
       if (Docking.DockManager.settings.get_boolean('show-windows-preview')){
