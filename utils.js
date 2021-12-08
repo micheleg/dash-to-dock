@@ -414,3 +414,23 @@ var IconTheme = class DashToDockIconTheme {
         this._iconTheme = null;
     }
 }
+
+/**
+ * Construct a map of gtk application window object paths to MetaWindows.
+ */
+function getWindowsByObjectPath() {
+    const windowsByObjectPath = new Map();
+    const { workspaceManager } = global;
+    const workspaces = [...new Array(workspaceManager.nWorkspaces)].map(
+        (_c, i) => workspaceManager.get_workspace_by_index(i));
+
+    workspaces.forEach(ws => {
+        ws.list_windows().forEach(w => {
+            const path = w.get_gtk_window_object_path();
+            if (path != null)
+                windowsByObjectPath.set(path, w);
+        });
+    });
+
+    return windowsByObjectPath;
+}

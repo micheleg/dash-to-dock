@@ -26,7 +26,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._cancellable = new Gio.Cancellable();
 
-        this._locationMap = new Map();
+        this._windowsByLocation = new Map();
         this._proxy = new FileManager1Proxy(Gio.DBus.session,
                                             "org.freedesktop.FileManager1",
                                             "/org/freedesktop/FileManager1",
@@ -72,21 +72,16 @@ var FileManager1Client = class DashToDock_FileManager1Client {
      * sub-directories of that location.
      */
     getWindows(location) {
-        let ret = new Set();
-    	let locationEsc = location;
-	    
-    	if (!location.endsWith('/')) { 
-		locationEsc += '/'; 
-	}
-	    
-        for (let [k,v] of this._locationMap) {
-            if ((k + '/').startsWith(locationEsc)) {
-                for (let l of v) {
-                    ret.add(l);
-                }
-            }
-        }
-        return Array.from(ret);
+        if (!location)
+            return [];
+
+        location += location.endsWith('/') ? '' : '/';
+        const windows = [];
+        this._windowsByLocation.forEach((wins, l) => {
+            if (l.startsWith(location))
+                windows.push(...wins);
+        });
+        return [...new Set(windows)];
     }
 
     _onPropertyChanged(proxy, changed, invalidated) {
@@ -110,45 +105,27 @@ var FileManager1Client = class DashToDock_FileManager1Client {
     }
 
     _updateFromPaths() {
-        let pathToLocations = this._proxy.OpenWindowsWithLocations;
-        let pathToWindow = getPathToWindow();
+        const locationsByWindowsPath = this._proxy.OpenWindowsWithLocations;
+        const windowsByPath = Utils.getWindowsByObjectPath();
 
-        let locationToWindow = new Map();
-        for (let path in pathToLocations) {
-            let locations = pathToLocations[path];
-            for (let i = 0; i < locations.length; i++) {
-                let l = locations[i];
-                // Use a set to deduplicate when a window has a
-                // location open in multiple tabs.
-                if (!locationToWindow.has(l)) {
-                    locationToWindow.set(l, new Set());
+        this._windowsByLocation = new Map();
+        Object.entries(locationsByWindowsPath).forEach(([windowPath, locations]) => {
+            locations.forEach(location => {
+                const window = windowsByPath.get(windowPath);
+
+                if (window) {
+                    location += location.endsWith('/') ? '' : '/';
+                    // Use a set to deduplicate when a window has a
+                    // location open in multiple tabs.
+                    const windows = this._windowsByLocation.get(location) || new Set();
+                    windows.add(window);
+
+                    if (windows.size === 1)
+                        this._windowsByLocation.set(location, windows);
                 }
-                let window = pathToWindow.get(path);
-                if (window != null) {
-                    locationToWindow.get(l).add(window);
-                }
-            }
-        }
-        this._locationMap = locationToWindow;
+            });
+        });
         this.emit('windows-changed');
     }
 }
 Signals.addSignalMethods(FileManager1Client.prototype);
-
-/**
- * Construct a map of gtk application window object paths to MetaWindows.
- */
-function getPathToWindow() {
-    let pathToWindow = new Map();
-
-    for (let i = 0; i < global.workspace_manager.n_workspaces; i++) {
-        let ws = global.workspace_manager.get_workspace_by_index(i);
-        ws.list_windows().map(function(w) {
-            let path = w.get_gtk_window_object_path();
-	    if (path != null) {
-                pathToWindow.set(path, w);
-            }
-        });
-    }
-    return pathToWindow;
-}
