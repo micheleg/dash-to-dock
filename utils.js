@@ -50,6 +50,14 @@ const BasicHandler = class DashToDock_BasicHandler {
             this.removeWithLabel(label);
     }
 
+    block() {
+        Object.keys(this._storage).forEach(label => this.blockWithLabel(label));
+    }
+
+    unblock() {
+        Object.keys(this._storage).forEach(label => this.unblockWithLabel(label));
+    }
+
     addWithLabel(label, ...args) {
         let argsArray = [...args];
         if (argsArray.every(arg => !Array.isArray(arg)))
@@ -80,6 +88,14 @@ const BasicHandler = class DashToDock_BasicHandler {
         }
     }
 
+    blockWithLabel(label) {
+        (this._storage[label] || []).forEach(item => this._block(item));
+    }
+
+    unblockWithLabel(label) {
+        (this._storage[label] || []).forEach(item => this._unblock(item));
+    }
+
     // Virtual methods to be implemented by subclass
 
     /**
@@ -94,6 +110,20 @@ const BasicHandler = class DashToDock_BasicHandler {
      */
     _remove(_item) {
         throw new GObject.NotImplementedError(`_remove in ${this.constructor.name}`);
+    }
+
+    /**
+     * Block single element
+     */
+    _block(_item) {
+        throw new GObject.NotImplementedError(`_block in ${this.constructor.name}`);
+    }
+
+    /**
+     * Unblock single element
+     */
+    _unblock(_item) {
+        throw new GObject.NotImplementedError(`_unblock in ${this.constructor.name}`);
     }
 };
 
@@ -123,6 +153,16 @@ var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHan
     _remove(item) {
         const [object, id] = item;
         object.disconnect(id);
+    }
+
+    _block(item) {
+        const [object, id] = item;
+        object.block_signal_handler(id);
+    }
+
+    _unblock(item) {
+        const [object, id] = item;
+        object.unblock_signal_handler(id);
     }
 };
 
