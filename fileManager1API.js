@@ -1,5 +1,6 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 const Signals = imports.signals;
 
@@ -26,6 +27,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._cancellable = new Gio.Cancellable();
 
+        this._windowsByPath = new Map();
         this._windowsByLocation = new Map();
         this._proxy = new FileManager1Proxy(Gio.DBus.session,
                                             "org.freedesktop.FileManager1",
@@ -35,7 +37,9 @@ var FileManager1Client = class DashToDock_FileManager1Client {
             if (error) {
                 if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
                     global.log(error);
+                return;
             } else {
+                this._updateWindows();
                 this._updateLocationMap();
             }
         }, this._cancellable);
@@ -47,23 +51,33 @@ var FileManager1Client = class DashToDock_FileManager1Client {
         ], [
             // We must additionally listen for Screen events to know when to
             // rebuild our location map when the set of available windows changes.
-            global.workspace_manager,
-            'workspace-switched',
-            this._updateLocationMap.bind(this)
+            global.workspaceManager,
+            'workspace-added',
+            () => this._onWindowsChanged(),
+        ], [
+            global.workspaceManager,
+            'workspace-removed',
+            () => this._onWindowsChanged(),
         ], [
             global.display,
             'window-entered-monitor',
-            this._updateLocationMap.bind(this)
+            () => this._onWindowsChanged(),
         ], [
             global.display,
             'window-left-monitor',
-            this._updateLocationMap.bind(this)
+            () => this._onWindowsChanged(),
         ]);
     }
 
     destroy() {
+        if (this._windowsUpdateIdle) {
+            GLib.source_remove(this._windowsUpdateIdle);
+            delete this._windowsUpdateIdle;
+        }
         this._cancellable.cancel();
         this._signalsHandler.destroy();
+        this._windowsByLocation.clear();
+        this._windowsByPath.clear()
         this._proxy = null;
     }
 
@@ -92,6 +106,30 @@ var FileManager1Client = class DashToDock_FileManager1Client {
         }
     }
 
+    _updateWindows() {
+        const oldSize = this._windowsByPath.size;
+        const oldPaths = this._windowsByPath.keys();
+        this._windowsByPath = Utils.getWindowsByObjectPath();
+
+        if (oldSize != this._windowsByPath.size)
+            return true;
+
+        return [...oldPaths].some(path => !this._windowsByPath.has(path));
+    }
+
+    _onWindowsChanged() {
+        if (this._windowsUpdateIdle)
+            return;
+
+        this._windowsUpdateIdle = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+            if (this._updateWindows())
+                this._updateLocationMap();
+
+            delete this._windowsUpdateIdle;
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
     _updateLocationMap() {
         let properties = this._proxy.get_cached_property_names();
         if (properties == null) {
@@ -106,12 +144,11 @@ var FileManager1Client = class DashToDock_FileManager1Client {
 
     _updateFromPaths() {
         const locationsByWindowsPath = this._proxy.OpenWindowsWithLocations;
-        const windowsByPath = Utils.getWindowsByObjectPath();
 
         this._windowsByLocation = new Map();
         Object.entries(locationsByWindowsPath).forEach(([windowPath, locations]) => {
             locations.forEach(location => {
-                const window = windowsByPath.get(windowPath);
+                const window = this._windowsByPath.get(windowPath);
 
                 if (window) {
                     location += location.endsWith('/') ? '' : '/';
