@@ -256,7 +256,7 @@ function getFileManagerApp() {
     return Shell.AppSystem.get_default().lookup_app(FILE_MANAGER_DESKTOP_APP_ID);
 }
 
-function wrapWindowsManagerApp() {
+function wrapFileManagerApp() {
     const fileManagerApp = getFileManagerApp();
     if (!fileManagerApp)
         return null;
@@ -308,7 +308,7 @@ function wrapWindowsManagerApp() {
     return fileManagerApp;
 }
 
-function unWrapWindowsManagerApp() {
+function unWrapFileManagerApp() {
     const fileManagerApp = getFileManagerApp();
     if (!fileManagerApp || !fileManagerApp._dtdData)
         return;
