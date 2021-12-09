@@ -242,10 +242,13 @@ function makeLocationApp(params) {
 
     const windowsChangedId = fm1Client.connect('windows-changed', () =>
         shellApp._updateWindows());
+    const workspaceChangedId = global.workspaceManager.connect('workspace-switched',
+        () => shellApp.emit('windows-changed'));
 
     const parentDestroy = shellApp.destroy;
     shellApp.destroy = function () {
         fm1Client.disconnect(windowsChangedId);
+        global.workspaceManager.disconnect(workspaceChangedId);
         parentDestroy.call(this);
     }
 
