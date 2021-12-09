@@ -671,17 +671,27 @@ function makeLocationApp(params) {
     shellApp._mi('can_open_new_window', () => false);
 
     const { fm1Client } = Docking.DockManager.getDefault();
-    shellApp._updateWindows = function () {
-        const windows = fm1Client.getWindows(this.location?.get_uri());
-        this._setWindows(windows);
-    };
+    shellApp._setDtdData({
+        _sortWindows: function () {
+            this._windows.sort(Utils.shellWindowsCompare);
+        },
+
+        _updateWindows: function () {
+            const windows = fm1Client.getWindows(this.location?.get_uri()).sort(
+                Utils.shellWindowsCompare);
+            this._setWindows(windows);
+        },
+    });
 
     shellApp._signalConnections.add(fm1Client, 'windows-changed', () =>
         shellApp._updateWindows());
-    shellApp._signalConnections.add(global.workspaceManager,
-        'workspace-switched', () => shellApp.emit('windows-changed'));
     shellApp._signalConnections.add(shellApp.appInfo, 'notify::icon', () =>
         shellApp.notify('icon'));
+    shellApp._signalConnections.add(global.workspaceManager,
+        'workspace-switched', () => {
+            shellApp._sortWindows();
+            shellApp.emit('windows-changed');
+        });
 
     return shellApp;
 }
