@@ -5,6 +5,7 @@ const Clutter = imports.gi.Clutter;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Meta = imports.gi.Meta;
+const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -480,4 +481,37 @@ function getWindowsByObjectPath() {
     });
 
     return windowsByObjectPath;
+}
+
+// Re-implements shell_app_compare so that can be used to resort running apps
+function shellAppCompare(appA, appB) {
+    if (appA.state !== appB.state) {
+        if (appA.state === Shell.AppState.RUNNING)
+            return -1;
+        return 1;
+    }
+
+    const windowsA = appA.get_windows();
+    const windowsB = appB.get_windows();
+
+    const isMinimized = windows => !windows.some(w => w.showing_on_its_workspace());
+    const minimizedB = isMinimized(windowsB);
+    if (isMinimized(windowsA) != minimizedB) {
+        if (minimizedB)
+            return -1;
+        return 1;
+    }
+
+    if (appA.state === Shell.AppState.RUNNING) {
+        if (windowsA.length && !windowsB.length)
+            return -1;
+        else if (!windowsA.length && windowsB.length)
+            return 1;
+
+        const lastUserTime = windows =>
+            Math.max(...windows.map(w => w.get_user_time()));
+        return lastUserTime(windowsB) - lastUserTime(windowsA);
+    }
+
+    return 0;
 }
