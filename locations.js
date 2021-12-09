@@ -212,6 +212,47 @@ var LocationAppInfo = GObject.registerClass({
     vfunc_get_supported_types() {
         return [];
     }
+
+    async _queryLocationIcon(params) {
+        if (!this.location)
+            return null;
+
+        const cancellable = params.cancellable ?? this.cancellable;
+
+        try {
+            const info = await this.location.query_info_async(
+                Gio.FILE_ATTRIBUTE_STANDARD_ICON,
+                Gio.FileQueryInfoFlags.NONE,
+                GLib.PRIORITY_LOW, cancellable);
+
+            return info?.get_icon();
+        } catch (e) {
+            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_FOUND) ||
+                e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
+                return icons;
+            throw e;
+        }
+    }
+
+    async _updateLocationIcon(params={}) {
+        try {
+            this._updateIconCancellable?.cancel();
+            const cancellable = new Utils.CancellableChild(this.cancellable);
+            this._updateIconCancellable = cancellable;
+
+            const icon = await this._queryLocationIcon({ cancellable, ...params });
+
+            if (icon && !icon.equal(this.icon))
+                this.icon = icon;
+        } catch (e) {
+            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                logError(e, 'Impossible to update icon for %s'.format(this.get_id()));
+        } finally {
+            cancellable.cancel();
+            if (this._updateIconCancellable === cancellable)
+                delete this._updateIconCancellable;
+        }
+    }
 });
 
 const VolumeAppInfo = GObject.registerClass({
@@ -417,10 +458,10 @@ class TrashAppInfo extends LocationAppInfo {
         super._init({
             location: Gio.file_new_for_uri(TRASH_URI),
             name: __('Trash'),
+            icon: Gio.ThemedIcon.new(FALLBACK_TRASH_ICON),
             cancellable,
         });
-        this.connect('notify::empty', () =>
-            (this.icon = Gio.ThemedIcon.new(this.empty ? 'user-trash' : 'user-trash-full')));
+        this.connect('notify::empty', () => this._updateLocationIcon());
         this.notify('empty');
     }
 
@@ -775,10 +816,11 @@ var Trash = class DashToDock_Trash {
         if (Trash._promisified)
             return;
 
+        const trashProto = Gio.file_new_for_uri(TRASH_URI).constructor.prototype;
         Gio._promisify(Gio.FileEnumerator.prototype, 'close_async', 'close_finish');
         Gio._promisify(Gio.FileEnumerator.prototype, 'next_files_async', 'next_files_finish');
-        Gio._promisify(Gio.file_new_for_uri(TRASH_URI).constructor.prototype,
-            'enumerate_children_async', 'enumerate_children_finish');
+        Gio._promisify(trashProto, 'enumerate_children_async', 'enumerate_children_finish');
+        Gio._promisify(trashProto, 'query_info_async', 'query_info_finish');
         Trash._promisified = true;
     }
 
