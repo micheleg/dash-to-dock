@@ -621,7 +621,7 @@ function wrapWindowsBackedApp(shellApp) {
 
     m('activate', () => shellApp.activate_full(-1, 0));
 
-    m('compare', (_om, other) => shellAppCompare(shellApp, other));
+    m('compare', (_om, other) => Utils.shellAppCompare(shellApp, other));
 
     const { destroy: defaultDestroy } = shellApp;
     shellApp.destroy = function() {
@@ -730,39 +730,6 @@ function unWrapFileManagerApp() {
         return;
 
     fileManagerApp.destroy();
-}
-
-// Re-implements shell_app_compare so that can be used to resort running apps
-function shellAppCompare(app, other) {
-    if (app.state !== other.state) {
-        if (app.state === Shell.AppState.RUNNING)
-            return -1;
-        return 1;
-    }
-
-    const windows = app.get_windows();
-    const otherWindows = other.get_windows();
-
-    const isMinimized = windows => !windows.some(w => w.showing_on_its_workspace());
-    const otherMinimized = isMinimized(otherWindows);
-    if (isMinimized(windows) != otherMinimized) {
-        if (otherMinimized)
-            return -1;
-        return 1;
-    }
-
-    if (app.state === Shell.AppState.RUNNING) {
-        if (windows.length && !otherWindows.length)
-            return -1;
-        else if (!windows.length && otherWindows.length)
-            return 1;
-
-        const lastUserTime = windows =>
-            Math.max(...windows.map(w => w.get_user_time()));
-        return lastUserTime(otherWindows) - lastUserTime(windows);
-    }
-
-    return 0;
 }
 
 /**

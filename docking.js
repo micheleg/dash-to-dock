@@ -1705,7 +1705,7 @@ var DockManager = class DashToDock_DockManager {
                         if (fileManagerIdx > -1 && fileManagerApp?.state !== Shell.AppState.RUNNING)
                             runningApps.splice(fileManagerIdx, 1);
 
-                        return [...runningApps, ...locationApps].sort(Locations.shellAppCompare);
+                        return [...runningApps, ...locationApps].sort(Utils.shellAppCompare);
                     }
                 ],
                 [
