@@ -142,10 +142,25 @@ var FileManager1Client = class DashToDock_FileManager1Client {
         }
     }
 
+    _locationMapsEquals(mapA, mapB) {
+        if (mapA.size !== mapB.size)
+            return false;
+
+        const setsEquals = (a, b) => a.size === b.size &&
+            [...a].every(value => b.has(value));
+
+        for (const [key, val] of mapA) {
+            const windowsSet = mapB.get(key);
+            if (!windowsSet || !setsEquals(windowsSet, val))
+                return false;
+        }
+        return true;
+    }
+
     _updateFromPaths() {
         const locationsByWindowsPath = this._proxy.OpenWindowsWithLocations;
 
-        this._windowsByLocation = new Map();
+        const windowsByLocation = new Map();
         Object.entries(locationsByWindowsPath).forEach(([windowPath, locations]) => {
             locations.forEach(location => {
                 const window = this._windowsByPath.get(windowPath);
@@ -154,15 +169,19 @@ var FileManager1Client = class DashToDock_FileManager1Client {
                     location += location.endsWith('/') ? '' : '/';
                     // Use a set to deduplicate when a window has a
                     // location open in multiple tabs.
-                    const windows = this._windowsByLocation.get(location) || new Set();
+                    const windows = windowsByLocation.get(location) || new Set();
                     windows.add(window);
 
                     if (windows.size === 1)
-                        this._windowsByLocation.set(location, windows);
+                        windowsByLocation.set(location, windows);
                 }
             });
         });
-        this.emit('windows-changed');
+
+        if (!this._locationMapsEquals(this._windowsByLocation, windowsByLocation)) {
+            this._windowsByLocation = windowsByLocation;
+            this.emit('windows-changed');
+        }
     }
 }
 Signals.addSignalMethods(FileManager1Client.prototype);
