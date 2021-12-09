@@ -72,12 +72,8 @@ const BasicHandler = class DashToDock_BasicHandler {
     }
 
     removeWithLabel(label) {
-        if (this._storage[label]) {
-            for (let i = 0; i < this._storage[label].length; i++)
-                this._remove(this._storage[label][i]);
-
-            delete this._storage[label];
-        }
+        this._storage[label]?.reverse().forEach(item => this._remove(item));
+        delete this._storage[label];
     }
 
     // Virtual methods to be implemented by subclass
