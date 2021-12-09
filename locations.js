@@ -516,19 +516,19 @@ function wrapWindowsBackedApp(shellApp) {
     shellApp._setDtdData({ mi: m, pi: p }, { public: false });
 
     m('get_state', () =>
-        shellApp.get_windows().length ? Shell.AppState.RUNNING : Shell.AppState.STOPPED);
+        shellApp.get_n_windows() ? Shell.AppState.RUNNING : Shell.AppState.STOPPED);
     p('state', { get: () => shellApp.get_state() });
 
     m('get_windows', () => shellApp._windows);
-    m('get_n_windows', () => shellApp.get_windows().length);
-    m('get_pids', () => shellApp.get_windows().reduce((pids, w) => {
+    m('get_n_windows', () => shellApp._windows.length);
+    m('get_pids', () => shellApp._windows.reduce((pids, w) => {
         if (w.get_pid() > 0 && !pids.includes(w.get_pid()))
             pids.push(w.get_pid());
         return pids;
     }, []));
-    m('is_on_workspace', (_om, workspace) => shellApp.get_windows().some(w =>
+    m('is_on_workspace', (_om, workspace) => shellApp._windows.some(w =>
         w.get_workspace() === workspace));
-    m('request_quit', () => shellApp.get_windows().filter(w =>
+    m('request_quit', () => shellApp._windows.filter(w =>
         w.can_close()).forEach(w => w.delete(global.get_current_time())));
 
     shellApp._setDtdData({
@@ -567,7 +567,7 @@ function wrapWindowsBackedApp(shellApp) {
 
     const windowTracker = Shell.WindowTracker.get_default();
     shellApp._checkFocused = function () {
-        if (this.get_windows().some(w => w.has_focus())) {
+        if (this._windows.some(w => w.has_focus())) {
             this.isFocused = true;
             windowTracker.notify('focus-app');
         } else if (this.isFocused) {
@@ -584,7 +584,7 @@ function wrapWindowsBackedApp(shellApp) {
     m('activate_window', function (_om, window, timestamp) {
         if (!window)
             [window] = this.get_windows();
-        else if (!this.get_windows().includes(window))
+        else if (!this._windows.includes(window))
             return;
 
         const currentWorkspace = global.workspace_manager.get_active_workspace();
