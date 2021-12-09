@@ -678,7 +678,20 @@ function makeLocationApp(params) {
         _updateWindows: function () {
             const windows = fm1Client.getWindows(this.location?.get_uri()).sort(
                 Utils.shellWindowsCompare);
-            this._setWindows(windows);
+            const { windowsChanged } = this._setWindows(windows);
+
+            if (!windowsChanged)
+                return;
+
+            this._signalConnections.removeWithLabel('location-windows');
+            windows.forEach(w =>
+                this._signalConnections.addWithLabel('location-windows', w,
+                    'notify::user-time', () => {
+                        if (w != this._windows[0]) {
+                            this._sortWindows();
+                            this.emit('windows-changed');
+                        }
+                    }));
         },
     });
 
