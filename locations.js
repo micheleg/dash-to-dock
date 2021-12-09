@@ -595,12 +595,14 @@ function wrapWindowsBackedApp(shellApp) {
 
     m('compare', (_om, other) => shellAppCompare(shellApp, other));
 
+    const { destroy: defaultDestroy } = shellApp;
     shellApp.destroy = function() {
         updateWindowsIdle && GLib.source_remove(updateWindowsIdle);
         this._dtdData.proxyProperties.forEach(p => (delete this[p]));
         this._dtdData.destroy();
         this._dtdData = undefined;
-        this.destroy = undefined;
+        this.destroy = defaultDestroy;
+        defaultDestroy && defaultDestroy.call(this);
     }
 
     return shellApp;
