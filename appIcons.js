@@ -1215,9 +1215,9 @@ function getInterestingWindows(windows, monitorIndex) {
     // that are neither in the current workspace nor marked urgent
     if (settings.get_boolean('isolate-workspaces')) {
         const showUrgent = settings.get_boolean('workspace-agnostic-urgent-windows');
-        const activeWorkspace = global.workspace_manager.get_active_workspace_index();
+        const activeWorkspace = global.workspace_manager.get_active_workspace();
         windows = windows.filter(function(w) {
-            const inWorkspace = w.get_workspace().index() === activeWorkspace;
+            const inWorkspace = w.get_workspace() === activeWorkspace;
             const isUrgent = w.urgent || w.demandsAttention || w._manualUrgency;
             return inWorkspace || (showUrgent && isUrgent);
         });
