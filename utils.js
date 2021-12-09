@@ -508,3 +508,25 @@ function shellAppCompare(appA, appB) {
 
     return 0;
 }
+
+// Re-implements shell_app_compare_windows
+function shellWindowsCompare(winA, winB) {
+    const activeWorkspace = global.workspaceManager.get_active_workspace();
+    const wsA = winA.get_workspace() === activeWorkspace;
+    const wsB = winB.get_workspace() === activeWorkspace;
+
+    if (wsA && !wsB)
+        return -1;
+    else if (!wsA && wsB)
+        return 1;
+
+    const visA = winA.showing_on_its_workspace();
+    const visB = winB.showing_on_its_workspace();
+
+    if (visA && !visB)
+        return -1;
+    else if (!visA && visB)
+        return 1;
+
+    return winB.get_user_time() - winA.get_user_time();
+}
