@@ -37,6 +37,10 @@ const NautilusFileOperations2Interface = '<node>\
 
 const NautilusFileOperations2ProxyInterface = Gio.DBusProxy.makeProxyWrapper(NautilusFileOperations2Interface);
 
+if (imports.system.version >= 17101) {
+    Gio._promisify(Gio.File.prototype, 'query_info_async', 'query_info_finish');
+}
+
 function makeNautilusFileOperationsProxy() {
     const proxy = new NautilusFileOperations2ProxyInterface(
         Gio.DBus.session,
@@ -213,34 +217,65 @@ var LocationAppInfo = GObject.registerClass({
         return [];
     }
 
-    async _queryLocationIcon(params) {
+    async _queryLocationIcons(params) {
+        const icons = { standard: null, custom: null };
         if (!this.location)
-            return null;
+            return icons;
 
         const cancellable = params.cancellable ?? this.cancellable;
+        const iconsQuery = [];
+        if (params?.standard)
+            iconsQuery.push(Gio.FILE_ATTRIBUTE_STANDARD_ICON);
 
+        if (params?.custom)
+            iconsQuery.push(ATTRIBUTE_METADATA_CUSTOM_ICON);
+
+        if (!iconsQuery.length)
+            throw new Error('Invalid Query Location Icons parameters');
+
+        let info;
         try {
-            const info = await this.location.query_info_async(
-                Gio.FILE_ATTRIBUTE_STANDARD_ICON,
+            // This is should not be needed in newer Gjs (> GNOME 41)
+            if (imports.system.version < 17101) {
+                Gio._promisify(this.location.constructor.prototype, 'query_info_async',
+                    'query_info_finish');
+            }
+            info = await this.location.query_info_async(
+                iconsQuery.join(','),
                 Gio.FileQueryInfoFlags.NONE,
                 GLib.PRIORITY_LOW, cancellable);
-
-            return info?.get_icon();
+            icons.standard = info.get_icon();
         } catch (e) {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_FOUND) ||
                 e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
                 return icons;
             throw e;
         }
+
+        const customIcon = info.get_attribute_string(ATTRIBUTE_METADATA_CUSTOM_ICON);
+        if (customIcon) {
+            const customIconFile = GLib.uri_parse_scheme(customIcon) ?
+                Gio.File.new_for_uri(customIcon) : Gio.File.new_for_path(customIcon);
+            const iconFileInfo = await customIconFile.query_info_async(
+                Gio.FILE_ATTRIBUTE_STANDARD_TYPE,
+                Gio.FileQueryInfoFlags.NONE,
+                GLib.PRIORITY_LOW, cancellable);
+
+            if (iconFileInfo.get_file_type() === Gio.FileType.REGULAR)
+                icons.custom = Gio.FileIcon.new(customIconFile);
+        }
+
+        return icons;
     }
 
-    async _updateLocationIcon(params={}) {
+    async _updateLocationIcon(params = { standard: true, custom: true }) {
         try {
             this._updateIconCancellable?.cancel();
             const cancellable = new Utils.CancellableChild(this.cancellable);
             this._updateIconCancellable = cancellable;
 
-            const icon = await this._queryLocationIcon({ cancellable, ...params });
+            const icons = await this._queryLocationIcons({ cancellable, ...params });
+            const icon = icons.custom ?? icons.standard;
 
             if (icon && !icon.equal(this.icon))
                 this.icon = icon;
@@ -273,6 +308,7 @@ class VolumeAppInfo extends LocationAppInfo {
             icon: volume.get_icon(),
             cancellable,
         });
+        this._updateLocationIcon({ custom: true });
     }
 
     vfunc_dup() {
@@ -368,6 +404,7 @@ class MountAppInfo extends LocationAppInfo {
             icon: mount.get_icon(),
             cancellable,
         });
+        this._updateLocationIcon({ custom: true });
     }
 
     vfunc_dup() {
