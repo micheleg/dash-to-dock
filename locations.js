@@ -669,10 +669,24 @@ function makeLocationApp(params) {
     // FIXME: We need to add a new API to Nautilus to open new windows
     shellApp._mi('can_open_new_window', () => false);
 
+    shellApp._mi('get_windows', function () {
+        if (this._needsResort)
+            this._sortWindows();
+        return this._windows;
+    });
+
     const { fm1Client } = Docking.DockManager.getDefault();
     shellApp._setDtdData({
+        _needsResort: true,
+
+        _windowsOrderChanged: function() {
+            this._needsResort = true;
+            this.emit('windows-changed');
+        },
+
         _sortWindows: function () {
             this._windows.sort(Utils.shellWindowsCompare);
+            this._needsResort = false;
         },
 
         _updateWindows: function () {
@@ -687,23 +701,18 @@ function makeLocationApp(params) {
             windows.forEach(w =>
                 this._signalConnections.addWithLabel('location-windows', w,
                     'notify::user-time', () => {
-                        if (w != this._windows[0]) {
-                            this._sortWindows();
-                            this.emit('windows-changed');
-                        }
+                        if (w != this._windows[0])
+                            this._windowsOrderChanged();
                     }));
         },
-    });
+    }, { readOnly: false });
 
     shellApp._signalConnections.add(fm1Client, 'windows-changed', () =>
         shellApp._updateWindows());
     shellApp._signalConnections.add(shellApp.appInfo, 'notify::icon', () =>
         shellApp.notify('icon'));
     shellApp._signalConnections.add(global.workspaceManager,
-        'workspace-switched', () => {
-            shellApp._sortWindows();
-            shellApp.emit('windows-changed');
-        });
+        'workspace-switched', () => shellApp._windowsOrderChanged());
 
     return shellApp;
 }
