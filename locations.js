@@ -652,7 +652,8 @@ function makeLocationApp(params) {
     }, { getter: true, enumerable: true });
 
     shellApp._mi('toString', defaultToString =>
-        '[LocationApp - %s]'.format(defaultToString.call(shellApp)));
+        '[LocationApp "%s" - %s]'.format(shellApp.get_id(),
+            defaultToString.call(shellApp)));
 
     shellApp._mi('launch', (_om, timestamp, workspace, _gpuPref) =>
         shellApp.appInfo.launch([],
