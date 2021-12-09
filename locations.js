@@ -457,10 +457,12 @@ function wrapWindowsBackedApp(shellApp) {
 
     shellApp._dtdData = {
         windows: [],
+        signalConnections: new Utils.GlobalSignalsHandler(),
         methodInjections: new Utils.InjectionsHandler(),
         propertyInjections: new Utils.PropertyInjectionsHandler(),
         destroy: function () {
             this.windows = [];
+            this.signalConnections.destroy();
             this.methodInjections.destroy();
             this.propertyInjections.destroy();
         }
@@ -470,6 +472,7 @@ function wrapWindowsBackedApp(shellApp) {
     const p = (...args) => shellApp._dtdData.propertyInjections.add(shellApp, ...args);
     shellApp._mi = m;
     shellApp._pi = p;
+    shellApp._signalConnections = shellApp._dtdData.signalConnections;
 
     m('get_state', () =>
         shellApp.get_windows().length ? Shell.AppState.RUNNING : Shell.AppState.STOPPED);
@@ -509,7 +512,7 @@ function wrapWindowsBackedApp(shellApp) {
     }
 
     shellApp._checkFocused();
-    const focusWindowNotifyId = global.display.connect('notify::focus-window', () =>
+    shellApp._signalConnections.add(global.display, 'notify::focus-window', () =>
         shellApp._checkFocused());
 
     // Re-implements shell_app_activate_window for generic activation and alt-tab support
@@ -556,7 +559,6 @@ function wrapWindowsBackedApp(shellApp) {
     m('compare', (_om, other) => shellAppCompare(shellApp, other));
 
     shellApp.destroy = function() {
-        global.display.disconnect(focusWindowNotifyId);
         updateWindowsIdle && GLib.source_remove(updateWindowsIdle);
         this._dtdData.destroy();
         this._dtdData = undefined;
@@ -618,20 +620,12 @@ function makeLocationApp(params) {
         }
     };
 
-    const windowsChangedId = fm1Client.connect('windows-changed', () =>
+    shellApp._signalConnections.add(fm1Client, 'windows-changed', () =>
         shellApp._updateWindows());
-    const workspaceChangedId = global.workspaceManager.connect('workspace-switched',
-        () => shellApp.emit('windows-changed'));
-    const iconChangedId = shellApp.appInfo.connect('notify::icon', () =>
+    shellApp._signalConnections.add(global.workspaceManager,
+        'workspace-switched', () => shellApp.emit('windows-changed'));
+    shellApp._signalConnections.add(shellApp.appInfo, 'notify::icon', () =>
         shellApp.notify('icon'));
-
-    const parentDestroy = shellApp.destroy;
-    shellApp.destroy = function () {
-        fm1Client.disconnect(windowsChangedId);
-        global.workspaceManager.disconnect(workspaceChangedId);
-        shellApp.appInfo.disconnect(iconChangedId);
-        parentDestroy.call(this);
-    }
 
     return shellApp;
 }
@@ -652,9 +646,9 @@ function wrapFileManagerApp() {
     wrapWindowsBackedApp(fileManagerApp);
 
     const { fm1Client } = Docking.DockManager.getDefault();
-    const windowsChangedId = fileManagerApp.connect('windows-changed', () =>
-        fileManagerApp._updateWindows());
-    const fm1WindowsChangedId = fm1Client.connect('windows-changed', () =>
+    fileManagerApp._signalConnections.addWithLabel('windowsChanged',
+        fileManagerApp, 'windows-changed', () => fileManagerApp._updateWindows());
+    fileManagerApp._signalConnections.add(fm1Client, 'windows-changed', () =>
         fileManagerApp._updateWindows());
 
     fileManagerApp._updateWindows = function () {
@@ -667,9 +661,9 @@ function wrapFileManagerApp() {
 
         if (this.get_windows().length !== oldWindows.length ||
             this.get_windows().some((win, index) => win !== oldWindows[index])) {
-            this.block_signal_handler(windowsChangedId);
+            this._signalConnections.blockWithLabel('windowsChanged');
             this.emit('windows-changed');
-            this.unblock_signal_handler(windowsChangedId);
+            this._signalConnections.unblockWithLabel('windowsChanged');
         }
 
         if (oldState !== this.state) {
@@ -681,13 +675,6 @@ function wrapFileManagerApp() {
 
     fileManagerApp._mi('toString', defaultToString =>
         '[FileManagerApp - %s]'.format(defaultToString.call(fileManagerApp)));
-
-    const parentDestroy = fileManagerApp.destroy;
-    fileManagerApp.destroy = function () {
-        fileManagerApp.disconnect(windowsChangedId);
-        fm1Client.disconnect(fm1WindowsChangedId);
-        parentDestroy.call(this);
-    }
 
     return fileManagerApp;
 }
