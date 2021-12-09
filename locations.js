@@ -457,28 +457,66 @@ function wrapWindowsBackedApp(shellApp) {
 
     shellApp._dtdData = {
         windows: [],
+        isFocused: false,
+        proxyProperties: [],
         signalConnections: new Utils.GlobalSignalsHandler(),
         methodInjections: new Utils.InjectionsHandler(),
         propertyInjections: new Utils.PropertyInjectionsHandler(),
+        addProxyProperties: function (parent, proxyProperties) {
+            Object.entries(proxyProperties).forEach(([p, o]) => {
+                const publicProp = o.public ? p : '_' + p;
+                const get = (o.getter && o.value instanceof Function) ?
+                    () => this[p]() : () => this[p];
+                Object.defineProperty(parent, publicProp, Object.assign({
+                    get,
+                    set: v => (this[p] = v),
+                    configurable: true,
+                    enumerable: !!o.enumerable,
+                }, o.readOnly ? { set: undefined } : {}));
+                o.value && (this[p] = o.value);
+                this.proxyProperties.push(publicProp);
+            });
+        },
         destroy: function () {
             this.windows = [];
+            this.proxyProperties = [];
             this.signalConnections.destroy();
             this.methodInjections.destroy();
             this.propertyInjections.destroy();
         }
     };
 
+    shellApp._dtdData.addProxyProperties(shellApp, {
+        windows: {},
+        isFocused: { public: true },
+        signalConnections: { readOnly: true },
+        updateWindows: {},
+        checkFocused: {},
+        setDtdData: {},
+    });
+
+    shellApp._setDtdData = function (data, params = {}) {
+        for (const [name, value] of Object.entries(data)) {
+            if (params.readOnly && name in this._dtdData)
+                throw new Error('Property %s is already defined'.format(name));
+            const defaultParams = { public: true, readOnly: true };
+            this._dtdData.addProxyProperties(this, {
+                [name]: { ...defaultParams, ...params, value }
+            });
+        }
+    };
+
     const m = (...args) => shellApp._dtdData.methodInjections.add(shellApp, ...args);
     const p = (...args) => shellApp._dtdData.propertyInjections.add(shellApp, ...args);
-    shellApp._mi = m; // Method injector
-    shellApp._pi = p; // Property injector
-    shellApp._signalConnections = shellApp._dtdData.signalConnections;
+
+    // mi is Method injector, pi is Property injector
+    shellApp._setDtdData({ mi: m, pi: p }, { public: false });
 
     m('get_state', () =>
         shellApp.get_windows().length ? Shell.AppState.RUNNING : Shell.AppState.STOPPED);
     p('state', { get: () => shellApp.get_state() });
 
-    m('get_windows', () => shellApp._dtdData.windows);
+    m('get_windows', () => shellApp._windows);
     m('get_n_windows', () => shellApp.get_windows().length);
     m('get_pids', () => shellApp.get_windows().reduce((pids, w) => {
         if (w.get_pid() > 0 && !pids.includes(w.get_pid()))
@@ -560,6 +598,7 @@ function wrapWindowsBackedApp(shellApp) {
 
     shellApp.destroy = function() {
         updateWindowsIdle && GLib.source_remove(updateWindowsIdle);
+        this._dtdData.proxyProperties.forEach(p => (delete this[p]));
         this._dtdData.destroy();
         this._dtdData = undefined;
         this.destroy = undefined;
@@ -579,10 +618,10 @@ function makeLocationApp(params) {
     const shellApp = new Shell.App(params);
     wrapWindowsBackedApp(shellApp);
 
-    Object.defineProperties(shellApp, {
-        location: { get: () => shellApp.appInfo.location },
-        isTrash: { get: () => shellApp.appInfo instanceof TrashAppInfo },
-    });
+    shellApp._setDtdData({
+        location: () => shellApp.appInfo.location,
+        isTrash: shellApp.appInfo instanceof TrashAppInfo,
+    }, { getter: true, enumerable: true });
 
     shellApp._mi('toString', defaultToString =>
         '[LocationApp - %s]'.format(defaultToString.call(shellApp)));
@@ -607,7 +646,7 @@ function makeLocationApp(params) {
     shellApp._updateWindows = function () {
         const oldState = this.state;
         const oldWindows = this.get_windows();
-        this._dtdData.windows = fm1Client.getWindows(this.location?.get_uri());
+        this._windows = fm1Client.getWindows(this.location?.get_uri());
 
         if (this.get_windows().length !== oldWindows.length ||
             this.get_windows().some((win, index) => win !== oldWindows[index]))
@@ -656,7 +695,7 @@ function wrapFileManagerApp() {
         const oldWindows = this.get_windows();
         const locationWindows = [];
         getRunningApps().forEach(a => locationWindows.push(...a.get_windows()));
-        this._dtdData.windows = originalGetWindows.call(this).filter(w =>
+        this._windows = originalGetWindows.call(this).filter(w =>
             !locationWindows.includes(w));
 
         if (this.get_windows().length !== oldWindows.length ||
