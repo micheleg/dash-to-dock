@@ -161,6 +161,8 @@ var FileManager1Client = class DashToDock_FileManager1Client {
         const locationsByWindowsPath = this._proxy.OpenWindowsWithLocations;
 
         const windowsByLocation = new Map();
+        this._signalsHandler.removeWithLabel('windows');
+
         Object.entries(locationsByWindowsPath).forEach(([windowPath, locations]) => {
             locations.forEach(location => {
                 const window = this._windowsByPath.get(windowPath);
@@ -174,6 +176,15 @@ var FileManager1Client = class DashToDock_FileManager1Client {
 
                     if (windows.size === 1)
                         windowsByLocation.set(location, windows);
+
+                    this._signalsHandler.addWithLabel('windows', window,
+                        'unmanaged', () => {
+                            const wins = this._windowsByLocation.get(location);
+                            wins.delete(window);
+                            if (!wins.size)
+                                this._windowsByLocation.delete(location);
+                            this.emit('windows-changed');
+                        });
                 }
             });
         });
