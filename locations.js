@@ -531,9 +531,33 @@ function wrapWindowsBackedApp(shellApp) {
     m('request_quit', () => shellApp.get_windows().filter(w =>
         w.can_close()).forEach(w => w.delete(global.get_current_time())));
 
-    shellApp._updateWindows = function () {
-        throw new GObject.NotImplementedError(`_updateWindows in ${this.constructor.name}`);
-    };
+    shellApp._setDtdData({
+        _updateWindows: function () {
+            throw new GObject.NotImplementedError(`_updateWindows in ${this.constructor.name}`);
+        },
+
+        _setWindows: function (windows) {
+            const oldState = this.state;
+            const oldWindows = this.get_windows().slice();
+            const result = { windowsChanged: false, stateChanged: false };
+
+            if (windows.length !== oldWindows.length ||
+                windows.some((win, index) => win !== oldWindows[index])) {
+                this._windows = windows;
+                this.emit('windows-changed');
+                result.windowsChanged = true;
+            }
+
+            if (this.state !== oldState) {
+                Shell.AppSystem.get_default().emit('app-state-changed', this);
+                this.notify('state');
+                this._checkFocused();
+                result.stateChanged = true;
+            }
+
+            return result;
+        },
+    }, { readOnly: false });
 
     shellApp._sources.add(GLib.idle_add(GLib.DEFAULT_PRIORITY, () => {
         shellApp._updateWindows();
@@ -648,19 +672,8 @@ function makeLocationApp(params) {
 
     const { fm1Client } = Docking.DockManager.getDefault();
     shellApp._updateWindows = function () {
-        const oldState = this.state;
-        const oldWindows = this.get_windows();
-        this._windows = fm1Client.getWindows(this.location?.get_uri());
-
-        if (this.get_windows().length !== oldWindows.length ||
-            this.get_windows().some((win, index) => win !== oldWindows[index]))
-            this.emit('windows-changed');
-
-        if (oldState !== this.state) {
-            Shell.AppSystem.get_default().emit('app-state-changed', this);
-            this.notify('state');
-            this._checkFocused();
-        }
+        const windows = fm1Client.getWindows(this.location?.get_uri());
+        this._setWindows(windows);
     };
 
     shellApp._signalConnections.add(fm1Client, 'windows-changed', () =>
@@ -695,25 +708,14 @@ function wrapFileManagerApp() {
         fileManagerApp._updateWindows());
 
     fileManagerApp._updateWindows = function () {
-        const oldState = this.state;
-        const oldWindows = this.get_windows();
         const locationWindows = [];
         getRunningApps().forEach(a => locationWindows.push(...a.get_windows()));
-        this._windows = originalGetWindows.call(this).filter(w =>
+        const windows = originalGetWindows.call(this).filter(w =>
             !locationWindows.includes(w));
 
-        if (this.get_windows().length !== oldWindows.length ||
-            this.get_windows().some((win, index) => win !== oldWindows[index])) {
-            this._signalConnections.blockWithLabel('windowsChanged');
-            this.emit('windows-changed');
-            this._signalConnections.unblockWithLabel('windowsChanged');
-        }
-
-        if (oldState !== this.state) {
-            Shell.AppSystem.get_default().emit('app-state-changed', this);
-            this.notify('state');
-            this._checkFocused();
-        }
+        this._signalConnections.blockWithLabel('windowsChanged');
+        this._setWindows(windows);
+        this._signalConnections.unblockWithLabel('windowsChanged');
     };
 
     fileManagerApp._mi('toString', defaultToString =>
