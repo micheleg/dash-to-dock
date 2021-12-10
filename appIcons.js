@@ -142,8 +142,10 @@ var DockAbstractAppIcon = GObject.registerClass({
         });
 
         this.connect('notify::focused', () => {
-            if (this.focused)
+            if (this.focused) {
                 this.add_style_class_name('focused');
+                this.urgent = false;
+            }
             else
                 this.remove_style_class_name('focused');
         })
@@ -311,7 +313,7 @@ var DockAbstractAppIcon = GObject.registerClass({
     }
 
     _addUrgentWindow(window) {
-        if (this._urgentWindows.has(window))
+        if (this._urgentWindows.has(window) || window.has_focus())
             return;
 
         if (window._manualUrgency && window.has_focus()) {
