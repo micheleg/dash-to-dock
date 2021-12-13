@@ -1025,6 +1025,14 @@ var Removables = class DashToDock_Removables {
             this._monitor,
             'mount-added',
             (_, mount) => this._onMountAdded(mount),
+        ], [
+            Docking.DockManager.settings,
+            'changed::show-mounts-only-mounted',
+            () => this._updateVolumes(),
+        ], [
+            Docking.DockManager.settings,
+            'changed::show-mounts-network',
+            () => this._updateVolumes(),
         ]);
     }
 
@@ -1059,7 +1067,10 @@ var Removables = class DashToDock_Removables {
             if (!mount.can_eject() && !mount.can_unmount())
                 return;
         } else {
-            return;
+            if (Docking.DockManager.settings.showMountsOnlyMounted)
+                return;
+            if (!volume.can_mount() && !volume.can_eject())
+                return;
         }
 
         const appInfo = new MountableVolumeAppInfo(volume, this._cancellable);
@@ -1070,8 +1081,12 @@ var Removables = class DashToDock_Removables {
 
         volumeApp._signalConnections.add(volumeApp, 'windows-changed',
             () => this.emit('windows-changed', volumeApp));
-        volumeApp._signalConnections.add(appInfo, 'notify::mount',
-            () => (!appInfo.mount && this._onVolumeRemoved(appInfo.volume)));
+
+        if (Docking.DockManager.settings.showMountsOnlyMounted) {
+            volumeApp._signalConnections.add(appInfo, 'notify::mount',
+                () => (!appInfo.mount && this._onVolumeRemoved(appInfo.volume)));
+        }
+
         this._volumeApps.push(volumeApp);
         this.emit('changed');
     }
@@ -1088,6 +1103,9 @@ var Removables = class DashToDock_Removables {
 
     _onMountAdded(mount) {
         Removables.initMountPromises(mount);
+
+        if (!Docking.DockManager.settings.showMountsOnlyMounted)
+            return;
 
         if (!this._volumeApps.find(({ appInfo }) => appInfo.mount === mount))
             this._onVolumeAdded(mount.get_volume());
