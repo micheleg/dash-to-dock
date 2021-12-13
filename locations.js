@@ -813,7 +813,10 @@ function wrapFileManagerApp() {
 
     const { removables, trash } = Docking.DockManager.getDefault();
     fileManagerApp._signalConnections.addWithLabel('windowsChanged',
-        fileManagerApp, 'windows-changed', () => fileManagerApp._updateWindows());
+        fileManagerApp, 'windows-changed', () => {
+            fileManagerApp.stop_emission_by_name('windows-changed');
+            fileManagerApp._updateWindows();
+        });
 
     if (removables) {
         fileManagerApp._signalConnections.add(removables, 'changed', () =>
