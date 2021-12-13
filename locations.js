@@ -581,9 +581,9 @@ var Removables = class DashToDock_Removables {
             if (app.get_name() == volume.get_name()) {
                 const [volumeApp] = this._volumeApps.splice(i, 1);
                 volumeApp.destroy();
+                this.emit('changed');
             }
         }
-        this.emit('changed');
     }
 
     _onMountAdded(monitor, mount) {
@@ -633,9 +633,9 @@ var Removables = class DashToDock_Removables {
             if (app.get_name() == mount.get_name()) {
                 const [mountApp] = this._mountApps.splice(i, 1);
                 mountApp.destroy();
+                this.emit('changed');
             }
         }
-        this.emit('changed');
     }
 
     getApps() {
