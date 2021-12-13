@@ -77,11 +77,11 @@ var LocationAppInfo = GObject.registerClass({
     Properties: {
         'location': GObject.ParamSpec.object(
             'location', 'location', 'location',
-            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            GObject.ParamFlags.READWRITE,
             Gio.File.$gtype),
         'name': GObject.ParamSpec.string(
             'name', 'name', 'name',
-            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            GObject.ParamFlags.READWRITE,
             null),
         'icon': GObject.ParamSpec.object(
             'icon', 'icon', 'icon',
@@ -290,41 +290,56 @@ var LocationAppInfo = GObject.registerClass({
     }
 });
 
-const VolumeAppInfo = GObject.registerClass({
+const MountableVolumeAppInfo = GObject.registerClass({
     Implements: [Gio.AppInfo],
     Properties: {
         'volume': GObject.ParamSpec.object(
             'volume', 'volume', 'volume',
             GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
             Gio.Volume.$gtype),
+        'mount': GObject.ParamSpec.object(
+            'mount', 'mount', 'mount',
+            GObject.ParamFlags.READWRITE,
+            Gio.Mount.$gtype),
     },
 },
-class VolumeAppInfo extends LocationAppInfo {
+class MountableVolumeAppInfo extends LocationAppInfo {
     _init(volume, cancellable = null) {
         super._init({
             volume,
-            location: volume.get_activation_root(),
-            name: volume.get_name(),
-            icon: volume.get_icon(),
             cancellable,
         });
-        this._updateLocationIcon({ custom: true });
+
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
+
+        const updateAndMonitor = () => {
+            this._update();
+            this._monitorChanges();
+        };
+        updateAndMonitor();
+        this._mountChanged = this.connect('notify::mount', updateAndMonitor);
+    }
+
+    destroy() {
+        this.disconnect(this._mountChanged);
+        this.mount = null;
+        this._signalsHandler.destroy();
     }
 
     vfunc_dup() {
-        return new VolumeAppInfo({
+        return new MountableVolumeAppInfo({
             volume: this.volume,
             cancellable: this.cancellable,
         });
     }
 
     vfunc_get_id() {
-        const uuid = this.volume.get_uuid();
-        return uuid ? 'volume:%s'.format(uuid) : super.vfunc_get_id();
+        const uuid = this.mount?.get_uuid() ?? this.volume.get_uuid();
+        return uuid ? 'mountable-volume:%s'.format(uuid) : super.vfunc_get_id();
     }
 
     vfunc_equal(other) {
-        if (this.volume === other?.volume)
+        if (this.volume === other?.volume && this.mount === other?.mount)
             return true;
 
         return this.get_id() === other?.get_id();
@@ -332,6 +347,16 @@ class VolumeAppInfo extends LocationAppInfo {
 
     list_actions() {
         const actions = [];
+        const { mount } = this;
+
+        if (mount) {
+            if (this.mount.can_unmount())
+                actions.push('unmount');
+            if (this.mount.can_eject())
+                actions.push('eject');
+
+            return actions;
+        }
 
         if (this.volume.can_mount())
             actions.push('mount');
@@ -345,100 +370,6 @@ class VolumeAppInfo extends LocationAppInfo {
         switch (action) {
             case 'mount':
                 return __('Mount');
-            case 'eject':
-                return __('Eject');
-            default:
-                return null;
-        }
-    }
-
-    async launchAction(action) {
-        if (!this.list_actions().includes(action))
-            throw new Error('Action %s is not supported by %s', action, this);
-
-        const operation = new ShellMountOperation.ShellMountOperation(this.volume);
-        try {
-            if (action === 'mount') {
-                await this.volume.mount(Gio.MountMountFlags.NONE, operation.mountOp,
-                    this.cancellable);
-            } else if (action === 'eject') {
-                await this.volume.eject_with_operation(Gio.MountUnmountFlags.FORCE,
-                    operation.mountOp, this.cancellable);
-            }
-        } catch (e) {
-            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.FAILED)) {
-                if (action === 'mount') {
-                    global.notify_error(__("Failed to mount “%s”".format(
-                        this.get_name())), e.message);
-                } else if (action === 'eject') {
-                    global.notify_error(__("Failed to eject “%s”".format(
-                        this.get_name())), e.message);
-                }
-            }
-
-            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
-                logError(e, 'Impossible to %s volume %s'.format(action,
-                    volume.get_name()));
-            }
-        } finally {
-            operation.close();
-        }
-    }
-});
-
-const MountAppInfo = GObject.registerClass({
-    Implements: [Gio.AppInfo],
-    Properties: {
-        'mount': GObject.ParamSpec.object(
-            'mount', 'mount', 'mount',
-            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
-            Gio.Mount.$gtype),
-    },
-},
-class MountAppInfo extends LocationAppInfo {
-    _init(mount, cancellable = null) {
-        super._init({
-            mount,
-            location: mount.get_default_location(),
-            name: mount.get_name(),
-            icon: mount.get_icon(),
-            cancellable,
-        });
-        this._updateLocationIcon({ custom: true });
-    }
-
-    vfunc_dup() {
-        return new MountAppInfo({
-            mount: this.mount,
-            cancellable: this.cancellable,
-        });
-    }
-
-    vfunc_get_id() {
-        const uuid = this.mount.get_uuid() ?? this.mount.get_volume()?.get_uuid();
-        return uuid ? 'mount:%s'.format(uuid) : super.vfunc_get_id();
-    }
-
-    vfunc_equal(other) {
-        if (this.mount === other?.mount)
-            return true;
-
-        return this.get_id() === other?.get_id();
-    }
-
-    list_actions() {
-        const actions = [];
-
-        if (this.mount.can_unmount())
-            actions.push('unmount');
-        if (this.mount.can_eject())
-            actions.push('eject');
-
-        return actions;
-    }
-
-    get_action_name(action) {
-        switch (action) {
             case 'unmount':
                 return __('Unmount');
             case 'eject':
@@ -448,22 +379,85 @@ class MountAppInfo extends LocationAppInfo {
         }
     }
 
+    vfunc_launch(files, context) {
+        if (this.mount || files?.length)
+            return super.vfunc_launch(files, context);
+
+        this.mountAndLaunch(files, context);
+        return true;
+    }
+
+    _update() {
+        this.mount = this.volume.get_mount();
+
+        const removable = this.mount ?? this.volume;
+        this.name = removable.get_name();
+        this.icon = removable.get_icon();
+
+        this.location = this.mount?.get_default_location() ??
+            this.volume.get_activation_root();
+
+        this._updateLocationIcon({ custom: true });
+    }
+
+    _monitorChanges() {
+        this._signalsHandler.destroy();
+
+        const removable = this.mount ?? this.volume;
+        this._signalsHandler.add(removable, 'changed', () => this._update());
+
+        if (this.mount) {
+            this._signalsHandler.add(this.mount, 'pre-unmount', () => this._update());
+            this._signalsHandler.add(this.mount, 'unmounted', () => this._update());
+        }
+    }
+
+    async mountAndLaunch(files, context) {
+        if (this.mount)
+            return super.vfunc_launch(files, context);
+
+        try {
+            await this.launchAction('mount');
+            if (!this.mount) {
+                throw new Error('No mounted location to open for %s'.format(
+                    this.get_id()));
+            }
+
+            return super.vfunc_launch(files, context);
+        } catch (e) {
+            logError(e, 'Mount and launch %s'.format(this.get_id()));
+        }
+    }
+
     async launchAction(action) {
         if (!this.list_actions().includes(action))
             throw new Error('Action %s is not supported by %s', action, this);
 
-        const operation = new ShellMountOperation.ShellMountOperation(this.mount);
+        const removable = this.mount ?? this.volume;
+        const operation = new ShellMountOperation.ShellMountOperation(removable);
         try {
-            if (action === 'unmount') {
+            if (action === 'mount') {
+                await this.volume.mount(Gio.MountMountFlags.NONE, operation.mountOp,
+                    this.cancellable);
+            } else if (action === 'unmount') {
                 await this.mount.unmount_with_operation(Gio.MountUnmountFlags.FORCE,
                     operation.mountOp, this.cancellable);
             } else if (action === 'eject') {
-                await this.mount.eject_with_operation(Gio.MountUnmountFlags.FORCE,
+                await removable.eject_with_operation(Gio.MountUnmountFlags.FORCE,
                     operation.mountOp, this.cancellable);
+            } else {
+                logError(new Error(), 'No action %s on removable %s'.format(action,
+                    removable.get_name()));
+                return false;
             }
+
+            return true;
         } catch (e) {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.FAILED)) {
-                if (action === 'unmount') {
+                if (action === 'mount') {
+                    global.notify_error(__("Failed to mount “%s”".format(
+                        this.get_name())), e.message);
+                } else if (action === 'unmount') {
                     global.notify_error(__("Failed to umount “%s”".format(
                         this.get_name())), e.message);
                 } else if (action === 'eject') {
@@ -471,11 +465,15 @@ class MountAppInfo extends LocationAppInfo {
                         this.get_name())), e.message);
                 }
             }
+
             if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
-                logError(e, 'Impossible to %s mount %s'.format(action,
-                    this.mount.get_name()));
+                logError(e, 'Impossible to %s removable %s'.format(action,
+                    removable.get_name()));
             }
+
+            return false;
         } finally {
+            this._update();
             operation.close();
         }
     }
@@ -770,6 +768,7 @@ function wrapWindowsBackedApp(shellApp) {
                 try {
                     this.launch(timestamp, workspace, Shell.AppLaunchGpu.APP_PREF);
                 } catch (e) {
+                    logError(e);
                     global.notify_error(_("Failed to launch “%s”".format(
                         this.get_name())), e.message);
                 }
@@ -1010,73 +1009,60 @@ var Removables = class DashToDock_Removables {
 
         this._monitor = Gio.VolumeMonitor.get();
         this._cancellable = new Gio.Cancellable();
-        this._volumeApps = []
-        this._mountApps = []
 
-        this._monitor.get_volumes().forEach(
-            (volume) => {
-                this._onVolumeAdded(this._monitor, volume);
-            }
-        );
-
-        this._monitor.get_mounts().forEach(
-            (mount) => {
-                this._onMountAdded(this._monitor, mount);
-            }
-        );
+        this._monitor.get_mounts().forEach(m => Removables.initMountPromises(m));
+        this._updateVolumes();
 
         this._signalsHandler.add([
             this._monitor,
-            'mount-added',
-            this._onMountAdded.bind(this)
-        ], [
-            this._monitor,
-            'mount-removed',
-            this._onMountRemoved.bind(this)
-        ], [
-            this._monitor,
             'volume-added',
-            this._onVolumeAdded.bind(this)
+            (_, volume) => this._onVolumeAdded(volume),
         ], [
             this._monitor,
             'volume-removed',
-            this._onVolumeRemoved.bind(this)
+            (_, volume) => this._onVolumeRemoved(volume),
+        ], [
+            this._monitor,
+            'mount-added',
+            (_, mount) => this._onMountAdded(mount),
         ]);
     }
 
     destroy() {
-        [...this._volumeApps, ...this._mountApps].forEach(a => a.destroy());
+        this._volumeApps.forEach(a => a.destroy());
         this._volumeApps = [];
-        this._mountApps = [];
         this._cancellable.cancel();
         this._cancellable = null;
         this._signalsHandler.destroy();
         this._monitor = null;
     }
 
-    _onVolumeAdded(monitor, volume) {
+    _updateVolumes() {
+        this._volumeApps?.forEach(a => a.destroy());
+        this._volumeApps = [];
+        this.emit('changed');
+
+        this._monitor.get_volumes().forEach(v => this._onVolumeAdded(v));
+    }
+
+    _onVolumeAdded(volume) {
         Removables.initVolumePromises(volume);
-
-        if (volume.get_mount())
-            return;
-
-        if (!volume.can_mount() && !volume.can_eject()) {
-            return;
-        }
 
         if (volume.get_identifier('class') == 'network') {
             return;
         }
 
-        if (!volume.get_activation_root()) {
-            // Can't offer to mount a device if we don't know
-            // where to mount it.
-            // These devices are usually ejectable so you
-            // don't normally unmount them anyway.
+        const mount = volume.get_mount();
+        if (mount) {
+            if (mount.is_shadowed())
+                return;
+            if (!mount.can_eject() && !mount.can_unmount())
+                return;
+        } else {
             return;
         }
 
-        const appInfo = new VolumeAppInfo(volume, this._cancellable);
+        const appInfo = new MountableVolumeAppInfo(volume, this._cancellable);
         const volumeApp = makeLocationApp({
             appInfo,
             fallbackIconName: FALLBACK_REMOVABLE_MEDIA_ICON,
@@ -1084,11 +1070,13 @@ var Removables = class DashToDock_Removables {
 
         volumeApp._signalConnections.add(volumeApp, 'windows-changed',
             () => this.emit('windows-changed', volumeApp));
+        volumeApp._signalConnections.add(appInfo, 'notify::mount',
+            () => (!appInfo.mount && this._onVolumeRemoved(appInfo.volume)));
         this._volumeApps.push(volumeApp);
         this.emit('changed');
     }
 
-    _onVolumeRemoved(monitor, volume) {
+    _onVolumeRemoved(volume) {
         const volumeIndex = this._volumeApps.findIndex(({ appInfo }) =>
             appInfo.volume === volume);
         if (volumeIndex !== -1) {
@@ -1098,51 +1086,15 @@ var Removables = class DashToDock_Removables {
         }
     }
 
-    _onMountAdded(monitor, mount) {
+    _onMountAdded(mount) {
         Removables.initMountPromises(mount);
 
-        // Filter out uninteresting mounts
-        if (!mount.can_eject() && !mount.can_unmount())
-            return;
-        if (mount.is_shadowed())
-            return;
-
-        let volume = mount.get_volume();
-        if (!volume || volume.get_identifier('class') == 'network') {
-            return;
-        }
-
-        const appInfo = new MountAppInfo(mount, this._cancellable);
-        const mountApp = makeLocationApp({
-            appInfo,
-            fallbackIconName: FALLBACK_REMOVABLE_MEDIA_ICON,
-        });
-        this._mountApps.push(mountApp);
-        this.emit('changed');
-    }
-
-    _onMountRemoved(monitor, mount) {
-        const mountIndex = this._mountApps.findIndex(({ appInfo }) =>
-            appInfo.mount === mount);
-        if (mountIndex !== -1) {
-            const [mountApp] = this._mountApps.splice(mountIndex, 1);
-            mountApp.destroy();
-            this.emit('changed');
-        }
+        if (!this._volumeApps.find(({ appInfo }) => appInfo.mount === mount))
+            this._onVolumeAdded(mount.get_volume());
     }
 
     getApps() {
-        // When we have both a volume app and a mount app, we prefer
-        // the mount app.
-        let apps = new Map();
-        this._volumeApps.map(function(app) {
-           apps.set(app.get_name(), app);
-        });
-        this._mountApps.map(function(app) {
-           apps.set(app.get_name(), app);
-        });
-
-        return [...apps.values()];
+        return this._volumeApps;
     }
 }
 Signals.addSignalMethods(Removables.prototype);
