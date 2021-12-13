@@ -319,9 +319,23 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         };
         updateAndMonitor();
         this._mountChanged = this.connect('notify::mount', updateAndMonitor);
+
+        if (!this.mount && this.volume.get_identifier('class') == 'network') {
+            // For some devices the mount point isn't advertised promptly
+            // even if it's already existing, and there's no signaling about
+            this._lazyUpdater = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
+                this._update();
+                delete this._lazyUpdater;
+                return GLib.SOURCE_REMOVE;
+            });
+        }
     }
 
     destroy() {
+        if (this._lazyUpdater) {
+            GLib.source_remove(this._lazyUpdater);
+            delete this._lazyUpdater;
+        }
         this.disconnect(this._mountChanged);
         this.mount = null;
         this._signalsHandler.destroy();
@@ -1054,7 +1068,8 @@ var Removables = class DashToDock_Removables {
     _onVolumeAdded(volume) {
         Removables.initVolumePromises(volume);
 
-        if (volume.get_identifier('class') == 'network') {
+        if (!Docking.DockManager.settings.showMountsNetwork &&
+            volume.get_identifier('class') == 'network') {
             return;
         }
 
