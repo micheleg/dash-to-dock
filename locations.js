@@ -813,11 +813,21 @@ function wrapFileManagerApp() {
     const originalGetWindows = fileManagerApp.get_windows;
     wrapWindowsBackedApp(fileManagerApp);
 
-    const { fm1Client } = Docking.DockManager.getDefault();
+    const { removables, trash } = Docking.DockManager.getDefault();
     fileManagerApp._signalConnections.addWithLabel('windowsChanged',
         fileManagerApp, 'windows-changed', () => fileManagerApp._updateWindows());
-    fileManagerApp._signalConnections.add(fm1Client, 'windows-changed', () =>
-        fileManagerApp._updateWindows());
+
+    if (removables) {
+        fileManagerApp._signalConnections.add(removables, 'changed', () =>
+            fileManagerApp._updateWindows());
+        fileManagerApp._signalConnections.add(removables, 'windows-changed', () =>
+            fileManagerApp._updateWindows());
+    }
+
+    if (trash?.getApp()) {
+        fileManagerApp._signalConnections.add(trash.getApp(), 'windows-changed', () =>
+            fileManagerApp._updateWindows());
+    }
 
     fileManagerApp._updateWindows = function () {
         const locationWindows = [];
@@ -1051,6 +1061,9 @@ var Removables = class DashToDock_Removables {
             appInfo,
             fallbackIconName: FALLBACK_REMOVABLE_MEDIA_ICON,
         });
+
+        volumeApp._signalConnections.add(volumeApp, 'windows-changed',
+            () => this.emit('windows-changed', volumeApp));
         this._volumeApps.push(volumeApp);
         this.emit('changed');
     }
