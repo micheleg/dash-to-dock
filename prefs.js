@@ -612,6 +612,10 @@ var Settings = GObject.registerClass({
             this._builder.get_object('show_only_mounted_devices_check'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-mounts-network',
+            this._builder.get_object('show_network_volumes_check'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('isolate-locations',
             this._builder.get_object('isolate_locations_switch'),
             'active',
