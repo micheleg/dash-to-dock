@@ -917,9 +917,23 @@ var Trash = class DashToDock_Trash {
     }
 
     async _updateTrash() {
+        const priority = GLib.PRIORITY_LOW;
+        const cancellable = this._cancellable;
+
         try {
-            const priority = GLib.PRIORITY_LOW;
-            const cancellable = this._cancellable;
+            const trashInfo = await this._file.query_info_async(
+                Gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT,
+                Gio.FileQueryInfoFlags.NONE,
+                priority, cancellable);
+            this._updateApp(!trashInfo.get_attribute_uint32(
+                Gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT));
+            return;
+        } catch (e) {
+            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                logError(e, 'Impossible to get trash children from infos');
+        }
+
+        try {
             const childrenEnumerator = await this._file.enumerate_children_async(
                 Gio.FILE_ATTRIBUTE_STANDARD_TYPE, Gio.FileQueryInfoFlags.NONE,
                 priority, cancellable);
