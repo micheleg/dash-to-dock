@@ -491,6 +491,20 @@ const TrashAppInfo = GObject.registerClass({
     },
 },
 class TrashAppInfo extends LocationAppInfo {
+    _promisified = false;
+
+    static initPromises(file) {
+        if (TrashAppInfo._promisified)
+            return;
+
+        const trashProto = file.constructor.prototype;
+        Gio._promisify(Gio.FileEnumerator.prototype, 'close_async', 'close_finish');
+        Gio._promisify(Gio.FileEnumerator.prototype, 'next_files_async', 'next_files_finish');
+        Gio._promisify(trashProto, 'enumerate_children_async', 'enumerate_children_finish');
+        Gio._promisify(trashProto, 'query_info_async', 'query_info_finish');
+        TrashAppInfo._promisified = true;
+    }
+
     _init(cancellable = null) {
         super._init({
             location: Gio.file_new_for_uri(TRASH_URI),
@@ -498,8 +512,31 @@ class TrashAppInfo extends LocationAppInfo {
             icon: Gio.ThemedIcon.new(FALLBACK_TRASH_ICON),
             cancellable,
         });
+        TrashAppInfo.initPromises(this.location);
+
+        try {
+            this._monitor = this.location.monitor_directory(0, this.cancellable);
+            this._monitor.set_rate_limit(UPDATE_TRASH_DELAY);
+            this._monitorChangedId = this._monitor.connect('changed', () =>
+                this._onTrashChange());
+        } catch (e) {
+            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                return;
+            logError(e, 'Impossible to monitor trash');
+        }
+        this._updateTrash();
+
         this.connect('notify::empty', () => this._updateLocationIcon());
         this.notify('empty');
+    }
+
+    destroy() {
+        if (this._trashChangedIdle)
+            GLib.source_remove(this._trashChangedIdle);
+
+        this._monitor?.disconnect(this._monitorChangedId);
+        this._monitor = null;
+        this.location = null;
     }
 
     list_actions() {
@@ -512,6 +549,53 @@ class TrashAppInfo extends LocationAppInfo {
                 return __('Empty Trash');
             default:
                 return null;
+        }
+    }
+
+    _onTrashChange() {
+        if (this._trashChangedIdle)
+            return;
+
+        if (this._monitor.is_cancelled())
+            return;
+
+        this._trashChangedIdle = GLib.timeout_add(
+            GLib.PRIORITY_LOW, UPDATE_TRASH_DELAY, () => {
+                this._trashChangedIdle = 0;
+                this._updateTrash();
+                return GLib.SOURCE_REMOVE;
+            });
+    }
+
+    async _updateTrash() {
+        const priority = GLib.PRIORITY_LOW;
+        const { cancellable } = this;
+
+        try {
+            const trashInfo = await this.location.query_info_async(
+                Gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT,
+                Gio.FileQueryInfoFlags.NONE,
+                priority, cancellable);
+            this.empty = !trashInfo.get_attribute_uint32(
+                Gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT);
+            return;
+        } catch (e) {
+            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                logError(e, 'Impossible to get trash children from infos');
+        }
+
+        try {
+            const childrenEnumerator = await this.location.enumerate_children_async(
+                Gio.FILE_ATTRIBUTE_STANDARD_TYPE, Gio.FileQueryInfoFlags.NONE,
+                priority, cancellable);
+            const children = await childrenEnumerator.next_files_async(1,
+                priority, cancellable);
+            this.empty = !children.length;
+
+            await childrenEnumerator.close_async(priority, null);
+        } catch (e) {
+            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                logError(e, 'Impossible to enumerate trash children');
         }
     }
 
@@ -705,6 +789,7 @@ function wrapWindowsBackedApp(shellApp) {
         this._dtdData.proxyProperties.forEach(p => (delete this[p]));
         this._dtdData.destroy();
         this._dtdData = undefined;
+        this.appInfo.destroy && this.appInfo.destroy();
         this.destroy = defaultDestroy;
         defaultDestroy && defaultDestroy.call(this);
     }
@@ -860,98 +945,14 @@ function unWrapFileManagerApp() {
  * up-to-date as the trash fills and is emptied over time.
  */
 var Trash = class DashToDock_Trash {
-    _promisified = false;
-
-    static initPromises() {
-        if (Trash._promisified)
-            return;
-
-        const trashProto = Gio.file_new_for_uri(TRASH_URI).constructor.prototype;
-        Gio._promisify(Gio.FileEnumerator.prototype, 'close_async', 'close_finish');
-        Gio._promisify(Gio.FileEnumerator.prototype, 'next_files_async', 'next_files_finish');
-        Gio._promisify(trashProto, 'enumerate_children_async', 'enumerate_children_finish');
-        Gio._promisify(trashProto, 'query_info_async', 'query_info_finish');
-        Trash._promisified = true;
-    }
-
     constructor() {
-        Trash.initPromises();
         this._cancellable = new Gio.Cancellable();
-        this._file = Gio.file_new_for_uri(TRASH_URI);
-        try {
-            this._monitor = this._file.monitor_directory(0, this._cancellable);
-            this._monitor.set_rate_limit(UPDATE_TRASH_DELAY);
-            this._signalId = this._monitor.connect('changed', () => this._onTrashChange());
-        } catch (e) {
-            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
-                return;
-            logError(e, 'Impossible to monitor trash');
-        }
-        this._schedUpdateId = 0;
-        this._updateTrash();
     }
 
     destroy() {
         this._cancellable.cancel();
         this._cancellable = null;
-        this._monitor?.disconnect(this._signalId);
-        this._monitor = null;
-        this._file = null;
         this._trashApp?.destroy();
-    }
-
-    _onTrashChange() {
-        if (this._schedUpdateId)
-            return;
-
-        if (this._monitor.is_cancelled())
-            return;
-
-        this._schedUpdateId = GLib.timeout_add(
-            GLib.PRIORITY_LOW, UPDATE_TRASH_DELAY, () => {
-                this._schedUpdateId = 0;
-                this._updateTrash();
-                return GLib.SOURCE_REMOVE;
-            });
-    }
-
-    async _updateTrash() {
-        const priority = GLib.PRIORITY_LOW;
-        const cancellable = this._cancellable;
-
-        try {
-            const trashInfo = await this._file.query_info_async(
-                Gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT,
-                Gio.FileQueryInfoFlags.NONE,
-                priority, cancellable);
-            this._updateApp(!trashInfo.get_attribute_uint32(
-                Gio.FILE_ATTRIBUTE_TRASH_ITEM_COUNT));
-            return;
-        } catch (e) {
-            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
-                logError(e, 'Impossible to get trash children from infos');
-        }
-
-        try {
-            const childrenEnumerator = await this._file.enumerate_children_async(
-                Gio.FILE_ATTRIBUTE_STANDARD_TYPE, Gio.FileQueryInfoFlags.NONE,
-                priority, cancellable);
-            const children = await childrenEnumerator.next_files_async(1,
-                priority, cancellable);
-            this._updateApp(!children.length);
-
-            await childrenEnumerator.close_async(priority, null);
-        } catch (e) {
-            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
-                logError(e, 'Impossible to enumerate trash children');
-        }
-    }
-
-    _updateApp(isEmpty) {
-        if (!this._trashApp)
-            return
-
-        this._trashApp.appInfo.empty = isEmpty;
     }
 
     _ensureApp() {
