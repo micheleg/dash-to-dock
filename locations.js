@@ -529,6 +529,9 @@ var Removables = class DashToDock_Removables {
     }
 
     destroy() {
+        [...this._volumeApps, ...this._mountApps].forEach(a => a.destroy());
+        this._volumeApps = [];
+        this._mountApps = [];
         this._signalsHandler.destroy();
         this._monitor = null;
     }
