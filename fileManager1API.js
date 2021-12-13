@@ -165,9 +165,12 @@ var FileManager1Client = class DashToDock_FileManager1Client {
 
         Object.entries(locationsByWindowsPath).forEach(([windowPath, locations]) => {
             locations.forEach(location => {
-                const window = this._windowsByPath.get(windowPath);
+                const win = this._windowsByPath.get(windowPath);
+                const windowGroup = win ? [win] : [];
 
-                if (window) {
+                win?.foreach_transient(w => (windowGroup.push(w) || true));
+
+                windowGroup.forEach(window => {
                     location += location.endsWith('/') ? '' : '/';
                     // Use a set to deduplicate when a window has a
                     // location open in multiple tabs.
@@ -185,7 +188,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
                                 this._windowsByLocation.delete(location);
                             this.emit('windows-changed');
                         });
-                }
+                });
             });
         });
 
