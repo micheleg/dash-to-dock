@@ -2,6 +2,8 @@
 const Gi = imports._gi;
 
 const Clutter = imports.gi.Clutter;
+const GLib = imports.gi.GLib;
+const Gio = imports.gi.Gio;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Meta = imports.gi.Meta;
@@ -537,3 +539,58 @@ function shellWindowsCompare(winA, winB) {
 
     return winB.get_user_time() - winA.get_user_time();
 }
+
+var CancellableChild = GObject.registerClass({
+    Properties: {
+        'parent': GObject.ParamSpec.object(
+            'parent', 'parent', 'parent',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            Gio.Cancellable.$gtype),
+    },
+},
+class CancellableChild extends Gio.Cancellable {
+    _init(parent) {
+        if (parent && !(parent instanceof Gio.Cancellable))
+            throw TypeError('Not a valid cancellable');
+
+        super._init({ parent });
+
+        if (parent?.is_cancelled()) {
+            this.cancel();
+            return;
+        }
+
+        this._connectToParent();
+    }
+
+    _connectToParent() {
+        this._connectId = this?.parent.connect(() => {
+            this._realCancel();
+
+            if (this._disconnectIdle)
+                return;
+
+            this._disconnectIdle = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                delete this._disconnectIdle;
+                this._disconnectFromParent();
+                return GLib.SOURCE_REMOVE;
+            });
+        });
+    }
+
+    _disconnectFromParent() {
+        if (this._connectId && !this._disconnectIdle) {
+            this.parent.disconnect(this._connectId);
+            delete this._connectId;
+        }
+    }
+
+    _realCancel() {
+        Gio.Cancellable.prototype.cancel.call(this);
+    }
+
+    cancel() {
+        this._disconnectFromParent();
+        this._realCancel();
+    }
+});
