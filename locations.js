@@ -301,6 +301,10 @@ const MountableVolumeAppInfo = GObject.registerClass({
             'mount', 'mount', 'mount',
             GObject.ParamFlags.READWRITE,
             Gio.Mount.$gtype),
+        'busy': GObject.ParamSpec.boolean(
+            'busy', 'busy', 'busy',
+            GObject.ParamFlags.READWRITE,
+            false),
     },
 },
 class MountableVolumeAppInfo extends LocationAppInfo {
@@ -328,6 +332,14 @@ class MountableVolumeAppInfo extends LocationAppInfo {
                 return GLib.SOURCE_REMOVE;
             });
         }
+    }
+
+    get busy() {
+        return !!this._currentAction;
+    }
+
+    get currentAction() {
+        return this._currentAction;
     }
 
     destroy() {
@@ -477,6 +489,7 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         }
 
         this._currentAction = action;
+        this.notify('busy');
         const removable = this.mount ?? this.volume;
         const operation = new ShellMountOperation.ShellMountOperation(removable);
         try {
@@ -508,6 +521,7 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             return false;
         } finally {
             delete this._currentAction;
+            this.notify('busy');
             this._update();
             operation.close();
         }
@@ -866,6 +880,17 @@ function makeLocationApp(params) {
 
     // FIXME: We need to add a new API to Nautilus to open new windows
     shellApp._mi('can_open_new_window', () => false);
+
+    if (shellApp.appInfo instanceof MountableVolumeAppInfo) {
+        shellApp._mi('get_busy', function (parentGetBusy) {
+            if (this.appInfo.busy)
+                return true;
+            return parentGetBusy.call(this);
+        });
+        shellApp._pi('busy', { get: () => shellApp.get_busy() });
+        shellApp._signalConnections.add(shellApp.appInfo, 'notify::busy', _ =>
+            shellApp.notify('busy'));
+    }
 
     shellApp._mi('get_windows', function () {
         if (this._needsResort)
