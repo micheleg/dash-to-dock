@@ -1026,6 +1026,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             for (let i = 0; i < actions.length; i++) {
                 let action = actions[i];
                 let item = this._appendMenuItem(appInfo.get_action_name(action));
+                item.sensitive = !appInfo.busy;
                 item.connect('activate', (emitter, event) => {
                     this._source.app.launch_action(action, event.get_time(), -1);
                     this.emit('activate-window', null);
