@@ -543,9 +543,7 @@ class TrashAppInfo extends LocationAppInfo {
     }
 
     destroy() {
-        if (this._trashChangedIdle)
-            GLib.source_remove(this._trashChangedIdle);
-
+        this._updateTrashCancellable?.cancel();
         this._monitor?.disconnect(this._monitorChangedId);
         this._monitor = null;
         this.location = null;
@@ -565,23 +563,17 @@ class TrashAppInfo extends LocationAppInfo {
     }
 
     _onTrashChange() {
-        if (this._trashChangedIdle)
-            return;
-
         if (this._monitor.is_cancelled())
             return;
 
-        this._trashChangedIdle = GLib.timeout_add(
-            GLib.PRIORITY_LOW, UPDATE_TRASH_DELAY, () => {
-                this._trashChangedIdle = 0;
-                this._updateTrash();
-                return GLib.SOURCE_REMOVE;
-            });
+        this._updateTrash();
     }
 
     async _updateTrash() {
         const priority = GLib.PRIORITY_LOW;
-        const { cancellable } = this;
+        this._updateTrashCancellable?.cancel();
+        const cancellable = new Utils.CancellableChild(this.cancellable);
+        this._updateTrashCancellable = cancellable;
 
         try {
             const trashInfo = await this.location.query_info_async(
@@ -594,6 +586,10 @@ class TrashAppInfo extends LocationAppInfo {
         } catch (e) {
             if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
                 logError(e, 'Impossible to get trash children from infos');
+        } finally {
+            cancellable.cancel();
+            if (this._updateIconCancellable === cancellable)
+                delete this._updateTrashCancellable;
         }
 
         try {
@@ -608,6 +604,10 @@ class TrashAppInfo extends LocationAppInfo {
         } catch (e) {
             if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
                 logError(e, 'Impossible to enumerate trash children');
+        } finally {
+            cancellable.cancel();
+            if (this._updateIconCancellable === cancellable)
+                delete this._updateTrashCancellable;
         }
     }
 
