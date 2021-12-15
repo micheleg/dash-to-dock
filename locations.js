@@ -443,10 +443,40 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         }
     }
 
+    _notifyActionError(action, message) {
+        if (action === 'mount') {
+            global.notify_error(__("Failed to mount “%s”".format(
+                this.get_name())), message);
+        } else if (action === 'unmount') {
+            global.notify_error(__("Failed to umount “%s”".format(
+                this.get_name())), message);
+        } else if (action === 'eject') {
+            global.notify_error(__("Failed to eject “%s”".format(
+                this.get_name())), message);
+        }
+    }
+
     async launchAction(action) {
         if (!this.list_actions().includes(action))
             throw new Error('Action %s is not supported by %s', action, this);
 
+        if (this._currentAction) {
+            if (this._currentAction === 'mount') {
+                this._notifyActionError(action,
+                    __("Mount operation already in progress"));
+            } else if (this._currentAction === 'unmount') {
+                this._notifyActionError(action,
+                    __("Umount operation already in progress"));
+            } else if (this._currentAction === 'eject') {
+                this._notifyActionError(action,
+                    __("Eject operation already in progress"));
+            }
+
+            throw new Error('Another action %s is being performed in %s'.format(
+                this._currentAction, this));
+        }
+
+        this._currentAction = action;
         const removable = this.mount ?? this.volume;
         const operation = new ShellMountOperation.ShellMountOperation(removable);
         try {
@@ -467,18 +497,8 @@ class MountableVolumeAppInfo extends LocationAppInfo {
 
             return true;
         } catch (e) {
-            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.FAILED)) {
-                if (action === 'mount') {
-                    global.notify_error(__("Failed to mount “%s”".format(
-                        this.get_name())), e.message);
-                } else if (action === 'unmount') {
-                    global.notify_error(__("Failed to umount “%s”".format(
-                        this.get_name())), e.message);
-                } else if (action === 'eject') {
-                    global.notify_error(__("Failed to eject “%s”".format(
-                        this.get_name())), e.message);
-                }
-            }
+            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.FAILED))
+                this._notifyActionError(action, e);
 
             if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
                 logError(e, 'Impossible to %s removable %s'.format(action,
@@ -487,6 +507,7 @@ class MountableVolumeAppInfo extends LocationAppInfo {
 
             return false;
         } finally {
+            delete this._currentAction;
             this._update();
             operation.close();
         }
