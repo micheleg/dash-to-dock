@@ -275,9 +275,14 @@
       <summary>Extend the dock container to all the available height</summary>
     </key>
     <key type="i" name="preferred-monitor">
-      <default>-1</default>
-      <summary>Monitor on which putting the dock</summary>
-      <description>Set on which monitor to put the dock, use -1 for the primary one</description>
+      <default>-2</default>
+      <summary>DEPRECATED: Monitor on which putting the dock (by index)</summary>
+      <description>Set on which monitor to put the dock, use -1 for the primary one. Use -2 refer to the 'preferred-monitor-by-connector' setting instead (this is the preferred value).</description>
+    </key>
+    <key type="s" name="preferred-monitor-by-connector">
+      <default>"primary"</default>
+      <summary>Monitor on which putting the dock (by connector)</summary>
+      <description>Set on which monitor to put the dock, for example 'DisplayPort-0'. Use 'primary' for primary one. This setting is only used if 'preferred-monitor' is -2.</description>
     </key>
     <key type="b" name="multi-monitor">
       <default>false</default>
