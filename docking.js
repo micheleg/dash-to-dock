@@ -178,19 +178,36 @@ var DashSlideContainer = GObject.registerClass({
 });
 
 var DockedDash = GObject.registerClass({
+    Properties: {
+        'is-main': GObject.ParamSpec.boolean(
+            'is-main', 'is-main', 'is-main',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            false),
+        'monitor-index': GObject.ParamSpec.uint(
+            'monitor-index', 'monitor-index', 'monitor-index',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            0, GLib.MAXUINT32, 0),
+    },
     Signals: {
         'showing': {},
         'hiding': {},
     }
 }, class DashToDock extends St.Bin {
+    _init(params) {
+        this._position = Utils.getPosition();
+        const positionStyleClass = ['top', 'right', 'bottom', 'left'];
 
-    _init(monitorIndex) {
+        // This is the centering actor
+        super._init({
+            ...params,
+            name: 'dashtodockContainer',
+            reactive: false,
+            style_class: positionStyleClass[this._position],
+        });
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
         // Load settings
         let settings = DockManager.settings;
-        this._monitorIndex = monitorIndex;
-        this._position = Utils.getPosition();
         this._isHorizontal = ((this._position == St.Side.TOP) || (this._position == St.Side.BOTTOM));
 
         // Temporary ignore hover events linked to autohide for whatever reason
@@ -202,13 +219,13 @@ var DockedDash = GObject.registerClass({
         this._intellihideIsEnabled = null;
 
         // Create intellihide object to monitor windows overlapping
-        this._intellihide = new Intellihide.Intellihide(this._monitorIndex);
+        this._intellihide = new Intellihide.Intellihide(this.monitorIndex);
 
         // initialize dock state
         this._dockState = State.HIDDEN;
 
         // Put dock on the required monitor
-        this._monitor = Main.layoutManager.monitors[this._monitorIndex];
+        this._monitor = Main.layoutManager.monitors[this.monitorIndex];
 
         // this store size and the position where the dash is shown;
         // used by intellihide module to check window overlap.
@@ -227,22 +244,13 @@ var DockedDash = GObject.registerClass({
         this._dockDwellTimeoutId = 0
 
         // Create a new dash object
-        this.dash = new DockDash.DockDash(this._monitorIndex);
+        this.dash = new DockDash.DockDash(this.monitorIndex);
 
         if (Main.overview.isDummy || !settings.get_boolean('show-show-apps-button'))
             this.dash.hideShowAppsButton();
 
-        // Create the main actor and the containers for sliding in and out and
+        // Create the containers for sliding in and out and
         // centering, turn on track hover
-
-        let positionStyleClass = ['top', 'right', 'bottom', 'left'];
-        // This is the centering actor
-        super._init({
-            name: 'dashtodockContainer',
-            reactive: false,
-            style_class: positionStyleClass[this._position],
-        });
-
         // This is the sliding actor whose allocation is to be tracked for input regions
         this._slider = new DashSlideContainer({
             monitor_index: this._monitor.index,
@@ -341,7 +349,7 @@ var DockedDash = GObject.registerClass({
         this._slider.connect(this._isHorizontal ? 'notify::x' : 'notify::y', this._updateStaticBox.bind(this));
 
         // Load optional features that need to be activated for one dock only
-        if (this._monitorIndex == settings.get_int('preferred-monitor'))
+        if (this.isMain)
             this._enableExtraFeatures();
         // Load optional features that need to be activated once per dock
         this._optionalScrollWorkspaceSwitch();
@@ -391,10 +399,6 @@ var DockedDash = GObject.registerClass({
         this._resetPosition();
 
         this.connect('destroy', this._onDestroy.bind(this));
-    }
-
-    get monitorIndex() {
-        return this._monitorIndex;
     }
 
     get position() {
@@ -1031,7 +1035,7 @@ var DockedDash = GObject.registerClass({
     }
 
     _isPrimaryMonitor() {
-        return (this._monitorIndex == Main.layoutManager.primaryIndex);
+        return (this.monitorIndex === Main.layoutManager.primaryIndex);
     }
 
     _resetPosition() {
@@ -1049,7 +1053,7 @@ var DockedDash = GObject.registerClass({
         // Note: do not use the workarea coordinates in the direction on which the dock is placed,
         // to avoid a loop [position change -> workArea change -> position change] with
         // fixed dock.
-        let workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitorIndex);
+        let workArea = Main.layoutManager.getWorkAreaForMonitor(this.monitorIndex);
 
 
         let fraction = DockManager.settings.get_double('height-fraction');
@@ -1736,6 +1740,10 @@ var DockManager = class DashToDock_DockManager {
             this._toggle.bind(this)
         ], [
             this._settings,
+            'changed::preferred-monitor-by-connector',
+            this._toggle.bind(this)
+        ], [
+            this._settings,
             'changed::dock-position',
             this._toggle.bind(this)
         ], [
@@ -1772,14 +1780,11 @@ var DockManager = class DashToDock_DockManager {
         }
 
         this._preferredMonitorIndex = this._settings.get_int('preferred-monitor');
-        // In case of multi-monitor, we consider the dock on the primary monitor to be the preferred (main) one
-        // regardless of the settings
-        // The dock goes on the primary monitor also if the settings are incosistent (e.g. desired monitor not connected).
-        if (this._settings.get_boolean('multi-monitor') ||
-            this._preferredMonitorIndex < 0 || this._preferredMonitorIndex > Main.layoutManager.monitors.length - 1
-            ) {
-            this._preferredMonitorIndex = Main.layoutManager.primaryIndex;
-        } else {
+        if (this._preferredMonitorIndex === -2) {
+            const monitorManager = Meta.MonitorManager.get();
+            this._preferredMonitorIndex = monitorManager.get_monitor_for_connector(
+                this._settings.get_string('preferred-monitor-by-connector'));
+        } else if (this._preferredMonitorIndex >= 0) {
             // Primary monitor used to be always 0 in Gdk, but the shell has a different
             // concept (where the order depends on mutter order).
             // So even if now the extension settings may use the same logic of the shell
@@ -1790,8 +1795,21 @@ var DockManager = class DashToDock_DockManager {
             this._preferredMonitorIndex = (Main.layoutManager.primaryIndex + this._preferredMonitorIndex) % Main.layoutManager.monitors.length ;
         }
 
+        // In case of multi-monitor, we consider the dock on the primary monitor
+        // to be the preferred (main) one regardless of the settings the dock
+        // goes on the primary monitor also if the settings are inconsistent
+        // (e.g. desired monitor not connected).
+        if (this._settings.get_boolean('multi-monitor') ||
+            this._preferredMonitorIndex < 0 ||
+            this._preferredMonitorIndex > Main.layoutManager.monitors.length - 1) {
+            this._preferredMonitorIndex = Main.layoutManager.primaryIndex;
+        }
+
         // First we create the main Dock, to get the extra features to bind to this one
-        let dock = new DockedDash(this._preferredMonitorIndex);
+        let dock = new DockedDash({
+            monitorIndex: this._preferredMonitorIndex,
+            isMain: true,
+        });
         this._allDocks.push(dock);
 
         // connect app icon into the view selector
@@ -1808,7 +1826,7 @@ var DockManager = class DashToDock_DockManager {
             for (let iMon = 0; iMon < nMon; iMon++) {
                 if (iMon == this._preferredMonitorIndex)
                     continue;
-                let dock = new DockedDash(iMon);
+                dock = new DockedDash({ monitorIndex: iMon });
                 this._allDocks.push(dock);
                 // connect app icon into the view selector
                 dock.dash.showAppsButton.connect('notify::checked', this._onShowAppsButtonToggled.bind(this));
