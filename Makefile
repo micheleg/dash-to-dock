@@ -63,7 +63,7 @@ else ifeq ($(SASS), dart)
 else ifeq ($(SASS), sassc)
 	sassc --omit-map-comment _stylesheet.scss stylesheet.css
 else
-	sass --omit-map-comment _stylesheet.scss stylesheet.css
+	sass --no-source-map _stylesheet.scss stylesheet.css
 endif
 
 install: install-local
