@@ -1233,8 +1233,11 @@ function getInterestingWindows(windows, monitorIndex) {
         const showUrgent = settings.get_boolean('workspace-agnostic-urgent-windows');
         const activeWorkspace = global.workspace_manager.get_active_workspace_index();
         windows = windows.filter(function(w) {
-            return w.get_workspace().index() == activeWorkspace
-                || (showUrgent && (w.urgent || w.demandsAttention || w._manualUrgency));
+            // See GJS docs : Meta/Window
+            const inWorkspace = w.get_workspace().index() == activeWorkspace;
+            const isUrgent = w.urgent || w.demandsAttention || w._manualUrgency;
+            const isNotInTaskbar = w.is_skip_taskbar();
+            return !isNotInTaskbar && (inWorkspace || (showUrgent && isUrgent));
         });
     }
 
