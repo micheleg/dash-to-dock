@@ -53,17 +53,6 @@ msgstr "Personalizar comportamiento del botón central"
 msgid "Customize running indicators"
 msgstr "Personalizar indicadores de ejecución"
 
-#: appIcons.js:790
-msgid "All Windows"
-msgstr "Todas las ventanas"
-
-#. Translators: %s is "Settings", which is automatically translated. You
-#. can also translate the full message if this fits better your language.
-#: appIcons.js:1092
-#, javascript-format
-msgid "Dash to Dock %s"
-msgstr "%s • Dash to Dock"
-
 #: Settings.ui.h:1
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
@@ -519,3 +508,40 @@ msgstr "Mostrar el icono Papelera"
 #: Settings.ui.h:109
 msgid "Show mounted volumes and devices"
 msgstr "Mostrar los dispositivos montados"
+
+#: appIcons.js:1148
+#, javascript-format
+msgid "Quit %d Windows"
+msgstr "Cerrar %d ventanas"
+
+#: appIcons.js:1146
+#, javascript-format
+msgid "Quit"
+msgstr "Cerrar"
+
+#. Translators: %s is "Settings", which is automatically translated. You
+#. can also translate the full message if this fits better your language.
+#: appIcons.js:1092
+#, javascript-format
+msgid "Dash to Dock %s"
+msgstr "%s • Dash to Dock"
+
+#: appIcons.js:1001
+msgid "All Windows"
+msgstr "Todas las ventanas"
+
+#: Settings.ui.h:36
+msgid "Preview size scale"
+msgstr "Tamaño de la ventana de previsualización"
+
+#: Settings.ui.h:43
+msgid "Keep the focused application always visible in the dash"
+msgstr "Mantener la aplicación seleccionada siempre visible en el dock"
+
+#: Settings.ui.h:50
+msgid "Isolate volumes, devices and trash windows from file manager"
+msgstr "Abrir volúmenes, dispositivos y papelera en ventana aparte."
+
+#: locations.js:412
+msgid "Trash"
+msgstr "Papperskorg"
