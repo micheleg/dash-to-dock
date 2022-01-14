@@ -9,8 +9,8 @@ const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
 const St = imports.gi.St;
 const Main = imports.ui.main;
-const Gtk = imports.gi.Gtk;
 
+const BoxPointer = imports.ui.boxpointer;
 const Params = imports.misc.params;
 const PopupMenu = imports.ui.popupMenu;
 const Workspace = imports.ui.workspace;
@@ -26,8 +26,7 @@ const PREVIEW_ANIMATION_DURATION = 250;
 var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.PopupMenu {
 
     constructor(source) {
-        let side = Utils.getPosition();
-        super(source.actor, 0.5, side);
+        super(source, 0.5, Utils.getPosition());
 
         // We want to keep the item hovered while the menu is up
         this.blockSourceEvents = true;
@@ -37,23 +36,19 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
         let monitorIndex = this._source.monitorIndex;
 
         this.actor.add_style_class_name('app-well-menu');
+        this.actor.add_style_class_name('app-menu');
         this.actor.set_style('max-width: '  + (Main.layoutManager.monitors[monitorIndex].width  - 22) + 'px; ' +
                              'max-height: ' + (Main.layoutManager.monitors[monitorIndex].height - 22) + 'px;');
         this.actor.hide();
 
         // Chain our visibility and lifecycle to that of the source
-        this._mappedId = this._source.actor.connect('notify::mapped', () => {
-            if (!this._source.actor.mapped)
+        this._mappedId = this._source.connect('notify::mapped', () => {
+            if (!this._source.mapped)
                 this.close();
         });
-        this._destroyId = this._source.actor.connect('destroy', this.destroy.bind(this));
+        this._destroyId = this._source.connect('destroy', this.destroy.bind(this));
 
         Main.uiGroup.add_actor(this.actor);
-
-        // Change the initialized side where required.
-        this._arrowSide = side;
-        this._boxPointer._arrowSide = side;
-        this._boxPointer._userArrowSide = side;
 
         this.connect('destroy', this._onDestroy.bind(this));
     }
@@ -70,18 +65,18 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
         let windows = this._source.getInterestingWindows();
         if (windows.length > 0) {
             this._redisplay();
-            this.open();
-            this.actor.navigate_focus(null, Gtk.DirectionType.TAB_FORWARD, false);
+            this.open(BoxPointer.PopupAnimation.FULL);
+            this.actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
             this._source.emit('sync-tooltip');
         }
     }
 
     _onDestroy() {
         if (this._mappedId)
-            this._source.actor.disconnect(this._mappedId);
+            this._source.disconnect(this._mappedId);
 
         if (this._destroyId)
-            this._source.actor.disconnect(this._destroyId);
+            this._source.disconnect(this._destroyId);
     }
 };
 
@@ -89,10 +84,12 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
 
     constructor(source) {
         super();
-        this.actor = new St.ScrollView({ name: 'dashtodockWindowScrollview',
-                                               hscrollbar_policy: Gtk.PolicyType.NEVER,
-                                               vscrollbar_policy: Gtk.PolicyType.NEVER,
-                                               enable_mouse_scrolling: true });
+        this.actor = new St.ScrollView({
+            name: 'dashtodockWindowScrollview',
+            hscrollbar_policy: St.PolicyType.NEVER,
+            vscrollbar_policy: St.PolicyType.NEVER,
+            enable_mouse_scrolling: true
+        });
 
         this.actor.connect('scroll-event', this._onScrollEvent.bind(this));
 
@@ -276,7 +273,8 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
         // when we *don't* need it, so turn off the scrollbar when that's true.
         // Dynamic changes in whether we need it aren't handled properly.
         let needsScrollbar = this._needsScrollbar();
-        let scrollbar_policy =  needsScrollbar ? Gtk.PolicyType.AUTOMATIC : Gtk.PolicyType.NEVER;
+        let scrollbar_policy = needsScrollbar ?
+            St.PolicyType.AUTOMATIC : St.PolicyType.NEVER;
         if (this.isHorizontal)
             this.actor.hscrollbar_policy =  scrollbar_policy;
         else
@@ -311,20 +309,22 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
 };
 
 var WindowPreviewMenuItem = GObject.registerClass(
-class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
+class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     _init(window, params) {
         super._init(params);
 
         this._window = window;
         this._destroyId = 0;
         this._windowAddedId = 0;
+        [this._width, this._height, this._scale] = this._getWindowPreviewSize(); // This gets the actual windows size for the preview
 
         // We don't want this: it adds spacing on the left of the item.
         this.remove_child(this._ornamentLabel);
         this.add_style_class_name('dashtodock-app-well-preview-menu-item');
 
+        // Now we don't have to set PREVIEW_MAX_WIDTH and PREVIEW_MAX_HEIGHT as preview size - that made all kinds of windows either stretched or squished (aspect ratio problem)
         this._cloneBin = new St.Bin();
-        this._cloneBin.set_size(PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT);
+        this._cloneBin.set_size(this._width*this._scale, this._height*this._scale);
 
         // TODO: improve the way the closebutton is layout. Just use some padding
         // for the moment.
@@ -341,7 +341,7 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this.closeButton.opacity = 0;
         this.closeButton.connect('clicked', this._closeWindow.bind(this));
 
-        let overlayGroup = new Clutter.Actor({layout_manager: new Clutter.BinLayout() });
+        let overlayGroup = new Clutter.Actor({layout_manager: new Clutter.BinLayout(), y_expand: true });
 
         overlayGroup.add_actor(this._cloneBin);
         overlayGroup.add_actor(this.closeButton);
@@ -349,7 +349,8 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         let label = new St.Label({ text: window.get_title()});
         label.set_style('max-width: '+PREVIEW_MAX_WIDTH +'px');
         let labelBin = new St.Bin({ child: label,
-                                    x_align: St.Align.MIDDLE});
+            x_align: Clutter.ActorAlign.CENTER,
+        });
 
         this._windowTitleId = this._window.connect('notify::title', () => {
                                   label.set_text(this._window.get_title());
@@ -362,14 +363,29 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         box.add(labelBin);
         this.add_actor(box);
 
-        this.connect('enter-event', this._onEnter.bind(this));
-        this.connect('leave-event', this._onLeave.bind(this));
-        this.connect('key-focus-in', this._onEnter.bind(this));
-        this.connect('key-focus-out', this._onLeave.bind(this));
-
         this._cloneTexture(window);
 
         this.connect('destroy', this._onDestroy.bind(this));
+    }
+
+    _getWindowPreviewSize() {
+        let mutterWindow = this._window.get_compositor_private();
+        let [width, height] = mutterWindow.get_size();
+
+        let scale;
+
+        if (Utils.getPreviewScale()) {
+            scale = Utils.getPreviewScale();
+        } else {
+            // a simple example with 1680x1050:
+            // * 250/1680 = 0,1488
+            // * 150/1050 = 0,1429
+            // => scale is 0,1429
+            scale = Math.min(1.0, PREVIEW_MAX_WIDTH/width, PREVIEW_MAX_HEIGHT/height)
+        }
+
+        // width and height that we wanna multiply by scale
+        return [width, height, scale];
     }
 
     _cloneTexture(metaWin){
@@ -392,12 +408,10 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             return;
         }
 
-        let [width, height] = mutterWindow.get_size();
-        let scale = Math.min(1.0, PREVIEW_MAX_WIDTH/width, PREVIEW_MAX_HEIGHT/height);
         let clone = new Clutter.Clone ({ source: mutterWindow,
                                          reactive: true,
-                                         width: width * scale,
-                                         height: height * scale });
+                                         width: this._width * this._scale,
+                                         height: this._height * this._scale });
 
         // when the source actor is destroyed, i.e. the window closed, first destroy the clone
         // and then destroy the menu item (do this animating out)
@@ -478,25 +492,30 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         return n>0;
     }
 
-    _onEnter() {
+    vfunc_key_focus_in() {
+        super.vfunc_key_focus_in();
         this._showCloseButton();
-        return Clutter.EVENT_PROPAGATE;
     }
 
-    _onLeave() {
-        if (!this._cloneBin.has_pointer &&
-            !this.closeButton.has_pointer)
-            this._hideCloseButton();
+    vfunc_key_focus_out() {
+        super.vfunc_key_focus_out();
+        this._hideCloseButton();
+    }
 
-        return Clutter.EVENT_PROPAGATE;
+    vfunc_enter_event(crossingEvent) {
+        this._showCloseButton();
+        return super.vfunc_enter_event(crossingEvent);
+    }
+
+    vfunc_leave_event(crossingEvent) {
+        this._hideCloseButton();
+        return super.vfunc_leave_event(crossingEvent);
     }
 
     _idleToggleCloseButton() {
         this._idleToggleCloseId = 0;
 
-        if (!this._cloneBin.has_pointer &&
-            !this.closeButton.has_pointer)
-            this._hideCloseButton();
+        this._hideCloseButton();
 
         return GLib.SOURCE_REMOVE;
     }
@@ -515,6 +534,10 @@ class DashToDock_WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     }
 
     _hideCloseButton() {
+        if (this.closeButton.has_pointer ||
+            this.get_children().some(a => a.has_pointer))
+            return;
+
         this.closeButton.remove_all_transitions();
         this.closeButton.ease({
             opacity: 0,

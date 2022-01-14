@@ -1,13 +1,12 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
-const Gtk = imports.gi.Gtk;
 const Signals = imports.signals;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
+const Clutter = imports.gi.Clutter;
 
 const AppDisplay = imports.ui.appDisplay;
 const AppFavorites = imports.ui.appFavorites;
@@ -40,7 +39,7 @@ const TransparencyMode = {
 var ThemeManager = class DashToDock_ThemeManager {
 
     constructor(dock) {
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._bindSettingsChanges();
         this._actor = dock;
         this._dash = dock.dash;
@@ -70,13 +69,13 @@ var ThemeManager = class DashToDock_ThemeManager {
 
         // destroy themeManager when the managed actor is destroyed (e.g. extension unload)
         // in order to disconnect signals
-        this._actor.connect('destroy', this.destroy.bind(this));
-
+        this._signalsHandler.add(this._actor, 'destroy', () => this.destroy());
     }
 
     destroy() {
-        this._signalsHandler.destroy();
+        this.emit('destroy');
         this._transparency.destroy();
+        this._destroyed = true;
     }
 
     _onOverviewShowing() {
@@ -163,19 +162,31 @@ var ThemeManager = class DashToDock_ThemeManager {
             // Note that if using 'dynamic' transparency modes,
             // the opacity will be set by the opaque/transparent styles anyway.
             let newAlpha = Math.round(backgroundColor.alpha/2.55)/100;
-            if (settings.get_enum('transparency-mode') == TransparencyMode.FIXED)
-                newAlpha = settings.get_double('background-opacity');
 
-            backgroundColor = Clutter.color_from_string(settings.get_string('background-color'))[1];
-            this._customizedBackground = 'rgba(' +
-                backgroundColor.red + ',' +
-                backgroundColor.green + ',' +
-                backgroundColor.blue + ',' +
-                newAlpha + ')';
+            backgroundColor = settings.get_string('background-color');
+            // backgroundColor is a string like rgb(0,0,0)
+            const [ret, color] = Clutter.Color.from_string(backgroundColor);
+            if (!ret) {
+                logError(new Error(`${backgroundColor} is not a valid color string`));
+                return;
+            }
+
+            if (settings.get_enum('transparency-mode') == TransparencyMode.FIXED) {
+                newAlpha = settings.get_double('background-opacity');
+                this._customizedBackground =
+                    `rgba(${color.red}, ${color.green}, ${color.blue}, ${newAlpha})`;
+            } else {
+                this._customizedBackground = backgroundColor;
+            }
 
             this._customizedBorder = this._customizedBackground;
+
+            color.alpha = newAlpha * 255;
+            this._transparency.setColor(color);
+        } else {
+            // backgroundColor is a Clutter.Color object
+            this._transparency.setColor(backgroundColor);
         }
-        this._transparency.setColor(backgroundColor);
     }
 
     _updateCustomStyleClasses() {
@@ -208,11 +219,13 @@ var ThemeManager = class DashToDock_ThemeManager {
     }
 
     updateCustomTheme() {
+        if (this._destroyed)
+            throw new Error(`Impossible to update a destroyed ${this.constructor.name}`);
         this._updateCustomStyleClasses();
         this._updateDashOpacity();
         this._updateDashColor();
         this._adjustTheme();
-        this._dash._redisplay();
+        this.emit('updated');
     }
 
     /**
@@ -221,13 +234,13 @@ var ThemeManager = class DashToDock_ThemeManager {
     _adjustTheme() {
         // Prevent shell crash if the actor is not on the stage.
         // It happens enabling/disabling repeatedly the extension
-        if (!this._dash._container.get_stage())
+        if (!this._dash._background.get_stage())
             return;
 
         let settings = Docking.DockManager.settings;
 
         // Remove prior style edits
-        this._dash._container.set_style(null);
+        this._dash._background.set_style(null);
         this._transparency.disable();
 
         // If built-in theme is enabled do nothing else
@@ -238,15 +251,13 @@ var ThemeManager = class DashToDock_ThemeManager {
         let position = Utils.getPosition(settings);
 
         // obtain theme border settings
-        let themeNode = this._dash._container.get_theme_node();
+        let themeNode = this._dash._background.get_theme_node();
         let borderColor = themeNode.get_border_color(St.Side.TOP);
         let borderWidth = themeNode.get_border_width(St.Side.TOP);
-        let borderRadius = themeNode.get_border_radius(St.Corner.TOPRIGHT);
 
         // We're copying border and corner styles to left border and top-left
         // corner, also removing bottom border and bottom-right corner styles
         let borderInner = '';
-        let borderRadiusValue = '';
         let borderMissingStyle = '';
 
         if (this._rtl && (position != St.Side.RIGHT))
@@ -256,32 +267,13 @@ var ThemeManager = class DashToDock_ThemeManager {
             borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
                    borderColor.to_string() + ';';
 
-        switch (position) {
-        case St.Side.LEFT:
-            borderInner = 'border-left';
-            borderRadiusValue = '0 ' + borderRadius + 'px ' + borderRadius + 'px 0;';
-            break;
-        case St.Side.RIGHT:
-            borderInner = 'border-right';
-            borderRadiusValue = borderRadius + 'px 0 0 ' + borderRadius + 'px;';
-            break;
-        case St.Side.TOP:
-            borderInner = 'border-top';
-            borderRadiusValue = '0 0 ' + borderRadius + 'px ' + borderRadius + 'px;';
-            break;
-        case St.Side.BOTTOM:
-            borderInner = 'border-bottom';
-            borderRadiusValue = borderRadius + 'px ' + borderRadius + 'px 0 0;';
-            break;
+        newStyle = borderMissingStyle;
+
+        if (newStyle) {
+            // I do call set_style possibly twice so that only the background gets the transition.
+            // The transition-property css rules seems to be unsupported
+            this._dash._background.set_style(newStyle);
         }
-
-        newStyle = borderInner + ': none;' +
-            'border-radius: ' + borderRadiusValue +
-            borderMissingStyle;
-
-        // I do call set_style possibly twice so that only the background gets the transition.
-        // The transition-property css rules seems to be unsupported
-        this._dash._container.set_style(newStyle);
 
         // Customize background
         let fixedTransparency = settings.get_enum('transparency-mode') == TransparencyMode.FIXED;
@@ -293,7 +285,7 @@ var ThemeManager = class DashToDock_ThemeManager {
             newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
                        'border-color:'+ this._customizedBorder + '; ' +
                        'transition-delay: 0s; transition-duration: 0.250s;';
-            this._dash._container.set_style(newStyle);
+            this._dash._background.set_style(newStyle);
         }
     }
 
@@ -311,15 +303,14 @@ var ThemeManager = class DashToDock_ThemeManager {
                     'extend-height',
                     'force-straight-corner'];
 
-        keys.forEach(function(key) {
-            this._signalsHandler.add([
-                Docking.DockManager.settings,
-                'changed::' + key,
-                this.updateCustomTheme.bind(this)
-           ]);
-        }, this);
+        this._signalsHandler.add(...keys.map(key => [
+            Docking.DockManager.settings,
+            `changed::${key}`,
+            () => this.updateCustomTheme(),
+        ]));
     }
 };
+Signals.addSignalMethods(ThemeManager.prototype);
 
 /**
  * The following class is based on the following upstream commit:
@@ -331,6 +322,7 @@ var Transparency = class DashToDock_Transparency {
     constructor(dock) {
         this._dash = dock.dash;
         this._actor = this._dash._container;
+        this._backgroundActor = this._dash._background;
         this._dockActor = dock;
         this._dock = dock;
         this._panel = Main.panel;
@@ -347,7 +339,6 @@ var Transparency = class DashToDock_Transparency {
         this._base_actor_style = "";
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
-        this._injectionsHandler = new Utils.InjectionsHandler();
         this._trackedWindows = new Map();
     }
 
@@ -419,12 +410,11 @@ var Transparency = class DashToDock_Transparency {
     destroy() {
         this.disable();
         this._signalsHandler.destroy();
-        this._injectionsHandler.destroy();
     }
 
     _onWindowActorAdded(container, metaWindowActor) {
         let signalIds = [];
-        ['allocation-changed', 'notify::visible'].forEach(s => {
+        ['notify::allocation', 'notify::visible'].forEach(s => {
             signalIds.push(metaWindowActor.connect(s, this._updateSolidStyle.bind(this)));
         });
         this._trackedWindows.set(metaWindowActor, signalIds);
@@ -444,12 +434,12 @@ var Transparency = class DashToDock_Transparency {
     _updateSolidStyle() {
         let isNear = this._dockIsNear();
         if (isNear) {
-            this._actor.set_style(this._opaque_style);
+            this._backgroundActor.set_style(this._opaque_style);
             this._dockActor.remove_style_class_name('transparent');
             this._dockActor.add_style_class_name('opaque');
         }
         else {
-            this._actor.set_style(this._transparent_style);
+            this._backgroundActor.set_style(this._transparent_style);
             this._dockActor.remove_style_class_name('opaque');
             this._dockActor.add_style_class_name('transparent');
         }
@@ -474,7 +464,7 @@ var Transparency = class DashToDock_Transparency {
          * up when it slides out. This is avoid an ugly transition.
          * */
         let factor = 0;
-        if (!Docking.DockManager.settings.get_boolean('dock-fixed') &&
+        if (!Docking.DockManager.settings.dockFixed &&
             this._dock.getDockState() == Docking.State.HIDDEN)
             factor = 1;
         let [leftCoord, topCoord] = this._actor.get_transformed_position();

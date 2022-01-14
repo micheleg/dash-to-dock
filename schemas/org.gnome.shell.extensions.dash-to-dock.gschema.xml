@@ -9,7 +9,8 @@
     <value value='5' nick='previews'/>
     <value value='6' nick='minimize-or-previews'/>
     <value value='7' nick='focus-or-previews'/>
-    <value value='8' nick='quit'/>
+    <value value='8' nick='focus-minimize-or-previews'/>
+    <value value='9' nick='quit'/>
   </enum>
   <enum id='org.gnome.shell.extensions.dash-to-dock.scrollAction'>
     <value value='0' nick='do-nothing'/>
@@ -46,7 +47,7 @@
   </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key name="dock-position" enum="org.gnome.shell.extensions.dash-to-dock.position">
-      <default>'LEFT'</default>
+      <default>'BOTTOM'</default>
       <summary>Dock position</summary>
       <description>Dock is shown on the Left, Right, Top or Bottom side of the screen.</description>
     </key>
@@ -155,10 +156,15 @@
       <summary>Maximum dash icon size</summary>
       <description>Set the allowed maximum dash icon size. Allowed range: 16..64.</description>
     </key>
+    <key type="d" name="preview-size-scale">
+      <default>0</default>
+      <summary>Preview size scale</summary>
+      <description>Set the allowed maximum dash preview size scale. Allowed range: 0,00..1,00.</description>
+    </key>
     <key type="b" name="icon-size-fixed">
       <default>false</default>
       <summary>Fixed icon size</summary>
-      <description>Keep the icon size fived by scrolling the dock.</description>
+      <description>Keep the icon size fixed by scrolling the dock.</description>
     </key>
     <key type="b" name="apply-custom-theme">
       <default>false</default>
@@ -193,17 +199,27 @@
     <key type="b" name="show-running">
       <default>true</default>
       <summary>Show running apps</summary>
-      <description>Show or hide running appplications icons in the dash</description>
+      <description>Show or hide running applications icons in the dash</description>
     </key>
     <key type="b" name="isolate-workspaces">
       <default>false</default>
       <summary>Provide workspace isolation</summary>
       <description>Dash shows only windows from the currentworkspace</description>
     </key>
+    <key type="b" name="workspace-agnostic-urgent-windows">
+      <default>true</default>
+      <summary>Show urgent windows on each workspace</summary>
+      <description>Show or hide urgent windows on each workspace in the dash</description>
+    </key>
     <key type="b" name="isolate-monitors">
       <default>false</default>
       <summary>Provide monitor isolation</summary>
       <description>Dash shows only windows from the monitor</description>
+    </key>
+    <key type="b" name="scroll-to-focused-application">
+      <default>true</default>
+      <summary>Scroll to focused application</summary>
+      <description>Ensure that the focused application icon is always visible in the dash</description>
     </key>
     <key type="b" name="show-windows-preview">
       <default>true</default>
@@ -213,7 +229,7 @@
     <key type="b" name="show-favorites">
       <default>true</default>
       <summary>Show favorites apps</summary>
-      <description>Show or hide favorite appplications icons in the dash</description>
+      <description>Show or hide favorite applications icons in the dash</description>
     </key>
     <key type="b" name="show-trash">
       <default>true</default>
@@ -225,15 +241,20 @@
       <summary>Show mounted volumes and devices</summary>
       <description>Show or hide mounted volume and device icons in the dash</description>
     </key>
+    <key type="b" name="isolate-locations">
+      <default>true</default>
+      <summary>Isolate volumes, devices and trash windows</summary>
+      <description>Consider volume, devices and trash as different application windows and not part of the file manager</description>
+    </key>
     <key type="b" name="show-show-apps-button">
       <default>true</default>
       <summary>Show applications button</summary>
-      <description>Show appplications button in the dash</description>
+      <description>Show applications button in the dash</description>
     </key>
     <key type="b" name="show-apps-at-top">
       <default>false</default>
-      <summary>Show application button at top</summary>
-      <description>Show appplication button at top of the dash</description>
+      <summary>Show application button on the left</summary>
+      <description>Show application button on the left of the dash</description>
     </key>
     <key type="b" name="animate-show-apps">
       <default>true</default>
@@ -545,6 +566,11 @@
       <default>false</default>
       <summary>Enable unity7 like glossy backlit items</summary>
       <description>Emulate the unity7 backlit glossy items behaviour</description>
+    </key>
+    <key name="apply-glossy-effect" type="b">
+      <default>true</default>
+      <summary>Enable glossy effect</summary>
+      <description>Toggle the glossy effect of the unity7 backlit feature.</description>
     </key>
   </schema>
 </schemalist>

@@ -128,7 +128,7 @@ var Intellihide = class DashToDock_Intellihide {
     _addWindowSignals(wa) {
         if (!this._handledWindow(wa))
             return;
-        let signalId = wa.connect('allocation-changed', this._checkOverlap.bind(this));
+        let signalId = wa.connect('notify::allocation', this._checkOverlap.bind(this));
         this._trackedWindows.set(wa, signalId);
         wa.connect('destroy', this._removeWindowSignals.bind(this));
     }
