@@ -1232,7 +1232,7 @@ function getInterestingWindows(windows, monitorIndex) {
         const showUrgent = settings.get_boolean('workspace-agnostic-urgent-windows');
         const activeWorkspace = global.workspace_manager.get_active_workspace_index();
         windows = windows.filter(function(w) {
-            const inWorkspace = w.get_workspace().index() == activeWorkspace;
+            const inWorkspace = w.get_workspace().index() === activeWorkspace;
             const isUrgent = w.urgent || w.demandsAttention || w._manualUrgency;
             return inWorkspace || (showUrgent && isUrgent);
         });
@@ -1240,7 +1240,7 @@ function getInterestingWindows(windows, monitorIndex) {
 
     if (settings.get_boolean('isolate-monitors')){
         windows = windows.filter(function(w) {
-            return w.get_monitor() == monitorIndex;
+            return w.get_monitor() === monitorIndex;
         });
     }
 
