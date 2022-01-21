@@ -56,12 +56,12 @@ $osd_fg_color: #eeeeec;
             }
 
             .dash-separator {
+                background-color: transparentize($osd_fg_color, 0.7);
                 @if is_horizontal($side) {
                     margin-bottom: 0;
                 } @else {
                     height: 1px;
                     margin: ($dash_spacing + ($dash_padding / 2)) 0;
-                    background-color: transparentize($osd_fg_color, 0.7);
                 }
             }
 
