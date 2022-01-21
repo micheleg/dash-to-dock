@@ -514,11 +514,6 @@ msgstr "Mostrar los dispositivos montados"
 msgid "Quit %d Windows"
 msgstr "Cerrar %d ventanas"
 
-#: appIcons.js:1146
-#, javascript-format
-msgid "Quit"
-msgstr "Cerrar"
-
 #. Translators: %s is "Settings", which is automatically translated. You
 #. can also translate the full message if this fits better your language.
 #: appIcons.js:1092
