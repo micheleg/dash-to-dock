@@ -1238,13 +1238,13 @@ function getInterestingWindows(windows, monitorIndex) {
         });
     }
 
-    if (settings.get_boolean('isolate-monitors')){
+    if (settings.get_boolean('isolate-monitors')) {
         windows = windows.filter(function(w) {
             return w.get_monitor() === monitorIndex;
         });
     }
 
-    return windows.filter(w => !w.is_skip_taskbar());
+    return windows.filter(w => !w.skipTaskbar);
 }
 
 /**
