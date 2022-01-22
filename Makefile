@@ -16,17 +16,6 @@ else
 endif
 INSTALLNAME = dash-to-dock@micxgx.gmail.com
 
-# The command line passed variable VERSION is used to set the version string
-# in the metadata and in the generated zip-file. If no VERSION is passed, the
-# current commit SHA1 is used as version number in the metadata while the
-# generated zip file has no string attached.
-ifdef VERSION
-	VSTRING = _v$(VERSION)
-else
-	VERSION = $(shell git rev-parse HEAD)
-	VSTRING =
-endif
-
 all: extension
 
 clean:
@@ -105,4 +94,3 @@ _build: all
 		mkdir -p $$lf/LC_MESSAGES; \
 		cp $$l $$lf/LC_MESSAGES/dashtodock.mo; \
 	done;
-	sed -i 's/"version": -1/"version": "$(VERSION)"/'  _build/metadata.json;
