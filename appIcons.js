@@ -298,10 +298,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         this._urgentWindows.clear();
         if (interestingWindows === undefined)
             interestingWindows = this.getInterestingWindows();
-        interestingWindows.forEach(win => {
-            if (win.urgent || win.demandsAttention || win._manualUrgency)
-                this._addUrgentWindow(win);
-        });
+        interestingWindows.forEach(win => this._addUrgentWindow(win));
         this.urgent = !!this._urgentWindows.size;
     }
 
@@ -311,6 +308,9 @@ var DockAbstractAppIcon = GObject.registerClass({
     }
 
     _addUrgentWindow(window) {
+        if (!isWindowUrgent(window))
+            return;
+
         if (this._urgentWindows.has(window))
             return;
 
@@ -323,7 +323,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         this.urgent = true;
 
         const onDemandsAttentionChanged = () => {
-            if (!window.demandsAttention && !window.urgent && !window._manualUrgency)
+            if (!isWindowUrgent(window))
                 this._updateUrgentWindows();
         };
 
@@ -1206,6 +1206,10 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
     }
 };
 
+function isWindowUrgent(w) {
+    return w.urgent || w.demandsAttention || w._manualUrgency;
+}
+
 // Filter out unnecessary windows, for instance
 // nautilus desktop window.
 function getInterestingWindows(windows, monitorIndex) {
@@ -1218,8 +1222,7 @@ function getInterestingWindows(windows, monitorIndex) {
         const activeWorkspace = global.workspace_manager.get_active_workspace();
         windows = windows.filter(function(w) {
             const inWorkspace = w.get_workspace() === activeWorkspace;
-            const isUrgent = w.urgent || w.demandsAttention || w._manualUrgency;
-            return inWorkspace || (showUrgent && isUrgent);
+            return inWorkspace || (showUrgent && isWindowUrgent(w));
         });
     }
 
