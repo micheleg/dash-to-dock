@@ -1995,7 +1995,22 @@ var DockManager = class DashToDock_DockManager {
                 return ret;
             });
 
-        const maybeAdjustBoxToDock = box => {
+        const maybeAdjustBoxToDock = (state, box, spacing) => {
+            if (state === OverviewControls.ControlsState.WINDOW_PICKER) {
+                const searchBox = this.overviewControls._searchEntry.get_allocation_box();
+                const { shouldShow: wsThumbnails } = this.overviewControls._thumbnailsBox;
+
+                if (!wsThumbnails)
+                    box.y1 += spacing;
+
+                box.y2 -= searchBox.get_height() + spacing;
+
+                if (!wsThumbnails && this.mainDock.position === St.Side.BOTTOM)
+                    box.y2 -= spacing;
+            } else if (state === OverviewControls.ControlsState.APP_GRID) {
+                return box;
+            }
+
             if (this.mainDock.isHorizontal || this.settings.dockFixed)
                 return box;
 
@@ -2030,7 +2045,7 @@ var DockManager = class DashToDock_DockManager {
 
                 propertyInjections.destroy();
                 workAreaBox.y1 = startY;
-                maybeAdjustBoxToDock(workAreaBox);
+                maybeAdjustBoxToDock(undefined, workAreaBox, this.spacing);
 
                 const adjustActorHorizontalAllocation = actor => {
                     if (!actor.visible || !workAreaBox.x1)
@@ -2062,14 +2077,16 @@ var DockManager = class DashToDock_DockManager {
             function (originalFunction, state, ...args) {
                 const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
                 if (state !== OverviewControls.ControlsState.HIDDEN)
-                    maybeAdjustBoxToDock(box);
+                    maybeAdjustBoxToDock(state, box, this.spacing);
                 return box;
             }
         ], [
             ControlsManagerLayout.prototype,
             '_getAppDisplayBoxForState',
-            function (...args) {
-                return maybeAdjustBoxToDock(workspaceBoxOriginFixer.call(this, ...args));
+            function (state, ...args) {
+                const { spacing } = this;
+                const box = workspaceBoxOriginFixer.call(this, state, ...args);
+                return maybeAdjustBoxToDock(state, box, spacing);
             }
         ]);
 
@@ -2101,23 +2118,6 @@ var DockManager = class DashToDock_DockManager {
 
             this._backgroundGroup.allocate(contentBox);
         });
-
-        // Always show the thumbnails box in fixed mode, so that we'll reduce the
-        // vertical space, causing the Workspace layout to show more workspaces.
-        // We might get the same also reducing the height of the workspace boxes
-        // in _computeWorkspacesBoxForState, but it would just waste vertical space
-        if (!this.mainDock.isHorizontal || this.settings.dockFixed) {
-            this._methodInjections.addWithLabel('main-dash',
-                WorkspaceThumbnail.ThumbnailsBox.prototype, '_updateShouldShow',
-                function () {
-                    const shouldShow = global.workspace_manager.nWorkspaces > 1;
-                    if (this._shouldShow === shouldShow)
-                        return;
-
-                    this._shouldShow = shouldShow;
-                    this.notify('should-show');
-                });
-        }
 
         // Reduce the space that the workspaces can use in secondary monitors
         this._methodInjections.addWithLabel('main-dash', WorkspacesView.WorkspacesView.prototype,
