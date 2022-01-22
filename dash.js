@@ -534,6 +534,9 @@ var DockDash = GObject.registerClass({
         appIcon.icon.setIconSize(this.iconSize);
         this._hookUpLabel(item, appIcon);
 
+        item.connect('notify::position', () => appIcon.updateIconGeometry());
+        item.connect('notify::size', () => appIcon.updateIconGeometry());
+
         return item;
     }
 
@@ -569,13 +572,6 @@ var DockDash = GObject.registerClass({
         });
 
       return appIcons;
-    }
-
-    _updateAppsIconGeometry() {
-        let appIcons = this.getAppIcons();
-        appIcons.forEach(function(icon) {
-            icon.updateIconGeometry();
-        });
     }
 
     _itemMenuStateChanged(item, opened) {
@@ -925,9 +921,6 @@ var DockDash = GObject.registerClass({
         // Workaround for https://bugzilla.gnome.org/show_bug.cgi?id=692744
         // Without it, StBoxLayout may use a stale size cache
         this._box.queue_relayout();
-        // TODO
-        // This is required for icon reordering when the scrollview is used.
-        this._updateAppsIconGeometry();
 
         // This will update the size, and the corresponding number for each icon
         this._updateNumberOverlay();
