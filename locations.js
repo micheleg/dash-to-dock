@@ -459,6 +459,7 @@ function wrapWindowsBackedApp(shellApp) {
         windows: [],
         isFocused: false,
         proxyProperties: [],
+        sources: new Set(),
         signalConnections: new Utils.GlobalSignalsHandler(),
         methodInjections: new Utils.InjectionsHandler(),
         propertyInjections: new Utils.PropertyInjectionsHandler(),
@@ -480,6 +481,8 @@ function wrapWindowsBackedApp(shellApp) {
         destroy: function () {
             this.windows = [];
             this.proxyProperties = [];
+            this.sources.forEach(s => GLib.source_remove(s));
+            this.sources.clear();
             this.signalConnections.destroy();
             this.methodInjections.destroy();
             this.propertyInjections.destroy();
@@ -490,7 +493,7 @@ function wrapWindowsBackedApp(shellApp) {
         windows: {},
         isFocused: { public: true },
         signalConnections: { readOnly: true },
-        updateWindows: {},
+        sources: { readOnly: true },
         checkFocused: {},
         setDtdData: {},
     });
@@ -531,11 +534,11 @@ function wrapWindowsBackedApp(shellApp) {
         throw new GObject.NotImplementedError(`_updateWindows in ${this.constructor.name}`);
     };
 
-    let updateWindowsIdle = GLib.idle_add(GLib.DEFAULT_PRIORITY, () => {
+    shellApp._sources.add(GLib.idle_add(GLib.DEFAULT_PRIORITY, () => {
         shellApp._updateWindows();
-        updateWindowsIdle = undefined;
+        shellApp._sources.delete(GLib.main_current_source().source_id);
         return GLib.SOURCE_REMOVE;
-    });
+    }));
 
     const windowTracker = Shell.WindowTracker.get_default();
     shellApp._checkFocused = function () {
@@ -597,7 +600,6 @@ function wrapWindowsBackedApp(shellApp) {
 
     const { destroy: defaultDestroy } = shellApp;
     shellApp.destroy = function() {
-        updateWindowsIdle && GLib.source_remove(updateWindowsIdle);
         this._dtdData.proxyProperties.forEach(p => (delete this[p]));
         this._dtdData.destroy();
         this._dtdData = undefined;
