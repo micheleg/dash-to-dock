@@ -1792,6 +1792,13 @@ var DockManager = class DashToDock_DockManager {
             this._settings,
             'changed::isolate-locations',
             () => this._ensureLocations()
+        ], [
+            this._settings,
+            'changed::intellihide',
+            () => {
+                if (!this._settings.intellihide)
+                    this._desktopIconsUsableArea.resetMargins();
+            }
         ]);
     }
 
