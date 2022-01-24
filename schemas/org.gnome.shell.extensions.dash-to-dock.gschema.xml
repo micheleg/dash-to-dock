@@ -592,10 +592,5 @@
       <summary>Enable glossy effect</summary>
       <description>Toggle the glossy effect of the unity7 backlit feature.</description>
     </key>
-    <key name="apply-glossy-effect" type="b">
-      <default>true</default>
-      <summary>Enable glossy effect</summary>
-      <description>Toggle the glossy effect of the unity7 backlit feature.</description>
-    </key>
   </schema>
 </schemalist>
