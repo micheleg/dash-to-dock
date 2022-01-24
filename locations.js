@@ -183,7 +183,7 @@ function makeLocationApp(params) {
     if (!params.location)
         throw new TypeError('Invalid location');
 
-    location = params.location;
+    const location = params.location;
     delete params.location;
 
     const shellApp = new Shell.App(params);
