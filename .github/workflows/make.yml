@@ -21,5 +21,11 @@ jobs:
       - name: Make
         run: make
 
+      - name: Install modules
+        run: sudo npm install eslint -g
+
+      - name: Make Check
+        run: make check
+
       - name: Make Install
         run: make install
