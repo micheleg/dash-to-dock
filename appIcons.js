@@ -662,26 +662,10 @@ var DockAbstractAppIcon = GObject.registerClass({
     // particular, if the application doens't allow to launch a new window, activate
     // the existing window instead.
     launchNewWindow(p) {
-        let appInfo = this.app.get_app_info();
-        let actions = appInfo.list_actions();
-        if (this.app.can_open_new_window()) {
+        if (this.app.state === Shell.AppState.RUNNING &&
+            this.app.can_open_new_window()) {
             this.animateLaunch();
-            // This is used as a workaround for a bug resulting in no new windows being opened
-            // for certain running applications when calling open_new_window().
-            //
-            // https://bugzilla.gnome.org/show_bug.cgi?id=756844
-            //
-            // Similar to what done when generating the popupMenu entries, if the application provides
-            // a "New Window" action, use it instead of directly requesting a new window with
-            // open_new_window(), which fails for certain application, notably Nautilus.
-            if (actions.indexOf('new-window') == -1) {
-                this.app.open_new_window(-1);
-            }
-            else {
-                let i = actions.indexOf('new-window');
-                if (i !== -1)
-                    this.app.launch_action(actions[i], global.get_current_time(), -1);
-            }
+            this.app.open_new_window(-1);
         }
         else {
             // Try to manually activate the first window. Otherwise, when the app is activated by
