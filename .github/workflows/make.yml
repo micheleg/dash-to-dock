@@ -6,6 +6,7 @@ name: Make
     branches:
       - master
       - ubuntu-dock
+      - make_ci
 
 jobs:
   make:
