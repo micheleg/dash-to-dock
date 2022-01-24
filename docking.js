@@ -1658,16 +1658,13 @@ var DockManager = class DashToDock_DockManager {
             this._trash = null;
         }
 
-        Locations.unWrapWindowsManagerApp();
-        [this._methodInjections, this._vfuncInjections, this._propertyInjections].forEach(
+        Locations.unWrapFileManagerApp();
+        [this._methodInjections, this._propertyInjections].forEach(
             injections => injections.removeWithLabel('locations'));
 
         if (showMounts || showTrash) {
-            this._vfuncInjections.addWithLabel('locations', Gio.DesktopAppInfo.prototype,
-                'get_id', function () { return this.customId ?? this.vfunc_get_id() });
-
             if (this.settings.isolateLocations) {
-                const fileManagerApp = Locations.wrapWindowsManagerApp();
+                const fileManagerApp = Locations.wrapFileManagerApp();
 
                 this._methodInjections.addWithLabel('locations', [
                     Shell.AppSystem.prototype, 'get_running',
@@ -1681,7 +1678,7 @@ var DockManager = class DashToDock_DockManager {
                         if (fileManagerIdx > -1 && fileManagerApp?.state !== Shell.AppState.RUNNING)
                             runningApps.splice(fileManagerIdx, 1);
 
-                        return [...runningApps, ...locationApps].sort(Locations.shellAppCompare);
+                        return [...runningApps, ...locationApps].sort(Utils.shellAppCompare);
                     }
                 ],
                 [
@@ -2306,7 +2303,7 @@ var DockManager = class DashToDock_DockManager {
         }
         this._trash?.destroy();
         this._trash = null;
-        Locations.unWrapWindowsManagerApp();
+        Locations.unWrapFileManagerApp();
         this._removables?.destroy();
         this._removables = null;
         this._iconTheme.destroy();

@@ -779,10 +779,7 @@ var DockDash = GObject.registerClass({
             oldApps = oldApps.filter(app => !app.location || app.isTrash)
         }
 
-        this._signalsHandler.removeWithLabel('show-trash');
         if (dockManager.trash) {
-            this._signalsHandler.addWithLabel('show-trash',
-                dockManager.trash, 'changed', this._queueRedisplay.bind(this));
             const trashApp = dockManager.trash.getApp();
             if (!newApps.includes(trashApp))
                 newApps.push(trashApp);

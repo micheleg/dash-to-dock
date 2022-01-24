@@ -31,6 +31,7 @@ const Workspace = imports.ui.workspace;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
+const Locations = Me.imports.locations;
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
 const AppIconIndicators = Me.imports.appIconIndicators;
@@ -856,8 +857,8 @@ var DockAppIcon = GObject.registerClass({
 var DockLocationAppIcon = GObject.registerClass({
 }, class DockLocationAppIcon extends DockAbstractAppIcon {
     _init(app, monitorIndex, iconAnimator) {
-        if (!app.location)
-            throw new Error('Provided application %s has no location'.format(app));
+        if (!(app.appInfo instanceof Locations.LocationAppInfo))
+            throw new Error('Provided application %s is not a Location'.format(app));
 
         super._init(app, monitorIndex, iconAnimator);
 
@@ -867,6 +868,8 @@ var DockLocationAppIcon = GObject.registerClass({
             this._signalsHandler.add(global.display, 'notify::focus-window',
                 () => this._updateFocusState());
         }
+
+        this._signalsHandler.add(this.app, 'notify::icon', () => this.icon.update());
     }
 
     get location() {
@@ -882,9 +885,8 @@ var DockLocationAppIcon = GObject.registerClass({
 });
 
 function makeAppIcon(app, monitorIndex, iconAnimator) {
-    if (app.location)
+    if (app.appInfo instanceof Locations.LocationAppInfo)
         return new DockLocationAppIcon(app, monitorIndex, iconAnimator);
-
 
     return new DockAppIcon(app, monitorIndex, iconAnimator);
 }
@@ -1028,6 +1030,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             for (let i = 0; i < actions.length; i++) {
                 let action = actions[i];
                 let item = this._appendMenuItem(appInfo.get_action_name(action));
+                item.sensitive = !appInfo.busy;
                 item.connect('activate', (emitter, event) => {
                     this._source.app.launch_action(action, event.get_time(), -1);
                     this.emit('activate-window', null);

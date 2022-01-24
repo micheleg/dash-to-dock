@@ -2,9 +2,12 @@
 const Gi = imports._gi;
 
 const Clutter = imports.gi.Clutter;
+const GLib = imports.gi.GLib;
+const Gio = imports.gi.Gio;
 const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Meta = imports.gi.Meta;
+const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
@@ -50,6 +53,14 @@ const BasicHandler = class DashToDock_BasicHandler {
             this.removeWithLabel(label);
     }
 
+    block() {
+        Object.keys(this._storage).forEach(label => this.blockWithLabel(label));
+    }
+
+    unblock() {
+        Object.keys(this._storage).forEach(label => this.unblockWithLabel(label));
+    }
+
     addWithLabel(label, ...args) {
         let argsArray = [...args];
         if (argsArray.every(arg => !Array.isArray(arg)))
@@ -76,6 +87,14 @@ const BasicHandler = class DashToDock_BasicHandler {
         delete this._storage[label];
     }
 
+    blockWithLabel(label) {
+        (this._storage[label] || []).forEach(item => this._block(item));
+    }
+
+    unblockWithLabel(label) {
+        (this._storage[label] || []).forEach(item => this._unblock(item));
+    }
+
     // Virtual methods to be implemented by subclass
 
     /**
@@ -90,6 +109,20 @@ const BasicHandler = class DashToDock_BasicHandler {
      */
     _remove(_item) {
         throw new GObject.NotImplementedError(`_remove in ${this.constructor.name}`);
+    }
+
+    /**
+     * Block single element
+     */
+    _block(_item) {
+        throw new GObject.NotImplementedError(`_block in ${this.constructor.name}`);
+    }
+
+    /**
+     * Unblock single element
+     */
+    _unblock(_item) {
+        throw new GObject.NotImplementedError(`_unblock in ${this.constructor.name}`);
     }
 };
 
@@ -119,6 +152,16 @@ var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHan
     _remove(item) {
         const [object, id] = item;
         object.disconnect(id);
+    }
+
+    _block(item) {
+        const [object, id] = item;
+        object.block_signal_handler(id);
+    }
+
+    _unblock(item) {
+        const [object, id] = item;
+        object.unblock_signal_handler(id);
     }
 };
 
@@ -410,3 +453,133 @@ var IconTheme = class DashToDockIconTheme {
         this._iconTheme = null;
     }
 }
+
+/**
+ * Construct a map of gtk application window object paths to MetaWindows.
+ */
+function getWindowsByObjectPath() {
+    const windowsByObjectPath = new Map();
+    const { workspaceManager } = global;
+    const workspaces = [...new Array(workspaceManager.nWorkspaces)].map(
+        (_c, i) => workspaceManager.get_workspace_by_index(i));
+
+    workspaces.forEach(ws => {
+        ws.list_windows().forEach(w => {
+            const path = w.get_gtk_window_object_path();
+            if (path != null)
+                windowsByObjectPath.set(path, w);
+        });
+    });
+
+    return windowsByObjectPath;
+}
+
+// Re-implements shell_app_compare so that can be used to resort running apps
+function shellAppCompare(appA, appB) {
+    if (appA.state !== appB.state) {
+        if (appA.state === Shell.AppState.RUNNING)
+            return -1;
+        return 1;
+    }
+
+    const windowsA = appA.get_windows();
+    const windowsB = appB.get_windows();
+
+    const isMinimized = windows => !windows.some(w => w.showing_on_its_workspace());
+    const minimizedB = isMinimized(windowsB);
+    if (isMinimized(windowsA) != minimizedB) {
+        if (minimizedB)
+            return -1;
+        return 1;
+    }
+
+    if (appA.state === Shell.AppState.RUNNING) {
+        if (windowsA.length && !windowsB.length)
+            return -1;
+        else if (!windowsA.length && windowsB.length)
+            return 1;
+
+        const lastUserTime = windows =>
+            Math.max(...windows.map(w => w.get_user_time()));
+        return lastUserTime(windowsB) - lastUserTime(windowsA);
+    }
+
+    return 0;
+}
+
+// Re-implements shell_app_compare_windows
+function shellWindowsCompare(winA, winB) {
+    const activeWorkspace = global.workspaceManager.get_active_workspace();
+    const wsA = winA.get_workspace() === activeWorkspace;
+    const wsB = winB.get_workspace() === activeWorkspace;
+
+    if (wsA && !wsB)
+        return -1;
+    else if (!wsA && wsB)
+        return 1;
+
+    const visA = winA.showing_on_its_workspace();
+    const visB = winB.showing_on_its_workspace();
+
+    if (visA && !visB)
+        return -1;
+    else if (!visA && visB)
+        return 1;
+
+    return winB.get_user_time() - winA.get_user_time();
+}
+
+var CancellableChild = GObject.registerClass({
+    Properties: {
+        'parent': GObject.ParamSpec.object(
+            'parent', 'parent', 'parent',
+            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            Gio.Cancellable.$gtype),
+    },
+},
+class CancellableChild extends Gio.Cancellable {
+    _init(parent) {
+        if (parent && !(parent instanceof Gio.Cancellable))
+            throw TypeError('Not a valid cancellable');
+
+        super._init({ parent });
+
+        if (parent?.is_cancelled()) {
+            this.cancel();
+            return;
+        }
+
+        this._connectToParent();
+    }
+
+    _connectToParent() {
+        this._connectId = this?.parent.connect(() => {
+            this._realCancel();
+
+            if (this._disconnectIdle)
+                return;
+
+            this._disconnectIdle = GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+                delete this._disconnectIdle;
+                this._disconnectFromParent();
+                return GLib.SOURCE_REMOVE;
+            });
+        });
+    }
+
+    _disconnectFromParent() {
+        if (this._connectId && !this._disconnectIdle) {
+            this.parent.disconnect(this._connectId);
+            delete this._connectId;
+        }
+    }
+
+    _realCancel() {
+        Gio.Cancellable.prototype.cancel.call(this);
+    }
+
+    cancel() {
+        this._disconnectFromParent();
+        this._realCancel();
+    }
+});

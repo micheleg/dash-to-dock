@@ -246,6 +246,16 @@
       <summary>Show mounted volumes and devices</summary>
       <description>Show or hide mounted volume and device icons in the dash</description>
     </key>
+    <key type="b" name="show-mounts-only-mounted">
+      <default>true</default>
+      <summary>Only show mounted volumes and devices</summary>
+      <description>Show or hide unmounted volume and device icons in the dash</description>
+    </key>
+    <key type="b" name="show-mounts-network">
+      <default>false</default>
+      <summary>Show network mounted volumes</summary>
+      <description>Show or hide network volumes in the dash</description>
+    </key>
     <key type="b" name="isolate-locations">
       <default>true</default>
       <summary>Isolate volumes, devices and trash windows</summary>

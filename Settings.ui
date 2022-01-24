@@ -1208,11 +1208,37 @@
                                 <property name="can_focus">0</property>
                                 <property name="hexpand">1</property>
                                 <property name="halign">start</property>
-                                <property name="label" translatable="yes">Show mounted volumes and devices</property>
+                                <property name="label" translatable="yes">Show volumes and devices</property>
 
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">0</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="show_only_mounted_devices_check">
+                                <property name="label" translatable="yes">Only if mounted</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">12</property>
+
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">1</property>
+                                  <property name="column-span">1</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="show_network_volumes_check">
+                                <property name="label" translatable="yes">Include network volumes</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">12</property>
+
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">2</property>
+                                  <property name="column-span">2</property>
                                 </layout>
                               </object>
                             </child>
