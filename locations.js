@@ -665,6 +665,8 @@ function wrapWindowsBackedApp(shellApp) {
 
     shellApp._dtdData = {
         windows: [],
+        state: undefined,
+        startingWorkspace: 0,
         isFocused: false,
         proxyProperties: [],
         sources: new Set(),
@@ -699,6 +701,8 @@ function wrapWindowsBackedApp(shellApp) {
 
     shellApp._dtdData.addProxyProperties(shellApp, {
         windows: {},
+        state: {},
+        startingWorkspace: {},
         isFocused: { public: true },
         signalConnections: { readOnly: true },
         sources: { readOnly: true },
@@ -723,8 +727,7 @@ function wrapWindowsBackedApp(shellApp) {
     // mi is Method injector, pi is Property injector
     shellApp._setDtdData({ mi: m, pi: p }, { public: false });
 
-    m('get_state', () =>
-        shellApp.get_n_windows() ? Shell.AppState.RUNNING : Shell.AppState.STOPPED);
+    m('get_state', () => shellApp._state ?? shellApp._getStateByWindows());
     p('state', { get: () => shellApp.get_state() });
 
     m('get_windows', () => shellApp._windows);
@@ -735,19 +738,39 @@ function wrapWindowsBackedApp(shellApp) {
         return pids;
     }, []));
     m('is_on_workspace', (_om, workspace) => shellApp._windows.some(w =>
-        w.get_workspace() === workspace));
+        w.get_workspace() === workspace) ||
+        (shellApp.state === Shell.AppState.STARTING &&
+         [-1, workspace.index()].includes(shellApp._startingWorkspace)));
     m('request_quit', () => shellApp._windows.filter(w =>
         w.can_close()).forEach(w => w.delete(global.get_current_time())));
 
     shellApp._setDtdData({
+        _getStateByWindows: function() {
+            return this.get_n_windows() ? Shell.AppState.RUNNING : Shell.AppState.STOPPED;
+        },
+
         _updateWindows: function () {
             throw new GObject.NotImplementedError(`_updateWindows in ${this.constructor.name}`);
+        },
+
+        _notifyStateChanged() {
+            Shell.AppSystem.get_default().emit('app-state-changed', this);
+            this.notify('state');
+        },
+
+        _setState: function (state) {
+            const oldState = this.state;
+            this._state = state;
+
+            if (this.state !== oldState)
+                this._notifyStateChanged();
         },
 
         _setWindows: function (windows) {
             const oldState = this.state;
             const oldWindows = this.get_windows().slice();
             const result = { windowsChanged: false, stateChanged: false };
+            this._state = undefined;
 
             if (windows.length !== oldWindows.length ||
                 windows.some((win, index) => win !== oldWindows[index])) {
@@ -757,8 +780,7 @@ function wrapWindowsBackedApp(shellApp) {
             }
 
             if (this.state !== oldState) {
-                Shell.AppSystem.get_default().emit('app-state-changed', this);
-                this.notify('state');
+                this._notifyStateChanged();
                 this._checkFocused();
                 result.stateChanged = true;
             }
@@ -815,6 +837,8 @@ function wrapWindowsBackedApp(shellApp) {
         switch (this.state) {
             case Shell.AppState.STOPPED:
                 try {
+                    this._startingWorkspace = workspace;
+                    this._setState(Shell.AppState.STARTING);
                     this.launch(timestamp, workspace, Shell.AppLaunchGpu.APP_PREF);
                 } catch (e) {
                     logError(e);
@@ -1188,7 +1212,7 @@ var Removables = class DashToDock_Removables {
 }
 Signals.addSignalMethods(Removables.prototype);
 
-function getRunningApps() {
+function getApps() {
     const dockManager = Docking.DockManager.getDefault();
     const locationApps = [];
 
@@ -1198,5 +1222,13 @@ function getRunningApps() {
     if (dockManager.trash)
         locationApps.push(dockManager.trash.getApp());
 
-    return locationApps.filter(a => a.state === Shell.AppState.RUNNING);
+    return locationApps;
+}
+
+function getRunningApps() {
+    return getApps().filter(a => a.state === Shell.AppState.RUNNING);
+}
+
+function getStartingApps() {
+    return getApps().filter(a => a.state === Shell.AppState.STARTING);
 }
