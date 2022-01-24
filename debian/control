@@ -13,7 +13,7 @@ Homepage: https://github.com/micheleg/dash-to-dock/blob/ubuntu-dock/README.md
 
 Package: gnome-shell-extension-ubuntu-dock
 Architecture: all
-Depends: gnome-shell (<< 41),
+Depends: gnome-shell (<< 43),
          gnome-shell (>= 40),
          ${misc:Depends},
          ${shlibs:Depends}
