@@ -92,7 +92,7 @@ var DockDash = GObject.registerClass({
         // Initialize icon variables and size
         this._maxWidth = -1;
         this._maxHeight = -1;
-        this.iconSize = Docking.DockManager.settings.get_int('dash-max-icon-size');
+        this.iconSize = Docking.DockManager.settings.dashMaxIconSize;
         this._availableIconSizes = baseIconSizes;
         this._shownInitially = false;
         this._initializeIconSize(this.iconSize);
@@ -171,7 +171,7 @@ var DockDash = GObject.registerClass({
             this._itemMenuStateChanged(this._showAppsIcon, opened);
         });
 
-        if (Docking.DockManager.settings.get_boolean('show-apps-at-top')) {
+        if (Docking.DockManager.settings.showAppsAtTop) {
             this._dashContainer.insert_child_below(this._showAppsIcon, null);
         } else {
             this._dashContainer.insert_child_above(this._showAppsIcon, null);
@@ -396,7 +396,7 @@ var DockDash = GObject.registerClass({
 
     _onScrollEvent(actor, event) {
         // If scroll is not used because the icon is resized, let the scroll event propagate.
-        if (!Docking.DockManager.settings.get_boolean('icon-size-fixed'))
+        if (!Docking.DockManager.settings.iconSizeFixed)
             return Clutter.EVENT_PROPAGATE;
 
         // reset timeout to avid conflicts with the mousehover event
@@ -517,7 +517,7 @@ var DockDash = GObject.registerClass({
 
         appIcon.connect('notify::focused', () => {
             const { settings } = Docking.DockManager;
-            if (appIcon.focused && settings.get_boolean('scroll-to-focused-application'))
+            if (appIcon.focused && settings.scrollToFocusedApplication)
                 ensureActorVisibleInScrollView(this._scrollView, item);
         });
 
@@ -723,8 +723,8 @@ var DockDash = GObject.registerClass({
         const dockManager = Docking.DockManager.getDefault();
         const { settings } = dockManager;
 
-        if (settings.get_boolean('isolate-workspaces') ||
-            settings.get_boolean('isolate-monitors')) {
+        if (settings.isolateWorkspaces ||
+            settings.isolateMonitors) {
             // When using isolation, we filter out apps that have no windows in
             // the current workspace
             let monitorIndex = this._monitorIndex;
@@ -742,13 +742,13 @@ var DockDash = GObject.registerClass({
         // Apps supposed to be in the dash
         let newApps = [];
 
-        const showFavorites = settings.get_boolean('show-favorites');
+        const showFavorites = settings.showFavorites;
         if (showFavorites) {
             for (let id in favorites)
                 newApps.push(favorites[id]);
         }
 
-        if (settings.get_boolean('show-running')) {
+        if (settings.showRunning) {
             // We reorder the running apps so that they don't change position on the
             // dash with every redisplay() call
 
@@ -958,7 +958,7 @@ var DockDash = GObject.registerClass({
         let max_allowed = baseIconSizes[baseIconSizes.length-1];
         max_size = Math.min(max_size, max_allowed);
 
-        if (Docking.DockManager.settings.get_boolean('icon-size-fixed'))
+        if (Docking.DockManager.settings.iconSizeFixed)
             this._availableIconSizes = [max_size];
         else {
             this._availableIconSizes = baseIconSizes.filter(function(val) {
@@ -1025,7 +1025,7 @@ var DockDash = GObject.registerClass({
             this._dashContainer, 'notify',
             (_obj, pspec) => notifiedProperties.push(pspec.name));
 
-        if (Docking.DockManager.settings.get_boolean('show-apps-at-top')) {
+        if (Docking.DockManager.settings.showAppsAtTop) {
             this._dashContainer.set_child_below_sibling(this._showAppsIcon, null);
         } else {
             this._dashContainer.set_child_above_sibling(this._showAppsIcon, null);

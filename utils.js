@@ -319,18 +319,18 @@ var PropertyInjectionsHandler = class DashToDock_PropertyInjectionsHandler exten
  * Return the actual position reverseing left and right in rtl
  */
 function getPosition() {
-    let position = Docking.DockManager.settings.get_enum('dock-position');
+    const position = Docking.DockManager.settings.dockPosition;
     if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL) {
         if (position == St.Side.LEFT)
-            position = St.Side.RIGHT;
+            return St.Side.RIGHT;
         else if (position == St.Side.RIGHT)
-            position = St.Side.LEFT;
+            return St.Side.LEFT;
     }
     return position;
 }
 
 function getPreviewScale() {
-    return Docking.DockManager.settings.get_double('preview-size-scale');
+    return Docking.DockManager.settings.previewSizeScale;
 }
 
 function drawRoundedLine(cr, x, y, width, height, isRoundLeft, isRoundRight, stroke, fill) {

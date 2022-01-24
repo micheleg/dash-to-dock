@@ -125,7 +125,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         // of any application opened or moved to a different desktop),
         // we restrict this signal to  the case when 'isolate-monitors' is true,
         // and if there are at least 2 monitors.
-        if (Docking.DockManager.settings.get_boolean('isolate-monitors') &&
+        if (Docking.DockManager.settings.isolateMonitors &&
             Main.layoutManager.monitors.length > 1) {
             this._signalsHandler.removeWithLabel('isolate-monitors');
             this._signalsHandler.addWithLabel('isolate-monitors',
@@ -213,7 +213,7 @@ var DockAbstractAppIcon = GObject.registerClass({
 
     vfunc_scroll_event(scrollEvent) {
         let settings = Docking.DockManager.settings;
-        let isEnabled = settings.get_enum('scroll-action') === scrollAction.CYCLE_WINDOWS;
+        let isEnabled = settings.scrollAction === scrollAction.CYCLE_WINDOWS;
         if (!isEnabled)
             return Clutter.EVENT_PROPAGATE;
 
@@ -356,7 +356,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         [rect.width, rect.height] = this.get_transformed_size();
 
         let windows = this.getWindows();
-        if (Docking.DockManager.settings.get_boolean('multi-monitor')) {
+        if (Docking.DockManager.settings.multiMonitor) {
             let monitorIndex = this.monitorIndex;
             windows = windows.filter(function(w) {
                 return w.get_monitor() == monitorIndex;
@@ -452,15 +452,15 @@ var DockAbstractAppIcon = GObject.registerClass({
         let settings = Docking.DockManager.settings;
         if (button && button == 2 ) {
             if (modifiers & Clutter.ModifierType.SHIFT_MASK)
-                buttonAction = settings.get_enum('shift-middle-click-action');
+                buttonAction = settings.shiftMiddleClickAction;
             else
-                buttonAction = settings.get_enum('middle-click-action');
+                buttonAction = settings.middleClickAction;
         }
         else if (button && button == 1) {
             if (modifiers & Clutter.ModifierType.SHIFT_MASK)
-                buttonAction = settings.get_enum('shift-click-action');
+                buttonAction = settings.shiftClickAction;
             else
-                buttonAction = settings.get_enum('click-action');
+                buttonAction = settings.clickAction;
         }
 
         // We check if the app is running, and that the # of windows is > 0 in
@@ -744,8 +744,8 @@ var DockAbstractAppIcon = GObject.registerClass({
     _activateAllWindows() {
         // First activate first window so workspace is switched if needed.
         // We don't do this if isolation is on!
-        if (!Docking.DockManager.settings.get_boolean('isolate-workspaces') &&
-            !Docking.DockManager.settings.get_boolean('isolate-monitors'))
+        if (!Docking.DockManager.settings.isolateWorkspaces &&
+            !Docking.DockManager.settings.isolateMonitors)
             this.app.activate();
 
         // then activate all other app windows in the current workspace
@@ -789,7 +789,7 @@ var DockAbstractAppIcon = GObject.registerClass({
 
         // If there isn't already a list of windows for the current app,
         // or the stored list is outdated, use the current windows list.
-        let monitorIsolation = Docking.DockManager.settings.get_boolean('isolate-monitors');
+        let monitorIsolation = Docking.DockManager.settings.isolateMonitors;
         if (!recentlyClickedApp ||
             recentlyClickedApp.get_id() != this.app.get_id() ||
             recentlyClickedAppWindows.length != app_windows.length ||
@@ -962,7 +962,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
     _rebuildMenu() {
         this.removeAll();
 
-        if (Docking.DockManager.settings.get_boolean('show-windows-preview')) {
+        if (Docking.DockManager.settings.showWindowsPreview) {
             // Display the app windows menu items and the separator between windows
             // of the current desktop and other windows.
 
@@ -1117,7 +1117,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
           this._quitMenuItem.actor.hide();
       }
 
-      if (Docking.DockManager.settings.get_boolean('show-windows-preview')){
+      if (Docking.DockManager.settings.showWindowsPreview){
           const windows = this._source.getInterestingWindows();
 
           // update, show, or hide the allWindows menu
@@ -1197,8 +1197,8 @@ function getInterestingWindows(windows, monitorIndex) {
 
     // When using workspace isolation, we filter out windows
     // that are neither in the current workspace nor marked urgent
-    if (settings.get_boolean('isolate-workspaces')) {
-        const showUrgent = settings.get_boolean('workspace-agnostic-urgent-windows');
+    if (settings.isolateWorkspaces) {
+        const showUrgent = settings.workspaceAgnosticUrgentWindows;
         const activeWorkspace = global.workspace_manager.get_active_workspace();
         windows = windows.filter(function(w) {
             const inWorkspace = w.get_workspace() === activeWorkspace;
@@ -1206,7 +1206,7 @@ function getInterestingWindows(windows, monitorIndex) {
         });
     }
 
-    if (settings.get_boolean('isolate-monitors')) {
+    if (settings.isolateMonitors) {
         windows = windows.filter(function(w) {
             return w.get_monitor() === monitorIndex;
         });
