@@ -234,8 +234,9 @@ var Settings = GObject.registerClass({
         if (!this._monitors?.length)
             return;
 
-        const preferredMonitor = this._monitors[combo.get_active()].index;
-        this._settings.set_int('preferred-monitor', preferredMonitor);
+        const preferredMonitor = this._monitors[combo.get_active()].connector;
+        this._settings.set_string('preferred-monitor-by-connector', preferredMonitor);
+        this._settings.set_int('preferred-monitor', -2);
     }
 
     position_top_button_toggled_cb(button) {
@@ -344,6 +345,7 @@ var Settings = GObject.registerClass({
     _updateMonitorsSettings() {
         // Monitor options
         const preferredMonitor = this._settings.get_int('preferred-monitor');
+        const preferredMonitorByConnector = this._settings.get_string('preferred-monitor-by-connector');
         const dockMonitorCombo = this._builder.get_object('dock_monitor_combo');
 
         this._monitors = [];
@@ -368,7 +370,8 @@ var Settings = GObject.registerClass({
 
             this._monitors.push(monitor);
 
-            if (monitor.index === preferredMonitor)
+            if (monitor.index === preferredMonitor ||
+                (preferredMonitor == -2 && preferredMonitorByConnector == monitor.connector))
                 dockMonitorCombo.set_active(this._monitors.length - 1);
         }
     }

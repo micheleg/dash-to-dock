@@ -1002,8 +1002,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             this._allWindowsMenuItem.hide();
             this.addMenuItem(this._allWindowsMenuItem);
         } else {
-            const windows = this._source.getInterestingWindows().filter(
-                w => !w.skip_taskbar);
+            const windows = this._source.getInterestingWindows();
 
             if (windows.length > 0) {
                 this.addMenuItem(
@@ -1233,17 +1232,19 @@ function getInterestingWindows(windows, monitorIndex) {
         const showUrgent = settings.get_boolean('workspace-agnostic-urgent-windows');
         const activeWorkspace = global.workspace_manager.get_active_workspace_index();
         windows = windows.filter(function(w) {
-            return w.get_workspace().index() == activeWorkspace
-                || (showUrgent && (w.urgent || w.demandsAttention || w._manualUrgency));
+            const inWorkspace = w.get_workspace().index() === activeWorkspace;
+            const isUrgent = w.urgent || w.demandsAttention || w._manualUrgency;
+            return inWorkspace || (showUrgent && isUrgent);
         });
     }
 
-    if (settings.get_boolean('isolate-monitors'))
+    if (settings.get_boolean('isolate-monitors')) {
         windows = windows.filter(function(w) {
-            return w.get_monitor() == monitorIndex;
+            return w.get_monitor() === monitorIndex;
         });
+    }
 
-    return windows;
+    return windows.filter(w => !w.skipTaskbar);
 }
 
 /**
