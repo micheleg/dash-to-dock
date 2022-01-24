@@ -149,12 +149,12 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
         case Clutter.ScrollDirection.DOWN:
             delta = +increment;
             break;
-        case Clutter.ScrollDirection.SMOOTH:
+        case Clutter.ScrollDirection.SMOOTH: {
             let [dx, dy] = event.get_scroll_delta();
             delta = dy*increment;
             delta += dx*increment;
             break;
-
+            }
         }
 
         adjustment.set_value(adjustment.get_value() + delta);

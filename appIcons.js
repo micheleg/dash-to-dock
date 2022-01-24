@@ -241,12 +241,13 @@ var DockAbstractAppIcon = GObject.registerClass({
         case Clutter.ScrollDirection.DOWN:
             direction = Meta.MotionDirection.DOWN;
             break;
-        case Clutter.ScrollDirection.SMOOTH:
+        case Clutter.ScrollDirection.SMOOTH: {
             let [, dy] = Clutter.get_current_event().get_scroll_delta();
             if (dy < 0)
                 direction = Meta.MotionDirection.UP;
             else if (dy > 0)
                 direction = Meta.MotionDirection.DOWN;
+            }
             break;
         }
 
@@ -604,8 +605,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                 break;
 
             case clickAction.SKIP:
-                let w = windows[0];
-                Main.activateWindow(w);
+                Main.activateWindow(windows[0]);
                 break;
             }
         }

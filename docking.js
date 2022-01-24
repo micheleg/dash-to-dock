@@ -1209,12 +1209,13 @@ var DockedDash = GObject.registerClass({
             case Clutter.ScrollDirection.DOWN:
                 direction = next_direction;
                 break;
-            case Clutter.ScrollDirection.SMOOTH:
+            case Clutter.ScrollDirection.SMOOTH: {
                 let [dx, dy] = event.get_scroll_delta();
                 if (dy < 0)
                     direction = prev_direction;
                 else if (dy > 0)
                     direction = next_direction;
+                }
                 break;
             }
 
