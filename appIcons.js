@@ -1363,7 +1363,7 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
             ExtensionUtils.openPrefs();
         });
     }
-};
+}
 
 /**
  * This function is used for both extendShowAppsIcon and extendDashItemContainer
