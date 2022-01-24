@@ -148,6 +148,10 @@ var LocationAppInfo = GObject.registerClass({
                 Gio.IOErrorEnum.NOT_SUPPORTED, 'Launching with files not supported');
         }
 
+        const handler = this._getHandlerApp();
+        if (handler)
+            return handler.launch_uris([this.location.get_uri()], context);
+
         const [ret] = GLib.spawn_async(null, this.get_commandline().split(' '),
             context?.get_environment() || null, GLib.SpawnFlags.SEARCH_PATH, null);
         return ret;
@@ -201,7 +205,8 @@ var LocationAppInfo = GObject.registerClass({
     }
 
     vfunc_get_commandline() {
-        return 'gio open %s'.format(this.location?.get_uri());
+        return this._getHandlerApp()?.get_commandline() ??
+            'gio open %s'.format(this.location?.get_uri());
     }
 
     vfunc_get_display_name() {
@@ -287,6 +292,24 @@ var LocationAppInfo = GObject.registerClass({
             cancellable.cancel();
             if (this._updateIconCancellable === cancellable)
                 delete this._updateIconCancellable;
+        }
+    }
+
+    _getHandlerApp() {
+        if (!this.location)
+            return null;
+
+        try {
+            return this.location.query_default_handler(this.cancellable);
+        } catch (e) {
+            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
+                return getFileManagerApp()?.appInfo;
+
+            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
+                logError(e, 'Impossible to find an URI handler for %s'.format(
+                    this.get_id()));
+            }
+            return null;
         }
     }
 });
@@ -904,7 +927,17 @@ function makeLocationApp(params) {
     }));
 
     // FIXME: We need to add a new API to Nautilus to open new windows
-    shellApp._mi('can_open_new_window', () => false);
+    shellApp._mi('can_open_new_window', () =>
+        shellApp.appInfo.get_commandline()?.split(' ').includes('--new-window'));
+
+    shellApp._mi('open_new_window', function (_om, workspace) {
+        const context = global.create_app_launch_context(0, workspace);
+        const [ret] = GLib.spawn_async(null,
+            [...this.appInfo.get_commandline().split(' ').filter(
+                t => !t.startsWith('%')), this.appInfo.location.get_uri() ],
+            context.get_environment(), GLib.SpawnFlags.SEARCH_PATH, null);
+        return ret;
+    });
 
     if (shellApp.appInfo instanceof MountableVolumeAppInfo) {
         shellApp._mi('get_busy', function (parentGetBusy) {
