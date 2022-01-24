@@ -72,13 +72,11 @@ var FileManager1Client = class DashToDock_FileManager1Client {
      * sub-directories of that location.
      */
     getWindows(location) {
-        let ret = new Set();
-    	let locationEsc = location;
-	    
-    	if (!location.endsWith('/')) { 
-		locationEsc += '/'; 
-	}
-	    
+        const ret = new Set();
+        let locationEsc = location;
+        if (!location.endsWith('/'))
+            locationEsc += '/';
+
         for (let [k,v] of this._locationMap) {
             if ((k + '/').startsWith(locationEsc)) {
                 for (let l of v) {
@@ -145,7 +143,7 @@ function getPathToWindow() {
         let ws = global.workspace_manager.get_workspace_by_index(i);
         ws.list_windows().map(function(w) {
             let path = w.get_gtk_window_object_path();
-	    if (path != null) {
+        if (path != null) {
                 pathToWindow.set(path, w);
             }
         });

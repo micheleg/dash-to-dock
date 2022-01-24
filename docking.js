@@ -1581,7 +1581,7 @@ var DockManager = class DashToDock_DockManager {
         return DockManager.getDefault().iconTheme;
     }
 
-    get settings() {
+    get settings() { // eslint-disable-line no-dupe-class-members
         return this._settings;
     }
 
@@ -2021,7 +2021,7 @@ var DockManager = class DashToDock_DockManager {
             const workspaceBox = originalFunction.call(this, state, workAreaBox, ...args);
             workspaceBox.set_origin(workAreaBox.x1, workspaceBox.y1);
             return workspaceBox;
-        };
+        }
 
         this._methodInjections.addWithLabel('main-dash', [
             ControlsManagerLayout.prototype,
