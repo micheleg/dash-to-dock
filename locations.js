@@ -959,7 +959,13 @@ function wrapFileManagerApp() {
     fileManagerApp._signalConnections.addWithLabel('windowsChanged',
         fileManagerApp, 'windows-changed', () => {
             fileManagerApp.stop_emission_by_name('windows-changed');
-            fileManagerApp._updateWindows();
+            // Let's wait for the location app to take control before of us
+            const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 50, () => {
+                fileManagerApp._sources.delete(id);
+                fileManagerApp._updateWindows();
+                return GLib.SOURCE_REMOVE;
+            });
+            fileManagerApp._sources.add(id);
         });
 
     if (removables) {
