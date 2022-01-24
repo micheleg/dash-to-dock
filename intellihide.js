@@ -252,7 +252,7 @@ var Intellihide = class DashToDock_Intellihide {
         let wksp_index = wksp.index();
 
         // Depending on the intellihide mode, exclude non-relevent windows
-        switch (Docking.DockManager.settings.get_enum('intellihide-mode')) {
+        switch (Docking.DockManager.settings.intellihideMode) {
             case IntellihideMode.ALL_WINDOWS:
                 // Do nothing
                 break;

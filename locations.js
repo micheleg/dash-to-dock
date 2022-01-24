@@ -6,6 +6,7 @@ const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Shell = imports.gi.Shell;
 const Signals = imports.signals;
+const St = imports.gi.St;
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
@@ -17,6 +18,7 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 
+const FALLBACK_REMOVABLE_MEDIA_ICON = 'drive-removable-media';
 const FILE_MANAGER_DESKTOP_APP_ID = 'org.gnome.Nautilus.desktop';
 const TRASH_URI = 'trash://';
 const UPDATE_TRASH_DELAY = 500;
@@ -63,7 +65,7 @@ function makeNautilusFileOperationsProxy() {
     return proxy;
 }
 
-function wrapWindowsBackedApp(shellApp) {
+function wrapWindowsBackedApp(shellApp, params = {}) {
     if (shellApp._dtdData)
         throw new Error('%s has been already wrapped'.format(shellApp));
 
@@ -80,12 +82,30 @@ function wrapWindowsBackedApp(shellApp) {
 
     const m = (...args) => shellApp._dtdData.methodInjections.add(shellApp, ...args);
     const p = (...args) => shellApp._dtdData.propertyInjections.add(shellApp, ...args);
+    const aM = (...args) => {
+        if (shellApp.appInfo)
+            shellApp._dtdData.methodInjections.add(shellApp.appInfo, ...args);
+    }
     shellApp._mi = m;
     shellApp._pi = p;
+    shellApp._aMi = aM;
 
     m('get_state', () =>
         shellApp.get_windows().length ? Shell.AppState.RUNNING : Shell.AppState.STOPPED);
     p('state', { get: () => shellApp.get_state() });
+
+    if (params.gicon) {
+        const { gicon } = params;
+        m('get_icon', () => gicon);
+        p('icon', { get: () => shellApp.get_icon() });
+        aM('get_icon', () => shellApp.get_icon());
+
+        m('create_icon_texture', (_om, icon_size) => new St.Icon({
+            icon_size,
+            gicon: shellApp.icon,
+            fallback_icon_name: FALLBACK_REMOVABLE_MEDIA_ICON,
+        }));
+    }
 
     m('get_windows', () => shellApp._dtdData.windows);
     m('get_n_windows', () => shellApp.get_windows().length);
@@ -153,7 +173,7 @@ function wrapWindowsBackedApp(shellApp) {
                 try {
                     this.launch(timestamp, workspace, Shell.AppLaunchGpu.APP_PREF);
                 } catch (e) {
-                    global.notify_error(__("Failed to launch “%s”".format(
+                    global.notify_error(_("Failed to launch “%s”".format(
                         this.get_name())), e.message);
                 }
                 break;
@@ -183,11 +203,13 @@ function makeLocationApp(params) {
     if (!params.location)
         throw new TypeError('Invalid location');
 
-    location = params.location;
+    const location = params.location;
+    const gicon = params.gicon;
     delete params.location;
+    delete params.gicon;
 
     const shellApp = new Shell.App(params);
-    wrapWindowsBackedApp(shellApp);
+    wrapWindowsBackedApp(shellApp, { gicon });
     shellApp.appInfo.customId = 'location:%s'.format(location);
 
     Object.defineProperties(shellApp, {
@@ -410,8 +432,6 @@ var Trash = class DashToDock_Trash {
             this._lastEmpty !== this._empty) {
             let trashKeys = new GLib.KeyFile();
             trashKeys.set_string('Desktop Entry', 'Name', __('Trash'));
-            trashKeys.set_string('Desktop Entry', 'Icon',
-                                 this._empty ? 'user-trash' : 'user-trash-full');
             trashKeys.set_string('Desktop Entry', 'Type', 'Application');
             trashKeys.set_string('Desktop Entry', 'Exec', 'gio open %s'.format(TRASH_URI));
             trashKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
@@ -426,6 +446,7 @@ var Trash = class DashToDock_Trash {
             this._trashApp = makeLocationApp({
                 location: TRASH_URI + '/',
                 appInfo: trashAppInfo,
+                gicon: Gio.ThemedIcon.new(this._empty ? 'user-trash' : 'user-trash-full'),
             });
 
             if (!this._empty) {
@@ -508,25 +529,6 @@ var Removables = class DashToDock_Removables {
         this._monitor = null;
     }
 
-    _getWorkingIconName(icon) {
-        if (icon instanceof Gio.EmblemedIcon) {
-            icon = icon.get_icon();
-        }
-        if (icon instanceof Gio.ThemedIcon) {
-            const { iconTheme } = Docking.DockManager.getDefault();
-            let names = icon.get_names();
-            for (let i = 0; i < names.length; i++) {
-                let iconName = names[i];
-                if (iconTheme.has_icon(iconName)) {
-                    return iconName;
-                }
-            }
-            return '';
-        } else {
-            return icon.to_string();
-        }
-    }
-
     _onVolumeAdded(monitor, volume) {
         if (!volume.can_mount()) {
             return;
@@ -550,7 +552,6 @@ var Removables = class DashToDock_Removables {
 
         let volumeKeys = new GLib.KeyFile();
         volumeKeys.set_string('Desktop Entry', 'Name', volume.get_name());
-        volumeKeys.set_string('Desktop Entry', 'Icon', this._getWorkingIconName(volume.get_icon()));
         volumeKeys.set_string('Desktop Entry', 'Type', 'Application');
         volumeKeys.set_string('Desktop Entry', 'Exec', 'gio open "' + uri + '"');
         volumeKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
@@ -561,6 +562,7 @@ var Removables = class DashToDock_Removables {
         const volumeApp = makeLocationApp({
             location: escapedUri,
             appInfo: volumeAppInfo,
+            gicon: volume.get_icon() || Gio.ThemedIcon.new(FALLBACK_REMOVABLE_MEDIA_ICON),
         });
         this._volumeApps.push(volumeApp);
         this.emit('changed');
@@ -594,8 +596,6 @@ var Removables = class DashToDock_Removables {
 
         let mountKeys = new GLib.KeyFile();
         mountKeys.set_string('Desktop Entry', 'Name', mount.get_name());
-        mountKeys.set_string('Desktop Entry', 'Icon',
-                             this._getWorkingIconName(volume.get_icon()));
         mountKeys.set_string('Desktop Entry', 'Type', 'Application');
         mountKeys.set_string('Desktop Entry', 'Exec', 'gio open "' + uri + '"');
         mountKeys.set_string('Desktop Entry', 'StartupNotify', 'false');
@@ -614,6 +614,7 @@ var Removables = class DashToDock_Removables {
         const mountApp = makeLocationApp({
             appInfo: mountAppInfo,
             location: escapedUri,
+            gicon: mount.get_icon() || new Gio.ThemedIcon(FALLBACK_REMOVABLE_MEDIA_ICON),
         });
         this._mountApps.push(mountApp);
         this.emit('changed');
