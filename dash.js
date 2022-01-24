@@ -429,13 +429,14 @@ var DockDash = GObject.registerClass({
                 case Clutter.ScrollDirection.RIGHT:
                     delta = +increment;
                     break;
-                case Clutter.ScrollDirection.SMOOTH:
+                case Clutter.ScrollDirection.SMOOTH: {
                     let [dx, dy] = event.get_scroll_delta();
                     // TODO: Handle y
                     //delta = dy * increment;
                     // Also consider horizontal component, for instance touchpad
                     delta = dx * increment;
                     break;
+                }
             }
         } else {
             switch (event.get_scroll_direction()) {
@@ -445,10 +446,11 @@ var DockDash = GObject.registerClass({
                 case Clutter.ScrollDirection.DOWN:
                     delta = +increment;
                     break;
-                case Clutter.ScrollDirection.SMOOTH:
+                case Clutter.ScrollDirection.SMOOTH: {
                     let [, dy] = event.get_scroll_delta();
                     delta = dy * increment;
                     break;
+                }
             }
         }
 
