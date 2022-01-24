@@ -1,3 +1,115 @@
+gnome-shell-extension-ubuntu-dock (72~ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * Revert "extension: Disable starting in the overview"
+  * locations: Do not manually dispose objects (LP: #1949352, LP: #1951599)
+  * po/es.po: Remove duplicated entry for Quit translation
+  * docking: Delay dash animation callback at actual completion
+  * utils: Fix variable in error template string
+  * appIcons: In case we have no window to activate, let's just present it
+  * docking: Do not try to re-add a Meta.Later if one is already queued
+  * docking: Optionally disable animation to overview on startup
+  * dash: Track hover on separator item so that it can contribute to scrolling
+  * dash: Remove the scroll view visibility idle if triggering actor is
+    destroyed
+  * docking: Handle monitoring of discrete GPU not to leak signals
+  * appIcons: Random cleanups to use more relevant variable names
+  * appIcons: Compare workspaces instead of their indexes
+  * appIcons: Ensure we only consider as urgent the ones respecting our rules
+  * appIcons: Use new-window action only when requested, avoiding duplication
+  * appIcons: Fixed logic on handling preview click actions (LP: #1947445)
+  * stylesheet: Use some better naming for start marging value
+  * stylesheet: Use scss generation for overview-icon background
+  * stylesheet: Set the dash-separator color in both horizontal and vertical
+    mode
+  * windowPreview: Try generating previews clones on meta later only if have
+    valid size (LP: 1949572)
+  * utils: Remove handlers in reversed order
+  * Dash: Update appIcon geometry on parent geometry changes
+  * docking: Reduce the space used by the window picker / app grid
+  * cleanup: Use cached settings values instead of doing C calls
+  * locations: Use shell domain to translate reused strings
+  * locations: Use native GIcon as location Apps-icons (LP: #1874578)
+  * locations: Use native Gio.FileMonitor rate limit instead of a custom idle
+  * locations: Fix typo on FileManager app (un)wrapping functions
+  * locations: Fix handling of location apps on isolated workspaces mode
+  * locations: Also destroy all removable devices on Removables manager
+    destruction
+  * locations: Only emit changed signal if a monitored device has been removed
+  * locations: Only update Trash icon on changes
+  * locations: Remove unmounted locations by value
+  * locations: Use native AppInfo's and Shell mount operations
+  * metadata: Add support for gnome-shell 42
+  * fileManager1API: Cleanup the code to get windows from location path
+  * fileManager1API: Keep windows paths cached so we can monitor changes
+  * utils: Add support for (un)blocking signals handlers
+  * locations: Smart managing wrapped windows backed applications signal
+    connections
+  * locations: Use proxy properties to expose private items to public object
+  * locations: Chain up to parent destroy() function if any
+  * locations: Manage sources as part of DtdData
+  * locations: Manage windows changes in base class
+  * cleanup: Move shellAppCompare under Utils as it's a generic tool
+  * locations: Keep locations windows ordered following the shell algorithm
+  * locations: Use windows array directly where there's no need for method call
+  * locations: Resort and notify windows changes on user-time changes
+  * locations: Sort location windows apps only demand
+  * fileManager1API: Only emit windows-changed signal if windows / locations
+    changed
+  * fileManager1API: Manage unmanaged windows early
+  * locations: Include actual app ID in the string representation
+  * utils: Add CancellableChild, a GCancellable that monitors a parent instance
+  * locations: Get Trash icon from the folder attributes
+  * locations: Add support for showing custom icon files on mounts
+  * fileManager1API: Include transient windows as part of the location windows
+  * locations: Monitor windows-changed from apps and not from fm1Client
+    (LP: #1947476)
+  * locations: Ignore native file manager windows-changed signal emissions
+  * locations: Try to get trash status from metadata info before iterating
+  * locations: Move handling of trash logic into TrashAppInfo
+  * locations: Manage all mountable volumes, whether they're mounted or not
+  * locations: Add support for optionally showing all mountable devices
+  * locations: Add support for showing network volumes
+  * locations: Use ChildCancellable to avoid queuing multiple trash updates
+  * locations: Do not try to perform (un)mount actions concurrently
+  * appIcons: Show menu item as insensitive if the app is busy
+  * locations: Wait for location apps to own windows before updating
+    file-manager (LP: #1947476)
+  * locations: Add support for starting app state
+  * locations: Support opening new location windows when using nautilus
+  * 10_ubuntu-dock.gschema.override: Update settings override for ubuntu
+  * debian/control: Add support to GNOME 41 and 42
+
+  [ Timofey X ]
+  * Impove Russian localisation strings and fix javascript-format bug
+
+  [ jesusignazio ]
+  * Updated Spanish translation
+
+  [ rafal ]
+  * Add and translate few missing strings in Polish translation
+
+  [ nobodyatandnothing ]
+  * change README to document actual behavier
+
+  [ NicKoehler ]
+  * Updated italian strings (#1643)
+
+  [ Geoffrey Coulaud ]
+  * Fix window listing by excluding skip-taskbar windows
+
+  [ Laura Klünder ]
+  * add preferred-monitor-by-connector as an alternative to storing the index
+
+  [ Raghuveer Kasaraneni ]
+  * dash: Fixes wrong separator position
+
+  [ Sergio Costas ]
+  * Integration of Dash to Dock and DING (LP: #1723117)
+    Add API that DING can use to draw icons
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 24 Jan 2022 08:00:37 +0100
+
 gnome-shell-extension-ubuntu-dock (70~ubuntu3) impish; urgency=medium
 
   [ Daniel van Vugt ]
