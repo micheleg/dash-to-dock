@@ -909,7 +909,6 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         this._parentalControlsManager = ParentalControlsManager.getDefault();
 
         this.actor.add_style_class_name('app-menu');
-        this.actor.add_style_class_name('app-well-menu');
         this.actor.add_style_class_name('dock-app-menu');
 
         // Chain our visibility and lifecycle to that of the source
