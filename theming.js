@@ -120,15 +120,15 @@ var ThemeManager = class DashToDock_ThemeManager {
     _getDefaultColors() {
         // Prevent shell crash if the actor is not on the stage.
         // It happens enabling/disabling repeatedly the extension
-        if (!this._dash._container.get_stage())
+        if (!this._dash._background.get_stage())
             return [null, null];
 
         // Remove custom style
-        let oldStyle = this._dash._container.get_style();
-        this._dash._container.set_style(null);
+        const oldStyle = this._dash._background.get_style();
+        this._dash._background.set_style(null);
 
-        let themeNode = this._dash._container.get_theme_node();
-        this._dash._container.set_style(oldStyle);
+        const themeNode = this._dash._background.get_theme_node();
+        this._dash._background.set_style(oldStyle);
 
         let backgroundColor = themeNode.get_background_color();
 
