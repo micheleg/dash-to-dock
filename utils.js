@@ -156,12 +156,16 @@ var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHan
 
     _block(item) {
         const [object, id] = item;
-        object.block_signal_handler(id);
+
+        if (object instanceof GObject.Object)
+            GObject.Object.prototype.block_signal_handler.call(object, id);
     }
 
     _unblock(item) {
         const [object, id] = item;
-        object.unblock_signal_handler(id);
+
+        if (object instanceof GObject.Object)
+            GObject.Object.prototype.unblock_signal_handler.call(object, id);
     }
 };
 
