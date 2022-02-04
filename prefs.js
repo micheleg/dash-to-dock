@@ -231,12 +231,15 @@ var Settings = GObject.registerClass({
     }
 
     dock_display_combo_changed_cb(combo) {
-        if (!this._monitors?.length)
+        if (!this._monitors?.length || this._updatingSettings)
             return;
 
         const preferredMonitor = this._monitors[combo.get_active()].connector;
+
+        this._updatingSettings = true;
         this._settings.set_string('preferred-monitor-by-connector', preferredMonitor);
         this._settings.set_int('preferred-monitor', -2);
+        this._updatingSettings = false;
     }
 
     position_top_button_toggled_cb(button) {
@@ -350,6 +353,7 @@ var Settings = GObject.registerClass({
 
         this._monitors = [];
         dockMonitorCombo.remove_all();
+        let primaryIndex = -1;
 
         // Add connected monitors
         for (const monitor of this._monitorsConfig.monitors) {
@@ -361,6 +365,7 @@ var Settings = GObject.registerClass({
                     /* Translators: This will be followed by Display Name - Connector. */
                     __('Primary monitor: ') + monitor.displayName + ' - ' +
                         monitor.connector);
+                primaryIndex = this._monitors.length;
             } else {
                 dockMonitorCombo.append_text(
                     /* Translators: Followed by monitor index, Display Name - Connector. */
@@ -374,6 +379,9 @@ var Settings = GObject.registerClass({
                 (preferredMonitor == -2 && preferredMonitorByConnector == monitor.connector))
                 dockMonitorCombo.set_active(this._monitors.length - 1);
         }
+
+        if (dockMonitorCombo.get_active() < 0 && primaryIndex >= 0)
+            dockMonitorCombo.set_active(primaryIndex);
     }
 
     _bindSettings() {
@@ -381,6 +389,8 @@ var Settings = GObject.registerClass({
 
         this._updateMonitorsSettings();
         this._monitorsConfig.connect('updated', () => this._updateMonitorsSettings());
+        this._settings.connect('changed::preferred-monitor', () => this._updateMonitorsSettings());
+        this._settings.connect('changed::preferred-monitor-by-connector', () => this._updateMonitorsSettings());
 
         // Position option
         let position = this._settings.get_enum('dock-position');
