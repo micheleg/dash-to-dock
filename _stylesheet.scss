@@ -213,6 +213,7 @@ $osd_fg_color: #eeeeec;
                 .app-well-app,
                 .show-apps {
                     padding-#{$side}: $dash_padding;
+                    padding-#{opposite($side)}: $dash_padding;
                 }
             }
         }
@@ -229,6 +230,7 @@ $osd_fg_color: #eeeeec;
                     .app-well-app,
                     .show-apps {
                         padding-#{$side}: shrink($dash_padding);
+                        padding-#{opposite($side)}: shrink($dash_padding);
                     }
                 }
             }
