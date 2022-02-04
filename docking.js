@@ -1650,6 +1650,10 @@ var DockManager = class DashToDock_DockManager {
         return AppDisplay.discreteGpuAvailable || this._discreteGpuAvailable;
     }
 
+    get desktopIconsUsableArea() {
+        return this._desktopIconsUsableArea;
+    }
+
     getDockByMonitor(monitorIndex) {
         return this._allDocks.find(d => (d.monitorIndex === monitorIndex));
     }
