@@ -190,6 +190,7 @@ var Settings = GObject.registerClass({
         else
             this._settings = new Gio.Settings({schema_id: 'org.gnome.shell.extensions.dash-to-dock'});
 
+        this._appSwitcherSettings = new Gio.Settings({ schema_id: 'org.gnome.shell.app-switcher' });
         this._rtl = (Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL);
 
         this._builder = new Gtk.Builder();
@@ -592,10 +593,26 @@ var Settings = GObject.registerClass({
             this._builder.get_object('show_running_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        const applicationButtonIsolationButton =
+            this._builder.get_object('application_button_isolation_button');
         this._settings.bind('isolate-workspaces',
-            this._builder.get_object('application_button_isolation_button'),
+            applicationButtonIsolationButton,
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        applicationButtonIsolationButton.connect(
+            'notify::sensitive', check => {
+                if (check.sensitive) {
+                    check.label = check.label.split('\n')[0];
+                } else {
+                    check.label += '\n' +
+                        __('Managed by GNOME Multitasking\'s Application Switching setting');
+                }
+            });
+        this._appSwitcherSettings.bind('current-workspace-only',
+            applicationButtonIsolationButton,
+            'sensitive',
+            Gio.SettingsBindFlags.INVERT_BOOLEAN |
+            Gio.SettingsBindFlags.SYNC_CREATE);
         this._settings.bind('workspace-agnostic-urgent-windows',
             this._builder.get_object('application_button_urgent_button'),
             'active',
