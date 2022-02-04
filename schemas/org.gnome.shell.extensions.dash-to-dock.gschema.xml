@@ -210,7 +210,7 @@
     <key type="b" name="isolate-workspaces">
       <default>false</default>
       <summary>Provide workspace isolation</summary>
-      <description>Dash shows only windows from the currentworkspace</description>
+      <description>Dash shows only windows from the current workspace, this is applied only if gnome-shell 'current-workspace-only' app-switcher settings is disabled</description>
     </key>
     <key type="b" name="workspace-agnostic-urgent-windows">
       <default>true</default>
