@@ -1566,6 +1566,7 @@ var DockManager = class DashToDock_DockManager {
         this._vfuncInjections = new Utils.VFuncInjectionsHandler(this);
         this._propertyInjections = new Utils.PropertyInjectionsHandler(this);
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
+        this._appSwitcherSettings = new Gio.Settings({ schema_id: 'org.gnome.shell.app-switcher' });
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass();
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
@@ -1753,6 +1754,28 @@ var DockManager = class DashToDock_DockManager {
         });
     }
 
+    _mapExternalSetting(settings, key, mappedKey, mapValueFunction) {
+        const camelMappedKey = mappedKey.replace(/-([a-z\d])/g, k => k[1].toUpperCase());
+
+        const dockPropertyDesc = Object.getOwnPropertyDescriptor(this.settings, camelMappedKey);
+
+        if (!dockPropertyDesc)
+            throw new Error('Setting %s not found in dock'.format(mappedKey));
+
+        const mappedValue = () => mapValueFunction(settings.get_value(key).recursiveUnpack());
+        Object.defineProperty(this.settings, camelMappedKey, {
+            get: () => mappedValue() ?? dockPropertyDesc.value,
+            set: (value) => { mappedValue() ?? (dockPropertyDesc.value = value) },
+        });
+
+        this._signalsHandler.addWithLabel('settings', settings,
+            'changed::%s'.format(key), () => {
+                this._signalsHandler.blockWithLabel('settings');
+                this.settings.emit('changed::%s'.format(mappedKey), mappedKey);
+                this._signalsHandler.unblockWithLabel('settings');
+            });
+    }
+
     _bindSettingsChanges() {
         this.settings.settingsSchema.list_keys().forEach(key => {
             const camelKey = key.replace(/-([a-z\d])/g, k => k[1].toUpperCase());
@@ -1776,7 +1799,7 @@ var DockManager = class DashToDock_DockManager {
         });
 
         // Connect relevant signals to the toggling function
-        this._signalsHandler.add([
+        this._signalsHandler.addWithLabel('settings', [
             Meta.MonitorManager.get(),
             'monitors-changed',
             this._toggle.bind(this)
@@ -1828,6 +1851,9 @@ var DockManager = class DashToDock_DockManager {
                     this._desktopIconsUsableArea.resetMargins();
             }
         ]);
+
+        this._mapExternalSetting(this._appSwitcherSettings, 'current-workspace-only',
+            'isolate-workspaces', value => value || undefined);
     }
 
     _createDocks() {
@@ -2347,6 +2373,7 @@ var DockManager = class DashToDock_DockManager {
         this._remoteModel.destroy();
         this._settings.run_dispose();
         this._settings = null;
+        this._appSwitcherSettings = null;
         this._oldDash = null;
 
         this._desktopIconsUsableArea.destroy();
