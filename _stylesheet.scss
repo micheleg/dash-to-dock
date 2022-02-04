@@ -25,6 +25,10 @@ $dock_fixed_inner_margin: $dock_side_margin;
     @return round($val / 4);
 }
 
+@function shrink_light($val) {
+    @return round($val * 0.75);
+}
+
 @function is_horizontal($side) {
     @return $side == top or $side == bottom;
 }
@@ -98,9 +102,9 @@ $osd_fg_color: #eeeeec;
         &.shrink {
             #dash {
                 .dash-background {
-                    margin-#{$side}: shrink($dock_side_margin);
+                    margin-#{$side}: $dock_side_margin;
                     padding: shrink($dash_padding);
-                    border-radius: $dash_border_radius / 2;
+                    border-radius: shrink_light($dash_border_radius);
                 }
 
                 #dashtodockDashContainer {
@@ -223,7 +227,7 @@ $osd_fg_color: #eeeeec;
                 #dashtodockDashContainer {
                     padding: 0;
 
-                    @include padded-dash-edge-items($side, shrink($dash_edge_items_padding));
+                    @include padded-dash-edge-items($side, $dash_edge_items_padding);
                 }
 
                 .dash-item-container {
