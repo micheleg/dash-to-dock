@@ -29,6 +29,7 @@
     <value value='0' nick='ALL_WINDOWS'/>
     <value value='1' nick='FOCUS_APPLICATION_WINDOWS'/>
     <value value='2' nick='MAXIMIZED_WINDOWS'/>
+    <value value='3' nick='ALWAYS_ON_TOP'/>
   </enum>
   <enum id='org.gnome.shell.extensions.dash-to-dock.transparency-mode'>
     <value value='0' nick='DEFAULT'/>

@@ -23,7 +23,8 @@ const OverlapStatus = {
 const IntellihideMode = {
     ALL_WINDOWS: 0,
     FOCUS_APPLICATION_WINDOWS: 1,
-    MAXIMIZED_WINDOWS : 2
+    MAXIMIZED_WINDOWS: 2,
+    ALWAYS_ON_TOP: 3,
 };
 
 // List of windows type taken into account. Order is important (keep the original
@@ -283,6 +284,15 @@ var Intellihide = class DashToDock_Intellihide {
                 // Skip unmaximized windows
                 if (!meta_win.maximized_vertically && !meta_win.maximized_horizontally)
                     return false;
+                break;
+
+            case IntellihideMode.ALWAYS_ON_TOP:
+                // Always on top, except for fullscreen windows
+                if (this._focusApp) {
+                    const { focusWindow } = global.display;
+                    if (!focusWindow?.fullscreen)
+                        return false;
+                }
                 break;
         }
 
