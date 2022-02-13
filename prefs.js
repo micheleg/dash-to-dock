@@ -342,6 +342,11 @@ var Settings = GObject.registerClass({
             this._settings.set_enum('intellihide-mode', 2);
     }
 
+    always_on_top_radio_button_toggled_cb(button) {
+        if (button.get_active())
+            this._settings.set_enum('intellihide-mode', 3);
+    }
+
     _updateMonitorsSettings() {
         // Monitor options
         const preferredMonitor = this._settings.get_int('preferred-monitor');
@@ -477,7 +482,8 @@ var Settings = GObject.registerClass({
             let intellihideModeRadioButtons = [
                 this._builder.get_object('all_windows_radio_button'),
                 this._builder.get_object('focus_application_windows_radio_button'),
-                this._builder.get_object('maximized_windows_radio_button')
+                this._builder.get_object('maximized_windows_radio_button'),
+                this._builder.get_object('always_on_top_radio_button'),
             ];
 
             intellihideModeRadioButtons[this._settings.get_enum('intellihide-mode')].set_active(true);
