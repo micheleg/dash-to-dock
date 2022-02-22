@@ -1231,8 +1231,14 @@ var Removables = class DashToDock_Removables {
         if (!Docking.DockManager.settings.showMountsOnlyMounted)
             return;
 
-        if (!this._volumeApps.find(({ appInfo }) => appInfo.mount === mount))
-            this._onVolumeAdded(mount.get_volume());
+        if (!this._volumeApps.find(({ appInfo }) => appInfo.mount === mount)) {
+            // In some Gio.Mount implementations the volume may be set after
+            // mount is emitted, so we could just ignore it as we'll get it
+            // later via volume-added
+            const volume = mount.get_volume();
+            if (volume)
+                this._onVolumeAdded(mount.get_volume());
+        }
     }
 
     getApps() {
