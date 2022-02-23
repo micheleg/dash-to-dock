@@ -260,7 +260,7 @@ var VFuncInjectionsHandler = class DashToDock_VFuncInjectionsHandler extends Bas
         const original = prototype[`vfunc_${name}`];
         if (!(original instanceof Function))
             throw new Error(`Virtual function ${name} is not available for ${prototype}`);
-        prototype[Gi.hook_up_vfunc_symbol](name, injectedFunction);
+        this._replaceVFunc(prototype, name, injectedFunction);
         return [prototype, name];
     }
 
@@ -271,16 +271,23 @@ var VFuncInjectionsHandler = class DashToDock_VFuncInjectionsHandler extends Bas
             // This may fail if trying to reset to a never-overridden vfunc
             // as gjs doesn't consider it a function, even if it's true that
             // originalVFunc instanceof Function.
-            prototype[Gi.hook_up_vfunc_symbol](name, originalVFunc);
+            this._replaceVFunc(prototype, name, originalVFunc);
         } catch {
             try {
-                prototype[Gi.hook_up_vfunc_symbol](name, function (...args) {
+                this._replaceVFunc(prototype, name, function (...args) {
                     return originalVFunc.call(this, ...args);
                 });
             } catch (e) {
                 logError(e, `Removing vfunc_${name}`);
             }
         }
+    }
+
+    _replaceVFunc(prototype, name, func) {
+        if (Gi.gobject_prototype_symbol && Gi.gobject_prototype_symbol in prototype)
+            prototype = prototype[Gi.gobject_prototype_symbol];
+
+        return prototype[Gi.hook_up_vfunc_symbol](name, func);
     }
 };
 
