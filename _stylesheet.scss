@@ -103,7 +103,7 @@ $osd_fg_color: #eeeeec;
         &.shrink {
             #dash {
                 .dash-background {
-                    margin-#{$side}: shrink($dock_side_margin);
+                    margin-#{$side}: $dock_side_margin;
                     padding: shrink($dash_padding);
                     border-radius: shrink_light($dash_border_radius);
                 }
@@ -116,7 +116,7 @@ $osd_fg_color: #eeeeec;
                     .app-well-app,
                     .show-apps {
                         padding: shrink($dash_spacing);
-                        padding-#{$side}: shrink($dash_padding + $dock_side_margin);
+                        padding-#{$side}: shrink($dash_padding) + $dock_side_margin;
                         padding-#{opposite($side)}: shrink($dash_padding);
                     }
                 }
