@@ -274,11 +274,11 @@ var LocationAppInfo = GObject.registerClass({
     }
 
     async _updateLocationIcon(params = { standard: true, custom: true }) {
-        try {
-            this._updateIconCancellable?.cancel();
-            const cancellable = new Utils.CancellableChild(this.cancellable);
-            this._updateIconCancellable = cancellable;
+        this._updateIconCancellable?.cancel();
+        const cancellable = new Utils.CancellableChild(this.cancellable);
+        this._updateIconCancellable = cancellable;
 
+        try {
             const icons = await this._queryLocationIcons({ cancellable, ...params });
             const icon = icons.custom ?? icons.standard;
 
