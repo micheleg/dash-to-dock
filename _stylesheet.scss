@@ -12,11 +12,12 @@ $dash_placeholder_size: 32px;
 $dash_padding: $base_padding + 4px; // 10px
 $dash_spacing: round($base_padding / 4);
 $dash_edge_items_padding: $dash_padding - $dash_spacing;
-$dash_start_margin: $base_margin * 4;
+$dash_bottom_margin: $base_margin * 4;
 $dash_border_radius: $modal_radius * 1.5;
 
 // Stock
-$dock_side_margin: $dash_start_margin / 4;
+$dock_start_margin: $dash_bottom_margin;
+$dock_side_margin: $dock_start_margin / 4;
 $dock_fixed_inner_margin: $dock_side_margin;
 
 // Adapted to $dock_bottom_margin
@@ -55,7 +56,7 @@ $osd_fg_color: #eeeeec;
 
             .dash-background {
                 margin: 0;
-                margin-#{$side}: $dash_start_margin;
+                margin-#{$side}: $dock_side_margin;
                 padding: 0;
             }
 
@@ -79,7 +80,7 @@ $osd_fg_color: #eeeeec;
                 .app-well-app,
                 .show-apps {
                     padding: $dash_spacing;
-                    padding-#{$side}: $dash_padding + $dash_start_margin;
+                    padding-#{$side}: $dash_padding + $dock_side_margin;
                     padding-#{opposite($side)}: $dash_padding;
                 }
 
@@ -115,7 +116,7 @@ $osd_fg_color: #eeeeec;
                     .app-well-app,
                     .show-apps {
                         padding: shrink($dash_spacing);
-                        padding-#{$side}: shrink($dash_padding + $dock_side_margin);
+                        padding-#{$side}: shrink($dash_padding) + $dock_side_margin;
                         padding-#{opposite($side)}: shrink($dash_padding);
                     }
                 }

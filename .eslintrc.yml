@@ -1,0 +1,28 @@
+env:
+  es6: true
+  es2020: true
+parserOptions:
+  ecmaVersion: 2022
+
+globals:
+  global: readonly
+  _: readonly
+  C_: readonly
+  N_: readonly
+  ngettext: readonly
+  ARGV: readonly
+  Debugger: readonly
+  GIRepositoryGType: readonly
+  globalThis: readonly
+  imports: readonly
+  Intl: readonly
+  log: readonly
+  logError: readonly
+  print: readonly
+  printerr: readonly
+
+extends:
+  - "eslint:recommended"
+
+rules:
+  no-unused-vars: warn

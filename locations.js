@@ -274,11 +274,12 @@ var LocationAppInfo = GObject.registerClass({
     }
 
     async _updateLocationIcon(params = { standard: true, custom: true }) {
-        this._updateIconCancellable?.cancel();
         const cancellable = new Utils.CancellableChild(this.cancellable);
-        this._updateIconCancellable = cancellable;
 
         try {
+            this._updateIconCancellable?.cancel();
+            this._updateIconCancellable = cancellable;
+
             const icons = await this._queryLocationIcons({ cancellable, ...params });
             const icon = icons.custom ?? icons.standard;
 
@@ -1237,7 +1238,7 @@ var Removables = class DashToDock_Removables {
             // later via volume-added
             const volume = mount.get_volume();
             if (volume)
-                this._onVolumeAdded(mount.get_volume());
+                this._onVolumeAdded(volume);
         }
     }
 

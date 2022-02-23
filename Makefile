@@ -82,7 +82,7 @@ endif
 	-rm -fR _build
 	echo done
 
-zip-file: _build
+zip-file: _build check
 	cd _build ; \
 	zip -qr "$(UUID)$(VSTRING).zip" .
 	mv _build/$(UUID)$(VSTRING).zip ./
@@ -106,3 +106,14 @@ _build: all
 		cp $$l $$lf/LC_MESSAGES/dashtodock.mo; \
 	done;
 	sed -i 's/"version": -1/"version": "$(VERSION)"/'  _build/metadata.json;
+
+ifeq ($(strip $(ESLINT)),)
+    ESLINT = eslint
+endif
+
+ifneq ($(strip $(ESLINT_TAP)),)
+    ESLINT_ARGS = -f tap
+endif
+
+check:
+	$(ESLINT) $(ESLINT_ARGS) .

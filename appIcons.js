@@ -241,12 +241,13 @@ var DockAbstractAppIcon = GObject.registerClass({
         case Clutter.ScrollDirection.DOWN:
             direction = Meta.MotionDirection.DOWN;
             break;
-        case Clutter.ScrollDirection.SMOOTH:
+        case Clutter.ScrollDirection.SMOOTH: {
             let [, dy] = Clutter.get_current_event().get_scroll_delta();
             if (dy < 0)
                 direction = Meta.MotionDirection.UP;
             else if (dy > 0)
                 direction = Meta.MotionDirection.DOWN;
+            }
             break;
         }
 
@@ -298,19 +299,16 @@ var DockAbstractAppIcon = GObject.registerClass({
         this._urgentWindows.clear();
         if (interestingWindows === undefined)
             interestingWindows = this.getInterestingWindows();
-        interestingWindows.forEach(win => this._addUrgentWindow(win));
+        interestingWindows.filter(isWindowUrgent).forEach(win => this._addUrgentWindow(win));
         this.urgent = !!this._urgentWindows.size;
     }
 
     _onWindowDemandsAttention(window) {
-        if (this.ownsWindow(window))
+        if (this.ownsWindow(window) && isWindowUrgent(window))
             this._addUrgentWindow(window);
     }
 
     _addUrgentWindow(window) {
-        if (!isWindowUrgent(window))
-            return;
-
         if (this._urgentWindows.has(window))
             return;
 
@@ -609,8 +607,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                 break;
 
             case clickAction.SKIP:
-                let w = windows[0];
-                Main.activateWindow(w);
+                Main.activateWindow(windows[0]);
                 break;
             }
         }
@@ -1339,7 +1336,7 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
             ExtensionUtils.openPrefs();
         });
     }
-};
+}
 
 /**
  * This function is used for both extendShowAppsIcon and extendDashItemContainer

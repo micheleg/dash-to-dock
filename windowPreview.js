@@ -150,12 +150,12 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
         case Clutter.ScrollDirection.DOWN:
             delta = +increment;
             break;
-        case Clutter.ScrollDirection.SMOOTH:
+        case Clutter.ScrollDirection.SMOOTH: {
             let [dx, dy] = event.get_scroll_delta();
             delta = dy*increment;
             delta += dx*increment;
             break;
-
+            }
         }
 
         adjustment.set_value(adjustment.get_value() + delta);
@@ -370,11 +370,15 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     }
 
     _getWindowPreviewSize() {
-        let mutterWindow = this._window.get_compositor_private();
-        const [width, height] = mutterWindow?.get_size();
+        const emptySize = [0, 0, 0];
 
-        if (!width || !height || !mutterWindow?.get_texture())
-            return [0, 0, 0];
+        let mutterWindow = this._window.get_compositor_private();
+        if (!mutterWindow?.get_texture())
+            return emptySize;
+
+        const [width, height] = mutterWindow.get_size();
+        if (!width || !height)
+            return emptySize;
 
         let scale;
 
@@ -491,8 +495,8 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             // see comment in Workspace._windowAdded
             let activationEvent = Clutter.get_current_event();
             this._windowAddedLater = Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
-                this.emit('activate', activationEvent);
                 delete this._windowAddedLater;
+                this.emit('activate', activationEvent);
                 return GLib.SOURCE_REMOVE;
             });
         }

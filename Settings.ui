@@ -2743,6 +2743,13 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                             <signal name="toggled" handler="maximized_windows_radio_button_toggled_cb" />
                           </object>
                         </child>
+                        <child>
+                          <object class="GtkCheckButton" id="always_on_top_radio_button">
+                            <property name="label" translatable="yes">Always on top</property>
+                            <property name="group">all_windows_radio_button</property>
+                            <signal name="toggled" handler="always_on_top_radio_button_toggled_cb" />
+                          </object>
+                        </child>
                         <layout>
                           <property name="column">0</property>
                           <property name="row">2</property>

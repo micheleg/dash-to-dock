@@ -1,0 +1,32 @@
+---
+name: Make
+'on':
+  pull_request:
+  push:
+    branches:
+      - master
+      - ubuntu-dock
+      - make_ci
+
+jobs:
+  make:
+    name: Make
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v2
+
+      - name: Install dependencies.
+        run: sudo apt-get install -y sassc gettext
+
+      - name: Make
+        run: make
+
+      - name: Install modules
+        run: sudo npm install eslint -g
+
+      - name: Make Check
+        run: make check
+
+      - name: Make Install
+        run: make install

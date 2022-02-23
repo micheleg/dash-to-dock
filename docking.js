@@ -1229,12 +1229,13 @@ var DockedDash = GObject.registerClass({
             case Clutter.ScrollDirection.DOWN:
                 direction = next_direction;
                 break;
-            case Clutter.ScrollDirection.SMOOTH:
+            case Clutter.ScrollDirection.SMOOTH: {
                 let [dx, dy] = event.get_scroll_delta();
                 if (dy < 0)
                     direction = prev_direction;
                 else if (dy > 0)
                     direction = next_direction;
+                }
                 break;
             }
 
@@ -1619,7 +1620,7 @@ var DockManager = class DashToDock_DockManager {
         return DockManager.getDefault().iconTheme;
     }
 
-    get settings() {
+    get settings() { // eslint-disable-line no-dupe-class-members
         return this._settings;
     }
 
@@ -1647,12 +1648,12 @@ var DockManager = class DashToDock_DockManager {
         return this._trash;
     }
 
-    get discreteGpuAvailable() {
-        return AppDisplay.discreteGpuAvailable || this._discreteGpuAvailable;
-    }
-
     get desktopIconsUsableArea() {
         return this._desktopIconsUsableArea;
+    }
+
+    get discreteGpuAvailable() {
+        return AppDisplay.discreteGpuAvailable || this._discreteGpuAvailable;
     }
 
     getDockByMonitor(monitorIndex) {
@@ -1761,7 +1762,7 @@ var DockManager = class DashToDock_DockManager {
         const mappedValue = () => mapValueFunction(settings.get_value(key).recursiveUnpack());
         Object.defineProperty(this.settings, camelMappedKey, {
             get: () => mappedValue() ?? dockPropertyDesc.value,
-            set: (value) => mappedValue() ?? (dockPropertyDesc.value = value),
+            set: (value) => { mappedValue() ?? (dockPropertyDesc.value = value) },
         });
 
         this._signalsHandler.addWithLabel('settings', settings,
@@ -1839,6 +1840,13 @@ var DockManager = class DashToDock_DockManager {
             this._settings,
             'changed::isolate-locations',
             () => this._ensureLocations()
+        ], [
+            this._settings,
+            'changed::intellihide',
+            () => {
+                if (!this._settings.intellihide)
+                    this._desktopIconsUsableArea.resetMargins();
+            }
         ]);
 
         this._mapExternalSetting(this._appSwitcherSettings, 'current-workspace-only',
@@ -2125,7 +2133,7 @@ var DockManager = class DashToDock_DockManager {
             const workspaceBox = originalFunction.call(this, state, workAreaBox, ...args);
             workspaceBox.set_origin(workAreaBox.x1, workspaceBox.y1);
             return workspaceBox;
-        };
+        }
 
         this._methodInjections.addWithLabel('main-dash', [
             ControlsManagerLayout.prototype,
