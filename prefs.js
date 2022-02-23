@@ -26,11 +26,13 @@ try {
     imports.searchPath.push('resource:///org/gnome/Extensions/js');
 }
 
+const Config = imports.misc.config;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
 const SCALE_UPDATE_TIMEOUT = 500;
 const DEFAULT_ICONS_SIZES = [128, 96, 64, 48, 32, 24, 16];
+const [SHELL_VERSION] = Config?.PACKAGE_VERSION?.split('.') ?? [undefined];
 
 const TransparencyMode = {
     DEFAULT: 0,
@@ -202,14 +204,19 @@ var Settings = GObject.registerClass({
             this._builder.add_from_file('./Settings.ui');
         }
 
-        this.widget = new Gtk.ScrolledWindow({ hscrollbar_policy: Gtk.PolicyType.NEVER });
+        this.widget = new Gtk.ScrolledWindow({
+            hscrollbar_policy: Gtk.PolicyType.NEVER,
+            vscrollbar_policy: (SHELL_VERSION >= 42) ?
+                Gtk.PolicyType.NEVER : Gtk.PolicyType.AUTOMATIC,
+        });
         this._notebook = this._builder.get_object('settings_notebook');
         this.widget.set_child(this._notebook);
 
         // Set a reasonable initial window height
         this.widget.connect('realize', () => {
-            const window = this.widget.get_root();
-            window.set_size_request(-1, 750);
+            this.widget.get_root().set_size_request(-1, 850);
+            if (SHELL_VERSION >= 42)
+                this.widget.set_size_request(-1, 850);
         });
 
         // Timeout to delay the update of the settings
