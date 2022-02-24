@@ -52,8 +52,8 @@ const RunningIndicatorStyle = {
 };
 
 class MonitorsConfig {
-    static XML_INTERFACE =
-        '<node>\
+    static get XML_INTERFACE() {
+        return '<node>\
             <interface name="org.gnome.Mutter.DisplayConfig">\
                 <method name="GetCurrentState">\
                 <arg name="serial" direction="out" type="u" />\
@@ -64,8 +64,11 @@ class MonitorsConfig {
                 <signal name="MonitorsChanged" />\
             </interface>\
         </node>';
+    }
 
-    static ProxyWrapper = Gio.DBusProxy.makeProxyWrapper(MonitorsConfig.XML_INTERFACE);
+    static get ProxyWrapper() {
+        return Gio.DBusProxy.makeProxyWrapper(MonitorsConfig.XML_INTERFACE);
+    }
 
     constructor() {
         this._monitorsConfigProxy = new MonitorsConfig.ProxyWrapper(

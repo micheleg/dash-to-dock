@@ -562,7 +562,6 @@ const TrashAppInfo = GObject.registerClass({
     },
 },
 class TrashAppInfo extends LocationAppInfo {
-    _promisified = false;
 
     static initPromises(file) {
         if (TrashAppInfo._promisified)
@@ -1100,8 +1099,6 @@ var Trash = class DashToDock_Trash {
  * devices come and go and are mounted and unmounted.
  */
 var Removables = class DashToDock_Removables {
-
-    _promisified = false;
 
     static initVolumePromises(object) {
         // TODO: This can be simplified using actual interface type when we
