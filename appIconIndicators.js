@@ -2,7 +2,6 @@ const Cairo = imports.cairo;
 const Clutter = imports.gi.Clutter;
 const GdkPixbuf = imports.gi.GdkPixbuf
 const Gio = imports.gi.Gio;
-const Graphene = imports.gi.Graphene;
 const Gtk = imports.gi.Gtk;
 const Main = imports.ui.main;
 const Pango = imports.gi.Pango;
@@ -250,18 +249,12 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
         this._area = new St.DrawingArea({x_expand: true, y_expand: true});
 
         // We draw for the bottom case and rotate the canvas for other placements
-        //set center of rotatoins to the center
+        // set center of rotatoins to the center
         this._area.set_pivot_point(0.5, 0.5);
-        // prepare transformation matrix
-        let m = new Graphene.Matrix();
-        m.init_identity();
-        let v = new Graphene.Vec3();
-        v.init(0, 0, 1);
 
         switch (this._side) {
         case St.Side.TOP:
-            m.xx = -1;
-            m.rotate(180, v);
+            this._area.rotation_angle_z = 180;
             break
 
         case St.Side.BOTTOM:
@@ -269,16 +262,13 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
             break;
 
         case St.Side.LEFT:
-            m.yy = -1;
-            m.rotate(90, v);
+            this._area.rotation_angle_z = 90;
             break;
 
         case St.Side.RIGHT:
-            m.rotate(-90, v);
+            this._area.rotation_angle_z = -90;
             break
         }
-
-        this._area.set_transform(m);
 
         this._area.connect('repaint', this._updateIndicator.bind(this));
         this._source._iconContainer.add_child(this._area);
