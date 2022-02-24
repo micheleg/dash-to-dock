@@ -2,6 +2,7 @@ const Cairo = imports.cairo;
 const Clutter = imports.gi.Clutter;
 const GdkPixbuf = imports.gi.GdkPixbuf
 const Gio = imports.gi.Gio;
+const GObject = imports.gi.GObject;
 const Gtk = imports.gi.Gtk;
 const Main = imports.ui.main;
 const Pango = imports.gi.Pango;
@@ -239,6 +240,22 @@ var RunningIndicatorDefault = class DashToDock_RunningIndicatorDefault extends R
     }
 };
 
+var IndicatorDrawingArea = GObject.registerClass(
+class IndicatorDrawingArea extends St.DrawingArea {
+    vfunc_allocate(box) {
+        if (box.x1 != 0 || box.y1 != 0)
+            return super.vfunc_allocate(box);
+
+        // We assume that the are is a rectangle in the operations below:
+        const size = Math.min(box.get_width(), box.get_height());
+        box.x2 = size;
+        box.y2 = size;
+        this.set_allocation(box);
+
+        return super.vfunc_allocate(box);
+    }
+});
+
 var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends RunningIndicatorBase {
 
     constructor(source) {
@@ -246,7 +263,10 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
 
         this._hideDefaultDot();
 
-        this._area = new St.DrawingArea({x_expand: true, y_expand: true});
+        this._area = new IndicatorDrawingArea({
+            x_expand: true,
+            y_expand: true,
+        });
 
         // We draw for the bottom case and rotate the canvas for other placements
         // set center of rotatoins to the center
