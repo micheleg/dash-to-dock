@@ -1,3 +1,35 @@
+gnome-shell-extension-ubuntu-dock (72~ubuntu2) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * schemas/10_ubuntu-dock.gschema.override: Remove hardcoded theme
+  * debian/rules: Also provide an empty yaru.css file
+  * debian: Support make check via eslint
+  * locations: Assign location to a const variable
+  * cleanup: Fix style to follow basic eslint rules
+  * cleanup: Fix case declaration scope
+  * .eslintrc: Add basic eslint rule to check main issues
+  * make: Add check case and use it before generating zip-file
+  * docking: Try to use g-s current-workspace-only before monitor isolation
+  * utils: Only block signal events for GObject classes
+  * locations: Do not try to add null volumes from valid mounts (LP: #1960898)
+  * locations: Ensure that cancellable is set during finally stanza
+  * prefs: Ensure display combo box is updated on settings changes
+  * prefs: Add support to show in GNOME 42 libadwaita-based dialog
+  * utils: Support vfunc injections on newer GObject classes as per gjs 1.71
+  * stylesheet: Use the same padding in both the sides in extended mode
+  * stylesheet: Do not shrink too much border radius and edge paddings
+  * stylesheet: Increase the side margin in shrink floating mode
+  * appIconIndicators: Use native actor rotation to rotate the drawing area
+  * appIconIndicators: Ensure that the drawing area is always a square
+
+  [ Stephen Gibbel ]
+  * Adds an intellihide mode for always-on-top (on non-fullscreen windows)
+
+  [ Sergio Costas ]
+  * Reset margins when 'intellihide' is disabled
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 24 Feb 2022 21:25:07 +0100
+
 gnome-shell-extension-ubuntu-dock (72~ubuntu1) jammy; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
