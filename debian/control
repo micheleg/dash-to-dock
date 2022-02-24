@@ -4,7 +4,11 @@ Priority: optional
 Maintainer: Didier Roche <didrocks@ubuntu.com>
 Build-Depends: debhelper (>= 10),
                dh-translations,
+               eslint <!nocheck>,
                libglib2.0-bin,
+               node-chalk <!nocheck>,
+               node-js-yaml <!nocheck>,
+               node-strip-ansi <!nocheck>,
                sassc,
 Standards-Version: 4.1.1
 Vcs-Git: https://github.com/micheleg/dash-to-dock.git -b ubuntu-dock
