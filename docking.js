@@ -1112,13 +1112,13 @@ var DockedDash = GObject.registerClass({
 
         const { desktopIconsUsableArea } = DockManager.getDefault();
         if (this._position === St.Side.BOTTOM)
-            desktopIconsUsableArea.setMargins(this._monitorIndex, 0, this._box.height, 0, 0);
+            desktopIconsUsableArea.setMargins(this.monitorIndex, 0, this._box.height, 0, 0);
         else if (this._position === St.Side.TOP)
-            desktopIconsUsableArea.setMargins(this._monitorIndex, this._box.height, 0, 0, 0);
+            desktopIconsUsableArea.setMargins(this.monitorIndex, this._box.height, 0, 0, 0);
         else if (this._position === St.Side.RIGHT)
-            desktopIconsUsableArea.setMargins(this._monitorIndex, 0, 0, 0, this._box.width);
+            desktopIconsUsableArea.setMargins(this.monitorIndex, 0, 0, 0, this._box.width);
         else if (this._position === St.Side.LEFT)
-            desktopIconsUsableArea.setMargins(this._monitorIndex, 0, 0, this._box.width, 0);
+            desktopIconsUsableArea.setMargins(this.monitorIndex, 0, 0, this._box.width, 0);
     }
 
     _updateStaticBox() {
