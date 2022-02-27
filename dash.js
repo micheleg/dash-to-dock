@@ -627,9 +627,8 @@ var DockDash = GObject.registerClass({
 
         const [{ child: firstButton }] = iconChildren;
         
-        if (!iconChildren || !firstButton) {
+        if (!iconChildren || !firstButton)
             return;
-        }
         
         const { child: firstIcon } = firstButton.icon;
 
