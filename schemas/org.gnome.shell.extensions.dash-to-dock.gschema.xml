@@ -117,6 +117,11 @@
       <summary>Opacity of the dash background</summary>
       <description>Sets the opacity of the dash background  when in autohide mode.</description>
     </key>
+    <key type="b" name="manualhide">
+      <default>false</default>
+      <summary>Dock not shown on desktop</summary>
+      <description>Enable or disable manualhide mode</description>
+    </key>
     <key type="b" name="intellihide">
       <default>true</default>
       <summary>Dock dodges windows</summary>
