@@ -642,8 +642,9 @@ var DockedDash = GObject.registerClass({
      */
     _updateDashVisibility() {
         if (DockManager.settings.manualhide) {
-            this._ignoreHover = false;
-            this._animateOut(DockManager.settings.animationTime, 0);
+            this._ignoreHover = true;
+            this._removeAnimations();
+            this._animateOut(0, 0);
             return;
         }
 
