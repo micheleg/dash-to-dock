@@ -555,6 +555,12 @@ var DockedDash = GObject.registerClass({
             }
         ], [
             settings,
+            'changed::manualhide',
+            () => {
+                this._updateVisibilityMode();
+            }
+        ], [
+            settings,
             'changed::intellihide',
             () => {
                 this._updateVisibilityMode();
@@ -604,7 +610,7 @@ var DockedDash = GObject.registerClass({
      */
     _updateVisibilityMode() {
         let settings = DockManager.settings;
-        if (DockManager.settings.dockFixed) {
+        if (DockManager.settings.dockFixed || DockManager.settings.manualhide) {
             this._autohideIsEnabled = false;
             this._intellihideIsEnabled = false;
         }
@@ -635,6 +641,12 @@ var DockedDash = GObject.registerClass({
      * overview visibility
      */
     _updateDashVisibility() {
+        if (DockManager.settings.manualhide) {
+            this._ignoreHover = false;
+            this._animateOut(DockManager.settings.animationTime, 0);
+            return;
+        }
+
         if (Main.overview.visibleTarget)
             return;
 
