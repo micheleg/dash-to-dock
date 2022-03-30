@@ -45,6 +45,7 @@
     <value value='5' nick='SOLID'/>
     <value value='6' nick='CILIORA'/>
     <value value='7' nick='METRO'/>
+    <value value='8' nick='BINARY'/>
   </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key name="dock-position" enum="org.gnome.shell.extensions.dash-to-dock.position">
