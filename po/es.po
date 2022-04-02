@@ -540,3 +540,19 @@ msgstr "Abrir volúmenes, dispositivos y papelera en ventana aparte."
 #: locations.js:412
 msgid "Trash"
 msgstr "Papelera"
+
+#: locations.js:420
+msgid "Empty Trash"
+msgstr "Vaciar papelera"
+
+#: locations.js:558
+msgid "Mount"
+msgstr "Montar"
+
+#: locations.js:604
+msgid "Eject"
+msgstr "Expulsar"
+
+#: locations.js:609
+msgid "Unmount"
+msgstr "Desmontar"
