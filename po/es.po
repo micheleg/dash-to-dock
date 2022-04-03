@@ -529,6 +529,10 @@ msgstr "Todas las ventanas"
 msgid "Preview size scale"
 msgstr "Tamaño de la ventana de previsualización"
 
+#: Settings.ui.h:42
+msgid "Show urgent windows despite current workspace."
+msgstr "Mostrar ventanas urgentes sin importar el espacio de trabajo actual."
+
 #: Settings.ui.h:43
 msgid "Keep the focused application always visible in the dash"
 msgstr "Mantener la aplicación seleccionada siempre visible en el dock"
