@@ -811,7 +811,7 @@ function wrapWindowsBackedApp(shellApp) {
 
             if (windows.length !== oldWindows.length ||
                 windows.some((win, index) => win !== oldWindows[index])) {
-                this._windows = windows;
+                this._windows = windows.filter(w => !w.is_override_redirect());
                 this.emit('windows-changed');
                 result.windowsChanged = true;
             }
