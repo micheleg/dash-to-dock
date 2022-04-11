@@ -1073,13 +1073,13 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 let isFavorite = AppFavorites.getAppFavorites().isFavorite(this._source.app.get_id());
 
                 if (isFavorite) {
-                    let item = this._appendMenuItem(_('Remove from Favorites'));
+                    let item = this._appendMenuItem(__('Remove from Favorites'));
                     item.connect('activate', () => {
                         let favs = AppFavorites.getAppFavorites();
                         favs.removeFavorite(this._source.app.get_id());
                     });
                 } else {
-                    let item = this._appendMenuItem(_('Add to Favorites'));
+                    let item = this._appendMenuItem(__('Add to Favorites'));
                     item.connect('activate', () => {
                         let favs = AppFavorites.getAppFavorites();
                         favs.addFavorite(this._source.app.get_id());
