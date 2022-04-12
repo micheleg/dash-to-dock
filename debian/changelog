@@ -1,3 +1,11 @@
+gnome-shell-extension-ubuntu-dock (72~ubuntu4) jammy; urgency=medium
+
+  * locations: Reintroduce manual rate limiting for trash monitoring to
+    avoid large memory spikes and leaks when Nautilus deletes files
+    (LP: #1962699)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Tue, 12 Apr 2022 16:01:16 +0800
+
 gnome-shell-extension-ubuntu-dock (72~ubuntu3) jammy; urgency=medium
 
   * Revert "debian/rules: Also provide an empty yaru.css file"
