@@ -1,3 +1,10 @@
+gnome-shell-extension-ubuntu-dock (72~ubuntu3) jammy; urgency=medium
+
+  * Revert "debian/rules: Also provide an empty yaru.css file"
+    This may be provided also by yaru-theme-gnome-shell, as it should be.
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 25 Feb 2022 01:52:07 +0100
+
 gnome-shell-extension-ubuntu-dock (72~ubuntu2) jammy; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
