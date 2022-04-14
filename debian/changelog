@@ -1,11 +1,11 @@
-gnome-shell-extension-ubuntu-dock (72~ubuntu5) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (72~ubuntu5) jammy; urgency=medium
 
   * docking: Use proper monitor index variable to support DING integration
   * locations: Always ignore OR windows in windows-backed app implementation
   * dash: Handle possible null first button
   * appIcons: Use proper method on _setPopupTimeout call (LP: #1964996)
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 14 Apr 2022 22:22:06 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 14 Apr 2022 22:24:07 +0200
 
 gnome-shell-extension-ubuntu-dock (72~ubuntu4) jammy; urgency=medium
 
