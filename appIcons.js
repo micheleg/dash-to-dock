@@ -1276,7 +1276,7 @@ var DockShowAppsIcon = GObject.registerClass({
     }
 
     _setPopupTimeout() {
-        AppDisplay.AppIcon.prototype._onMenuPoppedDown.apply(this, arguments);
+        AppDisplay.AppIcon.prototype._setPopupTimeout.apply(this, arguments);
     }
 
     _removeMenuTimeout() {
