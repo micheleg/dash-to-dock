@@ -1,6 +1,10 @@
-# Dash to Dock
-![screenshot](https://github.com/micheleg/dash-to-dock/raw/master/media/screenshot.jpg)
+# Dash to Dock for Pop!_OS
+![screenshot](https://github.com/halfmexican/dash-to-dock-pop/blob/master/screenshot.jpg)
 
+
+# Installation
+
+Go to releases and download the code. A simple Makefile is included. Extract the file.
 
 ### Build Dependencies
 
@@ -21,9 +25,7 @@ sudo apt install gettext
 
 ### Building
 
-Go to releases and download the code. A simple Makefile is included.
-
-Extract the file. Next use `make` to install the extension into your home directory. A Shell reload is required `Alt+F2 r Enter` under Xorg or under Wayland you may have to logout and login. The extension has to be enabled  with *gnome-extensions-app* (GNOME Extensions) or with *dconf*.
+Next use `make` to install the extension into your home directory. A Shell reload is required `Alt+F2 r Enter` under Xorg or under Wayland you may have to logout and login. The extension has to be enabled  with *gnome-extensions-app* (GNOME Extensions) or with *dconf*.
 
 ```bash
 make
