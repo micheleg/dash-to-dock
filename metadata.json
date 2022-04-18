@@ -5,10 +5,10 @@
     "42"
 ],
 "uuid": "ubuntu-dock@ubuntu.com",
-"name": "Ubuntu Dock",
-"description": "A dock for the Gnome Shell, default Ubuntu experience. This extension is a modified version of Dash To Dock with different defaults. Dash To Dock can be installed to replace it and give more (but unsupported) configuration options.",
+"name": "Dash to Dock for COSMIC",
+"description": "A dock for the COSMIC/GNOME Shell, fixes conflict with COSMIC Workspaces",
 "original-author": "micxgx@gmail.com",
-"url": "https://micheleg.github.io/dash-to-dock/",
+"url": "https://github.com/halfmexican/dash-to-dock-pop/tree/ubuntu-dock",
 "gettext-domain": "dashtodock",
 "version": 71
 }
