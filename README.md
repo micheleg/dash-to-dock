@@ -31,9 +31,8 @@ Clone the repository or download the branch from github. A simple Makefile is in
 Next use `make` to install the extension into your home directory. A Shell reload is required `Alt+F2 r Enter` under Xorg or under Wayland you may have to logout and login. The extension has to be enabled  with *gnome-extensions-app* (GNOME Extensions) or with *dconf*.
 
 ```bash
-git clone https://github.com/micheleg/dash-to-dock.git && cd dash-to-dock
-make
-make install
+git clone https://github.com/micheleg/dash-to-dock.git
+make -C dash-to-dock install
 ```
 
 ## Bug Reporting
