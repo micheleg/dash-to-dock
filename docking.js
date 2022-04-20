@@ -739,7 +739,7 @@ var DockedDash = GObject.registerClass({
       this._slider.ease_property('slide-x', 1, {
             duration: time * 1000,
             delay: delay * 1000,
-            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+            mode: Clutter.AnimationMode.EASE_IN_OUT_CUBIC,
             onComplete: () => {
                 this._dockState = State.SHOWN;
                 // Remove barrier so that mouse pointer is released and can access monitors on other side of dock
@@ -764,7 +764,7 @@ var DockedDash = GObject.registerClass({
         this._slider.ease_property('slide-x', 0, {
             duration: time * 1000,
             delay: delay * 1000,
-            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+            mode: Clutter.AnimationMode.EASE_IN_OUT_CUBIC,
             onComplete: () => {
                 this._dockState = State.HIDDEN;
                 // Remove queued barried removal if any
@@ -1988,7 +1988,7 @@ var DockManager = class DashToDock_DockManager {
                         translation_y: 0,
                         delay: STARTUP_ANIMATION_TIME,
                         duration: STARTUP_ANIMATION_TIME,
-                        mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+                        mode: Clutter.AnimationMode.EASE_IN_OUT_CUBIC,
                         ...mainDockProperties,
                     });
                 });
