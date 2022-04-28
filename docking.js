@@ -205,6 +205,13 @@ var DockedDash = GObject.registerClass({
             reactive: false,
             style_class: positionStyleClass[this._position],
         });
+
+        if (this.monitorIndex === undefined) {
+            // Hello turkish locale, gjs has instead defined this.monitorİndex
+            // See: https://gitlab.gnome.org/GNOME/gjs/-/merge_requests/742
+            this.monitorIndex = this.monitor_index;
+        }
+
         this._rtl = (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL);
 
         // Load settings
