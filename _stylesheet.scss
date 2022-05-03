@@ -340,3 +340,8 @@ $osd_fg_color: #eeeeec;
         background-size: contain;
     }
 }
+
+// Rise volume and workspace-switcher osd dialogs
+.osd-window, .workspace-switcher {
+  margin-bottom: 128px;
+}
