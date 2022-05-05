@@ -1156,6 +1156,9 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
           if (windows.length > 0){
               this._allWindowsMenuItem.show();
               this._allWindowsMenuItem.setSensitive(true);
+
+              if (Docking.DockManager.settings.defaultWindowsPreviewToOpen)
+                  this._allWindowsMenuItem.menu.open();
           }
       }
 
