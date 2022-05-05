@@ -238,6 +238,11 @@
       <summary>Show preview of the open windows</summary>
       <description>Replace open windows list with windows previews</description>
     </key>
+    <key type="b" name="default-windows-preview-to-open">
+      <default>false</default>
+      <summary>Open windows preview by default</summary>
+      <description>Window previews will show windows by default, rather than hide them behind a drop dowm menu.</description>
+    </key>
     <key type="b" name="show-favorites">
       <default>true</default>
       <summary>Show favorites apps</summary>
