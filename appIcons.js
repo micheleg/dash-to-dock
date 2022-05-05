@@ -968,10 +968,12 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         if (Docking.DockManager.settings.showWindowsPreview) {
             // Display the app windows menu items and the separator between windows
             // of the current desktop and other windows.
+            const windows = this._source.getInterestingWindows();
 
             this._allWindowsMenuItem = new PopupMenu.PopupSubMenuMenuItem(__('All Windows'), false);
             this._allWindowsMenuItem.hide();
-            this.addMenuItem(this._allWindowsMenuItem);
+            if (windows.length > 0)
+                this.addMenuItem(this._allWindowsMenuItem);
         } else {
             const windows = this._source.getInterestingWindows();
 
@@ -1147,7 +1149,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
 
           }
 
-          // The menu is created hidden and never hidded after being shown. Instead, a singlal
+          // The menu is created hidden and never hidded after being shown. Instead, a signal
           // connected to its items destroy will set is insensitive if no more windows preview are shown.
           if (windows.length > 0){
               this._allWindowsMenuItem.show();
