@@ -36,5 +36,5 @@ make install
 ```
 
 ## License
-Dash to Dock Gnome Shell extension is distributed under the terms of the GNU General Public License,
+Dash to Dock for Cosmic Gnome Shell extension is distributed under the terms of the GNU General Public License,
 version 2 or later. See the COPYING file for details.
