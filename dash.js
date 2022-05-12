@@ -83,6 +83,7 @@ var DockDash = GObject.registerClass({
             false),
     },
     Signals: {
+        'menu-opened': {},
         'menu-closed': {},
         'icon-size-changed': {},
     }
@@ -579,7 +580,9 @@ var DockDash = GObject.registerClass({
     _itemMenuStateChanged(item, opened) {
         Dash.Dash.prototype._itemMenuStateChanged.call(this, item, opened);
 
-        if (!opened) {
+        if (opened) {
+            this.emit('menu-opened');
+        } else {
             // I want to listen from outside when a menu is closed. I used to
             // add a custom signal to the appIcon, since gnome 3.8 the signal
             // calling this callback was added upstream.
