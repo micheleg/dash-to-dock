@@ -52,7 +52,7 @@ const RunningIndicatorStyle = {
 };
 
 class MonitorsConfig {
-    static get XML_INTERFACE() {
+   static get XML_INTERFACE() {
         return '<node>\
             <interface name="org.gnome.Mutter.DisplayConfig">\
                 <method name="GetCurrentState">\
@@ -69,7 +69,7 @@ class MonitorsConfig {
     static get ProxyWrapper() {
         return Gio.DBusProxy.makeProxyWrapper(MonitorsConfig.XML_INTERFACE);
     }
-
+    
     constructor() {
         this._monitorsConfigProxy = new MonitorsConfig.ProxyWrapper(
             Gio.DBus.session,
@@ -212,6 +212,7 @@ var Settings = GObject.registerClass({
             vscrollbar_policy: (SHELL_VERSION >= 42) ?
                 Gtk.PolicyType.NEVER : Gtk.PolicyType.AUTOMATIC,
         });
+        
         this._notebook = this._builder.get_object('settings_notebook');
         this.widget.set_child(this._notebook);
 
@@ -226,6 +227,8 @@ var Settings = GObject.registerClass({
         this._dock_size_timeout = 0;
         this._icon_size_timeout = 0;
         this._opacity_timeout = 0;
+        this._border_radius_timeout = 0;
+        this._floating_margin_timeout = 0;
 
         this._monitorsConfig = new MonitorsConfig();
         this._bindSettings();
@@ -251,6 +254,44 @@ var Settings = GObject.registerClass({
         this._settings.set_string('preferred-monitor-by-connector', preferredMonitor);
         this._settings.set_int('preferred-monitor', -2);
         this._updatingSettings = false;
+    }
+    
+     custom_radius_scale_value_changed_cb(scale) {
+        // Avoid settings the size consinuosly
+        if (this._border_radius_timeout > 0)
+            GLib.source_remove(this._border_radius_timeout);
+
+        this._border_radius_timeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+            this._settings.set_int('border-radius', scale.get_value());
+            this._border_radius_timeout = 0;
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+    
+    custom_margin_scale_value_changed_cb(scale) {
+        // Avoid settings the size consinuosly
+        if (this._floating_margin_timeout > 0)
+            GLib.source_remove(this._floating_margin_timeout);
+
+        this._floating_margin_timeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+            this._settings.set_int('floating-margin', scale.get_value());
+            this._floating_margin_timeout = 0;
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+    
+     custom_opacity_scale_value_changed_cb(scale) {
+        // Avoid settings the opacity consinuosly as it's change is animated
+        if (this._opacity_timeout > 0)
+            GLib.source_remove(this._opacity_timeout);
+        this._opacity_timeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+                this._settings.set_double('background-opacity', scale.get_value());
+                this._opacity_timeout = 0;
+                return GLib.SOURCE_REMOVE;
+        });
     }
 
     position_top_button_toggled_cb(button) {
@@ -290,7 +331,38 @@ var Settings = GObject.registerClass({
                 }
             });
     }
+    	
 
+    custom_opacity_scale_format_value_cb(scale, value) {
+        return Math.round(value * 100) + ' %';
+    }
+
+    min_opacity_scale_format_value_cb(scale, value) {
+        return Math.round(value * 100) + ' %';
+    }
+
+    max_opacity_scale_format_value_cb(scale, value) {
+        return Math.round(value * 100) + ' %';
+    }
+
+    all_windows_radio_button_toggled_cb(button) {
+        if (button.get_active())
+            this._settings.set_enum('intellihide-mode', 0);
+    }
+
+
+    focus_application_windows_radio_button_toggled_cb(button) {
+        if (button.get_active())
+            this._settings.set_enum('intellihide-mode', 1);
+    }
+
+
+    maximized_windows_radio_button_toggled_cb(button) {
+        if (button.get_active())
+            this._settings.set_enum('intellihide-mode', 2);
+
+    } 
+    
     icon_size_scale_value_changed_cb(scale) {
         // Avoid settings the size consinuosly
         if (this._icon_size_timeout > 0)
@@ -309,7 +381,8 @@ var Settings = GObject.registerClass({
     preview_size_scale_value_changed_cb(scale) {
         this._settings.set_double('preview-size-scale', scale.get_value());
     }
-    custom_opacity_scale_value_changed_cb(scale) {
+   
+     custom_opacity_scale_value_changed_cb(scale) {
         // Avoid settings the opacity consinuosly as it's change is animated
         if (this._opacity_timeout > 0)
             GLib.source_remove(this._opacity_timeout);
@@ -400,9 +473,9 @@ var Settings = GObject.registerClass({
             dockMonitorCombo.set_active(primaryIndex);
     }
 
-    _bindSettings() {
+   _bindSettings() {
+   
         // Position and size panel
-
         this._updateMonitorsSettings();
         this._monitorsConfig.connect('updated', () => this._updateMonitorsSettings());
         this._settings.connect('changed::preferred-monitor', () => this._updateMonitorsSettings());
@@ -556,6 +629,18 @@ var Settings = GObject.registerClass({
             dialog.present();
 
         });
+        
+        // Custom Margin Formatter
+        const custom_margin_scale = this._builder.get_object('custom_margin_scale');
+        custom_margin_scale.set_format_value_func((_, value) => {
+            return value + ' px';
+        });
+        
+        // Custom Border Formatter
+        const custom_radius_scale = this._builder.get_object('custom_radius_scale');
+        custom_radius_scale.set_format_value_func((_, value) => {
+            return value + ' px';
+        });
 
         // size options
         const dock_size_scale = this._builder.get_object('dock_size_scale');
@@ -574,6 +659,8 @@ var Settings = GObject.registerClass({
             return value + ' px';
         });
         this._builder.get_object('preview_size_scale').set_value(this._settings.get_double('preview-size-scale'));
+        
+        this._builder.get_object('') 
 
         // Corrent for rtl languages
         if (this._rtl) {
@@ -957,6 +1044,11 @@ var Settings = GObject.registerClass({
                 this._settings.set_enum('transparency-mode', parseInt(widget.get_active_id()));
             }
         );
+        
+
+        this._builder.get_object('custom_radius_scale').set_value(this._settings.get_int('border-radius'));
+        this._builder.get_object('custom_margin_scale').set_value(this._settings.get_int('floating-margin'));
+
 
         const custom_opacity_scale = this._builder.get_object('custom_opacity_scale');
         custom_opacity_scale.set_value(this._settings.get_double('background-opacity'));
@@ -986,6 +1078,8 @@ var Settings = GObject.registerClass({
                 this._builder.get_object('dynamic_opacity_button').set_sensitive(true);
             }
         });
+        
+       
 
         // Create dialog for transparency advanced settings
         this._builder.get_object('dynamic_opacity_button').connect('clicked', () => {
@@ -1064,9 +1158,9 @@ var Settings = GObject.registerClass({
             this._builder.get_object('force_straight_corner_switch'),
             'active', Gio.SettingsBindFlags.DEFAULT);
 
-        this._settings.bind('disable-overview-on-startup',
-            this._builder.get_object('show_overview_on_startup_switch'),
-            'active', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        //this._settings.bind('disable-overview-on-startup',
+            //this._builder.get_object('show_overview_on_startup_switch'),
+            //'active', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
         // About Panel
 
