@@ -2359,3 +2359,4 @@ var IconAnimator = class DashToDock_IconAnimator {
         }
     }
 };
+
