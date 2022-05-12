@@ -162,6 +162,16 @@
       <summary>Maximum dash icon size</summary>
       <description>Set the allowed maximum dash icon size. Allowed range: 16..64.</description>
     </key>
+     <key type="i" name="border-radius">
+      <default>30</default>
+      <summary>Dock border radius</summary>
+      <description>Set floating dock border radius.</description>
+    </key>
+    <key type="i" name="floating-margin">
+      <default>4</default>
+      <summary>Dash floating distance from the edge</summary>
+      <description>Set floating dock margin.</description>
+    </key>
     <key type="d" name="preview-size-scale">
       <default>0</default>
       <summary>Preview size scale</summary>
