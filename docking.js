@@ -35,7 +35,6 @@ const Locations = Me.imports.locations;
 const LauncherAPI = Me.imports.launcherAPI;
 const FileManager1API = Me.imports.fileManager1API;
 const DesktopIconsIntegration = Me.imports.desktopIconsIntegration;
-
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 
 var State = {
@@ -237,7 +236,7 @@ var DockedDash = GObject.registerClass({
         this._pressureBarrier = null;
         this._barrier = null;
         this._removeBarrierTimeoutId = 0;
-
+        this._triggerTimeoutId = 0;
         // Initialize dwelling system variables
         this._dockDwelling = false;
         this._dockWatch = null;
@@ -822,7 +821,7 @@ var DockedDash = GObject.registerClass({
                     GLib.PRIORITY_DEFAULT,
                     DockManager.settings.showDelay * 1000,
                     this._dockDwellTimeout.bind(this));
-                GLib.Source.set_name_by_id(this._dockDwellTimeoutId, '[dash-to-dock] this._dockDwellTimeout');
+                GLib.Source.set_name_by_id(this._dockDwellTimeoutId, '[dash-to-dock-pop] this._dockDwellTimeout');
             }
             this._dockDwelling = true;
         }
@@ -902,8 +901,8 @@ var DockedDash = GObject.registerClass({
 
         // In case the mouse move away from the dock area before hovering it, in such case the leave event
         // would never be triggered and the dock would stay visible forever.
-        let triggerTimeoutId =  GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => {
-            triggerTimeoutId = 0;
+            this._triggerTimeoutId =  GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => {
+            this._triggerTimeoutId = 0;
 
             let [x, y, mods] = global.get_pointer();
             let shouldHide = true;
@@ -1565,7 +1564,7 @@ var DockManager = class DashToDock_DockManager {
         this._methodInjections = new Utils.InjectionsHandler(this);
         this._vfuncInjections = new Utils.VFuncInjectionsHandler(this);
         this._propertyInjections = new Utils.PropertyInjectionsHandler(this);
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
+        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock-pop');
         this._appSwitcherSettings = new Gio.Settings({ schema_id: 'org.gnome.shell.app-switcher' });
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass();
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;

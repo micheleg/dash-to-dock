@@ -266,7 +266,11 @@ var ThemeManager = class DashToDock_ThemeManager {
         
         let pos_string = position_keys[this._dock_position];
 
-        newStyle = newStyle + `border-radius: ${this._border_radius}px;`;
+        if(settings.forceStraightCorner){
+            newStyle = newStyle + `border-radius: 0px;`;
+        }else {
+            newStyle = newStyle + `border-radius: ${this._border_radius}px;`;
+        }
         this._dash._background.set_style(newStyle);
 
         let marginStyle = `margin-${pos_string}: ${this._floating_margin}px;`;

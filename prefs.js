@@ -12,7 +12,7 @@ const Signals = imports.signals;
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
-const Gettext = imports.gettext.domain('dashtodock');
+const Gettext = imports.gettext.domain('dashtodockpop');
 const __ = Gettext.gettext;
 const N__ = function (e) { return e };
 
@@ -50,6 +50,8 @@ const RunningIndicatorStyle = {
     CILIORA: 6,
     METRO: 7
 };
+
+
 
 class MonitorsConfig {
    static get XML_INTERFACE() {
@@ -191,9 +193,9 @@ var Settings = GObject.registerClass({
         super._init();
 
         if (Me)
-            this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
+            this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock-pop');
         else
-            this._settings = new Gio.Settings({schema_id: 'org.gnome.shell.extensions.dash-to-dock'});
+            this._settings = new Gio.Settings({schema_id: 'org.gnome.shell.extensions.dash-to-dock-pop'});
 
         this._appSwitcherSettings = new Gio.Settings({ schema_id: 'org.gnome.shell.app-switcher' });
         this._rtl = (Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL);
@@ -224,11 +226,11 @@ var Settings = GObject.registerClass({
         });
 
         // Timeout to delay the update of the settings
-        this._dock_size_timeout = 0;
+        //this._dock_size_timeout = 0;
         this._icon_size_timeout = 0;
-        this._opacity_timeout = 0;
-        this._border_radius_timeout = 0;
-        this._floating_margin_timeout = 0;
+       // this._opacity_timeout = 0;
+        //this._border_radius_timeout = 0;
+        //this._floating_margin_timeout = 0;
 
         this._monitorsConfig = new MonitorsConfig();
         this._bindSettings();
@@ -257,41 +259,54 @@ var Settings = GObject.registerClass({
     }
     
      custom_radius_scale_value_changed_cb(scale) {
-        // Avoid settings the size consinuosly
-        if (this._border_radius_timeout > 0)
-            GLib.source_remove(this._border_radius_timeout);
 
-        this._border_radius_timeout = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+        if (this._settings.get_int('border-radius') !== scale.get_value()){
             this._settings.set_int('border-radius', scale.get_value());
-            this._border_radius_timeout = 0;
-            return GLib.SOURCE_REMOVE;
-        });
+        }
+
+
+        // Avoid settings the size consinuosly
+        //if (this._border_radius_timeout > 0)
+        //    GLib.source_remove(this._border_radius_timeout);
+
+       // this._border_radius_timeout = GLib.timeout_add(
+       //    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+       //     this._settings.set_int('border-radius', scale.get_value());
+       //     this._border_radius_timeout = 0;
+        //    return GLib.SOURCE_REMOVE;
+        //});
     }
     
     custom_margin_scale_value_changed_cb(scale) {
         // Avoid settings the size consinuosly
-        if (this._floating_margin_timeout > 0)
-            GLib.source_remove(this._floating_margin_timeout);
-
-        this._floating_margin_timeout = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+        if (this._settings.get_int('floating-margin') !== scale.get_value()){
             this._settings.set_int('floating-margin', scale.get_value());
-            this._floating_margin_timeout = 0;
-            return GLib.SOURCE_REMOVE;
-        });
+        }
+        //if (this._floating_margin_timeout > 0)
+        //    GLib.source_remove(this._floating_margin_timeout);
+
+        //this._floating_margin_timeout = GLib.timeout_add(
+        //    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+        //   this._settings.set_int('floating-margin', scale.get_value());
+        //    this._floating_margin_timeout = 0;
+        //    return GLib.SOURCE_REMOVE;
+        //});
     }
     
      custom_opacity_scale_value_changed_cb(scale) {
         // Avoid settings the opacity consinuosly as it's change is animated
-        if (this._opacity_timeout > 0)
-            GLib.source_remove(this._opacity_timeout);
-        this._opacity_timeout = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-                this._settings.set_double('background-opacity', scale.get_value());
-                this._opacity_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-        });
+         if (this._settings.get_double('background-opacity') !== scale.get_value()){
+             this._settings.set_double('background-opacity', scale.get_value());
+         }
+
+        //if (this._opacity_timeout > 0)
+        //    GLib.source_remove(this._opacity_timeout);
+        //this._opacity_timeout = GLib.timeout_add(
+        //   GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+        //        this._settings.set_double('background-opacity', scale.get_value());
+        //        this._opacity_timeout = 0;
+        //        return GLib.SOURCE_REMOVE;
+        //});
     }
 
     position_top_button_toggled_cb(button) {
@@ -320,16 +335,19 @@ var Settings = GObject.registerClass({
 
     dock_size_scale_value_changed_cb(scale) {
         // Avoid settings the size continuously
-        if (this._dock_size_timeout > 0)
-            GLib.source_remove(this._dock_size_timeout);
-        const id = this._dock_size_timeout = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-                if (id === this._dock_size_timeout) {
-                    this._settings.set_double('height-fraction', scale.get_value());
-                    this._dock_size_timeout = 0;
-                    return GLib.SOURCE_REMOVE;
-                }
-            });
+        if(this._settings.get_double('height-fraction', scale.get_value()) !== scale.get_value()){
+            this._settings.set_double('height-fraction', scale.get_value());
+        }
+        //if (this._dock_size_timeout > 0)
+        //    GLib.source_remove(this._dock_size_timeout);
+        //const id = this._dock_size_timeout = GLib.timeout_add(
+        //    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+        //       if (id === this._dock_size_timeout) {
+        //            this._settings.set_double('height-fraction', scale.get_value());
+        //            this._dock_size_timeout = 0;
+        //            return GLib.SOURCE_REMOVE;
+         //       }
+         //   });
     }
     	
 
@@ -366,14 +384,14 @@ var Settings = GObject.registerClass({
     icon_size_scale_value_changed_cb(scale) {
         // Avoid settings the size consinuosly
         if (this._icon_size_timeout > 0)
-            GLib.source_remove(this._icon_size_timeout);
+           GLib.source_remove(this._icon_size_timeout);
         this._icon_size_timeout = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-                log(scale.get_value());
-                this._settings.set_int('dash-max-icon-size', scale.get_value());
-                this._icon_size_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            });
+           GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+              log(scale.get_value());
+              this._settings.set_int('dash-max-icon-size', scale.get_value());
+               this._icon_size_timeout = 0;
+              return GLib.SOURCE_REMOVE;
+           });
     }
     preview_size_scale_format_value_cb(scale, value) {
         return value == 0 ? 'auto' : value;
@@ -381,53 +399,36 @@ var Settings = GObject.registerClass({
     preview_size_scale_value_changed_cb(scale) {
         this._settings.set_double('preview-size-scale', scale.get_value());
     }
-   
-     custom_opacity_scale_value_changed_cb(scale) {
-        // Avoid settings the opacity consinuosly as it's change is animated
-        if (this._opacity_timeout > 0)
-            GLib.source_remove(this._opacity_timeout);
-        this._opacity_timeout = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-                this._settings.set_double('background-opacity', scale.get_value());
-                this._opacity_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            });
-    }
+
     min_opacity_scale_value_changed_cb(scale) {
+        if(this._settings.get_double('min-alpha', scale.get_value())){
+            this._settings.set_double('min-alpha', scale.get_value());
+        }
         // Avoid settings the opacity consinuosly as it's change is animated
-        if (this._opacity_timeout > 0)
-            GLib.source_remove(this._opacity_timeout);
-        this._opacity_timeout = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-                this._settings.set_double('min-alpha', scale.get_value());
-                this._opacity_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            });
+        //if (this._opacity_timeout > 0)
+        //    GLib.source_remove(this._opacity_timeout);
+       // this._opacity_timeout = GLib.timeout_add(
+        //    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+         //       this._settings.set_double('min-alpha', scale.get_value());
+          //      this._opacity_timeout = 0;
+          //      return GLib.SOURCE_REMOVE;
+           // });
     }
     max_opacity_scale_value_changed_cb(scale) {
         // Avoid settings the opacity consinuosly as it's change is animated
-        if (this._opacity_timeout > 0)
-            GLib.source_remove(this._opacity_timeout);
-        this._opacity_timeout = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-                this._settings.set_double('max-alpha', scale.get_value());
-                this._opacity_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            });
+        if(this._settings.get_double('max-alpha', scale.get_value())){
+            this._settings.set_double('max-alpha', scale.get_value());
+        }
+        //if (this._opacity_timeout > 0)
+        //    GLib.source_remove(this._opacity_timeout);
+       // this._opacity_timeout = GLib.timeout_add(
+        //    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+         //       this._settings.set_double('max-alpha', scale.get_value());
+          //      this._opacity_timeout = 0;
+          //      return GLib.SOURCE_REMOVE;
+           // });
     }
 
-    all_windows_radio_button_toggled_cb(button) {
-        if (button.get_active())
-            this._settings.set_enum('intellihide-mode', 0);
-    }
-    focus_application_windows_radio_button_toggled_cb(button) {
-        if (button.get_active())
-            this._settings.set_enum('intellihide-mode', 1);
-    }
-    maximized_windows_radio_button_toggled_cb(button) {
-        if (button.get_active())
-            this._settings.set_enum('intellihide-mode', 2);
-    }
 
     always_on_top_radio_button_toggled_cb(button) {
         if (button.get_active())
@@ -649,6 +650,7 @@ var Settings = GObject.registerClass({
         dock_size_scale.set_format_value_func((_, value) => {
             return Math.round(value * 100) + ' %';
         });
+
         let icon_size_scale = this._builder.get_object('icon_size_scale');
         icon_size_scale.set_range(8, DEFAULT_ICONS_SIZES[0]);
         icon_size_scale.set_value(this._settings.get_int('dash-max-icon-size'));
@@ -667,7 +669,7 @@ var Settings = GObject.registerClass({
             // Flip value position: this is not done automatically
             dock_size_scale.set_value_pos(Gtk.PositionType.LEFT);
             icon_size_scale.set_value_pos(Gtk.PositionType.LEFT);
-            // I suppose due to a bug, having a more than one mark and one above a value of 100
+            // I suppose due to a bug, having a more than one mark and one above a value of 100i
             // makes the rendering of the marks wrong in rtl. This doesn't happen setting the scale as not flippable
             // and then manually inverting it
             icon_size_scale.set_flippable(false);
@@ -675,6 +677,7 @@ var Settings = GObject.registerClass({
         }
 
         this._settings.bind('icon-size-fixed', this._builder.get_object('icon_size_fixed_checkbutton'), 'active', Gio.SettingsBindFlags.DEFAULT);
+        //this._settings.bind('dash-max-icon-size', this._builder.get_object('icon_size_scale'), 'active', Gio.SettingsBindFlags.DEFAULT)
         this._settings.bind('extend-height', this._builder.get_object('dock_size_extend_checkbutton'), 'active', Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('extend-height', this._builder.get_object('dock_size_scale'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
@@ -1158,12 +1161,11 @@ var Settings = GObject.registerClass({
             this._builder.get_object('force_straight_corner_switch'),
             'active', Gio.SettingsBindFlags.DEFAULT);
 
-        //this._settings.bind('disable-overview-on-startup',
-            //this._builder.get_object('show_overview_on_startup_switch'),
-            //'active', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this._settings.bind('disable-overview-on-startup',
+            this._builder.get_object('show_overview_on_startup_switch'),
+            'active', Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
         // About Panel
-
         if (Me)
             this._builder.get_object('extension_version').set_label(Me.metadata.version.toString());
         else
@@ -1188,7 +1190,11 @@ if (!Me) {
     const loop = GLib.MainLoop.new(null, false);
     const win = new Gtk.Window();
     win.set_child(buildPrefsWidget());
-    win.connect('close-request', () => loop.quit());
+    win.connect('close-request', () => {
+        GLib.Source.remove(this._icon_size_timeout);
+        this._icon_size_timeout = null;
+        loop.quit();
+    });
     win.present();
 
     loop.run();

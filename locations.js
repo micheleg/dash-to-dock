@@ -11,7 +11,7 @@ const St = imports.gi.St;
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
-const Gettext = imports.gettext.domain('dashtodock');
+const Gettext = imports.gettext.domain('dashtodockpop');
 const __ = Gettext.gettext;
 const N__ = function(e) { return e };
 
@@ -36,6 +36,8 @@ const NautilusFileOperations2Interface = '<node>\
 </node>';
 
 const NautilusFileOperations2ProxyInterface = Gio.DBusProxy.makeProxyWrapper(NautilusFileOperations2Interface);
+
+let locationId = 0;
 
 if (imports.system.version >= 17101) {
     Gio._promisify(Gio.File.prototype, 'query_info_async', 'query_info_finish');
@@ -1031,12 +1033,12 @@ function wrapFileManagerApp() {
         fileManagerApp, 'windows-changed', () => {
             fileManagerApp.stop_emission_by_name('windows-changed');
             // Let's wait for the location app to take control before of us
-            const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 50, () => {
-                fileManagerApp._sources.delete(id);
+                locationId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 50, () => {
+                fileManagerApp._sources.delete(locationId);
                 fileManagerApp._updateWindows();
                 return GLib.SOURCE_REMOVE;
             });
-            fileManagerApp._sources.add(id);
+            fileManagerApp._sources.add(locationId);
         });
 
     if (removables) {

@@ -247,7 +247,7 @@
   </object>
 
   <object class="GtkAdjustment" id="custom_radius_adjustment">
-    <property name="upper">100</property>
+    <property name="upper">60</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -2036,7 +2036,6 @@
                                 <property name="valign">center</property>
                                 <property name="halign">start</property>
                                 <property name="label" translatable="yes">Force straight corner</property>
-
                               </object>
                             </child>
                             <child>
@@ -2049,7 +2048,37 @@
                         </property>
                       </object>
                     </child>
-
+                    <child>
+                      <object class="GtkListBoxRow">
+                        <property name="width_request">100</property>
+                        <property name="height_request">80</property>
+                        <property name="child">
+                          <object class="GtkBox">
+                            <property name="can_focus">0</property>
+                            <property name="spacing">32</property>
+                            <property name="margin_start">12</property>
+                            <property name="margin_end">12</property>
+                            <property name="margin_top">12</property>
+                            <property name="margin_bottom">12</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="hexpand">1</property>
+                                <property name="can_focus">0</property>
+                                <property name="valign">center</property>
+                                <property name="halign">start</property>
+                                <property name="label" translatable="yes">Show overview on startup</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkSwitch" id="show_overview_on_startup_switch">
+                                <property name="valign">center</property>
+                                <property name="margin_start">3</property>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>               
                     <child>
                       <object class="GtkListBoxRow" id="listboxrow_border_radius_lbr">
                         <property name="width_request">100</property>
@@ -2941,4 +2970,5 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
     </child>
   </object>
 </interface>
+
 
