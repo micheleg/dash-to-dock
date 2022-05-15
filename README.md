@@ -1,4 +1,4 @@
-# Dash to Dock for Pop!_OS
+# Dash to Dock for Pop!_OS's Cosmic
 ![screenshot](https://github.com/halfmexican/dash-to-dock-pop/blob/master/screenshot.jpg)
 
 
