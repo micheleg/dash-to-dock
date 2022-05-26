@@ -1,3 +1,9 @@
+gnome-shell-extension-ubuntu-dock (72~ubuntu6) kinetic; urgency=medium
+
+  * Ignore loss of the hover state while a menu is open (LP: #1967121)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Thu, 26 May 2022 16:35:29 +0800
+
 gnome-shell-extension-ubuntu-dock (72~ubuntu5) jammy; urgency=medium
 
   * docking: Use proper monitor index variable to support DING integration
