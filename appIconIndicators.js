@@ -32,7 +32,7 @@ const MAX_WINDOWS_CLASSES = 4;
 
 
 /*
- * This is the main indicator class to be used. The desired bahviour is
+ * This is the main indicator class to be used. The desired behavior is
  * obtained by composing the desired classes below based on the settings.
  *
  */
@@ -169,10 +169,10 @@ var RunningIndicatorBase = class DashToDock_RunningIndicatorBase extends Indicat
     }
 
     _updateDefaultDot() {
-        if (this._source.running)
+        // if (this._source.running)
             this._source._dot.show();
-        else
-            this._source._dot.hide();
+        // else
+        // this._source._dot.hide();
     }
 
     _hideDefaultDot() {

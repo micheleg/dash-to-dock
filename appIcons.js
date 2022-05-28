@@ -1225,77 +1225,65 @@ function getInterestingWindows(windows, monitorIndex) {
 }
 
 /**
- * A ShowAppsIcon improved class.
- *
- * - set label position based on dash orientation (Note, I am reusing most machinery of the appIcon class)
- * - implement a popupMenu based on the AppIcon code (Note, I am reusing most machinery of the appIcon class)
- *
+ * Use AppIcon to handle the menu for the dock icon
  */
 
 var DockShowAppsIcon = GObject.registerClass({
     Signals: {
         'menu-state-changed': { param_types: [GObject.TYPE_BOOLEAN] },
-        'sync-tooltip': {}
-    }
-}
-, class DockShowAppsIcon extends Dash.ShowAppsIcon {
-    _init() {
-        super._init();
+        'sync-tooltip': {},
+    },
+}, class DockShowAppsIcon extends AppDisplay.AppIcon {
+    _init(source) {
+        // Skip AppIcon._init to avoid the app handling logic
+        AppDisplay.AppViewItem.prototype._init.call(this, {}, false, false);
 
-        // Re-use appIcon methods
-        let appIconPrototype = AppDisplay.AppIcon.prototype;
-        this.toggleButton.y_expand = false;
-        this.toggleButton.connect('popup-menu',
-            appIconPrototype._onKeyboardPopupMenu.bind(this));
-        this.toggleButton.connect('clicked',
-            this._removeMenuTimeout.bind(this));
+        // Keep a reference to the container
+        this.source = source;
 
-        this.reactive = true;
-        this.toggleButton.popupMenu = () => this.popupMenu.call(this);
-        this.toggleButton._removeMenuTimeout = () => this._removeMenuTimeout.call(this);
+        this._iconActor = null;
+        
+        // Create the icon
+        this.icon = new IconGrid.BaseIcon(_('Show Applications'), {
+            setSizeManually: true,
+            showLabel: false,
+            createIcon: this._createIcon.bind(this),
+        });
+        this.icon.y_align = Clutter.ActorAlign.CENTER;
+
+        this._iconContainer = new St.Widget({
+            layout_manager: new Clutter.BinLayout(),
+            x_expand: true,
+            y_expand: true,
+        });
+
+        this.set_child(this._iconContainer);
+
+        this._iconContainer.add_child(this.icon);
+
+        // Setup the menu events
+        this.connect('popup-menu', this._onKeyboardPopupMenu.bind(this));
 
         this._menu = null;
         this._menuManager = new PopupMenu.PopupMenuManager(this);
+
         this._menuTimeoutId = 0;
     }
 
-    vfunc_leave_event(leaveEvent)
-    {
-        return AppDisplay.AppIcon.prototype.vfunc_leave_event.call(
-            this.toggleButton, leaveEvent);
+    _createIcon(iconSize) {
+        // Use ShowAppsIcon to create the icon itself
+        return Dash.ShowAppsIcon.prototype._createIcon.call(this, iconSize);
     }
 
-    vfunc_button_press_event(buttonPressEvent)
-    {
-        return AppDisplay.AppIcon.prototype.vfunc_button_press_event.call(
-            this.toggleButton, buttonPressEvent);
-    }
-
-    vfunc_touch_event(touchEvent)
-    {
-        return AppDisplay.AppIcon.prototype.vfunc_touch_event.call(
-            this.toggleButton, touchEvent);
-    }
-
-    showLabel() {
-        itemShowLabel.call(this);
-    }
-
-    _onMenuPoppedDown() {
-        AppDisplay.AppIcon.prototype._onMenuPoppedDown.apply(this, arguments);
-    }
-
-    _setPopupTimeout() {
-        AppDisplay.AppIcon.prototype._setPopupTimeout.apply(this, arguments);
-    }
-
-    _removeMenuTimeout() {
-        AppDisplay.AppIcon.prototype._removeMenuTimeout.apply(this, arguments);
+    activate() {
+        // Toggle the toggle button as the primary action
+        // This overrides the logic to "launch" an app
+        this.source.toggleButton.checked = !this.source.toggleButton.checked;
     }
 
     popupMenu() {
         this._removeMenuTimeout();
-        this.toggleButton.fake_release();
+        this.source.toggleButton.fake_release();
 
         if (!this._menu) {
             this._menu = new DockShowAppsIconMenu(this);
@@ -1314,12 +1302,47 @@ var DockShowAppsIcon = GObject.registerClass({
 
         this.emit('menu-state-changed', true);
 
-        this.toggleButton.set_hover(true);
+        this.source.toggleButton.set_hover(true);
         this._menu.popup();
         this._menuManager.ignoreRelease();
         this.emit('sync-tooltip');
 
         return false;
+    }
+});
+
+/**
+ * A ShowAppsIcon improved class.
+ *
+ * - set label position based on dash orientation (Note, I am reusing most machinery of the appIcon class)
+ * - implement a popupMenu based on the AppIcon code (Note, I am reusing most machinery of the appIcon class)
+ */
+var DockShowAppsIconContainer = GObject.registerClass(class DockShowAppsIconContainer extends Dash.ShowAppsIcon {
+    _init() {
+        Dash.DashItemContainer.prototype._init.call(this);
+
+        this.toggleButton = new St.Button({
+            style_class: 'show-apps',
+            track_hover: true,
+            can_focus: true,
+            toggle_mode: true,
+        });
+
+        this.appIcon = new DockShowAppsIcon(this);
+     
+        this.toggleButton.add_actor(this.appIcon);
+        this.toggleButton._delegate = this;
+
+        this.setChild(this.toggleButton);
+        this.setDragApp(null);
+    }
+
+    get icon() {
+        return this.appIcon.icon;
+    }
+
+    showLabel() {
+        itemShowLabel.call(this);
     }
 });
 

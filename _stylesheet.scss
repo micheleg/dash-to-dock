@@ -1,7 +1,5 @@
 // From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/c17dc9c8ecba0b542aab75f13da238f7b0690031/data/theme/gnome-shell-sass/_common.scss#L28
 $base_padding: 6px;
-$base_margin: 4px;
-$base_spacing: 6px;
 
 $base_border_radius: 8px;
 $modal_radius: $base_border_radius * 2;
@@ -9,15 +7,13 @@ $modal_radius: $base_border_radius * 2;
 // From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/c17dc9c8ecba0b542aab75f13da238f7b0690031/data/theme/gnome-shell-sass/widgets/_dash.scss
 $dash_background_color: #3b3b3b;
 $dash_placeholder_size: 32px;
-$dash_padding: $base_padding + 4px; // 10px
+$dash_padding: $base_padding * 2; // 12px
 $dash_spacing: round($base_padding / 4);
 $dash_edge_items_padding: $dash_padding - $dash_spacing;
-$dash_bottom_margin: $base_margin * 4;
 $dash_border_radius: $modal_radius * 1.5;
 
 // Stock
-$dock_start_margin: $dash_bottom_margin;
-$dock_side_margin: $dock_start_margin / 4;
+$dock_side_margin: $dash_padding;
 $dock_fixed_inner_margin: $dock_side_margin;
 
 // Adapted to $dock_bottom_margin
@@ -54,49 +50,54 @@ $osd_fg_color: #eeeeec;
             margin: 0px;
             padding: 0px;
 
-            .dash-background {
-                margin: 0;
-                margin-#{$side}: $dock_side_margin;
-                padding: 0;
-            }
-
-            .dash-separator {
-                background-color: transparentize($osd_fg_color, 0.7);
-                @if is_horizontal($side) {
-                    margin-bottom: 0;
-                } @else {
-                    height: 1px;
-                    margin: ($dash_spacing + ($dash_padding / 2)) 0;
-                }
-            }
-
             #dashtodockDashContainer {
                 padding: $dash_padding;
                 padding-#{$side}: 0;
                 padding-#{opposite($side)}: 0;
             }
 
-            .dash-item-container {
-                .app-well-app,
-                .show-apps {
-                    padding: $dash_spacing;
-                    padding-#{$side}: $dash_padding + $dock_side_margin;
-                    padding-#{opposite($side)}: $dash_padding;
+            .app-well-app-running-dot {
+                margin-bottom: 0;
+            }
+        }
+
+        .dash-background {
+            margin: 0;
+            margin-#{$side}: $dock_side_margin;
+            padding: 0;
+        }
+
+        .dash-item-container {
+            .app-well-app,
+            .show-apps {
+                padding: $dash_spacing;
+                padding-#{$side}: $dash_padding + $dock_side_margin;
+                padding-#{opposite($side)}: $dash_padding;
+            }
+
+            .app-well-app {
+                &.running .overview-icon {
+                    background-image: none;
                 }
 
-                .app-well-app {
-                    &.running .overview-icon {
-                        background-image: none;
-                    }
-                    &.focused .overview-icon {
-                        background-color: rgba(238, 238, 236, 0.2);
-                    }
+                &.focused .overview-icon {
+                    background-color: rgba(238, 238, 236, 0.2);
                 }
+            }
 
-                > StButton {
-                    transition-duration: 250;
-                    background-size: contain;
-                }
+            > StButton {
+                transition-duration: 250;
+                background-size: contain;
+            }
+        }
+
+        .dash-separator {
+            background-color: transparentize($osd_fg_color, 0.7);
+            @if is_horizontal($side) {
+                margin-bottom: 0;
+            } @else {
+                height: 1px;
+                margin: ($dash_spacing + ($dash_padding / 2)) 0;
             }
         }
 
@@ -116,7 +117,7 @@ $osd_fg_color: #eeeeec;
                     .app-well-app,
                     .show-apps {
                         padding: shrink($dash_spacing);
-                        padding-#{$side}: shrink($dash_padding) + $dock_side_margin;
+                        padding-#{$side}: shrink($dash_padding);
                         padding-#{opposite($side)}: shrink($dash_padding);
                     }
                 }
