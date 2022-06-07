@@ -649,6 +649,8 @@ var DockAbstractAppIcon = GObject.registerClass({
 
         }
 
+        this.emit('menu-state-changed', !this._previewMenu.isOpen);
+
         if (this._previewMenu.isOpen)
             this._previewMenu.close();
         else
