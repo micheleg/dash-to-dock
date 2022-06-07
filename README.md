@@ -4,7 +4,7 @@
 
 # Installation
 
-Go to releases and download the code. A simple Makefile is included. Extract the file.
+Go to releases and download the code. A simple Makefile is included. Extract and run the make file. Instructions Below!
 
 
 [<img src="https://micheleg.github.io/dash-to-dock/media/get-it-on-ego.png" height="100">](https://extensions.gnome.org/extension/5004/dash-to-dock-for-cosmic/)
