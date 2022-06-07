@@ -58,7 +58,7 @@ const scrollAction = {
     SWITCH_WORKSPACE: 2
 };
 
-let recentlyClickedAppLoopId =0;
+let recentlyClickedAppLoopId = 0;
 let recentlyClickedApp = null;
 let recentlyClickedAppWindows = null;
 let recentlyClickedAppIndex = 0;
@@ -106,7 +106,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this.iconAnimator = iconAnimator;
         this._indicator = new AppIconIndicators.AppIconIndicator(this);
-        this.re
+
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
         if (this._stateChangedId > 0) {
@@ -647,6 +647,8 @@ var DockAbstractAppIcon = GObject.registerClass({
 
         }
 
+        this.emit('menu-state-changed', !this._previewMenu.isOpen);
+
         if (this._previewMenu.isOpen)
             this._previewMenu.close();
         else
@@ -782,7 +784,6 @@ var DockAbstractAppIcon = GObject.registerClass({
 
         if (app_windows.length <1)
             return
-
 
         if (recentlyClickedAppLoopId > 0)
             GLib.source_remove(recentlyClickedAppLoopId);
@@ -1412,3 +1413,4 @@ function itemShowLabel()  {
         mode: Clutter.AnimationMode.EASE_OUT_QUAD
     });
 }
+
