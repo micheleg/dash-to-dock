@@ -6,6 +6,11 @@
 
 Go to releases and download the code. A simple Makefile is included. Extract the file.
 
+
+[<img src="https://micheleg.github.io/dash-to-dock/media/get-it-on-ego.png" height="100">](https://extensions.gnome.org/extension/5004/dash-to-dock-for-cosmic/)
+
+or click above to download from gnome extensions. Latest Version will appear on github!
+
 ### Build Dependencies
 
 To compile the stylesheet you'll need an implementation of SASS. Dash to Dock supports `dart-sass` (`sass`), `sassc`, and `ruby-sass`. Every distro should have at least one of these implementations, we recommend using `dart-sass` (`sass`) or `sassc` over `ruby-sass` as `ruby-sass` is deprecated.
