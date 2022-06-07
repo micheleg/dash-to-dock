@@ -1,0 +1,552 @@
+#dashtodockContainer.bottom #dash {
+  margin: 0px;
+  padding: 0px; }
+  #dashtodockContainer.bottom #dash .dash-background {
+    margin: 0;
+    margin-bottom: 4px;
+    padding: 0; }
+  #dashtodockContainer.bottom #dash .dash-separator {
+    background-color: rgba(238, 238, 236, 0.3);
+    margin-bottom: 0; }
+  #dashtodockContainer.bottom #dash #dashtodockDashContainer {
+    padding: 10px;
+    padding-bottom: 0;
+    padding-top: 0; }
+  #dashtodockContainer.bottom #dash .dash-item-container .app-well-app,
+  #dashtodockContainer.bottom #dash .dash-item-container .show-apps {
+    padding: 2px;
+    padding-bottom: 14px;
+    padding-top: 10px; }
+  #dashtodockContainer.bottom #dash .dash-item-container .app-well-app.running .overview-icon {
+    background-image: none; }
+  #dashtodockContainer.bottom #dash .dash-item-container .app-well-app.focused .overview-icon {
+    background-color: rgba(238, 238, 236, 0.2); }
+  #dashtodockContainer.bottom #dash .dash-item-container > StButton {
+    transition-duration: 250;
+    background-size: contain; }
+
+#dashtodockContainer.bottom.shrink #dash .dash-background {
+  margin-bottom: 4px;
+  padding: 3px;
+  border-radius: 18px; }
+
+#dashtodockContainer.bottom.shrink #dash #dashtodockDashContainer {
+  padding: 3px; }
+
+#dashtodockContainer.bottom.shrink #dash .dash-item-container .app-well-app,
+#dashtodockContainer.bottom.shrink #dash .dash-item-container .show-apps {
+  padding: 1px;
+  padding-bottom: 7px;
+  padding-top: 3px; }
+
+#dashtodockContainer.bottom.shrink.fixed #dash .dash-background {
+  margin-top: 1px; }
+
+#dashtodockContainer.bottom.shrink.fixed #dash .dash-item-container .app-well-app,
+#dashtodockContainer.bottom.shrink.fixed #dash .dash-item-container .show-apps {
+  padding-top: 4px; }
+
+#dashtodockContainer.bottom.fixed #dash .dash-background {
+  margin-top: 4px; }
+
+#dashtodockContainer.bottom.fixed #dash .dash-item-container .app-well-app,
+#dashtodockContainer.bottom.fixed #dash .dash-item-container .show-apps {
+  padding-top: 14px; }
+
+#dashtodockContainer.top #dash {
+  margin: 0px;
+  padding: 0px; }
+  #dashtodockContainer.top #dash .dash-background {
+    margin: 0;
+    margin-top: 4px;
+    padding: 0; }
+  #dashtodockContainer.top #dash .dash-separator {
+    background-color: rgba(238, 238, 236, 0.3);
+    margin-bottom: 0; }
+  #dashtodockContainer.top #dash #dashtodockDashContainer {
+    padding: 10px;
+    padding-top: 0;
+    padding-bottom: 0; }
+  #dashtodockContainer.top #dash .dash-item-container .app-well-app,
+  #dashtodockContainer.top #dash .dash-item-container .show-apps {
+    padding: 2px;
+    padding-top: 14px;
+    padding-bottom: 10px; }
+  #dashtodockContainer.top #dash .dash-item-container .app-well-app.running .overview-icon {
+    background-image: none; }
+  #dashtodockContainer.top #dash .dash-item-container .app-well-app.focused .overview-icon {
+    background-color: rgba(238, 238, 236, 0.2); }
+  #dashtodockContainer.top #dash .dash-item-container > StButton {
+    transition-duration: 250;
+    background-size: contain; }
+
+#dashtodockContainer.top.shrink #dash .dash-background {
+  margin-top: 4px;
+  padding: 3px;
+  border-radius: 18px; }
+
+#dashtodockContainer.top.shrink #dash #dashtodockDashContainer {
+  padding: 3px; }
+
+#dashtodockContainer.top.shrink #dash .dash-item-container .app-well-app,
+#dashtodockContainer.top.shrink #dash .dash-item-container .show-apps {
+  padding: 1px;
+  padding-top: 7px;
+  padding-bottom: 3px; }
+
+#dashtodockContainer.top.shrink.fixed #dash .dash-background {
+  margin-bottom: 1px; }
+
+#dashtodockContainer.top.shrink.fixed #dash .dash-item-container .app-well-app,
+#dashtodockContainer.top.shrink.fixed #dash .dash-item-container .show-apps {
+  padding-bottom: 4px; }
+
+#dashtodockContainer.top.fixed #dash .dash-background {
+  margin-bottom: 4px; }
+
+#dashtodockContainer.top.fixed #dash .dash-item-container .app-well-app,
+#dashtodockContainer.top.fixed #dash .dash-item-container .show-apps {
+  padding-bottom: 14px; }
+
+#dashtodockContainer.left #dash {
+  margin: 0px;
+  padding: 0px; }
+  #dashtodockContainer.left #dash .dash-background {
+    margin: 0;
+    margin-left: 4px;
+    padding: 0; }
+  #dashtodockContainer.left #dash .dash-separator {
+    background-color: rgba(238, 238, 236, 0.3);
+    height: 1px;
+    margin: 7px 0; }
+  #dashtodockContainer.left #dash #dashtodockDashContainer {
+    padding: 10px;
+    padding-left: 0;
+    padding-right: 0; }
+  #dashtodockContainer.left #dash .dash-item-container .app-well-app,
+  #dashtodockContainer.left #dash .dash-item-container .show-apps {
+    padding: 2px;
+    padding-left: 14px;
+    padding-right: 10px; }
+  #dashtodockContainer.left #dash .dash-item-container .app-well-app.running .overview-icon {
+    background-image: none; }
+  #dashtodockContainer.left #dash .dash-item-container .app-well-app.focused .overview-icon {
+    background-color: rgba(238, 238, 236, 0.2); }
+  #dashtodockContainer.left #dash .dash-item-container > StButton {
+    transition-duration: 250;
+    background-size: contain; }
+
+#dashtodockContainer.left.shrink #dash .dash-background {
+  margin-left: 4px;
+  padding: 3px;
+  border-radius: 18px; }
+
+#dashtodockContainer.left.shrink #dash #dashtodockDashContainer {
+  padding: 3px; }
+
+#dashtodockContainer.left.shrink #dash .dash-item-container .app-well-app,
+#dashtodockContainer.left.shrink #dash .dash-item-container .show-apps {
+  padding: 1px;
+  padding-left: 7px;
+  padding-right: 3px; }
+
+#dashtodockContainer.left.shrink.fixed #dash .dash-background {
+  margin-right: 1px; }
+
+#dashtodockContainer.left.shrink.fixed #dash .dash-item-container .app-well-app,
+#dashtodockContainer.left.shrink.fixed #dash .dash-item-container .show-apps {
+  padding-right: 4px; }
+
+#dashtodockContainer.left.fixed #dash .dash-background {
+  margin-right: 4px; }
+
+#dashtodockContainer.left.fixed #dash .dash-item-container .app-well-app,
+#dashtodockContainer.left.fixed #dash .dash-item-container .show-apps {
+  padding-right: 14px; }
+
+#dashtodockContainer.right #dash {
+  margin: 0px;
+  padding: 0px; }
+  #dashtodockContainer.right #dash .dash-background {
+    margin: 0;
+    margin-right: 4px;
+    padding: 0; }
+  #dashtodockContainer.right #dash .dash-separator {
+    background-color: rgba(238, 238, 236, 0.3);
+    height: 1px;
+    margin: 7px 0; }
+  #dashtodockContainer.right #dash #dashtodockDashContainer {
+    padding: 10px;
+    padding-right: 0;
+    padding-left: 0; }
+  #dashtodockContainer.right #dash .dash-item-container .app-well-app,
+  #dashtodockContainer.right #dash .dash-item-container .show-apps {
+    padding: 2px;
+    padding-right: 14px;
+    padding-left: 10px; }
+  #dashtodockContainer.right #dash .dash-item-container .app-well-app.running .overview-icon {
+    background-image: none; }
+  #dashtodockContainer.right #dash .dash-item-container .app-well-app.focused .overview-icon {
+    background-color: rgba(238, 238, 236, 0.2); }
+  #dashtodockContainer.right #dash .dash-item-container > StButton {
+    transition-duration: 250;
+    background-size: contain; }
+
+#dashtodockContainer.right.shrink #dash .dash-background {
+  margin-right: 4px;
+  padding: 3px;
+  border-radius: 18px; }
+
+#dashtodockContainer.right.shrink #dash #dashtodockDashContainer {
+  padding: 3px; }
+
+#dashtodockContainer.right.shrink #dash .dash-item-container .app-well-app,
+#dashtodockContainer.right.shrink #dash .dash-item-container .show-apps {
+  padding: 1px;
+  padding-right: 7px;
+  padding-left: 3px; }
+
+#dashtodockContainer.right.shrink.fixed #dash .dash-background {
+  margin-left: 1px; }
+
+#dashtodockContainer.right.shrink.fixed #dash .dash-item-container .app-well-app,
+#dashtodockContainer.right.shrink.fixed #dash .dash-item-container .show-apps {
+  padding-left: 4px; }
+
+#dashtodockContainer.right.fixed #dash .dash-background {
+  margin-left: 4px; }
+
+#dashtodockContainer.right.fixed #dash .dash-item-container .app-well-app,
+#dashtodockContainer.right.fixed #dash .dash-item-container .show-apps {
+  padding-left: 14px; }
+
+/* In extended mode we need to use the first and last .dash-item-container's
+ * to apply the padding on the dock, to ensure that the actual first or last
+ * child show-apps item will actually include the padding area so that it will
+ * be clickable up to the dock edge, and make Fitts happy.
+ * I don't think the same should happen for normal icons, so in the other side
+ * the padding will be applied via the scrolled area, given we can't get the
+ * parent of the first/last app-well-app icon to apply a rule there.
+ */
+#dashtodockContainer.extended.bottom #dash .dash-background {
+  margin: 0;
+  border-radius: 0; }
+
+#dashtodockContainer.extended.bottom #dash #dashtodockDashContainer {
+  padding: 0;
+  padding-bottom: 0;
+  padding-top: 0; }
+  #dashtodockContainer.extended.bottom #dash #dashtodockDashContainer > :first-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.bottom #dash #dashtodockDashContainer > :first-child .show-apps {
+      padding-left: 8px; }
+  #dashtodockContainer.extended.bottom #dash #dashtodockDashContainer #dashtodockDashScrollview:first-child {
+    padding-left: 8px; }
+  #dashtodockContainer.extended.bottom #dash #dashtodockDashContainer > :last-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.bottom #dash #dashtodockDashContainer > :last-child .show-apps {
+      padding-right: 8px; }
+  #dashtodockContainer.extended.bottom #dash #dashtodockDashContainer #dashtodockDashScrollview:last-child {
+    padding-right: 8px; }
+
+#dashtodockContainer.extended.bottom #dash .dash-item-container .app-well-app,
+#dashtodockContainer.extended.bottom #dash .dash-item-container .show-apps {
+  padding-bottom: 10px;
+  padding-top: 10px; }
+
+#dashtodockContainer.extended.bottom.shrink #dash #dashtodockDashContainer {
+  padding: 0; }
+  #dashtodockContainer.extended.bottom.shrink #dash #dashtodockDashContainer > :first-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.bottom.shrink #dash #dashtodockDashContainer > :first-child .show-apps {
+      padding-left: 8px; }
+  #dashtodockContainer.extended.bottom.shrink #dash #dashtodockDashContainer #dashtodockDashScrollview:first-child {
+    padding-left: 8px; }
+  #dashtodockContainer.extended.bottom.shrink #dash #dashtodockDashContainer > :last-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.bottom.shrink #dash #dashtodockDashContainer > :last-child .show-apps {
+      padding-right: 8px; }
+  #dashtodockContainer.extended.bottom.shrink #dash #dashtodockDashContainer #dashtodockDashScrollview:last-child {
+    padding-right: 8px; }
+
+#dashtodockContainer.extended.bottom.shrink #dash .dash-item-container .app-well-app,
+#dashtodockContainer.extended.bottom.shrink #dash .dash-item-container .show-apps {
+  padding-bottom: 3px;
+  padding-top: 3px; }
+
+#dashtodockContainer.extended.bottom.shrink.fixed #dash .dash-background {
+  margin-top: 0; }
+
+#dashtodockContainer.extended.top #dash .dash-background {
+  margin: 0;
+  border-radius: 0; }
+
+#dashtodockContainer.extended.top #dash #dashtodockDashContainer {
+  padding: 0;
+  padding-top: 0;
+  padding-bottom: 0; }
+  #dashtodockContainer.extended.top #dash #dashtodockDashContainer > :first-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.top #dash #dashtodockDashContainer > :first-child .show-apps {
+      padding-left: 8px; }
+  #dashtodockContainer.extended.top #dash #dashtodockDashContainer #dashtodockDashScrollview:first-child {
+    padding-left: 8px; }
+  #dashtodockContainer.extended.top #dash #dashtodockDashContainer > :last-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.top #dash #dashtodockDashContainer > :last-child .show-apps {
+      padding-right: 8px; }
+  #dashtodockContainer.extended.top #dash #dashtodockDashContainer #dashtodockDashScrollview:last-child {
+    padding-right: 8px; }
+
+#dashtodockContainer.extended.top #dash .dash-item-container .app-well-app,
+#dashtodockContainer.extended.top #dash .dash-item-container .show-apps {
+  padding-top: 10px;
+  padding-bottom: 10px; }
+
+#dashtodockContainer.extended.top.shrink #dash #dashtodockDashContainer {
+  padding: 0; }
+  #dashtodockContainer.extended.top.shrink #dash #dashtodockDashContainer > :first-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.top.shrink #dash #dashtodockDashContainer > :first-child .show-apps {
+      padding-left: 8px; }
+  #dashtodockContainer.extended.top.shrink #dash #dashtodockDashContainer #dashtodockDashScrollview:first-child {
+    padding-left: 8px; }
+  #dashtodockContainer.extended.top.shrink #dash #dashtodockDashContainer > :last-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.top.shrink #dash #dashtodockDashContainer > :last-child .show-apps {
+      padding-right: 8px; }
+  #dashtodockContainer.extended.top.shrink #dash #dashtodockDashContainer #dashtodockDashScrollview:last-child {
+    padding-right: 8px; }
+
+#dashtodockContainer.extended.top.shrink #dash .dash-item-container .app-well-app,
+#dashtodockContainer.extended.top.shrink #dash .dash-item-container .show-apps {
+  padding-top: 3px;
+  padding-bottom: 3px; }
+
+#dashtodockContainer.extended.top.shrink.fixed #dash .dash-background {
+  margin-bottom: 0; }
+
+#dashtodockContainer.extended.left #dash .dash-background {
+  margin: 0;
+  border-radius: 0; }
+
+#dashtodockContainer.extended.left #dash #dashtodockDashContainer {
+  padding: 0;
+  padding-left: 0;
+  padding-right: 0; }
+  #dashtodockContainer.extended.left #dash #dashtodockDashContainer > :first-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.left #dash #dashtodockDashContainer > :first-child .show-apps {
+      padding-top: 8px; }
+  #dashtodockContainer.extended.left #dash #dashtodockDashContainer #dashtodockDashScrollview:first-child {
+    padding-top: 8px; }
+  #dashtodockContainer.extended.left #dash #dashtodockDashContainer > :last-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.left #dash #dashtodockDashContainer > :last-child .show-apps {
+      padding-bottom: 8px; }
+  #dashtodockContainer.extended.left #dash #dashtodockDashContainer #dashtodockDashScrollview:last-child {
+    padding-bottom: 8px; }
+
+#dashtodockContainer.extended.left #dash .dash-item-container .app-well-app,
+#dashtodockContainer.extended.left #dash .dash-item-container .show-apps {
+  padding-left: 10px;
+  padding-right: 10px; }
+
+#dashtodockContainer.extended.left.shrink #dash #dashtodockDashContainer {
+  padding: 0; }
+  #dashtodockContainer.extended.left.shrink #dash #dashtodockDashContainer > :first-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.left.shrink #dash #dashtodockDashContainer > :first-child .show-apps {
+      padding-top: 8px; }
+  #dashtodockContainer.extended.left.shrink #dash #dashtodockDashContainer #dashtodockDashScrollview:first-child {
+    padding-top: 8px; }
+  #dashtodockContainer.extended.left.shrink #dash #dashtodockDashContainer > :last-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.left.shrink #dash #dashtodockDashContainer > :last-child .show-apps {
+      padding-bottom: 8px; }
+  #dashtodockContainer.extended.left.shrink #dash #dashtodockDashContainer #dashtodockDashScrollview:last-child {
+    padding-bottom: 8px; }
+
+#dashtodockContainer.extended.left.shrink #dash .dash-item-container .app-well-app,
+#dashtodockContainer.extended.left.shrink #dash .dash-item-container .show-apps {
+  padding-left: 3px;
+  padding-right: 3px; }
+
+#dashtodockContainer.extended.left.shrink.fixed #dash .dash-background {
+  margin-right: 0; }
+
+#dashtodockContainer.extended.right #dash .dash-background {
+  margin: 0;
+  border-radius: 0; }
+
+#dashtodockContainer.extended.right #dash #dashtodockDashContainer {
+  padding: 0;
+  padding-right: 0;
+  padding-left: 0; }
+  #dashtodockContainer.extended.right #dash #dashtodockDashContainer > :first-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.right #dash #dashtodockDashContainer > :first-child .show-apps {
+      padding-top: 8px; }
+  #dashtodockContainer.extended.right #dash #dashtodockDashContainer #dashtodockDashScrollview:first-child {
+    padding-top: 8px; }
+  #dashtodockContainer.extended.right #dash #dashtodockDashContainer > :last-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.right #dash #dashtodockDashContainer > :last-child .show-apps {
+      padding-bottom: 8px; }
+  #dashtodockContainer.extended.right #dash #dashtodockDashContainer #dashtodockDashScrollview:last-child {
+    padding-bottom: 8px; }
+
+#dashtodockContainer.extended.right #dash .dash-item-container .app-well-app,
+#dashtodockContainer.extended.right #dash .dash-item-container .show-apps {
+  padding-right: 10px;
+  padding-left: 10px; }
+
+#dashtodockContainer.extended.right.shrink #dash #dashtodockDashContainer {
+  padding: 0; }
+  #dashtodockContainer.extended.right.shrink #dash #dashtodockDashContainer > :first-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.right.shrink #dash #dashtodockDashContainer > :first-child .show-apps {
+      padding-top: 8px; }
+  #dashtodockContainer.extended.right.shrink #dash #dashtodockDashContainer #dashtodockDashScrollview:first-child {
+    padding-top: 8px; }
+  #dashtodockContainer.extended.right.shrink #dash #dashtodockDashContainer > :last-child {
+    /* Use this instead of #dashtodockDashScrollview rule to apply the
+             * padding via the last app-icon item */ }
+    #dashtodockContainer.extended.right.shrink #dash #dashtodockDashContainer > :last-child .show-apps {
+      padding-bottom: 8px; }
+  #dashtodockContainer.extended.right.shrink #dash #dashtodockDashContainer #dashtodockDashScrollview:last-child {
+    padding-bottom: 8px; }
+
+#dashtodockContainer.extended.right.shrink #dash .dash-item-container .app-well-app,
+#dashtodockContainer.extended.right.shrink #dash .dash-item-container .show-apps {
+  padding-right: 3px;
+  padding-left: 3px; }
+
+#dashtodockContainer.extended.right.shrink.fixed #dash .dash-background {
+  margin-left: 0; }
+
+#dashtodockContainer.top.shrink #dash .dash-background {
+  margin-top: 4px;
+  margin-bottom: 0; }
+
+#dashtodockContainer.straight-corner #dash .dash-background,
+#dashtodockContainer.shrink.straight-corner #dash .dash-background {
+  border-radius: 0px; }
+
+/* Scrollview style */
+.bottom #dashtodockDashScrollview,
+.top #dashtodockDashScrollview {
+  -st-hfade-offset: 24px; }
+
+.left #dashtodockDashScrollview,
+.right #dashtodockDashScrollview {
+  -st-vfade-offset: 24px; }
+
+#dashtodockContainer.dashtodock #dash .dash-background {
+  background: #2e3436; }
+
+#dashtodockContainer.dashtodock .progress-bar {
+  /* Customization of the progress bar style, e.g.:
+      -progress-bar-background: rgba(0.8, 0.8, 0.8, 1);
+      -progress-bar-border: rgba(0.9, 0.9, 0.9, 1);
+    */ }
+
+#dashtodockContainer.top #dash .placeholder,
+#dashtodockContainer.bottom #dash .placeholder {
+  width: 32px;
+  height: 1px; }
+
+/*
+ * This is applied to a dummy actor. Only the alpha value for the background and border color
+ * and the transition-duration are used
+ */
+#dashtodockContainer.dummy-opaque {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-color: rgba(0, 0, 0, 0.4);
+  transition-duration: 300ms; }
+
+/*
+ * This is applied to a dummy actor. Only the alpha value for the background and border color
+ * and the transition-duration are used
+ */
+#dashtodockContainer.dummy-transparent {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-color: rgba(0, 0, 0, 0.1);
+  transition-duration: 500ms; }
+
+#dashtodockContainer .number-overlay {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
+  text-align: center; }
+
+#dashtodockContainer .notification-badge {
+  color: white;
+  background-color: red;
+  padding: 0.2em 0.5em;
+  border-radius: 1em;
+  font-weight: bold;
+  text-align: center;
+  margin: 2px; }
+
+#dashtodockPreviewSeparator.popup-separator-menu-item-horizontal {
+  width: 1px;
+  height: auto;
+  border-right-width: 1px;
+  margin: 32px 0px; }
+
+.dashtodock-app-well-preview-menu-item {
+  padding: 1em 1em 0.5em 1em; }
+
+#dashtodockContainer .metro .overview-icon {
+  border-radius: 0px; }
+
+#dashtodockContainer.bottom .metro.running2.focused,
+#dashtodockContainer.top .metro.running2.focused {
+  background-image: url("./media/highlight_stacked_bg.svg");
+  background-position: 0px 0px;
+  background-size: contain; }
+
+#dashtodockContainer.left .metro.running2.focused,
+#dashtodockContainer.right .metro.running2.focused {
+  background-image: url("./media/highlight_stacked_bg_h.svg");
+  background-position: 0px 0px;
+  background-size: contain; }
+
+#dashtodockContainer.bottom .metro.running3.focused,
+#dashtodockContainer.top .metro.running3.focused {
+  background-image: url("./media/highlight_stacked_bg.svg");
+  background-position: 0px 0px;
+  background-size: contain; }
+
+#dashtodockContainer.left .metro.running3.focused,
+#dashtodockContainer.right .metro.running3.focused {
+  background-image: url("./media/highlight_stacked_bg_h.svg");
+  background-position: 0px 0px;
+  background-size: contain; }
+
+#dashtodockContainer.bottom .metro.running4.focused,
+#dashtodockContainer.top .metro.running4.focused {
+  background-image: url("./media/highlight_stacked_bg.svg");
+  background-position: 0px 0px;
+  background-size: contain; }
+
+#dashtodockContainer.left .metro.running4.focused,
+#dashtodockContainer.right .metro.running4.focused {
+  background-image: url("./media/highlight_stacked_bg_h.svg");
+  background-position: 0px 0px;
+  background-size: contain; }

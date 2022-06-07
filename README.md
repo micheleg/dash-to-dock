@@ -1,4 +1,4 @@
-# Dash to Dock for Pop!_OS's Cosmic
+# Dash to Dock for Pop!_OS
 ![screenshot](https://github.com/halfmexican/dash-to-dock-pop/blob/master/screenshot.jpg)
 
 
@@ -6,9 +6,6 @@
 
 Go to releases and download the code. A simple Makefile is included. Extract the file.
 
-[<img src="https://micheleg.github.io/dash-to-dock/media/get-it-on-ego.png" height="100">](https://extensions.gnome.org/extension/5004/dash-to-dock-for-cosmic/)
-
-or click above to download from gnome extensions
 ### Build Dependencies
 
 To compile the stylesheet you'll need an implementation of SASS. Dash to Dock supports `dart-sass` (`sass`), `sassc`, and `ruby-sass`. Every distro should have at least one of these implementations, we recommend using `dart-sass` (`sass`) or `sassc` over `ruby-sass` as `ruby-sass` is deprecated.
@@ -36,5 +33,5 @@ make install
 ```
 
 ## License
-Dash to Dock for Cosmic Gnome Shell extension is distributed under the terms of the GNU General Public License,
+Dash to Dock Gnome Shell extension is distributed under the terms of the GNU General Public License,
 version 2 or later. See the COPYING file for details.

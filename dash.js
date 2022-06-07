@@ -1107,3 +1107,4 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
 
     return [hValue - hValue0, vValue - vValue0];
 }
+
