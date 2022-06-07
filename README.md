@@ -1,5 +1,5 @@
 # Dash to Dock for Pop!_OS
-![screenshot](https://github.com/halfmexican/dash-to-dock-pop/blob/master/screenshot.jpg)
+![screenshot](https://github.com/halfmexican/dash-to-dock-pop/blob/ubuntu-dock/media/screenshot.jpg)
 
 
 # Installation
