@@ -288,6 +288,7 @@ var DockDash = GObject.registerClass({
 
         if(this._showLabelTimeoutId){
             GLib.Source.remove(this._showLabelTimeoutId);
+            this._showLabelTimeoutId = null;
         }
 
         
