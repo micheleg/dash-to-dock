@@ -1812,6 +1812,7 @@
                                       <item translatable="yes">Solid</item>
                                       <item translatable="yes">Ciliora</item>
                                       <item translatable="yes">Metro</item>
+                                      <item translatable="yes">Binary</item>
                                     </items>
                                   </object>
                                 </child>
