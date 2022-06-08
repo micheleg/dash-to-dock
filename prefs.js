@@ -1,8 +1,5 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-imports.gi.versions.Gtk = '4.0';
-imports.gi.versions.Gdk = '4.0';
-
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
@@ -15,16 +12,6 @@ const Signals = imports.signals;
 const Gettext = imports.gettext.domain('dashtodockpop');
 const __ = Gettext.gettext;
 const N__ = function (e) { return e };
-
-try {
-    imports.misc.extensionUtils;
-} catch (e) {
-    const resource = Gio.Resource.load(
-        (GLib.getenv('JHBUILD_PREFIX') || '/usr') +
-        '/share/gnome-shell/org.gnome.Extensions.src.gresource');
-    resource._register();
-    imports.searchPath.push('resource:///org/gnome/Extensions/js');
-}
 
 const Config = imports.misc.config;
 const ExtensionUtils = imports.misc.extensionUtils;
@@ -189,6 +176,8 @@ var Settings = GObject.registerClass({
     Implements: [Gtk.BuilderScope],
 }, class DashToDock_Settings extends GObject.Object {
 
+    
+
     _init() {
         super._init();
 
@@ -220,17 +209,19 @@ var Settings = GObject.registerClass({
 
         // Set a reasonable initial window height
         this.widget.connect('realize', () => {
-            this.widget.get_root().set_size_request(-1, 850);
+            window = this.widget.get_root();
+            window.set_size_request(-1, 850);
+            removeTimeouts(window);
             if (SHELL_VERSION >= 42)
-                this.widget.set_size_request(-1, 850);
+                this.widget.set_size_request(-1, 950);
         });
 
         // Timeout to delay the update of the settings
-        //this._dock_size_timeout = 0;
+        this._dock_size_timeout = 0;
         this._icon_size_timeout = 0;
-       // this._opacity_timeout = 0;
-        //this._border_radius_timeout = 0;
-        //this._floating_margin_timeout = 0;
+        this._opacity_timeout = 0;
+        this._border_radius_timeout = 0;
+        this._floating_margin_timeout = 0;
 
         this._monitorsConfig = new MonitorsConfig();
         this._bindSettings();
@@ -259,54 +250,41 @@ var Settings = GObject.registerClass({
     }
     
      custom_radius_scale_value_changed_cb(scale) {
-
-        if (this._settings.get_int('border-radius') !== scale.get_value()){
-            this._settings.set_int('border-radius', scale.get_value());
-        }
-
-
         // Avoid settings the size consinuosly
-        //if (this._border_radius_timeout > 0)
-        //    GLib.source_remove(this._border_radius_timeout);
+        if (this._border_radius_timeout > 0)
+               GLib.source_remove(this._border_radius_timeout);
 
-       // this._border_radius_timeout = GLib.timeout_add(
-       //    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-       //     this._settings.set_int('border-radius', scale.get_value());
-       //     this._border_radius_timeout = 0;
-        //    return GLib.SOURCE_REMOVE;
-        //});
+            this._border_radius_timeout = GLib.timeout_add(
+          GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+          this._settings.set_int('border-radius', scale.get_value());
+          this._border_radius_timeout = 0;
+           return GLib.SOURCE_REMOVE;
+        });
     }
     
     custom_margin_scale_value_changed_cb(scale) {
         // Avoid settings the size consinuosly
-        if (this._settings.get_int('floating-margin') !== scale.get_value()){
-            this._settings.set_int('floating-margin', scale.get_value());
-        }
-        //if (this._floating_margin_timeout > 0)
-        //    GLib.source_remove(this._floating_margin_timeout);
+        if (this._floating_margin_timeout > 0)
+           GLib.source_remove(this._floating_margin_timeout);
 
-        //this._floating_margin_timeout = GLib.timeout_add(
-        //    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-        //   this._settings.set_int('floating-margin', scale.get_value());
-        //    this._floating_margin_timeout = 0;
-        //    return GLib.SOURCE_REMOVE;
-        //});
+        this._floating_margin_timeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+           this._settings.set_int('floating-margin', scale.get_value());
+            this._floating_margin_timeout = 0;
+            return GLib.SOURCE_REMOVE;
+        });
     }
     
      custom_opacity_scale_value_changed_cb(scale) {
         // Avoid settings the opacity consinuosly as it's change is animated
-         if (this._settings.get_double('background-opacity') !== scale.get_value()){
-             this._settings.set_double('background-opacity', scale.get_value());
-         }
-
-        //if (this._opacity_timeout > 0)
-        //    GLib.source_remove(this._opacity_timeout);
-        //this._opacity_timeout = GLib.timeout_add(
-        //   GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-        //        this._settings.set_double('background-opacity', scale.get_value());
-        //        this._opacity_timeout = 0;
-        //        return GLib.SOURCE_REMOVE;
-        //});
+        if (this._opacity_timeout > 0)
+            GLib.source_remove(this._opacity_timeout);
+        this._opacity_timeout = GLib.timeout_add(
+          GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+                this._settings.set_double('background-opacity', scale.get_value());
+               this._opacity_timeout = 0;
+               return GLib.SOURCE_REMOVE;
+        });
     }
 
     position_top_button_toggled_cb(button) {
@@ -335,19 +313,16 @@ var Settings = GObject.registerClass({
 
     dock_size_scale_value_changed_cb(scale) {
         // Avoid settings the size continuously
-        if(this._settings.get_double('height-fraction', scale.get_value()) !== scale.get_value()){
-            this._settings.set_double('height-fraction', scale.get_value());
-        }
-        //if (this._dock_size_timeout > 0)
-        //    GLib.source_remove(this._dock_size_timeout);
-        //const id = this._dock_size_timeout = GLib.timeout_add(
-        //    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-        //       if (id === this._dock_size_timeout) {
-        //            this._settings.set_double('height-fraction', scale.get_value());
-        //            this._dock_size_timeout = 0;
-        //            return GLib.SOURCE_REMOVE;
-         //       }
-         //   });
+        if (this._dock_size_timeout > 0)
+            GLib.source_remove(this._dock_size_timeout);
+        const id = this._dock_size_timeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+               if (id === this._dock_size_timeout) {
+                    this._settings.set_double('height-fraction', scale.get_value());
+                    this._dock_size_timeout = 0;
+                    return GLib.SOURCE_REMOVE;
+                }
+            });
     }
     	
 
@@ -383,6 +358,7 @@ var Settings = GObject.registerClass({
     
     icon_size_scale_value_changed_cb(scale) {
         // Avoid settings the size consinuosly
+
         if (this._icon_size_timeout > 0)
            GLib.source_remove(this._icon_size_timeout);
         this._icon_size_timeout = GLib.timeout_add(
@@ -390,9 +366,11 @@ var Settings = GObject.registerClass({
               log(scale.get_value());
               this._settings.set_int('dash-max-icon-size', scale.get_value());
                this._icon_size_timeout = 0;
-              return GLib.SOURCE_REMOVE;
+                return GLib.SOURCE_REMOVE;
            });
     }
+
+   
     preview_size_scale_format_value_cb(scale, value) {
         return value == 0 ? 'auto' : value;
     }
@@ -401,32 +379,27 @@ var Settings = GObject.registerClass({
     }
 
     min_opacity_scale_value_changed_cb(scale) {
-        if(this._settings.get_double('min-alpha', scale.get_value())){
-            this._settings.set_double('min-alpha', scale.get_value());
-        }
         // Avoid settings the opacity consinuosly as it's change is animated
-        //if (this._opacity_timeout > 0)
-        //    GLib.source_remove(this._opacity_timeout);
-       // this._opacity_timeout = GLib.timeout_add(
-        //    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-         //       this._settings.set_double('min-alpha', scale.get_value());
-          //      this._opacity_timeout = 0;
-          //      return GLib.SOURCE_REMOVE;
-           // });
+        if (this._opacity_timeout > 0)
+            GLib.source_remove(this._opacity_timeout);
+            
+        this._opacity_timeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+                this._settings.set_double('min-alpha', scale.get_value());
+                this._opacity_timeout = 0;
+                return GLib.SOURCE_REMOVE;
+           });
     }
     max_opacity_scale_value_changed_cb(scale) {
         // Avoid settings the opacity consinuosly as it's change is animated
-        if(this._settings.get_double('max-alpha', scale.get_value())){
-            this._settings.set_double('max-alpha', scale.get_value());
-        }
-        //if (this._opacity_timeout > 0)
-        //    GLib.source_remove(this._opacity_timeout);
-       // this._opacity_timeout = GLib.timeout_add(
-        //    GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-         //       this._settings.set_double('max-alpha', scale.get_value());
-          //      this._opacity_timeout = 0;
-          //      return GLib.SOURCE_REMOVE;
-           // });
+        if (this._opacity_timeout > 0)
+            GLib.source_remove(this._opacity_timeout);
+        this._opacity_timeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+                this._settings.set_double('max-alpha', scale.get_value());
+                this._opacity_timeout = 0;
+                return GLib.SOURCE_REMOVE;
+            });
     }
 
 
@@ -1171,31 +1144,50 @@ var Settings = GObject.registerClass({
         else
             this._builder.get_object('extension_version').set_label('Unknown');
     }
+    
 });
 
 function init() {
     ExtensionUtils.initTranslations();
-}
+}   
+
 
 function buildPrefsWidget() {
     let settings = new Settings();
     let widget = settings.widget;
-    return widget;
-}
 
-if (!Me) {
-    GLib.setenv('GSETTINGS_SCHEMA_DIR', './schemas', true);
-    Gtk.init();
+    widget.connect('realize', () => {
 
-    const loop = GLib.MainLoop.new(null, false);
-    const win = new Gtk.Window();
-    win.set_child(buildPrefsWidget());
-    win.connect('close-request', () => {
-        GLib.Source.remove(this._icon_size_timeout);
-        this._icon_size_timeout = null;
-        loop.quit();
+        let window = widget.get_root();
+
+        window.connect('close-request', ()=> {
+
+            if(this._dock_size_timeout){
+                GLib.Source.remove(this._dock_size_timeout)
+                this._dock_size_timeout = null;
+            }
+    
+            if(this._icon_size_timeout){
+                GLib.Source.remove(this._icon_size_timeout)
+                this._icon_size_timeout = null;
+            }
+    
+            if(this._opacity_timeout){
+                GLib.Source.remove(this._opacity_timeout)
+                this._dock_size_timeout = null;
+            }
+    
+            if(this._border_radius_timeout){
+                GLib.Source.remove(this._border_radius_timeout)
+                this._border_radius_timeout = null;
+            }
+    
+            if(this._floating_margin_timeout){
+                GLib.Source.remove( this._floating_margin_timeout)
+                this._floating_margin_timeout = null;
+            }
+        });
     });
-    win.present();
-
-    loop.run();
+    
+    return widget;
 }
