@@ -276,8 +276,10 @@ var DockDash = GObject.registerClass({
     _onDestroy() {
         this.iconAnimator.destroy();
 
-        if (this._requiresVisibilityTimeout)
+        if (this._requiresVisibilityTimeout) {
             GLib.source_remove(this._requiresVisibilityTimeout);
+            delete this._requiresVisibilityTimeout;
+        }
     }
 
 
