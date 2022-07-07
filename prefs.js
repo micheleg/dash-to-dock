@@ -217,7 +217,9 @@ var Settings = GObject.registerClass({
 
         // Set a reasonable initial window height
         this.widget.connect('realize', () => {
-            this.widget.get_root().set_size_request(-1, 850);
+            const rootWindow = this.widget.get_root();
+            rootWindow.set_size_request(-1, 850);
+            rootWindow.connect('close-request', () => this._onWindowsClosed());
             if (SHELL_VERSION >= 42)
                 this.widget.set_size_request(-1, 850);
         });
@@ -235,6 +237,23 @@ var Settings = GObject.registerClass({
 
         this._monitorsConfig = new MonitorsConfig();
         this._bindSettings();
+    }
+
+    _onWindowsClosed() {
+        if (this._dock_size_timeout) {
+            GLib.source_remove(this._dock_size_timeout);
+            delete this._dock_size_timeout;
+        }
+
+        if (this._icon_size_timeout) {
+            GLib.source_remove(this._icon_size_timeout);
+            delete this._icon_size_timeout;
+        }
+
+        if (this._opacity_timeout) {
+            GLib.source_remove(this._opacity_timeout);
+            delete this._opacity_timeout;
+        }
     }
 
     vfunc_create_closure(builder, handlerName, flags, connectObject) {
@@ -287,13 +306,11 @@ var Settings = GObject.registerClass({
         // Avoid settings the size continuously
         if (this._dock_size_timeout > 0)
             GLib.source_remove(this._dock_size_timeout);
-        const id = this._dock_size_timeout = GLib.timeout_add(
+        this._dock_size_timeout = GLib.timeout_add(
             GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-                if (id === this._dock_size_timeout) {
-                    this._settings.set_double('height-fraction', scale.get_value());
-                    this._dock_size_timeout = 0;
-                    return GLib.SOURCE_REMOVE;
-                }
+                this._settings.set_double('height-fraction', scale.get_value());
+                this._dock_size_timeout = 0;
+                return GLib.SOURCE_REMOVE;
             });
     }
 
