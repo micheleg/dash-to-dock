@@ -285,6 +285,11 @@ var DockDash = GObject.registerClass({
             GLib.source_remove(this._requiresVisibilityTimeout);
             delete this._requiresVisibilityTimeout;
         }
+
+        if (this._ensureActorVisibilityTimeoutId) {
+            GLib.source_remove(this._ensureActorVisibilityTimeoutId);
+            delete this._ensureActorVisibilityTimeoutId;
+        }
     }
 
 
