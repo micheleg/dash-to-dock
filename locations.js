@@ -1218,7 +1218,8 @@ var Removables = class DashToDock_Removables {
                 return;
         }
 
-        const appInfo = new MountableVolumeAppInfo(volume, this._cancellable);
+        const appInfo = new MountableVolumeAppInfo(volume,
+            new Utils.CancellableChild(this._cancellable));
         const volumeApp = makeLocationApp({
             appInfo,
             fallbackIconName: FALLBACK_REMOVABLE_MEDIA_ICON,
