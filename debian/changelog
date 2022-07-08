@@ -1,3 +1,16 @@
+gnome-shell-extension-ubuntu-dock (72~ubuntu5.22.04.1) UNRELEASED; urgency=medium
+
+  [ Daniel van Vugt ]
+  * Ignore loss of the hover state while a menu is open (LP: #1967121):
+    - dash: Add a 'menu-opened' signal
+    - appIcons: Remember to emit menu-state-changed for _previewMenu
+    - docking: Ignore loss of the hover state while a menu is open
+
+  [ Marco Trevisan (Treviño) ]
+  * debian: Update references for jammy branching
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 08 Jul 2022 06:06:47 +0200
+
 gnome-shell-extension-ubuntu-dock (72~ubuntu5) jammy; urgency=medium
 
   * docking: Use proper monitor index variable to support DING integration
