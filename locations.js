@@ -1096,13 +1096,7 @@ function unWrapFileManagerApp() {
  * up-to-date as the trash fills and is emptied over time.
  */
 var Trash = class DashToDock_Trash {
-    constructor() {
-        this._cancellable = new Gio.Cancellable();
-    }
-
     destroy() {
-        this._cancellable.cancel();
-        this._cancellable = null;
         this._trashApp?.destroy();
     }
 
@@ -1111,7 +1105,7 @@ var Trash = class DashToDock_Trash {
             return;
 
         this._trashApp = makeLocationApp({
-            appInfo: new TrashAppInfo(this._cancellable),
+            appInfo: new TrashAppInfo(new Gio.Cancellable()),
             fallbackIconName: FALLBACK_TRASH_ICON,
         });
     }
