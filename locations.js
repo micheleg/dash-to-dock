@@ -312,6 +312,13 @@ var LocationAppInfo = GObject.registerClass({
             return null;
         }
     }
+
+    destroy() {
+        this.location = null;
+        this.icon = null;
+        this.name = null;
+        this.cancellable?.cancel();
+    }
 });
 
 const MountableVolumeAppInfo = GObject.registerClass({
@@ -374,6 +381,8 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         this.disconnect(this._mountChanged);
         this.mount = null;
         this._signalsHandler.destroy();
+
+        super.destroy();
     }
 
     vfunc_dup() {
@@ -607,7 +616,8 @@ class TrashAppInfo extends LocationAppInfo {
         this._updateTrashCancellable?.cancel();
         this._monitor?.disconnect(this._monitorChangedId);
         this._monitor = null;
-        this.location = null;
+
+        super.destroy();
     }
 
     list_actions() {
