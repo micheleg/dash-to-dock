@@ -1,3 +1,26 @@
+gnome-shell-extension-ubuntu-dock (72ubuntu1) UNRELEASED; urgency=medium
+
+  [ 13r0ck ]
+  * Implement manual hide
+  * get_preferred_height/width as 0 if NaN
+  * Add default-windows-preivew-to-open
+  * Do not animate manual hide
+  * Add back binary indicators
+  * Hide `All Windows` toggle button when no windows are open
+  * Keep Showing dock after hover in overview
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+  * locations: Use CancellableChild's for mountable app infos
+  * locations: Do not keep references on the Trash cancellable
+  * locations: Define a base destroy() function on LocationAppInfo and
+    use it in implementations
+  * prefs: Remove timeouts on window closed
+  * dash: Remove visibility timeout on destruction
+  * dash: Unset visibility timeout ID once removed
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 08 Jul 2022 05:57:32 +0200
+
 gnome-shell-extension-ubuntu-dock (72~ubuntu6) kinetic; urgency=medium
 
   * Ignore loss of the hover state while a menu is open (LP: #1967121)
