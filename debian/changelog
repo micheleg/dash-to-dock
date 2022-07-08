@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (72ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (72ubuntu1) kinetic; urgency=medium
 
   [ 13r0ck ]
   * Implement manual hide
@@ -19,7 +19,7 @@ gnome-shell-extension-ubuntu-dock (72ubuntu1) UNRELEASED; urgency=medium
   * dash: Remove visibility timeout on destruction
   * dash: Unset visibility timeout ID once removed
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 08 Jul 2022 05:57:32 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 08 Jul 2022 06:00:07 +0200
 
 gnome-shell-extension-ubuntu-dock (72~ubuntu6) kinetic; urgency=medium
 
