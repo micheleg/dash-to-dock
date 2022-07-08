@@ -921,7 +921,7 @@
                                 <property name="can_focus">0</property>
                                 <property name="hexpand">1</property>
                                 <property name="halign">start</property>
-                                <property name="label" translatable="yes">Show favorite applications</property>
+                                <property name="label" translatable="yes">Show pinned applications</property>
 
                                 <layout>
                                   <property name="column">0</property>
@@ -1804,6 +1804,7 @@
                                       <item translatable="yes">Solid</item>
                                       <item translatable="yes">Ciliora</item>
                                       <item translatable="yes">Metro</item>
+                                      <item translatable="yes">Binary</item>
                                     </items>
                                   </object>
                                 </child>

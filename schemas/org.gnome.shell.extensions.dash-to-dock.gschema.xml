@@ -45,6 +45,7 @@
     <value value='5' nick='SOLID'/>
     <value value='6' nick='CILIORA'/>
     <value value='7' nick='METRO'/>
+    <value value='8' nick='BINARY'/>
   </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key name="dock-position" enum="org.gnome.shell.extensions.dash-to-dock.position">
@@ -116,6 +117,11 @@
       <default>0.8</default>
       <summary>Opacity of the dash background</summary>
       <description>Sets the opacity of the dash background  when in autohide mode.</description>
+    </key>
+    <key type="b" name="manualhide">
+      <default>false</default>
+      <summary>Dock not shown on desktop</summary>
+      <description>Enable or disable manualhide mode</description>
     </key>
     <key type="b" name="intellihide">
       <default>true</default>
@@ -231,6 +237,11 @@
       <default>true</default>
       <summary>Show preview of the open windows</summary>
       <description>Replace open windows list with windows previews</description>
+    </key>
+    <key type="b" name="default-windows-preview-to-open">
+      <default>false</default>
+      <summary>Open windows preview by default</summary>
+      <description>Window previews will show windows by default, rather than hide them behind a drop dowm menu.</description>
     </key>
     <key type="b" name="show-favorites">
       <default>true</default>
