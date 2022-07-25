@@ -585,6 +585,11 @@ var DockedDash = GObject.registerClass({
             settings,
             'changed::autohide-in-fullscreen',
             this._updateBarrier.bind(this)
+        ], [
+            settings,
+            'changed::show-dock-urgent-notify',
+            () => { 
+                this.dash.resetAppIcons(); }
         ],
         [
             settings,
