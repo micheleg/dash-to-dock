@@ -456,7 +456,8 @@ var Transparency = class DashToDock_Transparency {
         let windows = activeWorkspace.list_windows().filter(function(metaWindow) {
             return metaWindow.get_monitor() === dash._monitorIndex &&
                    metaWindow.showing_on_its_workspace() &&
-                   metaWindow.get_window_type() != Meta.WindowType.DESKTOP;
+                   metaWindow.get_window_type() !== Meta.WindowType.DESKTOP &&
+                   (!Meta.is_wayland_compositor() || !metaWindow.skip_taskbar);
         });
 
         /* Check if at least one window is near enough to the panel.
