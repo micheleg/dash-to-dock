@@ -1,3 +1,13 @@
+gnome-shell-extension-ubuntu-dock (72ubuntu2) kinetic; urgency=medium
+
+  [ Patryk Skorupa ]
+  * Add compatibility with DING for Dynamic Transparency (LP: #1981837)
+
+  [ Daniel van Vugt ]
+  * Declare compatibility with gnome-shell 43 (LP: #1987272)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Mon, 22 Aug 2022 17:37:30 +0800
+
 gnome-shell-extension-ubuntu-dock (72ubuntu1) kinetic; urgency=medium
 
   [ 13r0ck ]
