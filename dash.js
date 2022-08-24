@@ -532,7 +532,12 @@ var DockDash = GObject.registerClass({
         appIcon.connect('notify::urgent', () => {
             if (appIcon.urgent) {
                 ensureActorVisibleInScrollView(this._scrollView, item);
-                this._requireVisibility();
+                const { settings } = Docking.DockManager;
+                const showDockUrgentNotify = settings.showDockUrgentNotify;
+                
+                if (showDockUrgentNotify) {
+                    this._requireVisibility();
+                }
             }
         });
 

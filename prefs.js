@@ -472,6 +472,10 @@ var Settings = GObject.registerClass({
             this._builder.get_object('autohide_enable_in_fullscreen_checkbutton'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-dock-urgent-notify',
+            this._builder.get_object('show_dock_urgent_notify_checkbutton'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('require-pressure-to-show',
             this._builder.get_object('require_pressure_checkbutton'),
             'active',
@@ -542,6 +546,11 @@ var Settings = GObject.registerClass({
                 'sensitive',
                 Gio.SettingsBindFlags.GET);
 
+            this._settings.bind('autohide',
+                this._builder.get_object('show_dock_urgent_notify_checkbutton'),
+                'sensitive',
+                Gio.SettingsBindFlags.GET);
+
             this._settings.bind('require-pressure-to-show',
                 this._builder.get_object('show_timeout_spinbutton'),
                 'sensitive',
@@ -562,7 +571,7 @@ var Settings = GObject.registerClass({
             dialog.connect('response', (dialog, id) => {
                 if (id == 1) {
                     // restore default settings for the relevant keys
-                    let keys = ['intellihide', 'autohide', 'intellihide-mode', 'autohide-in-fullscreen', 'require-pressure-to-show',
+                    let keys = ['intellihide', 'autohide', 'intellihide-mode', 'autohide-in-fullscreen', 'show-dock-urgent-notify', 'require-pressure-to-show',
                         'animation-time', 'show-delay', 'hide-delay', 'pressure-threshold'];
                     keys.forEach(function (val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));

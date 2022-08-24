@@ -585,6 +585,11 @@ var DockedDash = GObject.registerClass({
             settings,
             'changed::autohide-in-fullscreen',
             this._updateBarrier.bind(this)
+        ], [
+            settings,
+            'changed::show-dock-urgent-notify',
+            () => { 
+                this.dash.resetAppIcons(); }
         ],
         [
             settings,
@@ -2415,7 +2420,7 @@ var DockManager = class DashToDock_DockManager {
      * Adjust Panel corners, remove this when 41 won't be supported anymore
      */
     _adjustPanelCorners() {
-        if (!Main.panel._rightCorner || !Main.panel._leftCorner)
+        if (!this._hasPanelCorners())
             return;
 
         let position = Utils.getPosition();
@@ -2432,8 +2437,22 @@ var DockManager = class DashToDock_DockManager {
     }
 
     _revertPanelCorners() {
-        Main.panel._leftCorner?.show();
-        Main.panel._rightCorner?.show();
+        if (!this._hasPanelCorners())
+            return;
+
+        Main.panel._leftCorner.show();
+        Main.panel._rightCorner.show();
+    }
+
+    _hasPanelCorners() {
+        if (!Object.hasOwn(Main.panel, '_rightCorner') ||
+            !Object.hasOwn(Main.panel, '_leftCorner')) {
+            return false;
+        } else if (!Main.panel._rightCorner || !Main.panel._leftCorner) {
+            return false;
+        }
+
+        return true;
     }
 };
 Signals.addSignalMethods(DockManager.prototype);

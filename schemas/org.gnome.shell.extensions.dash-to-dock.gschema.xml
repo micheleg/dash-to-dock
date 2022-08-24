@@ -153,6 +153,11 @@
       <summary>Enable autohide in fullscreen mode.</summary>
       <description>Enable autohide in fullscreen mode.</description>
     </key>
+    <key type="b" name="show-dock-urgent-notify">
+      <default>true</default>
+      <summary>Show dock for urgent notifications.</summary>
+      <description>Show dock when urgent notifications are received.</description>
+    </key>
     <key type="b" name="dock-fixed">
       <default>false</default>
       <summary>Dock always visible</summary>
