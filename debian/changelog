@@ -1,3 +1,13 @@
+gnome-shell-extension-ubuntu-dock (72ubuntu3) UNRELEASED; urgency=medium
+
+  [ Alexandru Cheltuitor ]
+  * Ensure that PanelCorner has given properties before checking the value
+
+  [ Leandro Kemp ]
+  * Added option to turn on/off show dock for urgent notifications
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 24 Aug 2022 20:24:30 +0200
+
 gnome-shell-extension-ubuntu-dock (72ubuntu2) kinetic; urgency=medium
 
   [ Patryk Skorupa ]
