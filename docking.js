@@ -2445,14 +2445,7 @@ var DockManager = class DashToDock_DockManager {
     }
 
     _hasPanelCorners() {
-        if (!Object.hasOwn(Main.panel, '_rightCorner') ||
-            !Object.hasOwn(Main.panel, '_leftCorner')) {
-            return false;
-        } else if (!Main.panel._rightCorner || !Main.panel._leftCorner) {
-            return false;
-        }
-
-        return true;
+        return !!Main.panel?._rightCorner && !!Main.panel?._leftCorner;
     }
 };
 Signals.addSignalMethods(DockManager.prototype);
