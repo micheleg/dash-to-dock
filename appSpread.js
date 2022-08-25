@@ -50,6 +50,25 @@ var AppSpread = class AppSpread {
         this.windows = this.app.get_windows();
     }
 
+    _restoreDefaultWindows() {
+        const { workspaceManager } = global;
+
+        for (let i = 0; i < workspaceManager.nWorkspaces; i++) {
+            const metaWorkspace = workspaceManager.get_workspace_by_index(i);
+            metaWorkspace.list_windows().forEach(w => metaWorkspace.emit('window-added', w));
+        }
+    }
+
+    _filterWindows() {
+        const { workspaceManager } = global;
+
+        for (let i = 0; i < workspaceManager.nWorkspaces; i++) {
+            const metaWorkspace = workspaceManager.get_workspace_by_index(i);
+            metaWorkspace.list_windows().filter(w => !this.windows.includes(w)).forEach(
+                w => metaWorkspace.emit('window-removed', w));
+        }
+    }
+
     _showAppSpread(app) {
         if (this.isInAppSpread)
             return;
@@ -80,6 +99,13 @@ var AppSpread = class AppSpread {
                 return isOverviewWindow && appSpread.windows.includes(windowActor.metaWindow);
             }
         ]);
+
+        this._signalHandlers.add(Main.overview.dash.showAppsButton, 'notify::checked', () => {
+            if (Main.overview.dash.showAppsButton.checked) {
+                this._hideAppSpread();
+                this._restoreDefaultWindows();
+            }
+        });
 
         // If closing windows in AppSpread, and only one window left:
         // exit app spread and focus remaining window (handled in _hideAppSpread)
