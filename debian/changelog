@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (72ubuntu6) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (72ubuntu6) kinetic; urgency=medium
 
   [ David Astillero Pérez ]
   * Update spanish (Spain) translation
@@ -22,7 +22,7 @@ gnome-shell-extension-ubuntu-dock (72ubuntu6) UNRELEASED; urgency=medium
   [ ggcode ]
   * implement "minimize or overview" with only current app windows
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 25 Aug 2022 22:27:03 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 25 Aug 2022 22:28:23 +0200
 
 gnome-shell-extension-ubuntu-dock (72ubuntu5) kinetic; urgency=medium
 
