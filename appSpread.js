@@ -6,7 +6,6 @@ const Workspace = imports.ui.workspace;
 const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const AppIcons = Me.imports.appIcons;
 const Utils = Me.imports.utils;
 
 var AppSpread = class AppSpread {
@@ -47,7 +46,7 @@ var AppSpread = class AppSpread {
     }
 
     _updateWindows() {
-        this.windows = AppIcons.getInterestingWindows(this.app.get_windows(), -1);
+        this.windows = this.app.get_windows();
     }
 
     _showAppSpread(app) {
