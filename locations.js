@@ -37,6 +37,11 @@ const NautilusFileOperations2Interface = '<node>\
 
 const NautilusFileOperations2ProxyInterface = Gio.DBusProxy.makeProxyWrapper(NautilusFileOperations2Interface);
 
+const Labels = Object.freeze({
+    LOCATION_WINDOWS: Symbol('location-windows'),
+    WINDOWS_CHANGED: Symbol('windows-changed'),
+});
+
 if (imports.system.version >= 17101) {
     Gio._promisify(Gio.File.prototype, 'query_info_async', 'query_info_finish');
 }
@@ -1001,9 +1006,9 @@ function makeLocationApp(params) {
             if (!windowsChanged)
                 return;
 
-            this._signalConnections.removeWithLabel('location-windows');
+            this._signalConnections.removeWithLabel(Labels.LOCATION_WINDOWS);
             windows.forEach(w =>
-                this._signalConnections.addWithLabel('location-windows', w,
+                this._signalConnections.addWithLabel(Labels.LOCATION_WINDOWS, w,
                     'notify::user-time', () => {
                         if (w != this._windows[0])
                             this._windowsOrderChanged();
@@ -1037,7 +1042,7 @@ function wrapFileManagerApp() {
     wrapWindowsBackedApp(fileManagerApp);
 
     const { removables, trash } = Docking.DockManager.getDefault();
-    fileManagerApp._signalConnections.addWithLabel('windowsChanged',
+    fileManagerApp._signalConnections.addWithLabel(Labels.WINDOWS_CHANGED,
         fileManagerApp, 'windows-changed', () => {
             fileManagerApp.stop_emission_by_name('windows-changed');
             // Let's wait for the location app to take control before of us
@@ -1067,9 +1072,9 @@ function wrapFileManagerApp() {
         const windows = originalGetWindows.call(this).filter(w =>
             !locationWindows.includes(w));
 
-        this._signalConnections.blockWithLabel('windowsChanged');
+        this._signalConnections.blockWithLabel(Labels.WINDOWS_CHANGED);
         this._setWindows(windows);
-        this._signalConnections.unblockWithLabel('windowsChanged');
+        this._signalConnections.unblockWithLabel(Labels.WINDOWS_CHANGED);
     };
 
     fileManagerApp._mi('toString', defaultToString =>

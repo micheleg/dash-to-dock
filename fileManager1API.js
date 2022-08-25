@@ -13,6 +13,10 @@ const FileManager1Iface = '<node><interface name="org.freedesktop.FileManager1">
 
 const FileManager1Proxy = Gio.DBusProxy.makeProxyWrapper(FileManager1Iface);
 
+const Labels = Object.freeze({
+    WINDOWS: Symbol('windows'),
+});
+
 /**
  * This class implements a client for the org.freedesktop.FileManager1 dbus
  * interface, and specifically for the OpenWindowsWithLocations property
@@ -161,7 +165,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
         const locationsByWindowsPath = this._proxy.OpenWindowsWithLocations;
 
         const windowsByLocation = new Map();
-        this._signalsHandler.removeWithLabel('windows');
+        this._signalsHandler.removeWithLabel(Labels.WINDOWS);
 
         Object.entries(locationsByWindowsPath).forEach(([windowPath, locations]) => {
             locations.forEach(location => {
@@ -180,7 +184,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
                     if (windows.size === 1)
                         windowsByLocation.set(location, windows);
 
-                    this._signalsHandler.addWithLabel('windows', window,
+                    this._signalsHandler.addWithLabel(Labels.WINDOWS, window,
                         'unmanaged', () => {
                             const wins = this._windowsByLocation.get(location);
                             wins.delete(window);

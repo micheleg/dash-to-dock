@@ -41,6 +41,12 @@ const DbusmenuUtils = Me.imports.dbusmenuUtils;
 
 const tracker = Shell.WindowTracker.get_default();
 
+
+const Labels = Object.freeze({
+    ISOLATE_MONITORS: Symbol('isolate-monitors'),
+    URGENT_WINDOWS: Symbol('urgent-windows'),
+});
+
 const clickAction = {
     SKIP: 0,
     MINIMIZE: 1,
@@ -126,12 +132,12 @@ var DockAbstractAppIcon = GObject.registerClass({
         // In Wayland sessions, this signal is needed to track the state of windows dragged
         // from one monitor to another. As this is triggered quite often (whenever a new winow
         // of any application opened or moved to a different desktop),
-        // we restrict this signal to  the case when 'isolate-monitors' is true,
+        // we restrict this signal to  the case when Labels.ISOLATE_MONITORS is true,
         // and if there are at least 2 monitors.
         if (Docking.DockManager.settings.isolateMonitors &&
             Main.layoutManager.monitors.length > 1) {
-            this._signalsHandler.removeWithLabel('isolate-monitors');
-            this._signalsHandler.addWithLabel('isolate-monitors',
+            this._signalsHandler.removeWithLabel(Labels.ISOLATE_MONITORS);
+            this._signalsHandler.addWithLabel(Labels.ISOLATE_MONITORS,
                 global.display,
                 'window-entered-monitor',
                 this._onWindowEntered.bind(this));
@@ -153,7 +159,7 @@ var DockAbstractAppIcon = GObject.registerClass({
 
         this.connect('notify::urgent', () => {
             const icon = this.icon._iconBin;
-            this._signalsHandler.removeWithLabel('urgent-windows')
+            this._signalsHandler.removeWithLabel(Labels.URGENT_WINDOWS)
             if (this.urgent) {
                 icon.set_pivot_point(0.5, 0.5);
                 this.iconAnimator.addAnimation(icon, 'dance');
@@ -297,7 +303,7 @@ var DockAbstractAppIcon = GObject.registerClass({
     }
 
     _updateUrgentWindows(interestingWindows) {
-        this._signalsHandler.removeWithLabel('urgent-windows')
+        this._signalsHandler.removeWithLabel(Labels.URGENT_WINDOWS)
         this._urgentWindows.clear();
         if (interestingWindows === undefined)
             interestingWindows = this.getInterestingWindows();
@@ -328,13 +334,13 @@ var DockAbstractAppIcon = GObject.registerClass({
         };
 
         if (window.demandsAttention)
-            this._signalsHandler.addWithLabel('urgent-windows', window,
+            this._signalsHandler.addWithLabel(Labels.URGENT_WINDOWS, window,
                 'notify::demands-attention', () => onDemandsAttentionChanged());
         if (window.urgent)
-            this._signalsHandler.addWithLabel('urgent-windows', window,
+            this._signalsHandler.addWithLabel(Labels.URGENT_WINDOWS, window,
                 'notify::urgent', () => onDemandsAttentionChanged());
         if (window._manualUrgency) {
-            this._signalsHandler.addWithLabel('urgent-windows', window,
+            this._signalsHandler.addWithLabel(Labels.URGENT_WINDOWS, window,
                 'focus', () => {
                     delete window._manualUrgency;
                     onDemandsAttentionChanged()

@@ -18,14 +18,20 @@ var SignalsHandlerFlags = {
     CONNECT_AFTER: 1
 };
 
+const GENERIC_KEY = Symbol('generic');
+
 /**
  * Simplify global signals and function injections handling
  * abstract class
  */
 const BasicHandler = class DashToDock_BasicHandler {
 
+    static get genericKey() {
+        return GENERIC_KEY;
+    }
+
     constructor(parentObject) {
-        this._storage = new Object();
+        this._storage = new Object(null);
 
         if (parentObject) {
             if (!(parentObject.connect instanceof Function))
@@ -42,12 +48,12 @@ const BasicHandler = class DashToDock_BasicHandler {
     add(...args) {
         // Convert arguments object to array, concatenate with generic
         // Call addWithLabel with ags as if they were passed arguments
-        this.addWithLabel('generic', ...args);
+        this.addWithLabel(GENERIC_KEY, ...args);
     }
 
     clear() {
-        for (let label in this._storage)
-            this.removeWithLabel(label);
+        Object.getOwnPropertySymbols(this._storage).forEach(label =>
+            this.removeWithLabel(label));
     }
 
     destroy() {
@@ -58,14 +64,19 @@ const BasicHandler = class DashToDock_BasicHandler {
     }
 
     block() {
-        Object.keys(this._storage).forEach(label => this.blockWithLabel(label));
+        Object.getOwnPropertySymbols(this._storage).forEach(label =>
+            this.blockWithLabel(label));
     }
 
     unblock() {
-        Object.keys(this._storage).forEach(label => this.unblockWithLabel(label));
+        Object.getOwnPropertySymbols(this._storage).forEach(label =>
+            this.unblockWithLabel(label));
     }
 
     addWithLabel(label, ...args) {
+        if (typeof label !== 'symbol')
+            throw new Error(`Invalid label ${label}, must be a symbol`);
+
         let argsArray = [...args];
         if (argsArray.every(arg => !Array.isArray(arg)))
             argsArray = [argsArray];
