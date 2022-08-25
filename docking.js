@@ -2247,7 +2247,7 @@ var DockManager = class DashToDock_DockManager {
                 return box;
             });
 
-        if (!!AppDisplay.BaseAppView?.prototype?._pageForCoords) {
+        if (AppDisplay.BaseAppView?.prototype?._pageForCoords) {
             // Ensure we handle Dnd events happening on the dock when we're dragging from AppDisplay
             // Remove when merged https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2002
             this._methodInjections.addWithLabel('main-dash', AppDisplay.BaseAppView.prototype,
