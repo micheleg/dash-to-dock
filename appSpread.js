@@ -1,14 +1,12 @@
 /* exported AppSpread */
 
-const { GObject } = imports.gi;
 const Main = imports.ui.main;
 const SearchController = imports.ui.searchController;
 const Workspace = imports.ui.workspace;
 const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 
-var AppSpread = GObject.registerClass(
-class AppSpread extends GObject.Object {
-    _init() {
+var AppSpread = class AppSpread {
+    constructor() {
         this.isInAppSpread = false;
         // gnome shell functions to temporarily replace while in app spread
         this.originalWorkspaceIsOverviewWindow = Workspace?.Workspace?.prototype._isOverviewWindow;
@@ -108,4 +106,4 @@ class AppSpread extends GObject.Object {
             SearchController.SearchController.prototype._shouldTriggerSearch = this.originalShouldTriggerSearch;
         }
     }
-});
+};
