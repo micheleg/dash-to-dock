@@ -45,12 +45,16 @@ const BasicHandler = class DashToDock_BasicHandler {
         this.addWithLabel('generic', ...args);
     }
 
+    clear() {
+        for (let label in this._storage)
+            this.removeWithLabel(label);
+    }
+
     destroy() {
         this._parentObject?.disconnect(this._destroyId);
         this._parentObject = null;
 
-        for( let label in this._storage )
-            this.removeWithLabel(label);
+        this.clear();
     }
 
     block() {
