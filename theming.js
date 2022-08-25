@@ -33,6 +33,10 @@ const TransparencyMode = {
     DYNAMIC:  3
 };
 
+const Labels = Object.freeze({
+    TRANSPARENCY: Symbol('transparency'),
+});
+
 /**
  * Manage theme customization and custom theme support
  */
@@ -352,7 +356,7 @@ var Transparency = class DashToDock_Transparency {
             this._base_actor_style = "";
         }
 
-        this._signalsHandler.addWithLabel('transparency', [
+        this._signalsHandler.addWithLabel(Labels.TRANSPARENCY, [
             global.window_group,
             'actor-added',
             this._onWindowActorAdded.bind(this)
@@ -396,7 +400,7 @@ var Transparency = class DashToDock_Transparency {
     disable() {
         // ensure I never double-register/inject
         // although it should never happen
-        this._signalsHandler.removeWithLabel('transparency');
+        this._signalsHandler.removeWithLabel(Labels.TRANSPARENCY);
 
         for (let key of this._trackedWindows.keys())
             this._trackedWindows.get(key).forEach(id => {

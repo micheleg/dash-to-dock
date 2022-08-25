@@ -51,6 +51,16 @@ const scrollAction = {
     SWITCH_WORKSPACE: 2
 };
 
+const Labels = Object.freeze({
+    INITIALIZE: Symbol('initialize'),
+    ISOLATION: Symbol('isolation'),
+    LOCATIONS: Symbol('locations'),
+    MAIN_DASH: Symbol('main-dash'),
+    OLD_DASH_CHANGES: Symbol('old-dash-changes'),
+    SETTINGS: Symbol('settings'),
+    WORKSPACE_SWITCH_SCROLL: Symbol('workspace-switch-scroll'),
+});
+
 /**
  * A simple St.Widget with one child whose allocation takes into account the
  * slide out of its child via the slide-x property ([0:1]).
@@ -369,7 +379,7 @@ var DockedDash = GObject.registerClass({
          // Delay operations that require the shell to be fully loaded and with
          // user theme applied.
 
-        this._signalsHandler.addWithLabel('initialize', global.stage,
+        this._signalsHandler.addWithLabel(Labels.INITIALIZE, global.stage,
             'after-paint', () => this._initialize());
 
         // Add dash container actor and the container to the Chrome.
@@ -439,7 +449,7 @@ var DockedDash = GObject.registerClass({
     }
 
     _initialize() {
-        this._signalsHandler.removeWithLabel('initialize');
+        this._signalsHandler.removeWithLabel(Labels.INITIALIZE);
 
         // Apply custome css class according to the settings
         this._themeManager.updateCustomTheme();
@@ -1132,8 +1142,6 @@ var DockedDash = GObject.registerClass({
             this.x = pos_x;
             this.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
 
-            this._signalsHandler.removeWithLabel('verticalOffsetChecker');
-
             if (extendHeight) {
                 this.dash._container.set_height(this.height);
                 this.add_style_class_name('extended');
@@ -1208,8 +1216,6 @@ var DockedDash = GObject.registerClass({
      * Switch workspace by scrolling over the dock
      */
     _optionalScrollWorkspaceSwitch() {
-        let label = 'optionalScrollWorkspaceSwitch';
-
         function isEnabled() {
             return DockManager.settings.scrollAction === scrollAction.SWITCH_WORKSPACE;
         }
@@ -1225,16 +1231,16 @@ var DockedDash = GObject.registerClass({
             enable.bind(this)();
 
         function enable() {
-            this._signalsHandler.removeWithLabel(label);
+            this._signalsHandler.removeWithLabel(Labels.WORKSPACE_SWITCH_SCROLL);
 
-            this._signalsHandler.addWithLabel(label,
+            this._signalsHandler.addWithLabel(Labels.WORKSPACE_SWITCH_SCROLL,
                 this._box,
                 'scroll-event',
                 onScrollEvent.bind(this));
         }
 
         function disable() {
-            this._signalsHandler.removeWithLabel(label);
+            this._signalsHandler.removeWithLabel(Labels.WORKSPACE_SWITCH_SCROLL);
 
             if (this._optionalScrollWorkspaceSwitchDeadTimeId) {
                 GLib.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
@@ -1540,7 +1546,7 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
 
         DockManager.allDocks.forEach((dock) => {
             this._signalsHandler.addWithLabel(
-                'isolation',
+                Labels.ISOLATION,
                 [ global.display, 'restacked', () => dock.dash._queueRedisplay() ],
                 [ global.display, 'window-marked-urgent', () => dock.dash._queueRedisplay() ],
                 [ global.display, 'window-demands-attention', () => dock.dash._queueRedisplay() ],
@@ -1550,7 +1556,7 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
             // This last signal is only needed for monitor isolation, as windows
             // might migrate from one monitor to another without triggering 'restacked'
             if (DockManager.settings.isolateMonitors)
-                this._signalsHandler.addWithLabel('isolation',
+                this._signalsHandler.addWithLabel(Labels.ISOLATION,
                     global.display,
                     'window-entered-monitor',
                     dock.dash._queueRedisplay.bind(dock.dash));
@@ -1571,15 +1577,15 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
             return this.open_new_window(-1);
         }
 
-        this._injectionsHandler.addWithLabel('isolation',
+        this._injectionsHandler.addWithLabel(Labels.ISOLATION,
             Shell.App.prototype,
             'activate',
             IsolatedOverview);
     }
 
     _disable () {
-        this._signalsHandler.removeWithLabel('isolation');
-        this._injectionsHandler.removeWithLabel('isolation');
+        this._signalsHandler.removeWithLabel(Labels.ISOLATION);
+        this._injectionsHandler.removeWithLabel(Labels.ISOLATION);
     }
 
     destroy() {
@@ -1725,13 +1731,13 @@ var DockManager = class DashToDock_DockManager {
 
         Locations.unWrapFileManagerApp();
         [this._methodInjections, this._propertyInjections].forEach(
-            injections => injections.removeWithLabel('locations'));
+            injections => injections.removeWithLabel(Labels.LOCATIONS));
 
         if (showMounts || showTrash) {
             if (this.settings.isolateLocations) {
                 const fileManagerApp = Locations.wrapFileManagerApp();
 
-                this._methodInjections.addWithLabel('locations', [
+                this._methodInjections.addWithLabel(Labels.LOCATIONS, [
                     Shell.AppSystem.prototype, 'get_running',
                     function (originalMethod, ...args) {
                         const runningApps = originalMethod.call(this, ...args);
@@ -1765,7 +1771,7 @@ var DockManager = class DashToDock_DockManager {
 
                 const { get: defaultFocusAppGetter } = Object.getOwnPropertyDescriptor(
                     Shell.WindowTracker.prototype, 'focus_app');
-                this._propertyInjections.addWithLabel('locations',
+                this._propertyInjections.addWithLabel(Labels.LOCATIONS,
                     Shell.WindowTracker.prototype, 'focus_app', {
                     get: function () {
                         const locationApp = Locations.getRunningApps().find(a => a.isFocused);
@@ -1803,11 +1809,11 @@ var DockManager = class DashToDock_DockManager {
             set: (value) => { mappedValue() ?? (dockPropertyDesc.value = value) },
         });
 
-        this._signalsHandler.addWithLabel('settings', settings,
+        this._signalsHandler.addWithLabel(Labels.SETTINGS, settings,
             'changed::%s'.format(key), () => {
-                this._signalsHandler.blockWithLabel('settings');
+                this._signalsHandler.blockWithLabel(Labels.SETTINGS);
                 this.settings.emit('changed::%s'.format(mappedKey), mappedKey);
-                this._signalsHandler.unblockWithLabel('settings');
+                this._signalsHandler.unblockWithLabel(Labels.SETTINGS);
             });
     }
 
@@ -1822,7 +1828,7 @@ var DockManager = class DashToDock_DockManager {
                     this.settings[camelKey] = this.settings.get_value(key).recursiveUnpack();
             };
             updateSetting();
-            this._signalsHandler.addWithLabel('settings', this.settings,
+            this._signalsHandler.addWithLabel(Labels.SETTINGS, this.settings,
                 `changed::${key}`, updateSetting);
             if (key != camelKey) {
                 Object.defineProperty(this.settings, key,
@@ -1834,7 +1840,7 @@ var DockManager = class DashToDock_DockManager {
         });
 
         // Connect relevant signals to the toggling function
-        this._signalsHandler.addWithLabel('settings', [
+        this._signalsHandler.addWithLabel(Labels.SETTINGS, [
             Meta.MonitorManager.get(),
             'monitors-changed',
             this._toggle.bind(this)
@@ -2018,10 +2024,10 @@ var DockManager = class DashToDock_DockManager {
         // while just use the default getter otherwise.
         // The getter must be dynamic and not set only when we've a dummy
         // overview because the mode can change dynamically.
-        this._propertyInjections.removeWithLabel('main-dash');
+        this._propertyInjections.removeWithLabel(Labels.MAIN_DASH);
         let defaultDashGetter = Object.getOwnPropertyDescriptor(
             Main.overview.constructor.prototype, 'dash').get;
-        this._propertyInjections.addWithLabel('main-dash', Main.overview, 'dash', {
+        this._propertyInjections.addWithLabel(Labels.MAIN_DASH, Main.overview, 'dash', {
             get: () => Main.overview.isDummy ?
                 this.mainDock.dash : defaultDashGetter.call(Main.overview),
         });
@@ -2040,7 +2046,7 @@ var DockManager = class DashToDock_DockManager {
         // 1 static workspace only)
         this._oldDash.set_height(1);
 
-        this._signalsHandler.addWithLabel('old-dash-changes', [
+        this._signalsHandler.addWithLabel(Labels.OLD_DASH_CHANGES, [
             this._oldDash,
             'notify::visible',
             () => this._oldDash.hide()
@@ -2056,12 +2062,12 @@ var DockManager = class DashToDock_DockManager {
         this.searchController._showAppsButton = this.mainDock.dash.showAppsButton;
 
         // We also need to ignore max-size changes
-        this._methodInjections.addWithLabel('main-dash', this._oldDash,
+        this._methodInjections.addWithLabel(Labels.MAIN_DASH, this._oldDash,
             'setMaxSize', () => {});
-        this._methodInjections.addWithLabel('main-dash', this._oldDash,
+        this._methodInjections.addWithLabel(Labels.MAIN_DASH, this._oldDash,
             'allocate', () => {});
         // And to return the preferred height depending on the state
-        this._methodInjections.addWithLabel('main-dash', this._oldDash,
+        this._methodInjections.addWithLabel(Labels.MAIN_DASH, this._oldDash,
             'get_preferred_height', (_originalMethod, ...args) => {
                 if (this.mainDock.isHorizontal && !this.settings.dockFixed)
                     return this.mainDock.get_preferred_height(...args);
@@ -2070,7 +2076,7 @@ var DockManager = class DashToDock_DockManager {
 
         const { ControlsManager, ControlsManagerLayout } = OverviewControls;
 
-        this._methodInjections.addWithLabel('main-dash', ControlsManager.prototype,
+        this._methodInjections.addWithLabel(Labels.MAIN_DASH, ControlsManager.prototype,
             'runStartupAnimation', async function (originalMethod, callback) {
                 const injections = new Utils.InjectionsHandler();
                 const dockManager = DockManager.getDefault();
@@ -2124,7 +2130,7 @@ var DockManager = class DashToDock_DockManager {
             return box;
         }
 
-        this._vfuncInjections.addWithLabel('main-dash', ControlsManagerLayout.prototype,
+        this._vfuncInjections.addWithLabel(Labels.MAIN_DASH, ControlsManagerLayout.prototype,
             'allocate', function (container) {
                 const oldPostAllocation = this._runPostAllocation;
                 this._runPostAllocation = () => {};
@@ -2173,7 +2179,7 @@ var DockManager = class DashToDock_DockManager {
             return workspaceBox;
         }
 
-        this._methodInjections.addWithLabel('main-dash', [
+        this._methodInjections.addWithLabel(Labels.MAIN_DASH, [
             ControlsManagerLayout.prototype,
             '_computeWorkspacesBoxForState',
             function (originalFunction, state, ...args) {
@@ -2192,7 +2198,7 @@ var DockManager = class DashToDock_DockManager {
             }
         ]);
 
-        this._vfuncInjections.addWithLabel('main-dash', Workspace.WorkspaceBackground.prototype,
+        this._vfuncInjections.addWithLabel(Labels.MAIN_DASH, Workspace.WorkspaceBackground.prototype,
             'allocate', function (box) {
             this.vfunc_allocate(box);
 
@@ -2222,7 +2228,7 @@ var DockManager = class DashToDock_DockManager {
         });
 
         // Reduce the space that the workspaces can use in secondary monitors
-        this._methodInjections.addWithLabel('main-dash', WorkspacesView.WorkspacesView.prototype,
+        this._methodInjections.addWithLabel(Labels.MAIN_DASH, WorkspacesView.WorkspacesView.prototype,
             '_getFirstFitAllWorkspaceBox', function (originalFunction, ...args) {
                 const box = originalFunction.call(this, ...args);
                 if (DockManager.settings.dockFixed ||
@@ -2250,7 +2256,8 @@ var DockManager = class DashToDock_DockManager {
         if (AppDisplay.BaseAppView?.prototype?._pageForCoords) {
             // Ensure we handle Dnd events happening on the dock when we're dragging from AppDisplay
             // Remove when merged https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2002
-            this._methodInjections.addWithLabel('main-dash', AppDisplay.BaseAppView.prototype,
+            this._methodInjections.addWithLabel(Labels.MAIN_DASH,
+                AppDisplay.BaseAppView.prototype,
                 '_pageForCoords', function (originalFunction, ...args) {
                     if (!this._scrollView.has_pointer)
                         return AppDisplay.SidePages.NONE;
@@ -2260,7 +2267,7 @@ var DockManager = class DashToDock_DockManager {
 
         if (Main.layoutManager._startingUp && Main.sessionMode.hasOverview &&
             this._settings.disableOverviewOnStartup) {
-            this._methodInjections.addWithLabel('main-dash',
+            this._methodInjections.addWithLabel(Labels.MAIN_DASH,
                 Overview.Overview.prototype,
                 'runStartupAnimation', (_originalFunction, callback) => {
                     const monitor = Main.layoutManager.primaryMonitor;
@@ -2311,9 +2318,9 @@ var DockManager = class DashToDock_DockManager {
         if (!this._oldDash)
             return;
 
-        this._signalsHandler.removeWithLabel('old-dash-changes');
+        this._signalsHandler.removeWithLabel(Labels.OLD_DASH_CHANGES);
         [this._methodInjections, this._vfuncInjections, this._propertyInjections].forEach(
-            injections => injections.removeWithLabel('main-dash'));
+            injections => injections.removeWithLabel(Labels.MAIN_DASH));
 
         this.overviewControls.layout_manager._dash = this._oldDash;
         this.overviewControls.dash = this._oldDash;
