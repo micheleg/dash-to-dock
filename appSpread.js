@@ -8,13 +8,16 @@ const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 var AppSpread = class AppSpread {
     constructor() {
         this.isInAppSpread = false;
+        this.supported = true;
+
         // gnome shell functions to temporarily replace while in app spread
         this.originalWorkspaceIsOverviewWindow = Workspace?.Workspace?.prototype._isOverviewWindow;
         this.originalThumbnailIsOverviewWindow = WorkspaceThumbnail?.WorkspaceThumbnail?.prototype._isOverviewWindow;
         this.originalShouldTriggerSearch = SearchController?.SearchController?.prototype._shouldTriggerSearch;
         // fail early and do nothing, if mandatory gnome shell functions are missing
         if (!this.originalWorkspaceIsOverviewWindow || !this.originalThumbnailIsOverviewWindow) {
-            log('Dash to dock: Unable to temporarily replace shell functions for app spread - app spread will have no effect');
+            log('Dash to dock: Unable to temporarily replace shell functions for app spread - using previews instead');
+            this.supported = false;
             return;
         }
 
