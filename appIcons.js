@@ -522,22 +522,6 @@ var DockAbstractAppIcon = GObject.registerClass({
                 }
                 break;
 
-            case clickAction.FOCUS_OR_APP_SPREAD:
-            case clickAction.FOCUS_MINIMIZE_OR_APP_SPREAD:
-                const appSpreadCandidate = windows.length !== 1 || !!modifiers || button !== 1;
-                if (appSpreadCandidate) {
-                    const isClickedIconFocusedApp = this.app === tracker.focus_app;
-                    if (isClickedIconFocusedApp) {
-                        shouldHideOverview = false;
-                        Docking.DockManager.getDefault().appSpread.toggle(this.app);
-                    } else {
-                        // Clicked on another app or all app windows are minimized -> focus that
-                        Main.activateWindow(windows[0]);
-                    }
-                    break;
-                }
-                // fallthrough
-
             case clickAction.MINIMIZE_OR_OVERVIEW:
                 // When a single window is present, toggle minimization
                 // If only one windows is present toggle minimization, but only when triggered with the
@@ -638,6 +622,28 @@ var DockAbstractAppIcon = GObject.registerClass({
                     }
                 } else {
                     this.app.activate();
+                }
+                break;
+
+            case clickAction.FOCUS_OR_APP_SPREAD:
+                if (this.focused && !singleOrUrgentWindows && !modifiers && button === 1) {
+                    shouldHideOverview = false;
+                    Docking.DockManager.getDefault().appSpread.toggle(this.app);
+                } else {
+                    // Activate the first window
+                    Main.activateWindow(windows[0]);
+                }
+                break;
+
+            case clickAction.FOCUS_MINIMIZE_OR_APP_SPREAD:
+                if (this.focused && !singleOrUrgentWindows && !modifiers && button === 1) {
+                    shouldHideOverview = false;
+                    Docking.DockManager.getDefault().appSpread.toggle(this.app);
+                } else if (!this.focused) {
+                    // Activate the first window
+                    Main.activateWindow(windows[0]);
+                } else {
+                    this._minimizeWindow();
                 }
                 break;
 
