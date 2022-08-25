@@ -2414,6 +2414,7 @@ var DockManager = class DashToDock_DockManager {
             this._fm1Client.destroy();
             this._fm1Client = null;
         }
+        this._appSpread.destroy();
         this._trash?.destroy();
         this._trash = null;
         Locations.unWrapFileManagerApp();
