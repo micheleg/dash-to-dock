@@ -29,7 +29,7 @@ var AppSpread = class AppSpread {
         }
     }
 
-    toggleAppSpread(appSpreadMetaWindows) {
+    toggle(appSpreadMetaWindows) {
         if (Main.overview._shown) {
             Main.overview.hide(); // also triggers hook 'hidden'
         } else {

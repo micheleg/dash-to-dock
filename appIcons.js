@@ -36,7 +36,6 @@ const Docking = Me.imports.docking;
 const Locations = Me.imports.locations;
 const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
-const AppSpread = Me.imports.appSpread;
 const AppIconIndicators = Me.imports.appIconIndicators;
 const DbusmenuUtils = Me.imports.dbusmenuUtils;
 
@@ -114,7 +113,6 @@ var DockAbstractAppIcon = GObject.registerClass({
         // a prefix is required to avoid conflicting with the parent class variable
         this.monitorIndex = monitorIndex;
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
-        this.appSpread = new AppSpread.AppSpread();
         this.iconAnimator = iconAnimator;
         this._indicator = new AppIconIndicators.AppIconIndicator(this);
 
@@ -519,7 +517,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                     const isClickedIconFocusedApp = this.app === tracker.focus_app;
                     if (isClickedIconFocusedApp) {
                         shouldHideOverview = false;
-                        this.appSpread.toggleAppSpread(windows);
+                        Docking.DockManager.getDefault().appSpread.toggle(windows);
                     } else {
                         // Clicked on another app or all app windows are minimized -> focus that
                         Main.activateWindow(windows[0]);
