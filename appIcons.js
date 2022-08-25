@@ -47,7 +47,7 @@ const Labels = Object.freeze({
     URGENT_WINDOWS: Symbol('urgent-windows'),
 });
 
-const clickAction = {
+const clickAction = Object.freeze({
     SKIP: 0,
     MINIMIZE: 1,
     LAUNCH: 2,
@@ -56,16 +56,17 @@ const clickAction = {
     PREVIEWS: 5,
     MINIMIZE_OR_PREVIEWS: 6,
     FOCUS_OR_PREVIEWS: 7,
-    FOCUS_MINIMIZE_OR_PREVIEWS: 8,
-    APP_SPREAD: 9,
-    QUIT: 10
-};
+    FOCUS_OR_APP_SPREAD: 8,
+    FOCUS_MINIMIZE_OR_PREVIEWS: 9,
+    FOCUS_MINIMIZE_OR_APP_SPREAD: 10,
+    QUIT: 11,
+});
 
-const scrollAction = {
+const scrollAction = Object.freeze({
     DO_NOTHING: 0,
     CYCLE_WINDOWS: 1,
     SWITCH_WORKSPACE: 2
-};
+});
 
 let recentlyClickedAppLoopId = 0;
 let recentlyClickedApp = null;
@@ -511,17 +512,17 @@ var DockAbstractAppIcon = GObject.registerClass({
                 }
                 break;
 
-            case clickAction.APP_SPREAD:
-                const appSpreadCandidate = windows.length != 1 || !!modifiers || button != 1;
+            case clickAction.FOCUS_OR_APP_SPREAD:
+            case clickAction.FOCUS_MINIMIZE_OR_APP_SPREAD:
+                const appSpreadCandidate = windows.length !== 1 || !!modifiers || button !== 1;
                 if (appSpreadCandidate) {
-                    const isClickedIconFocusedApp = this.app == tracker.focus_app;
+                    const isClickedIconFocusedApp = this.app === tracker.focus_app;
                     if (isClickedIconFocusedApp) {
                         shouldHideOverview = false;
                         this.appSpread.toggleAppSpread(windows);
                     } else {
                         // Clicked on another app or all app windows are minimized -> focus that
-                        let w = windows[0];
-                        Main.activateWindow(w);
+                        Main.activateWindow(windows[0]);
                     }
                     break;
                 }
@@ -534,8 +535,10 @@ var DockAbstractAppIcon = GObject.registerClass({
                 if (singleOrUrgentWindows && !modifiers && button == 1) {
                     let w = windows[0];
                     if (this.focused) {
-                        // Window is raised, minimize it
-                        this._minimizeWindow(w);
+                        if (buttonAction !== clickAction.FOCUS_OR_APP_SPREAD) {
+                            // Window is raised, minimize it
+                            this._minimizeWindow(w);
+                        }
                     } else {
                         // Window is minimized, raise it
                         Main.activateWindow(w);
