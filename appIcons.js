@@ -473,6 +473,18 @@ var DockAbstractAppIcon = GObject.registerClass({
                 buttonAction = settings.clickAction;
         }
 
+        switch (buttonAction) {
+            case clickAction.FOCUS_OR_APP_SPREAD:
+                if (!Docking.DockManager.getDefault().appSpread.supported)
+                    buttonAction = clickAction.FOCUS_OR_PREVIEWS;
+                break;
+
+            case clickAction.FOCUS_MINIMIZE_OR_APP_SPREAD:
+                if (!Docking.DockManager.getDefault().appSpread.supported)
+                    buttonAction = clickAction.FOCUS_MINIMIZE_OR_PREVIEWS;
+                break;
+        }
+
         // We check if the app is running, and that the # of windows is > 0 in
         // case we use workspace isolation.
         let windows = this.getInterestingWindows();
