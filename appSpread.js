@@ -15,7 +15,8 @@ var AppSpread = class AppSpread {
         this.windows = [];
 
         // fail early and do nothing, if mandatory gnome shell functions are missing
-        if (!Workspace?.Workspace?.prototype._isOverviewWindow ||
+        if (Main.overview.isDummy ||
+            !Workspace?.Workspace?.prototype._isOverviewWindow ||
             !WorkspaceThumbnail?.WorkspaceThumbnail?.prototype._isOverviewWindow) {
             log('Dash to dock: Unable to temporarily replace shell functions for app spread - using previews instead');
             this.supported = false;
