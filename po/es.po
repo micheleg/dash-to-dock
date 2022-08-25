@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-03-06 01:57-0600\n"
-"PO-Revision-Date: 2020-03-23 11:25+0100\n"
-"Last-Translator: Adolfo Jayme Barrientos <fitojb@ubuntu.com>\n"
+"PO-Revision-Date: 2022-08-25 10:00+0100\n"
+"Last-Translator: David Astillero Pérez <dastillero@gmail.com>\n"
 "Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -508,6 +508,38 @@ msgstr "Mostrar el icono Papelera"
 #: Settings.ui.h:109
 msgid "Show mounted volumes and devices"
 msgstr "Mostrar los dispositivos montados"
+
+#: Settings.ui.h:115
+msgid "Always on top"
+msgstr "Siempre en primer plano"
+
+#: Settings.ui.h:116
+msgid "Show pinned applications"
+msgstr "Mostrar aplicaciones fijadas"
+
+#: Settings.ui.h:117
+msgid "Show volumes and devices"
+msgstr "Mostrar volúmenes y dispositivos"
+
+#: Settings.ui.h:118
+msgid "Only if mounted"
+msgstr "Sólo montados"
+
+#: Settings.ui.h:119
+msgid "Include network volumes"
+msgstr "Incluir volúmenes de red"
+
+#: Settings.ui.h:120
+msgid "Focus, minimize or show previews"
+msgstr "Focalizar, minimizar o mostrar previsualizaciones"
+
+#: Settings.ui.h:121
+msgid "Show overview on startup"
+msgstr "Mostrar visión general al inicializar"
+
+#: Settings.ui.h:122
+msgid "Apply glossy effect."
+msgstr "Aplicar efecto brillo."
 
 #: appIcons.js:1148
 #, javascript-format
