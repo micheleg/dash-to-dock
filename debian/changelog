@@ -1,3 +1,10 @@
+gnome-shell-extension-ubuntu-dock (72ubuntu4) UNRELEASED; urgency=medium
+
+  * docking: Check for corners availability using standard checks
+  * docking: Do not try to override removed old methods
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 25 Aug 2022 02:53:40 +0200
+
 gnome-shell-extension-ubuntu-dock (72ubuntu3) kinetic; urgency=medium
 
   [ Alexandru Cheltuitor ]
