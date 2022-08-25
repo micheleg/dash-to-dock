@@ -1,5 +1,7 @@
 /* exported AppSpread */
 
+const { Atk, Clutter } = imports.gi;
+
 const Main = imports.ui.main;
 const SearchController = imports.ui.searchController;
 const Workspace = imports.ui.workspace;
@@ -25,6 +27,7 @@ var AppSpread = class AppSpread {
 
         this._signalHandlers = new Utils.GlobalSignalsHandler();
         this._methodInjections = new Utils.InjectionsHandler();
+        this._vfuncInjections = new Utils.VFuncInjectionsHandler();
     }
 
     get isInAppSpread() {
@@ -35,6 +38,7 @@ var AppSpread = class AppSpread {
         this._hideAppSpread();
         this._signalHandlers.destroy();
         this._methodInjections.destroy();
+        this._vfuncInjections.destroy();
     }
 
     toggle(app) {
@@ -69,6 +73,11 @@ var AppSpread = class AppSpread {
         }
     }
 
+    _restoreDefaultOverview() {
+        this._hideAppSpread();
+        this._restoreDefaultWindows();
+    }
+
     _showAppSpread(app) {
         if (this.isInAppSpread)
             return;
@@ -100,11 +109,43 @@ var AppSpread = class AppSpread {
             }
         ]);
 
+        const activitiesButton = Main.panel.statusArea?.activities;
+
+        if (activitiesButton) {
+            this._signalHandlers.add(Main.overview, 'showing', () => {
+                activitiesButton.remove_style_pseudo_class('overview');
+                activitiesButton.remove_accessible_state(Atk.StateType.CHECKED);
+            });
+
+            this._vfuncInjections.add([
+                activitiesButton.constructor.prototype,
+                'event',
+                function (event) {
+                    if (event.type() == Clutter.EventType.TOUCH_END ||
+                        event.type() == Clutter.EventType.BUTTON_RELEASE) {
+                        if (Main.overview.shouldToggleByCornerOrButton())
+                            appSpread._restoreDefaultOverview();
+                    }
+                    return Clutter.EVENT_PROPAGATE;
+                }
+            ],
+            [
+                activitiesButton.constructor.prototype,
+                'key_release_event',
+                function (keyEvent) {
+                    const { keyval } = keyEvent;
+                    if (keyval == Clutter.KEY_Return || keyval == Clutter.KEY_space) {
+                        if (Main.overview.shouldToggleByCornerOrButton())
+                            appSpread._restoreDefaultOverview();
+                    }
+                    return Clutter.EVENT_PROPAGATE;
+                }
+            ]);
+        }
+
         this._signalHandlers.add(Main.overview.dash.showAppsButton, 'notify::checked', () => {
-            if (Main.overview.dash.showAppsButton.checked) {
-                this._hideAppSpread();
-                this._restoreDefaultWindows();
-            }
+            if (Main.overview.dash.showAppsButton.checked)
+                this._restoreDefaultOverview();
         });
 
         // If closing windows in AppSpread, and only one window left:
@@ -125,11 +166,17 @@ var AppSpread = class AppSpread {
         if (!this.isInAppSpread)
             return;
 
+        if (Main.overview.visible) {
+            Main.panel.statusArea?.activities.add_style_pseudo_class('overview');
+            Main.panel.statusArea?.activities.add_accessible_state(Atk.StateType.CHECKED);
+        }
+
         // Restore original behaviour
         this.app = null;
         this._enableSearch();
         this._methodInjections.clear();
         this._signalHandlers.clear();
+        this._vfuncInjections.clear();
 
         // Check reason for leaving AppSpread was closing app windows and only one window left...
         if (this.windows.length === 1)
