@@ -529,7 +529,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                     const isClickedIconFocusedApp = this.app === tracker.focus_app;
                     if (isClickedIconFocusedApp) {
                         shouldHideOverview = false;
-                        Docking.DockManager.getDefault().appSpread.toggle(windows);
+                        Docking.DockManager.getDefault().appSpread.toggle(this.app);
                     } else {
                         // Clicked on another app or all app windows are minimized -> focus that
                         Main.activateWindow(windows[0]);
@@ -1259,7 +1259,7 @@ function getInterestingWindows(windows, monitorIndex) {
         });
     }
 
-    if (settings.isolateMonitors) {
+    if (settings.isolateMonitors && monitorIndex >= 0) {
         windows = windows.filter(function(w) {
             return w.get_monitor() === monitorIndex;
         });
