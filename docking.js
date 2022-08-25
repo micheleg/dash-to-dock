@@ -27,6 +27,7 @@ const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
+const AppSpread = Me.imports.appSpread;
 const Utils = Me.imports.utils;
 const Intellihide = Me.imports.intellihide;
 const Theming = Me.imports.theming;
@@ -1614,6 +1615,7 @@ var DockManager = class DashToDock_DockManager {
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass();
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
+        this._appSpread = new AppSpread.AppSpread();
 
         if (this._discreteGpuAvailable === undefined) {
             const updateDiscreteGpuAvailable = () => {
@@ -1698,6 +1700,10 @@ var DockManager = class DashToDock_DockManager {
 
     get discreteGpuAvailable() {
         return AppDisplay.discreteGpuAvailable || this._discreteGpuAvailable;
+    }
+
+    get appSpread() {
+        return this._appSpread;
     }
 
     getDockByMonitor(monitorIndex) {
