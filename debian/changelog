@@ -1,3 +1,9 @@
+gnome-shell-extension-ubuntu-dock (72ubuntu5) kinetic; urgency=medium
+
+  * docking: Fix syntax to please eslint
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 25 Aug 2022 03:09:27 +0200
+
 gnome-shell-extension-ubuntu-dock (72ubuntu4) kinetic; urgency=medium
 
   * docking: Check for corners availability using standard checks
