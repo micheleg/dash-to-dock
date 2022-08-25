@@ -6,11 +6,12 @@ const Workspace = imports.ui.workspace;
 const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const AppIcons = Me.imports.appIcons;
 const Utils = Me.imports.utils;
 
 var AppSpread = class AppSpread {
     constructor() {
-        this.isInAppSpread = false;
+        this.app = null;
         this.supported = true;
         this.windows = [];
 
@@ -26,34 +27,43 @@ var AppSpread = class AppSpread {
         this._methodInjections = new Utils.InjectionsHandler();
     }
 
+    get isInAppSpread() {
+        return !!this.app;
+    }
+
     destroy() {
         this._hideAppSpread();
         this._signalHandlers.destroy();
         this._methodInjections.destroy();
     }
 
-    toggle(windows) {
-        if (Main.overview._shown) {
+    toggle(app) {
+        const newApp = this.app !== app;
+        if (this.app)
             Main.overview.hide(); // also triggers hook 'hidden'
-        } else {
-            this._showAppSpread(windows);
-        }
+
+        if (app && newApp)
+            this._showAppSpread(app);
     }
 
-    _showAppSpread(windows) {
+    _updateWindows() {
+        this.windows = AppIcons.getInterestingWindows(this.app.get_windows(), -1);
+    }
+
+    _showAppSpread(app) {
         if (this.isInAppSpread)
             return;
 
         // Checked in overview "hide" event handler _hideAppSpread
-        this.isInAppSpread = true;
-        this.windows = windows;
-        const appSpread = this;
+        this.app = app;
+        this._updateWindows();
 
         // we need to hook into overview 'hidden' like this, in case app spread
         // overview is hidden by choosing another app it should then do its
         // cleanup too
         this._signalHandlers.add(Main.overview, 'hidden', () => this._hideAppSpread());
 
+        const appSpread = this;
         this._methodInjections.add([
             // Filter workspaces to only show current app windows
             Workspace.Workspace.prototype, '_isOverviewWindow',
@@ -73,12 +83,10 @@ var AppSpread = class AppSpread {
 
         // If closing windows in AppSpread, and only one window left:
         // exit app spread and focus remaining window (handled in _hideAppSpread)
-        this._signalHandlers.add(global.window_manager, 'destroy', (_, windowActor) => {
-            const index = appSpread.windows.indexOf(windowActor.metaWindow);
-            if (index > -1)
-                appSpread.windows.splice(index, 1);
+        this._signalHandlers.add(this.app, 'windows-changed', () => {
+            this._updateWindows();
 
-            if (appSpread.windows.length <= 1)
+            if (this.windows.length <= 1)
                 Main.overview.hide();
         });
 
@@ -92,7 +100,7 @@ var AppSpread = class AppSpread {
             return;
 
         // Restore original behaviour
-        this.isInAppSpread = false;
+        this.app = null;
         this._enableSearch();
         this._methodInjections.clear();
         this._signalHandlers.clear();
