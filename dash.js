@@ -29,6 +29,11 @@ const DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME;
 const DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
 const DASH_VISIBILITY_TIMEOUT = 3;
 
+const Labels = Object.freeze({
+    SHOW_MOUNTS: Symbol('show-mounts'),
+    FIRST_LAST_CHILD_WORKAROUND: Symbol('first-last-child-workaround'),
+});
+
 /**
  * Extend DashItemContainer
  *
@@ -777,9 +782,9 @@ var DockDash = GObject.registerClass({
             });
         }
 
-        this._signalsHandler.removeWithLabel('show-mounts');
+        this._signalsHandler.removeWithLabel(Labels.SHOW_MOUNTS);
         if (dockManager.removables) {
-            this._signalsHandler.addWithLabel('show-mounts',
+            this._signalsHandler.addWithLabel(Labels.SHOW_MOUNTS,
                 dockManager.removables, 'changed', this._queueRedisplay.bind(this));
             dockManager.removables.getApps().forEach(removable => {
                 if (!newApps.includes(removable))
@@ -1026,7 +1031,7 @@ var DockDash = GObject.registerClass({
 
     updateShowAppsButton() {
         const notifiedProperties = [];
-        this._signalsHandler.addWithLabel('first-last-child-workaround',
+        this._signalsHandler.addWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND,
             this._dashContainer, 'notify',
             (_obj, pspec) => notifiedProperties.push(pspec.name));
 
@@ -1036,7 +1041,7 @@ var DockDash = GObject.registerClass({
             this._dashContainer.set_child_above_sibling(this._showAppsIcon, null);
         }
 
-        this._signalsHandler.removeWithLabel('first-last-child-workaround');
+        this._signalsHandler.removeWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND);
 
         // This is indeed ugly, but we need to ensure that the last and first
         // visible widgets are re-computed by St, that is buggy because of a
