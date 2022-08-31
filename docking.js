@@ -12,6 +12,7 @@ const Params = imports.misc.params;
 const Main = imports.ui.main;
 const AppDisplay = imports.ui.appDisplay;
 const Dash = imports.ui.dash;
+const Environment = imports.ui.environment;
 const IconGrid = imports.ui.iconGrid;
 const Overview = imports.ui.overview;
 const OverviewControls = imports.ui.overviewControls;
@@ -38,6 +39,7 @@ const FileManager1API = Me.imports.fileManager1API;
 const DesktopIconsIntegration = Me.imports.desktopIconsIntegration;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
+const ICON_ANIMATOR_DURATION = 3000;
 
 var State = {
     HIDDEN:  0,
@@ -2476,10 +2478,14 @@ var IconAnimator = class DashToDock_IconAnimator {
             dance: [],
         };
         this._timeline = new Clutter.Timeline({
-            duration: 3000,
+            duration: Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION),
             repeat_count: -1,
             actor
         });
+
+        this._updateSettings();
+        this._settingsChangedId = St.Settings.get().connect('notify',
+            () => this._updateSettings());
 
         this._timeline.connect('new-frame', () => {
             const progress = this._timeline.get_progress();
@@ -2491,7 +2497,12 @@ var IconAnimator = class DashToDock_IconAnimator {
         });
     }
 
+    _updateSettings() {
+        this._timeline.set_duration(Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION));
+    }
+
     destroy() {
+        St.Settings.get().disconnect(this._settingsChangedId);
         this._timeline.stop();
         this._timeline = null;
         for (const name in this._animations) {
