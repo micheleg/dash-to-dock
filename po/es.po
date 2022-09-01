@@ -509,6 +509,10 @@ msgstr "Mostrar el icono Papelera"
 msgid "Show mounted volumes and devices"
 msgstr "Mostrar los dispositivos montados"
 
+#: Settings.ui.h:110
+msgid "Show dock for urgent notifications"
+msgstr "Mostrar dock si hay notificaciones urgentes"
+
 #: Settings.ui.h:115
 msgid "Always on top"
 msgstr "Siempre en primer plano"
