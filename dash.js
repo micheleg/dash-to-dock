@@ -165,7 +165,8 @@ var DockDash = GObject.registerClass({
         this._dashContainer.add_actor(this._scrollView);
         this._scrollView.add_actor(this._box);
 
-        this._showAppsIcon = new AppIcons.DockShowAppsIcon();
+        this._showAppsIcon = new AppIcons.DockShowAppsIconContainer();
+
         this._showAppsIcon.show(false);
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._showAppsIcon.x_expand = false;
@@ -173,7 +174,7 @@ var DockDash = GObject.registerClass({
         if (!this._isHorizontal)
             this._showAppsIcon.y_align = Clutter.ActorAlign.START;
         this._hookUpLabel(this._showAppsIcon);
-        this._showAppsIcon.connect('menu-state-changed', (_icon, opened) => {
+        this._showAppsIcon.appIcon.connect('menu-state-changed', (o, opened) => {
             this._itemMenuStateChanged(this._showAppsIcon, opened);
         });
 
