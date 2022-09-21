@@ -91,6 +91,10 @@ $osd_fg_color: #eeeeec;
                     &.focused .overview-icon {
                         background-color: rgba(238, 238, 236, 0.2);
                     }
+
+                    .app-well-app-running-dot {
+                        margin-bottom: 2px;
+                    }
                 }
 
                 > StButton {
