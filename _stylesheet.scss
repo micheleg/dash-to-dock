@@ -198,6 +198,10 @@ $osd_fg_color: #eeeeec;
     }
 }
 
+.dash-label {
+    margin: $dash_padding;
+}
+
 @each $side in bottom, top, left, right {
     #dashtodockContainer.extended.#{$side} {
         #dash {
