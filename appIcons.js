@@ -1301,9 +1301,12 @@ var DockShowAppsIcon = GObject.registerClass({
             this._removeMenuTimeout.bind(this));
 
         this.reactive = true;
-        this.toggleButton.popupMenu = () => this.popupMenu.call(this);
-        this.toggleButton._setPopupTimeout = () => this._setPopupTimeout.call(this);
-        this.toggleButton._removeMenuTimeout = () => this._removeMenuTimeout.call(this);
+        this.toggleButton.popupMenu = (...args) =>
+            this.popupMenu.call(this, ...args);
+        this.toggleButton._setPopupTimeout = (...args) =>
+            this._setPopupTimeout.call(this, ...args);
+        this.toggleButton._removeMenuTimeout = (...args) =>
+            this._removeMenuTimeout.call(this, ...args);
 
         this._menu = null;
         this._menuManager = new PopupMenu.PopupMenuManager(this);
