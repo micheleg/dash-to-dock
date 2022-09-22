@@ -19,6 +19,7 @@ $dash_border_radius: $modal_radius * 1.5;
 $dock_start_margin: $dash_bottom_margin;
 $dock_side_margin: $dock_start_margin / 4;
 $dock_fixed_inner_margin: $dock_side_margin;
+$dock_icons_distance: 4px;
 
 // Adapted to $dock_bottom_margin
 
@@ -77,6 +78,27 @@ $osd_fg_color: #eeeeec;
             }
 
             .dash-item-container {
+                /* Disable all margins defined upstream, we handle them here */
+                > * {margin: 0;}
+
+                @if is_horizontal($side) {
+                    margin: 0 $dock_icons_distance / 2;
+                    &:ltr:first-child, &:rtl:last-child {
+                        margin-left: 0;
+                    }
+                    &:ltr:last-child, &:rtl:first-child {
+                        margin-right: 0;
+                    }
+                } @else {
+                    margin: $dock_icons_distance / 2 0;
+                    &:first-child {
+                        margin-top: 0;
+                    }
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+                }
+
                 .app-well-app,
                 .show-apps {
                     padding: $dash_spacing;
