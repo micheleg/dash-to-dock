@@ -180,6 +180,15 @@ $osd_fg_color: #eeeeec;
                         }
                     }
                 }
+
+                .dash-separator {
+                    @if is_horizontal($side) {
+                        margin: 0 shrink($base_margin);
+                    } @else {
+                        margin: shrink($base_margin) 0;
+                    }
+                    margin-#{$side}: shrink($dash_padding);
+                }
             }
 
             &.fixed {
