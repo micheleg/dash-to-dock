@@ -47,6 +47,34 @@ $dock_icons_distance: 4px;
     );
 }
 
+// minor-dimension is vertical space in horizontal mode and
+// horizontal space in vertical mode.
+@mixin set-internal-children-property($side, $property,
+                                      $minor_dimension,
+                                      $major_dimension: $minor_dimension) {
+    @if $property != margin and $property != padding {
+        @error "Property " + $property + " not supported!";
+    }
+
+    @if is_horizontal($side) {
+        #{$property}: $minor_dimension $major_dimension;
+        &:ltr:first-child, &:rtl:last-child {
+            #{$property}-left: 0;
+        }
+        &:ltr:last-child, &:rtl:first-child {
+            #{$property}-right: 0;
+        }
+    } @else {
+        #{$property}: $major_dimension $minor_dimension;
+        &:first-child {
+            #{$property}-top: 0;
+        }
+        &:last-child {
+            #{$property}-bottom: 0;
+        }
+    }
+}
+
 $osd_fg_color: #eeeeec;
 
 @each $side in bottom, top, left, right {
@@ -87,45 +115,14 @@ $osd_fg_color: #eeeeec;
                 /* Disable all margins defined upstream, we handle them here */
                 > * {margin: 0;}
 
-                @if is_horizontal($side) {
-                    margin: 0 $dock_icons_distance / 2;
-                    &:ltr:first-child, &:rtl:last-child {
-                        margin-left: 0;
-                    }
-                    &:ltr:last-child, &:rtl:first-child {
-                        margin-right: 0;
-                    }
-                } @else {
-                    margin: $dock_icons_distance / 2 0;
-                    &:first-child {
-                        margin-top: 0;
-                    }
-                    &:last-child {
-                        margin-bottom: 0;
-                    }
-                }
+                @include set-internal-children-property($side, margin,
+                    0, $dock_icons_distance / 2);
 
                 .app-well-app,
                 .show-apps {
-                    padding: $dash_spacing;
+                    @include set-internal-children-property($side, padding, $dash_spacing);
                     padding-#{$side}: $dash_padding + $dock_side_margin;
                     padding-#{opposite($side)}: $dash_padding;
-
-                    @if is_horizontal($side) {
-                        &:ltr:first-child, &:rtl:last-child {
-                            padding-left: 0;
-                        }
-                        &:ltr:last-child, &:rtl:first-child {
-                            padding-right: 0;
-                        }
-                    } @else {
-                        &:first-child {
-                            padding-top: 0;
-                        }
-                        &:last-child {
-                            padding-bottom: 0;
-                        }
-                    }
                 }
 
                 .app-well-app {
@@ -166,25 +163,9 @@ $osd_fg_color: #eeeeec;
                 .dash-item-container {
                     .app-well-app,
                     .show-apps {
-                        padding: shrink($dash_spacing);
-                        padding-#{$side}: shrink($dash_padding) + $dock_side_margin;
+                        @include set-internal-children-property($side, padding, shrink($dash_spacing));
+                        padding-#{$side}: $dock_side_margin + shrink($dash_padding);
                         padding-#{opposite($side)}: shrink($dash_padding);
-
-                        @if is_horizontal($side) {
-                            &:ltr:first-child, &:rtl:last-child {
-                                padding-left: 0;
-                            }
-                            &:ltr:last-child, &:rtl:first-child {
-                                padding-right: 0;
-                            }
-                        } @else {
-                            &:first-child {
-                                padding-top: 0;
-                            }
-                            &:last-child {
-                                padding-bottom: 0;
-                            }
-                        }
                     }
                 }
 
