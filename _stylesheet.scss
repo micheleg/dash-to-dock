@@ -104,6 +104,22 @@ $osd_fg_color: #eeeeec;
                     padding: $dash_spacing;
                     padding-#{$side}: $dash_padding + $dock_side_margin;
                     padding-#{opposite($side)}: $dash_padding;
+
+                    @if is_horizontal($side) {
+                        &:ltr:first-child, &:rtl:last-child {
+                            padding-left: 0;
+                        }
+                        &:ltr:last-child, &:rtl:first-child {
+                            padding-right: 0;
+                        }
+                    } @else {
+                        &:first-child {
+                            padding-top: 0;
+                        }
+                        &:last-child {
+                            padding-bottom: 0;
+                        }
+                    }
                 }
 
                 .app-well-app {
@@ -136,6 +152,8 @@ $osd_fg_color: #eeeeec;
 
                 #dashtodockDashContainer {
                     padding: shrink($dash_padding);
+                    padding-#{$side}: 0;
+                    padding-#{opposite($side)}: 0;
                 }
 
                 .dash-item-container {
@@ -144,6 +162,22 @@ $osd_fg_color: #eeeeec;
                         padding: shrink($dash_spacing);
                         padding-#{$side}: shrink($dash_padding) + $dock_side_margin;
                         padding-#{opposite($side)}: shrink($dash_padding);
+
+                        @if is_horizontal($side) {
+                            &:ltr:first-child, &:rtl:last-child {
+                                padding-left: 0;
+                            }
+                            &:ltr:last-child, &:rtl:first-child {
+                                padding-right: 0;
+                            }
+                        } @else {
+                            &:first-child {
+                                padding-top: 0;
+                            }
+                            &:last-child {
+                                padding-bottom: 0;
+                            }
+                        }
                     }
                 }
             }
