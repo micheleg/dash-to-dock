@@ -209,14 +209,13 @@ var DockedDash = GObject.registerClass({
 }, class DashToDock extends St.Bin {
     _init(params) {
         this._position = Utils.getPosition();
-        const positionStyleClass = ['top', 'right', 'bottom', 'left'];
 
         // This is the centering actor
         super._init({
             ...params,
             name: 'dashtodockContainer',
             reactive: false,
-            style_class: positionStyleClass[this._position],
+            style_class: Theming.PositionStyleClass[this._position],
         });
 
         if (this.monitorIndex === undefined) {
