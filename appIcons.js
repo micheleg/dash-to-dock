@@ -38,6 +38,7 @@ const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
 const AppIconIndicators = Me.imports.appIconIndicators;
 const DbusmenuUtils = Me.imports.dbusmenuUtils;
+const Theming = Me.imports.theming;
 
 const tracker = Shell.WindowTracker.get_default();
 
@@ -1289,7 +1290,7 @@ var DockShowAppsIcon = GObject.registerClass({
     }
 }
 , class DockShowAppsIcon extends Dash.ShowAppsIcon {
-    _init() {
+    _init(position) {
         super._init();
 
         // Re-use appIcon methods
@@ -1307,6 +1308,10 @@ var DockShowAppsIcon = GObject.registerClass({
             this._setPopupTimeout.call(this, ...args);
         this.toggleButton._removeMenuTimeout = (...args) =>
             this._removeMenuTimeout.call(this, ...args);
+
+        this.label?.add_style_class_name(Theming.PositionStyleClass[position]);
+        if (Docking.DockManager.settings.customThemeShrink)
+            this.label?.add_style_class_name('shrink');
 
         this._menu = null;
         this._menuManager = new PopupMenu.PopupMenuManager(this);
