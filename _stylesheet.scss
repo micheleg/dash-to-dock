@@ -83,6 +83,48 @@ $dock_icons_distance: 4px;
     }
 }
 
+@mixin padded-edge-child($chid, $side, $padding) {
+    @if $chid == first {
+        @if is_horizontal($side) {
+            padding-left: $padding;
+        } @else {
+            padding-top: $padding;
+        }
+    } @else if $chid == last {
+        @if is_horizontal($side) {
+            padding-right: $padding;
+        } @else {
+            padding-bottom: $padding;
+        }
+    } @else {
+        @error "Invalid rule";
+    }
+}
+
+// In extended mode we need to use the first and last .dash-item-container's
+// to apply the padding on the dock, to ensure that the actual first or last
+// child show-apps item will actually include the padding area so that it will
+// be clickable up to the dock edge, and make Fitts happy.
+// I don't think the same should happen for normal icons, so in the other side
+// the padding will be applied via the scrolled area, given we can't get the
+// parent of the first/last app-well-app icon to apply a rule there.
+@mixin padded-dash-edge-items($side, $padding) {
+    @each $child_pos in first, last {
+        > :#{$child_pos}-child {
+            // Use this instead of #dashtodockDashScrollview rule to apply the
+            // padding via the last app-icon item
+            //.dash-item-container:#{$child_pos}-child .app-well-app,
+            .show-apps {
+                @include padded-edge-child($child_pos, $side, $padding);
+            }
+        }
+
+        #dashtodockDashScrollview:#{$child_pos}-child {
+            @include padded-edge-child($child_pos, $side, $padding);
+        }
+    }
+}
+
 $osd_fg_color: #eeeeec;
 
 $dock_sides: [bottom, top, left, right];
@@ -209,49 +251,6 @@ $dock_style_modes: [null, shrink];
             }
 
             @include dock-container-style($side, $style_mode, $parameters);
-        }
-    }
-}
-
-@mixin padded-edge-child($chid, $side, $padding) {
-    @if $chid == first {
-        @if is_horizontal($side) {
-            padding-left: $padding;
-        } @else {
-            padding-top: $padding;
-        }
-    } @else if $chid == last {
-        @if is_horizontal($side) {
-            padding-right: $padding;
-        } @else {
-            padding-bottom: $padding;
-        }
-    } @else {
-        @error "Invalid rule";
-    }
-}
-
-/* In extended mode we need to use the first and last .dash-item-container's
- * to apply the padding on the dock, to ensure that the actual first or last
- * child show-apps item will actually include the padding area so that it will
- * be clickable up to the dock edge, and make Fitts happy.
- * I don't think the same should happen for normal icons, so in the other side
- * the padding will be applied via the scrolled area, given we can't get the
- * parent of the first/last app-well-app icon to apply a rule there.
- */
-@mixin padded-dash-edge-items($side, $padding) {
-    @each $child_pos in first, last {
-        > :#{$child_pos}-child {
-            /* Use this instead of #dashtodockDashScrollview rule to apply the
-             * padding via the last app-icon item */
-            // .dash-item-container:#{$child_pos}-child .app-well-app,
-            .show-apps {
-                @include padded-edge-child($child_pos, $side, $padding);
-            }
-        }
-
-        #dashtodockDashScrollview:#{$child_pos}-child {
-            @include padded-edge-child($child_pos, $side, $padding);
         }
     }
 }
