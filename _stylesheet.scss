@@ -59,6 +59,8 @@ $osd_fg_color: #eeeeec;
                 margin: 0;
                 margin-#{$side}: $dock_side_margin;
                 padding: 0;
+                border-radius: $dash_border_radius;
+                spacing: $base_padding;
             }
 
             .dash-separator {
@@ -148,6 +150,7 @@ $osd_fg_color: #eeeeec;
                     margin-#{$side}: $dock_side_margin;
                     padding: shrink($dash_padding);
                     border-radius: shrink_light($dash_border_radius);
+                    spacing: shrink($base_padding);
                 }
 
                 #dashtodockDashContainer {
