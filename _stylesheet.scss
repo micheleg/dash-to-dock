@@ -35,8 +35,16 @@ $dock_icons_distance: 4px;
     @return $side == top or $side == bottom;
 }
 
+@function checked-map-get($map, $key) {
+    $value: map-get($map, $key);
+    @if ($value == null) {
+        @error 'Key ' + $key + ' not found';
+    }
+    @return $value;
+}
+
 @function opposite($val) {
-    @return map-get(
+    @return checked-map-get(
         (
             left: right,
             right: left,
@@ -77,36 +85,48 @@ $dock_icons_distance: 4px;
 
 $osd_fg_color: #eeeeec;
 
-@each $side in bottom, top, left, right {
-    #dashtodockContainer.#{$side} {
+$dock_sides: [bottom, top, left, right];
+$dock_style_modes: [null, shrink];
+
+@mixin dock-container-style($side, $style_mode, $parameters) {
+    $style_selector: if($style_mode == null, null, '.' + $style_mode);
+    $base_padding: checked-map-get($parameters, base_padding);
+    $spacing: checked-map-get($parameters, spacing);
+    $border_radius: checked-map-get($parameters, border_radius);
+    $side_margin: checked-map-get($parameters, side_margin);
+    $padding: checked-map-get($parameters, padding);
+    $margin: checked-map-get($parameters, margin);
+    $fixed_inner_margin: checked-map-get($parameters, fixed_inner_margin);
+
+    &#{$style_selector} {
         #dash {
             margin: 0px;
             padding: 0px;
 
             .dash-background {
                 margin: 0;
-                margin-#{$side}: $dock_side_margin;
+                margin-#{$side}: $side_margin;
                 padding: 0;
-                border-radius: $dash_border_radius;
+                border-radius: $border_radius;
                 spacing: $base_padding;
             }
 
             .dash-separator {
                 background-color: transparentize($osd_fg_color, 0.7);
                 @if is_horizontal($side) {
-                    margin: 0 $base_margin;
+                    margin: 0 $margin;
                     width: 1px;
                     height: 0;
                 } @else {
                     width: 0;
                     height: 1px;
-                    margin: $base_margin 0;
+                    margin: $margin 0;
                 }
-                margin-#{$side}: $dock_side_margin;
+                margin-#{$side}: $side_margin;
             }
 
             #dashtodockDashContainer {
-                padding: $dash_padding;
+                padding: $padding;
                 padding-#{$side}: 0;
                 padding-#{opposite($side)}: 0;
             }
@@ -120,9 +140,9 @@ $osd_fg_color: #eeeeec;
 
                 .app-well-app,
                 .show-apps {
-                    @include set-internal-children-property($side, padding, $dash_spacing);
-                    padding-#{$side}: $dash_padding + $dock_side_margin;
-                    padding-#{opposite($side)}: $dash_padding;
+                    @include set-internal-children-property($side, padding, $spacing);
+                    padding-#{$side}: $padding + $side_margin;
+                    padding-#{opposite($side)}: $padding;
                 }
 
                 .app-well-app {
@@ -145,72 +165,50 @@ $osd_fg_color: #eeeeec;
             }
         }
 
-        &.shrink {
-            $shrunk_dash_padding: shrink($dash_padding);
-
+        &.fixed {
             #dash {
                 .dash-background {
-                    margin-#{$side}: $dock_side_margin;
-                    padding: $shrunk_dash_padding;
-                    border-radius: shrink_light($dash_border_radius);
-                    spacing: shrink($base_padding);
-                }
-
-                #dashtodockDashContainer {
-                    padding: $shrunk_dash_padding;
-                    padding-#{$side}: 0;
-                    padding-#{opposite($side)}: 0;
+                    margin-#{opposite($side)}: $fixed_inner_margin;
                 }
 
                 .dash-item-container {
+
                     .app-well-app,
                     .show-apps {
-                        @include set-internal-children-property($side, padding, shrink($dash_spacing));
-                        padding-#{$side}: $dock_side_margin + $shrunk_dash_padding;
-                        padding-#{opposite($side)}: $shrunk_dash_padding;
-                    }
-                }
-
-                .dash-separator {
-                    @if is_horizontal($side) {
-                        margin: 0 shrink($base_margin);
-                    } @else {
-                        margin: shrink($base_margin) 0;
-                    }
-                    margin-#{$side}: $dock_side_margin + $shrunk_dash_padding;
-                    margin-#{opposite($side)}: $shrunk_dash_padding;
-                }
-            }
-
-            &.fixed {
-                #dash {
-                    .dash-background {
-                        margin-#{opposite($side)}: shrink($dock_fixed_inner_margin);
-                    }
-
-                    .dash-item-container {
-                        .app-well-app,
-                        .show-apps {
-                            padding-#{opposite($side)}: shrink($dash_padding + $dock_fixed_inner_margin);
-                        }
+                        padding-#{opposite($side)}: $padding + $fixed_inner_margin;
                     }
                 }
             }
         }
+    }
+}
 
-        &.fixed {
-            #dash {
-                .dash-background {
-                    margin-#{opposite($side)}: $dock_fixed_inner_margin;
-                }
+@each $side in $dock_sides {
+    @each $style_mode in $dock_style_modes {
+        #dashtodockContainer.#{$side} {
+            $parameters: (
+                base_padding: $base_padding,
+                spacing: $dash_spacing,
+                border_radius: $dash_border_radius,
+                side_margin: $dock_side_margin,
+                padding: $dash_padding,
+                margin: $base_margin,
+                fixed_inner_margin: $dock_fixed_inner_margin,
+            );
 
-                .dash-item-container {
-                    .app-well-app,
-                    .show-apps {
-                        padding-#{opposite($side)}: $dash_padding + $dock_fixed_inner_margin;
-                    }
-                }
+            @if ($style_mode == shrink) {
+                $parameters: map-merge($parameters, (
+                    base_padding: shrink($base_padding),
+                    spacing: shrink($dash_spacing),
+                    border_radius: shrink_light($dash_border_radius),
+                    side_margin: /* not shrunk */ $dock_side_margin,
+                    padding: shrink($dash_padding),
+                    margin: shrink($base_margin),
+                    fixed_inner_margin: shrink($dock_fixed_inner_margin),
+                ));
             }
+
+            @include dock-container-style($side, $style_mode, $parameters);
         }
     }
 }
@@ -262,7 +260,7 @@ $osd_fg_color: #eeeeec;
     margin: $dash_padding;
 }
 
-@each $side in bottom, top, left, right {
+@each $side in $dock_sides {
     #dashtodockContainer.extended.#{$side} {
         #dash {
             .dash-background {
@@ -292,7 +290,8 @@ $osd_fg_color: #eeeeec;
                 #dashtodockDashContainer {
                     padding: 0;
 
-                    @include padded-dash-edge-items($side, $dash_edge_items_padding);
+                    @include padded-dash-edge-items($side,
+                        shrink_light($dash_edge_items_padding));
                 }
 
                 .dash-item-container {
