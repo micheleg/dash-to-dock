@@ -146,16 +146,18 @@ $osd_fg_color: #eeeeec;
         }
 
         &.shrink {
+            $shrunk_dash_padding: shrink($dash_padding);
+
             #dash {
                 .dash-background {
                     margin-#{$side}: $dock_side_margin;
-                    padding: shrink($dash_padding);
+                    padding: $shrunk_dash_padding;
                     border-radius: shrink_light($dash_border_radius);
                     spacing: shrink($base_padding);
                 }
 
                 #dashtodockDashContainer {
-                    padding: shrink($dash_padding);
+                    padding: $shrunk_dash_padding;
                     padding-#{$side}: 0;
                     padding-#{opposite($side)}: 0;
                 }
@@ -164,8 +166,8 @@ $osd_fg_color: #eeeeec;
                     .app-well-app,
                     .show-apps {
                         @include set-internal-children-property($side, padding, shrink($dash_spacing));
-                        padding-#{$side}: $dock_side_margin + shrink($dash_padding);
-                        padding-#{opposite($side)}: shrink($dash_padding);
+                        padding-#{$side}: $dock_side_margin + $shrunk_dash_padding;
+                        padding-#{opposite($side)}: $shrunk_dash_padding;
                     }
                 }
 
@@ -175,8 +177,8 @@ $osd_fg_color: #eeeeec;
                     } @else {
                         margin: shrink($base_margin) 0;
                     }
-                    margin-#{$side}: $dock_side_margin + shrink($dash_padding);
-                    margin-#{opposite($side)}: shrink($dash_padding);
+                    margin-#{$side}: $dock_side_margin + $shrunk_dash_padding;
+                    margin-#{opposite($side)}: $shrunk_dash_padding;
                 }
             }
 
