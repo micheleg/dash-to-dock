@@ -282,11 +282,24 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
 
             @include dock-container-style($side, $style_mode, $parameters);
         }
-    }
-}
 
-.dash-label {
-    margin: $dash_padding;
+        .dash-label.#{$side} {
+            $label_offset: if($is_shrink, shrink($dash_padding), $dash_padding);
+            $style_selector: if($is_shrink, '.shrink', null);
+
+            &#{$style_selector} {
+                @if is_horizontal($side) {
+                    margin-#{$side}: $label_offset;
+                    -x-offset: 0;
+                    -y-offset: 0;
+                } @else {
+                    margin: 0;
+                    -x-offset: $label_offset;
+                    -y-offset: 0;
+                }
+            }
+        }
+    }
 }
 
 #dashtodockContainer.top.shrink #dash .dash-background {
