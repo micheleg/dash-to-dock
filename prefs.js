@@ -204,13 +204,17 @@ var Settings = GObject.registerClass({
             this._builder.add_from_file('./Settings.ui');
         }
 
-        this.widget = new Gtk.ScrolledWindow({
-            hscrollbar_policy: Gtk.PolicyType.NEVER,
-            vscrollbar_policy: (SHELL_VERSION >= 42) ?
-                Gtk.PolicyType.NEVER : Gtk.PolicyType.AUTOMATIC,
-        });
         this._notebook = this._builder.get_object('settings_notebook');
-        this.widget.set_child(this._notebook);
+
+        if (SHELL_VERSION >= 42) {
+            this.widget = this._notebook;
+        } else {
+            this.widget = new Gtk.ScrolledWindow({
+                hscrollbar_policy: Gtk.PolicyType.NEVER,
+                vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
+            });
+            this.widget.set_child(this._notebook);
+        }
 
         // Set a reasonable initial window height
         this.widget.connect('realize', () => {
