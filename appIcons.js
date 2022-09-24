@@ -38,11 +38,13 @@ const Utils = Me.imports.utils;
 const WindowPreview = Me.imports.windowPreview;
 const AppIconIndicators = Me.imports.appIconIndicators;
 const DbusmenuUtils = Me.imports.dbusmenuUtils;
+const Theming = Me.imports.theming;
 
 const tracker = Shell.WindowTracker.get_default();
 
 const Labels = Object.freeze({
     ISOLATE_MONITORS: Symbol('isolate-monitors'),
+    ISOLATE_WORKSPACES: Symbol('isolate-workspaces'),
     URGENT_WINDOWS: Symbol('urgent-windows'),
 });
 
@@ -137,7 +139,6 @@ var DockAbstractAppIcon = GObject.registerClass({
         // and if there are at least 2 monitors.
         if (Docking.DockManager.settings.isolateMonitors &&
             Main.layoutManager.monitors.length > 1) {
-            this._signalsHandler.removeWithLabel(Labels.ISOLATE_MONITORS);
             this._signalsHandler.addWithLabel(Labels.ISOLATE_MONITORS,
                 global.display,
                 'window-entered-monitor',
@@ -293,6 +294,13 @@ var DockAbstractAppIcon = GObject.registerClass({
         this._updateRunningState();
         this._updateFocusState();
         this._updateUrgentWindows(interestingWindows);
+
+        if (Docking.DockManager.settings.isolateWorkspaces) {
+            this._signalsHandler.removeWithLabel(Labels.ISOLATE_WORKSPACES);
+            interestingWindows.forEach(window =>
+                this._signalsHandler.addWithLabel(Labels.ISOLATE_WORKSPACES,
+                    window, 'workspace-changed', () => this._updateWindows()));
+        }
     }
 
     _updateRunningState() {
@@ -1289,58 +1297,67 @@ var DockShowAppsIcon = GObject.registerClass({
     }
 }
 , class DockShowAppsIcon extends Dash.ShowAppsIcon {
-    _init() {
+    _init(position) {
         super._init();
 
         // Re-use appIcon methods
-        let appIconPrototype = AppDisplay.AppIcon.prototype;
+        const { prototype: appIconPrototype } = AppDisplay.AppIcon;
         this.toggleButton.y_expand = false;
-        this.toggleButton.connect('popup-menu',
-            appIconPrototype._onKeyboardPopupMenu.bind(this));
-        this.toggleButton.connect('clicked',
-            this._removeMenuTimeout.bind(this));
+        this.toggleButton.connect('popup-menu', () =>
+            appIconPrototype._onKeyboardPopupMenu.call(this));
+        this.toggleButton.connect('clicked', () =>
+            this._removeMenuTimeout());
 
         this.reactive = true;
-        this.toggleButton.popupMenu = () => this.popupMenu.call(this);
-        this.toggleButton._removeMenuTimeout = () => this._removeMenuTimeout.call(this);
+        this.toggleButton.popupMenu = (...args) =>
+            this.popupMenu.call(this, ...args);
+        this.toggleButton._setPopupTimeout = (...args) =>
+            this._setPopupTimeout.call(this, ...args);
+        this.toggleButton._removeMenuTimeout = (...args) =>
+            this._removeMenuTimeout.call(this, ...args);
+
+        this.label?.add_style_class_name(Theming.PositionStyleClass[position]);
+        if (Docking.DockManager.settings.customThemeShrink)
+            this.label?.add_style_class_name('shrink');
 
         this._menu = null;
         this._menuManager = new PopupMenu.PopupMenuManager(this);
         this._menuTimeoutId = 0;
     }
 
-    vfunc_leave_event(leaveEvent)
-    {
+    vfunc_leave_event(...args) {
         return AppDisplay.AppIcon.prototype.vfunc_leave_event.call(
-            this.toggleButton, leaveEvent);
+            this.toggleButton, ...args);
     }
 
-    vfunc_button_press_event(buttonPressEvent)
-    {
+    vfunc_button_press_event(...args) {
         return AppDisplay.AppIcon.prototype.vfunc_button_press_event.call(
-            this.toggleButton, buttonPressEvent);
+            this.toggleButton, ...args);
     }
 
-    vfunc_touch_event(touchEvent)
-    {
+    vfunc_touch_event(...args) {
         return AppDisplay.AppIcon.prototype.vfunc_touch_event.call(
-            this.toggleButton, touchEvent);
+            this.toggleButton, ...args);
     }
 
-    showLabel() {
-        itemShowLabel.call(this);
+    showLabel(...args) {
+        itemShowLabel.call(this, ...args);
     }
 
-    _onMenuPoppedDown() {
-        AppDisplay.AppIcon.prototype._onMenuPoppedDown.apply(this, arguments);
+    setForcedHighlight(...args) {
+        AppDisplay.AppIcon.prototype.setForcedHighlight.call(this, ...args);
     }
 
-    _setPopupTimeout() {
-        AppDisplay.AppIcon.prototype._setPopupTimeout.apply(this, arguments);
+    _onMenuPoppedDown(...args) {
+        AppDisplay.AppIcon.prototype._onMenuPoppedDown.call(this, ...args);
     }
 
-    _removeMenuTimeout() {
-        AppDisplay.AppIcon.prototype._removeMenuTimeout.apply(this, arguments);
+    _setPopupTimeout(...args) {
+        AppDisplay.AppIcon.prototype._setPopupTimeout.call(this, ...args);
+    }
+
+    _removeMenuTimeout(...args) {
+        AppDisplay.AppIcon.prototype._removeMenuTimeout.call(this, ...args);
     }
 
     popupMenu() {

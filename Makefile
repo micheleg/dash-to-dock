@@ -1,10 +1,41 @@
 # Basic Makefile
 
 UUID = ubuntu-dock@ubuntu.com
-BASE_MODULES = extension.js metadata.json COPYING README.md
-EXTRA_MODULES = dash.js docking.js appIcons.js appIconIndicators.js fileManager1API.js launcherAPI.js locations.js windowPreview.js intellihide.js prefs.js theming.js utils.js dbusmenuUtils.js Settings.ui desktopIconsIntegration.js appSpread.js
-EXTRA_MEDIA = logo.svg glossy.svg highlight_stacked_bg.svg highlight_stacked_bg_h.svg
-TOLOCALIZE =  prefs.js appIcons.js locations.js
+BASE_MODULES = extension.js \
+               metadata.json \
+               COPYING \
+               README.md \
+               $(NULL)
+
+EXTRA_MODULES = \
+                appSpread.js \
+                dash.js \
+                docking.js \
+                appIcons.js \
+                appIconIndicators.js \
+                fileManager1API.js \
+                launcherAPI.js \
+                locations.js \
+                windowPreview.js \
+                intellihide.js \
+                prefs.js \
+                theming.js \
+                utils.js \
+                dbusmenuUtils.js \
+                Settings.ui desktopIconsIntegration.js \
+                $(NULL)
+
+EXTRA_MEDIA = logo.svg \
+              glossy.svg \
+              highlight_stacked_bg.svg \
+              highlight_stacked_bg_h.svg \
+              $(NULL)
+
+TOLOCALIZE =  prefs.js \
+              appIcons.js \
+              locations.js \
+              $(NULL)
+
 MSGSRC = $(wildcard po/*.po)
 ifeq ($(strip $(DESTDIR)),)
 	INSTALLTYPE = local

@@ -37,6 +37,13 @@ const Labels = Object.freeze({
     TRANSPARENCY: Symbol('transparency'),
 });
 
+var PositionStyleClass = Object.freeze([
+    'top',
+    'right',
+    'bottom',
+    'left',
+]);
+
 /**
  * Manage theme customization and custom theme support
  */

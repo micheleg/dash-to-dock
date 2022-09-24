@@ -1687,21 +1687,6 @@
                         </property>
                       </object>
                     </child>
-                  </object>
-                </property>
-                <child type="label_item">
-                  <placeholder/>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkFrame" id="customize_theme">
-                <property name="can_focus">0</property>
-
-                <property name="child">
-                  <object class="GtkListBox" id="listbox2">
-                    <property name="can_focus">0</property>
-                    <property name="selection_mode">none</property>
                     <child>
                       <object class="GtkListBoxRow" id="listboxrow2">
                         <property name="child">
@@ -1756,6 +1741,21 @@
                         </property>
                       </object>
                     </child>
+                  </object>
+                </property>
+                <child type="label_item">
+                  <placeholder/>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkFrame" id="customize_theme">
+                <property name="can_focus">0</property>
+
+                <property name="child">
+                  <object class="GtkListBox" id="listbox2">
+                    <property name="can_focus">0</property>
+                    <property name="selection_mode">none</property>
                     <child>
                       <object class="GtkListBoxRow" id="listboxrow3">
                         <property name="child">

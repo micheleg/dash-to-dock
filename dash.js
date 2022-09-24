@@ -23,6 +23,7 @@ const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 const AppIcons = Me.imports.appIcons;
 const Locations = Me.imports.locations;
+const Theming = Me.imports.theming;
 
 const DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
 const DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME;
@@ -42,6 +43,13 @@ const Labels = Object.freeze({
  */
 var DockDashItemContainer = GObject.registerClass(
 class DockDashItemContainer extends Dash.DashItemContainer {
+    _init(position) {
+        super._init();
+
+        this.label?.add_style_class_name(Theming.PositionStyleClass[position]);
+        if (Docking.DockManager.settings.customThemeShrink)
+            this.label?.add_style_class_name('shrink');
+    }
 
     showLabel() {
         return AppIcons.itemShowLabel.call(this);
@@ -165,7 +173,7 @@ var DockDash = GObject.registerClass({
         this._dashContainer.add_actor(this._scrollView);
         this._scrollView.add_actor(this._box);
 
-        this._showAppsIcon = new AppIcons.DockShowAppsIcon();
+        this._showAppsIcon = new AppIcons.DockShowAppsIcon(this._position);
         this._showAppsIcon.show(false);
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._showAppsIcon.x_expand = false;
@@ -509,7 +517,7 @@ var DockDash = GObject.registerClass({
             this._itemMenuStateChanged(item, opened);
         });
 
-        const item = new DockDashItemContainer();
+        const item = new DockDashItemContainer(this._position);
         item.setChild(appIcon);
 
         appIcon.connect('notify::hover', a => this._ensureItemVisibility(a));

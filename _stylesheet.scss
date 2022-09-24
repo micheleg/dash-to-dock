@@ -1,26 +1,35 @@
-// From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/c17dc9c8ecba0b542aab75f13da238f7b0690031/data/theme/gnome-shell-sass/_common.scss#L28
+// From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/43.0/data/theme/gnome-shell-sass/_common.scss#L28
 $base_padding: 6px;
 $base_margin: 4px;
-$base_spacing: 6px;
 
 $base_border_radius: 8px;
 $modal_radius: $base_border_radius * 2;
 
-// From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/c17dc9c8ecba0b542aab75f13da238f7b0690031/data/theme/gnome-shell-sass/widgets/_dash.scss
-$dash_background_color: #3b3b3b;
+// From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/43.0/data/theme/gnome-shell-sass/_colors.scss
+$variant: 'dark';
+$fg_color: if($variant == 'light', transparentize(black, .2), white);
+$borders_color: if($variant == 'light', transparentize($fg_color, .5), transparentize($fg_color, .9));
+$_dark_base_color: darken(desaturate(#241f31, 100%), 2%);
+$base_color: if($variant =='light', #fff, $_dark_base_color);
+$system_bg_color: $base_color;
+
+// From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/43.0/data/theme/gnome-shell-sass/widgets/_dash.scss
+$dash_background_color: lighten($system_bg_color, 5%);
 $dash_placeholder_size: 32px;
+$dash_padding: $base_padding*2; // 12px
+$dash_border_radius: $modal_radius + $dash_padding;
+
+// Dash to dock specifics
 $dash_padding: $base_padding + 4px; // 10px
-$dash_spacing: round($base_padding / 4);
-$dash_edge_items_padding: $dash_padding - $dash_spacing;
-$dash_bottom_margin: $base_margin * 4;
 $dash_border_radius: $modal_radius * 1.5;
 
-// Stock
-$dock_start_margin: $dash_bottom_margin;
+$dock_spacing: round($base_padding / 4);
+$dock_bottom_margin: $base_margin * 4;
+$dock_start_margin: $dock_bottom_margin;
 $dock_side_margin: $dock_start_margin / 4;
+$dock_edge_items_padding: $dash_padding - $dock_spacing;
 $dock_fixed_inner_margin: $dock_side_margin;
-
-// Adapted to $dock_bottom_margin
+$dock_icons_distance: 4px;
 
 @function shrink($val) {
     @return round($val / 4);
@@ -34,8 +43,16 @@ $dock_fixed_inner_margin: $dock_side_margin;
     @return $side == top or $side == bottom;
 }
 
+@function checked-map-get($map, $key) {
+    $value: map-get($map, $key);
+    @if ($value == null) {
+        @error 'Key ' + $key + ' not found';
+    }
+    @return $value;
+}
+
 @function opposite($val) {
-    @return map-get(
+    @return checked-map-get(
         (
             left: right,
             right: left,
@@ -46,111 +63,30 @@ $dock_fixed_inner_margin: $dock_side_margin;
     );
 }
 
-$osd_fg_color: #eeeeec;
+// minor-dimension is vertical space in horizontal mode and
+// horizontal space in vertical mode.
+@mixin set-internal-children-property($side, $property,
+                                      $minor_dimension,
+                                      $major_dimension: $minor_dimension) {
+    @if $property != margin and $property != padding {
+        @error "Property " + $property + " not supported!";
+    }
 
-@each $side in bottom, top, left, right {
-    #dashtodockContainer.#{$side} {
-        #dash {
-            margin: 0px;
-            padding: 0px;
-
-            .dash-background {
-                margin: 0;
-                margin-#{$side}: $dock_side_margin;
-                padding: 0;
-            }
-
-            .dash-separator {
-                background-color: transparentize($osd_fg_color, 0.7);
-                @if is_horizontal($side) {
-                    margin-bottom: 0;
-                } @else {
-                    height: 1px;
-                    margin: ($dash_spacing + ($dash_padding / 2)) 0;
-                }
-            }
-
-            #dashtodockDashContainer {
-                padding: $dash_padding;
-                padding-#{$side}: 0;
-                padding-#{opposite($side)}: 0;
-            }
-
-            .dash-item-container {
-                .app-well-app,
-                .show-apps {
-                    padding: $dash_spacing;
-                    padding-#{$side}: $dash_padding + $dock_side_margin;
-                    padding-#{opposite($side)}: $dash_padding;
-                }
-
-                .app-well-app {
-                    &.running .overview-icon {
-                        background-image: none;
-                    }
-                    &.focused .overview-icon {
-                        background-color: rgba(238, 238, 236, 0.2);
-                    }
-                }
-
-                > StButton {
-                    transition-duration: 250;
-                    background-size: contain;
-                }
-            }
+    @if is_horizontal($side) {
+        #{$property}: $minor_dimension $major_dimension;
+        &:ltr:first-child, &:rtl:last-child {
+            #{$property}-left: 0;
         }
-
-        &.shrink {
-            #dash {
-                .dash-background {
-                    margin-#{$side}: $dock_side_margin;
-                    padding: shrink($dash_padding);
-                    border-radius: shrink_light($dash_border_radius);
-                }
-
-                #dashtodockDashContainer {
-                    padding: shrink($dash_padding);
-                }
-
-                .dash-item-container {
-                    .app-well-app,
-                    .show-apps {
-                        padding: shrink($dash_spacing);
-                        padding-#{$side}: shrink($dash_padding) + $dock_side_margin;
-                        padding-#{opposite($side)}: shrink($dash_padding);
-                    }
-                }
-            }
-
-            &.fixed {
-                #dash {
-                    .dash-background {
-                        margin-#{opposite($side)}: shrink($dock_fixed_inner_margin);
-                    }
-
-                    .dash-item-container {
-                        .app-well-app,
-                        .show-apps {
-                            padding-#{opposite($side)}: shrink($dash_padding + $dock_fixed_inner_margin);
-                        }
-                    }
-                }
-            }
+        &:ltr:last-child, &:rtl:first-child {
+            #{$property}-right: 0;
         }
-
-        &.fixed {
-            #dash {
-                .dash-background {
-                    margin-#{opposite($side)}: $dock_fixed_inner_margin;
-                }
-
-                .dash-item-container {
-                    .app-well-app,
-                    .show-apps {
-                        padding-#{opposite($side)}: $dash_padding + $dock_fixed_inner_margin;
-                    }
-                }
-            }
+    } @else {
+        #{$property}: $major_dimension $minor_dimension;
+        &:first-child {
+            #{$property}-top: 0;
+        }
+        &:last-child {
+            #{$property}-bottom: 0;
         }
     }
 }
@@ -173,20 +109,19 @@ $osd_fg_color: #eeeeec;
     }
 }
 
-/* In extended mode we need to use the first and last .dash-item-container's
- * to apply the padding on the dock, to ensure that the actual first or last
- * child show-apps item will actually include the padding area so that it will
- * be clickable up to the dock edge, and make Fitts happy.
- * I don't think the same should happen for normal icons, so in the other side
- * the padding will be applied via the scrolled area, given we can't get the
- * parent of the first/last app-well-app icon to apply a rule there.
- */
+// In extended mode we need to use the first and last .dash-item-container's
+// to apply the padding on the dock, to ensure that the actual first or last
+// child show-apps item will actually include the padding area so that it will
+// be clickable up to the dock edge, and make Fitts happy.
+// I don't think the same should happen for normal icons, so in the other side
+// the padding will be applied via the scrolled area, given we can't get the
+// parent of the first/last app-well-app icon to apply a rule there.
 @mixin padded-dash-edge-items($side, $padding) {
     @each $child_pos in first, last {
         > :#{$child_pos}-child {
-            /* Use this instead of #dashtodockDashScrollview rule to apply the
-             * padding via the last app-icon item */
-            // .dash-item-container:#{$child_pos}-child .app-well-app,
+            // Use this instead of #dashtodockDashScrollview rule to apply the
+            // padding via the last app-icon item
+            //.dash-item-container:#{$child_pos}-child .app-well-app,
             .show-apps {
                 @include padded-edge-child($child_pos, $side, $padding);
             }
@@ -198,53 +133,175 @@ $osd_fg_color: #eeeeec;
     }
 }
 
-@each $side in bottom, top, left, right {
-    #dashtodockContainer.extended.#{$side} {
+$dock_sides: [bottom, top, left, right];
+$dock_style_modes: [null, shrink, extended, extended-shrink];
+
+@mixin dock-container-style($side, $style_mode, $parameters) {
+    $style_selector: '';
+    $is_shrink: checked-map-get($parameters, is_shrink);
+    $is_extended: checked-map-get($parameters, is_extended);
+    $base_padding: checked-map-get($parameters, base_padding);
+    $spacing: checked-map-get($parameters, spacing);
+    $border_radius: checked-map-get($parameters, border_radius);
+    $side_margin: checked-map-get($parameters, side_margin);
+    $padding: checked-map-get($parameters, padding);
+    $margin: checked-map-get($parameters, margin);
+    $edge_items_padding: checked-map-get($parameters, edge_items_padding);
+    $fixed_inner_margin: checked-map-get($parameters, fixed_inner_margin);
+
+    @if ($is_extended) {
+        $style_selector: $style_selector +'.extended';
+    }
+
+    @if ($is_shrink) {
+        $style_selector: $style_selector +'.shrink';
+    }
+
+    &#{$style_selector} {
         #dash {
+            margin: 0px;
+            padding: 0px;
+
             .dash-background {
                 margin: 0;
-                border-radius: 0;
+                margin-#{$side}: $side_margin;
+                padding: 0;
+                border-radius: $border_radius;
+                spacing: $base_padding;
+            }
+
+            .dash-separator {
+                background-color: $borders_color;
+                @if is_horizontal($side) {
+                    margin: 0 $margin;
+                    width: 1px;
+                    height: 0;
+                } @else {
+                    width: 0;
+                    height: 1px;
+                    margin: $margin 0;
+                }
+                margin-#{$side}: $side_margin;
             }
 
             #dashtodockDashContainer {
-                padding: 0;
+                padding: if($is_extended, 0, $padding);
                 padding-#{$side}: 0;
                 padding-#{opposite($side)}: 0;
 
-                @include padded-dash-edge-items($side, $dash_edge_items_padding);
+                @if ($is_extended) {
+                    @include padded-dash-edge-items($side, $edge_items_padding);
+                }
             }
 
             .dash-item-container {
+                /* Disable all margins defined upstream, we handle them here */
+                > * {margin: 0;}
+
+                @include set-internal-children-property($side, margin,
+                    0, $dock_icons_distance / 2);
+
                 .app-well-app,
                 .show-apps {
-                    padding-#{$side}: $dash_padding;
-                    padding-#{opposite($side)}: $dash_padding;
+                    @include set-internal-children-property($side, padding, $spacing);
+                    padding-#{$side}: $padding + $side_margin;
+                    padding-#{opposite($side)}: $padding;
+                }
+
+                .app-well-app {
+                    &.running .overview-icon {
+                        background-image: none;
+                    }
+                    &.focused .overview-icon {
+                        background-color: rgba(238, 238, 236, 0.2);
+                    }
+
+                    .app-well-app-running-dot {
+                        margin-bottom: 2px;
+                    }
+                }
+
+                > StButton {
+                    transition-duration: 250;
+                    background-size: contain;
                 }
             }
         }
 
-        &.shrink {
+        &.fixed {
             #dash {
-                #dashtodockDashContainer {
-                    padding: 0;
-
-                    @include padded-dash-edge-items($side, $dash_edge_items_padding);
+                .dash-background {
+                    margin-#{opposite($side)}: $fixed_inner_margin;
                 }
 
                 .dash-item-container {
+
                     .app-well-app,
                     .show-apps {
-                        padding-#{$side}: shrink($dash_padding);
-                        padding-#{opposite($side)}: shrink($dash_padding);
+                        padding-#{opposite($side)}: $padding + $fixed_inner_margin;
                     }
                 }
             }
         }
+    }
+}
 
-        &.shrink.fixed {
-            #dash {
-                .dash-background {
-                    margin-#{opposite($side)}: 0;
+@each $side in $dock_sides {
+    @each $style_mode in $dock_style_modes {
+        $is_shrink: str-index(#{$style_mode}, shrink) !=null;
+        $is_extended: str-index(#{$style_mode}, extended) !=null;
+
+        #dashtodockContainer.#{$side} {
+            $parameters: (
+                is_shrink: $is_shrink,
+                is_extended: $is_extended,
+                base_padding: $base_padding,
+                spacing: $dock_spacing,
+                border_radius: $dash_border_radius,
+                side_margin: $dock_side_margin,
+                padding: $dash_padding,
+                margin: $base_margin,
+                edge_items_padding: $dock_edge_items_padding,
+                fixed_inner_margin: $dock_fixed_inner_margin,
+            );
+
+            @if ($is_shrink) {
+                $parameters: map-merge($parameters, (
+                    base_padding: shrink($base_padding),
+                    spacing: shrink($dock_spacing),
+                    border_radius: shrink_light($dash_border_radius),
+                    side_margin: /* not shrunk */ $dock_side_margin,
+                    padding: shrink($dash_padding),
+                    margin: shrink($base_margin),
+                    edge_items_padding: shrink_light($dock_edge_items_padding),
+                    fixed_inner_margin: shrink($dock_fixed_inner_margin),
+                ));
+            }
+
+            @if ($is_extended) {
+                $parameters: map-merge($parameters, (
+                    border_radius: 0,
+                    side_margin: 0,
+                    fixed_inner_margin: 0,
+                ));
+            }
+
+            @include dock-container-style($side, $style_mode, $parameters);
+        }
+
+        .dash-label.#{$side} {
+            $label_offset: if($is_shrink, shrink($dash_padding), $dash_padding);
+            $style_selector: if($is_shrink, '.shrink', null);
+
+            &#{$style_selector} {
+                @if is_horizontal($side) {
+                    margin-#{$side}: $label_offset;
+                    -x-offset: 0;
+                    -y-offset: 0;
+                } @else {
+                    margin: 0;
+                    -x-offset: $label_offset;
+                    -y-offset: 0;
                 }
             }
         }
@@ -273,7 +330,7 @@ $osd_fg_color: #eeeeec;
 }
 
 #dashtodockContainer.dashtodock #dash .dash-background {
-    background: #2e3436;
+    background: $dash_background_color;
 }
 
 #dashtodockContainer.dashtodock .progress-bar {

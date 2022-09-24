@@ -12,6 +12,7 @@ const Params = imports.misc.params;
 const Main = imports.ui.main;
 const AppDisplay = imports.ui.appDisplay;
 const Dash = imports.ui.dash;
+const Environment = imports.ui.environment;
 const IconGrid = imports.ui.iconGrid;
 const Overview = imports.ui.overview;
 const OverviewControls = imports.ui.overviewControls;
@@ -38,6 +39,7 @@ const FileManager1API = Me.imports.fileManager1API;
 const DesktopIconsIntegration = Me.imports.desktopIconsIntegration;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
+const ICON_ANIMATOR_DURATION = 3000;
 
 var State = {
     HIDDEN:  0,
@@ -207,14 +209,13 @@ var DockedDash = GObject.registerClass({
 }, class DashToDock extends St.Bin {
     _init(params) {
         this._position = Utils.getPosition();
-        const positionStyleClass = ['top', 'right', 'bottom', 'left'];
 
         // This is the centering actor
         super._init({
             ...params,
             name: 'dashtodockContainer',
             reactive: false,
-            style_class: positionStyleClass[this._position],
+            style_class: Theming.PositionStyleClass[this._position],
         });
 
         if (this.monitorIndex === undefined) {
@@ -2197,9 +2198,9 @@ var DockManager = class DashToDock_DockManager {
         ], [
             ControlsManagerLayout.prototype,
             '_getAppDisplayBoxForState',
-            function (state, ...args) {
+            function (originalFunction, state, ...args) {
                 const { spacing } = this;
-                const box = workspaceBoxOriginFixer.call(this, state, ...args);
+                const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
                 return maybeAdjustBoxToDock(state, box, spacing);
             }
         ]);
@@ -2262,7 +2263,8 @@ var DockManager = class DashToDock_DockManager {
         if (AppDisplay.BaseAppView?.prototype?._pageForCoords) {
             // Ensure we handle Dnd events happening on the dock when we're dragging from AppDisplay
             // Remove when merged https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2002
-            this._methodInjections.addWithLabel(Labels.MAIN_DASH, AppDisplay.BaseAppView.prototype,
+            this._methodInjections.addWithLabel(Labels.MAIN_DASH,
+                AppDisplay.BaseAppView.prototype,
                 '_pageForCoords', function (originalFunction, ...args) {
                     if (!this._scrollView.has_pointer)
                         return AppDisplay.SidePages.NONE;
@@ -2475,10 +2477,14 @@ var IconAnimator = class DashToDock_IconAnimator {
             dance: [],
         };
         this._timeline = new Clutter.Timeline({
-            duration: 3000,
+            duration: Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION),
             repeat_count: -1,
             actor
         });
+
+        this._updateSettings();
+        this._settingsChangedId = St.Settings.get().connect('notify',
+            () => this._updateSettings());
 
         this._timeline.connect('new-frame', () => {
             const progress = this._timeline.get_progress();
@@ -2490,7 +2496,12 @@ var IconAnimator = class DashToDock_IconAnimator {
         });
     }
 
+    _updateSettings() {
+        this._timeline.set_duration(Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION));
+    }
+
     destroy() {
+        St.Settings.get().disconnect(this._settingsChangedId);
         this._timeline.stop();
         this._timeline = null;
         for (const name in this._animations) {
