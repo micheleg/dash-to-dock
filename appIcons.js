@@ -128,7 +128,6 @@ var DockAbstractAppIcon = GObject.registerClass({
         // and if there are at least 2 monitors.
         if (Docking.DockManager.settings.isolateMonitors &&
             Main.layoutManager.monitors.length > 1) {
-            this._signalsHandler.removeWithLabel('isolate-monitors');
             this._signalsHandler.addWithLabel('isolate-monitors',
                 global.display,
                 'window-entered-monitor',
@@ -284,6 +283,13 @@ var DockAbstractAppIcon = GObject.registerClass({
         this._updateRunningState();
         this._updateFocusState();
         this._updateUrgentWindows(interestingWindows);
+
+        if (Docking.DockManager.settings.isolateWorkspaces) {
+            this._signalsHandler.removeWithLabel('isolate-workspaces');
+            interestingWindows.forEach(window =>
+                this._signalsHandler.addWithLabel('isolate-workspaces',
+                    window, 'workspace-changed', () => this._updateWindows()));
+        }
     }
 
     _updateRunningState() {
