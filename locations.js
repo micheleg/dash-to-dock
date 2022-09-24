@@ -805,7 +805,7 @@ function wrapWindowsBackedApp(shellApp) {
 
         _setWindows: function (windows) {
             const oldState = this.state;
-            const oldWindows = this.get_windows().slice();
+            const oldWindows = this._windows.slice();
             const result = { windowsChanged: false, stateChanged: false };
             this._state = undefined;
 
@@ -1037,6 +1037,13 @@ function wrapFileManagerApp() {
                 return GLib.SOURCE_REMOVE;
             });
             fileManagerApp._sources.add(id);
+        });
+
+    fileManagerApp._signalConnections.add(global.workspaceManager,
+        'workspace-switched', () => {
+            fileManagerApp._signalConnections.blockWithLabel('windowsChanged');
+            fileManagerApp.emit('windows-changed');
+            fileManagerApp._signalConnections.unblockWithLabel('windowsChanged');
         });
 
     if (removables) {
