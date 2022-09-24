@@ -2199,9 +2199,9 @@ var DockManager = class DashToDock_DockManager {
         ], [
             ControlsManagerLayout.prototype,
             '_getAppDisplayBoxForState',
-            function (state, ...args) {
+            function (originalFunction, state, ...args) {
                 const { spacing } = this;
-                const box = workspaceBoxOriginFixer.call(this, state, ...args);
+                const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
                 return maybeAdjustBoxToDock(state, box, spacing);
             }
         ]);
