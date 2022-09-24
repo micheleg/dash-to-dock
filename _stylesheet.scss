@@ -10,18 +10,16 @@ $modal_radius: $base_border_radius * 2;
 $dash_background_color: #3b3b3b;
 $dash_placeholder_size: 32px;
 $dash_padding: $base_padding + 4px; // 10px
-$dash_spacing: round($base_padding / 4);
-$dash_edge_items_padding: $dash_padding - $dash_spacing;
-$dash_bottom_margin: $base_margin * 4;
 $dash_border_radius: $modal_radius * 1.5;
 
-// Stock
-$dock_start_margin: $dash_bottom_margin;
+// Dash to dock specifics
+$dock_spacing: round($base_padding / 4);
+$dock_bottom_margin: $base_margin * 4;
+$dock_start_margin: $dock_bottom_margin;
 $dock_side_margin: $dock_start_margin / 4;
+$dock_edge_items_padding: $dash_padding - $dock_spacing;
 $dock_fixed_inner_margin: $dock_side_margin;
 $dock_icons_distance: 4px;
-
-// Adapted to $dock_bottom_margin
 
 @function shrink($val) {
     @return round($val / 4);
@@ -250,24 +248,24 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
                 is_shrink: $is_shrink,
                 is_extended: $is_extended,
                 base_padding: $base_padding,
-                spacing: $dash_spacing,
+                spacing: $dock_spacing,
                 border_radius: $dash_border_radius,
                 side_margin: $dock_side_margin,
                 padding: $dash_padding,
                 margin: $base_margin,
-                edge_items_padding: $dash_edge_items_padding,
+                edge_items_padding: $dock_edge_items_padding,
                 fixed_inner_margin: $dock_fixed_inner_margin,
             );
 
             @if ($is_shrink) {
                 $parameters: map-merge($parameters, (
                     base_padding: shrink($base_padding),
-                    spacing: shrink($dash_spacing),
+                    spacing: shrink($dock_spacing),
                     border_radius: shrink_light($dash_border_radius),
                     side_margin: /* not shrunk */ $dock_side_margin,
                     padding: shrink($dash_padding),
                     margin: shrink($base_margin),
-                    edge_items_padding: shrink_light($dash_edge_items_padding),
+                    edge_items_padding: shrink_light($dock_edge_items_padding),
                     fixed_inner_margin: shrink($dock_fixed_inner_margin),
                 ));
             }
