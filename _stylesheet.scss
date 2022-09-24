@@ -1,18 +1,28 @@
-// From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/c17dc9c8ecba0b542aab75f13da238f7b0690031/data/theme/gnome-shell-sass/_common.scss#L28
+// From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/43.0/data/theme/gnome-shell-sass/_common.scss#L28
 $base_padding: 6px;
 $base_margin: 4px;
-$base_spacing: 6px;
 
 $base_border_radius: 8px;
 $modal_radius: $base_border_radius * 2;
 
-// From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/c17dc9c8ecba0b542aab75f13da238f7b0690031/data/theme/gnome-shell-sass/widgets/_dash.scss
-$dash_background_color: #3b3b3b;
+// From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/43.0/data/theme/gnome-shell-sass/_colors.scss
+$variant: 'dark';
+$fg_color: if($variant == 'light', transparentize(black, .2), white);
+$borders_color: if($variant == 'light', transparentize($fg_color, .5), transparentize($fg_color, .9));
+$_dark_base_color: darken(desaturate(#241f31, 100%), 2%);
+$base_color: if($variant =='light', #fff, $_dark_base_color);
+$system_bg_color: $base_color;
+
+// From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/43.0/data/theme/gnome-shell-sass/widgets/_dash.scss
+$dash_background_color: lighten($system_bg_color, 5%);
 $dash_placeholder_size: 32px;
+$dash_padding: $base_padding*2; // 12px
+$dash_border_radius: $modal_radius + $dash_padding;
+
+// Dash to dock specifics
 $dash_padding: $base_padding + 4px; // 10px
 $dash_border_radius: $modal_radius * 1.5;
 
-// Dash to dock specifics
 $dock_spacing: round($base_padding / 4);
 $dock_bottom_margin: $base_margin * 4;
 $dock_start_margin: $dock_bottom_margin;
@@ -123,8 +133,6 @@ $dock_icons_distance: 4px;
     }
 }
 
-$osd_fg_color: #eeeeec;
-
 $dock_sides: [bottom, top, left, right];
 $dock_style_modes: [null, shrink, extended, extended-shrink];
 
@@ -163,7 +171,7 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
             }
 
             .dash-separator {
-                background-color: transparentize($osd_fg_color, 0.7);
+                background-color: $borders_color;
                 @if is_horizontal($side) {
                     margin: 0 $margin;
                     width: 1px;
@@ -322,7 +330,7 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
 }
 
 #dashtodockContainer.dashtodock #dash .dash-background {
-    background: #2e3436;
+    background: $dash_background_color;
 }
 
 #dashtodockContainer.dashtodock .progress-bar {
