@@ -217,8 +217,6 @@ var Settings = GObject.registerClass({
             const rootWindow = this.widget.get_root();
             rootWindow.set_size_request(-1, 850);
             rootWindow.connect('close-request', () => this._onWindowsClosed());
-            if (SHELL_VERSION >= 42)
-                this.widget.set_size_request(-1, 850);
         });
 
         // Timeout to delay the update of the settings
