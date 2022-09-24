@@ -1335,6 +1335,10 @@ var DockShowAppsIcon = GObject.registerClass({
         itemShowLabel.call(this);
     }
 
+    setForcedHighlight(...args) {
+        AppDisplay.AppIcon.prototype.setForcedHighlight.call(this, ...args);
+    }
+
     _onMenuPoppedDown() {
         AppDisplay.AppIcon.prototype._onMenuPoppedDown.apply(this, arguments);
     }
