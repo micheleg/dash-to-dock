@@ -187,7 +187,8 @@ $osd_fg_color: #eeeeec;
                     } @else {
                         margin: shrink($base_margin) 0;
                     }
-                    margin-#{$side}: shrink($dash_padding);
+                    margin-#{$side}: $dock_side_margin + shrink($dash_padding);
+                    margin-#{opposite($side)}: shrink($dash_padding);
                 }
             }
 
