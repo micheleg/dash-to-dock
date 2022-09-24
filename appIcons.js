@@ -1293,12 +1293,12 @@ var DockShowAppsIcon = GObject.registerClass({
         super._init();
 
         // Re-use appIcon methods
-        let appIconPrototype = AppDisplay.AppIcon.prototype;
+        const { prototype: appIconPrototype } = AppDisplay.AppIcon;
         this.toggleButton.y_expand = false;
-        this.toggleButton.connect('popup-menu',
-            appIconPrototype._onKeyboardPopupMenu.bind(this));
-        this.toggleButton.connect('clicked',
-            this._removeMenuTimeout.bind(this));
+        this.toggleButton.connect('popup-menu', () =>
+            appIconPrototype._onKeyboardPopupMenu.call(this));
+        this.toggleButton.connect('clicked', () =>
+            this._removeMenuTimeout());
 
         this.reactive = true;
         this.toggleButton.popupMenu = (...args) =>
@@ -1313,42 +1313,39 @@ var DockShowAppsIcon = GObject.registerClass({
         this._menuTimeoutId = 0;
     }
 
-    vfunc_leave_event(leaveEvent)
-    {
+    vfunc_leave_event(...args) {
         return AppDisplay.AppIcon.prototype.vfunc_leave_event.call(
-            this.toggleButton, leaveEvent);
+            this.toggleButton, ...args);
     }
 
-    vfunc_button_press_event(buttonPressEvent)
-    {
+    vfunc_button_press_event(...args) {
         return AppDisplay.AppIcon.prototype.vfunc_button_press_event.call(
-            this.toggleButton, buttonPressEvent);
+            this.toggleButton, ...args);
     }
 
-    vfunc_touch_event(touchEvent)
-    {
+    vfunc_touch_event(...args) {
         return AppDisplay.AppIcon.prototype.vfunc_touch_event.call(
-            this.toggleButton, touchEvent);
+            this.toggleButton, ...args);
     }
 
-    showLabel() {
-        itemShowLabel.call(this);
+    showLabel(...args) {
+        itemShowLabel.call(this, ...args);
     }
 
     setForcedHighlight(...args) {
         AppDisplay.AppIcon.prototype.setForcedHighlight.call(this, ...args);
     }
 
-    _onMenuPoppedDown() {
-        AppDisplay.AppIcon.prototype._onMenuPoppedDown.apply(this, arguments);
+    _onMenuPoppedDown(...args) {
+        AppDisplay.AppIcon.prototype._onMenuPoppedDown.call(this, ...args);
     }
 
-    _setPopupTimeout() {
-        AppDisplay.AppIcon.prototype._setPopupTimeout.apply(this, arguments);
+    _setPopupTimeout(...args) {
+        AppDisplay.AppIcon.prototype._setPopupTimeout.call(this, ...args);
     }
 
-    _removeMenuTimeout() {
-        AppDisplay.AppIcon.prototype._removeMenuTimeout.apply(this, arguments);
+    _removeMenuTimeout(...args) {
+        AppDisplay.AppIcon.prototype._removeMenuTimeout.call(this, ...args);
     }
 
     popupMenu() {
