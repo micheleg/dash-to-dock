@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (74ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (74ubuntu1) kinetic; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * New EGO upstream bugfix release 74
@@ -44,7 +44,7 @@ gnome-shell-extension-ubuntu-dock (74ubuntu1) UNRELEASED; urgency=medium
   [ rene-coty ]
   * Updated French Translation
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Sat, 24 Sep 2022 09:49:24 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Sat, 24 Sep 2022 10:02:45 +0200
 
 gnome-shell-extension-ubuntu-dock (72ubuntu6) kinetic; urgency=medium
 
