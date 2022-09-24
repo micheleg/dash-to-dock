@@ -43,6 +43,7 @@ const tracker = Shell.WindowTracker.get_default();
 
 const Labels = Object.freeze({
     ISOLATE_MONITORS: Symbol('isolate-monitors'),
+    ISOLATE_WORKSPACES: Symbol('isolate-workspaces'),
     URGENT_WINDOWS: Symbol('urgent-windows'),
 });
 
@@ -137,7 +138,6 @@ var DockAbstractAppIcon = GObject.registerClass({
         // and if there are at least 2 monitors.
         if (Docking.DockManager.settings.isolateMonitors &&
             Main.layoutManager.monitors.length > 1) {
-            this._signalsHandler.removeWithLabel(Labels.ISOLATE_MONITORS);
             this._signalsHandler.addWithLabel(Labels.ISOLATE_MONITORS,
                 global.display,
                 'window-entered-monitor',
@@ -293,6 +293,13 @@ var DockAbstractAppIcon = GObject.registerClass({
         this._updateRunningState();
         this._updateFocusState();
         this._updateUrgentWindows(interestingWindows);
+
+        if (Docking.DockManager.settings.isolateWorkspaces) {
+            this._signalsHandler.removeWithLabel(Labels.ISOLATE_WORKSPACES);
+            interestingWindows.forEach(window =>
+                this._signalsHandler.addWithLabel(Labels.ISOLATE_WORKSPACES,
+                    window, 'workspace-changed', () => this._updateWindows()));
+        }
     }
 
     _updateRunningState() {
