@@ -1,3 +1,51 @@
+gnome-shell-extension-ubuntu-dock (74ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New EGO upstream bugfix release 74
+  * debian/control: Bump dependency on gnome-shell << 44 (LP: #1990423)
+  * docking: Respect St.Settings for animation duration
+  * stylesheet: Increase apps tooltips margins
+  * stylesheet: Set margin for default app-running dots
+  * stylesheet: Remove upstream defined dash-item-container's children margins
+    (LP: #1966167)
+  * stylesheet: Do not add edge padding to edge elements
+  * stylesheet: Fix definition for dash-separator in shrink mode
+  * appIcons: Add missing implementation of _setPoupTimeout to wrapped toggle
+  * appIcons: Also redirect arguments, to called methods if any
+  * appIcons: Implement setForcedHighlight function in DockShowAppsIcons
+  * appIcons: Modernize and cleanup DockShowAppsIcon code
+  * docking: Fix arguments for overridden _getAppDisplayBoxForState
+  * Settings: Move the Shrink option to the global theme settings
+  * prefs: Do not request resizing of our root widget on startup
+  * prefs: Never use a scrolled window in newer GNOME Shell
+  * appIcons: Monitor windows workspace changes when isolating workspaces
+  * locations: Make FileManagerApp emit windows-changed on workspace switches
+    (LP: #1971012)
+  * stylesheet: Take in account side margin and opposite padding in separators
+  * stylesheet: Explicitly use border radius and spacing from upstream
+  * stylesheet: Simplify dash separator definition based on upstream one
+  * stylesheet: Use unique function to handle padding/margin on internal
+    children
+  * stylesheet: avoid computing the shrunk dash padding multiple times
+  * stylesheet: Use generic style generator for shrink mode too
+  * stylesheet: Move mixins to the top of the file for easier re-usage
+  * stylesheet: Use dock-container-style to define the extended cases too
+  * docking: Move style classes names to Theming
+  * dash, stylesheet: Support shrink and position-based style for labels
+  * stylesheet: Move dock specific variables to dock namespace
+  * stylesheet: Sync global variable definitions with upstream
+
+  [ David Astillero Pérez ]
+  * Update Spanish translation
+
+  [ Jose Riha ]
+  * Update Slovak translation
+
+  [ rene-coty ]
+  * Updated French Translation
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Sat, 24 Sep 2022 09:49:24 +0200
+
 gnome-shell-extension-ubuntu-dock (72ubuntu6) kinetic; urgency=medium
 
   [ David Astillero Pérez ]
