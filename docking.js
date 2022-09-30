@@ -2097,8 +2097,8 @@ var DockManager = class DashToDock_DockManager {
                 DockManager.allDocks.forEach(dock => (dock.opacity = 0));
                 injections.add(dockManager.mainDock.dash, 'ease', () => {});
                 let callbackArgs = [];
-                const ret = await originalMethod.call(this,
-                    (...args) => (callbackArgs = [...args]));
+                const ret = await originalMethod.call(this, () => {});
+                callback();
                 injections.destroy();
 
                 if (!DockManager.allDocks.length) {
@@ -2113,7 +2113,7 @@ var DockManager = class DashToDock_DockManager {
                 }
 
                 dockManager._prepareStartupAnimation();
-                dockManager._runStartupAnimation(() => callback(...callbackArgs));
+                dockManager._runStartupAnimation(() => {});
                 return ret;
             });
 
