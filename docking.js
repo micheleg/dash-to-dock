@@ -1996,7 +1996,7 @@ var DockManager = class DashToDock_DockManager {
         });
     }
 
-    _runStartupAnimation(callback) {
+    _runStartupAnimation() {
         const { STARTUP_ANIMATION_TIME } = Layout;
 
         DockManager.allDocks.forEach(dock => {
@@ -2017,10 +2017,6 @@ var DockManager = class DashToDock_DockManager {
                     break;
             }
 
-            const mainDockProperties = {};
-            if (dock === this.mainDock)
-                mainDockProperties.onComplete = callback;
-
             dash.ease({
                 opacity: 255,
                 translation_x: 0,
@@ -2028,7 +2024,6 @@ var DockManager = class DashToDock_DockManager {
                 delay: STARTUP_ANIMATION_TIME,
                 duration: STARTUP_ANIMATION_TIME,
                 mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-                ...mainDockProperties,
             });
         });
     }
@@ -2113,7 +2108,7 @@ var DockManager = class DashToDock_DockManager {
                 }
 
                 dockManager._prepareStartupAnimation();
-                dockManager._runStartupAnimation(() => {});
+                dockManager._runStartupAnimation();
                 return ret;
             });
 
