@@ -1974,8 +1974,14 @@ var DockManager = class DashToDock_DockManager {
             }
 
             const mainDockProperties = {};
-            if (dock === this.mainDock)
-                mainDockProperties.onComplete = callback;
+            if (dock === this.mainDock && callback) {
+                const destroyId = dash.connect('destroy',
+                    () => mainDockProperties.onStopped(false));
+                mainDockProperties.onStopped = _finished => {
+                    dash.disconnect(destroyId);
+                    callback();
+                };
+            }
 
             dash.ease({
                 opacity: 255,
