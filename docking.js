@@ -2281,6 +2281,7 @@ var DockManager = class DashToDock_DockManager {
 
         if (Main.layoutManager._startingUp && Main.sessionMode.hasOverview &&
             this._settings.disableOverviewOnStartup) {
+            this._prepareStartupAnimation();
             this._methodInjections.addWithLabel(Labels.MAIN_DASH,
                 Overview.Overview.prototype,
                 'runStartupAnimation', (_originalFunction, callback) => {
@@ -2289,7 +2290,6 @@ var DockManager = class DashToDock_DockManager {
                     const y = monitor.y + monitor.height / 2.0;
                     const { STARTUP_ANIMATION_TIME } = Layout;
 
-                    this._prepareStartupAnimation();
                     Main.uiGroup.set_pivot_point(
                         x / global.screen_width,
                         y / global.screen_height);
