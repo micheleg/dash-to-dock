@@ -2313,7 +2313,7 @@ var DockManager = class DashToDock_DockManager {
                         mode: Clutter.AnimationMode.EASE_OUT_QUAD,
                         onComplete: () => {
                             callback();
-                            this._runStartupAnimation();
+                            this._runStartupAnimation(() => {});
                         },
                     });
                 });
