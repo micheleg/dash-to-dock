@@ -2078,19 +2078,23 @@ var DockManager = class DashToDock_DockManager {
 
         this._methodInjections.addWithLabel('main-dash', ControlsManager.prototype,
             'runStartupAnimation', async function (originalMethod, callback) {
-                const injections = new Utils.InjectionsHandler();
-                const dockManager = DockManager.getDefault();
-                dockManager._prepareStartupAnimation(callback);
-                injections.add(dockManager.mainDock.dash, 'ease', () => {});
-                let callbackArgs = [];
-                const ret = await originalMethod.call(this,
-                    (...args) => (callbackArgs = [...args]));
-                injections.destroy();
+                try {
+                    const injections = new Utils.InjectionsHandler();
+                    const dockManager = DockManager.getDefault();
+                    dockManager._prepareStartupAnimation(callback);
+                    injections.add(dockManager.mainDock.dash, 'ease', () => {});
+                    let callbackArgs = [];
+                    const ret = await originalMethod.call(this,
+                        (...args) => (callbackArgs = [...args]));
+                    injections.destroy();
 
-                const onComplete = () => callback(...callbackArgs);
-                dockManager._prepareStartupAnimation(onComplete);
-                dockManager._runStartupAnimation(onComplete);
-                return ret;
+                    const onComplete = () => callback(...callbackArgs);
+                    dockManager._prepareStartupAnimation(onComplete);
+                    dockManager._runStartupAnimation(onComplete);
+                    return ret;
+                } catch (e) {
+                    logError(e);
+                }
             });
 
         const maybeAdjustBoxToDock = (state, box, spacing) => {
