@@ -1939,7 +1939,7 @@ var DockManager = class DashToDock_DockManager {
         this.emit('docks-ready');
     }
 
-    _prepareStartupAnimation() {
+    _prepareStartupAnimation(callback) {
         DockManager.allDocks.forEach(dock => {
             const { dash } = dock;
 
@@ -1950,6 +1950,31 @@ var DockManager = class DashToDock_DockManager {
                 translation_y: 0,
             });
         });
+
+        // We need to ensure that if docks are destroyed before animation is
+        // completed, then we still ensure the animation runs anyways.
+        const label = 'startup-animation';
+        this._signalsHandler.removeWithLabel(label);
+
+        // This shouldn't really ever happen, but in theory the manager
+        // could be destroyed at any time, in such case complete the animation
+        this._signalsHandler.addWithLabel(label, this, 'destroy', () =>
+            Main.overview.runStartupAnimation(callback));
+
+        const waitForDocksReady = () => {
+            global.window_group.remove_clip();
+            this._signalsHandler.addWithLabel(label, this, 'docks-ready', () => {
+                this._signalsHandler.removeWithLabel(label);
+                Main.overview.runStartupAnimation(callback);
+            });
+        };
+
+        if (this._allDocks.length) {
+            this._signalsHandler.addWithLabel(label, this, 'docks-destroyed',
+                () => waitForDocksReady());
+        } else {
+            waitForDocksReady();
+        }
     }
 
     _runStartupAnimation(callback) {
@@ -1974,12 +1999,11 @@ var DockManager = class DashToDock_DockManager {
             }
 
             const mainDockProperties = {};
-            if (dock === this.mainDock && callback) {
-                const destroyId = dash.connect('destroy',
-                    () => mainDockProperties.onStopped(false));
-                mainDockProperties.onStopped = _finished => {
-                    dash.disconnect(destroyId);
-                    callback();
+            if (dock === this.mainDock) {
+                mainDockProperties.onComplete = () => {
+                    this._signalsHandler.removeWithLabel('startup-animation');
+                    if (callback)
+                        callback();
                 };
             }
 
@@ -2056,26 +2080,16 @@ var DockManager = class DashToDock_DockManager {
             'runStartupAnimation', async function (originalMethod, callback) {
                 const injections = new Utils.InjectionsHandler();
                 const dockManager = DockManager.getDefault();
-                DockManager.allDocks.forEach(dock => (dock.opacity = 0));
+                dockManager._prepareStartupAnimation(callback);
                 injections.add(dockManager.mainDock.dash, 'ease', () => {});
                 let callbackArgs = [];
                 const ret = await originalMethod.call(this,
                     (...args) => (callbackArgs = [...args]));
                 injections.destroy();
 
-                if (!DockManager.allDocks.length) {
-                    // Docks may have been destroyed, let's wait till we've one again
-                    const readyPromise = new Promise(resolve => {
-                        const id = dockManager.connect('docks-ready', () => {
-                            dockManager.disconnect(id);
-                            resolve();
-                        });
-                    })
-                    await readyPromise;
-                }
-
-                dockManager._prepareStartupAnimation();
-                dockManager._runStartupAnimation(() => callback(...callbackArgs));
+                const onComplete = () => callback(...callbackArgs);
+                dockManager._prepareStartupAnimation(onComplete);
+                dockManager._runStartupAnimation(onComplete);
                 return ret;
             });
 
@@ -2248,7 +2262,7 @@ var DockManager = class DashToDock_DockManager {
                     const y = monitor.y + monitor.height / 2.0;
                     const { STARTUP_ANIMATION_TIME } = Layout;
 
-                    this._prepareStartupAnimation();
+                    this._prepareStartupAnimation(callback);
                     Main.uiGroup.set_pivot_point(
                         x / global.screen_width,
                         y / global.screen_height);
@@ -2284,6 +2298,8 @@ var DockManager = class DashToDock_DockManager {
         // Delete all docks
         this._allDocks.forEach(d => d.destroy());
         this._allDocks = [];
+
+        this.emit('docks-destroyed');
     }
 
     _restoreDash() {
