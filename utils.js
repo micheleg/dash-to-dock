@@ -161,6 +161,12 @@ var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHan
 
         let id = connector.call(object, event, callback);
 
+        if (event === 'destroy' && object === this._parentObject) {
+            this._parentObject.disconnect(this._destroyId);
+            this._destroyId =
+                this._parentObject.connect('destroy', () => this.destroy());
+        }
+
         return [object, id];
     }
 
