@@ -2018,13 +2018,13 @@ var DockManager = class DashToDock_DockManager {
             }
 
             const mainDockProperties = {};
-            if (dock === this.mainDock && callback !== undefined) {
+            if (dock === this.mainDock && callback) {
                 const destroyId = dash.connect('destroy',
                     () => mainDockProperties.onStopped(false));
-                mainDockProperties.onStopped = (finished) => {
+                mainDockProperties.onStopped = _finished => {
                     dash.disconnect(destroyId);
                     callback();
-                }
+                };
             }
 
             dash.ease({
