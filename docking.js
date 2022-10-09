@@ -702,7 +702,7 @@ var DockedDash = GObject.registerClass({
             // Skip if dock is not in autohide mode for instance because it is shown
             // by intellihide.
             if (this._autohideIsEnabled) {
-                if (this._box.hover)
+                if (this._box.hover || Main.overview.visible)
                     this._show();
                 else
                     this._hide();
