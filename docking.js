@@ -2154,7 +2154,13 @@ var DockManager = class DashToDock_DockManager {
             if (this.mainDock.isHorizontal || this.settings.dockFixed)
                 return box;
 
-            const [, preferredWidth] = this.mainDock.get_preferred_width(box.get_height());
+            let [, preferredWidth] = this.mainDock.get_preferred_width(box.get_height());
+
+            // For some reason we need to use an even value for the box area
+            // or we may end up in allocation issues:
+            // https://github.com/micheleg/dash-to-dock/issues/1612
+            preferredWidth = Math.floor(preferredWidth / 2.0) * 2
+
             box.x2 -= preferredWidth;
             if (this.mainDock.position === St.Side.LEFT)
                 box.set_origin(box.x1 + preferredWidth, box.y1);
