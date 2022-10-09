@@ -2135,8 +2135,6 @@ var DockManager = class DashToDock_DockManager {
 
                 if (!wsThumbnails && this.mainDock.position === St.Side.BOTTOM)
                     box.y2 -= spacing;
-            } else if (state === OverviewControls.ControlsState.APP_GRID) {
-                return box;
             }
 
             if (this.mainDock.isHorizontal || this.settings.dockFixed)
