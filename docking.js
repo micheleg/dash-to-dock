@@ -1568,14 +1568,12 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
         // here this is the Shell.App
         function IsolatedOverview() {
             // These lines take care of Nautilus for icons on Desktop
-            let windows = this.get_windows().filter(function(w) {
-                return w.get_workspace().index() == global.workspace_manager.get_active_workspace_index();
-            });
-            if (windows.length == 1)
-                if (windows[0].skip_taskbar)
-                    return this.open_new_window(-1);
+            const activeWorkspaceIndex =
+                global.workspaceManager.get_active_workspace_index();
+            const windows = this.get_windows().filter(w =>
+                !w.skipTaskbar && w.get_workspace().index() === activeWorkspaceIndex);
 
-            if (this.is_on_workspace(global.workspace_manager.get_active_workspace()))
+            if (windows.length)
                 return Main.activateWindow(windows[0]);
             return this.open_new_window(-1);
         }
