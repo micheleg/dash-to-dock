@@ -731,7 +731,7 @@ var DockedDash = GObject.registerClass({
     _onMenuClosed() {
         this._ignoreHover = false;
         this._box.sync_hover();
-        this._hoverChanged();
+        this._updateDashVisibility();
     }
 
     _hoverChanged() {
