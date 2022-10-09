@@ -2264,11 +2264,10 @@ var DockManager = class DashToDock_DockManager {
                         opacity: 255,
                         duration: STARTUP_ANIMATION_TIME,
                         mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-                        onComplete: () => {
-                            callback();
-                            this._runStartupAnimation();
-                        },
+                        onComplete: callback,
                     });
+
+                    this._runStartupAnimation();
                 });
         }
     }
