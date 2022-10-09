@@ -2124,6 +2124,8 @@ var DockManager = class DashToDock_DockManager {
             });
 
         const maybeAdjustBoxToDock = (state, box, spacing) => {
+            const initialRatio = box.get_width() / box.get_height();
+
             if (state === OverviewControls.ControlsState.WINDOW_PICKER) {
                 const searchBox = this.overviewControls._searchEntry.get_allocation_box();
                 const { shouldShow: wsThumbnails } = this.overviewControls._thumbnailsBox;
@@ -2150,6 +2152,11 @@ var DockManager = class DashToDock_DockManager {
             box.x2 -= preferredWidth;
             if (this.mainDock.position === St.Side.LEFT)
                 box.set_origin(box.x1 + preferredWidth, box.y1);
+
+            // Reduce the box height too, to keep the initial proportions
+            const heightAdjustment = (preferredWidth / initialRatio) / 2;
+            box.y1 += heightAdjustment;
+            box.y2 -= heightAdjustment;
 
             return box;
         }
