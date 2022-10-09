@@ -724,10 +724,12 @@ var DockAbstractAppIcon = GObject.registerClass({
             // switching to a different workspace, a launch spinning icon is shown and disappers only
             // after a timeout.
             let windows = this.getWindows();
-            if (windows.length > 0)
+            if (windows.length > 0) {
                 Main.activateWindow(windows[0])
-            else
+            } else {
                 this.app.activate();
+                this.animateLaunch();
+            }
         }
     }
 
@@ -801,8 +803,11 @@ var DockAbstractAppIcon = GObject.registerClass({
         // First activate first window so workspace is switched if needed.
         // We don't do this if isolation is on!
         if (!Docking.DockManager.settings.isolateWorkspaces &&
-            !Docking.DockManager.settings.isolateMonitors)
+            !Docking.DockManager.settings.isolateMonitors) {
+            if (!this.running)
+                this.animateLaunch();
             this.app.activate();
+        }
 
         // then activate all other app windows in the current workspace
         let windows = this.getInterestingWindows();
