@@ -35,6 +35,8 @@ var AppSpread = class AppSpread {
     }
 
     destroy() {
+        if (!this.supported)
+            return;
         this._hideAppSpread();
         this._signalHandlers.destroy();
         this._methodInjections.destroy();
