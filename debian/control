@@ -1,7 +1,7 @@
 Source: gnome-shell-extension-ubuntu-dock
 Section: gnome
 Priority: optional
-Maintainer: Didier Roche <didrocks@ubuntu.com>
+Maintainer: Marco Trevisan <marco@ubuntu.com>
 Build-Depends: debhelper (>= 10),
                dh-translations,
                eslint <!nocheck>,
