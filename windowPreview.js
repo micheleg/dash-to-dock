@@ -392,6 +392,8 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             scale = Math.min(1.0, PREVIEW_MAX_WIDTH/width, PREVIEW_MAX_HEIGHT/height)
         }
 
+        scale *= St.ThemeContext.get_for_stage(global.stage).scaleFactor;
+
         // width and height that we wanna multiply by scale
         return [width, height, scale];
     }
