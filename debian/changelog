@@ -1,3 +1,34 @@
+gnome-shell-extension-ubuntu-dock (74ubuntu2) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * debian/control: Update maintainer to myself
+  * docking: Don't try to call a null callback (LP: #1989170)
+  * docking: Do not wait for dash animation two times with no overview
+    (LP: #1965208)
+  * docking: Ensure we perform the startup animation completely on docks updates
+    (LP: #1965208, LP: #1989170)
+  * docking: Use a try/catch statement on our promise to show errors in case
+    (LP: #1989170)
+  * windowPreviews: Take global scaling in account to set the clone sizes
+    (LP: #1992843)
+  * docking: Keep overview controls layout proportions when resizing it
+    (LP: #1992847)
+  * docking: Also reduce the app grid area when in auto-hide mode (LP: #1992847)
+  * docking: Use an even width for the overview content area (LP: #1979096)
+  * docking: Check if autohide or intellihide is enabled on menu closed
+    (LP: #1983130)
+  * appIcons: Ensure icons are animated when new instances are launched
+    (LP: #1992845)
+  * docking: Do not try to focus potentially undefined window
+  * appSpread: Do not anything on destruction if not supported
+  * docking: Ignore hover changes if overview is visible (LP: #1983130)
+
+  [ Daniel van Vugt ]
+  * docking: Handle when dash is destroyed during the login animation
+    (LP: #1989170)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 13 Oct 2022 21:50:58 +0200
+
 gnome-shell-extension-ubuntu-dock (74ubuntu1) kinetic; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
