@@ -100,7 +100,7 @@ var AppSpread = class AppSpread {
             function (originalMethod, window) {
                 const isOverviewWindow = originalMethod.call(this, window);
                 return isOverviewWindow && appSpread.windows.includes(window);
-            }
+            },
         ],
         [
             // Filter thumbnails to only show current app windows
@@ -108,7 +108,7 @@ var AppSpread = class AppSpread {
             function (originalMethod, windowActor) {
                 const isOverviewWindow = originalMethod.call(this, windowActor);
                 return isOverviewWindow && appSpread.windows.includes(windowActor.metaWindow);
-            }
+            },
         ]);
 
         const activitiesButton = Main.panel.statusArea?.activities;
@@ -129,7 +129,7 @@ var AppSpread = class AppSpread {
                             appSpread._restoreDefaultOverview();
                     }
                     return Clutter.EVENT_PROPAGATE;
-                }
+                },
             ],
             [
                 activitiesButton.constructor.prototype,
@@ -141,7 +141,7 @@ var AppSpread = class AppSpread {
                             appSpread._restoreDefaultOverview();
                     }
                     return Clutter.EVENT_PROPAGATE;
-                }
+                },
             ]);
         }
 

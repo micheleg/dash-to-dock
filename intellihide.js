@@ -17,7 +17,7 @@ const INTELLIHIDE_CHECK_INTERVAL = 100;
 const OverlapStatus = {
     UNDEFINED: -1,
     FALSE: 0,
-    TRUE: 1
+    TRUE: 1,
 };
 
 const IntellihideMode = {
@@ -37,11 +37,11 @@ const handledWindowTypes = [
     Meta.WindowType.TOOLBAR,
     Meta.WindowType.MENU,
     Meta.WindowType.UTILITY,
-    Meta.WindowType.SPLASHSCREEN
+    Meta.WindowType.SPLASHSCREEN,
 ];
 
 // List of applications, ignore windows of these applications in considering intellihide
-const ignoreApps = [ "com.rastersoft.ding", "com.desktop.ding" ];
+const ignoreApps = ['com.rastersoft.ding', 'com.desktop.ding'];
 
 /**
  * A rough and ugly implementation of the intellihide behaviour.
@@ -49,7 +49,6 @@ const ignoreApps = [ "com.rastersoft.ding", "com.desktop.ding" ];
  * with the provided targetBoxClutter.ActorBox changes;
  */
 var Intellihide = class DashToDock_Intellihide {
-
     constructor(monitorIndex) {
         // Load settings
         this._monitorIndex = monitorIndex;
@@ -73,24 +72,24 @@ var Intellihide = class DashToDock_Intellihide {
             // Add signals on windows created from now on
             global.display,
             'window-created',
-            this._windowCreated.bind(this)
+            this._windowCreated.bind(this),
         ], [
             // triggered for instance when the window list order changes,
             // included when the workspace is switched
             global.display,
             'restacked',
-            this._checkOverlap.bind(this)
+            this._checkOverlap.bind(this),
         ], [
             // when windows are alwasy on top, the focus window can change
             // without the windows being restacked. Thus monitor window focus change.
             this._tracker,
             'notify::focus-app',
-            this._checkOverlap.bind(this)
+            this._checkOverlap.bind(this),
         ], [
             // update wne monitor changes, for instance in multimonitor when monitor are attached
             Utils.getMonitorManager(),
             'monitors-changed',
-            this._checkOverlap.bind(this)
+            this._checkOverlap.bind(this),
         ]);
     }
 
@@ -105,7 +104,7 @@ var Intellihide = class DashToDock_Intellihide {
     enable() {
         this._isEnabled = true;
         this._status = OverlapStatus.UNDEFINED;
-        global.get_window_actors().forEach(function(wa) {
+        global.get_window_actors().forEach(function (wa) {
             this._addWindowSignals(wa);
         }, this);
         this._doCheckOverlap();
@@ -114,9 +113,9 @@ var Intellihide = class DashToDock_Intellihide {
     disable() {
         this._isEnabled = false;
 
-        for (let wa of this._trackedWindows.keys()) {
+        for (let wa of this._trackedWindows.keys())
             this._removeWindowSignals(wa);
-        }
+
         this._trackedWindows.clear();
 
         if (this._checkOverlapTimeoutId > 0) {
@@ -140,10 +139,9 @@ var Intellihide = class DashToDock_Intellihide {
 
     _removeWindowSignals(wa) {
         if (this._trackedWindows.get(wa)) {
-           wa.disconnect(this._trackedWindows.get(wa));
-           this._trackedWindows.delete(wa);
+            wa.disconnect(this._trackedWindows.get(wa));
+            this._trackedWindows.delete(wa);
         }
-
     }
 
     updateTargetBox(box) {
@@ -157,7 +155,7 @@ var Intellihide = class DashToDock_Intellihide {
     }
 
     getOverlapStatus() {
-        return (this._status == OverlapStatus.TRUE);
+        return this._status == OverlapStatus.TRUE;
     }
 
     _checkOverlap() {
@@ -167,26 +165,25 @@ var Intellihide = class DashToDock_Intellihide {
         /* Limit the number of calls to the doCheckOverlap function */
         if (this._checkOverlapTimeoutId) {
             this._checkOverlapTimeoutContinue = true;
-            return
+            return;
         }
 
         this._doCheckOverlap();
 
         this._checkOverlapTimeoutId = GLib.timeout_add(
             GLib.PRIORITY_DEFAULT, INTELLIHIDE_CHECK_INTERVAL, () => {
-            this._doCheckOverlap();
-            if (this._checkOverlapTimeoutContinue) {
-                this._checkOverlapTimeoutContinue = false;
-                return GLib.SOURCE_CONTINUE;
-            } else {
-                this._checkOverlapTimeoutId = 0;
-                return GLib.SOURCE_REMOVE;
-            }
-        });
+                this._doCheckOverlap();
+                if (this._checkOverlapTimeoutContinue) {
+                    this._checkOverlapTimeoutContinue = false;
+                    return GLib.SOURCE_CONTINUE;
+                } else {
+                    this._checkOverlapTimeoutId = 0;
+                    return GLib.SOURCE_REMOVE;
+                }
+            });
     }
 
     _doCheckOverlap() {
-
         if (!this._isEnabled || (this._targetBox == null))
             return;
 
@@ -213,7 +210,7 @@ var Intellihide = class DashToDock_Intellihide {
             if (topWindow !== null) {
                 this._topApp = this._tracker.get_window_app(topWindow);
                 // If there isn't a focused app, use that of the window on top
-                this._focusApp = this._tracker.focus_app || this._topApp
+                this._focusApp = this._tracker.focus_app || this._topApp;
 
                 windows = windows.filter(this._intellihideFilterInteresting, this);
 
@@ -241,7 +238,6 @@ var Intellihide = class DashToDock_Intellihide {
             this._status = overlaps;
             this.emit('status-changed', this._status);
         }
-
     }
 
     // Filter interesting windows to be considered for intellihide.
@@ -256,53 +252,52 @@ var Intellihide = class DashToDock_Intellihide {
 
         // Depending on the intellihide mode, exclude non-relevent windows
         switch (Docking.DockManager.settings.intellihideMode) {
-            case IntellihideMode.ALL_WINDOWS:
-                // Do nothing
-                break;
+        case IntellihideMode.ALL_WINDOWS:
+            // Do nothing
+            break;
 
-            case IntellihideMode.FOCUS_APPLICATION_WINDOWS:
-                // Skip windows of other apps
-                if (this._focusApp) {
-                    // The DropDownTerminal extension is not an application per se
-                    // so we match its window by wm class instead
-                    if (meta_win.get_wm_class() == 'DropDownTerminalWindow')
-                        return true;
+        case IntellihideMode.FOCUS_APPLICATION_WINDOWS:
+            // Skip windows of other apps
+            if (this._focusApp) {
+                // The DropDownTerminal extension is not an application per se
+                // so we match its window by wm class instead
+                if (meta_win.get_wm_class() == 'DropDownTerminalWindow')
+                    return true;
 
-                    let currentApp = this._tracker.get_window_app(meta_win);
-                    let focusWindow = global.display.get_focus_window()
+                let currentApp = this._tracker.get_window_app(meta_win);
+                let focusWindow = global.display.get_focus_window();
 
-                    // Consider half maximized windows side by side
-                    // and windows which are alwayson top
-                    if((currentApp != this._focusApp) && (currentApp != this._topApp)
-                        && !((focusWindow && focusWindow.maximized_vertically && !focusWindow.maximized_horizontally)
-                              && (meta_win.maximized_vertically && !meta_win.maximized_horizontally)
-                              && meta_win.get_monitor() == focusWindow.get_monitor())
-                        && !meta_win.is_above())
-                        return false;
-                }
-                break;
-
-            case IntellihideMode.MAXIMIZED_WINDOWS:
-                // Skip unmaximized windows
-                if (!meta_win.maximized_vertically && !meta_win.maximized_horizontally)
+                // Consider half maximized windows side by side
+                // and windows which are alwayson top
+                if ((currentApp != this._focusApp) && (currentApp != this._topApp) &&
+                        !((focusWindow && focusWindow.maximized_vertically && !focusWindow.maximized_horizontally) &&
+                              (meta_win.maximized_vertically && !meta_win.maximized_horizontally) &&
+                              meta_win.get_monitor() == focusWindow.get_monitor()) &&
+                        !meta_win.is_above())
                     return false;
-                break;
+            }
+            break;
 
-            case IntellihideMode.ALWAYS_ON_TOP:
-                // Always on top, except for fullscreen windows
-                if (this._focusApp) {
-                    const { focusWindow } = global.display;
-                    if (!focusWindow?.fullscreen)
-                        return false;
-                }
-                break;
+        case IntellihideMode.MAXIMIZED_WINDOWS:
+            // Skip unmaximized windows
+            if (!meta_win.maximized_vertically && !meta_win.maximized_horizontally)
+                return false;
+            break;
+
+        case IntellihideMode.ALWAYS_ON_TOP:
+            // Always on top, except for fullscreen windows
+            if (this._focusApp) {
+                const { focusWindow } = global.display;
+                if (!focusWindow?.fullscreen)
+                    return false;
+            }
+            break;
         }
 
-        if ( wksp_index == currentWorkspace && meta_win.showing_on_its_workspace() )
+        if (wksp_index == currentWorkspace && meta_win.showing_on_its_workspace())
             return true;
         else
             return false;
-
     }
 
     // Filter windows by type

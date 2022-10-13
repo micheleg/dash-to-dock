@@ -15,7 +15,7 @@ const Docking = Me.imports.docking;
 
 var SignalsHandlerFlags = {
     NONE: 0,
-    CONNECT_AFTER: 1
+    CONNECT_AFTER: 1,
 };
 
 const GENERIC_KEY = Symbol('generic');
@@ -25,7 +25,6 @@ const GENERIC_KEY = Symbol('generic');
  * abstract class
  */
 const BasicHandler = class DashToDock_BasicHandler {
-
     static get genericKey() {
         return GENERIC_KEY;
     }
@@ -114,6 +113,10 @@ const BasicHandler = class DashToDock_BasicHandler {
 
     /**
      * Create single element to be stored in the storage structure
+     *
+     * @param _object
+     * @param _element
+     * @param _callback
      */
     _create(_object, _element, _callback) {
         throw new GObject.NotImplementedError(`_create in ${this.constructor.name}`);
@@ -121,6 +124,8 @@ const BasicHandler = class DashToDock_BasicHandler {
 
     /**
      * Correctly delete single element
+     *
+     * @param _item
      */
     _remove(_item) {
         throw new GObject.NotImplementedError(`_remove in ${this.constructor.name}`);
@@ -128,6 +133,8 @@ const BasicHandler = class DashToDock_BasicHandler {
 
     /**
      * Block single element
+     *
+     * @param _item
      */
     _block(_item) {
         throw new GObject.NotImplementedError(`_block in ${this.constructor.name}`);
@@ -135,6 +142,8 @@ const BasicHandler = class DashToDock_BasicHandler {
 
     /**
      * Unblock single element
+     *
+     * @param _item
      */
     _unblock(_item) {
         throw new GObject.NotImplementedError(`_unblock in ${this.constructor.name}`);
@@ -145,7 +154,6 @@ const BasicHandler = class DashToDock_BasicHandler {
  * Manage global signals
  */
 var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHandler {
-
     _create(object, event, callback, flags = SignalsHandlerFlags.NONE) {
         if (!object)
             throw new Error('Impossible to connect to an invalid object');
@@ -155,7 +163,7 @@ var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHan
 
         if (!connector) {
             throw new Error(`Requested to connect to signal '${event}', ` +
-                `but no implementation for 'connect${after ? '_after' : ''}' `+
+                `but no implementation for 'connect${after ? '_after' : ''}' ` +
                 `found in ${object.constructor.name}`);
         }
 
@@ -192,18 +200,17 @@ var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHan
 
 /**
  * Color manipulation utilities
-  */
+ */
 var ColorUtils = class DashToDock_ColorUtils {
-
     // Darken or brigthen color by a fraction dlum
     // Each rgb value is modified by the same fraction.
     // Return "#rrggbb" string
     static ColorLuminance(r, g, b, dlum) {
         let rgbString = '#';
 
-        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(r*(1+dlum), 0), 255)), 2);
-        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(g*(1+dlum), 0), 255)), 2);
-        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(b*(1+dlum), 0), 255)), 2);
+        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(r * (1 + dlum), 0), 255)), 2);
+        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(g * (1 + dlum), 0), 255)), 2);
+        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(b * (1 + dlum), 0), 255)), 2);
 
         return rgbString;
     }
@@ -212,7 +219,7 @@ var ColorUtils = class DashToDock_ColorUtils {
     static _decimalToHex(d, padding) {
         let hex = d.toString(16);
         while (hex.length < padding)
-            hex = '0'+ hex;
+            hex = `0${hex}`;
         return hex;
     }
 
@@ -228,21 +235,21 @@ var ColorUtils = class DashToDock_ColorUtils {
             h = h.h;
         }
 
-        let r,g,b;
-        let c = v*s;
-        let h1 = h*6;
-        let x = c*(1 - Math.abs(h1 % 2 - 1));
+        let r, g, b;
+        let c = v * s;
+        let h1 = h * 6;
+        let x = c * (1 - Math.abs(h1 % 2 - 1));
         let m = v - c;
 
-        if (h1 <=1)
+        if (h1 <= 1)
             r = c + m, g = x + m, b = m;
-        else if (h1 <=2)
+        else if (h1 <= 2)
             r = x + m, g = c + m, b = m;
-        else if (h1 <=3)
+        else if (h1 <= 3)
             r = m, g = c + m, b = x + m;
-        else if (h1 <=4)
+        else if (h1 <= 4)
             r = m, g = x + m, b = c + m;
-        else if (h1 <=5)
+        else if (h1 <= 5)
             r = x + m, g = m, b = c + m;
         else
             r = c + m, g = m, b = x + m;
@@ -250,7 +257,7 @@ var ColorUtils = class DashToDock_ColorUtils {
         return {
             r: Math.round(r * 255),
             g: Math.round(g * 255),
-            b: Math.round(b * 255)
+            b: Math.round(b * 255),
         };
     }
 
@@ -266,7 +273,7 @@ var ColorUtils = class DashToDock_ColorUtils {
             b = r.b;
         }
 
-        let h,s,v;
+        let h, s, v;
 
         let M = Math.max(r, g, b);
         let m = Math.min(r, g, b);
@@ -275,23 +282,23 @@ var ColorUtils = class DashToDock_ColorUtils {
         if (c == 0)
             h = 0;
         else if (M == r)
-            h = ((g-b)/c) % 6;
+            h = ((g - b) / c) % 6;
         else if (M == g)
-            h = (b-r)/c + 2;
+            h = (b - r) / c + 2;
         else
-            h = (r-g)/c + 4;
+            h = (r - g) / c + 4;
 
-        h = h/6;
-        v = M/255;
+        h /= 6;
+        v = M / 255;
         if (M !== 0)
-            s = c/M;
+            s = c / M;
         else
             s = 0;
 
         return {
-            h: h,
-            s: s,
-            v: v
+            h,
+            s,
+            v,
         };
     }
 };
@@ -301,14 +308,15 @@ var ColorUtils = class DashToDock_ColorUtils {
  * and restored
  */
 var InjectionsHandler = class DashToDock_InjectionsHandler extends BasicHandler {
-
     _create(object, name, injectedFunction) {
         let original = object[name];
 
         if (!(original instanceof Function))
             throw new Error(`Virtual function ${name}() is not available for ${object}`);
 
-        object[name] = function(...args) { return injectedFunction.call(this, original, ...args) };
+        object[name] = function (...args) {
+            return injectedFunction.call(this, original, ...args);
+        };
         return [object, name, original];
     }
 
@@ -323,7 +331,6 @@ var InjectionsHandler = class DashToDock_InjectionsHandler extends BasicHandler 
  * and restored
  */
 var VFuncInjectionsHandler = class DashToDock_VFuncInjectionsHandler extends BasicHandler {
-
     _create(prototype, name, injectedFunction) {
         const original = prototype[`vfunc_${name}`];
         if (!(original instanceof Function))
@@ -364,7 +371,6 @@ var VFuncInjectionsHandler = class DashToDock_VFuncInjectionsHandler extends Bas
  * and restored
  */
 var PropertyInjectionsHandler = class DashToDock_PropertyInjectionsHandler extends BasicHandler {
-
     _create(instance, name, injectedPropertyDescriptor) {
         if (!(name in instance))
             throw new Error(`Object ${instance} has no '${name}' property`);
@@ -404,34 +410,48 @@ function getPosition() {
     return position;
 }
 
+/**
+ *
+ */
 function getPreviewScale() {
     return Docking.DockManager.settings.previewSizeScale;
 }
 
+/**
+ * @param cr
+ * @param x
+ * @param y
+ * @param width
+ * @param height
+ * @param isRoundLeft
+ * @param isRoundRight
+ * @param stroke
+ * @param fill
+ */
 function drawRoundedLine(cr, x, y, width, height, isRoundLeft, isRoundRight, stroke, fill) {
     if (height > width) {
         y += Math.floor((height - width) / 2.0);
         height = width;
     }
-    
+
     height = 2.0 * Math.floor(height / 2.0);
-    
+
     var leftRadius = isRoundLeft ? height / 2.0 : 0.0;
     var rightRadius = isRoundRight ? height / 2.0 : 0.0;
-    
+
     cr.moveTo(x + width - rightRadius, y);
     cr.lineTo(x + leftRadius, y);
     if (isRoundLeft)
-        cr.arcNegative(x + leftRadius, y + leftRadius, leftRadius, -Math.PI/2, Math.PI/2);
+        cr.arcNegative(x + leftRadius, y + leftRadius, leftRadius, -Math.PI / 2, Math.PI / 2);
     else
         cr.lineTo(x, y + height);
     cr.lineTo(x + width - rightRadius, y + height);
     if (isRoundRight)
-        cr.arcNegative(x + width - rightRadius, y + rightRadius, rightRadius, Math.PI/2, -Math.PI/2);
+        cr.arcNegative(x + width - rightRadius, y + rightRadius, rightRadius, Math.PI / 2, -Math.PI / 2);
     else
         cr.lineTo(x + width, y);
     cr.closePath();
-    
+
     if (fill != null) {
         cr.setSource(fill);
         cr.fillPreserve();
@@ -446,11 +466,13 @@ function drawRoundedLine(cr, x, y, width, height, isRoundLeft, isRoundRight, str
  * signal source parameter) to an array of n handlers that are each responsible
  * for receiving one of the n values and calling the original handler with the
  * most up-to-date arguments.
+ *
+ * @param handler
  */
 function splitHandler(handler) {
-    if (handler.length > 30) {
-        throw new Error("too many parameters");
-    }
+    if (handler.length > 30)
+        throw new Error('too many parameters');
+
     const count = handler.length - 1;
     let missingValueBits = (1 << count) - 1;
     const values = Array.from({ length: count });
@@ -459,9 +481,8 @@ function splitHandler(handler) {
         return (obj, value) => {
             values[i] = value;
             missingValueBits &= mask;
-            if (missingValueBits === 0) {
+            if (missingValueBits === 0)
                 handler(obj, ...values);
-            }
         };
     });
 }
@@ -484,7 +505,7 @@ var IconTheme = class DashToDockIconTheme {
         St.Settings.get().disconnect(this._changesId);
         this._iconTheme = null;
     }
-}
+};
 
 /**
  * Construct a map of gtk application window object paths to MetaWindows.
@@ -506,7 +527,12 @@ function getWindowsByObjectPath() {
     return windowsByObjectPath;
 }
 
-// Re-implements shell_app_compare so that can be used to resort running apps
+/**
+ * Re-implements shell_app_compare so that can be used to resort running apps
+ *
+ * @param appA
+ * @param appB
+ */
 function shellAppCompare(appA, appB) {
     if (appA.state !== appB.state) {
         if (appA.state === Shell.AppState.RUNNING)
@@ -539,7 +565,12 @@ function shellAppCompare(appA, appB) {
     return 0;
 }
 
-// Re-implements shell_app_compare_windows
+/**
+ * Re-implements shell_app_compare_windows
+ *
+ * @param winA
+ * @param winB
+ */
 function shellWindowsCompare(winA, winB) {
     const activeWorkspace = global.workspaceManager.get_active_workspace();
     const wsA = winA.get_workspace() === activeWorkspace;
@@ -616,6 +647,9 @@ class CancellableChild extends Gio.Cancellable {
     }
 });
 
+/**
+ *
+ */
 function getMonitorManager() {
     return global.backend.get_monitor_manager?.() ?? Meta.MonitorManager.get();
 }

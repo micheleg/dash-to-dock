@@ -14,14 +14,16 @@ const Signals = imports.signals;
 // the shell domain with the default _() and N_()
 const Gettext = imports.gettext.domain('dashtodock');
 const __ = Gettext.gettext;
-const N__ = function (e) { return e };
+const N__ = function (e) {
+    return e;
+};
 
 try {
     imports.misc.extensionUtils;
 } catch (e) {
     const resource = Gio.Resource.load(
-        (GLib.getenv('JHBUILD_PREFIX') || '/usr') +
-        '/share/gnome-shell/org.gnome.Extensions.src.gresource');
+        `${GLib.getenv('JHBUILD_PREFIX') || '/usr'
+        }/share/gnome-shell/org.gnome.Extensions.src.gresource`);
     resource._register();
     imports.searchPath.push('resource:///org/gnome/Extensions/js');
 }
@@ -37,7 +39,7 @@ const [SHELL_VERSION] = Config?.PACKAGE_VERSION?.split('.') ?? [undefined];
 const TransparencyMode = {
     DEFAULT: 0,
     FIXED: 1,
-    DYNAMIC: 3
+    DYNAMIC: 3,
 };
 
 const RunningIndicatorStyle = {
@@ -48,12 +50,12 @@ const RunningIndicatorStyle = {
     SEGMENTED: 4,
     SOLID: 5,
     CILIORA: 6,
-    METRO: 7
+    METRO: 7,
 };
 
 class MonitorsConfig {
-    static XML_INTERFACE =
-        '<node>\
+    static get XML_INTERFACE() {
+        return '<node>\
             <interface name="org.gnome.Mutter.DisplayConfig">\
                 <method name="GetCurrentState">\
                 <arg name="serial" direction="out" type="u" />\
@@ -64,18 +66,21 @@ class MonitorsConfig {
                 <signal name="MonitorsChanged" />\
             </interface>\
         </node>';
+    }
 
-    static ProxyWrapper = Gio.DBusProxy.makeProxyWrapper(MonitorsConfig.XML_INTERFACE);
+    static get ProxyWrapper() {
+        return Gio.DBusProxy.makeProxyWrapper(MonitorsConfig.XML_INTERFACE);
+    }
 
     constructor() {
         this._monitorsConfigProxy = new MonitorsConfig.ProxyWrapper(
             Gio.DBus.session,
-            "org.gnome.Mutter.DisplayConfig",
-            "/org/gnome/Mutter/DisplayConfig"
+            'org.gnome.Mutter.DisplayConfig',
+            '/org/gnome/Mutter/DisplayConfig'
         );
 
         // Connecting to a D-Bus signal
-        this._monitorsConfigProxy.connectSignal("MonitorsChanged",
+        this._monitorsConfigProxy.connectSignal('MonitorsChanged',
             () => this._updateResources());
 
         this._primaryMonitor = null;
@@ -168,6 +173,9 @@ class MonitorsConfig {
 }
 Signals.addSignalMethods(MonitorsConfig.prototype);
 
+/**
+ * @param settings
+ */
 function setShortcut(settings) {
     const shortcutText = settings.get_string('shortcut-text');
     const [success, key, mods] = Gtk.accelerator_parse(shortcutText);
@@ -183,23 +191,22 @@ function setShortcut(settings) {
 var Settings = GObject.registerClass({
     Implements: [Gtk.BuilderScope],
 }, class DashToDock_Settings extends GObject.Object {
-
     _init() {
         super._init();
 
         if (Me)
             this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
         else
-            this._settings = new Gio.Settings({schema_id: 'org.gnome.shell.extensions.dash-to-dock'});
+            this._settings = new Gio.Settings({ schema_id: 'org.gnome.shell.extensions.dash-to-dock' });
 
         this._appSwitcherSettings = new Gio.Settings({ schema_id: 'org.gnome.shell.app-switcher' });
-        this._rtl = (Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL);
+        this._rtl = Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL;
 
         this._builder = new Gtk.Builder();
         this._builder.set_scope(this);
         if (Me) {
             this._builder.set_translation_domain(Me.metadata['gettext-domain']);
-            this._builder.add_from_file(Me.path + '/Settings.ui');
+            this._builder.add_from_file(`${Me.path}/Settings.ui`);
         } else {
             this._builder.add_from_file('./Settings.ui');
         }
@@ -325,12 +332,15 @@ var Settings = GObject.registerClass({
                 return GLib.SOURCE_REMOVE;
             });
     }
+
     preview_size_scale_format_value_cb(scale, value) {
         return value == 0 ? 'auto' : value;
     }
+
     preview_size_scale_value_changed_cb(scale) {
         this._settings.set_double('preview-size-scale', scale.get_value());
     }
+
     custom_opacity_scale_value_changed_cb(scale) {
         // Avoid settings the opacity consinuosly as it's change is animated
         if (this._opacity_timeout > 0)
@@ -342,6 +352,7 @@ var Settings = GObject.registerClass({
                 return GLib.SOURCE_REMOVE;
             });
     }
+
     min_opacity_scale_value_changed_cb(scale) {
         // Avoid settings the opacity consinuosly as it's change is animated
         if (this._opacity_timeout > 0)
@@ -353,6 +364,7 @@ var Settings = GObject.registerClass({
                 return GLib.SOURCE_REMOVE;
             });
     }
+
     max_opacity_scale_value_changed_cb(scale) {
         // Avoid settings the opacity consinuosly as it's change is animated
         if (this._opacity_timeout > 0)
@@ -369,10 +381,12 @@ var Settings = GObject.registerClass({
         if (button.get_active())
             this._settings.set_enum('intellihide-mode', 0);
     }
+
     focus_application_windows_radio_button_toggled_cb(button) {
         if (button.get_active())
             this._settings.set_enum('intellihide-mode', 1);
     }
+
     maximized_windows_radio_button_toggled_cb(button) {
         if (button.get_active())
             this._settings.set_enum('intellihide-mode', 2);
@@ -401,14 +415,14 @@ var Settings = GObject.registerClass({
             if (monitor.isPrimary) {
                 dockMonitorCombo.append_text(
                     /* Translators: This will be followed by Display Name - Connector. */
-                    __('Primary monitor: ') + monitor.displayName + ' - ' +
-                        monitor.connector);
+                    `${__('Primary monitor: ') + monitor.displayName} - ${
+                        monitor.connector}`);
                 primaryIndex = this._monitors.length;
             } else {
                 dockMonitorCombo.append_text(
                     /* Translators: Followed by monitor index, Display Name - Connector. */
-                    __('Secondary monitor ') + (monitor.index + 1) + ' - ' +
-                        monitor.displayName + ' - ' + monitor.connector);
+                    `${__('Secondary monitor ') + (monitor.index + 1)} - ${
+                        monitor.displayName} - ${monitor.connector}`);
             }
 
             this._monitors.push(monitor);
@@ -434,18 +448,18 @@ var Settings = GObject.registerClass({
         let position = this._settings.get_enum('dock-position');
 
         switch (position) {
-            case 0:
-                this._builder.get_object('position_top_button').set_active(true);
-                break;
-            case 1:
-                this._builder.get_object('position_right_button').set_active(true);
-                break;
-            case 2:
-                this._builder.get_object('position_bottom_button').set_active(true);
-                break;
-            case 3:
-                this._builder.get_object('position_left_button').set_active(true);
-                break;
+        case 0:
+            this._builder.get_object('position_top_button').set_active(true);
+            break;
+        case 1:
+            this._builder.get_object('position_right_button').set_active(true);
+            break;
+        case 2:
+            this._builder.get_object('position_bottom_button').set_active(true);
+            break;
+        case 3:
+            this._builder.get_object('position_left_button').set_active(true);
+            break;
         }
 
         if (this._rtl) {
@@ -500,16 +514,15 @@ var Settings = GObject.registerClass({
             'value',
             Gio.SettingsBindFlags.DEFAULT);
 
-        //this._builder.get_object('animation_duration_spinbutton').set_value(this._settings.get_double('animation-time'));
+        // this._builder.get_object('animation_duration_spinbutton').set_value(this._settings.get_double('animation-time'));
 
         // Create dialog for intelligent autohide advanced settings
         this._builder.get_object('intelligent_autohide_button').connect('clicked', () => {
-
             let dialog = new Gtk.Dialog({
                 title: __('Intelligent autohide customization'),
                 transient_for: this.widget.get_root(),
                 use_header_bar: true,
-                modal: true
+                modal: true,
             });
 
             // GTK+ leaves positive values for application-defined response ids.
@@ -581,11 +594,9 @@ var Settings = GObject.registerClass({
                     dialog.get_content_area().remove(box);
                     dialog.destroy();
                 }
-                return;
             });
 
             dialog.present();
-
         });
 
         // size options
@@ -593,16 +604,16 @@ var Settings = GObject.registerClass({
         dock_size_scale.set_value(this._settings.get_double('height-fraction'));
         dock_size_scale.add_mark(0.9, Gtk.PositionType.TOP, null);
         dock_size_scale.set_format_value_func((_, value) => {
-            return Math.round(value * 100) + ' %';
+            return `${Math.round(value * 100)} %`;
         });
         let icon_size_scale = this._builder.get_object('icon_size_scale');
         icon_size_scale.set_range(8, DEFAULT_ICONS_SIZES[0]);
         icon_size_scale.set_value(this._settings.get_int('dash-max-icon-size'));
-        DEFAULT_ICONS_SIZES.forEach(function (val) {
+        DEFAULT_ICONS_SIZES.forEach(val => {
             icon_size_scale.add_mark(val, Gtk.PositionType.TOP, val.toString());
         });
         icon_size_scale.set_format_value_func((_, value) => {
-            return value + ' px';
+            return `${value} px`;
         });
         this._builder.get_object('preview_size_scale').set_value(this._settings.get_double('preview-size-scale'));
 
@@ -645,8 +656,8 @@ var Settings = GObject.registerClass({
                 if (check.sensitive) {
                     check.label = check.label.split('\n')[0];
                 } else {
-                    check.label += '\n' +
-                        __('Managed by GNOME Multitasking\'s Application Switching setting');
+                    check.label += `\n${
+                        __('Managed by GNOME Multitasking\'s Application Switching setting')}`;
                 }
             });
         this._appSwitcherSettings.bind('current-workspace-only',
@@ -744,34 +755,33 @@ var Settings = GObject.registerClass({
             Gio.SettingsBindFlags.DEFAULT);
 
         this._builder.get_object('click_action_combo').set_active(this._settings.get_enum('click-action'));
-        this._builder.get_object('click_action_combo').connect('changed', (widget) => {
+        this._builder.get_object('click_action_combo').connect('changed', widget => {
             this._settings.set_enum('click-action', widget.get_active());
         });
 
         this._builder.get_object('scroll_action_combo').set_active(this._settings.get_enum('scroll-action'));
-        this._builder.get_object('scroll_action_combo').connect('changed', (widget) => {
+        this._builder.get_object('scroll_action_combo').connect('changed', widget => {
             this._settings.set_enum('scroll-action', widget.get_active());
         });
 
-        this._builder.get_object('shift_click_action_combo').connect('changed', (widget) => {
+        this._builder.get_object('shift_click_action_combo').connect('changed', widget => {
             this._settings.set_enum('shift-click-action', widget.get_active());
         });
 
-        this._builder.get_object('middle_click_action_combo').connect('changed', (widget) => {
+        this._builder.get_object('middle_click_action_combo').connect('changed', widget => {
             this._settings.set_enum('middle-click-action', widget.get_active());
         });
-        this._builder.get_object('shift_middle_click_action_combo').connect('changed', (widget) => {
+        this._builder.get_object('shift_middle_click_action_combo').connect('changed', widget => {
             this._settings.set_enum('shift-middle-click-action', widget.get_active());
         });
 
         // Create dialog for number overlay options
         this._builder.get_object('overlay_button').connect('clicked', () => {
-
             let dialog = new Gtk.Dialog({
                 title: __('Show dock and application numbers'),
                 transient_for: this.widget.get_root(),
                 use_header_bar: true,
-                modal: true
+                modal: true,
             });
 
             // GTK+ leaves positive values for application-defined response ids.
@@ -816,7 +826,6 @@ var Settings = GObject.registerClass({
                     dialog.get_content_area().remove(box);
                     dialog.destroy();
                 }
-                return;
             });
 
             dialog.present();
@@ -824,12 +833,11 @@ var Settings = GObject.registerClass({
 
         // Create dialog for middle-click options
         this._builder.get_object('middle_click_options_button').connect('clicked', () => {
-
             let dialog = new Gtk.Dialog({
                 title: __('Customize middle-click behavior'),
                 transient_for: this.widget.get_root(),
                 use_header_bar: true,
-                modal: true
+                modal: true,
             });
 
             // GTK+ leaves positive values for application-defined response ids.
@@ -873,11 +881,9 @@ var Settings = GObject.registerClass({
                     dialog.get_content_area().remove(box);
                     dialog.destroy();
                 }
-                return;
             });
 
             dialog.present();
-
         });
 
         // Appearance Panel
@@ -892,7 +898,7 @@ var Settings = GObject.registerClass({
         );
         this._builder.get_object('running_indicators_combo').connect(
             'changed',
-            (widget) => {
+            widget => {
                 this._settings.set_enum('running-indicator-style', widget.get_active());
             }
         );
@@ -909,12 +915,11 @@ var Settings = GObject.registerClass({
 
         // Create dialog for running indicators advanced settings
         this._builder.get_object('running_indicators_advance_settings_button').connect('clicked', () => {
-
             let dialog = new Gtk.Dialog({
                 title: __('Customize running indicators'),
                 transient_for: this.widget.get_root(),
                 use_header_bar: true,
-                modal: true
+                modal: true,
             });
 
             let box = this._builder.get_object('running_dots_advance_settings_box');
@@ -937,7 +942,7 @@ var Settings = GObject.registerClass({
             rgba.parse(this._settings.get_string('custom-theme-running-dots-color'));
             this._builder.get_object('dot_color_colorbutton').set_rgba(rgba);
 
-            this._builder.get_object('dot_color_colorbutton').connect('notify::rgba', (button) => {
+            this._builder.get_object('dot_color_colorbutton').connect('notify::rgba', button => {
                 let css = button.rgba.to_string();
 
                 this._settings.set_string('custom-theme-running-dots-color', css);
@@ -946,7 +951,7 @@ var Settings = GObject.registerClass({
             rgba.parse(this._settings.get_string('custom-theme-running-dots-border-color'));
             this._builder.get_object('dot_border_color_colorbutton').set_rgba(rgba);
 
-            this._builder.get_object('dot_border_color_colorbutton').connect('notify::rgba', (button) => {
+            this._builder.get_object('dot_border_color_colorbutton').connect('notify::rgba', button => {
                 let css = button.rgba.to_string();
 
                 this._settings.set_string('custom-theme-running-dots-border-color', css);
@@ -962,11 +967,9 @@ var Settings = GObject.registerClass({
                 // remove the settings box so it doesn't get destroyed;
                 dialog.get_content_area().remove(box);
                 dialog.destroy();
-                return;
             });
 
             dialog.present();
-
         });
 
         this._settings.bind('custom-background-color', this._builder.get_object('custom_background_color_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
@@ -976,7 +979,7 @@ var Settings = GObject.registerClass({
         rgba.parse(this._settings.get_string('background-color'));
         this._builder.get_object('custom_background_color').set_rgba(rgba);
 
-        this._builder.get_object('custom_background_color').connect('notify::rgba', (button) => {
+        this._builder.get_object('custom_background_color').connect('notify::rgba', button => {
             let css = button.rgba.to_string();
 
             this._settings.set_string('background-color', css);
@@ -988,7 +991,7 @@ var Settings = GObject.registerClass({
         );
         this._builder.get_object('customize_opacity_combo').connect(
             'changed',
-            (widget) => {
+            widget => {
                 this._settings.set_enum('transparency-mode', parseInt(widget.get_active_id()));
             }
         );
@@ -996,7 +999,7 @@ var Settings = GObject.registerClass({
         const custom_opacity_scale = this._builder.get_object('custom_opacity_scale');
         custom_opacity_scale.set_value(this._settings.get_double('background-opacity'));
         custom_opacity_scale.set_format_value_func((_, value) => {
-            return Math.round(value * 100) + '%';
+            return `${Math.round(value * 100)}%`;
         });
 
         if (this._settings.get_enum('transparency-mode') !== TransparencyMode.FIXED)
@@ -1009,27 +1012,25 @@ var Settings = GObject.registerClass({
                 this._builder.get_object('custom_opacity_scale').set_sensitive(true);
         });
 
-        if (this._settings.get_enum('transparency-mode') !== TransparencyMode.DYNAMIC) {
+        if (this._settings.get_enum('transparency-mode') !== TransparencyMode.DYNAMIC)
             this._builder.get_object('dynamic_opacity_button').set_sensitive(false);
-        }
+
 
         this._settings.connect('changed::transparency-mode', () => {
-            if (this._settings.get_enum('transparency-mode') !== TransparencyMode.DYNAMIC) {
+            if (this._settings.get_enum('transparency-mode') !== TransparencyMode.DYNAMIC)
                 this._builder.get_object('dynamic_opacity_button').set_sensitive(false);
-            }
-            else {
+
+            else
                 this._builder.get_object('dynamic_opacity_button').set_sensitive(true);
-            }
         });
 
         // Create dialog for transparency advanced settings
         this._builder.get_object('dynamic_opacity_button').connect('clicked', () => {
-
             let dialog = new Gtk.Dialog({
                 title: __('Customize opacity'),
                 transient_for: this.widget.get_root(),
                 use_header_bar: true,
-                modal: true
+                modal: true,
             });
 
             let box = this._builder.get_object('advanced_transparency_dialog');
@@ -1060,10 +1061,10 @@ var Settings = GObject.registerClass({
                 this._settings.get_double('min-alpha')
             );
             min_alpha_scale.set_format_value_func((_, value) => {
-                return Math.round(value * 100) + ' %';
+                return `${Math.round(value * 100)} %`;
             });
             max_alpha_scale.set_format_value_func((_, value) => {
-                return Math.round(value * 100) + ' %';
+                return `${Math.round(value * 100)} %`;
             });
 
             max_alpha_scale.set_value(
@@ -1074,7 +1075,6 @@ var Settings = GObject.registerClass({
                 // remove the settings box so it doesn't get destroyed;
                 dialog.get_content_area().remove(box);
                 dialog.destroy();
-                return;
             });
 
             dialog.present();
@@ -1112,10 +1112,16 @@ var Settings = GObject.registerClass({
     }
 });
 
+/**
+ *
+ */
 function init() {
     ExtensionUtils.initTranslations();
 }
 
+/**
+ *
+ */
 function buildPrefsWidget() {
     let settings = new Settings();
     let widget = settings.widget;

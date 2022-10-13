@@ -8,14 +8,23 @@ const Docking = Me.imports.docking;
 // GNOME Shell 3.26+ (mozjs52+).
 var dockManager;
 
+/**
+ *
+ */
 function init() {
     ExtensionUtils.initTranslations('dashtodock');
 }
 
+/**
+ *
+ */
 function enable() {
     new Docking.DockManager();
 }
 
+/**
+ *
+ */
 function disable() {
     dockManager.destroy();
 }

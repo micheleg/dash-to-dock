@@ -13,7 +13,9 @@ const St = imports.gi.St;
 // the shell domain with the default _() and N_()
 const Gettext = imports.gettext.domain('dashtodock');
 const __ = Gettext.gettext;
-const N__ = function(e) { return e };
+const N__ = function (e) {
+    return e;
+};
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
@@ -42,10 +44,13 @@ const Labels = Object.freeze({
     WINDOWS_CHANGED: Symbol('windows-changed'),
 });
 
-if (imports.system.version >= 17101) {
+if (imports.system.version >= 17101)
     Gio._promisify(Gio.File.prototype, 'query_info_async', 'query_info_finish');
-}
 
+
+/**
+ *
+ */
 function makeNautilusFileOperationsProxy() {
     const proxy = new NautilusFileOperations2ProxyInterface(
         Gio.DBus.session,
@@ -103,7 +108,7 @@ var LocationAppInfo = GObject.registerClass({
     }
 
     get_action_name() {
-        return null
+        return null;
     }
 
     get_boolean() {
@@ -264,8 +269,8 @@ var LocationAppInfo = GObject.registerClass({
 
         const customIcon = info.get_attribute_string(ATTRIBUTE_METADATA_CUSTOM_ICON);
         if (customIcon) {
-            const customIconFile = GLib.uri_parse_scheme(customIcon) ?
-                Gio.File.new_for_uri(customIcon) : Gio.File.new_for_path(customIcon);
+            const customIconFile = GLib.uri_parse_scheme(customIcon)
+                ? Gio.File.new_for_uri(customIcon) : Gio.File.new_for_path(customIcon);
             const iconFileInfo = await customIconFile.query_info_async(
                 Gio.FILE_ATTRIBUTE_STANDARD_TYPE,
                 Gio.FileQueryInfoFlags.NONE,
@@ -432,14 +437,14 @@ class MountableVolumeAppInfo extends LocationAppInfo {
 
     get_action_name(action) {
         switch (action) {
-            case 'mount':
-                return __('Mount');
-            case 'unmount':
-                return __('Unmount');
-            case 'eject':
-                return __('Eject');
-            default:
-                return null;
+        case 'mount':
+            return __('Mount');
+        case 'unmount':
+            return __('Unmount');
+        case 'eject':
+            return __('Eject');
+        default:
+            return null;
         }
     }
 
@@ -495,13 +500,13 @@ class MountableVolumeAppInfo extends LocationAppInfo {
 
     _notifyActionError(action, message) {
         if (action === 'mount') {
-            global.notify_error(__("Failed to mount “%s”".format(
+            global.notify_error(__('Failed to mount “%s”'.format(
                 this.get_name())), message);
         } else if (action === 'unmount') {
-            global.notify_error(__("Failed to umount “%s”".format(
+            global.notify_error(__('Failed to umount “%s”'.format(
                 this.get_name())), message);
         } else if (action === 'eject') {
-            global.notify_error(__("Failed to eject “%s”".format(
+            global.notify_error(__('Failed to eject “%s”'.format(
                 this.get_name())), message);
         }
     }
@@ -513,13 +518,13 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         if (this._currentAction) {
             if (this._currentAction === 'mount') {
                 this._notifyActionError(action,
-                    __("Mount operation already in progress"));
+                    __('Mount operation already in progress'));
             } else if (this._currentAction === 'unmount') {
                 this._notifyActionError(action,
-                    __("Umount operation already in progress"));
+                    __('Umount operation already in progress'));
             } else if (this._currentAction === 'eject') {
                 this._notifyActionError(action,
-                    __("Eject operation already in progress"));
+                    __('Eject operation already in progress'));
             }
 
             throw new Error('Another action %s is being performed in %s'.format(
@@ -631,10 +636,10 @@ class TrashAppInfo extends LocationAppInfo {
 
     get_action_name(action) {
         switch (action) {
-            case 'empty-trash':
-                return __('Empty Trash');
-            default:
-                return null;
+        case 'empty-trash':
+            return __('Empty Trash');
+        default:
+            return null;
         }
     }
 
@@ -649,10 +654,10 @@ class TrashAppInfo extends LocationAppInfo {
 
         this._schedUpdateId = GLib.timeout_add(GLib.PRIORITY_LOW,
             UPDATE_TRASH_DELAY, () => {
-            this._schedUpdateId = 0;
-            this._updateTrash();
-            return GLib.SOURCE_REMOVE;
-        });
+                this._schedUpdateId = 0;
+                this._updateTrash();
+                return GLib.SOURCE_REMOVE;
+            });
     }
 
     async _updateTrash() {
@@ -707,10 +712,13 @@ class TrashAppInfo extends LocationAppInfo {
             nautilus.platformData({ timestamp }), (_p, error) => {
                 if (error)
                     logError(error, 'Empty trash failed');
-        }, this.cancellable);
+            }, this.cancellable);
     }
 });
 
+/**
+ * @param shellApp
+ */
 function wrapWindowsBackedApp(shellApp) {
     if (shellApp._dtdData)
         throw new Error('%s has been already wrapped'.format(shellApp));
@@ -725,11 +733,11 @@ function wrapWindowsBackedApp(shellApp) {
         signalConnections: new Utils.GlobalSignalsHandler(),
         methodInjections: new Utils.InjectionsHandler(),
         propertyInjections: new Utils.PropertyInjectionsHandler(),
-        addProxyProperties: function (parent, proxyProperties) {
+        addProxyProperties(parent, proxyProperties) {
             Object.entries(proxyProperties).forEach(([p, o]) => {
-                const publicProp = o.public ? p : '_' + p;
-                const get = (o.getter && o.value instanceof Function) ?
-                    () => this[p]() : () => this[p];
+                const publicProp = o.public ? p : `_${p}`;
+                const get = o.getter && o.value instanceof Function
+                    ? () => this[p]() : () => this[p];
                 Object.defineProperty(parent, publicProp, Object.assign({
                     get,
                     set: v => (this[p] = v),
@@ -740,7 +748,7 @@ function wrapWindowsBackedApp(shellApp) {
                 this.proxyProperties.push(publicProp);
             });
         },
-        destroy: function () {
+        destroy() {
             this.windows = [];
             this.proxyProperties = [];
             this.sources.forEach(s => GLib.source_remove(s));
@@ -748,7 +756,7 @@ function wrapWindowsBackedApp(shellApp) {
             this.signalConnections.destroy();
             this.methodInjections.destroy();
             this.propertyInjections.destroy();
-        }
+        },
     };
 
     shellApp._dtdData.addProxyProperties(shellApp, {
@@ -768,7 +776,7 @@ function wrapWindowsBackedApp(shellApp) {
                 throw new Error('Property %s is already defined'.format(name));
             const defaultParams = { public: true, readOnly: true };
             this._dtdData.addProxyProperties(this, {
-                [name]: { ...defaultParams, ...params, value }
+                [name]: { ...defaultParams, ...params, value },
             });
         }
     };
@@ -797,11 +805,11 @@ function wrapWindowsBackedApp(shellApp) {
         w.can_close()).forEach(w => w.delete(global.get_current_time())));
 
     shellApp._setDtdData({
-        _getStateByWindows: function() {
+        _getStateByWindows() {
             return this.get_n_windows() ? Shell.AppState.RUNNING : Shell.AppState.STOPPED;
         },
 
-        _updateWindows: function () {
+        _updateWindows() {
             throw new GObject.NotImplementedError(`_updateWindows in ${this.constructor.name}`);
         },
 
@@ -810,7 +818,7 @@ function wrapWindowsBackedApp(shellApp) {
             this.notify('state');
         },
 
-        _setState: function (state) {
+        _setState(state) {
             const oldState = this.state;
             this._state = state;
 
@@ -818,7 +826,7 @@ function wrapWindowsBackedApp(shellApp) {
                 this._notifyStateChanged();
         },
 
-        _setWindows: function (windows) {
+        _setWindows(windows) {
             const oldState = this.state;
             const oldWindows = this._windows.slice();
             const result = { windowsChanged: false, stateChanged: false };
@@ -856,7 +864,7 @@ function wrapWindowsBackedApp(shellApp) {
             this.isFocused = false;
             windowTracker.notify('focus-app');
         }
-    }
+    };
 
     shellApp._checkFocused();
     shellApp._signalConnections.add(global.display, 'notify::focus-window', () =>
@@ -887,20 +895,20 @@ function wrapWindowsBackedApp(shellApp) {
             timestamp = global.get_current_time();
 
         switch (this.state) {
-            case Shell.AppState.STOPPED:
-                try {
-                    this._startingWorkspace = workspace;
-                    this._setState(Shell.AppState.STARTING);
-                    this.launch(timestamp, workspace, Shell.AppLaunchGpu.APP_PREF);
-                } catch (e) {
-                    logError(e);
-                    global.notify_error(_("Failed to launch “%s”".format(
-                        this.get_name())), e.message);
-                }
-                break;
-            case Shell.AppState.RUNNING:
-                this.activate_window(null, timestamp);
-                break;
+        case Shell.AppState.STOPPED:
+            try {
+                this._startingWorkspace = workspace;
+                this._setState(Shell.AppState.STARTING);
+                this.launch(timestamp, workspace, Shell.AppLaunchGpu.APP_PREF);
+            } catch (e) {
+                logError(e);
+                global.notify_error(_('Failed to launch “%s”'.format(
+                    this.get_name())), e.message);
+            }
+            break;
+        case Shell.AppState.RUNNING:
+            this.activate_window(null, timestamp);
+            break;
         }
     });
 
@@ -909,19 +917,23 @@ function wrapWindowsBackedApp(shellApp) {
     m('compare', (_om, other) => Utils.shellAppCompare(shellApp, other));
 
     const { destroy: defaultDestroy } = shellApp;
-    shellApp.destroy = function() {
-        this._dtdData.proxyProperties.forEach(p => (delete this[p]));
+    shellApp.destroy = function () {
+        this._dtdData.proxyProperties.forEach(p => delete this[p]);
         this._dtdData.destroy();
         this._dtdData = undefined;
         this.appInfo.destroy && this.appInfo.destroy();
         this.destroy = defaultDestroy;
         defaultDestroy && defaultDestroy.call(this);
-    }
+    };
 
     return shellApp;
 }
 
-// We can't inherit from Shell.App as it's a final type, so let's patch it
+/**
+ * We can't inherit from Shell.App as it's a final type, so let's patch it
+ *
+ * @param params
+ */
 function makeLocationApp(params) {
     if (!(params?.appInfo instanceof LocationAppInfo))
         throw new TypeError('Invalid location');
@@ -962,7 +974,7 @@ function makeLocationApp(params) {
         const context = global.create_app_launch_context(0, workspace);
         const [ret] = GLib.spawn_async(null,
             [...this.appInfo.get_commandline().split(' ').filter(
-                t => !t.startsWith('%')), this.appInfo.location.get_uri() ],
+                t => !t.startsWith('%')), this.appInfo.location.get_uri()],
             context.get_environment(), GLib.SpawnFlags.SEARCH_PATH, null);
         return ret;
     });
@@ -988,17 +1000,17 @@ function makeLocationApp(params) {
     shellApp._setDtdData({
         _needsResort: true,
 
-        _windowsOrderChanged: function() {
+        _windowsOrderChanged() {
             this._needsResort = true;
             this.emit('windows-changed');
         },
 
-        _sortWindows: function () {
+        _sortWindows() {
             this._windows.sort(Utils.shellWindowsCompare);
             this._needsResort = false;
         },
 
-        _updateWindows: function () {
+        _updateWindows() {
             const windows = fm1Client.getWindows(this.location?.get_uri()).sort(
                 Utils.shellWindowsCompare);
             const { windowsChanged } = this._setWindows(windows);
@@ -1026,10 +1038,16 @@ function makeLocationApp(params) {
     return shellApp;
 }
 
+/**
+ *
+ */
 function getFileManagerApp() {
     return Shell.AppSystem.get_default().lookup_app(FILE_MANAGER_DESKTOP_APP_ID);
 }
 
+/**
+ *
+ */
 function wrapFileManagerApp() {
     const fileManagerApp = getFileManagerApp();
     if (!fileManagerApp)
@@ -1090,6 +1108,9 @@ function wrapFileManagerApp() {
     return fileManagerApp;
 }
 
+/**
+ *
+ */
 function unWrapFileManagerApp() {
     const fileManagerApp = getFileManagerApp();
     if (!fileManagerApp || !fileManagerApp._dtdData)
@@ -1121,7 +1142,7 @@ var Trash = class DashToDock_Trash {
         this._ensureApp();
         return this._trashApp;
     }
-}
+};
 
 /**
  * This class maintains Shell.App representations for removable devices
@@ -1129,7 +1150,6 @@ var Trash = class DashToDock_Trash {
  * devices come and go and are mounted and unmounted.
  */
 var Removables = class DashToDock_Removables {
-
     static initVolumePromises(object) {
         // TODO: This can be simplified using actual interface type when we
         // can depend on gjs 1.72
@@ -1208,9 +1228,9 @@ var Removables = class DashToDock_Removables {
         Removables.initVolumePromises(volume);
 
         if (!Docking.DockManager.settings.showMountsNetwork &&
-            volume.get_identifier('class') == 'network') {
+            volume.get_identifier('class') == 'network')
             return;
-        }
+
 
         const mount = volume.get_mount();
         if (mount) {
@@ -1237,7 +1257,7 @@ var Removables = class DashToDock_Removables {
 
         if (Docking.DockManager.settings.showMountsOnlyMounted) {
             volumeApp._signalConnections.add(appInfo, 'notify::mount',
-                () => (!appInfo.mount && this._onVolumeRemoved(appInfo.volume)));
+                () => !appInfo.mount && this._onVolumeRemoved(appInfo.volume));
         }
 
         this._volumeApps.push(volumeApp);
@@ -1273,9 +1293,12 @@ var Removables = class DashToDock_Removables {
     getApps() {
         return this._volumeApps;
     }
-}
+};
 Signals.addSignalMethods(Removables.prototype);
 
+/**
+ *
+ */
 function getApps() {
     const dockManager = Docking.DockManager.getDefault();
     const locationApps = [];
@@ -1289,10 +1312,16 @@ function getApps() {
     return locationApps;
 }
 
+/**
+ *
+ */
 function getRunningApps() {
     return getApps().filter(a => a.state === Shell.AppState.RUNNING);
 }
 
+/**
+ *
+ */
 function getStartingApps() {
     return getApps().filter(a => a.state === Shell.AppState.STARTING);
 }
