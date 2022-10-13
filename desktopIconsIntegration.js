@@ -25,7 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
+/**
  * Integration class
  *
  * This class must be added to other extensions in order to integrate
@@ -61,7 +61,7 @@ const Main = imports.ui.main;
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
-const IDENTIFIER_UUID = "130cbc66-235c-4bd6-8571-98d2d8bba5e2";
+const IDENTIFIER_UUID = '130cbc66-235c-4bd6-8571-98d2d8bba5e2';
 
 var DesktopIconsUsableAreaClass = class {
     constructor() {
@@ -97,10 +97,10 @@ var DesktopIconsUsableAreaClass = class {
      */
     setMargins(monitor, top, bottom, left, right) {
         this._margins[monitor] = {
-            'top': top,
-            'bottom': bottom,
-            'left': left,
-            'right': right
+            top,
+            bottom,
+            left,
+            right,
         };
         this._changedMargins();
     }
@@ -131,10 +131,10 @@ var DesktopIconsUsableAreaClass = class {
     }
 
     _changedMargins() {
-        if (this._timedMarginsID) {
+        if (this._timedMarginsID)
             GLib.source_remove(this._timedMarginsID);
-        }
-        this._timedMarginsID = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, ()=> {
+
+        this._timedMarginsID = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
             this._sendMarginsToAll();
             this._timedMarginsID = 0;
             return GLib.SOURCE_REMOVE;
@@ -153,7 +153,7 @@ var DesktopIconsUsableAreaClass = class {
             return;
 
         const usableArea = extension?.stateObj?.DesktopIconsUsableArea;
-         if (usableArea?.uuid === IDENTIFIER_UUID)
+        if (usableArea?.uuid === IDENTIFIER_UUID)
             usableArea.setMarginsForExtension(Me.uuid, this._margins);
     }
-}
+};

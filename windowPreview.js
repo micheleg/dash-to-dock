@@ -30,7 +30,6 @@ const MAX_PREVIEW_GENERATION_ATTEMPTS = 15;
 const MENU_MARGINS = 10;
 
 var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.PopupMenu {
-
     constructor(source) {
         super(source, 0.5, Utils.getPosition());
 
@@ -45,9 +44,8 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
 
         this.actor.add_style_class_name('app-menu');
         this.actor.set_style(
-            `max-width: ${Math.round((workArea.width) / scaleFactor) - MENU_MARGINS}px; ` +
-            `max-height: ${Math.round((workArea.height) / scaleFactor) - MENU_MARGINS}px;`);
-
+            `max-width: ${Math.round(workArea.width / scaleFactor) - MENU_MARGINS}px; ` +
+            `max-height: ${Math.round(workArea.height / scaleFactor) - MENU_MARGINS}px;`);
         this.actor.hide();
 
         // Chain our visibility and lifecycle to that of the source
@@ -90,7 +88,6 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
 };
 
 var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.PopupMenuSection {
-
     constructor(source) {
         super();
         this.actor = new St.ScrollView({
@@ -98,7 +95,7 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
             hscrollbar_policy: St.PolicyType.NEVER,
             vscrollbar_policy: St.PolicyType.NEVER,
             overlay_scrollbars: true,
-            enable_mouse_scrolling: true
+            enable_mouse_scrolling: true,
         });
 
         this.actor.connect('scroll-event', this._onScrollEvent.bind(this));
@@ -119,10 +116,10 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
 
         this.actor.connect('destroy', this._onDestroy.bind(this));
         this._stateChangedId = this.app.connect('windows-changed',
-                                                this._queueRedisplay.bind(this));
+            this._queueRedisplay.bind(this));
     }
 
-    _queueRedisplay () {
+    _queueRedisplay() {
         Main.queueDeferredWork(this._redisplayId);
     }
 
@@ -152,19 +149,19 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
 
         let increment = adjustment.step_increment;
 
-        switch ( event.get_scroll_direction() ) {
+        switch (event.get_scroll_direction()) {
         case Clutter.ScrollDirection.UP:
             delta = -increment;
             break;
         case Clutter.ScrollDirection.DOWN:
-            delta = +increment;
+            delta = Number(increment);
             break;
         case Clutter.ScrollDirection.SMOOTH: {
             let [dx, dy] = event.get_scroll_delta();
-            delta = dy*increment;
-            delta += dx*increment;
+            delta = dy * increment;
+            delta += dx * increment;
             break;
-            }
+        }
         }
 
         adjustment.set_value(adjustment.get_value() + delta);
@@ -182,18 +179,18 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
         return preview;
     }
 
-    _redisplay () {
-        let children = this._getMenuItems().filter(function(actor) {
-                return actor._window;
-            });
+    _redisplay() {
+        let children = this._getMenuItems().filter(actor => {
+            return actor._window;
+        });
 
         // Windows currently on the menu
-        let oldWin = children.map(function(actor) {
-                return actor._window;
-            });
+        let oldWin = children.map(actor => {
+            return actor._window;
+        });
 
         // All app windows with a static order
-        let newWin = this._source.getInterestingWindows().sort(function(a, b) {
+        let newWin = this._source.getInterestingWindows().sort((a, b) => {
             return a.get_stable_sequence() > b.get_stable_sequence();
         });
 
@@ -224,7 +221,7 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
             if (newWin[newIndex] &&
                 oldWin.indexOf(newWin[newIndex]) == -1) {
                 addedItems.push({ item: this._createPreviewItem(newWin[newIndex]),
-                                  pos: newIndex });
+                    pos: newIndex });
                 newIndex++;
                 continue;
             }
@@ -232,14 +229,14 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
             // Window moved
             let insertHere = newWin[newIndex + 1] &&
                              newWin[newIndex + 1] == oldWin[oldIndex];
-            let alreadyRemoved = removedActors.reduce(function(result, actor) {
+            let alreadyRemoved = removedActors.reduce((result, actor) => {
                 let removedWin = actor._window;
                 return result || removedWin == newWin[newIndex];
             }, false);
 
             if (insertHere || alreadyRemoved) {
                 addedItems.push({ item: this._createPreviewItem(newWin[newIndex]),
-                                  pos: newIndex + removedActors.length });
+                    pos: newIndex + removedActors.length });
                 newIndex++;
             } else {
                 removedActors.push(children[oldIndex]);
@@ -247,9 +244,10 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
             }
         }
 
-        for (let i = 0; i < addedItems.length; i++)
+        for (let i = 0; i < addedItems.length; i++) {
             this.addMenuItem(addedItems[i].item,
-                             addedItems[i].pos);
+                addedItems[i].pos);
+        }
 
         for (let i = 0; i < removedActors.length; i++) {
             let item = removedActors[i];
@@ -283,8 +281,8 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
         // when we *don't* need it, so turn off the scrollbar when that's true.
         // Dynamic changes in whether we need it aren't handled properly.
         let needsScrollbar = this._needsScrollbar();
-        let scrollbar_policy = needsScrollbar ?
-            St.PolicyType.AUTOMATIC : St.PolicyType.NEVER;
+        let scrollbar_policy = needsScrollbar
+            ? St.PolicyType.AUTOMATIC : St.PolicyType.NEVER;
         if (this.isHorizontal)
             this.actor.hscrollbar_policy =  scrollbar_policy;
         else
@@ -308,13 +306,12 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
             let topMaxHeight = topThemeNode.get_max_height();
             return topMaxHeight >= 0 && topNaturalHeight >= topMaxHeight;
         }
-
     }
 
     isAnimatingOut() {
-        return this.actor.get_children().reduce(function(result, actor) {
-                   return result || actor.animatingOut;
-               }, false);
+        return this.actor.get_children().reduce((result, actor) => {
+            return result || actor.animatingOut;
+        }, false);
     }
 };
 
@@ -344,8 +341,8 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this._cloneBin.set_style('padding-bottom: 0.5em');
 
         this.closeButton = new St.Button({ style_class: 'window-close',
-                                          x_expand: true,
-                                          y_expand: true});
+            x_expand: true,
+            y_expand: true });
         this.closeButton.add_actor(new St.Icon({ icon_name: 'window-close-symbolic' }));
         this.closeButton.set_x_align(Clutter.ActorAlign.END);
         this.closeButton.set_y_align(Clutter.ActorAlign.START);
@@ -354,24 +351,23 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this.closeButton.opacity = 0;
         this.closeButton.connect('clicked', this._closeWindow.bind(this));
 
-        let overlayGroup = new Clutter.Actor({layout_manager: new Clutter.BinLayout(), y_expand: true });
+        let overlayGroup = new Clutter.Actor({ layout_manager: new Clutter.BinLayout(), y_expand: true });
 
         overlayGroup.add_actor(this._cloneBin);
         overlayGroup.add_actor(this.closeButton);
 
-        let label = new St.Label({ text: window.get_title()});
-        label.set_style('max-width: '+PREVIEW_MAX_WIDTH +'px');
+        let label = new St.Label({ text: window.get_title() });
+        label.set_style(`max-width: ${PREVIEW_MAX_WIDTH}px`);
         let labelBin = new St.Bin({ child: label,
-            x_align: Clutter.ActorAlign.CENTER,
-        });
+            x_align: Clutter.ActorAlign.CENTER });
 
         this._windowTitleId = this._window.connect('notify::title', () => {
-                                  label.set_text(this._window.get_title());
-                              });
+            label.set_text(this._window.get_title());
+        });
 
         let box = new St.BoxLayout({ vertical: true,
-                                     reactive:true,
-                                     x_expand:true });
+            reactive: true,
+            x_expand: true });
         box.add(overlayGroup);
         box.add(labelBin);
         this._box = box;
@@ -416,7 +412,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             // * 250/1680 = 0,1488
             // * 150/1050 = 0,1429
             // => scale is 0,1429
-            scale = Math.min(1.0, PREVIEW_MAX_WIDTH/width, PREVIEW_MAX_HEIGHT/height)
+            scale = Math.min(1.0, PREVIEW_MAX_WIDTH / width, PREVIEW_MAX_HEIGHT / height);
         }
 
         scale *= St.ThemeContext.get_for_stage(global.stage).scaleFactor;
@@ -431,7 +427,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this._cloneBin.set_size(this._width * this._scale, this._height * this._scale);
     }
 
-    _cloneTexture(metaWin){
+    _cloneTexture(metaWin) {
         // Newly-created windows are added to a workspace before
         // the compositor finds out about them...
         if (!this._width || !this._height) {
@@ -454,17 +450,17 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         }
 
         const mutterWindow = metaWin.get_compositor_private();
-        let clone = new Clutter.Clone ({ source: mutterWindow,
-                                         reactive: true,
-                                         width: this._width * this._scale,
-                                         height: this._height * this._scale });
+        let clone = new Clutter.Clone({ source: mutterWindow,
+            reactive: true,
+            width: this._width * this._scale,
+            height: this._height * this._scale });
 
         // when the source actor is destroyed, i.e. the window closed, first destroy the clone
         // and then destroy the menu item (do this animating out)
         this._destroyId = mutterWindow.connect('destroy', () => {
             clone.destroy();
             this._destroyId = 0; // avoid to try to disconnect this signal from mutterWindow in _onDestroy(),
-                                 // as the object was just destroyed
+            // as the object was just destroyed
             this._animateOutAndDestroy();
         });
 
@@ -478,7 +474,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
                 this._destroyId = 0;
             }
             this._clone = null;
-        })
+        });
     }
 
     _windowCanClose() {
@@ -494,14 +490,14 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         // for instance because asking user confirmation, by monitoring the opening of
         // such additional confirmation window
         this._windowAddedId = this._workspace.connect('window-added',
-                                                      this._onWindowAdded.bind(this));
+            this._onWindowAdded.bind(this));
 
         this.deleteAllWindows();
     }
 
     deleteAllWindows() {
         // Delete all windows, starting from the bottom-most (most-modal) one
-        //let windows = this._window.get_compositor_private().get_children();
+        // let windows = this._window.get_compositor_private().get_children();
         let windows = this._clone.get_children();
         for (let i = windows.length - 1; i >= 1; i--) {
             let realWindow = windows[i].source;
@@ -533,9 +529,11 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
 
     _hasAttachedDialogs() {
         // count trasient windows
-        let n=0;
-        this._window.foreach_transient(function(){n++;});
-        return n>0;
+        let n = 0;
+        this._window.foreach_transient(() => {
+            n++;
+        });
+        return n > 0;
     }
 
     vfunc_key_focus_in() {
@@ -567,14 +565,13 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     }
 
     _showCloseButton() {
-
         if (this._windowCanClose()) {
             this.closeButton.show();
             this.closeButton.remove_all_transitions();
             this.closeButton.ease({
                 opacity: 255,
                 duration: Workspace.WINDOW_OVERLAY_FADE_TIME,
-                mode: Clutter.AnimationMode.EASE_OUT_QUAD
+                mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             });
         }
     }
@@ -588,7 +585,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this.closeButton.ease({
             opacity: 0,
             duration: Workspace.WINDOW_OVERLAY_FADE_TIME,
-            mode: Clutter.AnimationMode.EASE_IN_QUAD
+            mode: Clutter.AnimationMode.EASE_IN_QUAD,
         });
     }
 
@@ -620,7 +617,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             height: 0,
             duration: PREVIEW_ANIMATION_DURATION,
             delay: PREVIEW_ANIMATION_DURATION,
-            onComplete: () => this.destroy()
+            onComplete: () => this.destroy(),
         });
     }
 

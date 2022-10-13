@@ -1,28 +1,52 @@
-env:
-  es6: true
-  es2020: true
-parserOptions:
-  ecmaVersion: 2022
-
-globals:
-  global: readonly
-  _: readonly
-  C_: readonly
-  N_: readonly
-  ngettext: readonly
-  ARGV: readonly
-  Debugger: readonly
-  GIRepositoryGType: readonly
-  globalThis: readonly
-  imports: readonly
-  Intl: readonly
-  log: readonly
-  logError: readonly
-  print: readonly
-  printerr: readonly
-
 extends:
-  - "eslint:recommended"
+ - ./lint/eslintrc-gjs.yml
+ - ./lint/eslintrc-shell.yml
 
-rules:
-  no-unused-vars: warn
+overrides:
+  - files: ./*.js
+    globals:
+      global: readonly
+      _: readonly
+      C_: readonly
+      N_: readonly
+      ngettext: readonly
+
+    rules:
+      brace-style:
+        - warn
+      camelcase:
+        - warn
+      consistent-return:
+        - warn
+      eqeqeq:
+        - warn
+      func-style:
+        - warn
+      jsdoc/check-param-names:
+        - warn
+      jsdoc/require-param-description:
+        - warn
+      jsdoc/require-param-type:
+        - warn
+      max-statements-per-line:
+        - warn
+      no-array-constructor:
+        - warn
+      no-invalid-this:
+        - warn
+      no-loop-func:
+        - warn
+      no-new-object:
+        - warn
+      no-return-assign:
+        - warn
+      no-shadow:
+        - warn
+      no-unused-expressions:
+        - warn
+      no-unused-vars:
+        - warn
+      no-useless-call:
+        - warn
+      prefer-rest-params:
+        - warn

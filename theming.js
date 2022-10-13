@@ -30,7 +30,7 @@ const Utils = Me.imports.utils;
 const TransparencyMode = {
     DEFAULT:  0,
     FIXED:    1,
-    DYNAMIC:  3
+    DYNAMIC:  3,
 };
 
 const Labels = Object.freeze({
@@ -48,7 +48,6 @@ var PositionStyleClass = Object.freeze([
  * Manage theme customization and custom theme support
  */
 var ThemeManager = class DashToDock_ThemeManager {
-
     constructor(dock) {
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._bindSettingsChanges();
@@ -56,24 +55,24 @@ var ThemeManager = class DashToDock_ThemeManager {
         this._dash = dock.dash;
 
         // initialize colors with generic values
-        this._customizedBackground = {red: 0, green: 0, blue: 0, alpha: 0};
-        this._customizedBorder = {red: 0, green: 0, blue: 0, alpha: 0};
+        this._customizedBackground = { red: 0, green: 0, blue: 0, alpha: 0 };
+        this._customizedBorder = { red: 0, green: 0, blue: 0, alpha: 0 };
         this._transparency = new Transparency(dock);
 
         this._signalsHandler.add([
             // When theme changes re-obtain default background color
-            St.ThemeContext.get_for_stage (global.stage),
+            St.ThemeContext.get_for_stage(global.stage),
             'changed',
-            this.updateCustomTheme.bind(this)
+            this.updateCustomTheme.bind(this),
         ], [
             // update :overview pseudoclass
             Main.overview,
             'showing',
-            this._onOverviewShowing.bind(this)
+            this._onOverviewShowing.bind(this),
         ], [
             Main.overview,
             'hiding',
-            this._onOverviewHiding.bind(this)
+            this._onOverviewHiding.bind(this),
         ]);
 
         this._updateCustomStyleClasses();
@@ -102,30 +101,29 @@ var ThemeManager = class DashToDock_ThemeManager {
 
         let [backgroundColor, borderColor] = this._getDefaultColors();
 
-        if (backgroundColor==null)
+        if (backgroundColor == null)
             return;
 
         // Get the background and border alphas. We check the background alpha
         // for a minimum of .001 to prevent division by 0 errors
-        let backgroundAlpha = Math.max(Math.round(backgroundColor.alpha/2.55)/100, .001);
-        let borderAlpha = Math.round(borderColor.alpha/2.55)/100;
+        let backgroundAlpha = Math.max(Math.round(backgroundColor.alpha / 2.55) / 100, .001);
+        let borderAlpha = Math.round(borderColor.alpha / 2.55) / 100;
 
         // The border and background alphas should remain in sync
         // We also limit the borderAlpha to a maximum of 1 (full opacity)
-        borderAlpha = Math.min((borderAlpha/backgroundAlpha)*newAlpha, 1);
+        borderAlpha = Math.min((borderAlpha / backgroundAlpha) * newAlpha, 1);
 
-        this._customizedBackground = 'rgba(' +
-            backgroundColor.red + ',' +
-            backgroundColor.green + ',' +
-            backgroundColor.blue + ',' +
-            newAlpha + ')';
+        this._customizedBackground = `rgba(${
+            backgroundColor.red},${
+            backgroundColor.green},${
+            backgroundColor.blue},${
+            newAlpha})`;
 
-        this._customizedBorder = 'rgba(' +
-            borderColor.red + ',' +
-            borderColor.green + ',' +
-            borderColor.blue + ',' +
-            borderAlpha + ')';
-
+        this._customizedBorder = `rgba(${
+            borderColor.red},${
+            borderColor.green},${
+            borderColor.blue},${
+            borderAlpha})`;
     }
 
     _getDefaultColors() {
@@ -162,7 +160,7 @@ var ThemeManager = class DashToDock_ThemeManager {
         // this._transparency.
         let [backgroundColor, borderColor] = this._getDefaultColors();
 
-        if (backgroundColor==null)
+        if (backgroundColor == null)
             return;
 
         let settings = Docking.DockManager.settings;
@@ -172,7 +170,7 @@ var ThemeManager = class DashToDock_ThemeManager {
             // if not the opacity will always be overridden by the color below.
             // Note that if using 'dynamic' transparency modes,
             // the opacity will be set by the opaque/transparent styles anyway.
-            let newAlpha = Math.round(backgroundColor.alpha/2.55)/100;
+            let newAlpha = Math.round(backgroundColor.alpha / 2.55) / 100;
 
             backgroundColor = settings.backgroundColor;
             // backgroundColor is a string like rgb(0,0,0)
@@ -271,12 +269,13 @@ var ThemeManager = class DashToDock_ThemeManager {
         let borderInner = '';
         let borderMissingStyle = '';
 
-        if (this._rtl && (position != St.Side.RIGHT))
-            borderMissingStyle = 'border-right: ' + borderWidth + 'px solid ' +
-                   borderColor.to_string() + ';';
-        else if (!this._rtl && (position != St.Side.LEFT))
-            borderMissingStyle = 'border-left: ' + borderWidth + 'px solid ' +
-                   borderColor.to_string() + ';';
+        if (this._rtl && (position != St.Side.RIGHT)) {
+            borderMissingStyle = `border-right: ${borderWidth}px solid ${
+                borderColor.to_string()};`;
+        } else if (!this._rtl && (position != St.Side.LEFT)) {
+            borderMissingStyle = `border-left: ${borderWidth}px solid ${
+                borderColor.to_string()};`;
+        }
 
         newStyle = borderMissingStyle;
 
@@ -291,10 +290,9 @@ var ThemeManager = class DashToDock_ThemeManager {
         const defaultTransparency = settings.transparencyMode === TransparencyMode.DEFAULT;
         if (!defaultTransparency && !fixedTransparency) {
             this._transparency.enable();
-        }
-        else if (!defaultTransparency || settings.customBackgroundColor) {
-            newStyle = newStyle + 'background-color:'+ this._customizedBackground + '; ' +
-                       'border-color:'+ this._customizedBorder + '; ' +
+        } else if (!defaultTransparency || settings.customBackgroundColor) {
+            newStyle = `${newStyle}background-color:${this._customizedBackground}; ` +
+                       `border-color:${this._customizedBorder}; ` +
                        'transition-delay: 0s; transition-duration: 0.250s;';
             this._dash._background.set_style(newStyle);
         }
@@ -302,17 +300,17 @@ var ThemeManager = class DashToDock_ThemeManager {
 
     _bindSettingsChanges() {
         let keys = ['transparency-mode',
-                    'customize-alphas',
-                    'min-alpha',
-                    'max-alpha',
-                    'background-opacity',
-                    'custom-background-color',
-                    'background-color',
-                    'apply-custom-theme',
-                    'custom-theme-shrink',
-                    'custom-theme-running-dots',
-                    'extend-height',
-                    'force-straight-corner'];
+            'customize-alphas',
+            'min-alpha',
+            'max-alpha',
+            'background-opacity',
+            'custom-background-color',
+            'background-color',
+            'apply-custom-theme',
+            'custom-theme-shrink',
+            'custom-theme-running-dots',
+            'extend-height',
+            'force-straight-corner'];
 
         this._signalsHandler.add(...keys.map(key => [
             Docking.DockManager.settings,
@@ -329,7 +327,6 @@ Signals.addSignalMethods(ThemeManager.prototype);
  * Transparency when free-floating
  */
 var Transparency = class DashToDock_Transparency {
-
     constructor(dock) {
         this._dash = dock.dash;
         this._actor = this._dash._container;
@@ -347,7 +344,7 @@ var Transparency = class DashToDock_Transparency {
         this._opaqueAlphaBorder = '0.5';
         this._transparentTransition = '0ms';
         this._opaqueTransition = '0ms';
-        this._base_actor_style = "";
+        this._base_actor_style = '';
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._trackedWindows = new Map();
@@ -359,39 +356,39 @@ var Transparency = class DashToDock_Transparency {
         this.disable();
 
         this._base_actor_style = this._actor.get_style();
-        if (this._base_actor_style == null) {
-            this._base_actor_style = "";
-        }
+        if (this._base_actor_style == null)
+            this._base_actor_style = '';
+
 
         this._signalsHandler.addWithLabel(Labels.TRANSPARENCY, [
             global.window_group,
             'actor-added',
-            this._onWindowActorAdded.bind(this)
+            this._onWindowActorAdded.bind(this),
         ], [
             global.window_group,
             'actor-removed',
-            this._onWindowActorRemoved.bind(this)
+            this._onWindowActorRemoved.bind(this),
         ], [
             global.window_manager,
             'switch-workspace',
-            this._updateSolidStyle.bind(this)
+            this._updateSolidStyle.bind(this),
         ], [
             Main.overview,
             'hiding',
-            this._updateSolidStyle.bind(this)
+            this._updateSolidStyle.bind(this),
         ], [
             Main.overview,
             'showing',
-            this._updateSolidStyle.bind(this)
+            this._updateSolidStyle.bind(this),
         ]);
 
         // Window signals
-        global.window_group.get_children().filter(function(child) {
+        global.window_group.get_children().filter(child => {
             // An irrelevant window actor ('Gnome-shell') produces an error when the signals are
             // disconnected, therefore do not add signals to it.
             return child instanceof Meta.WindowActor &&
                    child.get_meta_window().get_wm_class() !== 'Gnome-shell';
-        }).forEach(function(win) {
+        }).forEach(function (win) {
             this._onWindowActorAdded(null, win);
         }, this);
 
@@ -409,10 +406,11 @@ var Transparency = class DashToDock_Transparency {
         // although it should never happen
         this._signalsHandler.removeWithLabel(Labels.TRANSPARENCY);
 
-        for (let key of this._trackedWindows.keys())
+        for (let key of this._trackedWindows.keys()) {
             this._trackedWindows.get(key).forEach(id => {
                 key.disconnect(id);
             });
+        }
         this._trackedWindows.clear();
 
         this.emit('transparency-disabled');
@@ -448,8 +446,7 @@ var Transparency = class DashToDock_Transparency {
             this._backgroundActor.set_style(this._opaque_style);
             this._dockActor.remove_style_class_name('transparent');
             this._dockActor.add_style_class_name('opaque');
-        }
-        else {
+        } else {
             this._backgroundActor.set_style(this._transparent_style);
             this._dockActor.remove_style_class_name('opaque');
             this._dockActor.add_style_class_name('transparent');
@@ -464,7 +461,7 @@ var Transparency = class DashToDock_Transparency {
         /* Get all the windows in the active workspace that are in the primary monitor and visible */
         let activeWorkspace = global.workspace_manager.get_active_workspace();
         let dash = this._dash;
-        let windows = activeWorkspace.list_windows().filter(function(metaWindow) {
+        let windows = activeWorkspace.list_windows().filter(metaWindow => {
             return metaWindow.get_monitor() === dash._monitorIndex &&
                    metaWindow.showing_on_its_workspace() &&
                    metaWindow.get_window_type() !== Meta.WindowType.DESKTOP &&
@@ -491,21 +488,18 @@ var Transparency = class DashToDock_Transparency {
             threshold = topCoord - this._actor.get_height() * factor;
 
         let scale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let isNearEnough = windows.some((metaWindow) => {
+        let isNearEnough = windows.some(metaWindow => {
             let coord;
             if (this._position === St.Side.LEFT) {
                 coord = metaWindow.get_frame_rect().x;
                 return coord < threshold + 5 * scale;
-            }
-            else if (this._position === St.Side.RIGHT) {
+            } else if (this._position === St.Side.RIGHT) {
                 coord = metaWindow.get_frame_rect().x + metaWindow.get_frame_rect().width;
                 return coord > threshold - 5 * scale;
-            }
-            else if (this._position === St.Side.TOP) {
+            } else if (this._position === St.Side.TOP) {
                 coord = metaWindow.get_frame_rect().y;
                 return coord < threshold + 5 * scale;
-            }
-            else {
+            } else {
                 coord = metaWindow.get_frame_rect().y + metaWindow.get_frame_rect().height;
                 return coord > threshold - 5 * scale;
             }
@@ -517,25 +511,25 @@ var Transparency = class DashToDock_Transparency {
     _updateStyles() {
         this._getAlphas();
 
-        this._transparent_style = this._base_actor_style +
-            'background-color: rgba(' +
-            this._backgroundColor + ', ' + this._transparentAlpha + ');' +
-            'border-color: rgba(' +
-            this._backgroundColor + ', ' + this._transparentAlphaBorder + ');' +
-            'transition-duration: ' + this._transparentTransition + 'ms;';
+        this._transparent_style = `${this._base_actor_style
+        }background-color: rgba(${
+            this._backgroundColor}, ${this._transparentAlpha});` +
+            `border-color: rgba(${
+                this._backgroundColor}, ${this._transparentAlphaBorder});` +
+            `transition-duration: ${this._transparentTransition}ms;`;
 
-        this._opaque_style = this._base_actor_style +
-            'background-color: rgba(' +
-            this._backgroundColor + ', ' + this._opaqueAlpha + ');' +
-            'border-color: rgba(' +
-            this._backgroundColor + ',' + this._opaqueAlphaBorder + ');' +
-            'transition-duration: ' + this._opaqueTransition + 'ms;';
+        this._opaque_style = `${this._base_actor_style
+        }background-color: rgba(${
+            this._backgroundColor}, ${this._opaqueAlpha});` +
+            `border-color: rgba(${
+                this._backgroundColor},${this._opaqueAlphaBorder});` +
+            `transition-duration: ${this._opaqueTransition}ms;`;
 
         this.emit('styles-updated');
     }
 
     setColor(color) {
-        this._backgroundColor = color.red + ',' + color.green + ',' + color.blue;
+        this._backgroundColor = `${color.red},${color.green},${color.blue}`;
         this._updateStyles();
     }
 
