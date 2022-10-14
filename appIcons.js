@@ -416,11 +416,10 @@ var DockAbstractAppIcon = GObject.registerClass({
                     let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor_index);
                     let position = Utils.getPosition();
                     const { scaleFactor } = St.ThemeContext.get_for_stage(global.stage);
-                    this._isHorizontal = ( position == St.Side.TOP ||
-                                           position == St.Side.BOTTOM);
+                    const isHorizontal = (position == St.Side.TOP || position == St.Side.BOTTOM);
                     // If horizontal also remove the height of the dash
                     const { dockFixed: fixedDock } = Docking.DockManager.settings;
-                    const additionalMargin = (this._isHorizontal && !fixedDock) ? Main.overview.dash.height : 0;
+                    const additionalMargin = (isHorizontal && !fixedDock) ? Main.overview.dash.height : 0;
                     let verticalMargins = this._menu.actor.margin_top + this._menu.actor.margin_bottom;
                     const maxMenuHeight = workArea.height - additionalMargin - verticalMargins;
                     // Also set a max width to the menu, so long labels (long windows title) get truncated
@@ -1416,7 +1415,7 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
 }
 
 /**
- * This function is used for both extendShowAppsIcon and extendDashItemContainer
+ * This function is used for both DockShowAppsIcon and DockDashItemContainer
  */
 function itemShowLabel()  {
     // Check if the label is still present at all. When switching workpaces, the
@@ -1440,7 +1439,6 @@ function itemShowLabel()  {
     let x, y, xOffset, yOffset;
 
     let position = Utils.getPosition();
-    this._isHorizontal = ((position == St.Side.TOP) || (position == St.Side.BOTTOM));
     let labelOffset = node.get_length('-x-offset');
 
     switch (position) {
