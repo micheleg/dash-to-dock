@@ -1331,9 +1331,9 @@ var DockedDash = GObject.registerClass({
 
                 ws = activeWs.get_neighbor(direction);
 
-                if (!Main.wm._workspaceSwitcherPopup)
-                // Support Workspace Grid extension showing their custom Grid Workspace Switcher
-                {
+                if (!Main.wm._workspaceSwitcherPopup) {
+                    // Support Workspace Grid extension showing their custom
+                    // Grid Workspace Switcher
                     if (global.workspace_manager.workspace_grid !== undefined) {
                         Main.wm._workspaceSwitcherPopup =
                             global.workspace_manager.workspace_grid.getWorkspaceSwitcherPopup();
