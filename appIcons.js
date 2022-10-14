@@ -1242,7 +1242,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                         separatorShown = true;
                     }
 
-                    let item = new WindowPreview.WindowPreviewMenuItem(window);
+                    const item = new WindowPreview.WindowPreviewMenuItem(window,
+                        St.Side.LEFT);
                     this._allWindowsMenuItem.menu.addMenuItem(item);
                     item.connect('activate', () => {
                         this.emit('activate-window', window);
