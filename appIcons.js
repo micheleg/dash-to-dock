@@ -1326,11 +1326,11 @@ var DockShowAppsIcon = GObject.registerClass({
 
         this.reactive = true;
         this.toggleButton.popupMenu = (...args) =>
-            this.popupMenu.call(this, ...args);
+            this.popupMenu(...args);
         this.toggleButton._setPopupTimeout = (...args) =>
-            this._setPopupTimeout.call(this, ...args);
+            this._setPopupTimeout(...args);
         this.toggleButton._removeMenuTimeout = (...args) =>
-            this._removeMenuTimeout.call(this, ...args);
+            this._removeMenuTimeout(...args);
 
         this.label?.add_style_class_name(Theming.PositionStyleClass[position]);
         if (Docking.DockManager.settings.customThemeShrink)
