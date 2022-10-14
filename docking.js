@@ -2467,7 +2467,7 @@ var DockManager = class DashToDockDockManager {
 
 
             // Instead of "syncing" the stock button, let's call its callback directly.
-            overviewControls._onShowAppsButtonToggled.call(overviewControls);
+            overviewControls._onShowAppsButtonToggled();
         }
 
         // Because we "disconnected" from the search controller, we have to manage its state.

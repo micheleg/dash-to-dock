@@ -34,7 +34,5 @@ overrides:
         - warn
       no-unused-vars:
         - warn
-      no-useless-call:
-        - warn
       prefer-rest-params:
         - warn
