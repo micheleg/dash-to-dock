@@ -17,6 +17,8 @@ const PopupMenu = imports.ui.popupMenu;
 const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Docking = Me.imports.docking;
+const Theming = Me.imports.theming;
 const Utils = Me.imports.utils;
 
 const PREVIEW_MAX_WIDTH = 250;
@@ -176,7 +178,7 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
     }
 
     _createPreviewItem(window) {
-        let preview = new WindowPreviewMenuItem(window);
+        let preview = new WindowPreviewMenuItem(window, Utils.getPosition());
         return preview;
     }
 
@@ -318,7 +320,7 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
 
 var WindowPreviewMenuItem = GObject.registerClass(
 class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
-    _init(window, params) {
+    _init(window, position, params) {
         super._init(params);
 
         this._window = window;
@@ -328,6 +330,9 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         // We don't want this: it adds spacing on the left of the item.
         this.remove_child(this._ornamentLabel);
         this.add_style_class_name('dashtodock-app-well-preview-menu-item');
+        this.add_style_class_name(Theming.PositionStyleClass[position]);
+        if (Docking.DockManager.settings.customThemeShrink)
+            this.add_style_class_name('shrink');
 
         // Now we don't have to set PREVIEW_MAX_WIDTH and PREVIEW_MAX_HEIGHT as preview size - that made all kinds of windows either stretched or squished (aspect ratio problem)
         this._cloneBin = new St.Bin();
@@ -369,11 +374,26 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
                                      x_expand:true });
         box.add(overlayGroup);
         box.add(labelBin);
+        this._box = box;
         this.add_actor(box);
 
         this._cloneTexture(window);
 
         this.connect('destroy', this._onDestroy.bind(this));
+    }
+
+    vfunc_style_changed() {
+        super.vfunc_style_changed();
+
+        // For some crazy clutter / St reason we can't just have this handled
+        // automatically or here via vfunc_allocate + vfunc_get_preferred_*
+        // because if we do so, the St paddings on first / last child are lost
+        const themeNode = this.get_theme_node();
+        let [minWidth, naturalWidth] = this._box.get_preferred_width(-1);
+        let [minHeight, naturalHeight] = this._box.get_preferred_height(naturalWidth);
+        [minWidth, naturalWidth] = themeNode.adjust_preferred_width(minWidth, naturalWidth);
+        [minHeight, naturalHeight] = themeNode.adjust_preferred_height(minHeight, naturalHeight);
+        this.set({ minWidth, naturalWidth, minHeight, naturalHeight });
     }
 
     _getWindowPreviewSize() {
