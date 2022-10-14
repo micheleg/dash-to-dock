@@ -25,6 +25,8 @@ const PREVIEW_MAX_HEIGHT = 150;
 const PREVIEW_ANIMATION_DURATION = 250;
 const MAX_PREVIEW_GENERATION_ATTEMPTS = 15;
 
+const MENU_MARGINS = 10;
+
 var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.PopupMenu {
 
     constructor(source) {
@@ -35,11 +37,15 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
 
         this._source = source;
         this._app = this._source.app;
-        let monitorIndex = this._source.monitorIndex;
+        const workArea = Main.layoutManager.getWorkAreaForMonitor(
+            this._source.monitorIndex);
+        const { scaleFactor } = St.ThemeContext.get_for_stage(global.stage);
 
         this.actor.add_style_class_name('app-menu');
-        this.actor.set_style('max-width: '  + (Main.layoutManager.monitors[monitorIndex].width  - 22) + 'px; ' +
-                             'max-height: ' + (Main.layoutManager.monitors[monitorIndex].height - 22) + 'px;');
+        this.actor.set_style(
+            `max-width: ${Math.round((workArea.width) / scaleFactor) - MENU_MARGINS}px; ` +
+            `max-height: ${Math.round((workArea.height) / scaleFactor) - MENU_MARGINS}px;`);
+
         this.actor.hide();
 
         // Chain our visibility and lifecycle to that of the source
