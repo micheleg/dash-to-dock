@@ -101,7 +101,7 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
         this.actor.connect('scroll-event', this._onScrollEvent.bind(this));
 
         let position = Utils.getPosition();
-        this.isHorizontal = position == St.Side.BOTTOM || position == St.Side.TOP;
+        this.isHorizontal = position === St.Side.BOTTOM || position === St.Side.TOP;
         this.box.set_vertical(!this.isHorizontal);
         this.box.set_name('dashtodockWindowList');
         this.actor.add_actor(this.box);
@@ -203,7 +203,7 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
         while (newIndex < newWin.length || oldIndex < oldWin.length) {
             // No change at oldIndex/newIndex
             if (oldWin[oldIndex] &&
-                oldWin[oldIndex] == newWin[newIndex]) {
+                oldWin[oldIndex] === newWin[newIndex]) {
                 oldIndex++;
                 newIndex++;
                 continue;
@@ -211,7 +211,7 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
 
             // Window removed at oldIndex
             if (oldWin[oldIndex] &&
-                newWin.indexOf(oldWin[oldIndex]) == -1) {
+                newWin.indexOf(oldWin[oldIndex]) === -1) {
                 removedActors.push(children[oldIndex]);
                 oldIndex++;
                 continue;
@@ -219,7 +219,7 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
 
             // Window added at newIndex
             if (newWin[newIndex] &&
-                oldWin.indexOf(newWin[newIndex]) == -1) {
+                oldWin.indexOf(newWin[newIndex]) === -1) {
                 addedItems.push({ item: this._createPreviewItem(newWin[newIndex]),
                     pos: newIndex });
                 newIndex++;
@@ -228,10 +228,10 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
 
             // Window moved
             let insertHere = newWin[newIndex + 1] &&
-                             newWin[newIndex + 1] == oldWin[oldIndex];
+                             newWin[newIndex + 1] === oldWin[oldIndex];
             let alreadyRemoved = removedActors.reduce((result, actor) => {
                 let removedWin = actor._window;
-                return result || removedWin == newWin[newIndex];
+                return result || removedWin === newWin[newIndex];
             }, false);
 
             if (insertHere || alreadyRemoved) {
@@ -512,7 +512,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     _onWindowAdded(workspace, win) {
         let metaWindow = this._window;
 
-        if (win.get_transient_for() == metaWindow) {
+        if (win.get_transient_for() === metaWindow) {
             workspace.disconnect(this._windowAddedId);
             this._windowAddedId = 0;
 

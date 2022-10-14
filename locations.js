@@ -364,7 +364,7 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         updateAndMonitor();
         this._mountChanged = this.connect('notify::mount', updateAndMonitor);
 
-        if (!this.mount && this.volume.get_identifier('class') == 'network') {
+        if (!this.mount && this.volume.get_identifier('class') === 'network') {
             // For some devices the mount point isn't advertised promptly
             // even if it's already existing, and there's no signaling about
             this._lazyUpdater = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
@@ -1022,7 +1022,7 @@ function makeLocationApp(params) {
             windows.forEach(w =>
                 this._signalConnections.addWithLabel(Labels.LOCATION_WINDOWS, w,
                     'notify::user-time', () => {
-                        if (w != this._windows[0])
+                        if (w !== this._windows[0])
                             this._windowsOrderChanged();
                     }));
         },
@@ -1228,7 +1228,7 @@ var Removables = class DashToDock_Removables {
         Removables.initVolumePromises(volume);
 
         if (!Docking.DockManager.settings.showMountsNetwork &&
-            volume.get_identifier('class') == 'network')
+            volume.get_identifier('class') === 'network')
             return;
 
 

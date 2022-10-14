@@ -155,11 +155,11 @@ var Intellihide = class DashToDock_Intellihide {
     }
 
     getOverlapStatus() {
-        return this._status == OverlapStatus.TRUE;
+        return this._status === OverlapStatus.TRUE;
     }
 
     _checkOverlap() {
-        if (!this._isEnabled || (this._targetBox == null))
+        if (!this._isEnabled || !this._targetBox)
             return;
 
         /* Limit the number of calls to the doCheckOverlap function */
@@ -184,7 +184,7 @@ var Intellihide = class DashToDock_Intellihide {
     }
 
     _doCheckOverlap() {
-        if (!this._isEnabled || (this._targetBox == null))
+        if (!this._isEnabled || !this._targetBox)
             return;
 
         let overlaps = OverlapStatus.FALSE;
@@ -201,13 +201,13 @@ var Intellihide = class DashToDock_Intellihide {
             let topWindow = null;
             for (let i = windows.length - 1; i >= 0; i--) {
                 let meta_win = windows[i].get_meta_window();
-                if (meta_win.get_monitor() == this._monitorIndex) {
+                if (meta_win.get_monitor() === this._monitorIndex) {
                     topWindow = meta_win;
                     break;
                 }
             }
 
-            if (topWindow !== null) {
+            if (topWindow) {
                 this._topApp = this._tracker.get_window_app(topWindow);
                 // If there isn't a focused app, use that of the window on top
                 this._focusApp = this._tracker.focus_app || this._topApp;
@@ -261,7 +261,7 @@ var Intellihide = class DashToDock_Intellihide {
             if (this._focusApp) {
                 // The DropDownTerminal extension is not an application per se
                 // so we match its window by wm class instead
-                if (meta_win.get_wm_class() == 'DropDownTerminalWindow')
+                if (meta_win.get_wm_class() === 'DropDownTerminalWindow')
                     return true;
 
                 let currentApp = this._tracker.get_window_app(meta_win);
@@ -269,10 +269,10 @@ var Intellihide = class DashToDock_Intellihide {
 
                 // Consider half maximized windows side by side
                 // and windows which are alwayson top
-                if ((currentApp != this._focusApp) && (currentApp != this._topApp) &&
+                if ((currentApp !== this._focusApp) && (currentApp !== this._topApp) &&
                         !((focusWindow && focusWindow.maximized_vertically && !focusWindow.maximized_horizontally) &&
                               (meta_win.maximized_vertically && !meta_win.maximized_horizontally) &&
-                              meta_win.get_monitor() == focusWindow.get_monitor()) &&
+                              meta_win.get_monitor() === focusWindow.get_monitor()) &&
                         !meta_win.is_above())
                     return false;
             }
@@ -294,7 +294,7 @@ var Intellihide = class DashToDock_Intellihide {
             break;
         }
 
-        if (wksp_index == currentWorkspace && meta_win.showing_on_its_workspace())
+        if (wksp_index === currentWorkspace && meta_win.showing_on_its_workspace())
             return true;
         else
             return false;
@@ -316,13 +316,13 @@ var Intellihide = class DashToDock_Intellihide {
 
         // The DropDownTerminal extension uses the POPUP_MENU window type hint
         // so we match its window by wm class instead
-        if (metaWindow.get_wm_class() == 'DropDownTerminalWindow')
+        if (metaWindow.get_wm_class() === 'DropDownTerminalWindow')
             return true;
 
         let wtype = metaWindow.get_window_type();
         for (let i = 0; i < handledWindowTypes.length; i++) {
             var hwtype = handledWindowTypes[i];
-            if (hwtype == wtype)
+            if (hwtype === wtype)
                 return true;
             else if (hwtype > wtype)
                 return false;

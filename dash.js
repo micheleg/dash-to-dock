@@ -114,8 +114,8 @@ var DockDash = GObject.registerClass({
 
         this._monitorIndex = monitorIndex;
         this._position = Utils.getPosition();
-        this._isHorizontal = (this._position == St.Side.TOP) ||
-                               (this._position == St.Side.BOTTOM);
+        this._isHorizontal = (this._position === St.Side.TOP) ||
+                               (this._position === St.Side.BOTTOM);
 
         this._dragPlaceholder = null;
         this._dragPlaceholderPos = -1;
@@ -157,7 +157,7 @@ var DockDash = GObject.registerClass({
 
         this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
 
-        let rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
+        let rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
         this._box = new St.BoxLayout({
             vertical: !this._isHorizontal,
             clip_to_allocation: false,
@@ -348,7 +348,7 @@ var DockDash = GObject.registerClass({
         if (this._isHorizontal) {
             ret = Dash.Dash.prototype.handleDragOver.call(this, source, actor, x, y, time);
 
-            if (ret == DND.DragMotionResult.CONTINUE)
+            if (ret === DND.DragMotionResult.CONTINUE)
                 return ret;
         } else {
             const propertyInjections = new Utils.PropertyInjectionsHandler();
@@ -365,7 +365,7 @@ var DockDash = GObject.registerClass({
             ret = Dash.Dash.prototype.handleDragOver.call(this, source, actor, y, x, time);
             propertyInjections.destroy();
 
-            if (ret == DND.DragMotionResult.CONTINUE)
+            if (ret === DND.DragMotionResult.CONTINUE)
                 return ret;
 
             if (this._dragPlaceholder) {
@@ -373,10 +373,10 @@ var DockDash = GObject.registerClass({
                 this._dragPlaceholder.child.set_height(this.iconSize);
 
                 let pos = this._dragPlaceholderPos;
-                if (this._isHorizontal && (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL))
+                if (this._isHorizontal && (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL))
                     pos = this._box.get_children() - 1 - pos;
 
-                if (pos != this._dragPlaceholderPos) {
+                if (pos !== this._dragPlaceholderPos) {
                     this._dragPlaceholderPos = pos;
                     this._box.set_child_at_index(this._dragPlaceholder,
                         this._dragPlaceholderPos);
@@ -691,7 +691,7 @@ var DockDash = GObject.registerClass({
                 newIconSize = this._availableIconSizes[i];
         }
 
-        if (newIconSize == this.iconSize)
+        if (newIconSize === this.iconSize)
             return;
 
         let oldIconSize = this.iconSize;
@@ -840,7 +840,7 @@ var DockDash = GObject.registerClass({
             let newApp = newApps.length > newIndex ? newApps[newIndex] : null;
 
             // No change at oldIndex/newIndex
-            if (oldApp == newApp) {
+            if (oldApp === newApp) {
                 oldIndex++;
                 newIndex++;
                 continue;
@@ -865,10 +865,10 @@ var DockDash = GObject.registerClass({
             // App moved
             let nextApp = newApps.length > newIndex + 1
                 ? newApps[newIndex + 1] : null;
-            let insertHere = nextApp && nextApp == oldApp;
+            let insertHere = nextApp && nextApp === oldApp;
             let alreadyRemoved = removedActors.reduce((result, actor) => {
                 let removedApp = actor.child._delegate.app;
-                return result || removedApp == newApp;
+                return result || removedApp === newApp;
             }, false);
 
             if (insertHere || alreadyRemoved) {
@@ -956,7 +956,7 @@ var DockDash = GObject.registerClass({
             if (counter < 10) {
                 icon.setNumberOverlay(counter);
                 counter++;
-            } else if (counter == 10) {
+            } else if (counter === 10) {
                 icon.setNumberOverlay(0);
                 counter++;
             } else {
@@ -1092,7 +1092,7 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
     let y1 = box.y1, y2 = box.y2, x1 = box.x1, x2 = box.x2;
 
     let parent = actor.get_parent();
-    while (parent != scrollView) {
+    while (parent !== scrollView) {
         if (!parent)
             throw new Error('Actor not in scroll view');
 

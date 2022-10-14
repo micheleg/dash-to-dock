@@ -80,7 +80,7 @@ const BasicHandler = class DashToDock_BasicHandler {
         if (argsArray.every(arg => !Array.isArray(arg)))
             argsArray = [argsArray];
 
-        if (this._storage[label] == undefined)
+        if (this._storage[label] === undefined)
             this._storage[label] = new Array();
 
         // Skip first element of the arguments
@@ -158,7 +158,7 @@ var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHan
         if (!object)
             throw new Error('Impossible to connect to an invalid object');
 
-        let after = flags == SignalsHandlerFlags.CONNECT_AFTER;
+        let after = flags === SignalsHandlerFlags.CONNECT_AFTER;
         let connector = after ? object.connect_after : object.connect;
 
         if (!connector) {
@@ -279,11 +279,11 @@ var ColorUtils = class DashToDock_ColorUtils {
         let m = Math.min(r, g, b);
         let c = M - m;
 
-        if (c == 0)
+        if (c === 0)
             h = 0;
-        else if (M == r)
+        else if (M === r)
             h = ((g - b) / c) % 6;
-        else if (M == g)
+        else if (M === g)
             h = (b - r) / c + 2;
         else
             h = (r - g) / c + 4;
@@ -401,10 +401,10 @@ var PropertyInjectionsHandler = class DashToDock_PropertyInjectionsHandler exten
  */
 function getPosition() {
     const position = Docking.DockManager.settings.dockPosition;
-    if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL) {
-        if (position == St.Side.LEFT)
+    if (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL) {
+        if (position === St.Side.LEFT)
             return St.Side.RIGHT;
-        else if (position == St.Side.RIGHT)
+        else if (position === St.Side.RIGHT)
             return St.Side.LEFT;
     }
     return position;
@@ -452,11 +452,11 @@ function drawRoundedLine(cr, x, y, width, height, isRoundLeft, isRoundRight, str
         cr.lineTo(x + width, y);
     cr.closePath();
 
-    if (fill != null) {
+    if (fill) {
         cr.setSource(fill);
         cr.fillPreserve();
     }
-    if (stroke != null)
+    if (stroke)
         cr.setSource(stroke);
     cr.stroke();
 }
@@ -519,7 +519,7 @@ function getWindowsByObjectPath() {
     workspaces.forEach(ws => {
         ws.list_windows().forEach(w => {
             const path = w.get_gtk_window_object_path();
-            if (path != null)
+            if (path)
                 windowsByObjectPath.set(path, w);
         });
     });
@@ -545,7 +545,7 @@ function shellAppCompare(appA, appB) {
 
     const isMinimized = windows => !windows.some(w => w.showing_on_its_workspace());
     const minimizedB = isMinimized(windowsB);
-    if (isMinimized(windowsA) != minimizedB) {
+    if (isMinimized(windowsA) !== minimizedB) {
         if (minimizedB)
             return -1;
         return 1;

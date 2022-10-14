@@ -123,8 +123,8 @@ var AppSpread = class AppSpread {
                 activitiesButton.constructor.prototype,
                 'event',
                 function (event) {
-                    if (event.type() == Clutter.EventType.TOUCH_END ||
-                        event.type() == Clutter.EventType.BUTTON_RELEASE) {
+                    if (event.type() === Clutter.EventType.TOUCH_END ||
+                        event.type() === Clutter.EventType.BUTTON_RELEASE) {
                         if (Main.overview.shouldToggleByCornerOrButton())
                             appSpread._restoreDefaultOverview();
                     }
@@ -136,7 +136,7 @@ var AppSpread = class AppSpread {
                 'key_release_event',
                 function (keyEvent) {
                     const { keyval } = keyEvent;
-                    if (keyval == Clutter.KEY_Return || keyval == Clutter.KEY_space) {
+                    if (keyval === Clutter.KEY_Return || keyval === Clutter.KEY_space) {
                         if (Main.overview.shouldToggleByCornerOrButton())
                             appSpread._restoreDefaultOverview();
                     }
