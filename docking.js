@@ -100,7 +100,7 @@ var DashSlideContainer = GObject.registerClass({
         this._slideoutSize = 0; // minimum size when slided out
         this.connect('notify::slide-x', () => this.queue_relayout());
 
-        if (this.side == St.Side.TOP && DockManager.settings.dockFixed) {
+        if (this.side === St.Side.TOP && DockManager.settings.dockFixed) {
             this._signalsHandler = new Utils.GlobalSignalsHandler(this);
             this._signalsHandler.add(Main.panel, 'notify::height',
                 () => this.queue_relayout());
@@ -112,7 +112,7 @@ var DashSlideContainer = GObject.registerClass({
 
         this.set_allocation(box);
 
-        if (this.child == null)
+        if (!this.child)
             return;
 
         let availWidth = contentBox.x2 - contentBox.x1;
@@ -127,17 +127,17 @@ var DashSlideContainer = GObject.registerClass({
 
         let slideoutSize = this._slideoutSize;
 
-        if (this.side == St.Side.LEFT) {
+        if (this.side === St.Side.LEFT) {
             childBox.x1 = (this.slideX - 1) * (childWidth - slideoutSize);
             childBox.x2 = slideoutSize + this.slideX * (childWidth - slideoutSize);
             childBox.y1 = 0;
             childBox.y2 = childBox.y1 + childHeight;
-        } else if ((this.side == St.Side.RIGHT) || (this.side == St.Side.BOTTOM)) {
+        } else if ((this.side === St.Side.RIGHT) || (this.side === St.Side.BOTTOM)) {
             childBox.x1 = 0;
             childBox.x2 = childWidth;
             childBox.y1 = 0;
             childBox.y2 = childBox.y1 + childHeight;
-        } else if (this.side == St.Side.TOP) {
+        } else if (this.side === St.Side.TOP) {
             const monitor = Main.layoutManager.monitors[this.monitorIndex];
             let yOffset = 0;
             if (Main.panel.x === monitor.x && Main.panel.y === monitor.y &&
@@ -163,7 +163,7 @@ var DashSlideContainer = GObject.registerClass({
      */
     vfunc_get_preferred_width(forHeight) {
         let [minWidth, natWidth] = super.vfunc_get_preferred_width(forHeight || 0);
-        if ((this.side ==  St.Side.LEFT) || (this.side == St.Side.RIGHT)) {
+        if ((this.side ===  St.Side.LEFT) || (this.side === St.Side.RIGHT)) {
             minWidth = (minWidth - this._slideoutSize) * this.slideX + this._slideoutSize;
             natWidth = (natWidth - this._slideoutSize) * this.slideX + this._slideoutSize;
         }
@@ -177,11 +177,11 @@ var DashSlideContainer = GObject.registerClass({
      */
     vfunc_get_preferred_height(forWidth) {
         let [minHeight, natHeight] = super.vfunc_get_preferred_height(forWidth || 0);
-        if ((this.side ==  St.Side.TOP) || (this.side ==  St.Side.BOTTOM)) {
+        if ((this.side ===  St.Side.TOP) || (this.side ===  St.Side.BOTTOM)) {
             minHeight = (minHeight - this._slideoutSize) * this.slideX + this._slideoutSize;
             natHeight = (natHeight - this._slideoutSize) * this.slideX + this._slideoutSize;
 
-            if (this.side == St.Side.TOP && DockManager.settings.dockFixed) {
+            if (this.side === St.Side.TOP && DockManager.settings.dockFixed) {
                 const monitor = Main.layoutManager.monitors[this.monitorIndex];
                 if (Main.panel.x === monitor.x && Main.panel.y === monitor.y) {
                     minHeight += Main.panel.height;
@@ -226,11 +226,11 @@ var DockedDash = GObject.registerClass({
             this.monitorIndex = this.monitor_index;
         }
 
-        this._rtl = Clutter.get_default_text_direction() == Clutter.TextDirection.RTL;
+        this._rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
 
         // Load settings
         let settings = DockManager.settings;
-        this._isHorizontal = (this._position == St.Side.TOP) || (this._position == St.Side.BOTTOM);
+        this._isHorizontal = (this._position === St.Side.TOP) || (this._position === St.Side.BOTTOM);
 
         // Temporary ignore hover events linked to autohide for whatever reason
         this._ignoreHover = false;
@@ -420,9 +420,9 @@ var DockedDash = GObject.registerClass({
             });
         }
 
-        if (this._position == St.Side.RIGHT)
+        if (this._position === St.Side.RIGHT)
             this.connect('notify::width', () => this.translation_x = -this.width);
-        else if (this._position == St.Side.BOTTOM)
+        else if (this._position === St.Side.BOTTOM)
             this.connect('notify::height', () => this.translation_y = -this.height);
 
         // Set initial position
@@ -446,11 +446,11 @@ var DockedDash = GObject.registerClass({
 
     _trackDock() {
         if (DockManager.settings.dockFixed) {
-            if (Main.layoutManager._findActor(this) == -1)
+            if (Main.layoutManager._findActor(this) === -1)
                 Main.layoutManager._trackActor(this, { affectsInputRegion: false, trackFullscreen: true });
-            if (Main.layoutManager._findActor(this._slider) == -1)
+            if (Main.layoutManager._findActor(this._slider) === -1)
                 Main.layoutManager._trackActor(this._slider, { affectsStruts: true });
-        } else if (Main.layoutManager._findActor(this._slider) == -1) {
+        } else if (Main.layoutManager._findActor(this._slider) === -1) {
             Main.layoutManager._trackActor(this._slider);
         }
     }
@@ -774,8 +774,8 @@ var DockedDash = GObject.registerClass({
 
     _show() {
         this._delayedHide = false;
-        if ((this._dockState == State.HIDDEN) || (this._dockState == State.HIDING)) {
-            if (this._dockState == State.HIDING)
+        if ((this._dockState === State.HIDDEN) || (this._dockState === State.HIDING)) {
+            if (this._dockState === State.HIDING)
                 // suppress all potential queued transitions - i.e. added but not started,
                 // always give priority to show
                 this._removeAnimations();
@@ -787,11 +787,11 @@ var DockedDash = GObject.registerClass({
 
     _hide() {
         // If no hiding animation is running or queued
-        if ((this._dockState == State.SHOWN) || (this._dockState == State.SHOWING)) {
+        if ((this._dockState === State.SHOWN) || (this._dockState === State.SHOWING)) {
             let settings = DockManager.settings;
             let delay = settings.hideDelay;
 
-            if (this._dockState == State.SHOWING) {
+            if (this._dockState === State.SHOWING) {
                 // if a show already started, let it finish; queue hide without removing the show.
                 // to obtain this, we wait for the animateIn animation to be completed
                 this._delayedHide = true;
@@ -869,14 +869,14 @@ var DockedDash = GObject.registerClass({
         let shouldDwell;
         // Check for the correct screen edge, extending the sensitive area to the whole workarea,
         // minus 1 px to avoid conflicting with other active corners.
-        if (this._position == St.Side.LEFT)
-            shouldDwell = (x == this._monitor.x) && (y > workArea.y) && (y < workArea.y + workArea.height);
-        else if (this._position == St.Side.RIGHT)
-            shouldDwell = (x == this._monitor.x + this._monitor.width - 1) && (y > workArea.y) && (y < workArea.y + workArea.height);
-        else if (this._position == St.Side.TOP)
-            shouldDwell = (y == this._monitor.y) && (x > workArea.x) && (x < workArea.x + workArea.width);
-        else if (this._position == St.Side.BOTTOM)
-            shouldDwell = (y == this._monitor.y + this._monitor.height - 1) && (x > workArea.x) && (x < workArea.x + workArea.width);
+        if (this._position === St.Side.LEFT)
+            shouldDwell = (x === this._monitor.x) && (y > workArea.y) && (y < workArea.y + workArea.height);
+        else if (this._position === St.Side.RIGHT)
+            shouldDwell = (x === this._monitor.x + this._monitor.width - 1) && (y > workArea.y) && (y < workArea.y + workArea.height);
+        else if (this._position === St.Side.TOP)
+            shouldDwell = (y === this._monitor.y) && (x > workArea.x) && (x < workArea.x + workArea.width);
+        else if (this._position === St.Side.BOTTOM)
+            shouldDwell = (y === this._monitor.y + this._monitor.height - 1) && (x > workArea.x) && (x < workArea.x + workArea.width);
 
         if (shouldDwell) {
             // We only set up dwell timeout when the user is not hovering over the dock
@@ -884,7 +884,7 @@ var DockedDash = GObject.registerClass({
             // The _dockDwelling variable is used so that we only try to
             // fire off one dock dwell - if it fails (because, say, the user has the mouse down),
             // we don't try again until the user moves the mouse up and down again.
-            if (!this._dockDwelling && !this._box.hover && (this._dockDwellTimeoutId == 0)) {
+            if (!this._dockDwelling && !this._box.hover && (this._dockDwellTimeoutId === 0)) {
                 // Save the interaction timestamp so we can detect user input
                 let focusWindow = global.display.focus_window;
                 this._dockDwellUserTime = focusWindow ? focusWindow.user_time : 0;
@@ -903,7 +903,7 @@ var DockedDash = GObject.registerClass({
     }
 
     _cancelDockDwell() {
-        if (this._dockDwellTimeoutId != 0) {
+        if (this._dockDwellTimeoutId !== 0) {
             GLib.source_remove(this._dockDwellTimeoutId);
             this._dockDwellTimeoutId = 0;
         }
@@ -926,7 +926,7 @@ var DockedDash = GObject.registerClass({
         // dwell (by clicking or typing), don't activate the message tray
         let focusWindow = global.display.focus_window;
         let currentUserTime = focusWindow ? focusWindow.user_time : 0;
-        if (currentUserTime != this._dockDwellUserTime)
+        if (currentUserTime !== this._dockDwellUserTime)
             return GLib.SOURCE_REMOVE;
 
         // Reuse the pressure version function, the logic is the same
@@ -1062,25 +1062,25 @@ var DockedDash = GObject.registerClass({
             let x1, x2, y1, y2, direction;
             let workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index);
 
-            if (this._position == St.Side.LEFT) {
+            if (this._position === St.Side.LEFT) {
                 x1 = this._monitor.x + 1;
                 x2 = x1;
                 y1 = workArea.y + 1;
                 y2 = workArea.y + workArea.height - 1;
                 direction = Meta.BarrierDirection.POSITIVE_X;
-            } else if (this._position == St.Side.RIGHT) {
+            } else if (this._position === St.Side.RIGHT) {
                 x1 = this._monitor.x + this._monitor.width - 1;
                 x2 = x1;
                 y1 = workArea.y + 1;
                 y2 = workArea.y + workArea.height - 1;
                 direction = Meta.BarrierDirection.NEGATIVE_X;
-            } else if (this._position == St.Side.TOP) {
+            } else if (this._position === St.Side.TOP) {
                 x1 = workArea.x + 1;
                 x2 = workArea.x + workArea.width - 1;
                 y1 = this._monitor.y;
                 y2 = y1;
                 direction = Meta.BarrierDirection.POSITIVE_Y;
-            } else if (this._position == St.Side.BOTTOM) {
+            } else if (this._position === St.Side.BOTTOM) {
                 x1 = workArea.x + 1;
                 x2 = workArea.x + workArea.width - 1;
                 y1 = this._monitor.y + this._monitor.height;
@@ -1088,7 +1088,7 @@ var DockedDash = GObject.registerClass({
                 direction = Meta.BarrierDirection.NEGATIVE_Y;
             }
 
-            if (this._pressureBarrier && this._dockState == State.HIDDEN) {
+            if (this._pressureBarrier && this._dockState === State.HIDDEN) {
                 this._barrier = new Meta.Barrier({
                     display: global.display,
                     x1,
@@ -1135,7 +1135,7 @@ var DockedDash = GObject.registerClass({
             this.width = Math.round(fraction * workArea.width);
 
             let pos_y = this._monitor.y;
-            if (this._position == St.Side.BOTTOM)
+            if (this._position === St.Side.BOTTOM)
                 pos_y += this._monitor.height;
 
             this.x = workArea.x + Math.round((1 - fraction) / 2 * workArea.width);
@@ -1152,7 +1152,7 @@ var DockedDash = GObject.registerClass({
             this.height = Math.round(fraction * workArea.height);
 
             let pos_x = this._monitor.x;
-            if (this._position == St.Side.RIGHT)
+            if (this._position === St.Side.RIGHT)
                 pos_x += this._monitor.width;
 
             this.x = pos_x;
@@ -1185,8 +1185,8 @@ var DockedDash = GObject.registerClass({
 
     _updateStaticBox() {
         this.staticBox.init_rect(
-            this.x + this._slider.x - (this._position == St.Side.RIGHT ? this._box.width : 0),
-            this.y + this._slider.y - (this._position == St.Side.BOTTOM ? this._box.height : 0),
+            this.x + this._slider.x - (this._position === St.Side.RIGHT ? this._box.width : 0),
+            this.y + this._slider.y - (this._position === St.Side.BOTTOM ? this._box.height : 0),
             this._box.width,
             this._box.height
         );
@@ -1206,8 +1206,8 @@ var DockedDash = GObject.registerClass({
     }
 
     _onDragEnd() {
-        if (this._oldignoreHover !== null)
-            this._ignoreHover  = this._oldignoreHover;
+        if (this._oldignoreHover)
+            this._ignoreHover = this._oldignoreHover;
         this._oldignoreHover = null;
         this._box.sync_hover();
     }
@@ -1312,7 +1312,7 @@ var DockedDash = GObject.registerClass({
                 break;
             }
 
-            if (direction !== null) {
+            if (direction) {
                 // Prevent scroll events from triggering too many workspace switches
                 // by adding a 250ms deadtime between each scroll event.
                 // Usefull on laptops when using a touchpad.
@@ -1331,7 +1331,7 @@ var DockedDash = GObject.registerClass({
 
                 ws = activeWs.get_neighbor(direction);
 
-                if (Main.wm._workspaceSwitcherPopup == null)
+                if (!Main.wm._workspaceSwitcherPopup)
                 // Support Workspace Grid extension showing their custom Grid Workspace Switcher
                 {
                     if (global.workspace_manager.workspace_grid !== undefined) {
@@ -1871,7 +1871,7 @@ var DockManager = class DashToDock_DockManager {
             updateSetting();
             this._signalsHandler.addWithLabel(Labels.SETTINGS, this.settings,
                 `changed::${key}`, updateSetting);
-            if (key != camelKey) {
+            if (key !== camelKey) {
                 Object.defineProperty(this.settings, key,
                     { get: () => this.settings[camelKey] });
             }
@@ -1992,7 +1992,7 @@ var DockManager = class DashToDock_DockManager {
         if (this.settings.multiMonitor) {
             let nMon = Main.layoutManager.monitors.length;
             for (let iMon = 0; iMon < nMon; iMon++) {
-                if (iMon == this._preferredMonitorIndex)
+                if (iMon === this._preferredMonitorIndex)
                     continue;
                 dock = new DockedDash({ monitorIndex: iMon });
                 this._allDocks.push(dock);
@@ -2515,9 +2515,9 @@ var DockManager = class DashToDock_DockManager {
             return;
 
         let position = Utils.getPosition();
-        let isHorizontal = (position == St.Side.TOP) || (position == St.Side.BOTTOM);
+        let isHorizontal = (position === St.Side.TOP) || (position === St.Side.BOTTOM);
         let dockOnPrimary  = this._settings.multiMonitor ||
-                             this._preferredMonitorIndex == Main.layoutManager.primaryIndex;
+                             this._preferredMonitorIndex === Main.layoutManager.primaryIndex;
 
         if (!isHorizontal && dockOnPrimary && this.settings.dockExtended && this.settings.dockFixed) {
             Main.panel._rightCorner.hide();

@@ -101,7 +101,7 @@ var ThemeManager = class DashToDock_ThemeManager {
 
         let [backgroundColor, borderColor] = this._getDefaultColors();
 
-        if (backgroundColor == null)
+        if (!backgroundColor)
             return;
 
         // Get the background and border alphas. We check the background alpha
@@ -160,7 +160,7 @@ var ThemeManager = class DashToDock_ThemeManager {
         // this._transparency.
         let [backgroundColor, borderColor] = this._getDefaultColors();
 
-        if (backgroundColor == null)
+        if (!backgroundColor)
             return;
 
         let settings = Docking.DockManager.settings;
@@ -269,10 +269,10 @@ var ThemeManager = class DashToDock_ThemeManager {
         let borderInner = '';
         let borderMissingStyle = '';
 
-        if (this._rtl && (position != St.Side.RIGHT)) {
+        if (this._rtl && (position !== St.Side.RIGHT)) {
             borderMissingStyle = `border-right: ${borderWidth}px solid ${
                 borderColor.to_string()};`;
-        } else if (!this._rtl && (position != St.Side.LEFT)) {
+        } else if (!this._rtl && (position !== St.Side.LEFT)) {
             borderMissingStyle = `border-left: ${borderWidth}px solid ${
                 borderColor.to_string()};`;
         }
@@ -356,7 +356,7 @@ var Transparency = class DashToDock_Transparency {
         this.disable();
 
         this._base_actor_style = this._actor.get_style();
-        if (this._base_actor_style == null)
+        if (!this._base_actor_style)
             this._base_actor_style = '';
 
 
@@ -474,7 +474,7 @@ var Transparency = class DashToDock_Transparency {
          * */
         let factor = 0;
         if (!Docking.DockManager.settings.dockFixed &&
-            this._dock.getDockState() == Docking.State.HIDDEN)
+            this._dock.getDockState() === Docking.State.HIDDEN)
             factor = 1;
         let [leftCoord, topCoord] = this._actor.get_transformed_position();
         let threshold;

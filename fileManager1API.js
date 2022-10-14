@@ -114,7 +114,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
         const oldPaths = this._windowsByPath.keys();
         this._windowsByPath = Utils.getWindowsByObjectPath();
 
-        if (oldSize != this._windowsByPath.size)
+        if (oldSize !== this._windowsByPath.size)
             return true;
 
         return [...oldPaths].some(path => !this._windowsByPath.has(path));
@@ -135,7 +135,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
 
     _updateLocationMap() {
         let properties = this._proxy.get_cached_property_names();
-        if (properties == null) {
+        if (!properties) {
             // Nothing to check yet.
             return;
         }

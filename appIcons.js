@@ -371,7 +371,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         // and position are random values, which might exceeds the integer range
         // resulting in an error when assigned to the a rect. This is a more like
         // a workaround to prevent flooding the system with errors.
-        if (this.get_stage() == null)
+        if (!this.get_stage())
             return;
 
         let rect = new Meta.Rectangle();
@@ -383,7 +383,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         if (Docking.DockManager.settings.multiMonitor) {
             let monitorIndex = this.monitorIndex;
             windows = windows.filter(w => {
-                return w.get_monitor() == monitorIndex;
+                return w.get_monitor() === monitorIndex;
             });
         }
         windows.forEach(w => {
@@ -422,7 +422,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                     let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor_index);
                     let position = Utils.getPosition();
                     const { scaleFactor } = St.ThemeContext.get_for_stage(global.stage);
-                    const isHorizontal = position == St.Side.TOP || position == St.Side.BOTTOM;
+                    const isHorizontal = position === St.Side.TOP || position === St.Side.BOTTOM;
                     // If horizontal also remove the height of the dash
                     const { dockFixed: fixedDock } = Docking.DockManager.settings;
                     const additionalMargin = isHorizontal && !fixedDock ? Main.overview.dash.height : 0;
@@ -476,12 +476,12 @@ var DockAbstractAppIcon = GObject.registerClass({
         // event.
         let buttonAction = 0;
         let settings = Docking.DockManager.settings;
-        if (button && button == 2) {
+        if (button && button === 2) {
             if (modifiers & Clutter.ModifierType.SHIFT_MASK)
                 buttonAction = settings.shiftMiddleClickAction;
             else
                 buttonAction = settings.middleClickAction;
-        } else if (button && button == 1) {
+        } else if (button && button === 1) {
             if (modifiers & Clutter.ModifierType.SHIFT_MASK)
                 buttonAction = settings.shiftClickAction;
             else
@@ -525,7 +525,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                         let click_count = 0;
                         if (Clutter.EventType.CLUTTER_BUTTON_PRESS)
                             click_count = event.get_click_count();
-                        let all_windows = (button == 1 && !modifiers) || click_count > 1;
+                        let all_windows = (button === 1 && !modifiers) || click_count > 1;
                         this._minimizeWindow(all_windows);
                     } else {
                         this._activateAllWindows();
@@ -540,7 +540,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                 // When a single window is present, toggle minimization
                 // If only one windows is present toggle minimization, but only when triggered with the
                 // simple click action (no modifiers, no middle click).
-                if (singleOrUrgentWindows && !modifiers && button == 1) {
+                if (singleOrUrgentWindows && !modifiers && button === 1) {
                     let w = windows[0];
                     if (this.focused) {
                         if (buttonAction !== clickAction.FOCUS_OR_APP_SPREAD) {
@@ -575,7 +575,7 @@ var DockAbstractAppIcon = GObject.registerClass({
 
             case clickAction.FOCUS_OR_PREVIEWS:
                 if (this.focused && !hasUrgentWindows &&
-                    (windows.length > 1 || modifiers || button != 1)) {
+                    (windows.length > 1 || modifiers || button !== 1)) {
                     this._windowPreviews();
                 } else {
                     // Activate the first window
@@ -586,7 +586,7 @@ var DockAbstractAppIcon = GObject.registerClass({
 
             case clickAction.FOCUS_MINIMIZE_OR_PREVIEWS:
                 if (this.focused && !hasUrgentWindows) {
-                    if (windows.length > 1 || modifiers || button != 1)
+                    if (windows.length > 1 || modifiers || button !== 1)
                         this._windowPreviews();
                     else if (!Main.overview.visible)
                         this._minimizeWindow();
@@ -605,7 +605,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                 if (!Main.overview.visible) {
                     // If only one windows is present just switch to it, but only when trigggered with the
                     // simple click action (no modifiers, no middle click).
-                    if (singleOrUrgentWindows && !modifiers && button == 1) {
+                    if (singleOrUrgentWindows && !modifiers && button === 1) {
                         let w = windows[0];
                         Main.activateWindow(w);
                     } else {
@@ -621,7 +621,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                 // If only one windows is present toggle minimization, but only when trigggered with the
                 // simple click action (no modifiers, no middle click).
                 if (!Main.overview.visible) {
-                    if (singleOrUrgentWindows && !modifiers && button == 1) {
+                    if (singleOrUrgentWindows && !modifiers && button === 1) {
                         let w = windows[0];
                         if (this.focused) {
                             // Window is raised, minimize it
@@ -788,7 +788,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         let current_workspace = global.workspace_manager.get_active_workspace();
         for (let i = 0; i < windows.length; i++) {
             let w = windows[i];
-            if (w.get_workspace() == current_workspace && w.showing_on_its_workspace()) {
+            if (w.get_workspace() === current_workspace && w.showing_on_its_workspace()) {
                 w.minimize();
                 // Just minimize one window. By specification it should be the
                 // focused window on the current workspace.
@@ -849,9 +849,9 @@ var DockAbstractAppIcon = GObject.registerClass({
         // or the stored list is outdated, use the current windows list.
         let monitorIsolation = Docking.DockManager.settings.isolateMonitors;
         if (!recentlyClickedApp ||
-            recentlyClickedApp.get_id() != this.app.get_id() ||
-            recentlyClickedAppWindows.length != app_windows.length ||
-            (recentlyClickedAppMonitor != this.monitorIndex && monitorIsolation)) {
+            recentlyClickedApp.get_id() !== this.app.get_id() ||
+            recentlyClickedAppWindows.length !== app_windows.length ||
+            (recentlyClickedAppMonitor !== this.monitorIndex && monitorIsolation)) {
             recentlyClickedApp = this.app;
             recentlyClickedAppWindows = app_windows;
             recentlyClickedAppMonitor = this.monitorIndex;
@@ -1061,10 +1061,10 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             let appInfo = this._source.app.get_app_info();
             let actions = appInfo.list_actions();
             if (this._source.app.can_open_new_window() &&
-                actions.indexOf('new-window') == -1) {
+                actions.indexOf('new-window') === -1) {
                 this._newWindowMenuItem = this._appendMenuItem(_('New Window'));
                 this._newWindowMenuItem.connect('activate', () => {
-                    if (this._source.app.state == Shell.AppState.STOPPED)
+                    if (this._source.app.state === Shell.AppState.STOPPED)
                         this._source.animateLaunch();
 
                     this._source.app.open_new_window(-1);
@@ -1074,7 +1074,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             }
 
             if (Docking.DockManager.getDefault().discreteGpuAvailable &&
-                this._source.app.state == Shell.AppState.STOPPED) {
+                this._source.app.state === Shell.AppState.STOPPED) {
                 const appPrefersNonDefaultGPU = appInfo.get_boolean('PrefersNonDefaultGPU');
                 const gpuPref = appPrefersNonDefaultGPU
                     ? Shell.AppLaunchGpu.DEFAULT
@@ -1179,7 +1179,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
     update() {
         // update, show or hide the quit menu
         if (this._source.windowsCount > 0) {
-            if (this._source.windowsCount == 1) {
+            if (this._source.windowsCount === 1) {
                 this._quitMenuItem.label.set_text(_('Quit'));
             } else {
                 this._quitMenuItem.label.set_text(__('Quit %d Windows').format(
@@ -1236,11 +1236,11 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
 
         if (windows.length > 0) {
             let activeWorkspace = global.workspace_manager.get_active_workspace();
-            let separatorShown =  windows[0].get_workspace() != activeWorkspace;
+            let separatorShown =  windows[0].get_workspace() !== activeWorkspace;
 
             for (let i = 0; i < windows.length; i++) {
                 let window = windows[i];
-                if (!separatorShown && window.get_workspace() != activeWorkspace) {
+                if (!separatorShown && window.get_workspace() !== activeWorkspace) {
                     this._allWindowsMenuItem.menu.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
                     separatorShown = true;
                 }
@@ -1255,7 +1255,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 // This is to achieve a more gracefull transition when the last windows is closed.
                 item.connect('destroy', () => {
                     // It's still counting the item just going to be destroyed
-                    if (this._allWindowsMenuItem.menu._getMenuItems().length == 1)
+                    if (this._allWindowsMenuItem.menu._getMenuItems().length === 1)
                         this._allWindowsMenuItem.setSensitive(false);
                 });
             }
@@ -1433,7 +1433,7 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
 function itemShowLabel()  {
     // Check if the label is still present at all. When switching workpaces, the
     // item might have been destroyed in between.
-    if (!this._labelText || this.label.get_stage() == null)
+    if (!this._labelText || !this.label.get_stage())
         return;
 
     this.label.set_text(this._labelText);

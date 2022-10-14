@@ -162,7 +162,7 @@ var RunningIndicatorBase = class DashToDock_RunningIndicatorBase extends Indicat
     _updateCounterClass() {
         for (let i = 1; i <= MAX_WINDOWS_CLASSES; i++) {
             let className = `running${i}`;
-            if (i != this._number)
+            if (i !== this._number)
                 this._source.remove_style_class_name(className);
             else
                 this._source.add_style_class_name(className);
@@ -190,7 +190,7 @@ var RunningIndicatorBase = class DashToDock_RunningIndicatorBase extends Indicat
         let colorPalette = this._dominantColorExtractor._getColorPalette();
 
         // Fallback
-        if (colorPalette === null) {
+        if (!colorPalette) {
             this._source._iconContainer.set_style(
                 'border-radius: 5px;' +
                 'background-gradient-direction: vertical;' +
@@ -241,7 +241,7 @@ var RunningIndicatorDefault = class DashToDock_RunningIndicatorDefault extends R
 var IndicatorDrawingArea = GObject.registerClass(
 class IndicatorDrawingArea extends St.DrawingArea {
     vfunc_allocate(box) {
-        if (box.x1 != 0 || box.y1 != 0)
+        if (box.x1 !== 0 || box.y1 !== 0)
             return super.vfunc_allocate(box);
 
         // We assume that the are is a rectangle in the operations below:
@@ -358,7 +358,7 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
                 // Slightly adjust the styling
                 this._borderWidth = 2;
 
-                if (colorPalette !== null) {
+                if (colorPalette) {
                     this._borderColor = Clutter.color_from_string(colorPalette.lighter)[1];
                     this._bodyColor = Clutter.color_from_string(colorPalette.darker)[1];
                 } else {
@@ -371,7 +371,7 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
             // Apply dominant color if requested
             if (settings.runningIndicatorDominantColor) {
                 let colorPalette = this._dominantColorExtractor._getColorPalette();
-                if (colorPalette !== null)
+                if (colorPalette)
                     this._bodyColor = Clutter.color_from_string(colorPalette.original)[1];
             }
 
@@ -640,7 +640,7 @@ var RunningIndicatorBinary = class DashToDock_RunningIndicatorBinary extends Run
 
             cr.translate(Math.floor((this._width - 4 * size - (4 - 1) * spacing) / 2), yOffset);
             for (let i = 0; i < binaryValue.length; i++) {
-                if (binaryValue[i] == '1') {
+                if (binaryValue[i] === '1') {
                     cr.newSubPath();
                     cr.arc((2 * i + 1) * this._radius + i * spacing, -this._radius - this._borderWidth / 2, this._radius, 0, 2 * Math.PI);
                 } else {
@@ -852,7 +852,7 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         stroke = Cairo.SolidPattern.createRGBA(bd.red / 255, bd.green / 255, bd.blue / 255, bd.alpha / 255);
         fill = Cairo.SolidPattern.createRGBA(bg.red / 255, bg.green / 255, bg.blue / 255, bg.alpha / 255);
 
-        if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL)
+        if (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL)
             Utils.drawRoundedLine(cr, x + lineWidth / 2.0 + width - finishedWidth, y + lineWidth / 2.0, finishedWidth, height, true, true, stroke, fill);
         else
             Utils.drawRoundedLine(cr, x + lineWidth / 2.0, y + lineWidth / 2.0, finishedWidth, height, true, true, stroke, fill);
@@ -914,7 +914,7 @@ var DominantColorExtractor = class DashToDock_DominantColorExtractor {
         iconTexture = iconTexture.get_gicon();
 
         // Unable to load the icon texture, use fallback
-        if (iconTexture === null)
+        if (!iconTexture)
             return null;
 
 
@@ -925,7 +925,7 @@ var DominantColorExtractor = class DashToDock_DominantColorExtractor {
 
         // Get the pixel buffer from the icon theme
         let icon_info = themeLoader.lookup_icon(iconTexture.get_names()[0], DOMINANT_COLOR_ICON_SIZE, 0);
-        if (icon_info !== null)
+        if (icon_info)
             return icon_info.load_icon();
         else
             return null;
@@ -944,7 +944,7 @@ var DominantColorExtractor = class DashToDock_DominantColorExtractor {
         }
 
         let pixBuf = this._getIconPixBuf();
-        if (pixBuf == null)
+        if (!pixBuf)
             return null;
 
         let pixels = pixBuf.get_pixels(),

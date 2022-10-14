@@ -132,7 +132,7 @@ class MonitorsConfig {
             }
 
             const activeMonitors = this._monitors.filter(m => m.active);
-            if (activeMonitors.length > 1 && logicalMonitors.length == 1) {
+            if (activeMonitors.length > 1 && logicalMonitors.length === 1) {
                 // We're in cloning mode, so let's just activate the primary monitor
                 this._monitors.forEach(m => (m.active = false));
                 this._primaryMonitor.active = true;
@@ -200,7 +200,7 @@ var Settings = GObject.registerClass({
             this._settings = new Gio.Settings({ schema_id: 'org.gnome.shell.extensions.dash-to-dock' });
 
         this._appSwitcherSettings = new Gio.Settings({ schema_id: 'org.gnome.shell.app-switcher' });
-        this._rtl = Gtk.Widget.get_default_direction() == Gtk.TextDirection.RTL;
+        this._rtl = Gtk.Widget.get_default_direction() === Gtk.TextDirection.RTL;
 
         this._builder = new Gtk.Builder();
         this._builder.set_scope(this);
@@ -334,7 +334,7 @@ var Settings = GObject.registerClass({
     }
 
     preview_size_scale_format_value_cb(scale, value) {
-        return value == 0 ? 'auto' : value;
+        return value === 0 ? 'auto' : value;
     }
 
     preview_size_scale_value_changed_cb(scale) {
@@ -428,7 +428,7 @@ var Settings = GObject.registerClass({
             this._monitors.push(monitor);
 
             if (monitor.index === preferredMonitor ||
-                (preferredMonitor == -2 && preferredMonitorByConnector == monitor.connector))
+                (preferredMonitor === -2 && preferredMonitorByConnector === monitor.connector))
                 dockMonitorCombo.set_active(this._monitors.length - 1);
         }
 
@@ -581,7 +581,7 @@ var Settings = GObject.registerClass({
                 Gio.SettingsBindFlags.DEFAULT);
 
             dialog.connect('response', (dialog, id) => {
-                if (id == 1) {
+                if (id === 1) {
                     // restore default settings for the relevant keys
                     let keys = ['intellihide', 'autohide', 'intellihide-mode', 'autohide-in-fullscreen', 'show-dock-urgent-notify', 'require-pressure-to-show',
                         'animation-time', 'show-delay', 'hide-delay', 'pressure-threshold'];
@@ -815,7 +815,7 @@ var Settings = GObject.registerClass({
                 Gio.SettingsBindFlags.DEFAULT);
 
             dialog.connect('response', (dialog, id) => {
-                if (id == 1) {
+                if (id === 1) {
                     // restore default settings for the relevant keys
                     let keys = ['shortcut-text', 'hotkeys-overlay', 'hotkeys-show-dock', 'shortcut-timeout'];
                     keys.forEach(function (val) {
@@ -867,7 +867,7 @@ var Settings = GObject.registerClass({
                 Gio.SettingsBindFlags.DEFAULT);
 
             dialog.connect('response', (dialog, id) => {
-                if (id == 1) {
+                if (id === 1) {
                     // restore default settings for the relevant keys
                     let keys = ['shift-click-action', 'middle-click-action', 'shift-middle-click-action'];
                     keys.forEach(function (val) {
@@ -903,11 +903,11 @@ var Settings = GObject.registerClass({
             }
         );
 
-        if (this._settings.get_enum('running-indicator-style') == RunningIndicatorStyle.DEFAULT)
+        if (this._settings.get_enum('running-indicator-style') === RunningIndicatorStyle.DEFAULT)
             this._builder.get_object('running_indicators_advance_settings_button').set_sensitive(false);
 
         this._settings.connect('changed::running-indicator-style', () => {
-            if (this._settings.get_enum('running-indicator-style') == RunningIndicatorStyle.DEFAULT)
+            if (this._settings.get_enum('running-indicator-style') === RunningIndicatorStyle.DEFAULT)
                 this._builder.get_object('running_indicators_advance_settings_button').set_sensitive(false);
             else
                 this._builder.get_object('running_indicators_advance_settings_button').set_sensitive(true);
