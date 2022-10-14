@@ -7,7 +7,7 @@ const DbusmenuUtils = Me.imports.dbusmenuUtils;
 
 const Dbusmenu = DbusmenuUtils.haveDBusMenu();
 
-var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
+var LauncherEntryRemoteModel = class DashToDockLauncherEntryRemoteModel {
     constructor() {
         this._entrySourceStacks = new Map();
         this._remoteMaps = new Map();
@@ -19,8 +19,8 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
                 null, // path
                 null, // arg0
                 Gio.DBusSignalFlags.NONE,
-                (connection, sender_name, object_path, interface_name, signal_name, parameters) =>
-                    this._onUpdate(sender_name, ...parameters.deep_unpack()));
+                (_connection, senderName, _objectPath, _interfaceName, _signalName, parameters) =>
+                    this._onUpdate(senderName, ...parameters.deep_unpack()));
 
         this._dbus_name_owner_changed_signal_id =
             Gio.DBus.session.signal_subscribe('org.freedesktop.DBus',  // sender
@@ -29,7 +29,7 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
                 '/org/freedesktop/DBus', // path
                 null,                    // arg0
                 Gio.DBusSignalFlags.NONE,
-                (connection, sender_name, object_path, interface_name, signal_name, parameters) =>
+                (connection, _senderName, _objectPath, _interfaceName, _signalName, parameters) =>
                     this._onDBusNameChange(...parameters.deep_unpack().slice(1)));
 
         this._acquireUnityDBus();
@@ -159,7 +159,7 @@ const launcherEntryDefaults = {
     'progress-visible': false,
 };
 
-const LauncherEntry = class DashToDock_LauncherEntry {
+const LauncherEntry = class DashToDockLauncherEntry {
     constructor() {
         this._connections = new Map();
         this._handlers = new Map();
@@ -231,7 +231,7 @@ for (const name in launcherEntryDefaults) {
     }
 }
 
-const PropertySourceStack = class DashToDock_PropertySourceStack {
+const PropertySourceStack = class DashToDockPropertySourceStack {
     constructor(target, bottom) {
         this.target = target;
         this._bottom = bottom;

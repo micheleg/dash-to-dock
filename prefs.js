@@ -190,7 +190,7 @@ function setShortcut(settings) {
 
 var Settings = GObject.registerClass({
     Implements: [Gtk.BuilderScope],
-}, class DashToDock_Settings extends GObject.Object {
+}, class DashToDockSettings extends GObject.Object {
     _init() {
         super._init();
 
@@ -600,19 +600,19 @@ var Settings = GObject.registerClass({
         });
 
         // size options
-        const dock_size_scale = this._builder.get_object('dock_size_scale');
-        dock_size_scale.set_value(this._settings.get_double('height-fraction'));
-        dock_size_scale.add_mark(0.9, Gtk.PositionType.TOP, null);
-        dock_size_scale.set_format_value_func((_, value) => {
+        const dockSizeScale = this._builder.get_object('dock_size_scale');
+        dockSizeScale.set_value(this._settings.get_double('height-fraction'));
+        dockSizeScale.add_mark(0.9, Gtk.PositionType.TOP, null);
+        dockSizeScale.set_format_value_func((_, value) => {
             return `${Math.round(value * 100)} %`;
         });
-        let icon_size_scale = this._builder.get_object('icon_size_scale');
-        icon_size_scale.set_range(8, DEFAULT_ICONS_SIZES[0]);
-        icon_size_scale.set_value(this._settings.get_int('dash-max-icon-size'));
+        const iconSizeScale = this._builder.get_object('icon_size_scale');
+        iconSizeScale.set_range(8, DEFAULT_ICONS_SIZES[0]);
+        iconSizeScale.set_value(this._settings.get_int('dash-max-icon-size'));
         DEFAULT_ICONS_SIZES.forEach(val => {
-            icon_size_scale.add_mark(val, Gtk.PositionType.TOP, val.toString());
+            iconSizeScale.add_mark(val, Gtk.PositionType.TOP, val.toString());
         });
-        icon_size_scale.set_format_value_func((_, value) => {
+        iconSizeScale.set_format_value_func((_, value) => {
             return `${value} px`;
         });
         this._builder.get_object('preview_size_scale').set_value(this._settings.get_double('preview-size-scale'));
@@ -620,13 +620,13 @@ var Settings = GObject.registerClass({
         // Corrent for rtl languages
         if (this._rtl) {
             // Flip value position: this is not done automatically
-            dock_size_scale.set_value_pos(Gtk.PositionType.LEFT);
-            icon_size_scale.set_value_pos(Gtk.PositionType.LEFT);
+            dockSizeScale.set_value_pos(Gtk.PositionType.LEFT);
+            iconSizeScale.set_value_pos(Gtk.PositionType.LEFT);
             // I suppose due to a bug, having a more than one mark and one above a value of 100
             // makes the rendering of the marks wrong in rtl. This doesn't happen setting the scale as not flippable
             // and then manually inverting it
-            icon_size_scale.set_flippable(false);
-            icon_size_scale.set_inverted(true);
+            iconSizeScale.set_flippable(false);
+            iconSizeScale.set_inverted(true);
         }
 
         this._settings.bind('icon-size-fixed', this._builder.get_object('icon_size_fixed_checkbutton'), 'active', Gio.SettingsBindFlags.DEFAULT);
@@ -996,9 +996,9 @@ var Settings = GObject.registerClass({
             }
         );
 
-        const custom_opacity_scale = this._builder.get_object('custom_opacity_scale');
-        custom_opacity_scale.set_value(this._settings.get_double('background-opacity'));
-        custom_opacity_scale.set_format_value_func((_, value) => {
+        const customOpacityScale = this._builder.get_object('custom_opacity_scale');
+        customOpacityScale.set_value(this._settings.get_double('background-opacity'));
+        customOpacityScale.set_format_value_func((_, value) => {
             return `${Math.round(value * 100)}%`;
         });
 
@@ -1055,19 +1055,19 @@ var Settings = GObject.registerClass({
                 Gio.SettingsBindFlags.DEFAULT
             );
 
-            const min_alpha_scale = this._builder.get_object('min_alpha_scale');
-            const max_alpha_scale = this._builder.get_object('max_alpha_scale');
-            min_alpha_scale.set_value(
+            const minAlphaScale = this._builder.get_object('min_alpha_scale');
+            const maxAlphaScale = this._builder.get_object('max_alpha_scale');
+            minAlphaScale.set_value(
                 this._settings.get_double('min-alpha')
             );
-            min_alpha_scale.set_format_value_func((_, value) => {
+            minAlphaScale.set_format_value_func((_, value) => {
                 return `${Math.round(value * 100)} %`;
             });
-            max_alpha_scale.set_format_value_func((_, value) => {
+            maxAlphaScale.set_format_value_func((_, value) => {
                 return `${Math.round(value * 100)} %`;
             });
 
-            max_alpha_scale.set_value(
+            maxAlphaScale.set_value(
                 this._settings.get_double('max-alpha')
             );
 

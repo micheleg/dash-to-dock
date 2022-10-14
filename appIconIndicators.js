@@ -37,7 +37,7 @@ const MAX_WINDOWS_CLASSES = 4;
  * obtained by composing the desired classes below based on the settings.
  *
  */
-var AppIconIndicator = class DashToDock_AppIconIndicator {
+var AppIconIndicator = class DashToDockAppIconIndicator {
     constructor(source) {
         this._indicators = [];
 
@@ -117,7 +117,7 @@ var AppIconIndicator = class DashToDock_AppIconIndicator {
 /*
  * Base class to be inherited by all indicators of any kind
 */
-var IndicatorBase = class DashToDock_IndicatorBase {
+var IndicatorBase = class DashToDockIndicatorBase {
     constructor(source) {
         this._source = source;
         this._signalsHandler = new Utils.GlobalSignalsHandler(this._source);
@@ -138,7 +138,7 @@ var IndicatorBase = class DashToDock_IndicatorBase {
  * providing some basic methods, variables definitions and their update,  css style classes handling.
  *
  */
-var RunningIndicatorBase = class DashToDock_RunningIndicatorBase extends IndicatorBase {
+var RunningIndicatorBase = class DashToDockRunningIndicatorBase extends IndicatorBase {
     constructor(source) {
         super(source);
 
@@ -226,7 +226,7 @@ var RunningIndicatorBase = class DashToDock_RunningIndicatorBase extends Indicat
 
 // We add a css class so third parties themes can limit their indicaor customization
 // to the case we do nothing
-var RunningIndicatorDefault = class DashToDock_RunningIndicatorDefault extends RunningIndicatorBase {
+var RunningIndicatorDefault = class DashToDockRunningIndicatorDefault extends RunningIndicatorBase {
     constructor(source) {
         super(source);
         this._source.add_style_class_name('default');
@@ -254,7 +254,7 @@ class IndicatorDrawingArea extends St.DrawingArea {
     }
 });
 
-var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends RunningIndicatorBase {
+var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningIndicatorBase {
     constructor(source) {
         super(source);
 
@@ -426,7 +426,7 @@ var RunningIndicatorDots = class DashToDock_RunningIndicatorDots extends Running
 
 // Adapted from dash-to-panel by Jason DeRose
 // https://github.com/jderose9/dash-to-panel
-var RunningIndicatorCiliora = class DashToDock_RunningIndicatorCiliora extends RunningIndicatorDots {
+var RunningIndicatorCiliora = class DashToDockRunningIndicatorCiliora extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
             let size =  Math.max(this._width / 20, this._borderWidth);
@@ -459,7 +459,7 @@ var RunningIndicatorCiliora = class DashToDock_RunningIndicatorCiliora extends R
 
 // Adapted from dash-to-panel by Jason DeRose
 // https://github.com/jderose9/dash-to-panel
-var RunningIndicatorSegmented = class DashToDock_RunningIndicatorSegmented extends RunningIndicatorDots {
+var RunningIndicatorSegmented = class DashToDockRunningIndicatorSegmented extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
             let size =  Math.max(this._width / 20, this._borderWidth);
@@ -491,7 +491,7 @@ var RunningIndicatorSegmented = class DashToDock_RunningIndicatorSegmented exten
 
 // Adapted from dash-to-panel by Jason DeRose
 // https://github.com/jderose9/dash-to-panel
-var RunningIndicatorSolid = class DashToDock_RunningIndicatorSolid extends RunningIndicatorDots {
+var RunningIndicatorSolid = class DashToDockRunningIndicatorSolid extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
             let size =  Math.max(this._width / 20, this._borderWidth);
@@ -518,7 +518,7 @@ var RunningIndicatorSolid = class DashToDock_RunningIndicatorSolid extends Runni
 
 // Adapted from dash-to-panel by Jason DeRose
 // https://github.com/jderose9/dash-to-panel
-var RunningIndicatorSquares = class DashToDock_RunningIndicatorSquares extends RunningIndicatorDots {
+var RunningIndicatorSquares = class DashToDockRunningIndicatorSquares extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
             let size =  Math.max(this._width / 11, this._borderWidth);
@@ -543,7 +543,7 @@ var RunningIndicatorSquares = class DashToDock_RunningIndicatorSquares extends R
 
 // Adapted from dash-to-panel by Jason DeRose
 // https://github.com/jderose9/dash-to-panel
-var RunningIndicatorDashes = class DashToDock_RunningIndicatorDashes extends RunningIndicatorDots {
+var RunningIndicatorDashes = class DashToDockRunningIndicatorDashes extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
             let size =  Math.max(this._width / 20, this._borderWidth);
@@ -570,7 +570,7 @@ var RunningIndicatorDashes = class DashToDock_RunningIndicatorDashes extends Run
 
 // Adapted from dash-to-panel by Jason DeRose
 // https://github.com/jderose9/dash-to-panel
-var RunningIndicatorMetro = class DashToDock_RunningIndicatorMetro extends RunningIndicatorDots {
+var RunningIndicatorMetro = class DashToDockRunningIndicatorMetro extends RunningIndicatorDots {
     constructor(source) {
         super(source);
         this._source.add_style_class_name('metro');
@@ -623,7 +623,7 @@ var RunningIndicatorMetro = class DashToDock_RunningIndicatorMetro extends Runni
     }
 };
 
-var RunningIndicatorBinary = class DashToDock_RunningIndicatorBinary extends RunningIndicatorDots {
+var RunningIndicatorBinary = class DashToDockRunningIndicatorBinary extends RunningIndicatorDots {
     _drawIndicator(cr) {
         // Draw the required numbers of dots
         let n = Math.min(15, this._source.windowsCount);
@@ -658,7 +658,7 @@ var RunningIndicatorBinary = class DashToDock_RunningIndicatorBinary extends Run
 /*
  * Unity like notification and progress indicators
  */
-var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
+var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
     constructor(source) {
         super(source);
 
@@ -681,13 +681,13 @@ var UnityIndicator = class DashToDock_UnityIndicator extends IndicatorBase {
         this._signalsHandler.add([
             remoteEntry,
             ['count-changed', 'count-visible-changed'],
-            (sender, { count, count_visible }) =>
-                this.setNotificationCount(count_visible ? count : 0),
+            (sender, { count, count_visible: countVisible }) =>
+                this.setNotificationCount(countVisible ? count : 0),
         ], [
             remoteEntry,
             ['progress-changed', 'progress-visible-changed'],
-            (sender, { progress, progress_visible }) =>
-                this.setProgress(progress_visible ? progress : -1),
+            (sender, { progress, progress_visible: progressVisible }) =>
+                this.setProgress(progressVisible ? progress : -1),
         ], [
             remoteEntry,
             'urgent-changed',
@@ -894,7 +894,7 @@ const DOMINANT_COLOR_ICON_SIZE = 64;
 
 // Compute dominant color frim the app icon.
 // The color is cached for efficiency.
-var DominantColorExtractor = class DashToDock_DominantColorExtractor {
+var DominantColorExtractor = class DashToDockDominantColorExtractor {
     constructor(app) {
         this._app = app;
     }
@@ -924,9 +924,10 @@ var DominantColorExtractor = class DashToDock_DominantColorExtractor {
         }
 
         // Get the pixel buffer from the icon theme
-        let icon_info = themeLoader.lookup_icon(iconTexture.get_names()[0], DOMINANT_COLOR_ICON_SIZE, 0);
-        if (icon_info)
-            return icon_info.load_icon();
+        const iconInfo = themeLoader.lookup_icon(iconTexture.get_names()[0],
+            DOMINANT_COLOR_ICON_SIZE, 0);
+        if (iconInfo)
+            return iconInfo.load_icon();
         else
             return null;
     }
@@ -955,8 +956,8 @@ var DominantColorExtractor = class DashToDock_DominantColorExtractor {
             gTotal = 0,
             bTotal = 0;
 
-        let resample_y = 1,
-            resample_x = 1;
+        let resampleX = 1;
+        let resampleY = 1;
 
         // Resampling of large icons
         // We resample icons larger than twice the desired size, as the resampling
@@ -969,13 +970,13 @@ var DominantColorExtractor = class DashToDock_DominantColorExtractor {
 
         // Resample
         if (height >= 2 * DOMINANT_COLOR_ICON_SIZE)
-            resample_y = Math.floor(height / DOMINANT_COLOR_ICON_SIZE);
+            resampleY = Math.floor(height / DOMINANT_COLOR_ICON_SIZE);
 
         if (width >= 2 * DOMINANT_COLOR_ICON_SIZE)
-            resample_x = Math.floor(width / DOMINANT_COLOR_ICON_SIZE);
+            resampleX = Math.floor(width / DOMINANT_COLOR_ICON_SIZE);
 
-        if (resample_x !== 1 || resample_y !== 1)
-            pixels = this._resamplePixels(pixels, resample_x, resample_y);
+        if (resampleX !== 1 || resampleY !== 1)
+            pixels = this._resamplePixels(pixels, resampleX, resampleY);
 
         // computing the limit outside the for (where it would be repeated at each iteration)
         // for performance reasons

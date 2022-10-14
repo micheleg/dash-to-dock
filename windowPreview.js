@@ -29,7 +29,7 @@ const MAX_PREVIEW_GENERATION_ATTEMPTS = 15;
 
 const MENU_MARGINS = 10;
 
-var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.PopupMenu {
+var WindowPreviewMenu = class DashToDockWindowPreviewMenu extends PopupMenu.PopupMenu {
     constructor(source) {
         super(source, 0.5, Utils.getPosition());
 
@@ -87,7 +87,7 @@ var WindowPreviewMenu = class DashToDock_WindowPreviewMenu extends PopupMenu.Pop
     }
 };
 
-var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.PopupMenuSection {
+var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.PopupMenuSection {
     constructor(source) {
         super();
         this.actor = new St.ScrollView({
@@ -126,14 +126,14 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
     _onScrollEvent(actor, event) {
         // Event coordinates are relative to the stage but can be transformed
         // as the actor will only receive events within his bounds.
-        let stage_x, stage_y, ok, event_x, event_y, actor_w, actor_h;
-        [stage_x, stage_y] = event.get_coords();
-        [ok, event_x, event_y] = actor.transform_stage_point(stage_x, stage_y);
-        [actor_w, actor_h] = actor.get_size();
+        let stageX, stageY, eventY, actorH;
+        [stageX, stageY] = event.get_coords();
+        [,, eventY] = actor.transform_stage_point(stageX, stageY);
+        [, actorH] = actor.get_size();
 
         // If the scroll event is within a 1px margin from
         // the relevant edge of the actor, let the event propagate.
-        if (event_y >= actor_h - 2)
+        if (eventY >= actorH - 2)
             return Clutter.EVENT_PROPAGATE;
 
         // Skip to avoid double events mouse
@@ -281,12 +281,12 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
         // when we *don't* need it, so turn off the scrollbar when that's true.
         // Dynamic changes in whether we need it aren't handled properly.
         let needsScrollbar = this._needsScrollbar();
-        let scrollbar_policy = needsScrollbar
+        const scrollbarPolicy = needsScrollbar
             ? St.PolicyType.AUTOMATIC : St.PolicyType.NEVER;
         if (this.isHorizontal)
-            this.actor.hscrollbar_policy =  scrollbar_policy;
+            this.actor.hscrollbarPolicy = scrollbarPolicy;
         else
-            this.actor.vscrollbar_policy =  scrollbar_policy;
+            this.actor.vscrollbarPolicy = scrollbarPolicy;
 
         if (needsScrollbar)
             this.actor.add_style_pseudo_class('scrolled');

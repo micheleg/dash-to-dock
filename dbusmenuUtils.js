@@ -91,19 +91,19 @@ function makePopupMenuItem(dbusmenuItem, deep) {
 
     const updateDisposition = () => {
         const disposition = dbusmenuItem.property_get(Dbusmenu.MENUITEM_PROP_DISPOSITION);
-        let icon_name = null;
+        let iconName = null;
         switch (disposition) {
         case Dbusmenu.MENUITEM_DISPOSITION_ALERT:
         case Dbusmenu.MENUITEM_DISPOSITION_WARNING:
-            icon_name = 'dialog-warning-symbolic';
+            iconName = 'dialog-warning-symbolic';
             break;
         case Dbusmenu.MENUITEM_DISPOSITION_INFORMATIVE:
-            icon_name = 'dialog-information-symbolic';
+            iconName = 'dialog-information-symbolic';
             break;
         }
-        if (icon_name) {
+        if (iconName) {
             item._dispositionIcon = new St.Icon({
-                icon_name,
+                icon_name: iconName,
                 style_class: 'popup-menu-icon',
                 y_align: Clutter.ActorAlign.CENTER,
                 y_expand: true,

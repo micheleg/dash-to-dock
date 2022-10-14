@@ -14,8 +14,6 @@ overrides:
     rules:
       brace-style:
         - warn
-      camelcase:
-        - warn
       consistent-return:
         - warn
       func-style:

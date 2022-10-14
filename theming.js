@@ -47,7 +47,7 @@ var PositionStyleClass = Object.freeze([
 /**
  * Manage theme customization and custom theme support
  */
-var ThemeManager = class DashToDock_ThemeManager {
+var ThemeManager = class DashToDockThemeManager {
     constructor(dock) {
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._bindSettingsChanges();
@@ -326,7 +326,7 @@ Signals.addSignalMethods(ThemeManager.prototype);
  * https://git.gnome.org/browse/gnome-shell/commit/?id=447bf55e45b00426ed908b1b1035f472c2466956
  * Transparency when free-floating
  */
-var Transparency = class DashToDock_Transparency {
+var Transparency = class DashToDockTransparency {
     constructor(dock) {
         this._dash = dock.dash;
         this._actor = this._dash._container;

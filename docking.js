@@ -1134,12 +1134,12 @@ var DockedDash = GObject.registerClass({
         if (this._isHorizontal) {
             this.width = Math.round(fraction * workArea.width);
 
-            let pos_y = this._monitor.y;
+            let posY = this._monitor.y;
             if (this._position === St.Side.BOTTOM)
-                pos_y += this._monitor.height;
+                posY += this._monitor.height;
 
             this.x = workArea.x + Math.round((1 - fraction) / 2 * workArea.width);
-            this.y = pos_y;
+            this.y = posY;
 
             if (extendHeight) {
                 this.dash._container.set_width(this.width);
@@ -1151,11 +1151,11 @@ var DockedDash = GObject.registerClass({
         } else {
             this.height = Math.round(fraction * workArea.height);
 
-            let pos_x = this._monitor.x;
+            let posX = this._monitor.x;
             if (this._position === St.Side.RIGHT)
-                pos_x += this._monitor.width;
+                posX += this._monitor.width;
 
-            this.x = pos_x;
+            this.x = posX;
             this.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
 
             if (extendHeight) {
@@ -1286,28 +1286,28 @@ var DockedDash = GObject.registerClass({
             let activeWs = global.workspace_manager.get_active_workspace();
             let direction = null;
 
-            let prev_direction, next_direction;
+            let prevDirection, nextDirection;
             if (global.workspace_manager.layout_columns > global.workspace_manager.layout_rows) {
-                prev_direction = Meta.MotionDirection.UP;
-                next_direction = Meta.MotionDirection.DOWN;
+                prevDirection = Meta.MotionDirection.UP;
+                nextDirection = Meta.MotionDirection.DOWN;
             } else {
-                prev_direction = Meta.MotionDirection.LEFT;
-                next_direction = Meta.MotionDirection.RIGHT;
+                prevDirection = Meta.MotionDirection.LEFT;
+                nextDirection = Meta.MotionDirection.RIGHT;
             }
 
             switch (event.get_scroll_direction()) {
             case Clutter.ScrollDirection.UP:
-                direction = prev_direction;
+                direction = prevDirection;
                 break;
             case Clutter.ScrollDirection.DOWN:
-                direction = next_direction;
+                direction = nextDirection;
                 break;
             case Clutter.ScrollDirection.SMOOTH: {
                 let [dx, dy] = event.get_scroll_delta();
                 if (dy < 0)
-                    direction = prev_direction;
+                    direction = prevDirection;
                 else if (dy > 0)
-                    direction = next_direction;
+                    direction = nextDirection;
             }
                 break;
             }
@@ -1387,9 +1387,9 @@ var DockedDash = GObject.registerClass({
 /*
  * Handle keybaord shortcuts
  */
-const DashToDock_KeyboardShortcuts_NUM_HOTKEYS = 10;
+const NUM_HOTKEYS = 10;
 
-var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
+var KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     constructor() {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
@@ -1432,7 +1432,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
         // Setup keyboard bindings for dash elements
         let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
         keys.forEach(function (key) {
-            for (let i = 0; i < DashToDock_KeyboardShortcuts_NUM_HOTKEYS; i++) {
+            for (let i = 0; i < NUM_HOTKEYS; i++) {
                 let appNum = i;
                 Main.wm.addKeybinding(key + (i + 1), DockManager.settings,
                     Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
@@ -1453,7 +1453,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
 
         let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
         keys.forEach(key => {
-            for (let i = 0; i < DashToDock_KeyboardShortcuts_NUM_HOTKEYS; i++)
+            for (let i = 0; i < NUM_HOTKEYS; i++)
                 Main.wm.removeKeybinding(key + (i + 1));
         }, this);
 
@@ -1546,7 +1546,7 @@ var KeyboardShortcuts = class DashToDock_KeyboardShortcuts {
  * Note: the future implementaion is not fully contained here. Some bits are around in other methods of other classes.
  * This class just take care of enabling/disabling the option.
  */
-var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
+var WorkspaceIsolation = class DashToDockWorkspaceIsolation {
     constructor() {
         let settings = DockManager.settings;
 
@@ -1630,7 +1630,7 @@ var WorkspaceIsolation = class DashToDock_WorkspaceIsolation {
 };
 
 
-var DockManager = class DashToDock_DockManager {
+var DockManager = class DashToDockDockManager {
     constructor() {
         if (Me.imports.extension.dockManager)
             throw new Error('DashToDock has been already initialized');
@@ -2543,7 +2543,7 @@ Signals.addSignalMethods(DockManager.prototype);
 
 // This class drives long-running icon animations, to keep them running in sync
 // with each other, and to save CPU by pausing them when the dock is hidden.
-var IconAnimator = class DashToDock_IconAnimator {
+var IconAnimator = class DashToDockIconAnimator {
     constructor(actor) {
         this._count = 0;
         this._started = false;
