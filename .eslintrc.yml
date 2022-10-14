@@ -22,8 +22,6 @@ overrides:
         - warn
       no-loop-func:
         - warn
-      no-new-object:
-        - warn
       no-return-assign:
         - warn
       no-unused-expressions:
