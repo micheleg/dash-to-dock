@@ -30,7 +30,7 @@ const BasicHandler = class DashToDockBasicHandler {
     }
 
     constructor(parentObject) {
-        this._storage = new Object(null);
+        this._storage = Object.create(null);
 
         if (parentObject) {
             if (!(parentObject.connect instanceof Function))
