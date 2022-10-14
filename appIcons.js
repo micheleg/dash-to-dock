@@ -1028,6 +1028,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             const windows = this._source.getInterestingWindows();
 
             this._allWindowsMenuItem = new PopupMenu.PopupSubMenuMenuItem(__('All Windows'), false);
+            if (this._allWindowsMenuItem.menu?.actor)
+                this._allWindowsMenuItem.menu.actor.overlayScrollbars = true;
             this._allWindowsMenuItem.hide();
             if (windows.length > 0)
                 this.addMenuItem(this._allWindowsMenuItem);

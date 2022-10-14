@@ -95,6 +95,7 @@ var WindowPreviewList = class DashToDock_WindowPreviewList extends PopupMenu.Pop
             name: 'dashtodockWindowScrollview',
             hscrollbar_policy: St.PolicyType.NEVER,
             vscrollbar_policy: St.PolicyType.NEVER,
+            overlay_scrollbars: true,
             enable_mouse_scrolling: true
         });
 
