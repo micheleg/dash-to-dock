@@ -48,7 +48,7 @@ const ignoreApps = ['com.rastersoft.ding', 'com.desktop.ding'];
  * Intallihide object: emit 'status-changed' signal when the overlap of windows
  * with the provided targetBoxClutter.ActorBox changes;
  */
-var Intellihide = class DashToDock_Intellihide {
+var Intellihide = class DashToDockIntellihide {
     constructor(monitorIndex) {
         // Load settings
         this._monitorIndex = monitorIndex;
@@ -200,9 +200,9 @@ var Intellihide = class DashToDock_Intellihide {
 
             let topWindow = null;
             for (let i = windows.length - 1; i >= 0; i--) {
-                let meta_win = windows[i].get_meta_window();
-                if (meta_win.get_monitor() === this._monitorIndex) {
-                    topWindow = meta_win;
+                const metaWin = windows[i].get_meta_window();
+                if (metaWin.get_monitor() === this._monitorIndex) {
+                    topWindow = metaWin;
                     break;
                 }
             }
@@ -244,11 +244,10 @@ var Intellihide = class DashToDock_Intellihide {
     // Consider all windows visible on the current workspace.
     // Optionally skip windows of other applications
     _intellihideFilterInteresting(wa) {
-        let meta_win = wa.get_meta_window();
-
+        const metaWin = wa.get_meta_window();
         let currentWorkspace = global.workspace_manager.get_active_workspace_index();
-        let wksp = meta_win.get_workspace();
-        let wksp_index = wksp.index();
+        const workspace = metaWin.get_workspace();
+        const workspaceIndex = workspace.index();
 
         // Depending on the intellihide mode, exclude non-relevent windows
         switch (Docking.DockManager.settings.intellihideMode) {
@@ -261,26 +260,26 @@ var Intellihide = class DashToDock_Intellihide {
             if (this._focusApp) {
                 // The DropDownTerminal extension is not an application per se
                 // so we match its window by wm class instead
-                if (meta_win.get_wm_class() === 'DropDownTerminalWindow')
+                if (metaWin.get_wm_class() === 'DropDownTerminalWindow')
                     return true;
 
-                let currentApp = this._tracker.get_window_app(meta_win);
+                let currentApp = this._tracker.get_window_app(metaWin);
                 let focusWindow = global.display.get_focus_window();
 
                 // Consider half maximized windows side by side
                 // and windows which are alwayson top
                 if ((currentApp !== this._focusApp) && (currentApp !== this._topApp) &&
                         !((focusWindow && focusWindow.maximized_vertically && !focusWindow.maximized_horizontally) &&
-                              (meta_win.maximized_vertically && !meta_win.maximized_horizontally) &&
-                              meta_win.get_monitor() === focusWindow.get_monitor()) &&
-                        !meta_win.is_above())
+                              (metaWin.maximized_vertically && !metaWin.maximized_horizontally) &&
+                              metaWin.get_monitor() === focusWindow.get_monitor()) &&
+                        !metaWin.is_above())
                     return false;
             }
             break;
 
         case IntellihideMode.MAXIMIZED_WINDOWS:
             // Skip unmaximized windows
-            if (!meta_win.maximized_vertically && !meta_win.maximized_horizontally)
+            if (!metaWin.maximized_vertically && !metaWin.maximized_horizontally)
                 return false;
             break;
 
@@ -294,7 +293,7 @@ var Intellihide = class DashToDock_Intellihide {
             break;
         }
 
-        if (wksp_index === currentWorkspace && meta_win.showing_on_its_workspace())
+        if (workspaceIndex === currentWorkspace && metaWin.showing_on_its_workspace())
             return true;
         else
             return false;

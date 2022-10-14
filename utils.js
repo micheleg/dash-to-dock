@@ -24,7 +24,7 @@ const GENERIC_KEY = Symbol('generic');
  * Simplify global signals and function injections handling
  * abstract class
  */
-const BasicHandler = class DashToDock_BasicHandler {
+const BasicHandler = class DashToDockBasicHandler {
     static get genericKey() {
         return GENERIC_KEY;
     }
@@ -153,7 +153,7 @@ const BasicHandler = class DashToDock_BasicHandler {
 /**
  * Manage global signals
  */
-var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHandler {
+var GlobalSignalsHandler = class DashToDockGlobalSignalHandler extends BasicHandler {
     _create(object, event, callback, flags = SignalsHandlerFlags.NONE) {
         if (!object)
             throw new Error('Impossible to connect to an invalid object');
@@ -201,7 +201,7 @@ var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHan
 /**
  * Color manipulation utilities
  */
-var ColorUtils = class DashToDock_ColorUtils {
+var ColorUtils = class DashToDockColorUtils {
     // Darken or brigthen color by a fraction dlum
     // Each rgb value is modified by the same fraction.
     // Return "#rrggbb" string
@@ -307,7 +307,7 @@ var ColorUtils = class DashToDock_ColorUtils {
  * Manage function injection: both instances and prototype can be overridden
  * and restored
  */
-var InjectionsHandler = class DashToDock_InjectionsHandler extends BasicHandler {
+var InjectionsHandler = class DashToDockInjectionsHandler extends BasicHandler {
     _create(object, name, injectedFunction) {
         let original = object[name];
 
@@ -330,7 +330,7 @@ var InjectionsHandler = class DashToDock_InjectionsHandler extends BasicHandler 
  * Manage vfunction injection: both instances and prototype can be overridden
  * and restored
  */
-var VFuncInjectionsHandler = class DashToDock_VFuncInjectionsHandler extends BasicHandler {
+var VFuncInjectionsHandler = class DashToDockVFuncInjectionsHandler extends BasicHandler {
     _create(prototype, name, injectedFunction) {
         const original = prototype[`vfunc_${name}`];
         if (!(original instanceof Function))
@@ -370,7 +370,7 @@ var VFuncInjectionsHandler = class DashToDock_VFuncInjectionsHandler extends Bas
  * Manage properties injection: both instances and prototype can be overridden
  * and restored
  */
-var PropertyInjectionsHandler = class DashToDock_PropertyInjectionsHandler extends BasicHandler {
+var PropertyInjectionsHandler = class DashToDockPropertyInjectionsHandler extends BasicHandler {
     _create(instance, name, injectedPropertyDescriptor) {
         if (!(name in instance))
             throw new Error(`Object ${instance} has no '${name}' property`);

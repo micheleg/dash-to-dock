@@ -418,8 +418,8 @@ var DockAbstractAppIcon = GObject.registerClass({
                 } else {
                     // Setting the max-height is s useful if part of the menu is
                     // scrollable so the minimum height is smaller than the natural height.
-                    let monitor_index = Main.layoutManager.findIndexForActor(this);
-                    let workArea = Main.layoutManager.getWorkAreaForMonitor(monitor_index);
+                    const monitorIndex = Main.layoutManager.findIndexForActor(this);
+                    let workArea = Main.layoutManager.getWorkAreaForMonitor(monitorIndex);
                     let position = Utils.getPosition();
                     const { scaleFactor } = St.ThemeContext.get_for_stage(global.stage);
                     const isHorizontal = position === St.Side.TOP || position === St.Side.BOTTOM;
@@ -429,9 +429,8 @@ var DockAbstractAppIcon = GObject.registerClass({
                     let verticalMargins = this._menu.actor.margin_top + this._menu.actor.margin_bottom;
                     const maxMenuHeight = workArea.height - additionalMargin - verticalMargins;
                     // Also set a max width to the menu, so long labels (long windows title) get truncated
-                    this._menu.actor.set_style(
-                        'max-width: 400px; ' +
-                        `max-height: ${Math.round(maxMenuHeight / scaleFactor)}px;`);
+                    this._menu.actor.style = 'max-width: 400px; ' +
+                        `max-height: ${Math.round(maxMenuHeight / scaleFactor)}px;`;
                 }
             });
             let id = Main.overview.connect('hiding', () => {
@@ -522,11 +521,11 @@ var DockAbstractAppIcon = GObject.registerClass({
                     if ((this.focused && !hasUrgentWindows) || button === 2 || modifiers & Clutter.ModifierType.SHIFT_MASK) {
                         // minimize all windows on double click and always in the case of primary click without
                         // additional modifiers
-                        let click_count = 0;
+                        let clickCount = 0;
                         if (Clutter.EventType.CLUTTER_BUTTON_PRESS)
-                            click_count = event.get_click_count();
-                        let all_windows = (button === 1 && !modifiers) || click_count > 1;
-                        this._minimizeWindow(all_windows);
+                            clickCount = event.get_click_count();
+                        const allWindows = (button === 1 && !modifiers) || clickCount > 1;
+                        this._minimizeWindow(allWindows);
                     } else {
                         this._activateAllWindows();
                     }
@@ -759,10 +758,10 @@ var DockAbstractAppIcon = GObject.registerClass({
         // Set the font size to something smaller than the whole icon so it is
         // still visible. The border radius is large to make the shape circular
         let [minWidth, natWidth] = this._iconContainer.get_preferred_width(-1);
-        let font_size = Math.round(Math.max(12, 0.3 * natWidth) / scaleFactor);
-        let size = Math.round(font_size * 1.2);
+        let fontSize = Math.round(Math.max(12, 0.3 * natWidth) / scaleFactor);
+        let size = Math.round(fontSize * 1.2);
         this._numberOverlayLabel.set_style(
-            `font-size: ${font_size}px;` +
+            `font-size: ${fontSize}px;` +
            `border-radius: ${this.icon.iconSize}px;` +
            `width: ${size}px; height: ${size}px;`
         );
@@ -785,10 +784,10 @@ var DockAbstractAppIcon = GObject.registerClass({
     _minimizeWindow(param) {
         // Param true make all app windows minimize
         let windows = this.getInterestingWindows();
-        let current_workspace = global.workspace_manager.get_active_workspace();
+        const currentWorkspace = global.workspace_manager.get_active_workspace();
         for (let i = 0; i < windows.length; i++) {
             let w = windows[i];
-            if (w.get_workspace() === current_workspace && w.showing_on_its_workspace()) {
+            if (w.get_workspace() === currentWorkspace && w.showing_on_its_workspace()) {
                 w.minimize();
                 // Just minimize one window. By specification it should be the
                 // focused window on the current workspace.
@@ -835,9 +834,9 @@ var DockAbstractAppIcon = GObject.registerClass({
         // since the order changes upon window interaction
         let MEMORY_TIME = 3000;
 
-        let app_windows = this.getInterestingWindows();
+        let appWindows = this.getInterestingWindows();
 
-        if (app_windows.length < 1)
+        if (appWindows.length < 1)
             return;
 
         if (recentlyClickedAppLoopId > 0)
@@ -850,10 +849,10 @@ var DockAbstractAppIcon = GObject.registerClass({
         let monitorIsolation = Docking.DockManager.settings.isolateMonitors;
         if (!recentlyClickedApp ||
             recentlyClickedApp.get_id() !== this.app.get_id() ||
-            recentlyClickedAppWindows.length !== app_windows.length ||
+            recentlyClickedAppWindows.length !== appWindows.length ||
             (recentlyClickedAppMonitor !== this.monitorIndex && monitorIsolation)) {
             recentlyClickedApp = this.app;
-            recentlyClickedAppWindows = app_windows;
+            recentlyClickedAppWindows = appWindows;
             recentlyClickedAppMonitor = this.monitorIndex;
             recentlyClickedAppIndex = 0;
         }
@@ -1197,14 +1196,13 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             // update, show, or hide the allWindows menu
             // Check if there are new windows not already displayed. In such case, repopulate the allWindows
             // menu. Windows removal is already handled by each preview being connected to the destroy signal
-            let old_windows = this._allWindowsMenuItem.menu._getMenuItems().map(item => {
+            const oldWindows = this._allWindowsMenuItem.menu._getMenuItems().map(item => {
                 return item._window;
             });
 
-            let new_windows = windows.filter(w => {
-                return old_windows.indexOf(w) < 0;
-            });
-            if (new_windows.length > 0) {
+            const newWindows = windows.filter(w =>
+                oldWindows.indexOf(w) < 0);
+            if (newWindows.length > 0) {
                 this._populateAllWindowMenu(windows);
 
                 // Try to set the width to that of the submenu.

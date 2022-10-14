@@ -526,13 +526,13 @@ var DockDash = GObject.registerClass({
         });
 
         appIcon.connect('key-focus-in', actor => {
-            let [x_shift, y_shift] = ensureActorVisibleInScrollView(this._scrollView, actor);
+            const [xShift, yShift] = ensureActorVisibleInScrollView(this._scrollView, actor);
 
             // This signal is triggered also by mouse click. The popup menu is opened at the original
             // coordinates. Thus correct for the shift which is going to be applied to the scrollview.
             if (appIcon._menu) {
-                appIcon._menu._boxPointer.xOffset = -x_shift;
-                appIcon._menu._boxPointer.yOffset = -y_shift;
+                appIcon._menu._boxPointer.xOffset = -xShift;
+                appIcon._menu._boxPointer.yOffset = -yShift;
             }
         });
 
@@ -974,22 +974,22 @@ var DockDash = GObject.registerClass({
         });
     }
 
-    _initializeIconSize(max_size) {
-        let max_allowed = baseIconSizes[baseIconSizes.length - 1];
-        max_size = Math.min(max_size, max_allowed);
+    _initializeIconSize(maxSize) {
+        const maxAllowed = baseIconSizes[baseIconSizes.length - 1];
+        maxSize = Math.min(maxSize, maxAllowed);
 
         if (Docking.DockManager.settings.iconSizeFixed) {
-            this._availableIconSizes = [max_size];
+            this._availableIconSizes = [maxSize];
         } else {
             this._availableIconSizes = baseIconSizes.filter(val => {
-                return val < max_size;
+                return val < maxSize;
             });
-            this._availableIconSizes.push(max_size);
+            this._availableIconSizes.push(maxSize);
         }
     }
 
-    setIconSize(max_size, doNotAnimate) {
-        this._initializeIconSize(max_size);
+    setIconSize(maxSize, doNotAnimate) {
+        this._initializeIconSize(maxSize);
 
         if (doNotAnimate)
             this._shownInitially = false;

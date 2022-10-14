@@ -1123,7 +1123,7 @@ function unWrapFileManagerApp() {
  * This class maintains a Shell.App representing the Trash and keeps it
  * up-to-date as the trash fills and is emptied over time.
  */
-var Trash = class DashToDock_Trash {
+var Trash = class DashToDockTrash {
     destroy() {
         this._trashApp?.destroy();
     }
@@ -1149,7 +1149,7 @@ var Trash = class DashToDock_Trash {
  * plugged into the system, and keeps the list of Apps up-to-date as
  * devices come and go and are mounted and unmounted.
  */
-var Removables = class DashToDock_Removables {
+var Removables = class DashToDockRemovables {
     static initVolumePromises(object) {
         // TODO: This can be simplified using actual interface type when we
         // can depend on gjs 1.72
