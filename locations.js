@@ -918,7 +918,7 @@ function wrapWindowsBackedApp(shellApp) {
 
     const { destroy: defaultDestroy } = shellApp;
     shellApp.destroy = function () {
-        this._dtdData.proxyProperties.forEach(p => delete this[p]);
+        this._dtdData.proxyProperties.forEach(prop => delete this[prop]);
         this._dtdData.destroy();
         this._dtdData = undefined;
         this.appInfo.destroy && this.appInfo.destroy();

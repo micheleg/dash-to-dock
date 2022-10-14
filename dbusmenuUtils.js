@@ -178,7 +178,7 @@ function makePopupMenuItem(dbusmenuItem, deep) {
         }
     };
 
-    const onPropertyChanged = (dbusmenuItem, name, value) => {
+    const onPropertyChanged = (_, name, value) => {
         // `value` is null when a property is cleared, so handle those cases
         // with sensible defaults.
         switch (name) {
@@ -218,12 +218,12 @@ function makePopupMenuItem(dbusmenuItem, deep) {
         // Make a submenu.
         item = new PopupMenu.PopupSubMenuMenuItem(label, wantIcon);
         const updateChildren = () => {
-            const children = dbusmenuItem.get_children();
-            if (!children.length)
+            const itemChildren = dbusmenuItem.get_children();
+            if (!itemChildren.length)
                 return recreateItem();
 
             item.menu.removeAll();
-            children.forEach(remoteChild =>
+            itemChildren.forEach(remoteChild =>
                 item.menu.addMenuItem(makePopupMenuItem(remoteChild, true)));
         };
         updateChildren();

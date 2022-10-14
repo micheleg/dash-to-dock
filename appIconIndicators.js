@@ -948,8 +948,7 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
         if (!pixBuf)
             return null;
 
-        let pixels = pixBuf.get_pixels(),
-            offset = 0;
+        let pixels = pixBuf.get_pixels();
 
         let total  = 0,
             rTotal = 0,
