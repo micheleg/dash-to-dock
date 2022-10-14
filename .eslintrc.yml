@@ -12,13 +12,9 @@ overrides:
       ngettext: readonly
 
     rules:
-      brace-style:
-        - warn
       consistent-return:
         - warn
       func-style:
-        - warn
-      max-statements-per-line:
         - warn
       no-array-constructor:
         - warn
