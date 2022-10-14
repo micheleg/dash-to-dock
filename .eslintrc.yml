@@ -30,8 +30,6 @@ overrides:
         - warn
       no-return-assign:
         - warn
-      no-shadow:
-        - warn
       no-unused-expressions:
         - warn
       no-unused-vars:

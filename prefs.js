@@ -580,7 +580,7 @@ var Settings = GObject.registerClass({
                 'sensitive',
                 Gio.SettingsBindFlags.DEFAULT);
 
-            dialog.connect('response', (dialog, id) => {
+            dialog.connect('response', (_, id) => {
                 if (id === 1) {
                     // restore default settings for the relevant keys
                     let keys = ['intellihide', 'autohide', 'intellihide-mode', 'autohide-in-fullscreen', 'show-dock-urgent-notify', 'require-pressure-to-show',
@@ -814,7 +814,7 @@ var Settings = GObject.registerClass({
                 'value',
                 Gio.SettingsBindFlags.DEFAULT);
 
-            dialog.connect('response', (dialog, id) => {
+            dialog.connect('response', (_, id) => {
                 if (id === 1) {
                     // restore default settings for the relevant keys
                     let keys = ['shortcut-text', 'hotkeys-overlay', 'hotkeys-show-dock', 'shortcut-timeout'];
@@ -866,7 +866,7 @@ var Settings = GObject.registerClass({
                 'active-id',
                 Gio.SettingsBindFlags.DEFAULT);
 
-            dialog.connect('response', (dialog, id) => {
+            dialog.connect('response', (_, id) => {
                 if (id === 1) {
                     // restore default settings for the relevant keys
                     let keys = ['shift-click-action', 'middle-click-action', 'shift-middle-click-action'];
@@ -963,7 +963,7 @@ var Settings = GObject.registerClass({
                 Gio.SettingsBindFlags.DEFAULT);
 
 
-            dialog.connect('response', (dialog, id) => {
+            dialog.connect('response', () => {
                 // remove the settings box so it doesn't get destroyed;
                 dialog.get_content_area().remove(box);
                 dialog.destroy();
@@ -1071,7 +1071,7 @@ var Settings = GObject.registerClass({
                 this._settings.get_double('max-alpha')
             );
 
-            dialog.connect('response', (dialog, id) => {
+            dialog.connect('response', () => {
                 // remove the settings box so it doesn't get destroyed;
                 dialog.get_content_area().remove(box);
                 dialog.destroy();

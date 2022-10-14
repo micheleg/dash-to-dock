@@ -513,7 +513,7 @@ var DockDash = GObject.registerClass({
             });
         }
 
-        appIcon.connect('menu-state-changed', (appIcon, opened) => {
+        appIcon.connect('menu-state-changed', (_, opened) => {
             this._itemMenuStateChanged(item, opened);
         });
 
@@ -1096,11 +1096,11 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
         if (!parent)
             throw new Error('Actor not in scroll view');
 
-        let box = parent.get_allocation_box();
-        y1 += box.y1;
-        y2 += box.y1;
-        x1 += box.x1;
-        x2 += box.x1;
+        const parentBox = parent.get_allocation_box();
+        y1 += parentBox.y1;
+        y2 += parentBox.y1;
+        x1 += parentBox.x1;
+        x2 += parentBox.x1;
         parent = parent.get_parent();
     }
 
