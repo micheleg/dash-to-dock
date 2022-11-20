@@ -267,7 +267,7 @@ var Intellihide = class DashToDock_Intellihide {
                         return true;
 
                     // Desktop icons extension is not an application so it should be ignored
-                    else if (meta_win.get_wm_class() == 'com.desktop.ding')
+                    else if (meta_win.is_skip_taskbar())
                         return false;
 
                     let currentApp = this._tracker.get_window_app(meta_win);
