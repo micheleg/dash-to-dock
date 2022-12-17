@@ -40,6 +40,9 @@ const handledWindowTypes = [
     Meta.WindowType.SPLASHSCREEN
 ];
 
+// List of applications, ignore windows of these applications in considering intellihide
+const ignoreApps = [ "com.rastersoft.ding", "com.desktop.ding" ];
+
 /**
  * A rough and ugly implementation of the intellihide behaviour.
  * Intallihide object: emit 'status-changed' signal when the overlap of windows
@@ -313,7 +316,6 @@ var Intellihide = class DashToDock_Intellihide {
 
         // The DING extension desktop window needs to be excluded
         // so we match its window by application id and window property.
-        const ignoreApps = [ "com.rastersoft.ding", "com.desktop.ding" ];
         const wmApp = metaWindow.get_gtk_application_id();
         if (ignoreApps.includes(wmApp) && metaWindow.is_skip_taskbar())
             return false;
