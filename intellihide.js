@@ -311,6 +311,13 @@ var Intellihide = class DashToDock_Intellihide {
         if (!metaWindow)
             return false;
 
+        // The DING extension desktop window needs to be excluded
+        // so we match its window by application id and window property.
+        const ignoreApps = [ "com.rastersoft.ding", "com.desktop.ding" ];
+        const wmApp = metaWindow.get_gtk_application_id();
+        if (ignoreApps.includes(wmApp) && metaWindow.is_skip_taskbar())
+            return false;
+
         // The DropDownTerminal extension uses the POPUP_MENU window type hint
         // so we match its window by wm class instead
         if (metaWindow.get_wm_class() == 'DropDownTerminalWindow')
