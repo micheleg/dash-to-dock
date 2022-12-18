@@ -127,6 +127,7 @@ var Intellihide = class DashToDock_Intellihide {
 
     _windowCreated(display, metaWindow) {
         this._addWindowSignals(metaWindow.get_compositor_private());
+        this._doCheckOverlap();
     }
 
     _addWindowSignals(wa) {
@@ -190,7 +191,7 @@ var Intellihide = class DashToDock_Intellihide {
             return;
 
         let overlaps = OverlapStatus.FALSE;
-        let windows = global.get_window_actors();
+        let windows = global.get_window_actors().filter(wa => this._handledWindow(wa));
 
         if (windows.length > 0) {
             /*
@@ -203,7 +204,7 @@ var Intellihide = class DashToDock_Intellihide {
             let topWindow = null;
             for (let i = windows.length - 1; i >= 0; i--) {
                 let meta_win = windows[i].get_meta_window();
-                if (this._handledWindow(windows[i]) && (meta_win.get_monitor() == this._monitorIndex)) {
+                if (meta_win.get_monitor() == this._monitorIndex) {
                     topWindow = meta_win;
                     break;
                 }
@@ -248,8 +249,6 @@ var Intellihide = class DashToDock_Intellihide {
     // Optionally skip windows of other applications
     _intellihideFilterInteresting(wa) {
         let meta_win = wa.get_meta_window();
-        if (!this._handledWindow(wa))
-            return false;
 
         let currentWorkspace = global.workspace_manager.get_active_workspace_index();
         let wksp = meta_win.get_workspace();
