@@ -543,6 +543,11 @@ var DockedDash = GObject.registerClass({
             Utils.SignalsHandlerFlags.CONNECT_AFTER
         ], [
             settings,
+            'changed::dance-urgent-applications',
+            () => this.dash.resetAppIcons(),
+            Utils.SignalsHandlerFlags.CONNECT_AFTER
+        ], [
+            settings,
             'changed::show-running',
             () => { this.dash.resetAppIcons(); }
         ], [
