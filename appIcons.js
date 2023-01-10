@@ -816,13 +816,9 @@ var DockAbstractAppIcon = GObject.registerClass({
         if (windows.length <= 0)
             return;
 
-        let activatedWindows = 0;
-
         for (let i = windows.length - 1; i >= 0; i--) {
-            if (windows[i].get_workspace().index() == activeWorkspace) {
+            if (windows[i].get_workspace()?.index() === activeWorkspace)
                 Main.activateWindow(windows[i]);
-                activatedWindows++;
-            }
         }
     }
 
