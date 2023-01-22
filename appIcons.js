@@ -162,9 +162,11 @@ var DockAbstractAppIcon = GObject.registerClass({
         this.connect('notify::urgent', () => {
             const icon = this.icon._iconBin;
             this._signalsHandler.removeWithLabel(Labels.URGENT_WINDOWS)
-            if (this.urgent && Docking.DockManager.settings.danceUrgentApplications) {
-                icon.set_pivot_point(0.5, 0.5);
-                this.iconAnimator.addAnimation(icon, 'dance');
+            if (this.urgent) {
+                if (Docking.DockManager.settings.danceUrgentApplications) {
+                    icon.set_pivot_point(0.5, 0.5);
+                    this.iconAnimator.addAnimation(icon, 'dance');
+                }
                 if (!this._urgentWindows.size) {
                     const urgentWindows = this.getInterestingWindows();
                     urgentWindows.forEach(w => (w._manualUrgency = true));
