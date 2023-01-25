@@ -22,7 +22,8 @@ EXTRA_MODULES = \
                 theming.js \
                 utils.js \
                 dbusmenuUtils.js \
-                Settings.ui desktopIconsIntegration.js \
+                Settings.ui \
+                desktopIconsIntegration.js \
                 $(NULL)
 
 EXTRA_MEDIA = logo.svg \

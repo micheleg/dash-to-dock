@@ -1034,7 +1034,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             if (windows.length > 0) {
                 this.addMenuItem(
                     /* Translators: This is the heading of a list of open windows */
-                    new PopupMenu.PopupSeparatorMenuItem(_('Open Windows')));
+                    new PopupMenu.PopupSeparatorMenuItem(__('Open Windows')));
             }
 
             windows.forEach(window => {
@@ -1054,7 +1054,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             let actions = appInfo.list_actions();
             if (this._source.app.can_open_new_window() &&
                 actions.indexOf('new-window') == -1) {
-                this._newWindowMenuItem = this._appendMenuItem(_('New Window'));
+                this._newWindowMenuItem = this._appendMenuItem(__('New Window'));
                 this._newWindowMenuItem.connect('activate', () => {
                     if (this._source.app.state == Shell.AppState.STOPPED)
                         this._source.animateLaunch();
@@ -1072,8 +1072,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                     ? Shell.AppLaunchGpu.DEFAULT
                     : Shell.AppLaunchGpu.DISCRETE;
                 this._onGpuMenuItem = this._appendMenuItem(appPrefersNonDefaultGPU
-                    ? _('Launch using Integrated Graphics Card')
-                    : _('Launch using Discrete Graphics Card'));
+                    ? __('Launch using Integrated Graphics Card')
+                    : __('Launch using Discrete Graphics Card'));
                 this._onGpuMenuItem.connect('activate', () => {
                     this._source.animateLaunch();
                     this._source.app.launch(0, -1, gpuPref);
@@ -1102,16 +1102,16 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 const [majorVersion] = Config.PACKAGE_VERSION.split('.');
 
                 if (isFavorite) {
-                    const label = majorVersion >= 42 ? _('Unpin') :
-                        _('Remove from Favorites');
+                    const label = majorVersion >= 42 ? __('Unpin') :
+                        __('Remove from Favorites');
                     let item = this._appendMenuItem(label);
                     item.connect('activate', () => {
                         let favs = AppFavorites.getAppFavorites();
                         favs.removeFavorite(this._source.app.get_id());
                     });
                 } else {
-                    const label = majorVersion >= 42 ? _('Pin to Dash') :
-                        _('Add to Favorites');
+                    const label = majorVersion >= 42 ? __('Pin to Dash') :
+                        __('Add to Favorites');
                     let item = this._appendMenuItem(label);
                     item.connect('activate', () => {
                         let favs = AppFavorites.getAppFavorites();
@@ -1123,7 +1123,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop') &&
                 (this._source instanceof DockAppIcon)) {
                 this._appendSeparator();
-                let item = this._appendMenuItem(_('Show Details'));
+                let item = this._appendMenuItem(__('Show Details'));
                 item.connect('activate', () => {
                     let id = this._source.app.get_id();
                     let args = GLib.Variant.new('(ss)', [id, '']);
@@ -1160,7 +1160,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
 
         // quit menu
         this._appendSeparator();
-        this._quitMenuItem = this._appendMenuItem(_('Quit'));
+        this._quitMenuItem = this._appendMenuItem(__('Quit'));
         this._quitMenuItem.connect('activate', () => this._source.closeAllWindows());
 
         this.update();
@@ -1172,7 +1172,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
       // update, show or hide the quit menu
       if (this._source.windowsCount > 0) {
           if (this._source.windowsCount == 1)
-              this._quitMenuItem.label.set_text(_('Quit'));
+              this._quitMenuItem.label.set_text(__('Quit'));
           else
               this._quitMenuItem.label.set_text(__('Quit %d Windows').format(
                   this._source.windowsCount));
@@ -1401,7 +1401,7 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
 
         /* Translators: %s is "Settings", which is automatically translated. You
            can also translate the full message if this fits better your language. */
-        let name = __('Dash to Dock %s').format(_('Settings'))
+        let name = __('Dash to Dock %s').format(__('Settings'))
         let item = this._appendMenuItem(name);
 
         item.connect('activate', function () {
