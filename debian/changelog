@@ -1,3 +1,12 @@
+gnome-shell-extension-ubuntu-dock (75ubuntu1) lunar; urgency=medium
+
+  * New upstream release 75.
+
+  [ Daniel van Vugt ]
+  * Add support for GNOME 44 (avoid deprecated functions).
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Mon, 20 Feb 2023 16:57:54 +0800
+
 gnome-shell-extension-ubuntu-dock (74ubuntu2) kinetic; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
