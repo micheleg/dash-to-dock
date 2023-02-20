@@ -408,7 +408,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         // Newly-created windows are added to a workspace before
         // the compositor finds out about them...
         if (!this._width || !this._height) {
-            this._cloneTextureLater = Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
+            this._cloneTextureLater = Utils.laterAdd(Meta.LaterType.BEFORE_REDRAW, () => {
                 // Check if there's still a point in getting the texture,
                 // otherwise this could go on indefinitely
                 this._updateWindowPreviewSize();
@@ -496,7 +496,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             // use an idle handler to avoid mapping problems -
             // see comment in Workspace._windowAdded
             let activationEvent = Clutter.get_current_event();
-            this._windowAddedLater = Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
+            this._windowAddedLater = Utils.laterAdd(Meta.LaterType.BEFORE_REDRAW, () => {
                 delete this._windowAddedLater;
                 this.emit('activate', activationEvent);
                 return GLib.SOURCE_REMOVE;
@@ -604,12 +604,12 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
 
     _onDestroy() {
         if (this._cloneTextureLater) {
-            Meta.later_remove(this._cloneTextureLater);
+            Utils.laterRemove(this._cloneTextureLater);
             delete this._cloneTextureLater;
         }
 
         if (this._windowAddedLater) {
-            Meta.later_remove(this._windowAddedLater);
+            Utils.laterRemove(this._windowAddedLater);
             delete this._windowAddedLater;
         }
 

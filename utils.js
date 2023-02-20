@@ -622,3 +622,17 @@ function getMonitorManager() {
     else
         return Meta.MonitorManager.get();
 }
+
+function laterAdd(when, func) {
+    if (global.compositor.get_laters !== undefined)
+        return global.compositor.get_laters().add(when, func);
+    else
+        return Meta.later_add(when, func);
+}
+
+function laterRemove(later) {
+    if (global.compositor.get_laters !== undefined)
+        return global.compositor.get_laters().remove(later);
+    else
+        Meta.later_remove(later);
+}
