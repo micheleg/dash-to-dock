@@ -475,7 +475,7 @@ var DockedDash = GObject.registerClass({
         this._themeManager.destroy();
 
         if (this._marginLater) {
-            Meta.later_remove(this._marginLater);
+            Utils.laterRemove(this._marginLater);
             delete this._marginLater;
         }
 
@@ -1799,7 +1799,7 @@ var DockManager = class DashToDock_DockManager {
         if (this._toggleLater)
             return;
 
-        this._toggleLater = Meta.later_add(Meta.LaterType.BEFORE_REDRAW, () => {
+        this._toggleLater = Utils.laterAdd(Meta.LaterType.BEFORE_REDRAW, () => {
             delete this._toggleLater;
             this._restoreDash();
             this._deleteDocks();
@@ -2445,7 +2445,7 @@ var DockManager = class DashToDock_DockManager {
     destroy() {
         this.emit('destroy');
         if (this._toggleLater) {
-            Meta.later_remove(this._toggleLater);
+            Utils.laterRemove(this._toggleLater);
             delete this._toggleLater;
         }
         this._restoreDash();
