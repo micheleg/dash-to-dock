@@ -85,7 +85,7 @@ var Intellihide = class DashToDock_Intellihide {
             this._checkOverlap.bind(this)
         ], [
             // update wne monitor changes, for instance in multimonitor when monitor are attached
-            Meta.MonitorManager.get(),
+            Utils.getMonitorManager(),
             'monitors-changed',
             this._checkOverlap.bind(this)
         ]);

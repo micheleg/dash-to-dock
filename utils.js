@@ -615,3 +615,10 @@ class CancellableChild extends Gio.Cancellable {
         this._realCancel();
     }
 });
+
+function getMonitorManager() {
+    if (global.backend.get_monitor_manager !== undefined)
+        return global.backend.get_monitor_manager();
+    else
+        return Meta.MonitorManager.get();
+}
