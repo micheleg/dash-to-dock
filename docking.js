@@ -1854,7 +1854,7 @@ var DockManager = class DashToDock_DockManager {
 
         // Connect relevant signals to the toggling function
         this._signalsHandler.addWithLabel(Labels.SETTINGS, [
-            Meta.MonitorManager.get(),
+            Utils.getMonitorManager(),
             'monitors-changed',
             this._toggle.bind(this)
         ], [
@@ -1922,7 +1922,7 @@ var DockManager = class DashToDock_DockManager {
 
         this._preferredMonitorIndex = this.settings.preferredMonitor;
         if (this._preferredMonitorIndex === -2) {
-            const monitorManager = Meta.MonitorManager.get();
+            const monitorManager = Utils.getMonitorManager();
             this._preferredMonitorIndex = monitorManager.get_monitor_for_connector(
                 this.settings.preferredMonitorByConnector);
         } else if (this._preferredMonitorIndex >= 0) {
