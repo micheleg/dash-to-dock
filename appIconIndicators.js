@@ -355,12 +355,12 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
                 this._borderWidth = 2;
 
                 if (colorPalette) {
-                    this._borderColor = Clutter.color_from_string(colorPalette.lighter)[1];
-                    this._bodyColor = Clutter.color_from_string(colorPalette.darker)[1];
+                    [, this._borderColor] = Clutter.color_from_string(colorPalette.lighter);
+                    [, this._bodyColor] = Clutter.color_from_string(colorPalette.darker);
                 } else {
                     // Fallback
-                    this._borderColor = Clutter.color_from_string('white')[1];
-                    this._bodyColor = Clutter.color_from_string('gray')[1];
+                    [, this._borderColor] = Clutter.color_from_string('white');
+                    [, this._bodyColor] = Clutter.color_from_string('gray');
                 }
             }
 
@@ -368,14 +368,14 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
             if (settings.runningIndicatorDominantColor) {
                 const colorPalette = this._dominantColorExtractor._getColorPalette();
                 if (colorPalette)
-                    this._bodyColor = Clutter.color_from_string(colorPalette.original)[1];
+                    [, this._bodyColor] = Clutter.color_from_string(colorPalette.original);
             }
 
             // Finally, use customize style if requested
             if (settings.customThemeCustomizeRunningDots) {
-                this._borderColor = Clutter.color_from_string(settings.customThemeRunningDotsBorderColor)[1];
+                [, this._borderColor] = Clutter.color_from_string(settings.customThemeRunningDotsBorderColor);
                 this._borderWidth = settings.customThemeRunningDotsBorderWidth;
-                this._bodyColor =  Clutter.color_from_string(settings.customThemeRunningDotsColor)[1];
+                [, this._bodyColor] =  Clutter.color_from_string(settings.customThemeRunningDotsColor);
             }
         }
 
