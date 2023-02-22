@@ -1,6 +1,6 @@
 /* exported GlobalSignalsHandler, InjectionsHandler, VFuncInjectionsHandler,
             PropertyInjectionsHandler, SignalHandlersFlags, IconTheme,
-            CancellableChild, getPosition, getPreviewScale, drawRoundedLine,
+            CancellableChild, getPosition, drawRoundedLine,
             getWindowsByObjectPath, shellAppCompare, shellWindowsCompare,
             splitHandler, getMonitorManager, laterAdd, laterRemove */
 
@@ -427,13 +427,6 @@ function getPosition() {
             return St.Side.LEFT;
     }
     return position;
-}
-
-/**
- *
- */
-function getPreviewScale() {
-    return Docking.DockManager.settings.previewSizeScale;
 }
 
 /**
