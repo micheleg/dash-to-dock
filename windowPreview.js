@@ -190,9 +190,8 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
         });
 
         // All app windows with a static order
-        let newWin = this._source.getInterestingWindows().sort((a, b) => {
-            return a.get_stable_sequence() > b.get_stable_sequence();
-        });
+        const newWin = this._source.getInterestingWindows().sort((a, b) =>
+            a.get_stable_sequence() > b.get_stable_sequence());
 
         let addedItems = [];
         let removedActors = [];
@@ -201,42 +200,44 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
         let oldIndex = 0;
 
         while (newIndex < newWin.length || oldIndex < oldWin.length) {
+            const currentOldWin = oldWin[oldIndex];
+            const currentNewWin = newWin[newIndex];
+
             // No change at oldIndex/newIndex
-            if (oldWin[oldIndex] &&
-                oldWin[oldIndex] === newWin[newIndex]) {
+            if (currentOldWin === currentNewWin) {
                 oldIndex++;
                 newIndex++;
                 continue;
             }
 
             // Window removed at oldIndex
-            if (oldWin[oldIndex] &&
-                newWin.indexOf(oldWin[oldIndex]) === -1) {
+            if (currentOldWin && !newWin.includes(currentOldWin)) {
                 removedActors.push(children[oldIndex]);
                 oldIndex++;
                 continue;
             }
 
             // Window added at newIndex
-            if (newWin[newIndex] &&
-                oldWin.indexOf(newWin[newIndex]) === -1) {
-                addedItems.push({ item: this._createPreviewItem(newWin[newIndex]),
-                    pos: newIndex });
+            if (currentNewWin && !oldWin.includes(currentNewWin)) {
+                addedItems.push({
+                    item: this._createPreviewItem(currentNewWin),
+                    pos: newIndex,
+                });
                 newIndex++;
                 continue;
             }
 
             // Window moved
             let insertHere = newWin[newIndex + 1] &&
-                             newWin[newIndex + 1] === oldWin[oldIndex];
-            let alreadyRemoved = removedActors.reduce((result, actor) => {
-                let removedWin = actor._window;
-                return result || removedWin === newWin[newIndex];
-            }, false);
+                             newWin[newIndex + 1] === currentOldWin;
+            const alreadyRemoved = removedActors.reduce((result, actor) =>
+                result || actor._window === currentNewWin, false);
 
             if (insertHere || alreadyRemoved) {
-                addedItems.push({ item: this._createPreviewItem(newWin[newIndex]),
-                    pos: newIndex + removedActors.length });
+                addedItems.push({
+                    item: this._createPreviewItem(currentNewWin),
+                    pos: newIndex + removedActors.length,
+                });
                 newIndex++;
             } else {
                 removedActors.push(children[oldIndex]);

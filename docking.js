@@ -1431,6 +1431,7 @@ var KeyboardShortcuts = class DashToDockKeyboardShortcuts {
 
         // Setup keyboard bindings for dash elements
         let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
+        const { mainDock } = DockManager.getDefault();
         keys.forEach(function (key) {
             for (let i = 0; i < NUM_HOTKEYS; i++) {
                 let appNum = i;
@@ -1438,7 +1439,7 @@ var KeyboardShortcuts = class DashToDockKeyboardShortcuts {
                     Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
                     Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                     () => {
-                        DockManager.getDefault().mainDock._activateApp(appNum);
+                        mainDock._activateApp(appNum);
                         this._showOverlay();
                     });
             }
