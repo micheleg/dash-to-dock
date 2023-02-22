@@ -20,5 +20,3 @@ overrides:
         - warn
       no-unused-vars:
         - warn
-      prefer-rest-params:
-        - warn
