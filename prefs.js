@@ -19,6 +19,7 @@ const N__ = function (e) {
 };
 
 try {
+    // eslint-disable-next-line no-unused-expressions
     imports.misc.extensionUtils;
 } catch (e) {
     const resource = Gio.Resource.load(

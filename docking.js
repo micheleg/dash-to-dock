@@ -1846,7 +1846,8 @@ var DockManager = class DashToDockDockManager {
         Object.defineProperty(this.settings, camelMappedKey, {
             get: () => mappedValue() ?? dockPropertyDesc.value,
             set: value => {
-                mappedValue() ?? (dockPropertyDesc.value = value);
+                if (mappedValue())
+                    dockPropertyDesc.value = value;
             },
         });
 
