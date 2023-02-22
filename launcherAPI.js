@@ -150,14 +150,14 @@ var LauncherEntryRemoteModel = class DashToDockLauncherEntryRemoteModel {
     }
 };
 
-const launcherEntryDefaults = {
+const launcherEntryDefaults = Object.freeze({
     count: 0,
     progress: 0,
     urgent: false,
     quicklist: null,
     'count-visible': false,
     'progress-visible': false,
-};
+});
 
 const LauncherEntry = class DashToDockLauncherEntry {
     constructor() {

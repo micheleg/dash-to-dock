@@ -17,7 +17,7 @@ const Utils = Me.imports.utils;
 
 let tracker = Shell.WindowTracker.get_default();
 
-const RunningIndicatorStyle = {
+const RunningIndicatorStyle = Object.freeze({
     DEFAULT: 0,
     DOTS: 1,
     SQUARES: 2,
@@ -27,7 +27,7 @@ const RunningIndicatorStyle = {
     CILIORA: 6,
     METRO: 7,
     BINARY: 8,
-};
+});
 
 const MAX_WINDOWS_CLASSES = 4;
 

@@ -14,18 +14,18 @@ const Utils = Me.imports.utils;
 // A good compromise between reactivity and efficiency; to be tuned.
 const INTELLIHIDE_CHECK_INTERVAL = 100;
 
-const OverlapStatus = {
+const OverlapStatus = Object.freeze({
     UNDEFINED: -1,
     FALSE: 0,
     TRUE: 1,
-};
+});
 
-const IntellihideMode = {
+const IntellihideMode = Object.freeze({
     ALL_WINDOWS: 0,
     FOCUS_APPLICATION_WINDOWS: 1,
     MAXIMIZED_WINDOWS: 2,
     ALWAYS_ON_TOP: 3,
-};
+});
 
 // List of windows type taken into account. Order is important (keep the original
 // enum order).
