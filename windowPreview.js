@@ -4,6 +4,9 @@
  * and code from the Taskbar extension by Zorin OS
  * Some code was also adapted from the upstream Gnome Shell source code.
  */
+
+/* exported WindowPreviewMenu */
+
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
@@ -12,7 +15,6 @@ const St = imports.gi.St;
 const Main = imports.ui.main;
 
 const BoxPointer = imports.ui.boxpointer;
-const Params = imports.misc.params;
 const PopupMenu = imports.ui.popupMenu;
 const Workspace = imports.ui.workspace;
 
@@ -299,11 +301,13 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
         let topMenu = this._getTopMenu();
         let topThemeNode = topMenu.actor.get_theme_node();
         if (this.isHorizontal) {
-            let [topMinWidth, topNaturalWidth] = topMenu.actor.get_preferred_width(-1);
+            const [topMinWidth_, topNaturalWidth] =
+                topMenu.actor.get_preferred_width(-1);
             let topMaxWidth = topThemeNode.get_max_width();
             return topMaxWidth >= 0 && topNaturalWidth >= topMaxWidth;
         } else {
-            let [topMinHeight, topNaturalHeight] = topMenu.actor.get_preferred_height(-1);
+            const [topMinHeight_, topNaturalHeight] =
+                topMenu.actor.get_preferred_height(-1);
             let topMaxHeight = topThemeNode.get_max_height();
             return topMaxHeight >= 0 && topNaturalHeight >= topMaxHeight;
         }
@@ -350,7 +354,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
 
 
         this.closeButton.opacity = 0;
-        this.closeButton.connect('clicked', this._closeWindow.bind(this));
+        this.closeButton.connect('clicked', () => this._closeWindow());
 
         let overlayGroup = new Clutter.Actor({ layout_manager: new Clutter.BinLayout(), y_expand: true });
 
@@ -483,7 +487,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
                !this._hasAttachedDialogs();
     }
 
-    _closeWindow(actor) {
+    _closeWindow() {
         this._workspace = this._window.get_workspace();
 
         // This mechanism is copied from the workspace.js upstream code

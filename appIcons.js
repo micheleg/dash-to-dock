@@ -1,11 +1,11 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+/* exported DockShowAppsIcon, makeAppIcon, itemShowLabel, getInterestingWindows */
+
 const Clutter = imports.gi.Clutter;
-const GdkPixbuf = imports.gi.GdkPixbuf;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
-const Signals = imports.signals;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
@@ -22,13 +22,9 @@ const AppDisplay = imports.ui.appDisplay;
 const AppFavorites = imports.ui.appFavorites;
 const BoxPointer = imports.ui.boxpointer;
 const Dash = imports.ui.dash;
-const DND = imports.ui.dnd;
-const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
 const ParentalControlsManager = imports.misc.parentalControlsManager;
 const PopupMenu = imports.ui.popupMenu;
-const Util = imports.misc.util;
-const Workspace = imports.ui.workspace;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -713,7 +709,7 @@ var DockAbstractAppIcon = GObject.registerClass({
     // Try to do the right thing when attempting to launch a new window of an app. In
     // particular, if the application doens't allow to launch a new window, activate
     // the existing window instead.
-    launchNewWindow(p) {
+    launchNewWindow() {
         if (this.app.state === Shell.AppState.RUNNING &&
             this.app.can_open_new_window()) {
             this.animateLaunch();
@@ -755,7 +751,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         // Set the font size to something smaller than the whole icon so it is
         // still visible. The border radius is large to make the shape circular
-        let [minWidth, natWidth] = this._iconContainer.get_preferred_width(-1);
+        const [minWidth_, natWidth] = this._iconContainer.get_preferred_width(-1);
         let fontSize = Math.round(Math.max(12, 0.3 * natWidth) / scaleFactor);
         let size = Math.round(fontSize * 1.2);
         this._numberOverlayLabel.set_style(

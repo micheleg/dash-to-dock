@@ -1,33 +1,27 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+/* exported DockDash */
+
 const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
-const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 
-const AppDisplay = imports.ui.appDisplay;
 const AppFavorites = imports.ui.appFavorites;
 const Dash = imports.ui.dash;
 const DND = imports.ui.dnd;
-const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
-const PopupMenu = imports.ui.popupMenu;
 const Util = imports.misc.util;
-const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
 const AppIcons = Me.imports.appIcons;
-const Locations = Me.imports.locations;
 const Theming = Me.imports.theming;
 
 const DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
-const DASH_ITEM_LABEL_HIDE_TIME = Dash.DASH_ITEM_LABEL_HIDE_TIME;
-const DASH_ITEM_HOVER_TIMEOUT = Dash.DASH_ITEM_HOVER_TIMEOUT;
 const DASH_VISIBILITY_TIMEOUT = 3;
 
 const Labels = Object.freeze({
@@ -448,10 +442,7 @@ var DockDash = GObject.registerClass({
                 delta = Number(increment);
                 break;
             case Clutter.ScrollDirection.SMOOTH: {
-                let [dx, dy] = event.get_scroll_delta();
-                // TODO: Handle y
-                // delta = dy * increment;
-                // Also consider horizontal component, for instance touchpad
+                const [dx] = event.get_scroll_delta();
                 delta = dx * increment;
                 break;
             }
@@ -479,7 +470,6 @@ var DockDash = GObject.registerClass({
             adjustment.set_value(delta);
         else
             adjustment.set_value(value + delta);
-
 
         return Clutter.EVENT_STOP;
     }

@@ -1,21 +1,17 @@
+/* exported AppIconIndicator */
+
 const Cairo = imports.cairo;
 const Clutter = imports.gi.Clutter;
 const GdkPixbuf = imports.gi.GdkPixbuf;
 const Gio = imports.gi.Gio;
 const GObject = imports.gi.GObject;
-const Gtk = imports.gi.Gtk;
 const Main = imports.ui.main;
 const Pango = imports.gi.Pango;
-const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-
-const Util = imports.misc.util;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
 const Utils = Me.imports.utils;
-
-let tracker = Shell.WindowTracker.get_default();
 
 const RunningIndicatorStyle = Object.freeze({
     DEFAULT: 0,
@@ -391,7 +387,6 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
     }
 
     _updateIndicator() {
-        let area = this._area;
         let cr = this._area.get_context();
 
         this._computeStyle();
@@ -465,7 +460,6 @@ var RunningIndicatorSegmented = class DashToDockRunningIndicatorSegmented extend
             let size =  Math.max(this._width / 20, this._borderWidth);
             let spacing = Math.ceil(this._width / 18); // separation between the dots
             let dashLength = Math.ceil((this._width - ((this._number - 1) * spacing)) / this._number);
-            let lineLength = this._width - (size * (this._number - 1)) - (spacing * (this._number - 1));
             let padding = this._borderWidth;
             // For the backlit case here we don't want the outer border visible
             if (Docking.DockManager.settings.unityBacklitItems &&
@@ -630,7 +624,6 @@ var RunningIndicatorBinary = class DashToDockRunningIndicatorBinary extends Runn
 
         if (this._source.running) {
             let size =  Math.max(this._width / 11, this._borderWidth);
-            let padding = this._borderWidth;
             let spacing = Math.ceil(this._width / 18);
             let yOffset = this._height - size;
             let binaryValue = String(`0000${(n >>> 0).toString(2)}`).slice(-4);

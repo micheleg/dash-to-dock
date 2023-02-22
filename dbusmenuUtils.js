@@ -1,5 +1,7 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+/* exported haveDBusMenu, makePopupMenuItem */
+
 const Atk = imports.gi.Atk;
 const Clutter = imports.gi.Clutter;
 let Dbusmenu = null; /* Dynamically imported */

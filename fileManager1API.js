@@ -102,7 +102,7 @@ var FileManager1Client = class DashToDockFileManager1Client {
         return [...new Set(windows)];
     }
 
-    _onPropertyChanged(proxy, changed, invalidated) {
+    _onPropertyChanged(proxy, changed, _invalidated) {
         let property = changed.unpack();
         if (property &&
             ('OpenWindowsWithLocations' in property))

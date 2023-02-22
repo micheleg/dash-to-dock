@@ -1,22 +1,13 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const Gio = imports.gi.Gio;
-const GLib = imports.gi.GLib;
+/* exported PositionStyleClass */
+
 const Signals = imports.signals;
 const Meta = imports.gi.Meta;
-const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 const Clutter = imports.gi.Clutter;
 
-const AppDisplay = imports.ui.appDisplay;
-const AppFavorites = imports.ui.appFavorites;
-const Dash = imports.ui.dash;
-const DND = imports.ui.dnd;
-const IconGrid = imports.ui.iconGrid;
 const Main = imports.ui.main;
-const PopupMenu = imports.ui.popupMenu;
-const Util = imports.misc.util;
-const Workspace = imports.ui.workspace;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
@@ -158,7 +149,7 @@ var ThemeManager = class DashToDockThemeManager {
     _updateDashColor() {
         // Retrieve the color. If needed we will adjust it before passing it to
         // this._transparency.
-        let [backgroundColor, borderColor] = this._getDefaultColors();
+        let [backgroundColor, borderColor_] = this._getDefaultColors();
 
         if (!backgroundColor)
             return;
@@ -266,7 +257,6 @@ var ThemeManager = class DashToDockThemeManager {
 
         // We're copying border and corner styles to left border and top-left
         // corner, also removing bottom border and bottom-right corner styles
-        let borderInner = '';
         let borderMissingStyle = '';
 
         if (this._rtl && (position !== St.Side.RIGHT)) {

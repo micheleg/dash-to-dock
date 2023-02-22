@@ -1,5 +1,7 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+/* exported DockManager, IconAnimator */
+
 const Clutter = imports.gi.Clutter;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
@@ -7,24 +9,18 @@ const GObject = imports.gi.GObject;
 const Meta = imports.gi.Meta;
 const Shell = imports.gi.Shell;
 const St = imports.gi.St;
-const Params = imports.misc.params;
 
 const Main = imports.ui.main;
 const AppDisplay = imports.ui.appDisplay;
-const Dash = imports.ui.dash;
 const Environment = imports.ui.environment;
-const IconGrid = imports.ui.iconGrid;
 const Overview = imports.ui.overview;
 const OverviewControls = imports.ui.overviewControls;
 const PointerWatcher = imports.ui.pointerWatcher;
 const Signals = imports.signals;
-const SearchController = imports.ui.searchController;
 const WorkspaceSwitcherPopup = imports.ui.workspaceSwitcherPopup;
 const Layout = imports.ui.layout;
-const LayoutManager = imports.ui.main.layoutManager;
 const Workspace = imports.ui.workspace;
 const WorkspacesView = imports.ui.workspacesView;
-const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
@@ -78,7 +74,7 @@ const Labels = Object.freeze({
  * must have a WEST (SOUTH) anchor_point to achieve the sliding to the RIGHT (BOTTOM)
  * side.
  */
-var DashSlideContainer = GObject.registerClass({
+const DashSlideContainer = GObject.registerClass({
     Properties: {
         'monitor-index': GObject.ParamSpec.uint(
             'monitor-index', 'monitor-index', 'monitor-index',
@@ -193,7 +189,7 @@ var DashSlideContainer = GObject.registerClass({
     }
 });
 
-var DockedDash = GObject.registerClass({
+const DockedDash = GObject.registerClass({
     Properties: {
         'is-main': GObject.ParamSpec.boolean(
             'is-main', 'is-main', 'is-main',
@@ -961,7 +957,7 @@ var DockedDash = GObject.registerClass({
             DockManager.settings.requirePressureToShow) {
             this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, settings.showDelay * 1000,
                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
-            this._pressureBarrier.connect('trigger', barrier => {
+            this._pressureBarrier.connect('trigger', _barrier => {
                 if (!settings.autohideInFullscreen && this._monitor.inFullscreen)
                     return;
                 this._onPressureSensed();
@@ -982,7 +978,7 @@ var DockedDash = GObject.registerClass({
         // In case the mouse move away from the dock area before hovering it, in such case the leave event
         // would never be triggered and the dock would stay visible forever.
         this._triggerTimeoutId =  GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => {
-            let [x, y, mods] = global.get_pointer();
+            const [x, y, mods_] = global.get_pointer();
             let shouldHide = true;
             switch (this._position) {
             case St.Side.LEFT:
@@ -1295,7 +1291,7 @@ var DockedDash = GObject.registerClass({
                 direction = nextDirection;
                 break;
             case Clutter.ScrollDirection.SMOOTH: {
-                let [dx, dy] = event.get_scroll_delta();
+                const [dx_, dy] = event.get_scroll_delta();
                 if (dy < 0)
                     direction = prevDirection;
                 else if (dy > 0)
@@ -1381,7 +1377,7 @@ var DockedDash = GObject.registerClass({
  */
 const NUM_HOTKEYS = 10;
 
-var KeyboardShortcuts = class DashToDockKeyboardShortcuts {
+const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     constructor() {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
@@ -1539,7 +1535,7 @@ var KeyboardShortcuts = class DashToDockKeyboardShortcuts {
  * Note: the future implementaion is not fully contained here. Some bits are around in other methods of other classes.
  * This class just take care of enabling/disabling the option.
  */
-var WorkspaceIsolation = class DashToDockWorkspaceIsolation {
+const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
     constructor() {
         let settings = DockManager.settings;
 
