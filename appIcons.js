@@ -267,7 +267,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                 // Activate the first window
                 const windows = this.getInterestingWindows();
                 if (windows.length > 0) {
-                    const w = windows[0];
+                    const [w] = windows;
                     Main.activateWindow(w);
                 }
             }
@@ -520,7 +520,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                         this._activateAllWindows();
                     }
                 } else {
-                    const w = windows[0];
+                    const [w] = windows;
                     Main.activateWindow(w);
                 }
                 break;
@@ -530,7 +530,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                 // If only one windows is present toggle minimization, but only when triggered with the
                 // simple click action (no modifiers, no middle click).
                 if (singleOrUrgentWindows && !modifiers && button === 1) {
-                    const w = windows[0];
+                    const [w] = windows;
                     if (this.focused) {
                         if (buttonAction !== clickAction.FOCUS_OR_APP_SPREAD) {
                             // Window is raised, minimize it
@@ -554,7 +554,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                         this._cycleThroughWindows();
                     } else {
                         // Activate the first window
-                        const w = windows[0];
+                        const [w] = windows;
                         Main.activateWindow(w);
                     }
                 } else {
@@ -568,7 +568,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                     this._windowPreviews();
                 } else {
                     // Activate the first window
-                    const w = windows[0];
+                    const [w] = windows;
                     Main.activateWindow(w);
                 }
                 break;
@@ -581,7 +581,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                         this._minimizeWindow();
                 } else {
                     // Activate the first window
-                    const w = windows[0];
+                    const [w] = windows;
                     Main.activateWindow(w);
                 }
                 break;
@@ -595,7 +595,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                     // If only one windows is present just switch to it, but only when trigggered with the
                     // simple click action (no modifiers, no middle click).
                     if (singleOrUrgentWindows && !modifiers && button === 1) {
-                        const w = windows[0];
+                        const [w] = windows;
                         Main.activateWindow(w);
                     } else {
                         this._windowPreviews();
@@ -611,7 +611,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                 // simple click action (no modifiers, no middle click).
                 if (!Main.overview.visible) {
                     if (singleOrUrgentWindows && !modifiers && button === 1) {
-                        const w = windows[0];
+                        const [w] = windows;
                         if (this.focused) {
                             // Window is raised, minimize it
                             this._minimizeWindow(w);
