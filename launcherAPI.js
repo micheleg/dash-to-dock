@@ -63,7 +63,7 @@ var LauncherEntryRemoteModel = class DashToDockLauncherEntryRemoteModel {
         if (!this._unity_bus_id) {
             this._unity_bus_id = Gio.DBus.session.own_name('com.canonical.Unity',
                 Gio.BusNameOwnerFlags.ALLOW_REPLACEMENT | Gio.BusNameOwnerFlags.REPLACE,
-                null, () => this._unity_bus_id = 0);
+                null, () => (this._unity_bus_id = 0));
         }
     }
 

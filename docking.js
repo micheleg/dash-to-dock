@@ -420,10 +420,13 @@ var DockedDash = GObject.registerClass({
             });
         }
 
-        if (this._position === St.Side.RIGHT)
-            this.connect('notify::width', () => this.translation_x = -this.width);
-        else if (this._position === St.Side.BOTTOM)
-            this.connect('notify::height', () => this.translation_y = -this.height);
+        if (this._position === St.Side.RIGHT) {
+            this.connect('notify::width', () =>
+                (this.translation_x = -this.width));
+        } else if (this._position === St.Side.BOTTOM) {
+            this.connect('notify::height', () =>
+                (this.translation_y = -this.height));
+        }
 
         // Set initial position
         this._resetPosition();
