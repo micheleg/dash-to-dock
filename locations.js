@@ -744,7 +744,8 @@ function wrapWindowsBackedApp(shellApp) {
                     configurable: true,
                     enumerable: !!o.enumerable,
                 }, o.readOnly ? { set: undefined } : {}));
-                o.value && (this[p] = o.value);
+                if (o.value)
+                    this[p] = o.value;
                 this.proxyProperties.push(publicProp);
             });
         },
@@ -921,9 +922,9 @@ function wrapWindowsBackedApp(shellApp) {
         this._dtdData.proxyProperties.forEach(prop => delete this[prop]);
         this._dtdData.destroy();
         this._dtdData = undefined;
-        this.appInfo.destroy && this.appInfo.destroy();
+        this.appInfo.destroy?.();
         this.destroy = defaultDestroy;
-        defaultDestroy && defaultDestroy.call(this);
+        defaultDestroy?.call(this);
     };
 
     return shellApp;

@@ -241,18 +241,31 @@ var ColorUtils = class DashToDockColorUtils {
         let x = c * (1 - Math.abs(h1 % 2 - 1));
         let m = v - c;
 
-        if (h1 <= 1)
-            r = c + m, g = x + m, b = m;
-        else if (h1 <= 2)
-            r = x + m, g = c + m, b = m;
-        else if (h1 <= 3)
-            r = m, g = c + m, b = x + m;
-        else if (h1 <= 4)
-            r = m, g = x + m, b = c + m;
-        else if (h1 <= 5)
-            r = x + m, g = m, b = c + m;
-        else
-            r = c + m, g = m, b = x + m;
+        if (h1 <= 1) {
+            r = c + m;
+            g = x + m;
+            b = m;
+        } else if (h1 <= 2) {
+            r = x + m;
+            g = c + m;
+            b = m;
+        } else if (h1 <= 3) {
+            r = m;
+            g = c + m;
+            b = x + m;
+        } else if (h1 <= 4) {
+            r = m;
+            g = x + m;
+            b = c + m;
+        } else if (h1 <= 5) {
+            r = x + m;
+            g = m;
+            b = c + m;
+        } else {
+            r = c + m;
+            g = m;
+            b = x + m;
+        }
 
         return {
             r: Math.round(r * 255),
