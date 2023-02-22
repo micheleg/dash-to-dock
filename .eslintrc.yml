@@ -14,8 +14,6 @@ overrides:
     rules:
       consistent-return:
         - warn
-      func-style:
-        - warn
       no-array-constructor:
         - warn
       no-invalid-this:

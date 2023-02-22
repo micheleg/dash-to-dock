@@ -14,9 +14,7 @@ const Signals = imports.signals;
 // the shell domain with the default _() and N_()
 const Gettext = imports.gettext.domain('dashtodock');
 const __ = Gettext.gettext;
-const N__ = function (e) {
-    return e;
-};
+const N__ = e => e;
 
 try {
     // eslint-disable-next-line no-unused-expressions
