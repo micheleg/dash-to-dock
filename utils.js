@@ -81,7 +81,7 @@ const BasicHandler = class DashToDockBasicHandler {
             argsArray = [argsArray];
 
         if (this._storage[label] === undefined)
-            this._storage[label] = new Array();
+            this._storage[label] = [];
 
         // Skip first element of the arguments
         for (const argArray of argsArray) {

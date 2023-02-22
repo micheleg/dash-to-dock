@@ -14,8 +14,6 @@ overrides:
     rules:
       consistent-return:
         - warn
-      no-array-constructor:
-        - warn
       no-invalid-this:
         - warn
       no-loop-func:
