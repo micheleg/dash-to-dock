@@ -407,11 +407,8 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         if (!width || !height)
             return emptySize;
 
-        let scale;
-
-        if (Utils.getPreviewScale()) {
-            scale = Utils.getPreviewScale();
-        } else {
+        let { previewSizeScale: scale } = Docking.DockManager.settings;
+        if (!scale) {
             // a simple example with 1680x1050:
             // * 250/1680 = 0,1488
             // * 150/1050 = 0,1429
