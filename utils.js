@@ -617,22 +617,25 @@ class CancellableChild extends Gio.Cancellable {
 });
 
 function getMonitorManager() {
-    if (global.backend.get_monitor_manager !== undefined)
-        return global.backend.get_monitor_manager();
-    else
-        return Meta.MonitorManager.get();
+    return global.backend.get_monitor_manager?.() ?? Meta.MonitorManager.get();
 }
 
-function laterAdd(when, func) {
-    if (global.compositor.get_laters !== undefined)
-        return global.compositor.get_laters().add(when, func);
-    else
-        return Meta.later_add(when, func);
+/**
+ * @param laterType
+ * @param callback
+ */
+function laterAdd(laterType, callback) {
+    return global.compositor?.get_laters?.().add(laterType, callback) ??
+        Meta.later_add(laterType, callback);
 }
 
-function laterRemove(later) {
-    if (global.compositor.get_laters !== undefined)
-        return global.compositor.get_laters().remove(later);
+/**
+ * @param id
+ */
+function laterRemove(id) {
+    if (global.compositor?.get_laters)
+        global.compositor?.get_laters().remove(id);
     else
-        Meta.later_remove(later);
+        Meta.later_remove(id);
 }
+
