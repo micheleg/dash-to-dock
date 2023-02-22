@@ -41,18 +41,18 @@ const DesktopIconsIntegration = Me.imports.desktopIconsIntegration;
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 const ICON_ANIMATOR_DURATION = 3000;
 
-var State = {
+const State = Object.freeze({
     HIDDEN:  0,
     SHOWING: 1,
     SHOWN:   2,
     HIDING:  3,
-};
+});
 
-const scrollAction = {
+const scrollAction = Object.freeze({
     DO_NOTHING: 0,
     CYCLE_WINDOWS: 1,
     SWITCH_WORKSPACE: 2,
-};
+});
 
 const Labels = Object.freeze({
     INITIALIZE: Symbol('initialize'),

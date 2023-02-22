@@ -13,10 +13,10 @@ const St = imports.gi.St;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
 
-var SignalsHandlerFlags = {
+var SignalsHandlerFlags = Object.freeze({
     NONE: 0,
     CONNECT_AFTER: 1,
-};
+});
 
 const GENERIC_KEY = Symbol('generic');
 

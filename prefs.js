@@ -35,13 +35,13 @@ const SCALE_UPDATE_TIMEOUT = 500;
 const DEFAULT_ICONS_SIZES = [128, 96, 64, 48, 32, 24, 16];
 const [SHELL_VERSION] = Config?.PACKAGE_VERSION?.split('.') ?? [undefined];
 
-const TransparencyMode = {
+const TransparencyMode = Object.freeze({
     DEFAULT: 0,
     FIXED: 1,
     DYNAMIC: 3,
-};
+});
 
-const RunningIndicatorStyle = {
+const RunningIndicatorStyle = Object.freeze({
     DEFAULT: 0,
     DOTS: 1,
     SQUARES: 2,
@@ -50,7 +50,7 @@ const RunningIndicatorStyle = {
     SOLID: 5,
     CILIORA: 6,
     METRO: 7,
-};
+});
 
 class MonitorsConfig {
     static get XML_INTERFACE() {
