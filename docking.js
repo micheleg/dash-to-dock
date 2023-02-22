@@ -1235,53 +1235,37 @@ var DockedDash = GObject.registerClass({
      * Switch workspace by scrolling over the dock
      */
     _optionalScrollWorkspaceSwitch() {
-        /**
-         *
-         */
-        function isEnabled() {
-            return DockManager.settings.scrollAction === scrollAction.SWITCH_WORKSPACE;
-        }
+        const isEnabled = () =>
+            DockManager.settings.scrollAction === scrollAction.SWITCH_WORKSPACE;
 
-        DockManager.settings.connect('changed::scroll-action', () => {
-            if (isEnabled.bind(this)())
-                enable.bind(this)();
-            else
-                disable.bind(this)();
-        });
-
-        if (isEnabled.bind(this)())
-            enable.bind(this)();
-
-        /**
-         *
-         */
-        function enable() {
+        const enable = () => {
             this._signalsHandler.removeWithLabel(Labels.WORKSPACE_SWITCH_SCROLL);
 
             this._signalsHandler.addWithLabel(Labels.WORKSPACE_SWITCH_SCROLL,
-                this._box,
-                'scroll-event',
-                onScrollEvent.bind(this));
-        }
+                this._box, 'scroll-event', (_, e) => onScrollEvent(e));
+        };
 
-        /**
-         *
-         */
-        function disable() {
+        const disable = () => {
             this._signalsHandler.removeWithLabel(Labels.WORKSPACE_SWITCH_SCROLL);
 
             if (this._optionalScrollWorkspaceSwitchDeadTimeId) {
                 GLib.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
                 this._optionalScrollWorkspaceSwitchDeadTimeId = 0;
             }
-        }
+        };
+
+        DockManager.settings.connect('changed::scroll-action', () => {
+            if (isEnabled())
+                enable();
+            else
+                disable();
+        });
+
+        if (isEnabled())
+            enable();
 
         // This was inspired to desktop-scroller@obsidien.github.com
-        /**
-         * @param actor
-         * @param event
-         */
-        function onScrollEvent(actor, event) {
+        const onScrollEvent = event => {
             // When in overview change workspace only in windows view
             if (Main.overview.visible)
                 return false;
@@ -1366,7 +1350,7 @@ var DockedDash = GObject.registerClass({
             } else {
                 return false;
             }
-        }
+        };
     }
 
     _activateApp(appIndex) {
@@ -1783,6 +1767,7 @@ var DockManager = class DashToDockDockManager {
                 this._methodInjections.addWithLabel(Labels.LOCATIONS, [
                     Shell.AppSystem.prototype, 'get_running',
                     function (originalMethod, ...args) {
+                        /* eslint-disable no-invalid-this */
                         const runningApps = originalMethod.call(this, ...args);
                         const locationApps = Locations.getRunningApps();
                         if (!locationApps.length)
@@ -1793,22 +1778,27 @@ var DockManager = class DashToDockDockManager {
                             runningApps.splice(fileManagerIdx, 1);
 
                         return [...runningApps, ...locationApps].sort(Utils.shellAppCompare);
+                        /* eslint-enable no-invalid-this */
                     },
                 ],
                 [
                     Shell.WindowTracker.prototype, 'get_window_app',
                     function (originalMethod, window) {
+                        /* eslint-disable no-invalid-this */
                         const locationApp = Locations.getRunningApps().find(a =>
                             a.get_windows().includes(window));
                         return locationApp ?? originalMethod.call(this, window);
+                        /* eslint-enable no-invalid-this */
                     },
                 ],
                 [
                     Shell.WindowTracker.prototype, 'get_app_from_pid',
                     function (originalMethod, pid) {
+                        /* eslint-disable no-invalid-this */
                         const locationApp = Locations.getRunningApps().find(a =>
                             a.get_pids().includes(pid));
                         return locationApp ?? originalMethod.call(this, pid);
+                        /* eslint-enable no-invalid-this */
                     },
                 ]);
 
@@ -2153,6 +2143,7 @@ var DockManager = class DashToDockDockManager {
 
         this._methodInjections.addWithLabel(Labels.MAIN_DASH, ControlsManager.prototype,
             'runStartupAnimation', async function (originalMethod, callback) {
+                /* eslint-disable no-invalid-this */
                 try {
                     const injections = new Utils.InjectionsHandler();
                     const dockManager = DockManager.getDefault();
@@ -2170,6 +2161,7 @@ var DockManager = class DashToDockDockManager {
                 } catch (e) {
                     logError(e);
                 }
+                /* eslint-enable no-invalid-this */
             });
 
         const maybeAdjustBoxToDock = (state, box, spacing) => {
@@ -2212,6 +2204,7 @@ var DockManager = class DashToDockDockManager {
 
         this._vfuncInjections.addWithLabel(Labels.MAIN_DASH, ControlsManagerLayout.prototype,
             'allocate', function (container) {
+                /* eslint-disable no-invalid-this */
                 const oldPostAllocation = this._runPostAllocation;
                 this._runPostAllocation = () => {};
 
@@ -2250,6 +2243,7 @@ var DockManager = class DashToDockDockManager {
 
                 this._runPostAllocation = oldPostAllocation;
                 this._runPostAllocation();
+                /* eslint-enable no-invalid-this */
             });
 
         /**
@@ -2261,32 +2255,39 @@ var DockManager = class DashToDockDockManager {
          * @param {...any} args
          */
         function workspaceBoxOriginFixer(originalFunction, state, workAreaBox, ...args) {
+            /* eslint-disable no-invalid-this */
             const workspaceBox = originalFunction.call(this, state, workAreaBox, ...args);
             workspaceBox.set_origin(workAreaBox.x1, workspaceBox.y1);
             return workspaceBox;
+            /* eslint-enable no-invalid-this */
         }
 
         this._methodInjections.addWithLabel(Labels.MAIN_DASH, [
             ControlsManagerLayout.prototype,
             '_computeWorkspacesBoxForState',
             function (originalFunction, state, ...args) {
+                /* eslint-disable no-invalid-this */
                 const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
                 if (state !== OverviewControls.ControlsState.HIDDEN)
                     maybeAdjustBoxToDock(state, box, this.spacing);
                 return box;
+                /* eslint-enable no-invalid-this */
             },
         ], [
             ControlsManagerLayout.prototype,
             '_getAppDisplayBoxForState',
             function (originalFunction, state, ...args) {
+                /* eslint-disable no-invalid-this */
                 const { spacing } = this;
                 const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
                 return maybeAdjustBoxToDock(state, box, spacing);
+                /* eslint-enable no-invalid-this */
             },
         ]);
 
         this._vfuncInjections.addWithLabel(Labels.MAIN_DASH, Workspace.WorkspaceBackground.prototype,
             'allocate', function (box) {
+                /* eslint-disable no-invalid-this */
                 this.vfunc_allocate(box);
 
                 // This code has been submitted upstream via GNOME/gnome-shell!1892
@@ -2312,11 +2313,13 @@ var DockManager = class DashToDockDockManager {
                     contentHeight + (topOffset + bottomOffset) * yScale);
 
                 this._backgroundGroup.allocate(contentBox);
+                /* eslint-enable no-invalid-this */
             });
 
         // Reduce the space that the workspaces can use in secondary monitors
         this._methodInjections.addWithLabel(Labels.MAIN_DASH, WorkspacesView.WorkspacesView.prototype,
             '_getFirstFitAllWorkspaceBox', function (originalFunction, ...args) {
+                /* eslint-disable no-invalid-this */
                 const box = originalFunction.call(this, ...args);
                 if (DockManager.settings.dockFixed ||
                     this._monitorIndex === Main.layoutManager.primaryIndex)
@@ -2338,6 +2341,7 @@ var DockManager = class DashToDockDockManager {
                         box.set_origin(box.x1 + preferredWidth, box.y1);
                 }
                 return box;
+                /* eslint-enable no-invalid-this */
             });
 
         if (AppDisplay.BaseAppView?.prototype?._pageForCoords) {
@@ -2346,9 +2350,11 @@ var DockManager = class DashToDockDockManager {
             this._methodInjections.addWithLabel(Labels.MAIN_DASH,
                 AppDisplay.BaseAppView.prototype,
                 '_pageForCoords', function (originalFunction, ...args) {
+                    /* eslint-disable no-invalid-this */
                     if (!this._scrollView.has_pointer)
                         return AppDisplay.SidePages.NONE;
                     return originalFunction.call(this, ...args);
+                    /* eslint-enable no-invalid-this */
                 });
         }
 
