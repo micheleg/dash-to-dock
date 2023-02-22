@@ -1,3 +1,9 @@
+gnome-shell-extension-ubuntu-dock (75ubuntu2) UNRELEASED; urgency=medium
+
+  * debian/control: Allow installing with gnome-shell 44.
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Wed, 22 Feb 2023 12:27:10 +0800
+
 gnome-shell-extension-ubuntu-dock (75ubuntu1) lunar; urgency=medium
 
   * New upstream release 75.
