@@ -299,48 +299,48 @@ var DockDash = GObject.registerClass({
     }
 
 
-    _onItemDragBegin() {
-        return Dash.Dash.prototype._onItemDragBegin.call(this, ...arguments);
+    _onItemDragBegin(...args) {
+        return Dash.Dash.prototype._onItemDragBegin.call(this, ...args);
     }
 
-    _onItemDragCancelled() {
-        return Dash.Dash.prototype._onItemDragCancelled.call(this, ...arguments);
+    _onItemDragCancelled(...args) {
+        return Dash.Dash.prototype._onItemDragCancelled.call(this, ...args);
     }
 
-    _onItemDragEnd() {
-        return Dash.Dash.prototype._onItemDragEnd.call(this, ...arguments);
+    _onItemDragEnd(...args) {
+        return Dash.Dash.prototype._onItemDragEnd.call(this, ...args);
     }
 
-    _endItemDrag() {
-        return Dash.Dash.prototype._endItemDrag.call(this, ...arguments);
+    _endItemDrag(...args) {
+        return Dash.Dash.prototype._endItemDrag.call(this, ...args);
     }
 
-    _onItemDragMotion() {
-        return Dash.Dash.prototype._onItemDragMotion.call(this, ...arguments);
+    _onItemDragMotion(...args) {
+        return Dash.Dash.prototype._onItemDragMotion.call(this, ...args);
     }
 
-    _appIdListToHash() {
-        return Dash.Dash.prototype._appIdListToHash.call(this, ...arguments);
+    _appIdListToHash(...args) {
+        return Dash.Dash.prototype._appIdListToHash.call(this, ...args);
     }
 
-    _queueRedisplay() {
-        return Dash.Dash.prototype._queueRedisplay.call(this, ...arguments);
+    _queueRedisplay(...args) {
+        return Dash.Dash.prototype._queueRedisplay.call(this, ...args);
     }
 
-    _hookUpLabel() {
-        return Dash.Dash.prototype._hookUpLabel.call(this, ...arguments);
+    _hookUpLabel(...args) {
+        return Dash.Dash.prototype._hookUpLabel.call(this, ...args);
     }
 
-    _syncLabel() {
-        return Dash.Dash.prototype._syncLabel.call(this, ...arguments);
+    _syncLabel(...args) {
+        return Dash.Dash.prototype._syncLabel.call(this, ...args);
     }
 
-    _clearDragPlaceholder() {
-        return Dash.Dash.prototype._clearDragPlaceholder.call(this, ...arguments);
+    _clearDragPlaceholder(...args) {
+        return Dash.Dash.prototype._clearDragPlaceholder.call(this, ...args);
     }
 
-    _clearEmptyDropTarget() {
-        return Dash.Dash.prototype._clearEmptyDropTarget.call(this, ...arguments);
+    _clearEmptyDropTarget(...args) {
+        return Dash.Dash.prototype._clearEmptyDropTarget.call(this, ...args);
     }
 
     handleDragOver(source, actor, x, y, time) {
@@ -403,16 +403,16 @@ var DockDash = GObject.registerClass({
         return ret;
     }
 
-    acceptDrop() {
-        return Dash.Dash.prototype.acceptDrop.call(this, ...arguments);
+    acceptDrop(...args) {
+        return Dash.Dash.prototype.acceptDrop.call(this, ...args);
     }
 
-    _onWindowDragBegin() {
-        return Dash.Dash.prototype._onWindowDragBegin.call(this, ...arguments);
+    _onWindowDragBegin(...args) {
+        return Dash.Dash.prototype._onWindowDragBegin.call(this, ...args);
     }
 
-    _onWindowDragEnd() {
-        return Dash.Dash.prototype._onWindowDragEnd.call(this, ...arguments);
+    _onWindowDragEnd(...args) {
+        return Dash.Dash.prototype._onWindowDragEnd.call(this, ...args);
     }
 
     _onScrollEvent(actor, event) {
