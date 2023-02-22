@@ -16,8 +16,6 @@ overrides:
         - warn
       no-invalid-this:
         - warn
-      no-loop-func:
-        - warn
       no-return-assign:
         - warn
       no-unused-vars:
