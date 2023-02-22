@@ -1,3 +1,8 @@
+/* exported GlobalSignalsHandler, InjectionsHandler, VFuncInjectionsHandler,
+            PropertyInjectionsHandler, SignalHandlersFlags, IconTheme,
+            CancellableChild, getPosition, getPreviewScale, drawRoundedLine,
+            getWindowsByObjectPath, shellAppCompare, shellWindowsCompare,
+            splitHandler, getMonitorManager, laterAdd, laterRemove */
 
 const Gi = imports._gi;
 

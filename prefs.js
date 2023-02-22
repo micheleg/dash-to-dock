@@ -1,5 +1,7 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+/* exported init, buildPrefsWidget */
+
 imports.gi.versions.Gtk = '4.0';
 imports.gi.versions.Gdk = '4.0';
 
@@ -96,10 +98,10 @@ class MonitorsConfig {
                 return;
             }
 
-            const [_serial, monitors, logicalMonitors] = resources;
+            const [serial_, monitors, logicalMonitors] = resources;
             let index = 0;
             for (const monitor of monitors) {
-                const [monitorSpecs, _modes, props] = monitor;
+                const [monitorSpecs, modes_, props] = monitor;
                 const [connector, vendor, product, serial] = monitorSpecs;
                 this._monitors.push({
                     index: index++,
@@ -110,7 +112,7 @@ class MonitorsConfig {
             }
 
             for (const logicalMonitor of logicalMonitors) {
-                const [_x, _y, _scale, _transform, isPrimary, monitorsSpecs] =
+                const [x_, y_, scale_, transform_, isPrimary, monitorsSpecs] =
                     logicalMonitor;
 
                 // We only care about the first one really

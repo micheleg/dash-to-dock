@@ -1,9 +1,11 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+/* exported LocationAppInfo, Trash, wrapFileManagerApp,
+            unWrapFileManagerApp, getStartingApps */
+
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const GObject = imports.gi.GObject;
-const Gtk = imports.gi.Gtk;
 const Shell = imports.gi.Shell;
 const ShellMountOperation = imports.ui.shellMountOperation;
 const Signals = imports.signals;
