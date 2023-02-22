@@ -12,7 +12,5 @@ overrides:
       ngettext: readonly
 
     rules:
-      consistent-return:
-        - warn
       no-unused-vars:
         - warn

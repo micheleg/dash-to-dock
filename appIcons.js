@@ -929,8 +929,10 @@ var DockLocationAppIcon = GObject.registerClass({
     }
 
     _updateFocusState() {
-        if (Docking.DockManager.settings.isolateLocations)
-            return super._updateFocusState();
+        if (Docking.DockManager.settings.isolateLocations) {
+            super._updateFocusState();
+            return;
+        }
 
         this.focused = this.app.isFocused && this.running;
     }

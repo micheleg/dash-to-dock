@@ -2160,6 +2160,7 @@ var DockManager = class DashToDockDockManager {
                     return ret;
                 } catch (e) {
                     logError(e);
+                    return undefined;
                 }
                 /* eslint-enable no-invalid-this */
             });

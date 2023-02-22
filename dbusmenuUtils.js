@@ -219,8 +219,10 @@ function makePopupMenuItem(dbusmenuItem, deep) {
         item = new PopupMenu.PopupSubMenuMenuItem(label, wantIcon);
         const updateChildren = () => {
             const itemChildren = dbusmenuItem.get_children();
-            if (!itemChildren.length)
-                return recreateItem();
+            if (!itemChildren.length) {
+                recreateItem();
+                return;
+            }
 
             item.menu.removeAll();
             itemChildren.forEach(remoteChild =>
