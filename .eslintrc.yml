@@ -10,3 +10,6 @@ overrides:
       C_: readonly
       N_: readonly
       ngettext: readonly
+
+    rules:
+      prefer-const: error

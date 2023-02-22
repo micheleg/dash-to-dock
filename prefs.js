@@ -182,7 +182,7 @@ function setShortcut(settings) {
     const [success, key, mods] = Gtk.accelerator_parse(shortcutText);
 
     if (success && Gtk.accelerator_valid(key, mods)) {
-        let shortcut = Gtk.accelerator_name(key, mods);
+        const shortcut = Gtk.accelerator_name(key, mods);
         settings.set_strv('shortcut', [shortcut]);
     } else {
         settings.set_strv('shortcut', []);
@@ -446,7 +446,7 @@ var Settings = GObject.registerClass({
         this._settings.connect('changed::preferred-monitor-by-connector', () => this._updateMonitorsSettings());
 
         // Position option
-        let position = this._settings.get_enum('dock-position');
+        const position = this._settings.get_enum('dock-position');
 
         switch (position) {
         case 0:
@@ -519,7 +519,7 @@ var Settings = GObject.registerClass({
 
         // Create dialog for intelligent autohide advanced settings
         this._builder.get_object('intelligent_autohide_button').connect('clicked', () => {
-            let dialog = new Gtk.Dialog({
+            const dialog = new Gtk.Dialog({
                 title: __('Intelligent autohide customization'),
                 transient_for: this.widget.get_root(),
                 use_header_bar: true,
@@ -530,7 +530,7 @@ var Settings = GObject.registerClass({
             // Use +1 for the reset action
             dialog.add_button(__('Reset to defaults'), 1);
 
-            let box = this._builder.get_object('intelligent_autohide_advanced_settings_box');
+            const box = this._builder.get_object('intelligent_autohide_advanced_settings_box');
             dialog.get_content_area().append(box);
 
             this._settings.bind('intellihide',
@@ -540,7 +540,7 @@ var Settings = GObject.registerClass({
 
             // intellihide mode
 
-            let intellihideModeRadioButtons = [
+            const intellihideModeRadioButtons = [
                 this._builder.get_object('all_windows_radio_button'),
                 this._builder.get_object('focus_application_windows_radio_button'),
                 this._builder.get_object('maximized_windows_radio_button'),
@@ -584,7 +584,7 @@ var Settings = GObject.registerClass({
             dialog.connect('response', (_, id) => {
                 if (id === 1) {
                     // restore default settings for the relevant keys
-                    let keys = ['intellihide', 'autohide', 'intellihide-mode', 'autohide-in-fullscreen', 'show-dock-urgent-notify', 'require-pressure-to-show',
+                    const keys = ['intellihide', 'autohide', 'intellihide-mode', 'autohide-in-fullscreen', 'show-dock-urgent-notify', 'require-pressure-to-show',
                         'animation-time', 'show-delay', 'hide-delay', 'pressure-threshold'];
                     keys.forEach(function (val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
@@ -778,7 +778,7 @@ var Settings = GObject.registerClass({
 
         // Create dialog for number overlay options
         this._builder.get_object('overlay_button').connect('clicked', () => {
-            let dialog = new Gtk.Dialog({
+            const dialog = new Gtk.Dialog({
                 title: __('Show dock and application numbers'),
                 transient_for: this.widget.get_root(),
                 use_header_bar: true,
@@ -789,7 +789,7 @@ var Settings = GObject.registerClass({
             // Use +1 for the reset action
             dialog.add_button(__('Reset to defaults'), 1);
 
-            let box = this._builder.get_object('box_overlay_shortcut');
+            const box = this._builder.get_object('box_overlay_shortcut');
             dialog.get_content_area().append(box);
 
             this._builder.get_object('overlay_switch').set_active(this._settings.get_boolean('hotkeys-overlay'));
@@ -818,7 +818,7 @@ var Settings = GObject.registerClass({
             dialog.connect('response', (_, id) => {
                 if (id === 1) {
                     // restore default settings for the relevant keys
-                    let keys = ['shortcut-text', 'hotkeys-overlay', 'hotkeys-show-dock', 'shortcut-timeout'];
+                    const keys = ['shortcut-text', 'hotkeys-overlay', 'hotkeys-show-dock', 'shortcut-timeout'];
                     keys.forEach(function (val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);
@@ -834,7 +834,7 @@ var Settings = GObject.registerClass({
 
         // Create dialog for middle-click options
         this._builder.get_object('middle_click_options_button').connect('clicked', () => {
-            let dialog = new Gtk.Dialog({
+            const dialog = new Gtk.Dialog({
                 title: __('Customize middle-click behavior'),
                 transient_for: this.widget.get_root(),
                 use_header_bar: true,
@@ -845,7 +845,7 @@ var Settings = GObject.registerClass({
             // Use +1 for the reset action
             dialog.add_button(__('Reset to defaults'), 1);
 
-            let box = this._builder.get_object('box_middle_click_options');
+            const box = this._builder.get_object('box_middle_click_options');
             dialog.get_content_area().append(box);
 
             this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_enum('shift-click-action'));
@@ -870,7 +870,7 @@ var Settings = GObject.registerClass({
             dialog.connect('response', (_, id) => {
                 if (id === 1) {
                     // restore default settings for the relevant keys
-                    let keys = ['shift-click-action', 'middle-click-action', 'shift-middle-click-action'];
+                    const keys = ['shift-click-action', 'middle-click-action', 'shift-middle-click-action'];
                     keys.forEach(function (val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);
@@ -916,14 +916,14 @@ var Settings = GObject.registerClass({
 
         // Create dialog for running indicators advanced settings
         this._builder.get_object('running_indicators_advance_settings_button').connect('clicked', () => {
-            let dialog = new Gtk.Dialog({
+            const dialog = new Gtk.Dialog({
                 title: __('Customize running indicators'),
                 transient_for: this.widget.get_root(),
                 use_header_bar: true,
                 modal: true,
             });
 
-            let box = this._builder.get_object('running_dots_advance_settings_box');
+            const box = this._builder.get_object('running_dots_advance_settings_box');
             dialog.get_content_area().append(box);
 
             this._settings.bind('running-indicator-dominant-color',
@@ -939,12 +939,12 @@ var Settings = GObject.registerClass({
                 this._builder.get_object('dot_style_settings_box'),
                 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
-            let rgba = new Gdk.RGBA();
+            const rgba = new Gdk.RGBA();
             rgba.parse(this._settings.get_string('custom-theme-running-dots-color'));
             this._builder.get_object('dot_color_colorbutton').set_rgba(rgba);
 
             this._builder.get_object('dot_color_colorbutton').connect('notify::rgba', button => {
-                let css = button.rgba.to_string();
+                const css = button.rgba.to_string();
 
                 this._settings.set_string('custom-theme-running-dots-color', css);
             });
@@ -953,7 +953,7 @@ var Settings = GObject.registerClass({
             this._builder.get_object('dot_border_color_colorbutton').set_rgba(rgba);
 
             this._builder.get_object('dot_border_color_colorbutton').connect('notify::rgba', button => {
-                let css = button.rgba.to_string();
+                const css = button.rgba.to_string();
 
                 this._settings.set_string('custom-theme-running-dots-border-color', css);
             });
@@ -976,12 +976,12 @@ var Settings = GObject.registerClass({
         this._settings.bind('custom-background-color', this._builder.get_object('custom_background_color_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('custom-background-color', this._builder.get_object('custom_background_color'), 'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
-        let rgba = new Gdk.RGBA();
+        const rgba = new Gdk.RGBA();
         rgba.parse(this._settings.get_string('background-color'));
         this._builder.get_object('custom_background_color').set_rgba(rgba);
 
         this._builder.get_object('custom_background_color').connect('notify::rgba', button => {
-            let css = button.rgba.to_string();
+            const css = button.rgba.to_string();
 
             this._settings.set_string('background-color', css);
         });
@@ -1027,14 +1027,14 @@ var Settings = GObject.registerClass({
 
         // Create dialog for transparency advanced settings
         this._builder.get_object('dynamic_opacity_button').connect('clicked', () => {
-            let dialog = new Gtk.Dialog({
+            const dialog = new Gtk.Dialog({
                 title: __('Customize opacity'),
                 transient_for: this.widget.get_root(),
                 use_header_bar: true,
                 modal: true,
             });
 
-            let box = this._builder.get_object('advanced_transparency_dialog');
+            const box = this._builder.get_object('advanced_transparency_dialog');
             dialog.get_content_area().append(box);
 
             this._settings.bind(
@@ -1124,8 +1124,8 @@ function init() {
  *
  */
 function buildPrefsWidget() {
-    let settings = new Settings();
-    let widget = settings.widget;
+    const settings = new Settings();
+    const widget = settings.widget;
     return widget;
 }
 

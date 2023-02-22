@@ -112,7 +112,7 @@ var Intellihide = class DashToDockIntellihide {
     disable() {
         this._isEnabled = false;
 
-        for (let wa of this._trackedWindows.keys())
+        for (const wa of this._trackedWindows.keys())
             this._removeWindowSignals(wa);
 
         this._trackedWindows.clear();
@@ -131,7 +131,7 @@ var Intellihide = class DashToDockIntellihide {
     _addWindowSignals(wa) {
         if (!this._handledWindow(wa))
             return;
-        let signalId = wa.connect('notify::allocation', this._checkOverlap.bind(this));
+        const signalId = wa.connect('notify::allocation', this._checkOverlap.bind(this));
         this._trackedWindows.set(wa, signalId);
         wa.connect('destroy', this._removeWindowSignals.bind(this));
     }
@@ -214,12 +214,12 @@ var Intellihide = class DashToDockIntellihide {
                 windows = windows.filter(this._intellihideFilterInteresting, this);
 
                 for (let i = 0;  i < windows.length; i++) {
-                    let win = windows[i].get_meta_window();
+                    const win = windows[i].get_meta_window();
 
                     if (win) {
-                        let rect = win.get_frame_rect();
+                        const rect = win.get_frame_rect();
 
-                        let test = (rect.x < this._targetBox.x2) &&
+                        const test = (rect.x < this._targetBox.x2) &&
                                    (rect.x + rect.width > this._targetBox.x1) &&
                                    (rect.y < this._targetBox.y2) &&
                                    (rect.y + rect.height > this._targetBox.y1);
@@ -244,7 +244,7 @@ var Intellihide = class DashToDockIntellihide {
     // Optionally skip windows of other applications
     _intellihideFilterInteresting(wa) {
         const metaWin = wa.get_meta_window();
-        let currentWorkspace = global.workspace_manager.get_active_workspace_index();
+        const currentWorkspace = global.workspace_manager.get_active_workspace_index();
         const workspace = metaWin.get_workspace();
         const workspaceIndex = workspace.index();
 
@@ -262,8 +262,8 @@ var Intellihide = class DashToDockIntellihide {
                 if (metaWin.get_wm_class() === 'DropDownTerminalWindow')
                     return true;
 
-                let currentApp = this._tracker.get_window_app(metaWin);
-                let focusWindow = global.display.get_focus_window();
+                const currentApp = this._tracker.get_window_app(metaWin);
+                const focusWindow = global.display.get_focus_window();
 
                 // Consider half maximized windows side by side
                 // and windows which are alwayson top
@@ -301,7 +301,7 @@ var Intellihide = class DashToDockIntellihide {
     // Filter windows by type
     // inspired by Opacify@gnome-shell.localdomain.pl
     _handledWindow(wa) {
-        let metaWindow = wa.get_meta_window();
+        const metaWindow = wa.get_meta_window();
 
         if (!metaWindow)
             return false;
@@ -317,7 +317,7 @@ var Intellihide = class DashToDockIntellihide {
         if (metaWindow.get_wm_class() === 'DropDownTerminalWindow')
             return true;
 
-        let wtype = metaWindow.get_window_type();
+        const wtype = metaWindow.get_window_type();
         for (let i = 0; i < handledWindowTypes.length; i++) {
             var hwtype = handledWindowTypes[i];
             if (hwtype === wtype)

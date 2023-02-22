@@ -151,7 +151,7 @@ var DockDash = GObject.registerClass({
 
         this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
 
-        let rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
+        const rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
         this._box = new St.BoxLayout({
             vertical: !this._isHorizontal,
             clip_to_allocation: false,
@@ -259,7 +259,7 @@ var DockDash = GObject.registerClass({
     }
 
     vfunc_get_preferred_height(forWidth) {
-        let [minHeight, natHeight] = super.vfunc_get_preferred_height.call(this, forWidth);
+        const [minHeight, natHeight] = super.vfunc_get_preferred_height.call(this, forWidth);
         if (!this._isHorizontal && this._maxHeight !== -1 && natHeight > this._maxHeight)
             return [minHeight, this._maxHeight];
         else
@@ -267,7 +267,7 @@ var DockDash = GObject.registerClass({
     }
 
     vfunc_get_preferred_width(forHeight) {
-        let [minWidth, natWidth] = super.vfunc_get_preferred_width.call(this, forHeight);
+        const [minWidth, natWidth] = super.vfunc_get_preferred_width.call(this, forHeight);
         if (this._isHorizontal && this._maxWidth !== -1 && natWidth > this._maxWidth)
             return [minWidth, this._maxWidth];
         else
@@ -431,7 +431,7 @@ var DockDash = GObject.registerClass({
         else
             adjustment = this._scrollView.get_vscroll_bar().get_adjustment();
 
-        let increment = adjustment.step_increment;
+        const increment = adjustment.step_increment;
 
         if (this._isHorizontal) {
             switch (event.get_scroll_direction()) {
@@ -456,7 +456,7 @@ var DockDash = GObject.registerClass({
                 delta = Number(increment);
                 break;
             case Clutter.ScrollDirection.SMOOTH: {
-                let [, dy] = event.get_scroll_delta();
+                const [, dy] = event.get_scroll_delta();
                 delta = dy * increment;
                 break;
             }
@@ -575,13 +575,13 @@ var DockDash = GObject.registerClass({
         // icons (i.e. ignoring drag placeholders) and which are not
         // animating out (which means they will be destroyed at the end of
         // the animation)
-        let iconChildren = this._box.get_children().filter(actor => {
+        const iconChildren = this._box.get_children().filter(actor => {
             return actor.child &&
                    !!actor.child.icon &&
                    !actor.animatingOut;
         });
 
-        let appIcons = iconChildren.map(actor => {
+        const appIcons = iconChildren.map(actor => {
             return actor.child;
         });
 
@@ -606,7 +606,7 @@ var DockDash = GObject.registerClass({
         // icons (i.e. ignoring drag placeholders) and which are not
         // animating out (which means they will be destroyed at the end of
         // the animation)
-        let iconChildren = this._box.get_children().filter(actor => {
+        const iconChildren = this._box.get_children().filter(actor => {
             return actor.child &&
                    actor.child._delegate &&
                    actor.child._delegate.icon &&
@@ -630,14 +630,14 @@ var DockDash = GObject.registerClass({
             x2: this._isHorizontal ? this._maxWidth : 42 /* whatever */,
             y2: this._isHorizontal ? 42 : this._maxHeight,
         });
-        let maxContent = themeNode.get_content_box(maxAllocation);
+        const maxContent = themeNode.get_content_box(maxAllocation);
         let availSpace;
         if (this._isHorizontal)
             availSpace = maxContent.get_width();
         else
             availSpace = maxContent.get_height();
 
-        let spacing = themeNode.get_length('spacing');
+        const spacing = themeNode.get_length('spacing');
 
         const [{ child: firstButton }] = iconChildren;
         const { child: firstIcon } = firstButton?.icon ?? { child: null };
@@ -672,8 +672,8 @@ var DockDash = GObject.registerClass({
         }
 
         const maxIconSize = availSpace / iconChildren.length;
-        let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let iconSizes = this._availableIconSizes.map(s => s * scaleFactor);
+        const scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+        const iconSizes = this._availableIconSizes.map(s => s * scaleFactor);
 
         let newIconSize = this._availableIconSizes[0];
         for (let i = 0; i < iconSizes.length; i++) {
@@ -684,13 +684,13 @@ var DockDash = GObject.registerClass({
         if (newIconSize === this.iconSize)
             return;
 
-        let oldIconSize = this.iconSize;
+        const oldIconSize = this.iconSize;
         this.iconSize = newIconSize;
         this.emit('icon-size-changed');
 
-        let scale = oldIconSize / newIconSize;
+        const scale = oldIconSize / newIconSize;
         for (let i = 0; i < iconChildren.length; i++) {
-            let icon = iconChildren[i].child._delegate.icon;
+            const icon = iconChildren[i].child._delegate.icon;
 
             // Set the new size immediately, to keep the icons' sizes
             // in sync with this.iconSize
@@ -703,7 +703,7 @@ var DockDash = GObject.registerClass({
                 !this._shownInitially)
                 continue;
 
-            let [targetWidth, targetHeight] = icon.icon.get_size();
+            const [targetWidth, targetHeight] = icon.icon.get_size();
 
             // Scale the icon's texture to the previous size and
             // tween to the new size
@@ -731,7 +731,7 @@ var DockDash = GObject.registerClass({
     }
 
     _redisplay() {
-        let favorites = AppFavorites.getAppFavorites().getFavoriteMap();
+        const favorites = AppFavorites.getAppFavorites().getFavoriteMap();
 
         let running = this._appSystem.get_running();
         const dockManager = Docking.DockManager.getDefault();
@@ -741,12 +741,12 @@ var DockDash = GObject.registerClass({
             settings.isolateMonitors) {
             // When using isolation, we filter out apps that have no windows in
             // the current workspace
-            let monitorIndex = this._monitorIndex;
+            const monitorIndex = this._monitorIndex;
             running = running.filter(app =>
                 AppIcons.getInterestingWindows(app.get_windows(), monitorIndex).length);
         }
 
-        let children = this._box.get_children().filter(actor => {
+        const children = this._box.get_children().filter(actor => {
             return actor.child &&
                    actor.child._delegate &&
                    actor.child._delegate.app;
@@ -754,11 +754,11 @@ var DockDash = GObject.registerClass({
         // Apps currently in the dash
         let oldApps = children.map(actor => actor.child._delegate.app);
         // Apps supposed to be in the dash
-        let newApps = [];
+        const newApps = [];
 
         const showFavorites = settings.showFavorites;
         if (showFavorites) {
-            for (let id in favorites)
+            for (const id in favorites)
                 newApps.push(favorites[id]);
         }
 
@@ -820,14 +820,14 @@ var DockDash = GObject.registerClass({
         // to use a more sophisticated algorithm, e.g. Longest Common
         // Subsequence as used by diff.
 
-        let addedItems = [];
-        let removedActors = [];
+        const addedItems = [];
+        const removedActors = [];
 
         let newIndex = 0;
         let oldIndex = 0;
         while (newIndex < newApps.length || oldIndex < oldApps.length) {
-            let oldApp = oldApps.length > oldIndex ? oldApps[oldIndex] : null;
-            let newApp = newApps.length > newIndex ? newApps[newIndex] : null;
+            const oldApp = oldApps.length > oldIndex ? oldApps[oldIndex] : null;
+            const newApp = newApps.length > newIndex ? newApps[newIndex] : null;
 
             // No change at oldIndex/newIndex
             if (oldApp === newApp) {
@@ -853,16 +853,16 @@ var DockDash = GObject.registerClass({
             }
 
             // App moved
-            let nextApp = newApps.length > newIndex + 1
+            const nextApp = newApps.length > newIndex + 1
                 ? newApps[newIndex + 1] : null;
-            let insertHere = nextApp && nextApp === oldApp;
-            let alreadyRemoved = removedActors.reduce((result, actor) => {
-                let removedApp = actor.child._delegate.app;
+            const insertHere = nextApp && nextApp === oldApp;
+            const alreadyRemoved = removedActors.reduce((result, actor) => {
+                const removedApp = actor.child._delegate.app;
                 return result || removedApp === newApp;
             }, false);
 
             if (insertHere || alreadyRemoved) {
-                let newItem = this._createAppItem(newApp);
+                const newItem = this._createAppItem(newApp);
                 addedItems.push({ app: newApp,
                     item: newItem,
                     pos: newIndex + removedActors.length });
@@ -879,7 +879,7 @@ var DockDash = GObject.registerClass({
         }
 
         for (let i = 0; i < removedActors.length; i++) {
-            let item = removedActors[i];
+            const item = removedActors[i];
 
             // Don't animate item removal when the overview is transitioning
             // or hidden
@@ -894,7 +894,7 @@ var DockDash = GObject.registerClass({
         // Skip animations on first run when adding the initial set
         // of items, to avoid all items zooming in at once
 
-        let animate = this._shownInitially &&
+        const animate = this._shownInitially &&
             !Main.overview.animationInProgress;
 
         if (!this._shownInitially)
@@ -940,7 +940,7 @@ var DockDash = GObject.registerClass({
     }
 
     _updateNumberOverlay() {
-        let appIcons = this.getAppIcons();
+        const appIcons = this.getAppIcons();
         let counter = 1;
         appIcons.forEach(icon => {
             if (counter < 10) {
@@ -958,7 +958,7 @@ var DockDash = GObject.registerClass({
     }
 
     toggleNumberOverlay(activate) {
-        let appIcons = this.getAppIcons();
+        const appIcons = this.getAppIcons();
         appIcons.forEach(icon => {
             icon.toggleNumberOverlay(activate);
         });
@@ -992,12 +992,12 @@ var DockDash = GObject.registerClass({
      * show favorites/show running settings
      */
     resetAppIcons() {
-        let children = this._box.get_children().filter(actor => {
+        const children = this._box.get_children().filter(actor => {
             return actor.child &&
                    !!actor.child.icon;
         });
         for (let i = 0; i < children.length; i++) {
-            let item = children[i];
+            const item = children[i];
             item.destroy();
         }
 
@@ -1072,13 +1072,13 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
     let [hValue, vValue] = [hValue0, vValue0];
     let vOffset = 0;
     let hOffset = 0;
-    let fade = scrollView.get_effect('fade');
+    const fade = scrollView.get_effect('fade');
     if (fade) {
         vOffset = fade.fade_margins.top;
         hOffset = fade.fade_margins.left;
     }
 
-    let box = actor.get_allocation_box();
+    const box = actor.get_allocation_box();
     let y1 = box.y1, y2 = box.y2, x1 = box.x1, x2 = box.x2;
 
     let parent = actor.get_parent();

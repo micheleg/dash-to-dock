@@ -103,7 +103,7 @@ var FileManager1Client = class DashToDockFileManager1Client {
     }
 
     _onPropertyChanged(proxy, changed, _invalidated) {
-        let property = changed.unpack();
+        const property = changed.unpack();
         if (property &&
             ('OpenWindowsWithLocations' in property))
             this._updateLocationMap();
@@ -134,7 +134,7 @@ var FileManager1Client = class DashToDockFileManager1Client {
     }
 
     _updateLocationMap() {
-        let properties = this._proxy.get_cached_property_names();
+        const properties = this._proxy.get_cached_property_names();
         if (!properties) {
             // Nothing to check yet.
             return;

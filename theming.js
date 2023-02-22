@@ -88,16 +88,16 @@ var ThemeManager = class DashToDockThemeManager {
     }
 
     _updateDashOpacity() {
-        let newAlpha = Docking.DockManager.settings.backgroundOpacity;
+        const newAlpha = Docking.DockManager.settings.backgroundOpacity;
 
-        let [backgroundColor, borderColor] = this._getDefaultColors();
+        const [backgroundColor, borderColor] = this._getDefaultColors();
 
         if (!backgroundColor)
             return;
 
         // Get the background and border alphas. We check the background alpha
         // for a minimum of .001 to prevent division by 0 errors
-        let backgroundAlpha = Math.max(Math.round(backgroundColor.alpha / 2.55) / 100, .001);
+        const backgroundAlpha = Math.max(Math.round(backgroundColor.alpha / 2.55) / 100, .001);
         let borderAlpha = Math.round(borderColor.alpha / 2.55) / 100;
 
         // The border and background alphas should remain in sync
@@ -130,18 +130,18 @@ var ThemeManager = class DashToDockThemeManager {
         const themeNode = this._dash._background.get_theme_node();
         this._dash._background.set_style(oldStyle);
 
-        let backgroundColor = themeNode.get_background_color();
+        const backgroundColor = themeNode.get_background_color();
 
         // Just in case the theme has different border colors ..
         // We want to find the inside border-color of the dock because it is
         // the side most visible to the user. We do this by finding the side
         // opposite the position
-        let position = Utils.getPosition();
+        const position = Utils.getPosition();
         let side = position + 2;
         if (side > 3)
             side = Math.abs(side - 4);
 
-        let borderColor = themeNode.get_border_color(side);
+        const borderColor = themeNode.get_border_color(side);
 
         return [backgroundColor, borderColor];
     }
@@ -149,12 +149,12 @@ var ThemeManager = class DashToDockThemeManager {
     _updateDashColor() {
         // Retrieve the color. If needed we will adjust it before passing it to
         // this._transparency.
-        let [backgroundColor, borderColor_] = this._getDefaultColors();
+        let [backgroundColor] = this._getDefaultColors();
 
         if (!backgroundColor)
             return;
 
-        let settings = Docking.DockManager.settings;
+        const settings = Docking.DockManager.settings;
 
         if (settings.customBackgroundColor) {
             // When applying a custom color, we need to check the alpha value,
@@ -190,7 +190,7 @@ var ThemeManager = class DashToDockThemeManager {
     }
 
     _updateCustomStyleClasses() {
-        let settings = Docking.DockManager.settings;
+        const settings = Docking.DockManager.settings;
 
         if (settings.applyCustomTheme)
             this._actor.add_style_class_name('dashtodock');
@@ -237,7 +237,7 @@ var ThemeManager = class DashToDockThemeManager {
         if (!this._dash._background.get_stage())
             return;
 
-        let settings = Docking.DockManager.settings;
+        const settings = Docking.DockManager.settings;
 
         // Remove prior style edits
         this._dash._background.set_style(null);
@@ -248,12 +248,12 @@ var ThemeManager = class DashToDockThemeManager {
             return;
 
         let newStyle = '';
-        let position = Utils.getPosition(settings);
+        const position = Utils.getPosition(settings);
 
         // obtain theme border settings
-        let themeNode = this._dash._background.get_theme_node();
-        let borderColor = themeNode.get_border_color(St.Side.TOP);
-        let borderWidth = themeNode.get_border_width(St.Side.TOP);
+        const themeNode = this._dash._background.get_theme_node();
+        const borderColor = themeNode.get_border_color(St.Side.TOP);
+        const borderWidth = themeNode.get_border_width(St.Side.TOP);
 
         // We're copying border and corner styles to left border and top-left
         // corner, also removing bottom border and bottom-right corner styles
@@ -289,7 +289,7 @@ var ThemeManager = class DashToDockThemeManager {
     }
 
     _bindSettingsChanges() {
-        let keys = ['transparency-mode',
+        const keys = ['transparency-mode',
             'customize-alphas',
             'min-alpha',
             'max-alpha',
@@ -396,7 +396,7 @@ var Transparency = class DashToDockTransparency {
         // although it should never happen
         this._signalsHandler.removeWithLabel(Labels.TRANSPARENCY);
 
-        for (let key of this._trackedWindows.keys()) {
+        for (const key of this._trackedWindows.keys()) {
             this._trackedWindows.get(key).forEach(id => {
                 key.disconnect(id);
             });
@@ -412,7 +412,7 @@ var Transparency = class DashToDockTransparency {
     }
 
     _onWindowActorAdded(container, metaWindowActor) {
-        let signalIds = [];
+        const signalIds = [];
         ['notify::allocation', 'notify::visible'].forEach(s => {
             signalIds.push(metaWindowActor.connect(s, this._updateSolidStyle.bind(this)));
         });
@@ -431,7 +431,7 @@ var Transparency = class DashToDockTransparency {
     }
 
     _updateSolidStyle() {
-        let isNear = this._dockIsNear();
+        const isNear = this._dockIsNear();
         if (isNear) {
             this._backgroundActor.set_style(this._opaque_style);
             this._dockActor.remove_style_class_name('transparent');
@@ -449,9 +449,9 @@ var Transparency = class DashToDockTransparency {
         if (this._dockActor.has_style_pseudo_class('overview'))
             return false;
         /* Get all the windows in the active workspace that are in the primary monitor and visible */
-        let activeWorkspace = global.workspace_manager.get_active_workspace();
-        let dash = this._dash;
-        let windows = activeWorkspace.list_windows().filter(metaWindow => {
+        const activeWorkspace = global.workspace_manager.get_active_workspace();
+        const dash = this._dash;
+        const windows = activeWorkspace.list_windows().filter(metaWindow => {
             return metaWindow.get_monitor() === dash._monitorIndex &&
                    metaWindow.showing_on_its_workspace() &&
                    metaWindow.get_window_type() !== Meta.WindowType.DESKTOP &&
@@ -466,7 +466,7 @@ var Transparency = class DashToDockTransparency {
         if (!Docking.DockManager.settings.dockFixed &&
             this._dock.getDockState() === Docking.State.HIDDEN)
             factor = 1;
-        let [leftCoord, topCoord] = this._actor.get_transformed_position();
+        const [leftCoord, topCoord] = this._actor.get_transformed_position();
         let threshold;
         if (this._position === St.Side.LEFT)
             threshold = leftCoord + this._actor.get_width() * (factor + 1);
@@ -477,8 +477,8 @@ var Transparency = class DashToDockTransparency {
         else
             threshold = topCoord - this._actor.get_height() * factor;
 
-        let scale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let isNearEnough = windows.some(metaWindow => {
+        const scale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+        const isNearEnough = windows.some(metaWindow => {
             let coord;
             if (this._position === St.Side.LEFT) {
                 coord = metaWindow.get_frame_rect().x;
@@ -525,7 +525,7 @@ var Transparency = class DashToDockTransparency {
 
     _getAlphas() {
         // Create dummy object and add to the uiGroup to get it to the stage
-        let dummyObject = new St.Bin({
+        const dummyObject = new St.Bin({
             name: 'dashtodockContainer',
         });
         Main.uiGroup.add_child(dummyObject);
@@ -544,7 +544,7 @@ var Transparency = class DashToDockTransparency {
 
         Main.uiGroup.remove_child(dummyObject);
 
-        let settings = Docking.DockManager.settings;
+        const settings = Docking.DockManager.settings;
 
         if (settings.customizeAlphas) {
             this._opaqueAlpha = settings.maxAlpha;
