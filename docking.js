@@ -486,6 +486,9 @@ var DockedDash = GObject.registerClass({
             delete this._marginLater;
         }
 
+        if (this._triggerTimeoutId)
+            GLib.source_remove(this._triggerTimeoutId);
+
         // Remove barrier timeout
         if (this._removeBarrierTimeoutId > 0)
             GLib.source_remove(this._removeBarrierTimeoutId);
@@ -973,11 +976,12 @@ var DockedDash = GObject.registerClass({
         if (Main.overview.visibleTarget)
             return;
 
+        if (this._triggerTimeoutId)
+            GLib.source_remove(this._triggerTimeoutId);
+
         // In case the mouse move away from the dock area before hovering it, in such case the leave event
         // would never be triggered and the dock would stay visible forever.
-        let triggerTimeoutId =  GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => {
-            triggerTimeoutId = 0;
-
+        this._triggerTimeoutId =  GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => {
             let [x, y, mods] = global.get_pointer();
             let shouldHide = true;
             switch (this._position) {
@@ -1013,6 +1017,7 @@ var DockedDash = GObject.registerClass({
                     shouldHide = false;
             }
             if (shouldHide) {
+                this._triggerTimeoutId = 0;
                 this._hoverChanged();
                 return GLib.SOURCE_REMOVE;
             } else {
