@@ -98,16 +98,20 @@ var AppSpread = class AppSpread {
             // Filter workspaces to only show current app windows
             Workspace.Workspace.prototype, '_isOverviewWindow',
             function (originalMethod, window) {
+                /* eslint-disable no-invalid-this */
                 const isOverviewWindow = originalMethod.call(this, window);
                 return isOverviewWindow && appSpread.windows.includes(window);
+                /* eslint-enable no-invalid-this */
             },
         ],
         [
             // Filter thumbnails to only show current app windows
             WorkspaceThumbnail.WorkspaceThumbnail.prototype, '_isOverviewWindow',
             function (originalMethod, windowActor) {
+                /* eslint-disable no-invalid-this */
                 const isOverviewWindow = originalMethod.call(this, windowActor);
                 return isOverviewWindow && appSpread.windows.includes(windowActor.metaWindow);
+                /* eslint-enable no-invalid-this */
             },
         ]);
 

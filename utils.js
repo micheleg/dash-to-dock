@@ -363,6 +363,7 @@ var VFuncInjectionsHandler = class DashToDockVFuncInjectionsHandler extends Basi
         } catch {
             try {
                 this._replaceVFunc(prototype, name, function (...args) {
+                    // eslint-disable-next-line no-invalid-this
                     return originalVFunc.call(this, ...args);
                 });
             } catch (e) {
