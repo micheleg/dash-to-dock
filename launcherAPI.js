@@ -263,6 +263,8 @@ const PropertySourceStack = class DashToDockPropertySourceStack {
                 break;
             }
         }
+
+        return null;
     }
 
     _assignFrom(source) {

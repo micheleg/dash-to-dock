@@ -493,6 +493,7 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             return super.vfunc_launch(files, context);
         } catch (e) {
             logError(e, 'Mount and launch %s'.format(this.get_id()));
+            return false;
         }
     }
 
