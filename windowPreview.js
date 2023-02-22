@@ -71,7 +71,7 @@ var WindowPreviewMenu = class DashToDockWindowPreviewMenu extends PopupMenu.Popu
     }
 
     popup() {
-        let windows = this._source.getInterestingWindows();
+        const windows = this._source.getInterestingWindows();
         if (windows.length > 0) {
             this._redisplay();
             this.open(BoxPointer.PopupAnimation.FULL);
@@ -102,7 +102,7 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
 
         this.actor.connect('scroll-event', this._onScrollEvent.bind(this));
 
-        let position = Utils.getPosition();
+        const position = Utils.getPosition();
         this.isHorizontal = position === St.Side.BOTTOM || position === St.Side.TOP;
         this.box.set_vertical(!this.isHorizontal);
         this.box.set_name('dashtodockWindowList');
@@ -128,10 +128,9 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
     _onScrollEvent(actor, event) {
         // Event coordinates are relative to the stage but can be transformed
         // as the actor will only receive events within his bounds.
-        let stageX, stageY, eventY, actorH;
-        [stageX, stageY] = event.get_coords();
-        [,, eventY] = actor.transform_stage_point(stageX, stageY);
-        [, actorH] = actor.get_size();
+        const [stageX, stageY] = event.get_coords();
+        const [,, eventY] = actor.transform_stage_point(stageX, stageY);
+        const [, actorH] = actor.get_size();
 
         // If the scroll event is within a 1px margin from
         // the relevant edge of the actor, let the event propagate.
@@ -149,7 +148,7 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
         else
             adjustment = this.actor.get_vscroll_bar().get_adjustment();
 
-        let increment = adjustment.step_increment;
+        const increment = adjustment.step_increment;
 
         switch (event.get_scroll_direction()) {
         case Clutter.ScrollDirection.UP:
@@ -159,7 +158,7 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
             delta = Number(increment);
             break;
         case Clutter.ScrollDirection.SMOOTH: {
-            let [dx, dy] = event.get_scroll_delta();
+            const [dx, dy] = event.get_scroll_delta();
             delta = dy * increment;
             delta += dx * increment;
             break;
@@ -177,17 +176,17 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
     }
 
     _createPreviewItem(window) {
-        let preview = new WindowPreviewMenuItem(window, Utils.getPosition());
+        const preview = new WindowPreviewMenuItem(window, Utils.getPosition());
         return preview;
     }
 
     _redisplay() {
-        let children = this._getMenuItems().filter(actor => {
+        const children = this._getMenuItems().filter(actor => {
             return actor._window;
         });
 
         // Windows currently on the menu
-        let oldWin = children.map(actor => {
+        const oldWin = children.map(actor => {
             return actor._window;
         });
 
@@ -195,8 +194,8 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
         const newWin = this._source.getInterestingWindows().sort((a, b) =>
             a.get_stable_sequence() > b.get_stable_sequence());
 
-        let addedItems = [];
-        let removedActors = [];
+        const addedItems = [];
+        const removedActors = [];
 
         let newIndex = 0;
         let oldIndex = 0;
@@ -230,7 +229,7 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
             }
 
             // Window moved
-            let insertHere = newWin[newIndex + 1] &&
+            const insertHere = newWin[newIndex + 1] &&
                              newWin[newIndex + 1] === currentOldWin;
             const alreadyRemoved = removedActors.reduce((result, actor) =>
                 result || actor._window === currentNewWin, false);
@@ -253,7 +252,7 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
         }
 
         for (let i = 0; i < removedActors.length; i++) {
-            let item = removedActors[i];
+            const item = removedActors[i];
             if (this._shownInitially)
                 item._animateOutAndDestroy();
             else
@@ -262,7 +261,7 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
 
         // Skip animations on first run when adding the initial set
         // of items, to avoid all items zooming in at once
-        let animate = this._shownInitially;
+        const animate = this._shownInitially;
 
         if (!this._shownInitially)
             this._shownInitially = true;
@@ -283,7 +282,7 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
         // of width-for-height in St.BoxLayout and St.ScrollView. This looks bad
         // when we *don't* need it, so turn off the scrollbar when that's true.
         // Dynamic changes in whether we need it aren't handled properly.
-        let needsScrollbar = this._needsScrollbar();
+        const needsScrollbar = this._needsScrollbar();
         const scrollbarPolicy = needsScrollbar
             ? St.PolicyType.AUTOMATIC : St.PolicyType.NEVER;
         if (this.isHorizontal)
@@ -298,17 +297,17 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
     }
 
     _needsScrollbar() {
-        let topMenu = this._getTopMenu();
-        let topThemeNode = topMenu.actor.get_theme_node();
+        const topMenu = this._getTopMenu();
+        const topThemeNode = topMenu.actor.get_theme_node();
         if (this.isHorizontal) {
             const [topMinWidth_, topNaturalWidth] =
                 topMenu.actor.get_preferred_width(-1);
-            let topMaxWidth = topThemeNode.get_max_width();
+            const topMaxWidth = topThemeNode.get_max_width();
             return topMaxWidth >= 0 && topNaturalWidth >= topMaxWidth;
         } else {
             const [topMinHeight_, topNaturalHeight] =
                 topMenu.actor.get_preferred_height(-1);
-            let topMaxHeight = topThemeNode.get_max_height();
+            const topMaxHeight = topThemeNode.get_max_height();
             return topMaxHeight >= 0 && topNaturalHeight >= topMaxHeight;
         }
     }
@@ -356,21 +355,21 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this.closeButton.opacity = 0;
         this.closeButton.connect('clicked', () => this._closeWindow());
 
-        let overlayGroup = new Clutter.Actor({ layout_manager: new Clutter.BinLayout(), y_expand: true });
+        const overlayGroup = new Clutter.Actor({ layout_manager: new Clutter.BinLayout(), y_expand: true });
 
         overlayGroup.add_actor(this._cloneBin);
         overlayGroup.add_actor(this.closeButton);
 
-        let label = new St.Label({ text: window.get_title() });
+        const label = new St.Label({ text: window.get_title() });
         label.set_style(`max-width: ${PREVIEW_MAX_WIDTH}px`);
-        let labelBin = new St.Bin({ child: label,
+        const labelBin = new St.Bin({ child: label,
             x_align: Clutter.ActorAlign.CENTER });
 
         this._windowTitleId = this._window.connect('notify::title', () => {
             label.set_text(this._window.get_title());
         });
 
-        let box = new St.BoxLayout({ vertical: true,
+        const box = new St.BoxLayout({ vertical: true,
             reactive: true,
             x_expand: true });
         box.add(overlayGroup);
@@ -400,7 +399,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     _getWindowPreviewSize() {
         const emptySize = [0, 0, 0];
 
-        let mutterWindow = this._window.get_compositor_private();
+        const mutterWindow = this._window.get_compositor_private();
         if (!mutterWindow?.get_texture())
             return emptySize;
 
@@ -455,7 +454,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         }
 
         const mutterWindow = metaWin.get_compositor_private();
-        let clone = new Clutter.Clone({ source: mutterWindow,
+        const clone = new Clutter.Clone({ source: mutterWindow,
             reactive: true,
             width: this._width * this._scale,
             height: this._height * this._scale });
@@ -503,10 +502,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     deleteAllWindows() {
         // Delete all windows, starting from the bottom-most (most-modal) one
         // let windows = this._window.get_compositor_private().get_children();
-        let windows = this._clone.get_children();
+        const windows = this._clone.get_children();
         for (let i = windows.length - 1; i >= 1; i--) {
-            let realWindow = windows[i].source;
-            let metaWindow = realWindow.meta_window;
+            const realWindow = windows[i].source;
+            const metaWindow = realWindow.meta_window;
 
             metaWindow.delete(global.get_current_time());
         }
@@ -515,7 +514,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     }
 
     _onWindowAdded(workspace, win) {
-        let metaWindow = this._window;
+        const metaWindow = this._window;
 
         if (win.get_transient_for() === metaWindow) {
             workspace.disconnect(this._windowAddedId);
@@ -523,7 +522,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
 
             // use an idle handler to avoid mapping problems -
             // see comment in Workspace._windowAdded
-            let activationEvent = Clutter.get_current_event();
+            const activationEvent = Clutter.get_current_event();
             this._windowAddedLater = Utils.laterAdd(Meta.LaterType.BEFORE_REDRAW, () => {
                 delete this._windowAddedLater;
                 this.emit('activate', activationEvent);
@@ -595,12 +594,12 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     }
 
     show(animate) {
-        let fullWidth = this.get_width();
+        const fullWidth = this.get_width();
 
         this.opacity = 0;
         this.set_width(0);
 
-        let time = animate ? PREVIEW_ANIMATION_DURATION : 0;
+        const time = animate ? PREVIEW_ANIMATION_DURATION : 0;
         this.remove_all_transitions();
         this.ease({
             opacity: 255,

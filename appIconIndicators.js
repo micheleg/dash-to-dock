@@ -38,14 +38,14 @@ var AppIconIndicator = class DashToDockAppIconIndicator {
         this._indicators = [];
 
         // Unity indicators always enabled for now
-        let unityIndicator = new UnityIndicator(source);
+        const unityIndicator = new UnityIndicator(source);
         this._indicators.push(unityIndicator);
 
         // Choose the style for the running indicators
         let runningIndicator = null;
         let runningIndicatorStyle;
 
-        let settings = Docking.DockManager.settings;
+        const { settings } = Docking.DockManager;
         if (settings.applyCustomTheme)
             runningIndicatorStyle = RunningIndicatorStyle.DOTS;
         else
@@ -97,14 +97,14 @@ var AppIconIndicator = class DashToDockAppIconIndicator {
 
     update() {
         for (let i = 0; i < this._indicators.length; i++) {
-            let indicator = this._indicators[i];
+            const indicator = this._indicators[i];
             indicator.update();
         }
     }
 
     destroy() {
         for (let i = 0; i < this._indicators.length; i++) {
-            let indicator = this._indicators[i];
+            const indicator = this._indicators[i];
             indicator.destroy();
         }
     }
@@ -157,7 +157,7 @@ var RunningIndicatorBase = class DashToDockRunningIndicatorBase extends Indicato
 
     _updateCounterClass() {
         for (let i = 1; i <= MAX_WINDOWS_CLASSES; i++) {
-            let className = `running${i}`;
+            const className = `running${i}`;
             if (i !== this._number)
                 this._source.remove_style_class_name(className);
             else
@@ -183,7 +183,7 @@ var RunningIndicatorBase = class DashToDockRunningIndicatorBase extends Indicato
     }
 
     _enableBacklight() {
-        let colorPalette = this._dominantColorExtractor._getColorPalette();
+        const colorPalette = this._dominantColorExtractor._getColorPalette();
 
         // Fallback
         if (!colorPalette) {
@@ -286,7 +286,7 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
         this._area.connect('repaint', this._updateIndicator.bind(this));
         this._source._iconContainer.add_child(this._area);
 
-        let keys = ['custom-theme-running-dots-color',
+        const keys = ['custom-theme-running-dots-color',
             'custom-theme-running-dots-border-color',
             'custom-theme-running-dots-border-width',
             'custom-theme-customize-running-dots',
@@ -333,23 +333,23 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
     }
 
     _computeStyle() {
-        let [width, height] = this._area.get_surface_size();
+        const [width, height] = this._area.get_surface_size();
         this._width = height;
         this._height = width;
 
         // By defaut re-use the style - background color, and border width and color -
         // of the default dot
-        let themeNode = this._source._dot.get_theme_node();
+        const themeNode = this._source._dot.get_theme_node();
         this._borderColor = themeNode.get_border_color(this._side);
         this._borderWidth = themeNode.get_border_width(this._side);
         this._bodyColor = themeNode.get_background_color();
 
-        let settings = Docking.DockManager.settings;
+        const settings = Docking.DockManager.settings;
         if (!settings.applyCustomTheme) {
             // Adjust for the backlit case
             if (settings.unityBacklitItems) {
                 // Use dominant color for dots too if the backlit is enables
-                let colorPalette = this._dominantColorExtractor._getColorPalette();
+                const colorPalette = this._dominantColorExtractor._getColorPalette();
 
                 // Slightly adjust the styling
                 this._borderWidth = 2;
@@ -366,7 +366,7 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
 
             // Apply dominant color if requested
             if (settings.runningIndicatorDominantColor) {
-                let colorPalette = this._dominantColorExtractor._getColorPalette();
+                const colorPalette = this._dominantColorExtractor._getColorPalette();
                 if (colorPalette)
                     this._bodyColor = Clutter.color_from_string(colorPalette.original)[1];
             }
@@ -387,7 +387,7 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
     }
 
     _updateIndicator() {
-        let cr = this._area.get_context();
+        const cr = this._area.get_context();
 
         this._computeStyle();
         this._drawIndicator(cr);
@@ -396,7 +396,7 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
 
     _drawIndicator(cr) {
         // Draw the required numbers of dots
-        let n = this._number;
+        const n = this._number;
 
         cr.setLineWidth(this._borderWidth);
         Clutter.cairo_set_source_color(cr, this._borderColor);
@@ -424,15 +424,15 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
 var RunningIndicatorCiliora = class DashToDockRunningIndicatorCiliora extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
-            let size =  Math.max(this._width / 20, this._borderWidth);
-            let spacing = size; // separation between the dots
-            let lineLength = this._width - (size * (this._number - 1)) - (spacing * (this._number - 1));
+            const size =  Math.max(this._width / 20, this._borderWidth);
+            const spacing = size; // separation between the dots
+            const lineLength = this._width - (size * (this._number - 1)) - (spacing * (this._number - 1));
             let padding = this._borderWidth;
             // For the backlit case here we don't want the outer border visible
             if (Docking.DockManager.settings.unityBacklitItems &&
                 !Docking.DockManager.settings.customThemeCustomizeRunningDots)
                 padding = 0;
-            let yOffset = this._height - padding - size;
+            const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
             Clutter.cairo_set_source_color(cr, this._borderColor);
@@ -457,15 +457,15 @@ var RunningIndicatorCiliora = class DashToDockRunningIndicatorCiliora extends Ru
 var RunningIndicatorSegmented = class DashToDockRunningIndicatorSegmented extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
-            let size =  Math.max(this._width / 20, this._borderWidth);
-            let spacing = Math.ceil(this._width / 18); // separation between the dots
-            let dashLength = Math.ceil((this._width - ((this._number - 1) * spacing)) / this._number);
+            const size =  Math.max(this._width / 20, this._borderWidth);
+            const spacing = Math.ceil(this._width / 18); // separation between the dots
+            const dashLength = Math.ceil((this._width - ((this._number - 1) * spacing)) / this._number);
             let padding = this._borderWidth;
             // For the backlit case here we don't want the outer border visible
             if (Docking.DockManager.settings.unityBacklitItems &&
                 !Docking.DockManager.settings.customThemeCustomizeRunningDots)
                 padding = 0;
-            let yOffset = this._height - padding - size;
+            const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
             Clutter.cairo_set_source_color(cr, this._borderColor);
@@ -488,13 +488,13 @@ var RunningIndicatorSegmented = class DashToDockRunningIndicatorSegmented extend
 var RunningIndicatorSolid = class DashToDockRunningIndicatorSolid extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
-            let size =  Math.max(this._width / 20, this._borderWidth);
+            const size =  Math.max(this._width / 20, this._borderWidth);
             let padding = this._borderWidth;
             // For the backlit case here we don't want the outer border visible
             if (Docking.DockManager.settings.unityBacklitItems &&
                 !Docking.DockManager.settings.customThemeCustomizeRunningDots)
                 padding = 0;
-            let yOffset = this._height - padding - size;
+            const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
             Clutter.cairo_set_source_color(cr, this._borderColor);
@@ -515,10 +515,10 @@ var RunningIndicatorSolid = class DashToDockRunningIndicatorSolid extends Runnin
 var RunningIndicatorSquares = class DashToDockRunningIndicatorSquares extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
-            let size =  Math.max(this._width / 11, this._borderWidth);
-            let padding = this._borderWidth;
-            let spacing = Math.ceil(this._width / 18); // separation between the dots
-            let yOffset = this._height - padding - size;
+            const size =  Math.max(this._width / 11, this._borderWidth);
+            const padding = this._borderWidth;
+            const spacing = Math.ceil(this._width / 18); // separation between the dots
+            const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
             Clutter.cairo_set_source_color(cr, this._borderColor);
@@ -540,11 +540,11 @@ var RunningIndicatorSquares = class DashToDockRunningIndicatorSquares extends Ru
 var RunningIndicatorDashes = class DashToDockRunningIndicatorDashes extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
-            let size =  Math.max(this._width / 20, this._borderWidth);
-            let padding = this._borderWidth;
-            let spacing = Math.ceil(this._width / 18); // separation between the dots
-            let dashLength = Math.floor(this._width / 4) - spacing;
-            let yOffset = this._height - padding - size;
+            const size =  Math.max(this._width / 20, this._borderWidth);
+            const padding = this._borderWidth;
+            const spacing = Math.ceil(this._width / 18); // separation between the dots
+            const dashLength = Math.floor(this._width / 4) - spacing;
+            const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
             Clutter.cairo_set_source_color(cr, this._borderColor);
@@ -577,15 +577,15 @@ var RunningIndicatorMetro = class DashToDockRunningIndicatorMetro extends Runnin
 
     _drawIndicator(cr) {
         if (this._source.running) {
-            let size =  Math.max(this._width / 20, this._borderWidth);
+            const size =  Math.max(this._width / 20, this._borderWidth);
             let padding = 0;
             // For the backlit case here we don't want the outer border visible
             if (Docking.DockManager.settings.unityBacklitItems &&
                 !Docking.DockManager.settings.customThemeCustomizeRunningDots)
                 padding = 0;
-            let yOffset = this._height - padding - size;
+            const yOffset = this._height - padding - size;
 
-            let n = this._number;
+            const n = this._number;
             if (n <= 1) {
                 cr.translate(0, yOffset);
                 Clutter.cairo_set_source_color(cr, this._bodyColor);
@@ -593,10 +593,10 @@ var RunningIndicatorMetro = class DashToDockRunningIndicatorMetro extends Runnin
                 cr.rectangle(0, 0, this._width, size);
                 cr.fill();
             } else {
-                let blackenedLength = (1 / 48) * this._width; // need to scale with the SVG for the stacked highlight
-                let darkenedLength = this._source.focused ? (2 / 48) * this._width : (10 / 48) * this._width;
-                let blackenedColor = this._bodyColor.shade(.3);
-                let darkenedColor = this._bodyColor.shade(.7);
+                const blackenedLength = (1 / 48) * this._width; // need to scale with the SVG for the stacked highlight
+                const darkenedLength = this._source.focused ? (2 / 48) * this._width : (10 / 48) * this._width;
+                const blackenedColor = this._bodyColor.shade(.3);
+                const darkenedColor = this._bodyColor.shade(.7);
 
                 cr.translate(0, yOffset);
 
@@ -620,13 +620,13 @@ var RunningIndicatorMetro = class DashToDockRunningIndicatorMetro extends Runnin
 var RunningIndicatorBinary = class DashToDockRunningIndicatorBinary extends RunningIndicatorDots {
     _drawIndicator(cr) {
         // Draw the required numbers of dots
-        let n = Math.min(15, this._source.windowsCount);
+        const n = Math.min(15, this._source.windowsCount);
 
         if (this._source.running) {
-            let size =  Math.max(this._width / 11, this._borderWidth);
-            let spacing = Math.ceil(this._width / 18);
-            let yOffset = this._height - size;
-            let binaryValue = String(`0000${(n >>> 0).toString(2)}`).slice(-4);
+            const size =  Math.max(this._width / 11, this._borderWidth);
+            const spacing = Math.ceil(this._width / 18);
+            const yOffset = this._height - size;
+            const binaryValue = String(`0000${(n >>> 0).toString(2)}`).slice(-4);
 
             cr.setLineWidth(this._borderWidth);
             Clutter.cairo_set_source_color(cr, this._borderColor);
@@ -697,12 +697,12 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
     }
 
     updateNotificationBadgeStyle() {
-        let themeContext = St.ThemeContext.get_for_stage(global.stage);
-        let fontDesc = themeContext.get_font();
-        let defaultFontSize = fontDesc.get_size() / 1024;
+        const themeContext = St.ThemeContext.get_for_stage(global.stage);
+        const fontDesc = themeContext.get_font();
+        const defaultFontSize = fontDesc.get_size() / 1024;
         let fontSize = defaultFontSize * 0.9;
-        let iconSize = Main.overview.dash.iconSize;
-        let defaultIconSize = Docking.DockManager.settings.get_default_value(
+        const iconSize = Main.overview.dash.iconSize;
+        const defaultIconSize = Docking.DockManager.settings.get_default_value(
             'dash-max-icon-size').unpack();
 
         if (!fontDesc.get_size_is_absolute()) {
@@ -711,7 +711,7 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         }
 
         fontSize = Math.round((iconSize / defaultIconSize) * fontSize);
-        let leftMargin = Math.round((iconSize / defaultIconSize) * 3);
+        const leftMargin = Math.round((iconSize / defaultIconSize) * 3);
 
         this._notificationBadgeLabel.set_style(
             `font-size: ${fontSize}px;` +
@@ -723,26 +723,26 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         if (count <= 9999) {
             return count.toString();
         } else if (count < 1e5) {
-            let thousands = count / 1e3;
+            const thousands = count / 1e3;
             return `${thousands.toFixed(1).toString()}k`;
         } else if (count < 1e6) {
-            let thousands = count / 1e3;
+            const thousands = count / 1e3;
             return `${thousands.toFixed(0).toString()}k`;
         } else if (count < 1e8) {
-            let millions = count / 1e6;
+            const millions = count / 1e6;
             return `${millions.toFixed(1).toString()}M`;
         } else if (count < 1e9) {
-            let millions = count / 1e6;
+            const millions = count / 1e6;
             return `${millions.toFixed(0).toString()}M`;
         } else {
-            let billions = count / 1e9;
+            const billions = count / 1e9;
             return `${billions.toFixed(1).toString()}B`;
         }
     }
 
     setNotificationCount(count) {
         if (count > 0) {
-            let text = this._notificationBadgeCountToText(count);
+            const text = this._notificationBadgeCountToText(count);
             this._notificationBadgeLabel.set_text(text);
             this._notificationBadgeBin.show();
         } else {
@@ -763,7 +763,7 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         });
 
         this._source._iconContainer.add_child(this._progressOverlayArea);
-        let node = this._progressOverlayArea.get_theme_node();
+        const node = this._progressOverlayArea.get_theme_node();
 
         let [hasColor, color] = node.lookup_color('-progress-bar-background', false);
         if (hasColor)
@@ -794,17 +794,17 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
     }
 
     _drawProgressOverlay(area) {
-        let scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
-        let [surfaceWidth, surfaceHeight] = area.get_surface_size();
-        let cr = area.get_context();
+        const scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+        const [surfaceWidth, surfaceHeight] = area.get_surface_size();
+        const cr = area.get_context();
 
-        let iconSize = this._source.icon.iconSize * scaleFactor;
+        const iconSize = this._source.icon.iconSize * scaleFactor;
 
         let x = Math.floor((surfaceWidth - iconSize) / 2);
         let y = Math.floor((surfaceHeight - iconSize) / 2);
 
-        let lineWidth = Math.floor(Number(scaleFactor));
-        let padding = Math.floor(iconSize * 0.05);
+        const lineWidth = Math.floor(Number(scaleFactor));
+        const padding = Math.floor(iconSize * 0.05);
         let width = iconSize - 2.0 * padding;
         let height = Math.floor(Math.min(18.0 * scaleFactor, 0.20 * iconSize));
         x += padding;
@@ -837,10 +837,10 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         width -= 2.0 * lineWidth;
         height -= 2.0 * lineWidth;
 
-        let finishedWidth = Math.ceil(this._progress * width);
+        const finishedWidth = Math.ceil(this._progress * width);
 
-        let bg = this._progressbar_background;
-        let bd = this._progressbar_border;
+        const bg = this._progressbar_background;
+        const bd = this._progressbar_border;
 
         stroke = Cairo.SolidPattern.createRGBA(bd.red / 255, bd.green / 255, bd.blue / 255, bd.alpha / 255);
         fill = Cairo.SolidPattern.createRGBA(bg.red / 255, bg.green / 255, bg.blue / 255, bg.alpha / 255);
@@ -875,7 +875,7 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
 
 
 // Global icon cache. Used for Unity7 styling.
-let iconCacheMap = new Map();
+const iconCacheMap = new Map();
 // Max number of items to store
 // We don't expect to ever reach this number, but let's put an hard limit to avoid
 // even the remote possibility of the cached items to grow indefinitely.
@@ -917,7 +917,7 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
         }
 
         // Get the pixel buffer from the icon theme
-        const iconInfo = themeLoader.lookup_icon(iconTexture.get_names()[0],
+        const [iconInfo] = themeLoader.lookup_icon(iconTexture.get_names(),
             DOMINANT_COLOR_ICON_SIZE, 0);
         if (iconInfo)
             return iconInfo.load_icon();
@@ -937,7 +937,7 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
             return iconCacheMap.get(this._app.get_id());
         }
 
-        let pixBuf = this._getIconPixBuf();
+        const pixBuf = this._getIconPixBuf();
         if (!pixBuf)
             return null;
 
@@ -957,8 +957,8 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
         // DOMINANT_COLOR_ICON_SIZE < s < 2*DOMINANT_COLOR_ICON_SIZE,
         // most of the case exactly DOMINANT_COLOR_ICON_SIZE as the icon size is tipycally
         // a multiple of it.
-        let width = pixBuf.get_width();
-        let height = pixBuf.get_height();
+        const width = pixBuf.get_width();
+        const height = pixBuf.get_height();
 
         // Resample
         if (height >= 2 * DOMINANT_COLOR_ICON_SIZE)
@@ -972,15 +972,15 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
 
         // computing the limit outside the for (where it would be repeated at each iteration)
         // for performance reasons
-        let limit = pixels.length;
+        const limit = pixels.length;
         for (let offset = 0; offset < limit; offset += 4) {
-            let r = pixels[offset],
+            const r = pixels[offset],
                 g = pixels[offset + 1],
                 b = pixels[offset + 2],
                 a = pixels[offset + 3];
 
-            let saturation = Math.max(r, g, b) - Math.min(r, g, b);
-            let relevance  = 0.1 * 255 * 255 + 0.9 * a * saturation;
+            const saturation = Math.max(r, g, b) - Math.min(r, g, b);
+            const relevance  = 0.1 * 255 * 255 + 0.9 * a * saturation;
 
             rTotal += r * relevance;
             gTotal += g * relevance;
@@ -991,20 +991,20 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
 
         total *= 255;
 
-        let r = rTotal / total,
+        const r = rTotal / total,
             g = gTotal / total,
             b = bTotal / total;
 
-        let hsv = Utils.ColorUtils.RGBtoHSV(r * 255, g * 255, b * 255);
+        const hsv = Utils.ColorUtils.RGBtoHSV(r * 255, g * 255, b * 255);
 
         if (hsv.s > 0.15)
             hsv.s = 0.65;
         hsv.v = 0.90;
 
-        let rgb = Utils.ColorUtils.HSVtoRGB(hsv.h, hsv.s, hsv.v);
+        const rgb = Utils.ColorUtils.HSVtoRGB(hsv.h, hsv.s, hsv.v);
 
         // Cache the result.
-        let backgroundColor = {
+        const backgroundColor = {
             lighter:  Utils.ColorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, 0.2),
             original: Utils.ColorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, 0),
             darker:   Utils.ColorUtils.ColorLuminance(rgb.r, rgb.g, rgb.b, -0.5),
@@ -1013,7 +1013,7 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
         if (iconCacheMap.size >= MAX_CACHED_ITEMS) {
             // delete oldest cached values (which are in order of insertions)
             let ctr = 0;
-            for (let key of iconCacheMap.keys()) {
+            for (const key of iconCacheMap.keys()) {
                 if (++ctr > BATCH_SIZE_TO_DELETE)
                     break;
                 iconCacheMap.delete(key);
@@ -1037,12 +1037,12 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
      * @returns [];
      */
     _resamplePixels(pixels, resampleX, resampleY) {
-        let resampledPixels = [];
+        const resampledPixels = [];
         // computing the limit outside the for (where it would be repeated at each iteration)
         // for performance reasons
-        let limit = pixels.length / (resampleX * resampleY) / 4;
+        const limit = pixels.length / (resampleX * resampleY) / 4;
         for (let i = 0; i < limit; i++) {
-            let pixel = i * resampleX * resampleY;
+            const pixel = i * resampleX * resampleY;
 
             resampledPixels.push(pixels[pixel * 4]);
             resampledPixels.push(pixels[pixel * 4 + 1]);

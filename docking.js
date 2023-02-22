@@ -104,24 +104,24 @@ const DashSlideContainer = GObject.registerClass({
     }
 
     vfunc_allocate(box) {
-        let contentBox = this.get_theme_node().get_content_box(box);
+        const contentBox = this.get_theme_node().get_content_box(box);
 
         this.set_allocation(box);
 
         if (!this.child)
             return;
 
-        let availWidth = contentBox.x2 - contentBox.x1;
+        const availWidth = contentBox.x2 - contentBox.x1;
         let availHeight = contentBox.y2 - contentBox.y1;
-        let [, , natChildWidth, natChildHeight] =
+        const [, , natChildWidth, natChildHeight] =
             this.child.get_preferred_size();
 
-        let childWidth = natChildWidth;
-        let childHeight = natChildHeight;
+        const childWidth = natChildWidth;
+        const childHeight = natChildHeight;
 
-        let childBox = new Clutter.ActorBox();
+        const childBox = new Clutter.ActorBox();
 
-        let slideoutSize = this._slideoutSize;
+        const slideoutSize = this._slideoutSize;
 
         if (this.side === St.Side.LEFT) {
             childBox.x1 = (this.slideX - 1) * (childWidth - slideoutSize);
@@ -225,7 +225,7 @@ const DockedDash = GObject.registerClass({
         this._rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
 
         // Load settings
-        let settings = DockManager.settings;
+        const settings = DockManager.settings;
         this._isHorizontal = (this._position === St.Side.TOP) || (this._position === St.Side.BOTTOM);
 
         // Temporary ignore hover events linked to autohide for whatever reason
@@ -515,7 +515,7 @@ const DockedDash = GObject.registerClass({
     }
 
     _bindSettingsChanges() {
-        let settings = DockManager.settings;
+        const settings = DockManager.settings;
         this._signalsHandler.add([
             settings,
             'changed::scroll-action',
@@ -660,7 +660,7 @@ const DockedDash = GObject.registerClass({
      * This is call when visibility settings change
      */
     _updateVisibilityMode() {
-        let settings = DockManager.settings;
+        const settings = DockManager.settings;
         if (DockManager.settings.dockFixed || DockManager.settings.manualhide) {
             this._autohideIsEnabled = false;
             this._intellihideIsEnabled = false;
@@ -701,7 +701,7 @@ const DockedDash = GObject.registerClass({
         if (Main.overview.visibleTarget)
             return;
 
-        let settings = DockManager.settings;
+        const settings = DockManager.settings;
 
         if (DockManager.settings.dockFixed) {
             this._removeAnimations();
@@ -790,8 +790,8 @@ const DockedDash = GObject.registerClass({
     _hide() {
         // If no hiding animation is running or queued
         if ((this._dockState === State.SHOWN) || (this._dockState === State.SHOWING)) {
-            let settings = DockManager.settings;
-            let delay = settings.hideDelay;
+            const settings = DockManager.settings;
+            const delay = settings.hideDelay;
 
             if (this._dockState === State.SHOWING) {
                 // if a show already started, let it finish; queue hide without removing the show.
@@ -859,7 +859,7 @@ const DockedDash = GObject.registerClass({
         if (this._autohideIsEnabled &&
             (!global.display.supports_extended_barriers() ||
             !DockManager.settings.requirePressureToShow)) {
-            let pointerWatcher = PointerWatcher.getPointerWatcher();
+            const pointerWatcher = PointerWatcher.getPointerWatcher();
             this._dockWatch = pointerWatcher.addWatch(DOCK_DWELL_CHECK_INTERVAL, this._checkDockDwell.bind(this));
             this._dockDwelling = false;
             this._dockDwellUserTime = 0;
@@ -867,7 +867,7 @@ const DockedDash = GObject.registerClass({
     }
 
     _checkDockDwell(x, y) {
-        let workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index);
+        const workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index);
         let shouldDwell;
         // Check for the correct screen edge, extending the sensitive area to the whole workarea,
         // minus 1 px to avoid conflicting with other active corners.
@@ -888,7 +888,7 @@ const DockedDash = GObject.registerClass({
             // we don't try again until the user moves the mouse up and down again.
             if (!this._dockDwelling && !this._box.hover && (this._dockDwellTimeoutId === 0)) {
                 // Save the interaction timestamp so we can detect user input
-                let focusWindow = global.display.focus_window;
+                const focusWindow = global.display.focus_window;
                 this._dockDwellUserTime = focusWindow ? focusWindow.user_time : 0;
 
                 this._dockDwellTimeoutId = GLib.timeout_add(
@@ -926,8 +926,8 @@ const DockedDash = GObject.registerClass({
 
         // If the user interacted with the focus window since we started the tray
         // dwell (by clicking or typing), don't activate the message tray
-        let focusWindow = global.display.focus_window;
-        let currentUserTime = focusWindow ? focusWindow.user_time : 0;
+        const focusWindow = global.display.focus_window;
+        const currentUserTime = focusWindow ? focusWindow.user_time : 0;
         if (currentUserTime !== this._dockDwellUserTime)
             return GLib.SOURCE_REMOVE;
 
@@ -937,9 +937,9 @@ const DockedDash = GObject.registerClass({
     }
 
     _updatePressureBarrier() {
-        let settings = DockManager.settings;
+        const settings = DockManager.settings;
         this._canUsePressure = global.display.supports_extended_barriers();
-        let pressureThreshold = settings.pressureThreshold;
+        const pressureThreshold = settings.pressureThreshold;
 
         // Remove existing pressure barrier
         if (this._pressureBarrier) {
@@ -1064,7 +1064,7 @@ const DockedDash = GObject.registerClass({
         if (this._canUsePressure && this._autohideIsEnabled &&
             DockManager.settings.requirePressureToShow) {
             let x1, x2, y1, y2, direction;
-            let workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index);
+            const workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index);
 
             if (this._position === St.Side.LEFT) {
                 x1 = this._monitor.x + 1;
@@ -1125,7 +1125,7 @@ const DockedDash = GObject.registerClass({
         // Note: do not use the workarea coordinates in the direction on which the dock is placed,
         // to avoid a loop [position change -> workArea change -> position change] with
         // fixed dock.
-        let workArea = Main.layoutManager.getWorkAreaForMonitor(this.monitorIndex);
+        const workArea = Main.layoutManager.getWorkAreaForMonitor(this.monitorIndex);
 
 
         let fraction = DockManager.settings.heightFraction;
@@ -1271,7 +1271,7 @@ const DockedDash = GObject.registerClass({
             if (Main.overview.visible)
                 return false;
 
-            let activeWs = global.workspace_manager.get_active_workspace();
+            const activeWs = global.workspace_manager.get_active_workspace();
             let direction = null;
 
             let prevDirection, nextDirection;
@@ -1355,18 +1355,18 @@ const DockedDash = GObject.registerClass({
     }
 
     _activateApp(appIndex) {
-        let children = this.dash._box.get_children().filter(actor => {
+        const children = this.dash._box.get_children().filter(actor => {
             return actor.child &&
                        actor.child.app;
         });
 
         // Apps currently in the dash
-        let apps = children.map(actor => {
+        const apps = children.map(actor => {
             return actor.child;
         });
 
         // Activate with button = 1, i.e. same as left click
-        let button = 1;
+        const button = 1;
         if (appIndex < apps.length)
             apps[appIndex].activate(button);
     }
@@ -1418,11 +1418,11 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
             return;
 
         // Setup keyboard bindings for dash elements
-        let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
+        const keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
         const { mainDock } = DockManager.getDefault();
         keys.forEach(function (key) {
             for (let i = 0; i < NUM_HOTKEYS; i++) {
-                let appNum = i;
+                const appNum = i;
                 Main.wm.addKeybinding(key + (i + 1), DockManager.settings,
                     Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
                     Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
@@ -1440,7 +1440,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
         if (!this._hotKeysEnabled)
             return;
 
-        let keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
+        const keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
         keys.forEach(key => {
             for (let i = 0; i < NUM_HOTKEYS; i++)
                 Main.wm.removeKeybinding(key + (i + 1));
@@ -1450,7 +1450,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     }
 
     _optionalNumberOverlay() {
-        let settings = DockManager.settings;
+        const settings = DockManager.settings;
         this._shortcutIsSet = false;
         // Enable extra shortcut if either 'overlay' or 'show-dock' are true
         if (settings.hotKeys &&
@@ -1473,7 +1473,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     }
 
     _checkHotkeysOptions() {
-        let settings = DockManager.settings;
+        const settings = DockManager.settings;
 
         if (settings.hotKeys &&
            (settings.hotkeysOverlay || settings.hotkeysShowDock))
@@ -1500,7 +1500,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     }
 
     _showOverlay() {
-        for (let dock of DockManager.allDocks) {
+        for (const dock of DockManager.allDocks) {
             if (DockManager.settings.hotkeysOverlay)
                 dock.dash.toggleNumberOverlay(true);
 
@@ -1511,7 +1511,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
             }
 
             // Hide the overlay/dock after the timeout
-            let timeout = DockManager.settings.shortcutTimeout * 1000;
+            const timeout = DockManager.settings.shortcutTimeout * 1000;
             dock._numberOverlayTimeoutId = GLib.timeout_add(
                 GLib.PRIORITY_DEFAULT, timeout, () => {
                     dock._numberOverlayTimeoutId = 0;
@@ -1522,7 +1522,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
 
             // Show the dock if it is hidden
             if (DockManager.settings.hotkeysShowDock) {
-                let showDock = dock._intellihideIsEnabled || dock._autohideIsEnabled;
+                const showDock = dock._intellihideIsEnabled || dock._autohideIsEnabled;
                 if (showDock)
                     dock._show();
             }
@@ -1537,7 +1537,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
  */
 const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
     constructor() {
-        let settings = DockManager.settings;
+        const settings = DockManager.settings;
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._injectionsHandler = new Utils.InjectionsHandler();
@@ -1986,7 +1986,7 @@ var DockManager = class DashToDockDockManager {
         this._adjustPanelCorners();
 
         if (this.settings.multiMonitor) {
-            let nMon = Main.layoutManager.monitors.length;
+            const nMon = Main.layoutManager.monitors.length;
             for (let iMon = 0; iMon < nMon; iMon++) {
                 if (iMon === this._preferredMonitorIndex)
                     continue;
@@ -2091,7 +2091,7 @@ var DockManager = class DashToDockDockManager {
         // The getter must be dynamic and not set only when we've a dummy
         // overview because the mode can change dynamically.
         this._propertyInjections.removeWithLabel(Labels.MAIN_DASH);
-        let defaultDashGetter = Object.getOwnPropertyDescriptor(
+        const defaultDashGetter = Object.getOwnPropertyDescriptor(
             Main.overview.constructor.prototype, 'dash').get;
         this._propertyInjections.addWithLabel(Labels.MAIN_DASH, Main.overview, 'dash', {
             get: () => Main.overview.isDummy
@@ -2527,9 +2527,9 @@ var DockManager = class DashToDockDockManager {
         if (!this._hasPanelCorners())
             return;
 
-        let position = Utils.getPosition();
-        let isHorizontal = (position === St.Side.TOP) || (position === St.Side.BOTTOM);
-        let dockOnPrimary  = this._settings.multiMonitor ||
+        const position = Utils.getPosition();
+        const isHorizontal = (position === St.Side.TOP) || (position === St.Side.BOTTOM);
+        const dockOnPrimary  = this._settings.multiMonitor ||
                              this._preferredMonitorIndex === Main.layoutManager.primaryIndex;
 
         if (!isHorizontal && dockOnPrimary && this.settings.dockExtended && this.settings.dockFixed) {

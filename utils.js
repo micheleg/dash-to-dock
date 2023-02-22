@@ -92,7 +92,7 @@ const BasicHandler = class DashToDockBasicHandler {
         for (const argArray of argsArray) {
             if (argArray.length < 3)
                 throw new Error('Unexpected number of arguments');
-            let item = this._storage[label];
+            const item = this._storage[label];
             try {
                 item.push(this._create(...argArray));
             } catch (e) {
@@ -163,8 +163,8 @@ var GlobalSignalsHandler = class DashToDockGlobalSignalHandler extends BasicHand
         if (!object)
             throw new Error('Impossible to connect to an invalid object');
 
-        let after = flags === SignalsHandlerFlags.CONNECT_AFTER;
-        let connector = after ? object.connect_after : object.connect;
+        const after = flags === SignalsHandlerFlags.CONNECT_AFTER;
+        const connector = after ? object.connect_after : object.connect;
 
         if (!connector) {
             throw new Error(`Requested to connect to signal '${event}', ` +
@@ -172,7 +172,7 @@ var GlobalSignalsHandler = class DashToDockGlobalSignalHandler extends BasicHand
                 `found in ${object.constructor.name}`);
         }
 
-        let id = connector.call(object, event, callback);
+        const id = connector.call(object, event, callback);
 
         if (event === 'destroy' && object === this._parentObject) {
             this._parentObject.disconnect(this._destroyId);
@@ -241,10 +241,10 @@ var ColorUtils = class DashToDockColorUtils {
         }
 
         let r, g, b;
-        let c = v * s;
-        let h1 = h * 6;
-        let x = c * (1 - Math.abs(h1 % 2 - 1));
-        let m = v - c;
+        const c = v * s;
+        const h1 = h * 6;
+        const x = c * (1 - Math.abs(h1 % 2 - 1));
+        const m = v - c;
 
         if (h1 <= 1) {
             r = c + m;
@@ -291,11 +291,11 @@ var ColorUtils = class DashToDockColorUtils {
             b = r.b;
         }
 
-        let h, s, v;
+        let h, s;
 
-        let M = Math.max(r, g, b);
-        let m = Math.min(r, g, b);
-        let c = M - m;
+        const M = Math.max(r, g, b);
+        const m = Math.min(r, g, b);
+        const c = M - m;
 
         if (c === 0)
             h = 0;
@@ -307,7 +307,7 @@ var ColorUtils = class DashToDockColorUtils {
             h = (r - g) / c + 4;
 
         h /= 6;
-        v = M / 255;
+        const v = M / 255;
         if (M !== 0)
             s = c / M;
         else
@@ -327,7 +327,7 @@ var ColorUtils = class DashToDockColorUtils {
  */
 var InjectionsHandler = class DashToDockInjectionsHandler extends BasicHandler {
     _create(object, name, injectedFunction) {
-        let original = object[name];
+        const original = object[name];
 
         if (!(original instanceof Function))
             throw new Error(`Virtual function ${name}() is not available for ${object}`);
