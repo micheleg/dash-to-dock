@@ -249,18 +249,6 @@ var DockDash = GObject.registerClass({
             Main.overview,
             'item-drag-cancelled',
             this._onItemDragCancelled.bind(this)
-        ], [
-            Main.overview,
-            'window-drag-begin',
-            this._onWindowDragBegin.bind(this)
-        ], [
-            Main.overview,
-            'window-drag-cancelled',
-            this._onWindowDragEnd.bind(this)
-        ], [
-            Main.overview,
-            'window-drag-end',
-            this._onWindowDragEnd.bind(this)
         ]);
 
         this.connect('destroy', this._onDestroy.bind(this));
