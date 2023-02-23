@@ -163,7 +163,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                     icon.set_pivot_point(0.5, 0.5);
                     this.iconAnimator.addAnimation(icon, 'dance');
                 }
-                if (!this._urgentWindows.size) {
+                if (this.running && !this._urgentWindows.size) {
                     const urgentWindows = this.getInterestingWindows();
                     urgentWindows.forEach(w => (w._manualUrgency = true));
                     this._updateUrgentWindows(urgentWindows);
