@@ -2,16 +2,21 @@
 
 /* exported PositionStyleClass */
 
-const Signals = imports.signals;
-const { Meta } = imports.gi;
-const { St } = imports.gi;
-const { Clutter } = imports.gi;
+const { signals: Signals } = imports;
 
-const Main = imports.ui.main;
+const {
+    Clutter,
+    Meta,
+    St,
+} = imports.gi;
+
+const { main: Main } = imports.ui;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Docking = Me.imports.docking;
-const Utils = Me.imports.utils;
+const {
+    docking: Docking,
+    utils: Utils,
+} = Me.imports;
 
 /*
  * DEFAULT:  transparency given by theme

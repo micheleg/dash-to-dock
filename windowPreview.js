@@ -7,21 +7,27 @@
 
 /* exported WindowPreviewMenu */
 
-const { Clutter } = imports.gi;
-const { GLib } = imports.gi;
-const { GObject } = imports.gi;
-const { Meta } = imports.gi;
-const { St } = imports.gi;
-const Main = imports.ui.main;
+const {
+    Clutter,
+    GLib,
+    GObject,
+    Meta,
+    St,
+} = imports.gi;
 
-const BoxPointer = imports.ui.boxpointer;
-const PopupMenu = imports.ui.popupMenu;
-const Workspace = imports.ui.workspace;
+const {
+    boxpointer: BoxPointer,
+    main: Main,
+    popupMenu: PopupMenu,
+    workspace: Workspace,
+} = imports.ui;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Docking = Me.imports.docking;
-const Theming = Me.imports.theming;
-const Utils = Me.imports.utils;
+const {
+    docking: Docking,
+    theming: Theming,
+    utils: Utils,
+} = Me.imports;
 
 const PREVIEW_MAX_WIDTH = 250;
 const PREVIEW_MAX_HEIGHT = 150;

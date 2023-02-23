@@ -1,11 +1,10 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const { GLib } = imports.gi;
-const { Gio } = imports.gi;
-const Signals = imports.signals;
+const { GLib, Gio } = imports.gi;
+const { signals: Signals } = imports;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Utils = Me.imports.utils;
+const { utils: Utils } = Me.imports;
 
 const FileManager1Iface = '<node><interface name="org.freedesktop.FileManager1">\
                                <property name="OpenWindowsWithLocations" type="a{sas}" access="read"/>\

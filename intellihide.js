@@ -1,14 +1,18 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const { GLib } = imports.gi;
-const { Meta } = imports.gi;
-const { Shell } = imports.gi;
+const {
+    GLib,
+    Meta,
+    Shell,
+} = imports.gi;
 
-const Signals = imports.signals;
+const { signals: Signals } = imports;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Docking = Me.imports.docking;
-const Utils = Me.imports.utils;
+const {
+    docking: Docking,
+    utils: Utils,
+} = Me.imports;
 
 // A good compromise between reactivity and efficiency; to be tuned.
 const INTELLIHIDE_CHECK_INTERVAL = 100;

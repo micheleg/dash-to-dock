@@ -2,37 +2,46 @@
 
 /* exported DockManager, IconAnimator */
 
-const { Clutter } = imports.gi;
-const { GLib } = imports.gi;
-const { Gio } = imports.gi;
-const { GObject } = imports.gi;
-const { Meta } = imports.gi;
-const { Shell } = imports.gi;
-const { St } = imports.gi;
+const {
+    Clutter,
+    GLib,
+    Gio,
+    GObject,
+    Meta,
+    Shell,
+    St,
+} = imports.gi;
 
-const Main = imports.ui.main;
-const AppDisplay = imports.ui.appDisplay;
-const Environment = imports.ui.environment;
-const Overview = imports.ui.overview;
-const OverviewControls = imports.ui.overviewControls;
-const PointerWatcher = imports.ui.pointerWatcher;
-const Signals = imports.signals;
-const WorkspaceSwitcherPopup = imports.ui.workspaceSwitcherPopup;
-const Layout = imports.ui.layout;
-const Workspace = imports.ui.workspace;
-const WorkspacesView = imports.ui.workspacesView;
+const { signals: Signals } = imports;
+
+const {
+    appDisplay: AppDisplay,
+    environment: Environment,
+    layout: Layout,
+    main: Main,
+    overview: Overview,
+    overviewControls: OverviewControls,
+    pointerWatcher: PointerWatcher,
+    workspace: Workspace,
+    workspacesView: WorkspacesView,
+    workspaceSwitcherPopup: WorkspaceSwitcherPopup,
+} = imports.ui;
+
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
-const AppSpread = Me.imports.appSpread;
-const Utils = Me.imports.utils;
-const Intellihide = Me.imports.intellihide;
-const Theming = Me.imports.theming;
-const DockDash = Me.imports.dash;
-const Locations = Me.imports.locations;
-const LauncherAPI = Me.imports.launcherAPI;
-const FileManager1API = Me.imports.fileManager1API;
-const DesktopIconsIntegration = Me.imports.desktopIconsIntegration;
+
+const {
+    appSpread: AppSpread,
+    dash: DockDash,
+    desktopIconsIntegration: DesktopIconsIntegration,
+    fileManager1API: FileManager1API,
+    intellihide: Intellihide,
+    launcherAPI: LauncherAPI,
+    locations: Locations,
+    theming: Theming,
+    utils: Utils,
+} = Me.imports;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 const ICON_ANIMATOR_DURATION = 3000;
