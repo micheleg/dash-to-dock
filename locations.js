@@ -559,7 +559,7 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             return true;
         } catch (e) {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.FAILED))
-                this._notifyActionError(action, e);
+                this._notifyActionError(action, e.message);
 
             if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
                 logError(e, 'Impossible to %s removable %s'.format(action,
