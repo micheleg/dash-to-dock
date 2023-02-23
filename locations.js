@@ -32,7 +32,7 @@ const FILE_MANAGER_DESKTOP_APP_ID = 'org.gnome.Nautilus.desktop';
 const ATTRIBUTE_METADATA_CUSTOM_ICON = 'metadata::custom-icon';
 const TRASH_URI = 'trash://';
 const UPDATE_TRASH_DELAY = 1000;
-const MAX_LAUNCH_HANDLER_WAIT = 500;
+const LAUNCH_HANDLER_MAX_WAIT = 500;
 
 const NautilusFileOperations2Interface = '<node>\
     <interface name="org.gnome.Nautilus.FileOperations2">\
@@ -53,8 +53,10 @@ const Labels = Object.freeze({
 
 const GJS_SUPPORTS_FILE_IFACE_PROMISES = imports.system.version >= 17101;
 
-if (GJS_SUPPORTS_FILE_IFACE_PROMISES)
+if (GJS_SUPPORTS_FILE_IFACE_PROMISES) {
     Gio._promisify(Gio.File.prototype, 'query_info_async');
+    Gio._promisify(Gio.File.prototype, 'query_default_handler_async');
+}
 
 
 /**
@@ -317,12 +319,19 @@ var LocationAppInfo = GObject.registerClass({
         }
     }
 
-    _getHandlerApp() {
+    async _getHandlerAppAsync(cancellable) {
         if (!this.location)
             return null;
 
         try {
-            return this.location.query_default_handler(this.cancellable);
+            if (!GJS_SUPPORTS_FILE_IFACE_PROMISES) {
+                Gio._promisify(this.location.constructor.prototype,
+                    'query_default_handler_async',
+                    'query_default_handler_async_finish');
+            }
+
+            return await this.location.query_default_handler_async(
+                GLib.PRIORITY_DEFAULT, cancellable);
         } catch (e) {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
                 return getFileManagerApp()?.appInfo;
@@ -331,14 +340,52 @@ var LocationAppInfo = GObject.registerClass({
                 logError(e, 'Impossible to find an URI handler for %s'.format(
                     this.get_id()));
             }
-            return null;
+
+            throw e;
         }
+    }
+
+    _getHandlerApp(cancellable) {
+        cancellable = cancellable ?? new Utils.CancellableChild(this.cancellable);
+
+        // GVfs providers could hang when querying the file informations, so we
+        // workaround this by using the async API in a sync way, but we need to
+        // use a timeout to avoid this to hang forever, better than hang the
+        // shell.
+        let handler, error;
+        Promise.race([
+            this._getHandlerAppAsync(cancellable),
+            new Promise((resolve, reject) =>
+                GLib.timeout_add(GLib.PRIORITY_DEFAULT, LAUNCH_HANDLER_MAX_WAIT, () => {
+                    cancellable.cancel();
+                    reject(new GLib.Error(Gio.IOErrorEnum,
+                        Gio.IOErrorEnum.TIMED_OUT,
+                        `Searching for ${this.get_id()} handler took too long`));
+                    return GLib.SOURCE_REMOVE;
+                })
+            ),
+        ]).then(h => (handler = h)).catch(e => (error = e));
+
+        while (handler === undefined && error === undefined)
+            GLib.MainContext.default().iteration(false);
+
+        if (this._handlerApp && error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.TIMED_OUT))
+            return this._handlerApp;
+
+        if (error)
+            throw error;
+
+        if (handler)
+            this._handlerApp = handler;
+
+        return handler;
     }
 
     destroy() {
         this.location = null;
         this.icon = null;
         this.name = null;
+        this._handlerApp = null;
         this.cancellable?.cancel();
     }
 });
