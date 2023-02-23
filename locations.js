@@ -993,11 +993,10 @@ function makeLocationApp(params) {
 
     shellApp._mi('open_new_window', function (_om, workspace) {
         const context = global.create_app_launch_context(0, workspace);
-        const [ret] = GLib.spawn_async(null,
+        GLib.spawn_async(null,
             [...this.appInfo.get_commandline().split(' ').filter(
                 t => !t.startsWith('%')), this.appInfo.location.get_uri()],
             context.get_environment(), GLib.SpawnFlags.SEARCH_PATH, null);
-        return ret;
     });
 
     if (shellApp.appInfo instanceof MountableVolumeAppInfo) {
