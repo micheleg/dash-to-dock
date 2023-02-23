@@ -166,7 +166,7 @@ var LocationAppInfo = GObject.registerClass({
         if (handler)
             return handler.launch_uris([this.location.get_uri()], context);
 
-        const [ret] = GLib.spawn_async(null, this.get_commandline().split(' '),
+        const [ret] = GLib.spawn_async(null, this._getFallbackCommandLine().split(' '),
             context?.get_environment() || null, GLib.SpawnFlags.SEARCH_PATH, null);
         return ret;
     }
@@ -220,7 +220,7 @@ var LocationAppInfo = GObject.registerClass({
 
     vfunc_get_commandline() {
         return this._getHandlerApp()?.get_commandline() ??
-            'gio open %s'.format(this.location?.get_uri());
+            this._getFallbackCommandLine();
     }
 
     vfunc_get_display_name() {
@@ -234,6 +234,10 @@ var LocationAppInfo = GObject.registerClass({
 
     vfunc_get_supported_types() {
         return [];
+    }
+
+    _getFallbackCommandLine() {
+        return `gio open ${this.location?.get_uri()}`;
     }
 
     async _queryLocationIcons(params) {
