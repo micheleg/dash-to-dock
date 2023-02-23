@@ -35,6 +35,15 @@ git clone https://github.com/micheleg/dash-to-dock.git
 make -C dash-to-dock install
 ```
 
+If `msgfmt` is not available on your system, you will see an error message like the following:
+
+```bash
+make: msgfmt: No such file or directory
+```
+
+In this case install the `gettext` package from your distribution's repository.
+
+
 ## Bug Reporting
 
 Bugs should be reported to the Github bug tracker [https://github.com/micheleg/dash-to-dock/issues](https://github.com/micheleg/dash-to-dock/issues).
