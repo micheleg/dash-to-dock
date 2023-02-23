@@ -780,34 +780,16 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         });
 
         this._source._iconContainer.add_child(this._progressOverlayArea);
-        const node = this._progressOverlayArea.get_theme_node();
-
-        let [hasColor, color] = node.lookup_color('-progress-bar-background', false);
-        if (hasColor)
-            this._progressbar_background = color;
-        else
-            this._progressbar_background = new Clutter.Color({ red: 204, green: 204, blue: 204, alpha: 255 });
-
-        [hasColor, color] = node.lookup_color('-progress-bar-border', false);
-        if (hasColor)
-            this._progressbar_border = color;
-        else
-            this._progressbar_border = new Clutter.Color({ red: 230, green: 230, blue: 230, alpha: 255 });
-
         this._updateProgressOverlay();
     }
 
     _hideProgressOverlay() {
-        if (this._progressOverlayArea)
-            this._progressOverlayArea.destroy();
+        this._progressOverlayArea?.destroy();
         this._progressOverlayArea = null;
-        this._progressbar_background = null;
-        this._progressbar_border = null;
     }
 
     _updateProgressOverlay() {
-        if (this._progressOverlayArea)
-            this._progressOverlayArea.queue_repaint();
+        this._progressOverlayArea?.queue_repaint();
     }
 
     _drawProgressOverlay(area) {
@@ -858,8 +840,16 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
 
         const finishedWidth = Math.ceil(this._progress * width);
 
-        const bg = this._progressbar_background;
-        const bd = this._progressbar_border;
+        let hasColor, bg, bd;
+        const node = this._progressOverlayArea.get_theme_node();
+
+        [hasColor, bg] = node.lookup_color('-progress-bar-background', false);
+        if (!hasColor)
+            bg = new Clutter.Color({ red: 204, green: 204, blue: 204, alpha: 255 });
+
+        [hasColor, bd] = node.lookup_color('-progress-bar-border', false);
+        if (!hasColor)
+            bd = new Clutter.Color({ red: 230, green: 230, blue: 230, alpha: 255 });
 
         stroke = Cairo.SolidPattern.createRGBA(
             bd.red / 255, bd.green / 255, bd.blue / 255, bd.alpha / 255);
