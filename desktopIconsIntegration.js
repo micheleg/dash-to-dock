@@ -74,13 +74,16 @@ var DesktopIconsUsableAreaClass = class {
             if (!extension)
                 return;
 
-            // If an extension is being enabled and lacks the DesktopIconsUsableArea object, we can avoid launching a refresh
+            // If an extension is being enabled and lacks the
+            // DesktopIconsUsableArea object, we can avoid launching a refresh
             if (extension.state === ExtensionUtils.ExtensionState.ENABLED) {
                 this._sendMarginsToExtension(extension);
                 return;
             }
-            // if the extension is being disabled, we must do a full refresh, because if there were other extensions originally
-            // loaded after that extension, those extensions will be disabled and enabled again without notification
+            // if the extension is being disabled, we must do a full refresh,
+            // because if there were other extensions originally
+            // loaded after that extension, those extensions will be disabled
+            // and enabled again without notification
             this._changedMargins();
         });
     }

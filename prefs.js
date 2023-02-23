@@ -441,9 +441,12 @@ var Settings = GObject.registerClass({
         // Position and size panel
 
         this._updateMonitorsSettings();
-        this._monitorsConfig.connect('updated', () => this._updateMonitorsSettings());
-        this._settings.connect('changed::preferred-monitor', () => this._updateMonitorsSettings());
-        this._settings.connect('changed::preferred-monitor-by-connector', () => this._updateMonitorsSettings());
+        this._monitorsConfig.connect('updated',
+            () => this._updateMonitorsSettings());
+        this._settings.connect('changed::preferred-monitor',
+            () => this._updateMonitorsSettings());
+        this._settings.connect('changed::preferred-monitor-by-connector',
+            () => this._updateMonitorsSettings());
 
         // Position option
         const position = this._settings.get_enum('dock-position');
@@ -515,7 +518,8 @@ var Settings = GObject.registerClass({
             'value',
             Gio.SettingsBindFlags.DEFAULT);
 
-        // this._builder.get_object('animation_duration_spinbutton').set_value(this._settings.get_double('animation-time'));
+        // this._builder.get_object('animation_duration_spinbutton').set_value(
+        //   this._settings.get_double('animation-time'));
 
         // Create dialog for intelligent autohide advanced settings
         this._builder.get_object('intelligent_autohide_button').connect('clicked', () => {
@@ -584,8 +588,10 @@ var Settings = GObject.registerClass({
             dialog.connect('response', (_, id) => {
                 if (id === 1) {
                     // restore default settings for the relevant keys
-                    const keys = ['intellihide', 'autohide', 'intellihide-mode', 'autohide-in-fullscreen', 'show-dock-urgent-notify', 'require-pressure-to-show',
-                        'animation-time', 'show-delay', 'hide-delay', 'pressure-threshold'];
+                    const keys = ['intellihide', 'autohide', 'intellihide-mode',
+                        'autohide-in-fullscreen', 'show-dock-urgent-notify',
+                        'require-pressure-to-show', 'animation-time',
+                        'show-delay', 'hide-delay', 'pressure-threshold'];
                     keys.forEach(function (val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);
@@ -616,23 +622,34 @@ var Settings = GObject.registerClass({
         iconSizeScale.set_format_value_func((_, value) => {
             return `${value} px`;
         });
-        this._builder.get_object('preview_size_scale').set_value(this._settings.get_double('preview-size-scale'));
+        this._builder.get_object('preview_size_scale').set_value(
+            this._settings.get_double('preview-size-scale'));
 
         // Corrent for rtl languages
         if (this._rtl) {
             // Flip value position: this is not done automatically
             dockSizeScale.set_value_pos(Gtk.PositionType.LEFT);
             iconSizeScale.set_value_pos(Gtk.PositionType.LEFT);
-            // I suppose due to a bug, having a more than one mark and one above a value of 100
-            // makes the rendering of the marks wrong in rtl. This doesn't happen setting the scale as not flippable
+            // I suppose due to a bug, having a more than one mark and one above
+            // a value of 100 makes the rendering of the marks wrong in rtl.
+            // This doesn't happen setting the scale as not flippable
             // and then manually inverting it
             iconSizeScale.set_flippable(false);
             iconSizeScale.set_inverted(true);
         }
 
-        this._settings.bind('icon-size-fixed', this._builder.get_object('icon_size_fixed_checkbutton'), 'active', Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('extend-height', this._builder.get_object('dock_size_extend_checkbutton'), 'active', Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('extend-height', this._builder.get_object('dock_size_scale'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this._settings.bind('icon-size-fixed',
+            this._builder.get_object('icon_size_fixed_checkbutton'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('extend-height',
+            this._builder.get_object('dock_size_extend_checkbutton'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('extend-height',
+            this._builder.get_object('dock_size_scale'),
+            'sensitive',
+            Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
         this._settings.bind('multi-monitor',
             this._builder.get_object('dock_monitor_combo'),
@@ -792,8 +809,10 @@ var Settings = GObject.registerClass({
             const box = this._builder.get_object('box_overlay_shortcut');
             dialog.get_content_area().append(box);
 
-            this._builder.get_object('overlay_switch').set_active(this._settings.get_boolean('hotkeys-overlay'));
-            this._builder.get_object('show_dock_switch').set_active(this._settings.get_boolean('hotkeys-show-dock'));
+            this._builder.get_object('overlay_switch').set_active(
+                this._settings.get_boolean('hotkeys-overlay'));
+            this._builder.get_object('show_dock_switch').set_active(
+                this._settings.get_boolean('hotkeys-show-dock'));
 
             // We need to update the shortcut 'strv' when the text is modified
             this._settings.connect('changed::shortcut-text', () => setShortcut(this._settings));
@@ -818,7 +837,8 @@ var Settings = GObject.registerClass({
             dialog.connect('response', (_, id) => {
                 if (id === 1) {
                     // restore default settings for the relevant keys
-                    const keys = ['shortcut-text', 'hotkeys-overlay', 'hotkeys-show-dock', 'shortcut-timeout'];
+                    const keys = ['shortcut-text', 'hotkeys-overlay',
+                        'hotkeys-show-dock', 'shortcut-timeout'];
                     keys.forEach(function (val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);
@@ -848,11 +868,14 @@ var Settings = GObject.registerClass({
             const box = this._builder.get_object('box_middle_click_options');
             dialog.get_content_area().append(box);
 
-            this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_enum('shift-click-action'));
+            this._builder.get_object('shift_click_action_combo').set_active(
+                this._settings.get_enum('shift-click-action'));
 
-            this._builder.get_object('middle_click_action_combo').set_active(this._settings.get_enum('middle-click-action'));
+            this._builder.get_object('middle_click_action_combo').set_active(
+                this._settings.get_enum('middle-click-action'));
 
-            this._builder.get_object('shift_middle_click_action_combo').set_active(this._settings.get_enum('shift-middle-click-action'));
+            this._builder.get_object('shift_middle_click_action_combo').set_active(
+                this._settings.get_enum('shift-middle-click-action'));
 
             this._settings.bind('shift-click-action',
                 this._builder.get_object('shift_click_action_combo'),
@@ -874,9 +897,12 @@ var Settings = GObject.registerClass({
                     keys.forEach(function (val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);
-                    this._builder.get_object('shift_click_action_combo').set_active(this._settings.get_enum('shift-click-action'));
-                    this._builder.get_object('middle_click_action_combo').set_active(this._settings.get_enum('middle-click-action'));
-                    this._builder.get_object('shift_middle_click_action_combo').set_active(this._settings.get_enum('shift-middle-click-action'));
+                    this._builder.get_object('shift_click_action_combo').set_active(
+                        this._settings.get_enum('shift-click-action'));
+                    this._builder.get_object('middle_click_action_combo').set_active(
+                        this._settings.get_enum('middle-click-action'));
+                    this._builder.get_object('shift_middle_click_action_combo').set_active(
+                        this._settings.get_enum('shift-middle-click-action'));
                 } else {
                     // remove the settings box so it doesn't get destroyed;
                     dialog.get_content_area().remove(box);
@@ -889,9 +915,18 @@ var Settings = GObject.registerClass({
 
         // Appearance Panel
 
-        this._settings.bind('apply-custom-theme', this._builder.get_object('customize_theme'), 'sensitive', Gio.SettingsBindFlags.INVERT_BOOLEAN | Gio.SettingsBindFlags.GET);
-        this._settings.bind('apply-custom-theme', this._builder.get_object('builtin_theme_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('custom-theme-shrink', this._builder.get_object('shrink_dash_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('apply-custom-theme',
+            this._builder.get_object('customize_theme'),
+            'sensitive',
+            Gio.SettingsBindFlags.INVERT_BOOLEAN | Gio.SettingsBindFlags.GET);
+        this._settings.bind('apply-custom-theme',
+            this._builder.get_object('builtin_theme_switch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('custom-theme-shrink',
+            this._builder.get_object('shrink_dash_switch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
 
         // Running indicators
         this._builder.get_object('running_indicators_combo').set_active(
@@ -973,8 +1008,12 @@ var Settings = GObject.registerClass({
             dialog.present();
         });
 
-        this._settings.bind('custom-background-color', this._builder.get_object('custom_background_color_switch'), 'active', Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('custom-background-color', this._builder.get_object('custom_background_color'), 'sensitive', Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('custom-background-color',
+            this._builder.get_object('custom_background_color_switch'),
+            'active', Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('custom-background-color',
+            this._builder.get_object('custom_background_color'),
+            'sensitive', Gio.SettingsBindFlags.DEFAULT);
 
         const rgba = new Gdk.RGBA();
         rgba.parse(this._settings.get_string('background-color'));

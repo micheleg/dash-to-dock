@@ -37,7 +37,8 @@ const NautilusFileOperations2Interface = '<node>\
     </interface>\
 </node>';
 
-const NautilusFileOperations2ProxyInterface = Gio.DBusProxy.makeProxyWrapper(NautilusFileOperations2Interface);
+const NautilusFileOperations2ProxyInterface =
+    Gio.DBusProxy.makeProxyWrapper(NautilusFileOperations2Interface);
 
 const Labels = Object.freeze({
     LOCATION_WINDOWS: Symbol('location-windows'),

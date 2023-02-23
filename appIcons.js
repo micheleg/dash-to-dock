@@ -508,9 +508,10 @@ var DockAbstractAppIcon = GObject.registerClass({
                 if (!Main.overview.visible || modifiers) {
                     // If we have button=2 or a modifier, allow minimization even if
                     // the app is not focused
-                    if ((this.focused && !hasUrgentWindows) || button === 2 || modifiers & Clutter.ModifierType.SHIFT_MASK) {
-                        // minimize all windows on double click and always in the case of primary click without
-                        // additional modifiers
+                    if (this.focused && !hasUrgentWindows || button === 2 ||
+                        modifiers & Clutter.ModifierType.SHIFT_MASK) {
+                        // minimize all windows on double click and always in
+                        // the case of primary click without additional modifiers
                         let clickCount = 0;
                         if (Clutter.EventType.CLUTTER_BUTTON_PRESS)
                             clickCount = event.get_click_count();
@@ -527,8 +528,9 @@ var DockAbstractAppIcon = GObject.registerClass({
 
             case clickAction.MINIMIZE_OR_OVERVIEW:
                 // When a single window is present, toggle minimization
-                // If only one windows is present toggle minimization, but only when triggered with the
-                // simple click action (no modifiers, no middle click).
+                // If only one windows is present toggle minimization, but
+                // only when triggered with the simple click action
+                // (no modifiers, no middle click).
                 if (singleOrUrgentWindows && !modifiers && button === 1) {
                     const [w] = windows;
                     if (this.focused) {
@@ -592,8 +594,9 @@ var DockAbstractAppIcon = GObject.registerClass({
 
             case clickAction.PREVIEWS:
                 if (!Main.overview.visible) {
-                    // If only one windows is present just switch to it, but only when trigggered with the
-                    // simple click action (no modifiers, no middle click).
+                    // If only one windows is present just switch to it,
+                    // but only when trigggered with the simple click action
+                    // (no modifiers, no middle click).
                     if (singleOrUrgentWindows && !modifiers && button === 1) {
                         const [w] = windows;
                         Main.activateWindow(w);
@@ -607,8 +610,9 @@ var DockAbstractAppIcon = GObject.registerClass({
 
             case clickAction.MINIMIZE_OR_PREVIEWS:
                 // When a single window is present, toggle minimization
-                // If only one windows is present toggle minimization, but only when trigggered with the
-                // simple click action (no modifiers, no middle click).
+                // If only one windows is present toggle minimization, but only
+                // when trigggered with the imple click action (no modifiers,
+                // no middle click).
                 if (!Main.overview.visible) {
                     if (singleOrUrgentWindows && !modifiers && button === 1) {
                         const [w] = windows;
@@ -711,9 +715,9 @@ var DockAbstractAppIcon = GObject.registerClass({
             this.animateLaunch();
             this.app.open_new_window(-1);
         } else {
-            // Try to manually activate the first window. Otherwise, when the app is activated by
-            // switching to a different workspace, a launch spinning icon is shown and disappers only
-            // after a timeout.
+            // Try to manually activate the first window. Otherwise, when the
+            // app is activated by switching to a different workspace, a launch
+            // spinning icon is shown and disappers only after a timeout.
             const windows = this.getWindows();
             if (windows.length > 0) {
                 Main.activateWindow(windows[0]);
@@ -978,11 +982,13 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         const { remoteModel } = Docking.DockManager.getDefault();
         const remoteModelApp = remoteModel?.lookupById(this._source?.app?.id);
         if (remoteModelApp && DbusmenuUtils.haveDBusMenu()) {
-            const [onQuicklist, onDynamicSection] = Utils.splitHandler((sender, { quicklist }, dynamicSection) => {
+            const [onQuicklist, onDynamicSection] = Utils.splitHandler((sender,
+                { quicklist }, dynamicSection) => {
                 dynamicSection.removeAll();
                 if (quicklist) {
                     quicklist.get_children().forEach(remoteItem =>
-                        dynamicSection.addMenuItem(DbusmenuUtils.makePopupMenuItem(remoteItem, false)));
+                        dynamicSection.addMenuItem(
+                            DbusmenuUtils.makePopupMenuItem(remoteItem, false)));
                 }
             });
 
@@ -1186,8 +1192,9 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             const windows = this._source.getInterestingWindows();
 
             // update, show, or hide the allWindows menu
-            // Check if there are new windows not already displayed. In such case, repopulate the allWindows
-            // menu. Windows removal is already handled by each preview being connected to the destroy signal
+            // Check if there are new windows not already displayed. In such case,
+            // repopulate the allWindows menu. Windows removal is already handled
+            // by each preview being connected to the destroy signal
             const oldWindows = this._allWindowsMenuItem.menu._getMenuItems().map(item => {
                 return item._window;
             });
@@ -1203,8 +1210,9 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 this._allWindowsMenuItem.width =  this._allWindowsMenuItem.menu.actor.width + 15;
             }
 
-            // The menu is created hidden and never hidded after being shown. Instead, a signal
-            // connected to its items destroy will set is insensitive if no more windows preview are shown.
+            // The menu is created hidden and never hidded after being shown.
+            // Instead, a signal connected to its items destroy will set is
+            // insensitive if no more windows preview are shown.
             if (windows.length > 0) {
                 this._allWindowsMenuItem.show();
                 this._allWindowsMenuItem.setSensitive(true);
@@ -1293,8 +1301,10 @@ function getInterestingWindows(windows, monitorIndex) {
 /**
  * A ShowAppsIcon improved class.
  *
- * - set label position based on dash orientation (Note, I am reusing most machinery of the appIcon class)
- * - implement a popupMenu based on the AppIcon code (Note, I am reusing most machinery of the appIcon class)
+ * - set label position based on dash orientation
+ *   Note: we are am reusing most machinery of the appIcon class.
+ * - implement a popupMenu based on the AppIcon code
+ *   Note: we are reusing most machinery of the appIcon class)
  *
  */
 

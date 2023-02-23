@@ -119,7 +119,8 @@ function makePopupMenuItem(dbusmenuItem, deep) {
                     });
                     item.actor.add_child(expander);
                     break;
-                } else if (child instanceof St.Widget && child.has_style_class_name('popup-menu-item-expander')) {
+                } else if (child instanceof St.Widget &&
+                           child.has_style_class_name('popup-menu-item-expander')) {
                     expander = child;
                     break;
                 }
@@ -274,9 +275,9 @@ function makePopupMenuItem(dbusmenuItem, deep) {
 
     // Connections on item will be lost when item is disposed; there's no need
     // to add them to signalsHandler.
-    item.connect('activate', () => {
-        dbusmenuItem.handle_event(Dbusmenu.MENUITEM_EVENT_ACTIVATED, new GLib.Variant('i', 0), Math.floor(Date.now() / 1000));
-    });
+    item.connect('activate', () =>
+        dbusmenuItem.handle_event(Dbusmenu.MENUITEM_EVENT_ACTIVATED,
+            new GLib.Variant('i', 0), Math.floor(Date.now() / 1000)));
     item.connect('destroy', () => signalsHandler.destroy());
 
     return item;

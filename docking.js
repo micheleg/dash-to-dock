@@ -372,7 +372,8 @@ const DockedDash = GObject.registerClass({
         // Since Clutter has no longer ClutterAllocationFlags,
         // "allocation-changed" signal has been removed. MR !1245
         this.dash._container.connect('notify::allocation', this._updateStaticBox.bind(this));
-        this._slider.connect(this._isHorizontal ? 'notify::x' : 'notify::y', this._updateStaticBox.bind(this));
+        this._slider.connect(this._isHorizontal ? 'notify::x' : 'notify::y',
+            this._updateStaticBox.bind(this));
 
         // Load optional features that need to be activated for one dock only
         if (this.isMain)
@@ -397,8 +398,8 @@ const DockedDash = GObject.registerClass({
             Main.uiGroup.set_child_below_sibling(this, global.top_window_group);
 
         if (settings.dockFixed) {
-            // Note: tracking the fullscreen directly on the slider actor causes some hiccups when fullscreening
-            // windows of certain applications
+            // Note: tracking the fullscreen directly on the slider actor causes
+            // some hiccups when fullscreening windows of certain applications
             Main.layoutManager._trackActor(this, { affectsInputRegion: false, trackFullscreen: true });
             Main.layoutManager._trackActor(this._slider, { affectsStruts: true });
         } else {
@@ -816,9 +817,11 @@ const DockedDash = GObject.registerClass({
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             onComplete: () => {
                 this._dockState = State.SHOWN;
-                // Remove barrier so that mouse pointer is released and can access monitors on other side of dock
-                // NOTE: Delay needed to keep mouse from moving past dock and re-hiding dock immediately. This
-                // gives users an opportunity to hover over the dock
+                // Remove barrier so that mouse pointer is released and can
+                // monitors on other side of dock.
+                // NOTE: Delay needed to keep mouse from moving past dock and
+                // re-hiding dock immediately. This gives users an opportunity
+                // to hover over the dock
                 if (this._removeBarrierTimeoutId > 0)
                     GLib.source_remove(this._removeBarrierTimeoutId);
 
@@ -858,9 +861,10 @@ const DockedDash = GObject.registerClass({
         // to support the old tray dwelling mechanism.
         if (this._autohideIsEnabled &&
             (!global.display.supports_extended_barriers() ||
-            !DockManager.settings.requirePressureToShow)) {
+             !DockManager.settings.requirePressureToShow)) {
             const pointerWatcher = PointerWatcher.getPointerWatcher();
-            this._dockWatch = pointerWatcher.addWatch(DOCK_DWELL_CHECK_INTERVAL, this._checkDockDwell.bind(this));
+            this._dockWatch = pointerWatcher.addWatch(
+                DOCK_DWELL_CHECK_INTERVAL, this._checkDockDwell.bind(this));
             this._dockDwelling = false;
             this._dockDwellUserTime = 0;
         }
@@ -871,14 +875,19 @@ const DockedDash = GObject.registerClass({
         let shouldDwell;
         // Check for the correct screen edge, extending the sensitive area to the whole workarea,
         // minus 1 px to avoid conflicting with other active corners.
-        if (this._position === St.Side.LEFT)
-            shouldDwell = (x === this._monitor.x) && (y > workArea.y) && (y < workArea.y + workArea.height);
-        else if (this._position === St.Side.RIGHT)
-            shouldDwell = (x === this._monitor.x + this._monitor.width - 1) && (y > workArea.y) && (y < workArea.y + workArea.height);
-        else if (this._position === St.Side.TOP)
-            shouldDwell = (y === this._monitor.y) && (x > workArea.x) && (x < workArea.x + workArea.width);
-        else if (this._position === St.Side.BOTTOM)
-            shouldDwell = (y === this._monitor.y + this._monitor.height - 1) && (x > workArea.x) && (x < workArea.x + workArea.width);
+        if (this._position === St.Side.LEFT) {
+            shouldDwell = (x === this._monitor.x) && (y > workArea.y) &&
+                (y < workArea.y + workArea.height);
+        } else if (this._position === St.Side.RIGHT) {
+            shouldDwell = (x === this._monitor.x + this._monitor.width - 1) &&
+                (y > workArea.y) && (y < workArea.y + workArea.height);
+        } else if (this._position === St.Side.TOP) {
+            shouldDwell = (y === this._monitor.y) && (x > workArea.x) &&
+                (x < workArea.x + workArea.width);
+        } else if (this._position === St.Side.BOTTOM) {
+            shouldDwell = (y === this._monitor.y + this._monitor.height - 1) &&
+                (x > workArea.x) && (x < workArea.x + workArea.width);
+        }
 
         if (shouldDwell) {
             // We only set up dwell timeout when the user is not hovering over the dock
@@ -895,7 +904,8 @@ const DockedDash = GObject.registerClass({
                     GLib.PRIORITY_DEFAULT,
                     DockManager.settings.showDelay * 1000,
                     this._dockDwellTimeout.bind(this));
-                GLib.Source.set_name_by_id(this._dockDwellTimeoutId, '[dash-to-dock] this._dockDwellTimeout');
+                GLib.Source.set_name_by_id(this._dockDwellTimeoutId,
+                    '[dash-to-dock] this._dockDwellTimeout');
             }
             this._dockDwelling = true;
         } else {
@@ -955,7 +965,8 @@ const DockedDash = GObject.registerClass({
         // Create new pressure barrier based on pressure threshold setting
         if (this._canUsePressure && this._autohideIsEnabled &&
             DockManager.settings.requirePressureToShow) {
-            this._pressureBarrier = new Layout.PressureBarrier(pressureThreshold, settings.showDelay * 1000,
+            this._pressureBarrier = new Layout.PressureBarrier(
+                pressureThreshold, settings.showDelay * 1000,
                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
             this._pressureBarrier.connect('trigger', _barrier => {
                 if (!settings.autohideInFullscreen && this._monitor.inFullscreen)
@@ -975,8 +986,9 @@ const DockedDash = GObject.registerClass({
         if (this._triggerTimeoutId)
             GLib.source_remove(this._triggerTimeoutId);
 
-        // In case the mouse move away from the dock area before hovering it, in such case the leave event
-        // would never be triggered and the dock would stay visible forever.
+        // In case the mouse move away from the dock area before hovering it,
+        // in such case the leave event would never be triggered and the dock
+        // would stay visible forever.
         this._triggerTimeoutId =  GLib.timeout_add(GLib.PRIORITY_DEFAULT, 250, () => {
             const [x, y, mods_] = global.get_pointer();
             let shouldHide = true;
@@ -1045,26 +1057,29 @@ const DockedDash = GObject.registerClass({
         // Remove existing barrier
         this._removeBarrier();
 
-        // The barrier needs to be removed in fullscreen with autohide disabled, otherwise the mouse can
-        // get trapped on monitor.
+        // The barrier needs to be removed in fullscreen with autohide disabled
+        // otherwise the mouse can get trapped on monitor.
         if (this._monitor.inFullscreen &&
             !DockManager.settings.autohideInFullscreen)
             return;
 
         // Manually reset pressure barrier
-        // This is necessary because we remove the pressure barrier when it is triggered to show the dock
+        // This is necessary because we remove the pressure barrier when it is
+        // triggered to show the dock
         if (this._pressureBarrier) {
             this._pressureBarrier._reset();
             this._pressureBarrier._isTriggered = false;
         }
 
         // Create new barrier
-        // The barrier extends to the whole workarea, minus 1 px to avoid conflicting with other active corners
+        // The barrier extends to the whole workarea, minus 1 px to avoid
+        // conflicting with other active corners
         // Note: dash in fixed position doesn't use pressure barrier.
         if (this._canUsePressure && this._autohideIsEnabled &&
             DockManager.settings.requirePressureToShow) {
             let x1, x2, y1, y2, direction;
-            const workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index);
+            const workArea = Main.layoutManager.getWorkAreaForMonitor(
+                this._monitor.index);
 
             if (this._position === St.Side.LEFT) {
                 x1 = this._monitor.x + 1;
@@ -1532,7 +1547,8 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
 
 /**
  * Isolate overview to open new windows for inactive apps
- * Note: the future implementaion is not fully contained here. Some bits are around in other methods of other classes.
+ * Note: the future implementaion is not fully contained here.
+ * Some bits are around in other methods of other classes.
  * This class just take care of enabling/disabling the option.
  */
 const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
@@ -1935,10 +1951,12 @@ var DockManager = class DashToDockDockManager {
     }
 
     _createDocks() {
-        // If there are no monitors (headless configurations, but it can also happen temporary while disconnecting
-        // and reconnecting monitors), just do nothing. When a monitor will be connected we we'll be notified and
-        // and thus create the docks. This prevents pointing trying to access monitors throughout the code, were we
-        // are assuming that at least the primary monitor is present.
+        // If there are no monitors (headless configurations, but it can also
+        // happen temporary while disconnecting and reconnecting monitors), just
+        // do nothing. When a monitor will be connected we we'll be notified and
+        // and thus create the docks. This prevents pointing trying to access
+        // monitors throughout the code, were we are assuming that at least the
+        // primary monitor is present.
         if (Main.layoutManager.monitors.length <= 0)
             return;
 
@@ -1956,7 +1974,9 @@ var DockManager = class DashToDockDockManager {
             // assume that the gsettings monitor numbering follows the old strategy.
             // This ensure the indexing in the settings and in the shell are matched,
             // i.e. that we start counting from the primaryMonitorIndex
-            this._preferredMonitorIndex = (Main.layoutManager.primaryIndex + this._preferredMonitorIndex) % Main.layoutManager.monitors.length;
+            this._preferredMonitorIndex =
+                (Main.layoutManager.primaryIndex + this._preferredMonitorIndex) %
+                Main.layoutManager.monitors.length;
         }
 
         // In case of multi-monitor, we consider the dock on the primary monitor
@@ -1977,7 +1997,8 @@ var DockManager = class DashToDockDockManager {
         this._allDocks.push(dock);
 
         // connect app icon into the view selector
-        dock.dash.showAppsButton.connect('notify::checked', this._onShowAppsButtonToggled.bind(this));
+        dock.dash.showAppsButton.connect('notify::checked',
+            this._onShowAppsButtonToggled.bind(this));
 
         // Make the necessary changes to Main.overview.dash
         this._prepareMainDash();
@@ -1993,7 +2014,8 @@ var DockManager = class DashToDockDockManager {
                 dock = new DockedDash({ monitorIndex: iMon });
                 this._allDocks.push(dock);
                 // connect app icon into the view selector
-                dock.dash.showAppsButton.connect('notify::checked', this._onShowAppsButtonToggled.bind(this));
+                dock.dash.showAppsButton.connect('notify::checked',
+                    this._onShowAppsButtonToggled.bind(this));
             }
         }
 
@@ -2347,8 +2369,10 @@ var DockManager = class DashToDockDockManager {
             });
 
         if (AppDisplay.BaseAppView?.prototype?._pageForCoords) {
-            // Ensure we handle Dnd events happening on the dock when we're dragging from AppDisplay
-            // Remove when merged https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2002
+            // Ensure we handle Dnd events happening on the dock when we're
+            // dragging from AppDisplay.
+            // Remove when merged
+            // https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2002
             this._methodInjections.addWithLabel(Labels.MAIN_DASH,
                 AppDisplay.BaseAppView.prototype,
                 '_pageForCoords', function (originalFunction, ...args) {
@@ -2615,7 +2639,8 @@ var IconAnimator = class DashToDockIconAnimator {
     }
 
     addAnimation(target, name) {
-        const targetDestroyId = target.connect('destroy', () => this.removeAnimation(target, name));
+        const targetDestroyId = target.connect('destroy',
+            () => this.removeAnimation(target, name));
         this._animations[name].push({ target, targetDestroyId });
         if (this._started && this._count === 0)
             this._timeline.start();
