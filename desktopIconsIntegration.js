@@ -57,7 +57,7 @@
 
 /* exported DesktopIconsUsableAreaClass */
 
-const GLib = imports.gi.GLib;
+const { GLib } = imports.gi;
 const Main = imports.ui.main;
 
 const ExtensionUtils = imports.misc.extensionUtils;

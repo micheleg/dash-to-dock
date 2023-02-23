@@ -2,13 +2,13 @@
 
 /* exported DockManager, IconAnimator */
 
-const Clutter = imports.gi.Clutter;
-const GLib = imports.gi.GLib;
-const Gio = imports.gi.Gio;
-const GObject = imports.gi.GObject;
-const Meta = imports.gi.Meta;
-const Shell = imports.gi.Shell;
-const St = imports.gi.St;
+const { Clutter } = imports.gi;
+const { GLib } = imports.gi;
+const { Gio } = imports.gi;
+const { GObject } = imports.gi;
+const { Meta } = imports.gi;
+const { Shell } = imports.gi;
+const { St } = imports.gi;
 
 const Main = imports.ui.main;
 const AppDisplay = imports.ui.appDisplay;
@@ -225,7 +225,7 @@ const DockedDash = GObject.registerClass({
         this._rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
 
         // Load settings
-        const settings = DockManager.settings;
+        const { settings } = DockManager;
         this._isHorizontal = (this._position === St.Side.TOP) || (this._position === St.Side.BOTTOM);
 
         // Temporary ignore hover events linked to autohide for whatever reason
@@ -516,7 +516,7 @@ const DockedDash = GObject.registerClass({
     }
 
     _bindSettingsChanges() {
-        const settings = DockManager.settings;
+        const { settings } = DockManager;
         this._signalsHandler.add([
             settings,
             'changed::scroll-action',
@@ -661,7 +661,7 @@ const DockedDash = GObject.registerClass({
      * This is call when visibility settings change
      */
     _updateVisibilityMode() {
-        const settings = DockManager.settings;
+        const { settings } = DockManager;
         if (DockManager.settings.dockFixed || DockManager.settings.manualhide) {
             this._autohideIsEnabled = false;
             this._intellihideIsEnabled = false;
@@ -702,7 +702,7 @@ const DockedDash = GObject.registerClass({
         if (Main.overview.visibleTarget)
             return;
 
-        const settings = DockManager.settings;
+        const { settings } = DockManager;
 
         if (DockManager.settings.dockFixed) {
             this._removeAnimations();
@@ -791,7 +791,7 @@ const DockedDash = GObject.registerClass({
     _hide() {
         // If no hiding animation is running or queued
         if ((this._dockState === State.SHOWN) || (this._dockState === State.SHOWING)) {
-            const settings = DockManager.settings;
+            const { settings } = DockManager;
             const delay = settings.hideDelay;
 
             if (this._dockState === State.SHOWING) {
@@ -947,9 +947,9 @@ const DockedDash = GObject.registerClass({
     }
 
     _updatePressureBarrier() {
-        const settings = DockManager.settings;
+        const { settings } = DockManager;
         this._canUsePressure = global.display.supports_extended_barriers();
-        const pressureThreshold = settings.pressureThreshold;
+        const { pressureThreshold } = settings;
 
         // Remove existing pressure barrier
         if (this._pressureBarrier) {
@@ -1465,7 +1465,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     }
 
     _optionalNumberOverlay() {
-        const settings = DockManager.settings;
+        const { settings } = DockManager;
         this._shortcutIsSet = false;
         // Enable extra shortcut if either 'overlay' or 'show-dock' are true
         if (settings.hotKeys &&
@@ -1488,7 +1488,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     }
 
     _checkHotkeysOptions() {
-        const settings = DockManager.settings;
+        const { settings } = DockManager;
 
         if (settings.hotKeys &&
            (settings.hotkeysOverlay || settings.hotkeysShowDock))
@@ -1553,7 +1553,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
  */
 const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
     constructor() {
-        const settings = DockManager.settings;
+        const { settings } = DockManager;
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._injectionsHandler = new Utils.InjectionsHandler();

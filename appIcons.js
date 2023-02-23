@@ -2,13 +2,13 @@
 
 /* exported DockShowAppsIcon, makeAppIcon, itemShowLabel, getInterestingWindows */
 
-const Clutter = imports.gi.Clutter;
-const Gio = imports.gi.Gio;
-const GLib = imports.gi.GLib;
-const GObject = imports.gi.GObject;
-const Meta = imports.gi.Meta;
-const Shell = imports.gi.Shell;
-const St = imports.gi.St;
+const { Clutter } = imports.gi;
+const { Gio } = imports.gi;
+const { GLib } = imports.gi;
+const { GObject } = imports.gi;
+const { Meta } = imports.gi;
+const { Shell } = imports.gi;
+const { St } = imports.gi;
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
@@ -220,7 +220,7 @@ var DockAbstractAppIcon = GObject.registerClass({
     }
 
     vfunc_scroll_event(scrollEvent) {
-        const settings = Docking.DockManager.settings;
+        const { settings } = Docking.DockManager;
         const isEnabled = settings.scrollAction === scrollAction.CYCLE_WINDOWS;
         if (!isEnabled)
             return Clutter.EVENT_PROPAGATE;
@@ -464,7 +464,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         // being used. We then define what buttonAction should be for this
         // event.
         let buttonAction = 0;
-        const settings = Docking.DockManager.settings;
+        const { settings } = Docking.DockManager;
         if (button && button === 2) {
             if (modifiers & Clutter.ModifierType.SHIFT_MASK)
                 buttonAction = settings.shiftMiddleClickAction;
@@ -1276,7 +1276,7 @@ function isWindowUrgent(w) {
  * @param monitorIndex
  */
 function getInterestingWindows(windows, monitorIndex) {
-    const settings = Docking.DockManager.settings;
+    const { settings } = Docking.DockManager;
 
     // When using workspace isolation, we filter out windows
     // that are neither in the current workspace nor marked urgent

@@ -7,11 +7,11 @@
 
 /* exported WindowPreviewMenu */
 
-const Clutter = imports.gi.Clutter;
-const GLib = imports.gi.GLib;
-const GObject = imports.gi.GObject;
-const Meta = imports.gi.Meta;
-const St = imports.gi.St;
+const { Clutter } = imports.gi;
+const { GLib } = imports.gi;
+const { GObject } = imports.gi;
+const { Meta } = imports.gi;
+const { St } = imports.gi;
 const Main = imports.ui.main;
 
 const BoxPointer = imports.ui.boxpointer;

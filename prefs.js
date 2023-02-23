@@ -5,11 +5,11 @@
 imports.gi.versions.Gtk = '4.0';
 imports.gi.versions.Gdk = '4.0';
 
-const Gio = imports.gi.Gio;
-const GLib = imports.gi.GLib;
-const GObject = imports.gi.GObject;
-const Gtk = imports.gi.Gtk;
-const Gdk = imports.gi.Gdk;
+const { Gio } = imports.gi;
+const { GLib } = imports.gi;
+const { GObject } = imports.gi;
+const { Gtk } = imports.gi;
+const { Gdk } = imports.gi;
 const Signals = imports.signals;
 
 // Use __ () and N__() for the extension gettext domain, and reuse
@@ -672,7 +672,7 @@ var Settings = GObject.registerClass({
         applicationButtonIsolationButton.connect(
             'notify::sensitive', check => {
                 if (check.sensitive) {
-                    check.label = check.label.split('\n')[0];
+                    [check.label] = check.label.split('\n');
                 } else {
                     check.label += `\n${
                         __('Managed by GNOME Multitasking\'s Application Switching setting')}`;
@@ -1164,7 +1164,7 @@ function init() {
  */
 function buildPrefsWidget() {
     const settings = new Settings();
-    const widget = settings.widget;
+    const { widget } = settings;
     return widget;
 }
 

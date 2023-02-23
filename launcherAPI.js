@@ -2,7 +2,7 @@
 
 /* exported LauncherEntryRemoteModel */
 
-const Gio = imports.gi.Gio;
+const { Gio } = imports.gi;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const DbusmenuUtils = Me.imports.dbusmenuUtils;
