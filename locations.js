@@ -923,6 +923,7 @@ function wrapWindowsBackedApp(shellApp) {
                 this.launch(timestamp, workspace, Shell.AppLaunchGpu.APP_PREF);
             } catch (e) {
                 logError(e);
+                this._setState(Shell.AppState.STOPPED);
                 global.notify_error(_('Failed to launch “%s”'.format(
                     this.get_name())), e.message);
             }
