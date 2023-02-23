@@ -14,6 +14,7 @@ overrides:
     rules:
       prefer-const: error
       prefer-destructuring: warn
+      guard-for-in: error
       max-len:
         - error
         - code: 110

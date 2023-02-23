@@ -758,10 +758,8 @@ var DockDash = GObject.registerClass({
         const newApps = [];
 
         const { showFavorites } = settings;
-        if (showFavorites) {
-            for (const id in favorites)
-                newApps.push(favorites[id]);
-        }
+        if (showFavorites)
+            newApps.push(...Object.values(favorites));
 
         if (settings.showRunning) {
             // We reorder the running apps so that they don't change position on the
