@@ -25,6 +25,7 @@ const FILE_MANAGER_DESKTOP_APP_ID = 'org.gnome.Nautilus.desktop';
 const ATTRIBUTE_METADATA_CUSTOM_ICON = 'metadata::custom-icon';
 const TRASH_URI = 'trash://';
 const UPDATE_TRASH_DELAY = 1000;
+const LAUNCH_HANDLER_MAX_WAIT = 500;
 
 const NautilusFileOperations2Interface = '<node>\
     <interface name="org.gnome.Nautilus.FileOperations2">\
@@ -37,8 +38,11 @@ const NautilusFileOperations2Interface = '<node>\
 
 const NautilusFileOperations2ProxyInterface = Gio.DBusProxy.makeProxyWrapper(NautilusFileOperations2Interface);
 
-if (imports.system.version >= 17101) {
-    Gio._promisify(Gio.File.prototype, 'query_info_async', 'query_info_finish');
+const GJS_SUPPORTS_FILE_IFACE_PROMISES = imports.system.version >= 17101;
+
+if (GJS_SUPPORTS_FILE_IFACE_PROMISES) {
+    Gio._promisify(Gio.File.prototype, 'query_info_async');
+    Gio._promisify(Gio.File.prototype, 'query_default_handler_async');
 }
 
 function makeNautilusFileOperationsProxy() {
@@ -295,12 +299,19 @@ var LocationAppInfo = GObject.registerClass({
         }
     }
 
-    _getHandlerApp() {
+    async _getHandlerAppAsync(cancellable) {
         if (!this.location)
             return null;
 
         try {
-            return this.location.query_default_handler(this.cancellable);
+            if (!GJS_SUPPORTS_FILE_IFACE_PROMISES) {
+                Gio._promisify(this.location.constructor.prototype,
+                    'query_default_handler_async',
+                    'query_default_handler_finish');
+            }
+
+            return await this.location.query_default_handler_async(
+                GLib.PRIORITY_DEFAULT, cancellable);
         } catch (e) {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
                 return getFileManagerApp()?.appInfo;
@@ -309,8 +320,66 @@ var LocationAppInfo = GObject.registerClass({
                 logError(e, 'Impossible to find an URI handler for %s'.format(
                     this.get_id()));
             }
-            return null;
+
+            throw e;
         }
+    }
+
+    _getHandlerApp(cancellable) {
+        if (this._handlerApp)
+            return this._handlerApp;
+
+        cancellable = cancellable ?? new Utils.CancellableChild(this.cancellable);
+
+        if (this._launchMaxWaitIds === undefined)
+            this._launchMaxWaitIds = new Set();
+
+        // GVfs providers could hang when querying the file informations, so we
+        // workaround this by using the async API in a sync way, but we need to
+        // use a timeout to avoid this to hang forever, better than hang the
+        // shell.
+        let handler, error, launchMaxWaitId;
+        Promise.race([
+            this._getHandlerAppAsync(cancellable),
+            new Promise((resolve, reject) => {
+                launchMaxWaitId = GLib.timeout_add(GLib.PRIORITY_DEFAULT,
+                    LAUNCH_HANDLER_MAX_WAIT, () => {
+                        this._launchMaxWaitIds.delete(launchMaxWaitId);
+                        launchMaxWaitId = 0;
+                        cancellable.cancel();
+                        reject(new GLib.Error(Gio.IOErrorEnum,
+                            Gio.IOErrorEnum.TIMED_OUT,
+                            `Searching for ${this.get_id()} handler took too long`));
+                        return GLib.SOURCE_REMOVE;
+                    });
+                this._launchMaxWaitIds.add(launchMaxWaitId);
+            }),
+        ]).then(h => (handler = h)).catch(e => (error = e));
+
+        while (handler === undefined && error === undefined)
+            GLib.MainContext.default().iteration(false);
+
+        if (launchMaxWaitId) {
+            GLib.source_remove(launchMaxWaitId);
+            this._launchMaxWaitIds.delete(launchMaxWaitId);
+        }
+
+        if (this._handlerApp && error?.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.TIMED_OUT))
+            return this._handlerApp;
+
+        if (error)
+            throw error;
+
+        if (handler)
+            this._handlerApp = handler;
+
+        return handler;
+    }
+
+    destroy() {
+        this._launchMaxWaitIds?.forEach(id => GLib.source_remove(id));
+        this._launchMaxWaitIds = null;
+        this._handlerApp = null;
     }
 });
 
@@ -534,8 +603,15 @@ class MountableVolumeAppInfo extends LocationAppInfo {
 
             return true;
         } catch (e) {
+            if (action === 'mount' &&
+                e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.ALREADY_MOUNTED))
+                return true;
+            else if (action === 'umount' &&
+                     e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
+                return true;
+
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.FAILED))
-                this._notifyActionError(action, e);
+                this._notifyActionError(action, e.message);
 
             if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
                 logError(e, 'Impossible to %s removable %s'.format(action,
@@ -879,6 +955,7 @@ function wrapWindowsBackedApp(shellApp) {
                     this.launch(timestamp, workspace, Shell.AppLaunchGpu.APP_PREF);
                 } catch (e) {
                     logError(e);
+                    this._setState(Shell.AppState.STOPPED);
                     global.notify_error(_("Failed to launch “%s”".format(
                         this.get_name())), e.message);
                 }
