@@ -402,10 +402,15 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
         Clutter.cairo_set_source_color(cr, this._borderColor);
 
         // draw for the bottom case:
-        cr.translate((this._width - (2 * n) * this._radius - (n - 1) * this._spacing) / 2, this._height - this._padding);
+        cr.translate(
+            (this._width - (2 * n) * this._radius - (n - 1) * this._spacing) / 2,
+            this._height - this._padding);
+
         for (let i = 0; i < n; i++) {
             cr.newSubPath();
-            cr.arc((2 * i + 1) * this._radius + i * this._spacing, -this._radius - this._borderWidth / 2, this._radius, 0, 2 * Math.PI);
+            cr.arc((2 * i + 1) * this._radius + i * this._spacing,
+                -this._radius - this._borderWidth / 2,
+                this._radius, 0, 2 * Math.PI);
         }
 
         cr.strokePreserve();
@@ -523,7 +528,10 @@ var RunningIndicatorSquares = class DashToDockRunningIndicatorSquares extends Ru
             cr.setLineWidth(this._borderWidth);
             Clutter.cairo_set_source_color(cr, this._borderColor);
 
-            cr.translate(Math.floor((this._width - this._number * size - (this._number - 1) * spacing) / 2), yOffset);
+            cr.translate(
+                Math.floor((this._width - this._number * size - (this._number - 1) * spacing) / 2),
+                yOffset);
+
             for (let i = 0; i < this._number; i++) {
                 cr.newSubPath();
                 cr.rectangle(i * size + i * spacing, 0, size, size);
@@ -549,7 +557,10 @@ var RunningIndicatorDashes = class DashToDockRunningIndicatorDashes extends Runn
             cr.setLineWidth(this._borderWidth);
             Clutter.cairo_set_source_color(cr, this._borderColor);
 
-            cr.translate(Math.floor((this._width - this._number * dashLength - (this._number - 1) * spacing) / 2), yOffset);
+            cr.translate(
+                Math.floor((this._width - this._number * dashLength - (this._number - 1) * spacing) / 2),
+                yOffset);
+
             for (let i = 0; i < this._number; i++) {
                 cr.newSubPath();
                 cr.rectangle(i * dashLength + i * spacing, 0, dashLength, size);
@@ -593,8 +604,10 @@ var RunningIndicatorMetro = class DashToDockRunningIndicatorMetro extends Runnin
                 cr.rectangle(0, 0, this._width, size);
                 cr.fill();
             } else {
-                const blackenedLength = (1 / 48) * this._width; // need to scale with the SVG for the stacked highlight
-                const darkenedLength = this._source.focused ? (2 / 48) * this._width : (10 / 48) * this._width;
+                // need to scale with the SVG for the stacked highlight
+                const blackenedLength = (1 / 48) * this._width;
+                const darkenedLength = this._source.focused
+                    ? (2 / 48) * this._width : (10 / 48) * this._width;
                 const blackenedColor = this._bodyColor.shade(.3);
                 const darkenedColor = this._bodyColor.shade(.7);
 
@@ -635,10 +648,14 @@ var RunningIndicatorBinary = class DashToDockRunningIndicatorBinary extends Runn
             for (let i = 0; i < binaryValue.length; i++) {
                 if (binaryValue[i] === '1') {
                     cr.newSubPath();
-                    cr.arc((2 * i + 1) * this._radius + i * spacing, -this._radius - this._borderWidth / 2, this._radius, 0, 2 * Math.PI);
+                    cr.arc((2 * i + 1) * this._radius + i * spacing,
+                        -this._radius - this._borderWidth / 2,
+                        this._radius, 0, 2 * Math.PI);
                 } else {
                     cr.newSubPath();
-                    cr.rectangle(i * size + i * spacing, -this._radius - this._borderWidth / 2 - size / 5, size, size / 3);
+                    cr.rectangle(i * size + i * spacing,
+                        -this._radius - this._borderWidth / 2 - size / 5,
+                        size, size / 3);
                 }
             }
             cr.strokePreserve();
@@ -817,7 +834,8 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         let fill = null;
         stroke.addColorStopRGBA(0.5, 0.5, 0.5, 0.5, 0.1);
         stroke.addColorStopRGBA(0.9, 0.8, 0.8, 0.8, 0.4);
-        Utils.drawRoundedLine(cr, x + lineWidth / 2.0, y + lineWidth / 2.0, width, height, true, true, stroke, fill);
+        Utils.drawRoundedLine(cr, x + lineWidth / 2.0,
+            y + lineWidth / 2.0, width, height, true, true, stroke, fill);
 
         // Draw the background
         x += lineWidth;
@@ -829,7 +847,8 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         fill = new Cairo.LinearGradient(0, y, 0, y + height);
         fill.addColorStopRGBA(0.4, 0.25, 0.25, 0.25, 1.0);
         fill.addColorStopRGBA(0.9, 0.35, 0.35, 0.35, 1.0);
-        Utils.drawRoundedLine(cr, x + lineWidth / 2.0, y + lineWidth / 2.0, width, height, true, true, stroke, fill);
+        Utils.drawRoundedLine(cr, x + lineWidth / 2.0,
+            y + lineWidth / 2.0, width, height, true, true, stroke, fill);
 
         // Draw the finished bar
         x += lineWidth;
@@ -842,13 +861,19 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         const bg = this._progressbar_background;
         const bd = this._progressbar_border;
 
-        stroke = Cairo.SolidPattern.createRGBA(bd.red / 255, bd.green / 255, bd.blue / 255, bd.alpha / 255);
-        fill = Cairo.SolidPattern.createRGBA(bg.red / 255, bg.green / 255, bg.blue / 255, bg.alpha / 255);
+        stroke = Cairo.SolidPattern.createRGBA(
+            bd.red / 255, bd.green / 255, bd.blue / 255, bd.alpha / 255);
+        fill = Cairo.SolidPattern.createRGBA(
+            bg.red / 255, bg.green / 255, bg.blue / 255, bg.alpha / 255);
 
-        if (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL)
-            Utils.drawRoundedLine(cr, x + lineWidth / 2.0 + width - finishedWidth, y + lineWidth / 2.0, finishedWidth, height, true, true, stroke, fill);
-        else
-            Utils.drawRoundedLine(cr, x + lineWidth / 2.0, y + lineWidth / 2.0, finishedWidth, height, true, true, stroke, fill);
+        if (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL) {
+            Utils.drawRoundedLine(cr,
+                x + lineWidth / 2.0 + width - finishedWidth, y + lineWidth / 2.0,
+                finishedWidth, height, true, true, stroke, fill);
+        } else {
+            Utils.drawRoundedLine(cr, x + lineWidth / 2.0, y + lineWidth / 2.0,
+                finishedWidth, height, true, true, stroke, fill);
+        }
 
         cr.$dispose();
     }

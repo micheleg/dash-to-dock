@@ -335,7 +335,9 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         if (Docking.DockManager.settings.customThemeShrink)
             this.add_style_class_name('shrink');
 
-        // Now we don't have to set PREVIEW_MAX_WIDTH and PREVIEW_MAX_HEIGHT as preview size - that made all kinds of windows either stretched or squished (aspect ratio problem)
+        // Now we don't have to set PREVIEW_MAX_WIDTH and PREVIEW_MAX_HEIGHT as
+        // preview size - that made all kinds of windows either stretched or
+        // squished (aspect ratio problem)
         this._cloneBin = new St.Bin();
 
         this._updateWindowPreviewSize();
@@ -355,7 +357,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this.closeButton.opacity = 0;
         this.closeButton.connect('clicked', () => this._closeWindow());
 
-        const overlayGroup = new Clutter.Actor({ layout_manager: new Clutter.BinLayout(), y_expand: true });
+        const overlayGroup = new Clutter.Actor({
+            layout_manager: new Clutter.BinLayout(),
+            y_expand: true,
+        });
 
         overlayGroup.add_actor(this._cloneBin);
         overlayGroup.add_actor(this.closeButton);

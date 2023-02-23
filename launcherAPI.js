@@ -51,8 +51,11 @@ var LauncherEntryRemoteModel = class DashToDockLauncherEntryRemoteModel {
 
     _lookupStackById(appId) {
         let sourceStack = this._entrySourceStacks.get(appId);
-        if (!sourceStack)
-            this._entrySourceStacks.set(appId, sourceStack = new PropertySourceStack(new LauncherEntry(), launcherEntryDefaults));
+        if (!sourceStack) {
+            sourceStack = new PropertySourceStack(new LauncherEntry(),
+                launcherEntryDefaults);
+            this._entrySourceStacks.set(appId, sourceStack);
+        }
 
         return sourceStack;
     }
@@ -118,7 +121,9 @@ var LauncherEntryRemoteModel = class DashToDockLauncherEntryRemoteModel {
         for (const name in properties) {
             if (name === 'quicklist' && Dbusmenu) {
                 const quicklistPath = properties[name].unpack();
-                if (quicklistPath && (!remote._quicklistMenuClient || remote._quicklistMenuClient.dbus_object !== quicklistPath)) {
+                if (quicklistPath &&
+                    (!remote._quicklistMenuClient ||
+                     remote._quicklistMenuClient.dbus_object !== quicklistPath)) {
                     remote.quicklist = null;
                     let menuClient = remote._quicklistMenuClient;
                     if (menuClient) {
@@ -127,7 +132,10 @@ var LauncherEntryRemoteModel = class DashToDockLauncherEntryRemoteModel {
                         // This property should not be enumerable
                         Object.defineProperty(remote, '_quicklistMenuClient', {
                             writable: true,
-                            value: menuClient = new Dbusmenu.Client({ dbus_name: senderName, dbus_object: quicklistPath }),
+                            value: menuClient = new Dbusmenu.Client({
+                                dbus_name: senderName,
+                                dbus_object: quicklistPath,
+                            }),
                         });
                     }
                     const handler = () => {

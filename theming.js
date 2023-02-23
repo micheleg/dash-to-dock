@@ -326,7 +326,8 @@ var Transparency = class DashToDockTransparency {
         this._panel = Main.panel;
         this._position = Utils.getPosition();
 
-        // All these properties are replaced with the ones in the .dummy-opaque and .dummy-transparent css classes
+        // All these properties are replaced with the ones in the .dummy-opaque
+        // and .dummy-transparent css classes
         this._backgroundColor = '0,0,0';
         this._transparentAlpha = '0.2';
         this._opaqueAlpha = '1';

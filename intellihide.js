@@ -267,10 +267,11 @@ var Intellihide = class DashToDockIntellihide {
 
                 // Consider half maximized windows side by side
                 // and windows which are alwayson top
-                if ((currentApp !== this._focusApp) && (currentApp !== this._topApp) &&
-                        !((focusWindow && focusWindow.maximized_vertically && !focusWindow.maximized_horizontally) &&
-                              (metaWin.maximized_vertically && !metaWin.maximized_horizontally) &&
-                              metaWin.get_monitor() === focusWindow.get_monitor()) &&
+                if (currentApp !== this._focusApp && currentApp !== this._topApp &&
+                    !((focusWindow && focusWindow.maximized_vertically &&
+                       !focusWindow.maximized_horizontally) &&
+                     (metaWin.maximized_vertically && !metaWin.maximized_horizontally) &&
+                     metaWin.get_monitor() === focusWindow.get_monitor()) &&
                         !metaWin.is_above())
                     return false;
             }

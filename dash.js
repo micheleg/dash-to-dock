@@ -367,7 +367,8 @@ var DockDash = GObject.registerClass({
                 this._dragPlaceholder.child.set_height(this.iconSize);
 
                 let pos = this._dragPlaceholderPos;
-                if (this._isHorizontal && (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL))
+                if (this._isHorizontal &&
+                    Clutter.get_default_text_direction() === Clutter.TextDirection.RTL)
                     pos = this._box.get_children() - 1 - pos;
 
                 if (pos !== this._dragPlaceholderPos) {
@@ -379,8 +380,8 @@ var DockDash = GObject.registerClass({
         }
 
         if (this._dragPlaceholder) {
-            // Ensure the next and previous icon are visible when moving the placeholder
-            // (I assume there's room for both of them)
+            // Ensure the next and previous icon are visible when moving the
+            // placeholder (we're assuming there's room for both of them)
             const children = this._box.get_children();
             if (this._dragPlaceholderPos > 0) {
                 ensureActorVisibleInScrollView(this._scrollView,

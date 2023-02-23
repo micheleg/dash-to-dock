@@ -13,3 +13,8 @@ overrides:
 
     rules:
       prefer-const: error
+      max-len:
+        - error
+        - code: 110
+          ignoreUrls: true
+          ignoreTemplateLiterals: true
