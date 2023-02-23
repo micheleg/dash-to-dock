@@ -2,24 +2,33 @@
 
 /* exported DockDash */
 
-const { Clutter } = imports.gi;
-const { Gio } = imports.gi;
-const { GLib } = imports.gi;
-const { GObject } = imports.gi;
-const { Shell } = imports.gi;
-const { St } = imports.gi;
+const {
+    Clutter,
+    Gio,
+    GLib,
+    GObject,
+    Shell,
+    St,
+} = imports.gi;
 
-const AppFavorites = imports.ui.appFavorites;
-const Dash = imports.ui.dash;
-const DND = imports.ui.dnd;
-const Main = imports.ui.main;
-const Util = imports.misc.util;
+const {
+    appFavorites: AppFavorites,
+    dash: Dash,
+    dnd: DND,
+    main: Main,
+} = imports.ui;
+
+const {
+    util: Util,
+} = imports.misc;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Docking = Me.imports.docking;
-const Utils = Me.imports.utils;
-const AppIcons = Me.imports.appIcons;
-const Theming = Me.imports.theming;
+const {
+    appIcons: AppIcons,
+    docking: Docking,
+    theming: Theming,
+    utils: Utils,
+} = Me.imports;
 
 const { DASH_ANIMATION_TIME } = Dash;
 const DASH_VISIBILITY_TIMEOUT = 3;

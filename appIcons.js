@@ -2,13 +2,15 @@
 
 /* exported DockShowAppsIcon, makeAppIcon, itemShowLabel, getInterestingWindows */
 
-const { Clutter } = imports.gi;
-const { Gio } = imports.gi;
-const { GLib } = imports.gi;
-const { GObject } = imports.gi;
-const { Meta } = imports.gi;
-const { Shell } = imports.gi;
-const { St } = imports.gi;
+const {
+    Clutter,
+    Gio,
+    GLib,
+    GObject,
+    Meta,
+    Shell,
+    St,
+} = imports.gi;
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
@@ -18,23 +20,30 @@ const N__ = e => e;
 
 const Config = imports.misc.config;
 
-const AppDisplay = imports.ui.appDisplay;
-const AppFavorites = imports.ui.appFavorites;
-const BoxPointer = imports.ui.boxpointer;
-const Dash = imports.ui.dash;
-const Main = imports.ui.main;
-const ParentalControlsManager = imports.misc.parentalControlsManager;
-const PopupMenu = imports.ui.popupMenu;
+const {
+    appDisplay: AppDisplay,
+    appFavorites: AppFavorites,
+    boxpointer: BoxPointer,
+    dash: Dash,
+    main: Main,
+    popupMenu: PopupMenu,
+} = imports.ui;
+
+const {
+    parentalControlsManager: ParentalControlsManager,
+} = imports.misc;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
-const Docking = Me.imports.docking;
-const Locations = Me.imports.locations;
-const Utils = Me.imports.utils;
-const WindowPreview = Me.imports.windowPreview;
-const AppIconIndicators = Me.imports.appIconIndicators;
-const DbusmenuUtils = Me.imports.dbusmenuUtils;
-const Theming = Me.imports.theming;
+const {
+    appIconIndicators: AppIconIndicators,
+    dbusmenuUtils: DbusmenuUtils,
+    docking: Docking,
+    locations: Locations,
+    theming: Theming,
+    utils: Utils,
+    windowPreview: WindowPreview,
+} = Me.imports;
 
 const tracker = Shell.WindowTracker.get_default();
 

@@ -2,17 +2,20 @@
 
 /* exported haveDBusMenu, makePopupMenuItem */
 
-const { Atk } = imports.gi;
-const { Clutter } = imports.gi;
-let Dbusmenu = null; /* Dynamically imported */
-const { Gio } = imports.gi;
-const { GLib } = imports.gi;
-const { St } = imports.gi;
+const {
+    Atk,
+    Clutter,
+    Gio,
+    GLib,
+    St,
+} = imports.gi;
 
-const PopupMenu = imports.ui.popupMenu;
+let Dbusmenu = null; /* Dynamically imported */
+
+const { popupMenu: PopupMenu } = imports.ui;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Utils = Me.imports.utils;
+const { utils: Utils } = Me.imports;
 
 // Dbusmenu features not (yet) supported:
 //

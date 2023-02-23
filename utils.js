@@ -4,19 +4,21 @@
             getWindowsByObjectPath, shellAppCompare, shellWindowsCompare,
             splitHandler, getMonitorManager, laterAdd, laterRemove */
 
-const Gi = imports._gi;
+const {
+    Clutter,
+    GLib,
+    Gio,
+    GObject,
+    Gtk,
+    Meta,
+    Shell,
+    St,
+} = imports.gi;
 
-const { Clutter } = imports.gi;
-const { GLib } = imports.gi;
-const { Gio } = imports.gi;
-const { GObject } = imports.gi;
-const { Gtk } = imports.gi;
-const { Meta } = imports.gi;
-const { Shell } = imports.gi;
-const { St } = imports.gi;
+const { _gi: Gi } = imports;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Docking = Me.imports.docking;
+const { docking: Docking } = Me.imports;
 
 var SignalsHandlerFlags = Object.freeze({
     NONE: 0,

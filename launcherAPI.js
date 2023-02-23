@@ -5,7 +5,7 @@
 const { Gio } = imports.gi;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const DbusmenuUtils = Me.imports.dbusmenuUtils;
+const { dbusmenuUtils: DbusmenuUtils } = Me.imports;
 
 const Dbusmenu = DbusmenuUtils.haveDBusMenu();
 

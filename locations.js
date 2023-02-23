@@ -3,13 +3,16 @@
 /* exported LocationAppInfo, Trash, wrapFileManagerApp,
             unWrapFileManagerApp, getStartingApps */
 
-const { Gio } = imports.gi;
-const { GLib } = imports.gi;
-const { GObject } = imports.gi;
-const { Shell } = imports.gi;
-const ShellMountOperation = imports.ui.shellMountOperation;
-const Signals = imports.signals;
-const { St } = imports.gi;
+const {
+    Gio,
+    GLib,
+    GObject,
+    Shell,
+    St,
+} = imports.gi;
+
+const { shellMountOperation: ShellMountOperation } = imports.ui;
+const { signals: Signals } = imports;
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()

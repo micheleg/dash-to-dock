@@ -1,17 +1,22 @@
 /* exported AppIconIndicator */
 
-const Cairo = imports.cairo;
-const { Clutter } = imports.gi;
-const { GdkPixbuf } = imports.gi;
-const { Gio } = imports.gi;
-const { GObject } = imports.gi;
-const Main = imports.ui.main;
-const { Pango } = imports.gi;
-const { St } = imports.gi;
+const { cairo: Cairo } = imports;
+const { main: Main } = imports.ui;
+
+const {
+    Clutter,
+    GdkPixbuf,
+    Gio,
+    GObject,
+    Pango,
+    St,
+} = imports.gi;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Docking = Me.imports.docking;
-const Utils = Me.imports.utils;
+const {
+    docking: Docking,
+    utils: Utils,
+} = Me.imports;
 
 const RunningIndicatorStyle = Object.freeze({
     DEFAULT: 0,
