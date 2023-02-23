@@ -3,9 +3,9 @@
 /* exported PositionStyleClass */
 
 const Signals = imports.signals;
-const Meta = imports.gi.Meta;
-const St = imports.gi.St;
-const Clutter = imports.gi.Clutter;
+const { Meta } = imports.gi;
+const { St } = imports.gi;
+const { Clutter } = imports.gi;
 
 const Main = imports.ui.main;
 
@@ -154,7 +154,7 @@ var ThemeManager = class DashToDockThemeManager {
         if (!backgroundColor)
             return;
 
-        const settings = Docking.DockManager.settings;
+        const { settings } = Docking.DockManager;
 
         if (settings.customBackgroundColor) {
             // When applying a custom color, we need to check the alpha value,
@@ -163,7 +163,7 @@ var ThemeManager = class DashToDockThemeManager {
             // the opacity will be set by the opaque/transparent styles anyway.
             let newAlpha = Math.round(backgroundColor.alpha / 2.55) / 100;
 
-            backgroundColor = settings.backgroundColor;
+            ({ backgroundColor } = settings);
             // backgroundColor is a string like rgb(0,0,0)
             const [ret, color] = Clutter.Color.from_string(backgroundColor);
             if (!ret) {
@@ -190,7 +190,7 @@ var ThemeManager = class DashToDockThemeManager {
     }
 
     _updateCustomStyleClasses() {
-        const settings = Docking.DockManager.settings;
+        const { settings } = Docking.DockManager;
 
         if (settings.applyCustomTheme)
             this._actor.add_style_class_name('dashtodock');
@@ -237,7 +237,7 @@ var ThemeManager = class DashToDockThemeManager {
         if (!this._dash._background.get_stage())
             return;
 
-        const settings = Docking.DockManager.settings;
+        const { settings } = Docking.DockManager;
 
         // Remove prior style edits
         this._dash._background.set_style(null);
@@ -545,7 +545,7 @@ var Transparency = class DashToDockTransparency {
 
         Main.uiGroup.remove_child(dummyObject);
 
-        const settings = Docking.DockManager.settings;
+        const { settings } = Docking.DockManager;
 
         if (settings.customizeAlphas) {
             this._opaqueAlpha = settings.maxAlpha;

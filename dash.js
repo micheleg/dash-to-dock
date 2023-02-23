@@ -2,12 +2,12 @@
 
 /* exported DockDash */
 
-const Clutter = imports.gi.Clutter;
-const Gio = imports.gi.Gio;
-const GLib = imports.gi.GLib;
-const GObject = imports.gi.GObject;
-const Shell = imports.gi.Shell;
-const St = imports.gi.St;
+const { Clutter } = imports.gi;
+const { Gio } = imports.gi;
+const { GLib } = imports.gi;
+const { GObject } = imports.gi;
+const { Shell } = imports.gi;
+const { St } = imports.gi;
 
 const AppFavorites = imports.ui.appFavorites;
 const Dash = imports.ui.dash;
@@ -21,7 +21,7 @@ const Utils = Me.imports.utils;
 const AppIcons = Me.imports.appIcons;
 const Theming = Me.imports.theming;
 
-const DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME;
+const { DASH_ANIMATION_TIME } = Dash;
 const DASH_VISIBILITY_TIMEOUT = 3;
 
 const Labels = Object.freeze({
@@ -676,7 +676,7 @@ var DockDash = GObject.registerClass({
         const scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         const iconSizes = this._availableIconSizes.map(s => s * scaleFactor);
 
-        let newIconSize = this._availableIconSizes[0];
+        let [newIconSize] = this._availableIconSizes;
         for (let i = 0; i < iconSizes.length; i++) {
             if (iconSizes[i] <= maxIconSize)
                 newIconSize = this._availableIconSizes[i];
@@ -691,7 +691,7 @@ var DockDash = GObject.registerClass({
 
         const scale = oldIconSize / newIconSize;
         for (let i = 0; i < iconChildren.length; i++) {
-            const icon = iconChildren[i].child._delegate.icon;
+            const { icon } = iconChildren[i].child._delegate;
 
             // Set the new size immediately, to keep the icons' sizes
             // in sync with this.iconSize
@@ -757,7 +757,7 @@ var DockDash = GObject.registerClass({
         // Apps supposed to be in the dash
         const newApps = [];
 
-        const showFavorites = settings.showFavorites;
+        const { showFavorites } = settings;
         if (showFavorites) {
             for (const id in favorites)
                 newApps.push(favorites[id]);
@@ -1080,7 +1080,7 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
     }
 
     const box = actor.get_allocation_box();
-    let y1 = box.y1, y2 = box.y2, x1 = box.x1, x2 = box.x2;
+    let { y1 } = box, { y2 } = box, { x1 } = box, { x2 } = box;
 
     let parent = actor.get_parent();
     while (parent !== scrollView) {

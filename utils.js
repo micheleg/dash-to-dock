@@ -6,14 +6,14 @@
 
 const Gi = imports._gi;
 
-const Clutter = imports.gi.Clutter;
-const GLib = imports.gi.GLib;
-const Gio = imports.gi.Gio;
-const GObject = imports.gi.GObject;
-const Gtk = imports.gi.Gtk;
-const Meta = imports.gi.Meta;
-const Shell = imports.gi.Shell;
-const St = imports.gi.St;
+const { Clutter } = imports.gi;
+const { GLib } = imports.gi;
+const { Gio } = imports.gi;
+const { GObject } = imports.gi;
+const { Gtk } = imports.gi;
+const { Meta } = imports.gi;
+const { Shell } = imports.gi;
+const { St } = imports.gi;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
@@ -234,11 +234,8 @@ var ColorUtils = class DashToDockColorUtils {
     // Accept either (h,s,v) independently or  {h:h, s:s, v:v} object.
     // Return {r:r, g:g, b:b} object.
     static HSVtoRGB(h, s, v) {
-        if (arguments.length === 1) {
-            s = h.s;
-            v = h.v;
-            h = h.h;
-        }
+        if (arguments.length === 1)
+            ({ s, v, h } = h);
 
         let r, g, b;
         const c = v * s;
@@ -285,11 +282,8 @@ var ColorUtils = class DashToDockColorUtils {
     // Accept either (r,g,b) independently or {r:r, g:g, b:b} object.
     // Return {h:h, s:s, v:v} object.
     static RGBtoHSV(r, g, b) {
-        if (arguments.length === 1) {
-            r = r.r;
-            g = r.g;
-            b = r.b;
-        }
+        if (arguments.length === 1)
+            ({ r, g, b } = r);
 
         let h, s;
 
@@ -394,7 +388,7 @@ var PropertyInjectionsHandler = class DashToDockPropertyInjectionsHandler extend
         if (!(name in instance))
             throw new Error(`Object ${instance} has no '${name}' property`);
 
-        const prototype = instance.constructor.prototype;
+        const { prototype } = instance.constructor;
         const originalPropertyDescriptor = Object.getOwnPropertyDescriptor(prototype, name) ??
             Object.getOwnPropertyDescriptor(instance, name);
 

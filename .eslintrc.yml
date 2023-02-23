@@ -13,6 +13,7 @@ overrides:
 
     rules:
       prefer-const: error
+      prefer-destructuring: warn
       max-len:
         - error
         - code: 110

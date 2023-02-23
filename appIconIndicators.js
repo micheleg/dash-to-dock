@@ -1,13 +1,13 @@
 /* exported AppIconIndicator */
 
 const Cairo = imports.cairo;
-const Clutter = imports.gi.Clutter;
-const GdkPixbuf = imports.gi.GdkPixbuf;
-const Gio = imports.gi.Gio;
-const GObject = imports.gi.GObject;
+const { Clutter } = imports.gi;
+const { GdkPixbuf } = imports.gi;
+const { Gio } = imports.gi;
+const { GObject } = imports.gi;
 const Main = imports.ui.main;
-const Pango = imports.gi.Pango;
-const St = imports.gi.St;
+const { Pango } = imports.gi;
+const { St } = imports.gi;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Docking = Me.imports.docking;
@@ -49,7 +49,7 @@ var AppIconIndicator = class DashToDockAppIconIndicator {
         if (settings.applyCustomTheme)
             runningIndicatorStyle = RunningIndicatorStyle.DOTS;
         else
-            runningIndicatorStyle = settings.runningIndicatorStyle;
+            ({ runningIndicatorStyle } = settings);
 
 
         switch (runningIndicatorStyle) {
@@ -344,7 +344,7 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
         this._borderWidth = themeNode.get_border_width(this._side);
         this._bodyColor = themeNode.get_background_color();
 
-        const settings = Docking.DockManager.settings;
+        const { settings } = Docking.DockManager;
         if (!settings.applyCustomTheme) {
             // Adjust for the backlit case
             if (settings.unityBacklitItems) {
@@ -718,7 +718,7 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         const fontDesc = themeContext.get_font();
         const defaultFontSize = fontDesc.get_size() / 1024;
         let fontSize = defaultFontSize * 0.9;
-        const iconSize = Main.overview.dash.iconSize;
+        const { iconSize } = Main.overview.dash;
         const defaultIconSize = Docking.DockManager.settings.get_default_value(
             'dash-max-icon-size').unpack();
 

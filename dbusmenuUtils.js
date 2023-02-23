@@ -2,12 +2,12 @@
 
 /* exported haveDBusMenu, makePopupMenuItem */
 
-const Atk = imports.gi.Atk;
-const Clutter = imports.gi.Clutter;
+const { Atk } = imports.gi;
+const { Clutter } = imports.gi;
 let Dbusmenu = null; /* Dynamically imported */
-const Gio = imports.gi.Gio;
-const GLib = imports.gi.GLib;
-const St = imports.gi.St;
+const { Gio } = imports.gi;
+const { GLib } = imports.gi;
+const { St } = imports.gi;
 
 const PopupMenu = imports.ui.popupMenu;
 
@@ -45,7 +45,7 @@ function haveDBusMenu() {
         return Dbusmenu;
 
     try {
-        Dbusmenu = imports.gi.Dbusmenu;
+        ({ Dbusmenu } = imports.gi);
         return Dbusmenu;
     } catch (e) {
         log(`Failed to import DBusMenu, quicklists are not avaialble: ${e}`);
