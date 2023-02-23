@@ -2614,8 +2614,7 @@ var IconAnimator = class DashToDockIconAnimator {
         St.Settings.get().disconnect(this._settingsChangedId);
         this._timeline.stop();
         this._timeline = null;
-        for (const name in this._animations) {
-            const pairs = this._animations[name];
+        for (const pairs of Object.values(this._animations)) {
             for (let i = 0, iMax = pairs.length; i < iMax; i++) {
                 const pair = pairs[i];
                 pair.target.disconnect(pair.targetDestroyId);

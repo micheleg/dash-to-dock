@@ -226,9 +226,9 @@ const LauncherEntry = class DashToDockLauncherEntry {
     }
 };
 
-for (const name in launcherEntryDefaults) {
+for (const [name, defaultValue] of Object.entries(launcherEntryDefaults)) {
     const jsName = name.replace(/-/g, '_');
-    LauncherEntry.prototype[jsName] = launcherEntryDefaults[name];
+    LauncherEntry.prototype[jsName] = defaultValue;
     if (jsName !== name) {
         Object.defineProperty(LauncherEntry.prototype, name, {
             get() {
