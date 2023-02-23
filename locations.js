@@ -14,15 +14,17 @@ const {
 const { shellMountOperation: ShellMountOperation } = imports.ui;
 const { signals: Signals } = imports;
 
+const Me = imports.misc.extensionUtils.getCurrentExtension();
+const {
+    docking: Docking,
+    utils: Utils,
+} = Me.imports;
+
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
 const Gettext = imports.gettext.domain('dashtodock');
 const __ = Gettext.gettext;
 const N__ = e => e;
-
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Docking = Me.imports.docking;
-const Utils = Me.imports.utils;
 
 const FALLBACK_REMOVABLE_MEDIA_ICON = 'drive-removable-media';
 const FALLBACK_TRASH_ICON = 'user-trash';
