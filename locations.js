@@ -32,6 +32,7 @@ const FILE_MANAGER_DESKTOP_APP_ID = 'org.gnome.Nautilus.desktop';
 const ATTRIBUTE_METADATA_CUSTOM_ICON = 'metadata::custom-icon';
 const TRASH_URI = 'trash://';
 const UPDATE_TRASH_DELAY = 1000;
+const MAX_LAUNCH_HANDLER_WAIT = 500;
 
 const NautilusFileOperations2Interface = '<node>\
     <interface name="org.gnome.Nautilus.FileOperations2">\
@@ -50,8 +51,10 @@ const Labels = Object.freeze({
     WINDOWS_CHANGED: Symbol('windows-changed'),
 });
 
-if (imports.system.version >= 17101)
-    Gio._promisify(Gio.File.prototype, 'query_info_async', 'query_info_finish');
+const GJS_SUPPORTS_FILE_IFACE_PROMISES = imports.system.version >= 17101;
+
+if (GJS_SUPPORTS_FILE_IFACE_PROMISES)
+    Gio._promisify(Gio.File.prototype, 'query_info_async');
 
 
 /**
@@ -260,10 +263,9 @@ var LocationAppInfo = GObject.registerClass({
 
         let info;
         try {
-            // This is should not be needed in newer Gjs (> GNOME 41)
-            if (imports.system.version < 17101) {
-                Gio._promisify(this.location.constructor.prototype, 'query_info_async',
-                    'query_info_finish');
+            if (!GJS_SUPPORTS_FILE_IFACE_PROMISES) {
+                Gio._promisify(this.location.constructor.prototype,
+                    'query_info_async', 'query_info_finish');
             }
             info = await this.location.query_info_async(
                 iconsQuery.join(','),
