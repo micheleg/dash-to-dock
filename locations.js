@@ -169,7 +169,7 @@ var LocationAppInfo = GObject.registerClass({
                 Gio.IOErrorEnum.NOT_SUPPORTED, 'Launching with files not supported');
         }
 
-        const handler = this._getHandlerApp();
+        const handler = this.getHandlerApp();
         if (handler)
             return handler.launch_uris([this.location.get_uri()], context);
 
@@ -226,7 +226,7 @@ var LocationAppInfo = GObject.registerClass({
     }
 
     vfunc_get_commandline() {
-        return this._getHandlerApp()?.get_commandline() ??
+        return this.getHandlerApp()?.get_commandline() ??
             this._getFallbackCommandLine();
     }
 
@@ -345,7 +345,7 @@ var LocationAppInfo = GObject.registerClass({
         }
     }
 
-    _getHandlerApp(cancellable) {
+    getHandlerApp(cancellable) {
         cancellable = cancellable ?? new Utils.CancellableChild(this.cancellable);
 
         // GVfs providers could hang when querying the file informations, so we
@@ -1036,8 +1036,28 @@ function makeLocationApp(params) {
     }));
 
     // FIXME: We need to add a new API to Nautilus to open new windows
-    shellApp._mi('can_open_new_window', () =>
-        shellApp.appInfo.get_commandline()?.split(' ').includes('--new-window'));
+    shellApp._mi('can_open_new_window', () => {
+        try {
+            const handlerApp = shellApp.appInfo.getHandlerApp();
+
+            if (handlerApp.has_key('SingleMainWindow'))
+                return !handlerApp.get_boolean('SingleMainWindow');
+
+            if (handlerApp.has_key('X-GNOME-SingleWindow'))
+                return !handlerApp.get_boolean('X-GNOME-SingleWindow');
+
+            if (handlerApp.get_commandline()?.split(' ').includes('--new-window'))
+                return true;
+
+            const [window] = shellApp.get_windows();
+            if (window && window.get_gtk_window_object_path())
+                return window.get_gtk_application_id() === null;
+
+            return true;
+        } catch (e) {
+            return false;
+        }
+    });
 
     shellApp._mi('open_new_window', function (_om, workspace) {
         const context = global.create_app_launch_context(0, workspace);
