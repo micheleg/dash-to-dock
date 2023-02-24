@@ -1,8 +1,75 @@
-gnome-shell-extension-ubuntu-dock (75ubuntu2) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (76ubuntu1) UNRELEASED; urgency=medium
 
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release 76
+  * windowPreviews, appIcons: set maximum width/height on menus taking scaling
+    in account.
+    Even if St.Theme is supposed to scale down all the css values, this
+    doesn't seem to happen for the menus max-width / height values and so
+    we may end up having too big menus to be visible. (LP: #1992980)
+  * appIcons, windowPreview: Use overlay-scrollbars for window previews.
+    Helps to have them properly aligned
+  * appIcons: do not set isHorizontal parameter on AppIcon when opening a menu.
+    It's not an object property, so no need to keep it changed here.
+  * windowPreview: Improve style of menu-items depending on dock positioning.
+    Sadly this is not just a style change, because apparently St is bugged
+    when it comes to handle the first/last child properties so if we'd just
+    use normal allocation we would have lost the special padding for those
+    elements causing unwanted behavior.
+    In this way, instead we preserve the style-defined sizes also for
+    first/last children.
+  * utils: Use nicer syntax for later and MonitorManager wrappers
+  * Add gnome-suggested eslint and auto-fix main issues.
+  * extension: Cleanup code to be conform to ESLint rules
+  * docking: Remove autohide trigger timeout on destruction
+  * windowPreview: Get scale size without using an utility function.
+    That's simple enough to be handled internally
+  * appIcons: Allow marking urgent applications when not running.
+    This may be supported when using remote launcher actions
+  * appIconIndicators: Do not load theme node for off-stage widgets.
+    These information are only available when a widget is on the stage
+  * locations: Notify error message to the user, not the error itself
+  * locations: Ignore errors when mounting a mounted device or umounting an
+    umounted one
+  * locations: Do not try to use the handler app twice to launch if not found.
+    We're already doing a check for handler app in vfunc_launch(), so
+    there's no need to go through the same via vfunc_get_commandline()
+  * locations: Check for gjs version just once
+  * locations: Do not return anything on open_new_window.
+  * locations: Mark the application as stopped if launching fails.
+  * locations: Use async API to get the handler APP for uri.
+    GVfs implementations of GFile could cause the shell to hang while querying
+    the file infos, making the whole UI to freeze, and such actions can't be
+    cancelled, even if that's running in external processes.
+    To avoid this to happen, we need to use the async API and limit its
+    execution time to handle failures gracefully.
+    In case we also cache the last valid handler applications so that in case
+    we can re-use it on timeouts. (LP: #1997264)
+  * locations: Use better logic to check if a new window can be opened.
+    Sadly we can't use the new-window action directly because it does not
+    support adding further arguments.
+  * locations: Handle undefined error gracefully
+  * eslint: disable some options that are not working in ubuntu's eslint
+
+  [ Daniel van Vugt ]
   * debian/control: Allow installing with gnome-shell 44.
 
- -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Wed, 22 Feb 2023 12:27:10 +0800
+  [ Sabri Ünal ]
+  * Update Turkish translation
+
+  [ Sundeep Mediratta ]
+  * Dont detect and track DING windows for intellihide
+  * Move constant to global, to prevent recurrent assignments
+  * intellihide: Optimize intellihide for handled windows.
+  * Fix Transparency for Gtk4 DING
+
+  [ Brendan Weibrecht ]
+  * Make urgent application icon dance toggleable
+
+  [ Robert Strauch ]
+  * docs: add dependency for gettext to build section
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 24 Feb 2023 03:13:05 +0100
 
 gnome-shell-extension-ubuntu-dock (75ubuntu1) lunar; urgency=medium
 
