@@ -23,3 +23,7 @@ overrides:
         - code: 110
           ignoreUrls: true
           ignoreTemplateLiterals: true
+
+      # Ubuntu's eslint is not as good as upstream one :(
+      camelcase: warn
+      no-unused-expressions: warn
