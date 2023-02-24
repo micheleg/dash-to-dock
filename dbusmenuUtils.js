@@ -1,16 +1,21 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const Atk = imports.gi.Atk;
-const Clutter = imports.gi.Clutter;
-let Dbusmenu = null; /* Dynamically imported */
-const Gio = imports.gi.Gio;
-const GLib = imports.gi.GLib;
-const St = imports.gi.St;
+/* exported haveDBusMenu, makePopupMenuItem */
 
-const PopupMenu = imports.ui.popupMenu;
+const {
+    Atk,
+    Clutter,
+    Gio,
+    GLib,
+    St,
+} = imports.gi;
+
+let Dbusmenu = null; /* Dynamically imported */
+
+const { popupMenu: PopupMenu } = imports.ui;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Utils = Me.imports.utils;
+const { utils: Utils } = Me.imports;
 
 // Dbusmenu features not (yet) supported:
 //
@@ -35,12 +40,15 @@ const Utils = Me.imports.utils;
 //     mapped to a popup menu. A shortcut key that only works once the popup
 //     menu is open and has key focus is possibly of marginal value.
 
+/**
+ *
+ */
 function haveDBusMenu() {
     if (Dbusmenu)
         return Dbusmenu;
 
     try {
-        Dbusmenu = imports.gi.Dbusmenu;
+        ({ Dbusmenu } = imports.gi);
         return Dbusmenu;
     } catch (e) {
         log(`Failed to import DBusMenu, quicklists are not avaialble: ${e}`);
@@ -49,6 +57,10 @@ function haveDBusMenu() {
 }
 
 
+/**
+ * @param dbusmenuItem
+ * @param deep
+ */
 function makePopupMenuItem(dbusmenuItem, deep) {
     // These are the only properties guaranteed to be available when the root
     // item is first announced. Other properties might be loaded already, but
@@ -59,7 +71,7 @@ function makePopupMenuItem(dbusmenuItem, deep) {
     const visible = dbusmenuItem.property_get_bool(Dbusmenu.MENUITEM_PROP_VISIBLE);
     const enabled = dbusmenuItem.property_get_bool(Dbusmenu.MENUITEM_PROP_ENABLED);
     const accessibleDesc = dbusmenuItem.property_get(Dbusmenu.MENUITEM_PROP_ACCESSIBLE_DESC);
-    //const childDisplay = dbusmenuItem.property_get(Dbusmenu.MENUITEM_PROP_CHILD_DISPLAY);
+    // const childDisplay = dbusmenuItem.property_get(Dbusmenu.MENUITEM_PROP_CHILD_DISPLAY);
 
     let item;
     const signalsHandler = new Utils.GlobalSignalsHandler();
@@ -74,9 +86,9 @@ function makePopupMenuItem(dbusmenuItem, deep) {
         // "above" earlier ones, so "above" here means "below" in terms of the
         // menu's vertical order.
         parentMenu.actor.set_child_above_sibling(newItem.actor, item.actor);
-        if (newItem.menu) {
+        if (newItem.menu)
             parentMenu.actor.set_child_above_sibling(newItem.menu.actor, newItem.actor);
-        }
+
         parentMenu.actor.remove_child(item.actor);
         item.destroy();
         item = null;
@@ -84,25 +96,25 @@ function makePopupMenuItem(dbusmenuItem, deep) {
 
     const updateDisposition = () => {
         const disposition = dbusmenuItem.property_get(Dbusmenu.MENUITEM_PROP_DISPOSITION);
-        let icon_name = null;
+        let iconName = null;
         switch (disposition) {
-            case Dbusmenu.MENUITEM_DISPOSITION_ALERT:
-            case Dbusmenu.MENUITEM_DISPOSITION_WARNING:
-                icon_name = 'dialog-warning-symbolic';
-                break;
-            case Dbusmenu.MENUITEM_DISPOSITION_INFORMATIVE:
-                icon_name = 'dialog-information-symbolic';
-                break;
+        case Dbusmenu.MENUITEM_DISPOSITION_ALERT:
+        case Dbusmenu.MENUITEM_DISPOSITION_WARNING:
+            iconName = 'dialog-warning-symbolic';
+            break;
+        case Dbusmenu.MENUITEM_DISPOSITION_INFORMATIVE:
+            iconName = 'dialog-information-symbolic';
+            break;
         }
-        if (icon_name) {
+        if (iconName) {
             item._dispositionIcon = new St.Icon({
-                icon_name,
+                icon_name: iconName,
                 style_class: 'popup-menu-icon',
                 y_align: Clutter.ActorAlign.CENTER,
                 y_expand: true,
             });
             let expander;
-            for (let child = item.label.get_next_sibling();; child = child.get_next_sibling()) {
+            for (let child = item.label.get_next_sibling(); ; child = child.get_next_sibling()) {
                 if (!child) {
                     expander = new St.Bin({
                         style_class: 'popup-menu-item-expander',
@@ -110,7 +122,8 @@ function makePopupMenuItem(dbusmenuItem, deep) {
                     });
                     item.actor.add_child(expander);
                     break;
-                } else if (child instanceof St.Widget && child.has_style_class_name('popup-menu-item-expander')) {
+                } else if (child instanceof St.Widget &&
+                           child.has_style_class_name('popup-menu-item-expander')) {
                     expander = child;
                     break;
                 }
@@ -123,29 +136,28 @@ function makePopupMenuItem(dbusmenuItem, deep) {
     };
 
     const updateIcon = () => {
-        if (!wantIcon) {
+        if (!wantIcon)
             return;
-        }
+
         const iconData = dbusmenuItem.property_get_byte_array(Dbusmenu.MENUITEM_PROP_ICON_DATA);
         const iconName = dbusmenuItem.property_get(Dbusmenu.MENUITEM_PROP_ICON_NAME);
-        if (iconName) {
+        if (iconName)
             item.icon.icon_name = iconName;
-        } else if (iconData.length) {
+        else if (iconData.length)
             item.icon.gicon = Gio.BytesIcon.new(iconData);
-        }
     };
 
     const updateOrnament = () => {
         const toggleType = dbusmenuItem.property_get(Dbusmenu.MENUITEM_PROP_TOGGLE_TYPE);
         switch (toggleType) {
-            case Dbusmenu.MENUITEM_TOGGLE_CHECK:
-                item.actor.accessible_role = Atk.Role.CHECK_MENU_ITEM;
-                break;
-            case Dbusmenu.MENUITEM_TOGGLE_RADIO:
-                item.actor.accessible_role = Atk.Role.RADIO_MENU_ITEM;
-                break;
-            default:
-                item.actor.accessible_role = Atk.Role.MENU_ITEM;
+        case Dbusmenu.MENUITEM_TOGGLE_CHECK:
+            item.actor.accessible_role = Atk.Role.CHECK_MENU_ITEM;
+            break;
+        case Dbusmenu.MENUITEM_TOGGLE_RADIO:
+            item.actor.accessible_role = Atk.Role.RADIO_MENU_ITEM;
+            break;
+        default:
+            item.actor.accessible_role = Atk.Role.MENU_ITEM;
         }
         let ornament = PopupMenu.Ornament.NONE;
         const state = dbusmenuItem.property_get_int(Dbusmenu.MENUITEM_PROP_TOGGLE_STATE);
@@ -159,11 +171,11 @@ function makePopupMenuItem(dbusmenuItem, deep) {
         } else {
             item.actor.remove_accessible_state(Atk.StateType.INDETERMINATE);
             if (state === Dbusmenu.MENUITEM_TOGGLE_STATE_CHECKED) {
-                if (toggleType === Dbusmenu.MENUITEM_TOGGLE_CHECK) {
+                if (toggleType === Dbusmenu.MENUITEM_TOGGLE_CHECK)
                     ornament = PopupMenu.Ornament.CHECK;
-                } else if (toggleType === Dbusmenu.MENUITEM_TOGGLE_RADIO) {
+                else if (toggleType === Dbusmenu.MENUITEM_TOGGLE_RADIO)
                     ornament = PopupMenu.Ornament.DOT;
-                }
+
                 item.actor.add_style_pseudo_class('checked');
             } else {
                 item.actor.remove_style_pseudo_class('checked');
@@ -172,36 +184,36 @@ function makePopupMenuItem(dbusmenuItem, deep) {
         }
     };
 
-    const onPropertyChanged = (dbusmenuItem, name, value) => {
+    const onPropertyChanged = (_, name, value) => {
         // `value` is null when a property is cleared, so handle those cases
         // with sensible defaults.
         switch (name) {
-            case Dbusmenu.MENUITEM_PROP_TYPE:
-                recreateItem();
-                break;
-            case Dbusmenu.MENUITEM_PROP_ENABLED:
-                item.setSensitive(value ? value.unpack() : false);
-                break;
-            case Dbusmenu.MENUITEM_PROP_LABEL:
-                item.label.text = value ? value.unpack() : '';
-                break;
-            case Dbusmenu.MENUITEM_PROP_VISIBLE:
-                item.actor.visible = value ? value.unpack() : false;
-                break;
-            case Dbusmenu.MENUITEM_PROP_DISPOSITION:
-                updateDisposition();
-                break;
-            case Dbusmenu.MENUITEM_PROP_ACCESSIBLE_DESC:
-                item.actor.get_accessible().accessible_description = value && value.unpack() || '';
-                break;
-            case Dbusmenu.MENUITEM_PROP_ICON_DATA:
-            case Dbusmenu.MENUITEM_PROP_ICON_NAME:
-                updateIcon();
-                break;
-            case Dbusmenu.MENUITEM_PROP_TOGGLE_TYPE:
-            case Dbusmenu.MENUITEM_PROP_TOGGLE_STATE:
-                updateOrnament();
-                break;
+        case Dbusmenu.MENUITEM_PROP_TYPE:
+            recreateItem();
+            break;
+        case Dbusmenu.MENUITEM_PROP_ENABLED:
+            item.setSensitive(value ? value.unpack() : false);
+            break;
+        case Dbusmenu.MENUITEM_PROP_LABEL:
+            item.label.text = value ? value.unpack() : '';
+            break;
+        case Dbusmenu.MENUITEM_PROP_VISIBLE:
+            item.actor.visible = value ? value.unpack() : false;
+            break;
+        case Dbusmenu.MENUITEM_PROP_DISPOSITION:
+            updateDisposition();
+            break;
+        case Dbusmenu.MENUITEM_PROP_ACCESSIBLE_DESC:
+            item.actor.get_accessible().accessible_description = value && value.unpack() || '';
+            break;
+        case Dbusmenu.MENUITEM_PROP_ICON_DATA:
+        case Dbusmenu.MENUITEM_PROP_ICON_NAME:
+            updateIcon();
+            break;
+        case Dbusmenu.MENUITEM_PROP_TOGGLE_TYPE:
+        case Dbusmenu.MENUITEM_PROP_TOGGLE_STATE:
+            updateOrnament();
+            break;
         }
     };
 
@@ -212,12 +224,14 @@ function makePopupMenuItem(dbusmenuItem, deep) {
         // Make a submenu.
         item = new PopupMenu.PopupSubMenuMenuItem(label, wantIcon);
         const updateChildren = () => {
-            const children = dbusmenuItem.get_children();
-            if (!children.length) {
-                return recreateItem();
+            const itemChildren = dbusmenuItem.get_children();
+            if (!itemChildren.length) {
+                recreateItem();
+                return;
             }
+
             item.menu.removeAll();
-            children.forEach(remoteChild =>
+            itemChildren.forEach(remoteChild =>
                 item.menu.addMenuItem(makePopupMenuItem(remoteChild, true)));
         };
         updateChildren();
@@ -225,7 +239,6 @@ function makePopupMenuItem(dbusmenuItem, deep) {
             [dbusmenuItem, Dbusmenu.MENUITEM_SIGNAL_CHILD_ADDED, updateChildren],
             [dbusmenuItem, Dbusmenu.MENUITEM_SIGNAL_CHILD_MOVED, updateChildren],
             [dbusmenuItem, Dbusmenu.MENUITEM_SIGNAL_CHILD_REMOVED, updateChildren]);
-
     } else {
         // Don't make a submenu.
         if (!deep) {
@@ -249,25 +262,25 @@ function makePopupMenuItem(dbusmenuItem, deep) {
     // Set common initial properties.
     item.actor.visible = visible;
     item.setSensitive(enabled);
-    if (accessibleDesc) {
+    if (accessibleDesc)
         item.actor.get_accessible().accessible_description = accessibleDesc;
-    }
+
     updateDisposition();
     updateIcon();
     updateOrnament();
 
     // Prevent an initial resize flicker.
-    if (wantIcon) {
+    if (wantIcon)
         item.icon.icon_size = 16;
-    }
+
 
     signalsHandler.add(dbusmenuItem, Dbusmenu.MENUITEM_SIGNAL_PROPERTY_CHANGED, onPropertyChanged);
 
     // Connections on item will be lost when item is disposed; there's no need
     // to add them to signalsHandler.
-    item.connect('activate', () => {
-        dbusmenuItem.handle_event(Dbusmenu.MENUITEM_EVENT_ACTIVATED, new GLib.Variant('i', 0), Math.floor(Date.now()/1000));
-    });
+    item.connect('activate', () =>
+        dbusmenuItem.handle_event(Dbusmenu.MENUITEM_EVENT_ACTIVATED,
+            new GLib.Variant('i', 0), Math.floor(Date.now() / 1000)));
     item.connect('destroy', () => signalsHandler.destroy());
 
     return item;

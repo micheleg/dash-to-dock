@@ -67,7 +67,8 @@ $dock_icons_distance: 4px;
 // horizontal space in vertical mode.
 @mixin set-internal-children-property($side, $property,
                                       $minor_dimension,
-                                      $major_dimension: $minor_dimension) {
+                                      $major_dimension: $minor_dimension,
+                                      $edges: 0) {
     @if $property != margin and $property != padding {
         @error "Property " + $property + " not supported!";
     }
@@ -75,18 +76,18 @@ $dock_icons_distance: 4px;
     @if is_horizontal($side) {
         #{$property}: $minor_dimension $major_dimension;
         &:ltr:first-child, &:rtl:last-child {
-            #{$property}-left: 0;
+            #{$property}-left: $edges;
         }
         &:ltr:last-child, &:rtl:first-child {
-            #{$property}-right: 0;
+            #{$property}-right: $edges;
         }
     } @else {
         #{$property}: $major_dimension $minor_dimension;
         &:first-child {
-            #{$property}-top: 0;
+            #{$property}-top: $edges;
         }
         &:last-child {
-            #{$property}-bottom: 0;
+            #{$property}-bottom: $edges;
         }
     }
 }
@@ -306,6 +307,11 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
             }
         }
     }
+
+    .dashtodock-app-well-preview-menu-item.#{$side} {
+        @include set-internal-children-property($side, padding,
+            0.5em, 0.5em, 1em);
+    }
 }
 
 #dashtodockContainer.top.shrink #dash .dash-background {
@@ -387,10 +393,6 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     height: auto;
     border-right-width: 1px;
     margin: 32px 0px;
-}
-
-.dashtodock-app-well-preview-menu-item {
-    padding: 1em 1em 0.5em 1em;
 }
 
 #dashtodockContainer .metro .overview-icon {

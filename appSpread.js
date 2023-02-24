@@ -8,7 +8,7 @@ const Workspace = imports.ui.workspace;
 const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Utils = Me.imports.utils;
+const { utils: Utils } = Me.imports;
 
 var AppSpread = class AppSpread {
     constructor() {
@@ -20,7 +20,8 @@ var AppSpread = class AppSpread {
         if (Main.overview.isDummy ||
             !Workspace?.Workspace?.prototype._isOverviewWindow ||
             !WorkspaceThumbnail?.WorkspaceThumbnail?.prototype._isOverviewWindow) {
-            log('Dash to dock: Unable to temporarily replace shell functions for app spread - using previews instead');
+            log('Dash to dock: Unable to temporarily replace shell functions ' +
+                'for app spread - using previews instead');
             this.supported = false;
             return;
         }
@@ -98,17 +99,21 @@ var AppSpread = class AppSpread {
             // Filter workspaces to only show current app windows
             Workspace.Workspace.prototype, '_isOverviewWindow',
             function (originalMethod, window) {
+                /* eslint-disable no-invalid-this */
                 const isOverviewWindow = originalMethod.call(this, window);
                 return isOverviewWindow && appSpread.windows.includes(window);
-            }
+                /* eslint-enable no-invalid-this */
+            },
         ],
         [
             // Filter thumbnails to only show current app windows
             WorkspaceThumbnail.WorkspaceThumbnail.prototype, '_isOverviewWindow',
             function (originalMethod, windowActor) {
+                /* eslint-disable no-invalid-this */
                 const isOverviewWindow = originalMethod.call(this, windowActor);
                 return isOverviewWindow && appSpread.windows.includes(windowActor.metaWindow);
-            }
+                /* eslint-enable no-invalid-this */
+            },
         ]);
 
         const activitiesButton = Main.panel.statusArea?.activities;
@@ -123,25 +128,25 @@ var AppSpread = class AppSpread {
                 activitiesButton.constructor.prototype,
                 'event',
                 function (event) {
-                    if (event.type() == Clutter.EventType.TOUCH_END ||
-                        event.type() == Clutter.EventType.BUTTON_RELEASE) {
+                    if (event.type() === Clutter.EventType.TOUCH_END ||
+                        event.type() === Clutter.EventType.BUTTON_RELEASE) {
                         if (Main.overview.shouldToggleByCornerOrButton())
                             appSpread._restoreDefaultOverview();
                     }
                     return Clutter.EVENT_PROPAGATE;
-                }
+                },
             ],
             [
                 activitiesButton.constructor.prototype,
                 'key_release_event',
                 function (keyEvent) {
                     const { keyval } = keyEvent;
-                    if (keyval == Clutter.KEY_Return || keyval == Clutter.KEY_space) {
+                    if (keyval === Clutter.KEY_Return || keyval === Clutter.KEY_space) {
                         if (Main.overview.shouldToggleByCornerOrButton())
                             appSpread._restoreDefaultOverview();
                     }
                     return Clutter.EVENT_PROPAGATE;
-                }
+                },
             ]);
         }
 

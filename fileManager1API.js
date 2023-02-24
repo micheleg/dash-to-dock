@@ -1,11 +1,10 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const GLib = imports.gi.GLib;
-const Gio = imports.gi.Gio;
-const Signals = imports.signals;
+const { GLib, Gio } = imports.gi;
+const { signals: Signals } = imports;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Utils = Me.imports.utils;
+const { utils: Utils } = Me.imports;
 
 const FileManager1Iface = '<node><interface name="org.freedesktop.FileManager1">\
                                <property name="OpenWindowsWithLocations" type="a{sas}" access="read"/>\
@@ -25,8 +24,7 @@ const Labels = Object.freeze({
  * The property is a map from window identifiers to a list of locations open in
  * the window.
  */
-var FileManager1Client = class DashToDock_FileManager1Client {
-
+var FileManager1Client = class DashToDockFileManager1Client {
     constructor() {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._cancellable = new Gio.Cancellable();
@@ -34,24 +32,23 @@ var FileManager1Client = class DashToDock_FileManager1Client {
         this._windowsByPath = new Map();
         this._windowsByLocation = new Map();
         this._proxy = new FileManager1Proxy(Gio.DBus.session,
-                                            "org.freedesktop.FileManager1",
-                                            "/org/freedesktop/FileManager1",
-                                            (initable, error) => {
+            'org.freedesktop.FileManager1',
+            '/org/freedesktop/FileManager1',
+            (initable, error) => {
             // Use async construction to avoid blocking on errors.
-            if (error) {
-                if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
-                    global.log(error);
-                return;
-            } else {
-                this._updateWindows();
-                this._updateLocationMap();
-            }
-        }, this._cancellable);
+                if (error) {
+                    if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                        global.log(error);
+                } else {
+                    this._updateWindows();
+                    this._updateLocationMap();
+                }
+            }, this._cancellable);
 
         this._signalsHandler.add([
             this._proxy,
             'g-properties-changed',
-            this._onPropertyChanged.bind(this)
+            this._onPropertyChanged.bind(this),
         ], [
             // We must additionally listen for Screen events to know when to
             // rebuild our location map when the set of available windows changes.
@@ -81,13 +78,15 @@ var FileManager1Client = class DashToDock_FileManager1Client {
         this._cancellable.cancel();
         this._signalsHandler.destroy();
         this._windowsByLocation.clear();
-        this._windowsByPath.clear()
+        this._windowsByPath.clear();
         this._proxy = null;
     }
 
     /**
      * Return an array of windows that are showing a location or
      * sub-directories of that location.
+     *
+     * @param location
      */
     getWindows(location) {
         if (!location)
@@ -102,12 +101,11 @@ var FileManager1Client = class DashToDock_FileManager1Client {
         return [...new Set(windows)];
     }
 
-    _onPropertyChanged(proxy, changed, invalidated) {
-        let property = changed.unpack();
+    _onPropertyChanged(proxy, changed, _invalidated) {
+        const property = changed.unpack();
         if (property &&
-            ('OpenWindowsWithLocations' in property)) {
+            ('OpenWindowsWithLocations' in property))
             this._updateLocationMap();
-        }
     }
 
     _updateWindows() {
@@ -115,7 +113,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
         const oldPaths = this._windowsByPath.keys();
         this._windowsByPath = Utils.getWindowsByObjectPath();
 
-        if (oldSize != this._windowsByPath.size)
+        if (oldSize !== this._windowsByPath.size)
             return true;
 
         return [...oldPaths].some(path => !this._windowsByPath.has(path));
@@ -135,15 +133,14 @@ var FileManager1Client = class DashToDock_FileManager1Client {
     }
 
     _updateLocationMap() {
-        let properties = this._proxy.get_cached_property_names();
-        if (properties == null) {
+        const properties = this._proxy.get_cached_property_names();
+        if (!properties) {
             // Nothing to check yet.
             return;
         }
 
-        if (properties.includes('OpenWindowsWithLocations')) {
+        if (properties.includes('OpenWindowsWithLocations'))
             this._updateFromPaths();
-        }
     }
 
     _locationMapsEquals(mapA, mapB) {
@@ -172,7 +169,7 @@ var FileManager1Client = class DashToDock_FileManager1Client {
                 const win = this._windowsByPath.get(windowPath);
                 const windowGroup = win ? [win] : [];
 
-                win?.foreach_transient(w => (windowGroup.push(w) || true));
+                win?.foreach_transient(w => windowGroup.push(w) || true);
 
                 windowGroup.forEach(window => {
                     location += location.endsWith('/') ? '' : '/';
@@ -201,5 +198,5 @@ var FileManager1Client = class DashToDock_FileManager1Client {
             this.emit('windows-changed');
         }
     }
-}
+};
 Signals.addSignalMethods(FileManager1Client.prototype);

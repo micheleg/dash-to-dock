@@ -1,14 +1,15 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const Gio = imports.gi.Gio;
+/* exported LauncherEntryRemoteModel */
+
+const { Gio } = imports.gi;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const DbusmenuUtils = Me.imports.dbusmenuUtils;
+const { dbusmenuUtils: DbusmenuUtils } = Me.imports;
 
 const Dbusmenu = DbusmenuUtils.haveDBusMenu();
 
-var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
-
+var LauncherEntryRemoteModel = class DashToDockLauncherEntryRemoteModel {
     constructor() {
         this._entrySourceStacks = new Map();
         this._remoteMaps = new Map();
@@ -20,8 +21,8 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
                 null, // path
                 null, // arg0
                 Gio.DBusSignalFlags.NONE,
-                (connection, sender_name, object_path, interface_name, signal_name, parameters) =>
-                    this._onUpdate(sender_name, ...parameters.deep_unpack()));
+                (_connection, senderName, _objectPath, _interfaceName, _signalName, parameters) =>
+                    this._onUpdate(senderName, ...parameters.deep_unpack()));
 
         this._dbus_name_owner_changed_signal_id =
             Gio.DBus.session.signal_subscribe('org.freedesktop.DBus',  // sender
@@ -30,20 +31,20 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
                 '/org/freedesktop/DBus', // path
                 null,                    // arg0
                 Gio.DBusSignalFlags.NONE,
-                (connection, sender_name, object_path, interface_name, signal_name, parameters) =>
+                (connection, _senderName, _objectPath, _interfaceName, _signalName, parameters) =>
                     this._onDBusNameChange(...parameters.deep_unpack().slice(1)));
 
         this._acquireUnityDBus();
     }
 
     destroy() {
-        if (this._launcher_entry_dbus_signal_id) {
+        if (this._launcher_entry_dbus_signal_id)
             Gio.DBus.session.signal_unsubscribe(this._launcher_entry_dbus_signal_id);
-        }
 
-        if (this._dbus_name_owner_changed_signal_id) {
+
+        if (this._dbus_name_owner_changed_signal_id)
             Gio.DBus.session.signal_unsubscribe(this._dbus_name_owner_changed_signal_id);
-        }
+
 
         this._releaseUnityDBus();
     }
@@ -51,8 +52,11 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
     _lookupStackById(appId) {
         let sourceStack = this._entrySourceStacks.get(appId);
         if (!sourceStack) {
-            this._entrySourceStacks.set(appId, sourceStack = new PropertySourceStack(new LauncherEntry(), launcherEntryDefaults));
+            sourceStack = new PropertySourceStack(new LauncherEntry(),
+                launcherEntryDefaults);
+            this._entrySourceStacks.set(appId, sourceStack);
         }
+
         return sourceStack;
     }
 
@@ -64,7 +68,7 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
         if (!this._unity_bus_id) {
             this._unity_bus_id = Gio.DBus.session.own_name('com.canonical.Unity',
                 Gio.BusNameOwnerFlags.ALLOW_REPLACEMENT | Gio.BusNameOwnerFlags.REPLACE,
-                null, () => this._unity_bus_id = 0);
+                null, () => (this._unity_bus_id = 0));
         }
     }
 
@@ -76,13 +80,13 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
     }
 
     _onDBusNameChange(before, after) {
-        if (!before || !this._remoteMaps.size) {
+        if (!before || !this._remoteMaps.size)
             return;
-        }
+
         const remoteMap = this._remoteMaps.get(before);
-        if (!remoteMap) {
+        if (!remoteMap)
             return;
-        }
+
         this._remoteMaps.delete(before);
         if (after && !this._remoteMaps.has(after)) {
             this._remoteMaps.set(after, remoteMap);
@@ -90,35 +94,36 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
             for (const [appId, remote] of remoteMap) {
                 const sourceStack = this._entrySourceStacks.get(appId);
                 const changed = sourceStack.remove(remote);
-                if (changed) {
+                if (changed)
                     sourceStack.target._emitChangedEvents(changed);
-                }
             }
         }
     }
 
     _onUpdate(senderName, appUri, properties) {
-        if (!senderName) {
+        if (!senderName)
             return;
-        }
+
 
         const appId = appUri.replace(/(^\w+:|^)\/\//, '');
-        if (!appId) {
+        if (!appId)
             return;
-        }
+
 
         let remoteMap = this._remoteMaps.get(senderName);
-        if (!remoteMap) {
+        if (!remoteMap)
             this._remoteMaps.set(senderName, remoteMap = new Map());
-        }
+
         let remote = remoteMap.get(appId);
-        if (!remote) {
+        if (!remote)
             remoteMap.set(appId, remote = Object.assign({}, launcherEntryDefaults));
-        }
+
         for (const name in properties) {
             if (name === 'quicklist' && Dbusmenu) {
                 const quicklistPath = properties[name].unpack();
-                if (quicklistPath && (!remote._quicklistMenuClient || remote._quicklistMenuClient.dbus_object !== quicklistPath)) {
+                if (quicklistPath &&
+                    (!remote._quicklistMenuClient ||
+                     remote._quicklistMenuClient.dbus_object !== quicklistPath)) {
                     remote.quicklist = null;
                     let menuClient = remote._quicklistMenuClient;
                     if (menuClient) {
@@ -127,7 +132,10 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
                         // This property should not be enumerable
                         Object.defineProperty(remote, '_quicklistMenuClient', {
                             writable: true,
-                            value: menuClient = new Dbusmenu.Client({ dbus_name: senderName, dbus_object: quicklistPath }),
+                            value: menuClient = new Dbusmenu.Client({
+                                dbus_name: senderName,
+                                dbus_object: quicklistPath,
+                            }),
                         });
                     }
                     const handler = () => {
@@ -152,16 +160,16 @@ var LauncherEntryRemoteModel = class DashToDock_LauncherEntryRemoteModel {
     }
 };
 
-const launcherEntryDefaults = {
+const launcherEntryDefaults = Object.freeze({
     count: 0,
     progress: 0,
     urgent: false,
     quicklist: null,
     'count-visible': false,
     'progress-visible': false,
-};
+});
 
-const LauncherEntry = class DashToDock_LauncherEntry {
+const LauncherEntry = class DashToDockLauncherEntry {
     constructor() {
         this._connections = new Map();
         this._handlers = new Map();
@@ -169,17 +177,17 @@ const LauncherEntry = class DashToDock_LauncherEntry {
     }
 
     connect(eventNames, callback) {
-        if (typeof eventNames === 'string') {
+        if (typeof eventNames === 'string')
             eventNames = [eventNames];
-        }
+
         callback(this, this);
         const id = this._nextId++;
         const handler = { id, callback };
         eventNames.forEach(name => {
             let handlerList = this._handlers.get(name);
-            if (!handlerList) {
+            if (!handlerList)
                 this._handlers.set(name, handlerList = []);
-            }
+
             handlerList.push(handler);
         });
         this._connections.set(id, eventNames);
@@ -188,9 +196,9 @@ const LauncherEntry = class DashToDock_LauncherEntry {
 
     disconnect(id) {
         const eventNames = this._connections.get(id);
-        if (!eventNames) {
+        if (!eventNames)
             return;
-        }
+
         this._connections.delete(id);
         eventNames.forEach(name => {
             const handlerList = this._handlers.get(name);
@@ -208,20 +216,19 @@ const LauncherEntry = class DashToDock_LauncherEntry {
     _emitChangedEvents(propertyNames) {
         const handlers = new Set();
         propertyNames.forEach(name => {
-            const handlerList = this._handlers.get(name + '-changed');
+            const handlerList = this._handlers.get(`${name}-changed`);
             if (handlerList) {
-                for (let i = 0, iMax = handlerList.length; i < iMax; i++) {
+                for (let i = 0, iMax = handlerList.length; i < iMax; i++)
                     handlers.add(handlerList[i]);
-                }
             }
         });
         Array.from(handlers).sort((x, y) => x.id - y.id).forEach(handler => handler.callback(this, this));
     }
-}
+};
 
-for (const name in launcherEntryDefaults) {
+for (const [name, defaultValue] of Object.entries(launcherEntryDefaults)) {
     const jsName = name.replace(/-/g, '_');
-    LauncherEntry.prototype[jsName] = launcherEntryDefaults[name];
+    LauncherEntry.prototype[jsName] = defaultValue;
     if (jsName !== name) {
         Object.defineProperty(LauncherEntry.prototype, name, {
             get() {
@@ -234,7 +241,7 @@ for (const name in launcherEntryDefaults) {
     }
 }
 
-const PropertySourceStack = class DashToDock_PropertySourceStack {
+const PropertySourceStack = class DashToDockPropertySourceStack {
     constructor(target, bottom) {
         this.target = target;
         this._bottom = bottom;
@@ -266,6 +273,8 @@ const PropertySourceStack = class DashToDock_PropertySourceStack {
                 break;
             }
         }
+
+        return null;
     }
 
     _assignFrom(source) {
@@ -278,4 +287,4 @@ const PropertySourceStack = class DashToDock_PropertySourceStack {
         }
         return changedProperties;
     }
-}
+};

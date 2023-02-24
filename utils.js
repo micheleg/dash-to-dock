@@ -1,22 +1,29 @@
+/* exported GlobalSignalsHandler, InjectionsHandler, VFuncInjectionsHandler,
+            PropertyInjectionsHandler, SignalHandlersFlags, IconTheme,
+            CancellableChild, getPosition, drawRoundedLine,
+            getWindowsByObjectPath, shellAppCompare, shellWindowsCompare,
+            splitHandler, getMonitorManager, laterAdd, laterRemove */
 
-const Gi = imports._gi;
+const {
+    Clutter,
+    GLib,
+    Gio,
+    GObject,
+    Gtk,
+    Meta,
+    Shell,
+    St,
+} = imports.gi;
 
-const Clutter = imports.gi.Clutter;
-const GLib = imports.gi.GLib;
-const Gio = imports.gi.Gio;
-const GObject = imports.gi.GObject;
-const Gtk = imports.gi.Gtk;
-const Meta = imports.gi.Meta;
-const Shell = imports.gi.Shell;
-const St = imports.gi.St;
+const { _gi: Gi } = imports;
 
 const Me = imports.misc.extensionUtils.getCurrentExtension();
-const Docking = Me.imports.docking;
+const { docking: Docking } = Me.imports;
 
-var SignalsHandlerFlags = {
+var SignalsHandlerFlags = Object.freeze({
     NONE: 0,
-    CONNECT_AFTER: 1
-};
+    CONNECT_AFTER: 1,
+});
 
 const GENERIC_KEY = Symbol('generic');
 
@@ -24,14 +31,13 @@ const GENERIC_KEY = Symbol('generic');
  * Simplify global signals and function injections handling
  * abstract class
  */
-const BasicHandler = class DashToDock_BasicHandler {
-
+const BasicHandler = class DashToDockBasicHandler {
     static get genericKey() {
         return GENERIC_KEY;
     }
 
     constructor(parentObject) {
-        this._storage = new Object(null);
+        this._storage = Object.create(null);
 
         if (parentObject) {
             if (!(parentObject.connect instanceof Function))
@@ -81,14 +87,14 @@ const BasicHandler = class DashToDock_BasicHandler {
         if (argsArray.every(arg => !Array.isArray(arg)))
             argsArray = [argsArray];
 
-        if (this._storage[label] == undefined)
-            this._storage[label] = new Array();
+        if (this._storage[label] === undefined)
+            this._storage[label] = [];
 
         // Skip first element of the arguments
         for (const argArray of argsArray) {
             if (argArray.length < 3)
                 throw new Error('Unexpected number of arguments');
-            let item = this._storage[label];
+            const item = this._storage[label];
             try {
                 item.push(this._create(...argArray));
             } catch (e) {
@@ -114,6 +120,10 @@ const BasicHandler = class DashToDock_BasicHandler {
 
     /**
      * Create single element to be stored in the storage structure
+     *
+     * @param _object
+     * @param _element
+     * @param _callback
      */
     _create(_object, _element, _callback) {
         throw new GObject.NotImplementedError(`_create in ${this.constructor.name}`);
@@ -121,6 +131,8 @@ const BasicHandler = class DashToDock_BasicHandler {
 
     /**
      * Correctly delete single element
+     *
+     * @param _item
      */
     _remove(_item) {
         throw new GObject.NotImplementedError(`_remove in ${this.constructor.name}`);
@@ -128,6 +140,8 @@ const BasicHandler = class DashToDock_BasicHandler {
 
     /**
      * Block single element
+     *
+     * @param _item
      */
     _block(_item) {
         throw new GObject.NotImplementedError(`_block in ${this.constructor.name}`);
@@ -135,6 +149,8 @@ const BasicHandler = class DashToDock_BasicHandler {
 
     /**
      * Unblock single element
+     *
+     * @param _item
      */
     _unblock(_item) {
         throw new GObject.NotImplementedError(`_unblock in ${this.constructor.name}`);
@@ -144,22 +160,21 @@ const BasicHandler = class DashToDock_BasicHandler {
 /**
  * Manage global signals
  */
-var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHandler {
-
+var GlobalSignalsHandler = class DashToDockGlobalSignalHandler extends BasicHandler {
     _create(object, event, callback, flags = SignalsHandlerFlags.NONE) {
         if (!object)
             throw new Error('Impossible to connect to an invalid object');
 
-        let after = flags == SignalsHandlerFlags.CONNECT_AFTER;
-        let connector = after ? object.connect_after : object.connect;
+        const after = flags === SignalsHandlerFlags.CONNECT_AFTER;
+        const connector = after ? object.connect_after : object.connect;
 
         if (!connector) {
             throw new Error(`Requested to connect to signal '${event}', ` +
-                `but no implementation for 'connect${after ? '_after' : ''}' `+
+                `but no implementation for 'connect${after ? '_after' : ''}' ` +
                 `found in ${object.constructor.name}`);
         }
 
-        let id = connector.call(object, event, callback);
+        const id = connector.call(object, event, callback);
 
         if (event === 'destroy' && object === this._parentObject) {
             this._parentObject.disconnect(this._destroyId);
@@ -192,18 +207,17 @@ var GlobalSignalsHandler = class DashToDock_GlobalSignalHandler extends BasicHan
 
 /**
  * Color manipulation utilities
-  */
-var ColorUtils = class DashToDock_ColorUtils {
-
+ */
+var ColorUtils = class DashToDockColorUtils {
     // Darken or brigthen color by a fraction dlum
     // Each rgb value is modified by the same fraction.
     // Return "#rrggbb" string
     static ColorLuminance(r, g, b, dlum) {
         let rgbString = '#';
 
-        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(r*(1+dlum), 0), 255)), 2);
-        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(g*(1+dlum), 0), 255)), 2);
-        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(b*(1+dlum), 0), 255)), 2);
+        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(r * (1 + dlum), 0), 255)), 2);
+        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(g * (1 + dlum), 0), 255)), 2);
+        rgbString += ColorUtils._decimalToHex(Math.round(Math.min(Math.max(b * (1 + dlum), 0), 255)), 2);
 
         return rgbString;
     }
@@ -212,7 +226,7 @@ var ColorUtils = class DashToDock_ColorUtils {
     static _decimalToHex(d, padding) {
         let hex = d.toString(16);
         while (hex.length < padding)
-            hex = '0'+ hex;
+            hex = `0${hex}`;
         return hex;
     }
 
@@ -222,35 +236,45 @@ var ColorUtils = class DashToDock_ColorUtils {
     // Accept either (h,s,v) independently or  {h:h, s:s, v:v} object.
     // Return {r:r, g:g, b:b} object.
     static HSVtoRGB(h, s, v) {
-        if (arguments.length === 1) {
-            s = h.s;
-            v = h.v;
-            h = h.h;
+        if (arguments.length === 1)
+            ({ s, v, h } = h);
+
+        let r, g, b;
+        const c = v * s;
+        const h1 = h * 6;
+        const x = c * (1 - Math.abs(h1 % 2 - 1));
+        const m = v - c;
+
+        if (h1 <= 1) {
+            r = c + m;
+            g = x + m;
+            b = m;
+        } else if (h1 <= 2) {
+            r = x + m;
+            g = c + m;
+            b = m;
+        } else if (h1 <= 3) {
+            r = m;
+            g = c + m;
+            b = x + m;
+        } else if (h1 <= 4) {
+            r = m;
+            g = x + m;
+            b = c + m;
+        } else if (h1 <= 5) {
+            r = x + m;
+            g = m;
+            b = c + m;
+        } else {
+            r = c + m;
+            g = m;
+            b = x + m;
         }
-
-        let r,g,b;
-        let c = v*s;
-        let h1 = h*6;
-        let x = c*(1 - Math.abs(h1 % 2 - 1));
-        let m = v - c;
-
-        if (h1 <=1)
-            r = c + m, g = x + m, b = m;
-        else if (h1 <=2)
-            r = x + m, g = c + m, b = m;
-        else if (h1 <=3)
-            r = m, g = c + m, b = x + m;
-        else if (h1 <=4)
-            r = m, g = x + m, b = c + m;
-        else if (h1 <=5)
-            r = x + m, g = m, b = c + m;
-        else
-            r = c + m, g = m, b = x + m;
 
         return {
             r: Math.round(r * 255),
             g: Math.round(g * 255),
-            b: Math.round(b * 255)
+            b: Math.round(b * 255),
         };
     }
 
@@ -260,38 +284,35 @@ var ColorUtils = class DashToDock_ColorUtils {
     // Accept either (r,g,b) independently or {r:r, g:g, b:b} object.
     // Return {h:h, s:s, v:v} object.
     static RGBtoHSV(r, g, b) {
-        if (arguments.length === 1) {
-            r = r.r;
-            g = r.g;
-            b = r.b;
-        }
+        if (arguments.length === 1)
+            ({ r, g, b } = r);
 
-        let h,s,v;
+        let h, s;
 
-        let M = Math.max(r, g, b);
-        let m = Math.min(r, g, b);
-        let c = M - m;
+        const M = Math.max(r, g, b);
+        const m = Math.min(r, g, b);
+        const c = M - m;
 
-        if (c == 0)
+        if (c === 0)
             h = 0;
-        else if (M == r)
-            h = ((g-b)/c) % 6;
-        else if (M == g)
-            h = (b-r)/c + 2;
+        else if (M === r)
+            h = ((g - b) / c) % 6;
+        else if (M === g)
+            h = (b - r) / c + 2;
         else
-            h = (r-g)/c + 4;
+            h = (r - g) / c + 4;
 
-        h = h/6;
-        v = M/255;
+        h /= 6;
+        const v = M / 255;
         if (M !== 0)
-            s = c/M;
+            s = c / M;
         else
             s = 0;
 
         return {
-            h: h,
-            s: s,
-            v: v
+            h,
+            s,
+            v,
         };
     }
 };
@@ -300,15 +321,16 @@ var ColorUtils = class DashToDock_ColorUtils {
  * Manage function injection: both instances and prototype can be overridden
  * and restored
  */
-var InjectionsHandler = class DashToDock_InjectionsHandler extends BasicHandler {
-
+var InjectionsHandler = class DashToDockInjectionsHandler extends BasicHandler {
     _create(object, name, injectedFunction) {
-        let original = object[name];
+        const original = object[name];
 
         if (!(original instanceof Function))
             throw new Error(`Virtual function ${name}() is not available for ${object}`);
 
-        object[name] = function(...args) { return injectedFunction.call(this, original, ...args) };
+        object[name] = function (...args) {
+            return injectedFunction.call(this, original, ...args);
+        };
         return [object, name, original];
     }
 
@@ -322,8 +344,7 @@ var InjectionsHandler = class DashToDock_InjectionsHandler extends BasicHandler 
  * Manage vfunction injection: both instances and prototype can be overridden
  * and restored
  */
-var VFuncInjectionsHandler = class DashToDock_VFuncInjectionsHandler extends BasicHandler {
-
+var VFuncInjectionsHandler = class DashToDockVFuncInjectionsHandler extends BasicHandler {
     _create(prototype, name, injectedFunction) {
         const original = prototype[`vfunc_${name}`];
         if (!(original instanceof Function))
@@ -343,6 +364,7 @@ var VFuncInjectionsHandler = class DashToDock_VFuncInjectionsHandler extends Bas
         } catch {
             try {
                 this._replaceVFunc(prototype, name, function (...args) {
+                    // eslint-disable-next-line no-invalid-this
                     return originalVFunc.call(this, ...args);
                 });
             } catch (e) {
@@ -363,13 +385,12 @@ var VFuncInjectionsHandler = class DashToDock_VFuncInjectionsHandler extends Bas
  * Manage properties injection: both instances and prototype can be overridden
  * and restored
  */
-var PropertyInjectionsHandler = class DashToDock_PropertyInjectionsHandler extends BasicHandler {
-
+var PropertyInjectionsHandler = class DashToDockPropertyInjectionsHandler extends BasicHandler {
     _create(instance, name, injectedPropertyDescriptor) {
         if (!(name in instance))
             throw new Error(`Object ${instance} has no '${name}' property`);
 
-        const prototype = instance.constructor.prototype;
+        const { prototype } = instance.constructor;
         const originalPropertyDescriptor = Object.getOwnPropertyDescriptor(prototype, name) ??
             Object.getOwnPropertyDescriptor(instance, name);
 
@@ -395,48 +416,55 @@ var PropertyInjectionsHandler = class DashToDock_PropertyInjectionsHandler exten
  */
 function getPosition() {
     const position = Docking.DockManager.settings.dockPosition;
-    if (Clutter.get_default_text_direction() == Clutter.TextDirection.RTL) {
-        if (position == St.Side.LEFT)
+    if (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL) {
+        if (position === St.Side.LEFT)
             return St.Side.RIGHT;
-        else if (position == St.Side.RIGHT)
+        else if (position === St.Side.RIGHT)
             return St.Side.LEFT;
     }
     return position;
 }
 
-function getPreviewScale() {
-    return Docking.DockManager.settings.previewSizeScale;
-}
-
+/**
+ * @param cr
+ * @param x
+ * @param y
+ * @param width
+ * @param height
+ * @param isRoundLeft
+ * @param isRoundRight
+ * @param stroke
+ * @param fill
+ */
 function drawRoundedLine(cr, x, y, width, height, isRoundLeft, isRoundRight, stroke, fill) {
     if (height > width) {
         y += Math.floor((height - width) / 2.0);
         height = width;
     }
-    
+
     height = 2.0 * Math.floor(height / 2.0);
-    
+
     var leftRadius = isRoundLeft ? height / 2.0 : 0.0;
     var rightRadius = isRoundRight ? height / 2.0 : 0.0;
-    
+
     cr.moveTo(x + width - rightRadius, y);
     cr.lineTo(x + leftRadius, y);
     if (isRoundLeft)
-        cr.arcNegative(x + leftRadius, y + leftRadius, leftRadius, -Math.PI/2, Math.PI/2);
+        cr.arcNegative(x + leftRadius, y + leftRadius, leftRadius, -Math.PI / 2, Math.PI / 2);
     else
         cr.lineTo(x, y + height);
     cr.lineTo(x + width - rightRadius, y + height);
     if (isRoundRight)
-        cr.arcNegative(x + width - rightRadius, y + rightRadius, rightRadius, Math.PI/2, -Math.PI/2);
+        cr.arcNegative(x + width - rightRadius, y + rightRadius, rightRadius, Math.PI / 2, -Math.PI / 2);
     else
         cr.lineTo(x + width, y);
     cr.closePath();
-    
-    if (fill != null) {
+
+    if (fill) {
         cr.setSource(fill);
         cr.fillPreserve();
     }
-    if (stroke != null)
+    if (stroke)
         cr.setSource(stroke);
     cr.stroke();
 }
@@ -446,11 +474,13 @@ function drawRoundedLine(cr, x, y, width, height, isRoundLeft, isRoundRight, str
  * signal source parameter) to an array of n handlers that are each responsible
  * for receiving one of the n values and calling the original handler with the
  * most up-to-date arguments.
+ *
+ * @param handler
  */
 function splitHandler(handler) {
-    if (handler.length > 30) {
-        throw new Error("too many parameters");
-    }
+    if (handler.length > 30)
+        throw new Error('too many parameters');
+
     const count = handler.length - 1;
     let missingValueBits = (1 << count) - 1;
     const values = Array.from({ length: count });
@@ -459,9 +489,8 @@ function splitHandler(handler) {
         return (obj, value) => {
             values[i] = value;
             missingValueBits &= mask;
-            if (missingValueBits === 0) {
+            if (missingValueBits === 0)
                 handler(obj, ...values);
-            }
         };
     });
 }
@@ -484,7 +513,7 @@ var IconTheme = class DashToDockIconTheme {
         St.Settings.get().disconnect(this._changesId);
         this._iconTheme = null;
     }
-}
+};
 
 /**
  * Construct a map of gtk application window object paths to MetaWindows.
@@ -498,7 +527,7 @@ function getWindowsByObjectPath() {
     workspaces.forEach(ws => {
         ws.list_windows().forEach(w => {
             const path = w.get_gtk_window_object_path();
-            if (path != null)
+            if (path)
                 windowsByObjectPath.set(path, w);
         });
     });
@@ -506,7 +535,12 @@ function getWindowsByObjectPath() {
     return windowsByObjectPath;
 }
 
-// Re-implements shell_app_compare so that can be used to resort running apps
+/**
+ * Re-implements shell_app_compare so that can be used to resort running apps
+ *
+ * @param appA
+ * @param appB
+ */
 function shellAppCompare(appA, appB) {
     if (appA.state !== appB.state) {
         if (appA.state === Shell.AppState.RUNNING)
@@ -519,7 +553,7 @@ function shellAppCompare(appA, appB) {
 
     const isMinimized = windows => !windows.some(w => w.showing_on_its_workspace());
     const minimizedB = isMinimized(windowsB);
-    if (isMinimized(windowsA) != minimizedB) {
+    if (isMinimized(windowsA) !== minimizedB) {
         if (minimizedB)
             return -1;
         return 1;
@@ -539,7 +573,12 @@ function shellAppCompare(appA, appB) {
     return 0;
 }
 
-// Re-implements shell_app_compare_windows
+/**
+ * Re-implements shell_app_compare_windows
+ *
+ * @param winA
+ * @param winB
+ */
 function shellWindowsCompare(winA, winB) {
     const activeWorkspace = global.workspaceManager.get_active_workspace();
     const wsA = winA.get_workspace() === activeWorkspace;
@@ -616,23 +655,29 @@ class CancellableChild extends Gio.Cancellable {
     }
 });
 
+/**
+ *
+ */
 function getMonitorManager() {
-    if (global.backend.get_monitor_manager !== undefined)
-        return global.backend.get_monitor_manager();
-    else
-        return Meta.MonitorManager.get();
+    return global.backend.get_monitor_manager?.() ?? Meta.MonitorManager.get();
 }
 
-function laterAdd(when, func) {
-    if (global.compositor.get_laters !== undefined)
-        return global.compositor.get_laters().add(when, func);
-    else
-        return Meta.later_add(when, func);
+/**
+ * @param laterType
+ * @param callback
+ */
+function laterAdd(laterType, callback) {
+    return global.compositor?.get_laters?.().add(laterType, callback) ??
+        Meta.later_add(laterType, callback);
 }
 
-function laterRemove(later) {
-    if (global.compositor.get_laters !== undefined)
-        return global.compositor.get_laters().remove(later);
+/**
+ * @param id
+ */
+function laterRemove(id) {
+    if (global.compositor?.get_laters)
+        global.compositor?.get_laters().remove(id);
     else
-        Meta.later_remove(later);
+        Meta.later_remove(id);
 }
+

@@ -25,7 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*******************************************************************************
+/**
  * Integration class
  *
  * This class must be added to other extensions in order to integrate
@@ -55,13 +55,15 @@
  *
  *******************************************************************************/
 
-const GLib = imports.gi.GLib;
-const Main = imports.ui.main;
+/* exported DesktopIconsUsableAreaClass */
+
+const { GLib } = imports.gi;
+const { main: Main } = imports.ui;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
-const IDENTIFIER_UUID = "130cbc66-235c-4bd6-8571-98d2d8bba5e2";
+const IDENTIFIER_UUID = '130cbc66-235c-4bd6-8571-98d2d8bba5e2';
 
 var DesktopIconsUsableAreaClass = class {
     constructor() {
@@ -72,13 +74,16 @@ var DesktopIconsUsableAreaClass = class {
             if (!extension)
                 return;
 
-            // If an extension is being enabled and lacks the DesktopIconsUsableArea object, we can avoid launching a refresh
+            // If an extension is being enabled and lacks the
+            // DesktopIconsUsableArea object, we can avoid launching a refresh
             if (extension.state === ExtensionUtils.ExtensionState.ENABLED) {
                 this._sendMarginsToExtension(extension);
                 return;
             }
-            // if the extension is being disabled, we must do a full refresh, because if there were other extensions originally
-            // loaded after that extension, those extensions will be disabled and enabled again without notification
+            // if the extension is being disabled, we must do a full refresh,
+            // because if there were other extensions originally
+            // loaded after that extension, those extensions will be disabled
+            // and enabled again without notification
             this._changedMargins();
         });
     }
@@ -97,10 +102,10 @@ var DesktopIconsUsableAreaClass = class {
      */
     setMargins(monitor, top, bottom, left, right) {
         this._margins[monitor] = {
-            'top': top,
-            'bottom': bottom,
-            'left': left,
-            'right': right
+            top,
+            bottom,
+            left,
+            right,
         };
         this._changedMargins();
     }
@@ -131,10 +136,10 @@ var DesktopIconsUsableAreaClass = class {
     }
 
     _changedMargins() {
-        if (this._timedMarginsID) {
+        if (this._timedMarginsID)
             GLib.source_remove(this._timedMarginsID);
-        }
-        this._timedMarginsID = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, ()=> {
+
+        this._timedMarginsID = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, () => {
             this._sendMarginsToAll();
             this._timedMarginsID = 0;
             return GLib.SOURCE_REMOVE;
@@ -153,7 +158,7 @@ var DesktopIconsUsableAreaClass = class {
             return;
 
         const usableArea = extension?.stateObj?.DesktopIconsUsableArea;
-         if (usableArea?.uuid === IDENTIFIER_UUID)
+        if (usableArea?.uuid === IDENTIFIER_UUID)
             usableArea.setMarginsForExtension(Me.uuid, this._margins);
     }
-}
+};

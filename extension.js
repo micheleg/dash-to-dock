@@ -1,15 +1,17 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 const Main = imports.ui.main;
 
-const ExtensionUtils = imports.misc.extensionUtils;
+/* exported init, enable, disable */
+
+const { extensionUtils: ExtensionUtils } = imports.misc;
+
 const Me = ExtensionUtils.getCurrentExtension();
-const Docking = Me.imports.docking;
-const ExtensionSystem = imports.ui.extensionSystem;
+const { extensionSystem: ExtensionSystem } = imports.ui;
+const { docking: Docking } = Me.imports;
 
 // We declare this with var so it can be accessed by other extensions in
 // GNOME Shell 3.26+ (mozjs52+).
 var dockManager;
-
 
 let _extensionlistenerId;
 
@@ -17,6 +19,9 @@ function init() {
     ExtensionUtils.initTranslations('dashtodock');
 }
 
+/**
+ *
+ */
 function enable() {
     /*
      * Listen to enabled extension, if Dash to Dock is on the list or become active,
@@ -27,9 +32,12 @@ function enable() {
     conditionallyenabledock();
 }
 
+/**
+ *
+ */
 function disable() {
     try {
-        if (dockManager != null) {
+        if (dockManager) {
             dockManager.destroy();
         }
     } catch(e) {

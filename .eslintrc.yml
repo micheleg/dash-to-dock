@@ -1,28 +1,25 @@
-env:
-  es6: true
-  es2020: true
-parserOptions:
-  ecmaVersion: 2021
-
-globals:
-  global: readonly
-  _: readonly
-  C_: readonly
-  N_: readonly
-  ngettext: readonly
-  ARGV: readonly
-  Debugger: readonly
-  GIRepositoryGType: readonly
-  globalThis: readonly
-  imports: readonly
-  Intl: readonly
-  log: readonly
-  logError: readonly
-  print: readonly
-  printerr: readonly
+ignorePatterns:
+  - _build/**
 
 extends:
-  - "eslint:recommended"
+ - ./lint/eslintrc-gjs.yml
+ - ./lint/eslintrc-shell.yml
 
-rules:
-  no-unused-vars: warn
+overrides:
+  - files: ./*.js
+    globals:
+      global: readonly
+      _: readonly
+      C_: readonly
+      N_: readonly
+      ngettext: readonly
+
+    rules:
+      prefer-const: error
+      prefer-destructuring: warn
+      guard-for-in: error
+      max-len:
+        - error
+        - code: 110
+          ignoreUrls: true
+          ignoreTemplateLiterals: true
