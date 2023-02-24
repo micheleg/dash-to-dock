@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (76ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (76ubuntu1) lunar; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * New upstream release 76
@@ -69,7 +69,7 @@ gnome-shell-extension-ubuntu-dock (76ubuntu1) UNRELEASED; urgency=medium
   [ Robert Strauch ]
   * docs: add dependency for gettext to build section
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 24 Feb 2023 03:13:05 +0100
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 24 Feb 2023 03:42:49 +0100
 
 gnome-shell-extension-ubuntu-dock (75ubuntu1) lunar; urgency=medium
 
