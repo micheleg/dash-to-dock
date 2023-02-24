@@ -369,7 +369,7 @@ var LocationAppInfo = GObject.registerClass({
         while (handler === undefined && error === undefined)
             GLib.MainContext.default().iteration(false);
 
-        if (this._handlerApp && error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.TIMED_OUT))
+        if (this._handlerApp && error?.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.TIMED_OUT))
             return this._handlerApp;
 
         if (error)
