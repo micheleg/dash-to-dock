@@ -1,5 +1,5 @@
-ignorePatterns:
-  - _build/**
+#ignorePatterns:
+#  - _build/**
 
 extends:
  - ./lint/eslintrc-gjs.yml
