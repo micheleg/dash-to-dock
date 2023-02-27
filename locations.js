@@ -355,23 +355,23 @@ var LocationAppInfo = GObject.registerClass({
         let handler, error, launchMaxWaitId;
         Promise.race([
             this._getHandlerAppAsync(cancellable),
-            new Promise((resolve, reject) =>
-                (launchMaxWaitId = GLib.timeout_add(GLib.PRIORITY_DEFAULT,
+            new Promise((resolve, reject) => {
+                launchMaxWaitId = GLib.timeout_add(GLib.PRIORITY_DEFAULT,
                     LAUNCH_HANDLER_MAX_WAIT, () => {
+                        this._launchMaxWaitIds.delete(launchMaxWaitId);
                         launchMaxWaitId = 0;
                         cancellable.cancel();
                         reject(new GLib.Error(Gio.IOErrorEnum,
                             Gio.IOErrorEnum.TIMED_OUT,
                             `Searching for ${this.get_id()} handler took too long`));
                         return GLib.SOURCE_REMOVE;
-                    }))
-            ),
+                    });
+                this._launchMaxWaitIds.add(launchMaxWaitId);
+            }),
         ]).then(h => (handler = h)).catch(e => (error = e));
 
         if (this._launchMaxWaitIds === undefined)
             this._launchMaxWaitIds = new Set();
-
-        this._launchMaxWaitIds.add(launchMaxWaitId);
 
         while (handler === undefined && error === undefined)
             GLib.MainContext.default().iteration(false);
