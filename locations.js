@@ -352,22 +352,34 @@ var LocationAppInfo = GObject.registerClass({
         // workaround this by using the async API in a sync way, but we need to
         // use a timeout to avoid this to hang forever, better than hang the
         // shell.
-        let handler, error;
+        let handler, error, launchMaxWaitId;
         Promise.race([
             this._getHandlerAppAsync(cancellable),
             new Promise((resolve, reject) =>
-                GLib.timeout_add(GLib.PRIORITY_DEFAULT, LAUNCH_HANDLER_MAX_WAIT, () => {
-                    cancellable.cancel();
-                    reject(new GLib.Error(Gio.IOErrorEnum,
-                        Gio.IOErrorEnum.TIMED_OUT,
-                        `Searching for ${this.get_id()} handler took too long`));
-                    return GLib.SOURCE_REMOVE;
-                })
+                (launchMaxWaitId = GLib.timeout_add(GLib.PRIORITY_DEFAULT,
+                    LAUNCH_HANDLER_MAX_WAIT, () => {
+                        launchMaxWaitId = 0;
+                        cancellable.cancel();
+                        reject(new GLib.Error(Gio.IOErrorEnum,
+                            Gio.IOErrorEnum.TIMED_OUT,
+                            `Searching for ${this.get_id()} handler took too long`));
+                        return GLib.SOURCE_REMOVE;
+                    }))
             ),
         ]).then(h => (handler = h)).catch(e => (error = e));
 
+        if (this._launchMaxWaitIds === undefined)
+            this._launchMaxWaitIds = new Set();
+
+        this._launchMaxWaitIds.add(launchMaxWaitId);
+
         while (handler === undefined && error === undefined)
             GLib.MainContext.default().iteration(false);
+
+        if (launchMaxWaitId) {
+            GLib.source_remove(launchMaxWaitId);
+            this._launchMaxWaitIds.delete(launchMaxWaitId);
+        }
 
         if (this._handlerApp && error?.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.TIMED_OUT))
             return this._handlerApp;
@@ -382,6 +394,8 @@ var LocationAppInfo = GObject.registerClass({
     }
 
     destroy() {
+        this._launchMaxWaitIds.forEach(id => GLib.source_remove(id));
+        this._launchMaxWaitIds = null;
         this.location = null;
         this.icon = null;
         this.name = null;
