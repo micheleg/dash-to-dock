@@ -394,7 +394,7 @@ var LocationAppInfo = GObject.registerClass({
     }
 
     destroy() {
-        this._launchMaxWaitIds.forEach(id => GLib.source_remove(id));
+        this._launchMaxWaitIds?.forEach(id => GLib.source_remove(id));
         this._launchMaxWaitIds = null;
         this.location = null;
         this.icon = null;
