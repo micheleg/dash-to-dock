@@ -348,6 +348,9 @@ var LocationAppInfo = GObject.registerClass({
     getHandlerApp(cancellable) {
         cancellable = cancellable ?? new Utils.CancellableChild(this.cancellable);
 
+        if (this._launchMaxWaitIds === undefined)
+            this._launchMaxWaitIds = new Set();
+
         // GVfs providers could hang when querying the file informations, so we
         // workaround this by using the async API in a sync way, but we need to
         // use a timeout to avoid this to hang forever, better than hang the
@@ -369,9 +372,6 @@ var LocationAppInfo = GObject.registerClass({
                 this._launchMaxWaitIds.add(launchMaxWaitId);
             }),
         ]).then(h => (handler = h)).catch(e => (error = e));
-
-        if (this._launchMaxWaitIds === undefined)
-            this._launchMaxWaitIds = new Set();
 
         while (handler === undefined && error === undefined)
             GLib.MainContext.default().iteration(false);
