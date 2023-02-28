@@ -937,8 +937,10 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
         }
 
         // Get the pixel buffer from the icon theme
-        const [iconInfo] = themeLoader.lookup_icon(iconTexture.get_names(),
+        const [iconName] = iconTexture.get_names();
+        const iconInfo = themeLoader.lookup_icon(iconName,
             DOMINANT_COLOR_ICON_SIZE, 0);
+
         if (iconInfo)
             return iconInfo.load_icon();
         else
