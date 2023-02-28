@@ -352,15 +352,17 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         // for the moment.
         this._cloneBin.set_style('padding-bottom: 0.5em');
 
-        this.closeButton = new St.Button({ style_class: 'window-close',
+        const buttonLayout = Meta.prefs_get_button_layout();
+        this.closeButton = new St.Button({
+            style_class: 'window-close',
+            opacity: 0,
             x_expand: true,
-            y_expand: true });
+            y_expand: true,
+            x_align: buttonLayout.left_buttons.includes(Meta.ButtonFunction.CLOSE)
+                ? Clutter.ActorAlign.START : Clutter.ActorAlign.END,
+            y_align: Clutter.ActorAlign.START,
+        });
         this.closeButton.add_actor(new St.Icon({ icon_name: 'window-close-symbolic' }));
-        this.closeButton.set_x_align(Clutter.ActorAlign.END);
-        this.closeButton.set_y_align(Clutter.ActorAlign.START);
-
-
-        this.closeButton.opacity = 0;
         this.closeButton.connect('clicked', () => this._closeWindow());
 
         const overlayGroup = new Clutter.Actor({
