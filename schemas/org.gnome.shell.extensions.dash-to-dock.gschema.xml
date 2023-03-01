@@ -616,5 +616,10 @@
       <summary>Enable glossy effect</summary>
       <description>Toggle the glossy effect of the unity7 backlit feature.</description>
     </key>
+    <key name="hide-tooltip" type="b">
+      <default>false</default>
+      <summary>Hide application tooltip</summary>
+      <description>Hide tooltip when hovering application in the dash.</description>
+    </key>
   </schema>
 </schemalist>

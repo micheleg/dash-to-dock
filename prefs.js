@@ -735,6 +735,10 @@ var Settings = GObject.registerClass({
             this._builder.get_object('dance_urgent_applications_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('hide-tooltip',
+            this._builder.get_object('hide_tooltip_switch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-show-apps-button',
             this._builder.get_object('show_applications_button_switch'),
             'active',
