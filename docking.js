@@ -1,6 +1,6 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-/* exported DockManager, IconAnimator */
+/* exported DockManager, IconAnimator, State */
 
 const {
     Clutter,
@@ -46,7 +46,7 @@ const {
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 const ICON_ANIMATOR_DURATION = 3000;
 
-const State = Object.freeze({
+var State = Object.freeze({
     HIDDEN:  0,
     SHOWING: 1,
     SHOWN:   2,
