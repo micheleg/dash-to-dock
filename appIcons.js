@@ -189,10 +189,11 @@ var DockAbstractAppIcon = GObject.registerClass({
         this._progressOverlayArea = null;
         this._progress = 0;
 
-        const keys = ['apply-custom-theme',
-            'running-indicator-style'];
-
-        keys.forEach(key => {
+        [
+            'apply-custom-theme',
+            'running-indicator-style',
+            'show-icons-emblems',
+        ].forEach(key => {
             this._signalsHandler.add(
                 Docking.DockManager.settings,
                 `changed::${key}`, () => {
