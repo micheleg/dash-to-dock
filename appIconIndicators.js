@@ -691,13 +691,14 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         this._source._iconContainer.add_child(this._notificationBadgeBin);
         this.updateNotificationBadgeStyle();
 
-        const { remoteModel } = Docking.DockManager.getDefault();
+        const { remoteModel, notificationsMonitor } = Docking.DockManager.getDefault();
         const remoteEntry = remoteModel.lookupById(this._source.app.id);
+        this._remoteEntry = remoteEntry;
+
         this._signalsHandler.add([
             remoteEntry,
             ['count-changed', 'count-visible-changed'],
-            (sender, { count, count_visible: countVisible }) =>
-                this.setNotificationCount(countVisible ? count : 0),
+            () => this._updateNotificationsCount(),
         ], [
             remoteEntry,
             ['progress-changed', 'progress-visible-changed'],
@@ -707,6 +708,10 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
             remoteEntry,
             'urgent-changed',
             (sender, { urgent }) => this.setUrgent(urgent),
+        ], [
+            notificationsMonitor,
+            'changed',
+            () => this._updateNotificationsCount(),
         ], [
             St.ThemeContext.get_for_stage(global.stage),
             'changed',
@@ -720,8 +725,10 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
 
     destroy() {
         super.destroy();
+
         this._notificationBadgeBin.destroy();
         this._notificationBadgeBin = null;
+        this._remoteEntry = null;
     }
 
     updateNotificationBadgeStyle() {
@@ -766,6 +773,16 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
             const billions = count / 1e9;
             return `${billions.toFixed(1).toString()}B`;
         }
+    }
+
+    _updateNotificationsCount() {
+        const remoteCount = this._remoteEntry['count-visible']
+            ? this._remoteEntry.count ?? 0 : 0;
+        const { notificationsMonitor } = Docking.DockManager.getDefault();
+        const notificationsCount = notificationsMonitor.getAppNotificationsCount(
+            this._source.app.id);
+
+        this.setNotificationCount(remoteCount + notificationsCount);
     }
 
     setNotificationCount(count) {
