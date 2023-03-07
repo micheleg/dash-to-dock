@@ -52,7 +52,8 @@ var AppIconIndicator = class DashToDockAppIconIndicator {
         else
             ({ runningIndicatorStyle } = settings);
 
-        if (settings.showIconsEmblems) {
+        if (settings.showIconsEmblems &&
+            Docking.DockManager.getDefault().notificationsMonitor.enabled) {
             const unityIndicator = new UnityIndicator(source);
             this._indicators.push(unityIndicator);
         }
