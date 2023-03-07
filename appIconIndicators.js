@@ -42,10 +42,6 @@ var AppIconIndicator = class DashToDockAppIconIndicator {
     constructor(source) {
         this._indicators = [];
 
-        // Unity indicators always enabled for now
-        const unityIndicator = new UnityIndicator(source);
-        this._indicators.push(unityIndicator);
-
         // Choose the style for the running indicators
         let runningIndicator = null;
         let runningIndicatorStyle;
@@ -56,6 +52,11 @@ var AppIconIndicator = class DashToDockAppIconIndicator {
         else
             ({ runningIndicatorStyle } = settings);
 
+        if (settings.showIconsEmblems &&
+            Docking.DockManager.getDefault().notificationsMonitor.enabled) {
+            const unityIndicator = new UnityIndicator(source);
+            this._indicators.push(unityIndicator);
+        }
 
         switch (runningIndicatorStyle) {
         case RunningIndicatorStyle.DEFAULT:
@@ -691,13 +692,14 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         this._source._iconContainer.add_child(this._notificationBadgeBin);
         this.updateNotificationBadgeStyle();
 
-        const { remoteModel } = Docking.DockManager.getDefault();
+        const { remoteModel, notificationsMonitor } = Docking.DockManager.getDefault();
         const remoteEntry = remoteModel.lookupById(this._source.app.id);
+        this._remoteEntry = remoteEntry;
+
         this._signalsHandler.add([
             remoteEntry,
             ['count-changed', 'count-visible-changed'],
-            (sender, { count, count_visible: countVisible }) =>
-                this.setNotificationCount(countVisible ? count : 0),
+            () => this._updateNotificationsCount(),
         ], [
             remoteEntry,
             ['progress-changed', 'progress-visible-changed'],
@@ -708,6 +710,10 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
             'urgent-changed',
             (sender, { urgent }) => this.setUrgent(urgent),
         ], [
+            notificationsMonitor,
+            'changed',
+            () => this._updateNotificationsCount(),
+        ], [
             St.ThemeContext.get_for_stage(global.stage),
             'changed',
             this.updateNotificationBadgeStyle.bind(this),
@@ -716,6 +722,16 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
             'notify::size',
             this.updateNotificationBadgeStyle.bind(this),
         ]);
+    }
+
+    destroy() {
+        this._notificationBadgeBin.destroy();
+        this._notificationBadgeBin = null;
+        this._hideProgressOverlay();
+        this.setUrgent(false);
+        this._remoteEntry = null;
+
+        super.destroy();
     }
 
     updateNotificationBadgeStyle() {
@@ -762,6 +778,16 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         }
     }
 
+    _updateNotificationsCount() {
+        const remoteCount = this._remoteEntry['count-visible']
+            ? this._remoteEntry.count ?? 0 : 0;
+        const { notificationsMonitor } = Docking.DockManager.getDefault();
+        const notificationsCount = notificationsMonitor.getAppNotificationsCount(
+            this._source.app.id);
+
+        this.setNotificationCount(remoteCount + notificationsCount);
+    }
+
     setNotificationCount(count) {
         if (count > 0) {
             const text = this._notificationBadgeCountToText(count);
@@ -798,7 +824,7 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
     }
 
     _drawProgressOverlay(area) {
-        const scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+        const { scaleFactor } = St.ThemeContext.get_for_stage(global.stage);
         const [surfaceWidth, surfaceHeight] = area.get_surface_size();
         const cr = area.get_context();
 
@@ -937,8 +963,10 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
         }
 
         // Get the pixel buffer from the icon theme
-        const [iconInfo] = themeLoader.lookup_icon(iconTexture.get_names(),
+        const [iconName] = iconTexture.get_names();
+        const iconInfo = themeLoader.lookup_icon(iconName,
             DOMINANT_COLOR_ICON_SIZE, 0);
+
         if (iconInfo)
             return iconInfo.load_icon();
         else

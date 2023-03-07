@@ -16,6 +16,7 @@ EXTRA_MODULES = \
                 fileManager1API.js \
                 launcherAPI.js \
                 locations.js \
+                notificationsMonitor.js \
                 windowPreview.js \
                 intellihide.js \
                 prefs.js \

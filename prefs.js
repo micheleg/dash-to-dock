@@ -236,7 +236,7 @@ var Settings = GObject.registerClass({
         this._icon_size_timeout = 0;
         this._opacity_timeout = 0;
 
-        if (Config.PACKAGE_VERSION.split('.')[0] < 42) {
+        if (SHELL_VERSION < 42) {
             // Remove this when we won't support earlier versions
             this._builder.get_object('shrink_dash_label1').label =
                 __('Show favorite applications');
@@ -733,6 +733,14 @@ var Settings = GObject.registerClass({
             'notify::active', () => updateIsolateLocations()));
         this._settings.bind('dance-urgent-applications',
             this._builder.get_object('dance_urgent_applications_switch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('hide-tooltip',
+            this._builder.get_object('hide_tooltip_switch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-icons-emblems',
+            this._builder.get_object('show_icons_emblems_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-show-apps-button',

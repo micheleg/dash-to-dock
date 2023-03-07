@@ -616,5 +616,15 @@
       <summary>Enable glossy effect</summary>
       <description>Toggle the glossy effect of the unity7 backlit feature.</description>
     </key>
+    <key name="hide-tooltip" type="b">
+      <default>false</default>
+      <summary>Hide application tooltip</summary>
+      <description>Hide tooltip when hovering application in the dash.</description>
+    </key>
+    <key name="show-icons-emblems" type="b">
+      <default>true</default>
+      <summary>Show application icons emblems</summary>
+      <description>Show application icons emblems such as notification counters an progress bars.</description>
+    </key>
   </schema>
 </schemalist>

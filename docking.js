@@ -1,6 +1,6 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-/* exported DockManager, IconAnimator */
+/* exported DockManager, IconAnimator, State */
 
 const {
     Clutter,
@@ -39,6 +39,7 @@ const {
     intellihide: Intellihide,
     launcherAPI: LauncherAPI,
     locations: Locations,
+    notificationsMonitor: NotificationsMonitor,
     theming: Theming,
     utils: Utils,
 } = Me.imports;
@@ -46,7 +47,7 @@ const {
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 const ICON_ANIMATOR_DURATION = 3000;
 
-const State = Object.freeze({
+var State = Object.freeze({
     HIDDEN:  0,
     SHOWING: 1,
     SHOWN:   2,
@@ -1663,6 +1664,7 @@ var DockManager = class DashToDockDockManager {
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
         this._appSpread = new AppSpread.AppSpread();
+        this._notificationsMonitor = new NotificationsMonitor.NotificationsMonitor();
 
         if (this._discreteGpuAvailable === undefined) {
             const updateDiscreteGpuAvailable = () => {
@@ -1751,6 +1753,10 @@ var DockManager = class DashToDockDockManager {
 
     get appSpread() {
         return this._appSpread;
+    }
+
+    get notificationsMonitor() {
+        return this._notificationsMonitor;
     }
 
     getDockByMonitor(monitorIndex) {
@@ -2535,6 +2541,7 @@ var DockManager = class DashToDockDockManager {
             this._fm1Client.destroy();
             this._fm1Client = null;
         }
+        this._notificationsMonitor.destroy();
         this._appSpread.destroy();
         this._trash?.destroy();
         this._trash = null;

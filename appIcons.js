@@ -164,11 +164,14 @@ var DockAbstractAppIcon = GObject.registerClass({
                 this.remove_style_class_name('focused');
         });
 
+        const { notificationsMonitor } = Docking.DockManager.getDefault();
+
         this.connect('notify::urgent', () => {
             const icon = this.icon._iconBin;
             this._signalsHandler.removeWithLabel(Labels.URGENT_WINDOWS);
             if (this.urgent) {
-                if (Docking.DockManager.settings.danceUrgentApplications) {
+                if (Docking.DockManager.settings.danceUrgentApplications &&
+                    notificationsMonitor.enabled) {
                     icon.set_pivot_point(0.5, 0.5);
                     this.iconAnimator.addAnimation(icon, 'dance');
                 }
@@ -189,10 +192,11 @@ var DockAbstractAppIcon = GObject.registerClass({
         this._progressOverlayArea = null;
         this._progress = 0;
 
-        const keys = ['apply-custom-theme',
-            'running-indicator-style'];
-
-        keys.forEach(key => {
+        [
+            'apply-custom-theme',
+            'running-indicator-style',
+            'show-icons-emblems',
+        ].forEach(key => {
             this._signalsHandler.add(
                 Docking.DockManager.settings,
                 `changed::${key}`, () => {
@@ -200,6 +204,11 @@ var DockAbstractAppIcon = GObject.registerClass({
                     this._indicator = new AppIconIndicators.AppIconIndicator(this);
                 }
             );
+        });
+
+        this._signalsHandler.add(notificationsMonitor, 'state-changed', () => {
+            this._indicator.destroy();
+            this._indicator = new AppIconIndicators.AppIconIndicator(this);
         });
 
         this._updateState();
@@ -682,7 +691,8 @@ var DockAbstractAppIcon = GObject.registerClass({
 
     shouldShowTooltip() {
         return this.hover && (!this._menu || !this._menu.isOpen) &&
-                            (!this._previewMenu || !this._previewMenu.isOpen);
+                            (!this._previewMenu || !this._previewMenu.isOpen) &&
+                            !Docking.DockManager.settings.hideTooltip;
     }
 
     _windowPreviews() {
