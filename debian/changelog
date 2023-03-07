@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (79ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (79ubuntu1) lunar; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * locations: Keep track of launch wait timeouts
@@ -22,7 +22,7 @@ gnome-shell-extension-ubuntu-dock (79ubuntu1) UNRELEASED; urgency=medium
   [ SubZ69 ]
   * Hide application tooltip option
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 07 Mar 2023 06:14:59 +0100
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 07 Mar 2023 06:19:23 +0100
 
 gnome-shell-extension-ubuntu-dock (76ubuntu1) lunar; urgency=medium
 
