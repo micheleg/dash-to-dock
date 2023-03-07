@@ -798,7 +798,7 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
     }
 
     _drawProgressOverlay(area) {
-        const scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+        const { scaleFactor } = St.ThemeContext.get_for_stage(global.stage);
         const [surfaceWidth, surfaceHeight] = area.get_surface_size();
         const cr = area.get_context();
 
