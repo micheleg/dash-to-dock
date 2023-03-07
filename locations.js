@@ -346,6 +346,9 @@ var LocationAppInfo = GObject.registerClass({
     }
 
     getHandlerApp(cancellable) {
+        if (this._handlerApp)
+            return this._handlerApp;
+
         cancellable = cancellable ?? new Utils.CancellableChild(this.cancellable);
 
         if (this._launchMaxWaitIds === undefined)
