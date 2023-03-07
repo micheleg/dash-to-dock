@@ -724,11 +724,13 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
     }
 
     destroy() {
-        super.destroy();
-
         this._notificationBadgeBin.destroy();
         this._notificationBadgeBin = null;
+        this._hideProgressOverlay();
+        this.setUrgent(false);
         this._remoteEntry = null;
+
+        super.destroy();
     }
 
     updateNotificationBadgeStyle() {
