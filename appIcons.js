@@ -164,11 +164,14 @@ var DockAbstractAppIcon = GObject.registerClass({
                 this.remove_style_class_name('focused');
         });
 
+        const { notificationsMonitor } = Docking.DockManager.getDefault();
+
         this.connect('notify::urgent', () => {
             const icon = this.icon._iconBin;
             this._signalsHandler.removeWithLabel(Labels.URGENT_WINDOWS);
             if (this.urgent) {
-                if (Docking.DockManager.settings.danceUrgentApplications) {
+                if (Docking.DockManager.settings.danceUrgentApplications &&
+                    notificationsMonitor.enabled) {
                     icon.set_pivot_point(0.5, 0.5);
                     this.iconAnimator.addAnimation(icon, 'dance');
                 }
@@ -201,6 +204,11 @@ var DockAbstractAppIcon = GObject.registerClass({
                     this._indicator = new AppIconIndicators.AppIconIndicator(this);
                 }
             );
+        });
+
+        this._signalsHandler.add(notificationsMonitor, 'state-changed', () => {
+            this._indicator.destroy();
+            this._indicator = new AppIconIndicators.AppIconIndicator(this);
         });
 
         this._updateState();
