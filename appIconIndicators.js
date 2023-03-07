@@ -718,6 +718,12 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         ]);
     }
 
+    destroy() {
+        super.destroy();
+        this._notificationBadgeBin.destroy();
+        this._notificationBadgeBin = null;
+    }
+
     updateNotificationBadgeStyle() {
         const themeContext = St.ThemeContext.get_for_stage(global.stage);
         const fontDesc = themeContext.get_font();
