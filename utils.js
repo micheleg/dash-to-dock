@@ -497,6 +497,11 @@ function splitHandler(handler) {
 
 var IconTheme = class DashToDockIconTheme {
     constructor() {
+        if (St.IconTheme) {
+            this._iconTheme = new St.IconTheme();
+            return;
+        }
+
         const settings = St.Settings.get();
         this._iconTheme = new Gtk.IconTheme();
         this._iconTheme.set_custom_theme(settings.gtkIconTheme);
@@ -510,7 +515,9 @@ var IconTheme = class DashToDockIconTheme {
     }
 
     destroy() {
-        St.Settings.get().disconnect(this._changesId);
+        if (this._changesId)
+            St.Settings.get().disconnect(this._changesId);
+
         this._iconTheme = null;
     }
 };
