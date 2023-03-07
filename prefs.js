@@ -236,7 +236,7 @@ var Settings = GObject.registerClass({
         this._icon_size_timeout = 0;
         this._opacity_timeout = 0;
 
-        if (Config.PACKAGE_VERSION.split('.')[0] < 42) {
+        if (SHELL_VERSION < 42) {
             // Remove this when we won't support earlier versions
             this._builder.get_object('shrink_dash_label1').label =
                 __('Show favorite applications');
