@@ -1,3 +1,29 @@
+gnome-shell-extension-ubuntu-dock (79ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * locations: Keep track of launch wait timeouts
+  * locations: Ensure we always remove tracked launch timeout sources
+  * appIconIndicators: Unpack texture names, not the iconInfo
+  * locations: Create launchMaxWait in order
+  * windowPreview: Honor button layout settings for the window preview close
+  * docking: export Docking.State enum
+  * cleanup: get scaleFactor using deconstruction
+  * utils: Use St.IconTheme if available (required by GNOME 44)
+  * appIndicators: Destroy the notifications badge on destruction
+  * prefs: Use SHELL_VERSION not to depend on running shell
+  * prefs: Add ability to toggle visibility of icon emblems
+  * appIconIndicators: Add add unhanded notifications to icon count
+  * appIcons: Do not show icon emblems on do-not-disturb mode
+  * locations: Re-use cached handler app instead of querying it all the times
+
+  [ Davi Figueiredo ]
+  * fix: this._launchMaxWaitIds is undefined
+
+  [ SubZ69 ]
+  * Hide application tooltip option
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 07 Mar 2023 06:14:59 +0100
+
 gnome-shell-extension-ubuntu-dock (76ubuntu1) lunar; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
