@@ -1,21 +1,22 @@
 # Dash to Dock spanish translation.
 # This file is distributed under the same license as the Dash to Dock package.
 # Hugo Olabera <hugolabe@gmail.com>, 2015.
+# hasecilu <hasecilu@tuta.io>, 2023.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-01 17:07+0200\n"
-"PO-Revision-Date: 2022-09-01 17:50+0100\n"
-"Last-Translator: David Astillero Pérez <dastillero@gmail.com>\n"
+"PO-Revision-Date: 2023-03-13 14:23-0600\n"
+"Last-Translator: hasecilu <hasecilu@tuta.io>\n"
 "Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: prefs.js:232
 msgid "Show favorite applications"
@@ -23,14 +24,13 @@ msgstr "Mostrar aplicaciones favoritas"
 
 #. Translators: This will be followed by Display Name - Connector.
 #: prefs.js:402
-#, fuzzy
 msgid "Primary monitor: "
-msgstr "Monitor principal"
+msgstr "Monitor principal: "
 
 #. Translators: Followed by monitor index, Display Name - Connector.
 #: prefs.js:408
 msgid "Secondary monitor "
-msgstr "Monitor secundario"
+msgstr "Monitor secundario "
 
 #: prefs.js:451 Settings.ui.h:32
 msgid "Right"
@@ -132,12 +132,10 @@ msgid "Empty Trash"
 msgstr "Vaciar papelera"
 
 #: Settings.ui.h:1
-msgid ""
-"When set to minimize, double clicking minimizes all the windows of the "
-"application."
+msgid "When set to minimize, double clicking minimizes all the windows of the application."
 msgstr ""
-"Cuando se selecciona minimizar, la doble pulsación minimiza todas las "
-"ventanas de la aplicación."
+"Cuando se selecciona minimizar, la doble pulsación minimiza todas las ventanas de la "
+"aplicación."
 
 #: Settings.ui.h:2
 msgid "Shift+Click action"
@@ -176,18 +174,16 @@ msgid "Focus or show previews"
 msgstr "Focalizar o mostrar previsualizaciones"
 
 #: Settings.ui.h:11
-#, fuzzy
 msgid "Focus or app spread"
-msgstr "Focalizar o esparcir aplicaciones"
+msgstr "Focalizar o extender aplicaciones"
 
 #: Settings.ui.h:12
 msgid "Focus, minimize or show previews"
 msgstr "Focalizar, minimizar o mostrar previsualizaciones"
 
 #: Settings.ui.h:13
-#, fuzzy
 msgid "Focus, minimize or app spread"
-msgstr "Focalizar, minimizar o esparcir aplicaciones"
+msgstr "Focalizar, minimizar o extender aplicaciones"
 
 #: Settings.ui.h:14
 msgid "Quit"
@@ -195,7 +191,7 @@ msgstr "Cerrar"
 
 #: Settings.ui.h:15
 msgid "Behavior for Middle-Click."
-msgstr "Comportamiento del botón central"
+msgstr "Comportamiento del botón central."
 
 #: Settings.ui.h:16
 msgid "Middle-Click action"
@@ -203,7 +199,7 @@ msgstr "Acción del botón central"
 
 #: Settings.ui.h:17
 msgid "Behavior for Shift+Middle-Click."
-msgstr "Comportamiento de Mayús + botón central"
+msgstr "Comportamiento de Mayús + botón central."
 
 #: Settings.ui.h:18
 msgid "Shift+Middle-Click action"
@@ -259,11 +255,10 @@ msgstr "Superior"
 
 #: Settings.ui.h:33
 msgid ""
-"Hide the dock when it obstructs a window of the current application. More "
-"refined settings are available."
+"Hide the dock when it obstructs a window of the current application. More refined settings "
+"are available."
 msgstr ""
-"Ocultar el dock cuando cubre una ventana de la aplicación activa. Otras "
-"opciones disponibles."
+"Ocultar el dock cuando cubre una ventana de la aplicación activa. Otras opciones disponibles."
 
 #: Settings.ui.h:34
 msgid "Intelligent autohide"
@@ -287,7 +282,7 @@ msgstr "Tamaño fijo de los iconos: desplazarse para mostrar otros"
 
 #: Settings.ui.h:39
 msgid "Preview size scale"
-msgstr "Tamaño de la ventana de previsualización"
+msgstr "Escala de tamaño de previsualización"
 
 #: Settings.ui.h:40
 msgid "Position and size"
@@ -323,11 +318,10 @@ msgstr "Mantener la aplicación activa siempre visible en el dock"
 
 #: Settings.ui.h:48
 msgid ""
-"If disabled, these settings are accessible from gnome-tweak-tool or the "
-"extension website."
+"If disabled, these settings are accessible from gnome-tweak-tool or the extension website."
 msgstr ""
-"Si se desactiva, estas opciones estarán disponibles en Retoques de GNOME o "
-"el sitio web de la extensión."
+"Si se desactiva, estas opciones estarán disponibles en Retoques de GNOME o el sitio web de "
+"la extensión."
 
 #: Settings.ui.h:49
 msgid "Show <i>Applications</i> icon"
@@ -335,15 +329,15 @@ msgstr "Mostrar el icono <i>Aplicaciones</i>"
 
 #: Settings.ui.h:50
 msgid "Move the applications button at the beginning of the dock."
-msgstr "Mover el botón de aplicaciones al comienzo del dock"
+msgstr "Mover el botón de aplicaciones al comienzo del dock."
 
 #: Settings.ui.h:51
 msgid "Animate <i>Show Applications</i>."
-msgstr "Animar <i>Mostrar aplicaciones</i>"
+msgstr "Animar <i>Mostrar aplicaciones</i>."
 
 #: Settings.ui.h:52
 msgid "Show trash can"
-msgstr "Mostrar el icono Papelera"
+msgstr "Mostrar papelera"
 
 #: Settings.ui.h:53
 msgid "Show volumes and devices"
@@ -351,7 +345,7 @@ msgstr "Mostrar volúmenes y dispositivos"
 
 #: Settings.ui.h:54
 msgid "Only if mounted"
-msgstr "Sólo montados"
+msgstr "Sólo los montados"
 
 #: Settings.ui.h:55
 msgid "Include network volumes"
@@ -359,7 +353,7 @@ msgstr "Incluir volúmenes de red"
 
 #: Settings.ui.h:56
 msgid "Isolate volumes, devices and trash windows from file manager"
-msgstr "Abrir volúmenes, dispositivos y papelera en ventana aparte."
+msgstr "Aislar ventanas de volúmenes, dispositivos y papelera del administrador de archivos"
 
 #: Settings.ui.h:57
 msgid "Launchers"
@@ -367,11 +361,11 @@ msgstr "Lanzadores"
 
 #: Settings.ui.h:58
 msgid ""
-"Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
-"together with Shift and Ctrl."
+"Enable Super+(0-9) as shortcuts to activate apps. It can also be used together with Shift "
+"and Ctrl."
 msgstr ""
-"Activar Súper + (0-9) como atajos para activar aplicaciones. Pueden "
-"emplearse en conjunto con Mayús y Ctrl."
+"Activar Súper + (0-9) como atajos para activar aplicaciones. Pueden emplearse en conjunto "
+"con Mayús y Ctrl."
 
 #: Settings.ui.h:59
 msgid "Use keyboard shortcuts to activate apps"
@@ -379,7 +373,7 @@ msgstr "Usar atajos de teclado para activar aplicaciones"
 
 #: Settings.ui.h:60
 msgid "Behaviour when clicking on the icon of a running application."
-msgstr "Comportamiento al pulsar el icono de una aplicación en ejecución"
+msgstr "Comportamiento al pulsar el icono de una aplicación en ejecución."
 
 #: Settings.ui.h:61
 msgid "Click action"
@@ -403,7 +397,7 @@ msgstr "No hacer nada"
 
 #: Settings.ui.h:66
 msgid "Switch workspace"
-msgstr "Cambiar de espacio de trabajo."
+msgstr "Cambiar de espacio de trabajo"
 
 #: Settings.ui.h:67
 msgid "Behavior"
@@ -411,11 +405,11 @@ msgstr "Comportamiento"
 
 #: Settings.ui.h:68
 msgid ""
-"Few customizations meant to integrate the dock with the default GNOME theme. "
-"Alternatively, specific options can be enabled below."
+"Few customizations meant to integrate the dock with the default GNOME theme. Alternatively, "
+"specific options can be enabled below."
 msgstr ""
-"Utilizar el tema predeterminado de GNOME. Alternativamente, pueden elegirse "
-"ciertas opciones más abajo."
+"Utilizar el tema predeterminado de GNOME. Alternativamente, pueden elegirse ciertas opciones "
+"más abajo."
 
 #: Settings.ui.h:69
 msgid "Use built-in theme"
@@ -423,7 +417,7 @@ msgstr "Utilizar el tema incorporado"
 
 #: Settings.ui.h:70
 msgid "Save space reducing padding and border radius."
-msgstr "Reducir los márgenes para ganar espacio"
+msgstr "Reducir los márgenes para ganar espacio."
 
 #: Settings.ui.h:71
 msgid "Shrink the dash"
@@ -511,8 +505,7 @@ msgstr "versión: "
 
 #: Settings.ui.h:93
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr ""
-"Mueve el panel fuera de la vista de actividades trasformándolo en un dock"
+msgstr "Mueve el panel fuera de la vista de actividades trasformándolo en un dock"
 
 #: Settings.ui.h:94
 msgid "Created by"
@@ -525,13 +518,12 @@ msgstr "Sitio web"
 #: Settings.ui.h:96
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
-"See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0."
-"html\">GNU General Public License, version 2 or later</a> for details.</span>"
+"See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU General "
+"Public License, version 2 or later</a> for details.</span>"
 msgstr ""
 "<span size=\"small\">Este programa viene SIN NINGUNA GARANTÍA.\n"
-"Consulte la <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0."
-"html\">Licencia Pública General de GNU, versión 2 o posterior</a> para "
-"obtener más detalles.</span>"
+"Consulte la <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">Licencia "
+"Pública General de GNU, versión 2 o posterior</a> para obtener más detalles.</span>"
 
 #: Settings.ui.h:98
 msgid "About"
@@ -554,24 +546,17 @@ msgid "Number overlay"
 msgstr "Número sobrepuesto"
 
 #: Settings.ui.h:103
-msgid ""
-"Temporarily show the application numbers over the icons, corresponding to "
-"the shortcut."
-msgstr ""
-"Al usar atajos, mostrar momentáneamente el número de aplicación sobre los "
-"iconos."
+msgid "Temporarily show the application numbers over the icons, corresponding to the shortcut."
+msgstr "Al usar atajos, mostrar momentáneamente el número de aplicación sobre los iconos."
 
 #: Settings.ui.h:104
 msgid "Show the dock if it is hidden"
 msgstr "Mostrar el dock si está oculto"
 
 #: Settings.ui.h:105
-msgid ""
-"If using autohide, the dock will appear for a short time when triggering the "
-"shortcut."
+msgid "If using autohide, the dock will appear for a short time when triggering the shortcut."
 msgstr ""
-"Si se activa el ocultamiento automático, el dock aparecerá momentáneamente "
-"al usar el atajo."
+"Si se activa el ocultamiento automático, el dock aparecerá momentáneamente al usar el atajo."
 
 #: Settings.ui.h:106
 msgid "Shortcut for the options above"
@@ -587,7 +572,7 @@ msgstr "Tiempo de ocultación (s)"
 
 #: Settings.ui.h:109
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr "Mostrar el dock al mover el puntero al borde de la pantalla"
+msgstr "Mostrar el dock al mover el puntero al borde de la pantalla."
 
 #: Settings.ui.h:110
 msgid "Autohide"
@@ -639,7 +624,7 @@ msgstr "Tiempo de aparición (s)"
 
 #: Settings.ui.h:122
 msgid "Pressure threshold"
-msgstr "Nivel de presión"
+msgstr "Umbral de presión"
 
 #~ msgid "Show mounted volumes and devices"
 #~ msgstr "Mostrar los dispositivos montados"
