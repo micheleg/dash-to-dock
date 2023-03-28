@@ -227,7 +227,7 @@ var Settings = GObject.registerClass({
         // Set a reasonable initial window height
         this.widget.connect('realize', () => {
             const rootWindow = this.widget.get_root();
-            rootWindow.set_size_request(-1, 850);
+            rootWindow.set_default_size(-1, 850);
             rootWindow.connect('close-request', () => this._onWindowsClosed());
         });
 
