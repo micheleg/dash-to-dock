@@ -732,7 +732,7 @@ var Settings = GObject.registerClass({
         isolateLocationsBindings.forEach(s => this._builder.get_object(s).connect(
             'notify::active', () => updateIsolateLocations()));
         this._settings.bind('dance-urgent-applications',
-            this._builder.get_object('dance_urgent_applications_switch'),
+            this._builder.get_object('wiggle_urgent_applications_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('hide-tooltip',
