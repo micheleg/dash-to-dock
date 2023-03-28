@@ -282,8 +282,8 @@
     </key>
     <key type="b" name="dance-urgent-applications">
       <default>true</default>
-      <summary>Dance urgent applications</summary>
-      <description>Dance urgent application icons in the dash</description>
+      <summary>Wiggle urgent applications</summary>
+      <description>Wiggle urgent application icons in the dash</description>
     </key>
     <key type="b" name="show-show-apps-button">
       <default>true</default>

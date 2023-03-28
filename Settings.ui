@@ -1290,7 +1290,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkListBoxRow" id="dance_urgent_applications_row">
+                      <object class="GtkListBoxRow" id="wiggle_urgent_applications_row">
                         <property name="child">
                           <object class="GtkGrid">
                             <property name="can_focus">0</property>
@@ -1300,7 +1300,7 @@
                             <property name="margin_bottom">12</property>
                             <property name="column_spacing">32</property>
                             <child>
-                              <object class="GtkSwitch" id="dance_urgent_applications_switch">
+                              <object class="GtkSwitch" id="wiggle_urgent_applications_switch">
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
                                 <layout>
@@ -1314,7 +1314,7 @@
                                 <property name="can_focus">0</property>
                                 <property name="hexpand">1</property>
                                 <property name="halign">start</property>
-                                <property name="label" translatable="yes">Dance urgent applications</property>
+                                <property name="label" translatable="yes">Wiggle urgent applications</property>
 
                                 <layout>
                                   <property name="column">0</property>

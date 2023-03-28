@@ -2601,7 +2601,7 @@ var IconAnimator = class DashToDockIconAnimator {
         this._count = 0;
         this._started = false;
         this._animations = {
-            dance: [],
+            wiggle: [],
         };
         this._timeline = new Clutter.Timeline({
             duration: Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION),
@@ -2615,10 +2615,10 @@ var IconAnimator = class DashToDockIconAnimator {
 
         this._timeline.connect('new-frame', () => {
             const progress = this._timeline.get_progress();
-            const danceRotation = progress < 1 / 6 ? 15 * Math.sin(progress * 24 * Math.PI) : 0;
-            const dancers = this._animations.dance;
-            for (let i = 0, iMax = dancers.length; i < iMax; i++)
-                dancers[i].target.rotation_angle_z = danceRotation;
+            const wiggleRotation = progress < 1 / 6 ? 15 * Math.sin(progress * 24 * Math.PI) : 0;
+            const wigglers = this._animations.wiggle;
+            for (let i = 0, iMax = wigglers.length; i < iMax; i++)
+                wigglers[i].target.rotation_angle_z = wiggleRotation;
         });
     }
 
