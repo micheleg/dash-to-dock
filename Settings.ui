@@ -520,7 +520,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="multi_monitor_button">
-                                <property name="label" translatable="yes">Show on all monitors.</property>
+                                <property name="label" translatable="yes">Show on all monitors</property>
                                 <property name="margin_top">12</property>
 
                                 <layout>
@@ -974,7 +974,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="application_button_isolation_button">
-                                <property name="label" translatable="yes">Isolate workspaces.</property>
+                                <property name="label" translatable="yes">Isolate workspaces</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">12</property>
 
@@ -987,7 +987,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="application_button_urgent_button">
-                                <property name="label" translatable="yes">Show urgent windows despite current workspace.</property>
+                                <property name="label" translatable="yes">Show urgent windows despite current workspace</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">12</property>
 
@@ -1000,7 +1000,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="application_button_monitor_isolation_button">
-                                <property name="label" translatable="yes">Isolate monitors.</property>
+                                <property name="label" translatable="yes">Isolate monitors</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">12</property>
 
@@ -1014,7 +1014,7 @@
                             <child>
                               <object class="GtkCheckButton" id="windows_preview_button">
                                 <property name="margin_top">3</property>
-                                <property name="label" translatable="yes">Show open windows previews.</property>
+                                <property name="label" translatable="yes">Show open windows' previews</property>
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">1</property>
@@ -1116,7 +1116,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="application_button_first_button">
-                                <property name="label" translatable="yes">Move the applications button at the beginning of the dock.</property>
+                                <property name="label" translatable="yes">Move the applications button at the beginning of the dock</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">12</property>
 
@@ -1137,7 +1137,7 @@
                                   <object class="GtkLabel" id="label3">
                                     <property name="can_focus">0</property>
                                     <property name="halign">start</property>
-                                    <property name="label" translatable="yes">Animate &lt;i&gt;Show Applications&lt;/i&gt;.</property>
+                                    <property name="label" translatable="yes">Animate &lt;i&gt;Show Applications&lt;/i&gt;</property>
                                     <property name="use_markup">1</property>
                                   </object>
                                 </child>
@@ -1401,7 +1401,7 @@
                               <object class="GtkLabel">
                                 <property name="can_focus">0</property>
                                 <property name="hexpand">1</property>
-                                <property name="label" translatable="yes">When enabled application icons will show notification counters and progress-bars (if Unity API is used)</property>
+                                <property name="label" translatable="yes">When enabled application icons will show notification counters and progress-bars (if Unity API is used).</property>
                                 <property name="wrap">1</property>
                                 <property name="xalign">0</property>
                                 <style>
