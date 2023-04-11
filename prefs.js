@@ -675,7 +675,7 @@ var Settings = GObject.registerClass({
                     [check.label] = check.label.split('\n');
                 } else {
                     check.label += `\n${
-                        __('Managed by GNOME Multitasking\'s Application Switching setting')}`;
+                        __('Managed by GNOME Multitasking\'s Application Switching setting.')}`;
                 }
             });
         this._appSwitcherSettings.bind('current-workspace-only',
