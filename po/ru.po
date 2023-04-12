@@ -199,8 +199,8 @@ msgid "Show the dock on"
 msgstr "Показывать Док на:"
 
 #: Settings.ui.h:24
-msgid "Show on all monitors."
-msgstr "Показывать на всех мониторах."
+msgid "Show on all monitors"
+msgstr "Показывать на всех мониторах"
 
 #: Settings.ui.h:25
 msgid "Position on screen"
@@ -261,20 +261,20 @@ msgid "Show running applications"
 msgstr "Показывать запущенные приложения"
 
 #: Settings.ui.h:40
-msgid "Isolate workspaces."
-msgstr "Изолировать рабочие столы."
+msgid "Isolate workspaces"
+msgstr "Изолировать рабочие столы"
 
 #: Settings.ui.h:39
-msgid "Show urgent windows despite current workspace."
-msgstr "Показывать срочные окна независимо от текущего рабочего стола."
+msgid "Show urgent windows despite current workspace"
+msgstr "Показывать срочные окна независимо от текущего рабочего стола"
 
 #: Settings.ui.h:39
-msgid "Isolate monitors."
-msgstr "Изолировать мониторы."
+msgid "Isolate monitors"
+msgstr "Изолировать мониторы"
 
 #: Settings.ui.h:43
-msgid "Show open windows previews."
-msgstr "Показывать миниатюры открытых окон."
+msgid "Show open windows previews"
+msgstr "Показывать миниатюры открытых окон"
 
 #: Settings.ui.h:44
 msgid "Keep the focused application always visible in the dash"
@@ -293,11 +293,11 @@ msgid "Show <i>Applications</i> icon"
 msgstr "Показывать иконку <i>«Приложения»</i>"
 
 #: Settings.ui.h:47
-msgid "Move the applications button at the beginning of the dock."
-msgstr "Расположить кнопку «Приложения» с другой стороны Дока."
+msgid "Move the applications button at the beginning of the dock"
+msgstr "Расположить кнопку «Приложения» с другой стороны Дока"
 
 #: Settings.ui.h:48
-msgid "Animate <i>Show Applications</i>."
+msgid "Animate <i>Show Applications</i>"
 msgstr "Анимация при показе <i>«Приложений»</i>"
 
 #: Settings.ui.h:49

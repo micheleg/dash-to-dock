@@ -166,8 +166,8 @@ msgid "Show the dock on"
 msgstr "Dock tonen op"
 
 #: Settings.ui.h:23
-msgid "Show on all monitors."
-msgstr "Tonen op alle beeldschermen."
+msgid "Show on all monitors"
+msgstr "Tonen op alle beeldschermen"
 
 #: Settings.ui.h:24
 msgid "Position on screen"
@@ -223,16 +223,16 @@ msgid "Show running applications"
 msgstr "Geopende programma's tonen"
 
 #: Settings.ui.h:38
-msgid "Isolate workspaces."
-msgstr "Werkbladen isoleren."
+msgid "Isolate workspaces"
+msgstr "Werkbladen isoleren"
 
 #: Settings.ui.h:39
-msgid "Isolate monitors."
-msgstr "Beeldschermen isoleren."
+msgid "Isolate monitors"
+msgstr "Beeldschermen isoleren"
 
 #: Settings.ui.h:40
-msgid "Show open windows previews."
-msgstr "Voorbeelden van geopende vensters tonen."
+msgid "Show open windows previews"
+msgstr "Voorbeelden van geopende vensters tonen"
 
 #: Settings.ui.h:41
 msgid ""
@@ -247,12 +247,12 @@ msgid "Show <i>Applications</i> icon"
 msgstr "Pictogram voor <i>Alle programma's</i> tonen"
 
 #: Settings.ui.h:43
-msgid "Move the applications button at the beginning of the dock."
-msgstr "Verplaatst de 'Alle programma's'-knop naar het begin van het dock."
+msgid "Move the applications button at the beginning of the dock"
+msgstr "Verplaatst de 'Alle programma's'-knop naar het begin van het dock"
 
 #: Settings.ui.h:44
-msgid "Animate <i>Show Applications</i>."
-msgstr "Animatie na klikken op <i>Alle programma's tonen</i>."
+msgid "Animate <i>Show Applications</i>"
+msgstr "Animatie na klikken op <i>Alle programma's tonen</i>"
 
 #: Settings.ui.h:45
 msgid "Show trash can"

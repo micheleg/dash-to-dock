@@ -155,8 +155,8 @@ msgid "Show the dock on"
 msgstr "Vis dokken på"
 
 #: Settings.ui.h:21
-msgid "Show on all monitors."
-msgstr "Vis på alle skjermer."
+msgid "Show on all monitors"
+msgstr "Vis på alle skjermer"
 
 #: Settings.ui.h:22
 msgid "Position on screen"
@@ -211,16 +211,16 @@ msgid "Show running applications"
 msgstr "Vis kjørende programmer"
 
 #: Settings.ui.h:36
-msgid "Isolate workspaces."
-msgstr "Isoler arbeidsområder."
+msgid "Isolate workspaces"
+msgstr "Isoler arbeidsområder"
 
 #: Settings.ui.h:37
-msgid "Isolate monitors."
-msgstr "Isoler skjermer."
+msgid "Isolate monitors"
+msgstr "Isoler skjermer"
 
 #: Settings.ui.h:38
-msgid "Show open windows previews."
-msgstr "Vis forhåndsvisning av åpne vinduer."
+msgid "Show open windows previews"
+msgstr "Vis forhåndsvisning av åpne vinduer"
 
 #: Settings.ui.h:39
 msgid ""
@@ -235,12 +235,12 @@ msgid "Show <i>Applications</i> icon"
 msgstr "Vis <i>programmer</i> ikon"
 
 #: Settings.ui.h:41
-msgid "Move the applications button at the beginning of the dock."
-msgstr "Flytt programmer-knappen til starten av dokken."
+msgid "Move the applications button at the beginning of the dock"
+msgstr "Flytt programmer-knappen til starten av dokken"
 
 #: Settings.ui.h:42
-msgid "Animate <i>Show Applications</i>."
-msgstr "Animere <i>Vis programmer</i>."
+msgid "Animate <i>Show Applications</i>"
+msgstr "Animere <i>Vis programmer</i>"
 
 #: Settings.ui.h:43
 msgid "Launchers"

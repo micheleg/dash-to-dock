@@ -191,8 +191,8 @@ msgid "Show the dock on"
 msgstr "显示 Dock 于"
 
 #: Settings.ui.h:24
-msgid "Show on all monitors."
-msgstr "所有显示器上都显示。"
+msgid "Show on all monitors"
+msgstr "所有显示器上都显示"
 
 #: Settings.ui.h:25
 msgid "Position on screen"
@@ -247,16 +247,16 @@ msgid "Show running applications"
 msgstr "显示正在运行的应用程序"
 
 #: Settings.ui.h:39
-msgid "Isolate workspaces."
-msgstr "隔离工作区。"
+msgid "Isolate workspaces"
+msgstr "隔离工作区"
 
 #: Settings.ui.h:40
-msgid "Isolate monitors."
-msgstr "隔离显示器。"
+msgid "Isolate monitors"
+msgstr "隔离显示器"
 
 #: Settings.ui.h:41
-msgid "Show open windows previews."
-msgstr "显示打开窗口预览。"
+msgid "Show open windows previews"
+msgstr "显示打开窗口预览"
 
 #: Settings.ui.h:42
 msgid ""
@@ -269,12 +269,12 @@ msgid "Show <i>Applications</i> icon"
 msgstr "显示 <i>应用程序</i> 图标"
 
 #: Settings.ui.h:44
-msgid "Move the applications button at the beginning of the dock."
-msgstr "将应用程序图标移至 Dock 的起始位置。"
+msgid "Move the applications button at the beginning of the dock"
+msgstr "将应用程序图标移至 Dock 的起始位置"
 
 #: Settings.ui.h:45
-msgid "Animate <i>Show Applications</i>."
-msgstr "<i>显示应用程序</i>时播放动画。"
+msgid "Animate <i>Show Applications</i>"
+msgstr "<i>显示应用程序</i>时播放动画"
 
 #: Settings.ui.h:46
 msgid "Show trash can"

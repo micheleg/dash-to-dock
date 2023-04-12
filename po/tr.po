@@ -57,8 +57,8 @@ msgid "Reset to defaults"
 msgstr "Varsayılan ayarlara dön"
 
 #: prefs.js:649
-msgid "Managed by GNOME Multitasking's Application Switching setting"
-msgstr "GNOME Çoklu Görev'in Uygulama Değiştirme ayarı tarafından yönetilir"
+msgid "Managed by GNOME Multitasking's Application Switching setting."
+msgstr "GNOME Çoklu Görev'in Uygulama Değiştirme ayarı tarafından yönetilir."
 
 #: prefs.js:767
 msgid "Show dock and application numbers"
@@ -297,8 +297,8 @@ msgid "Show the dock on"
 msgstr "Rıhtım'ı göster"
 
 #: Settings.ui.h:27
-msgid "Show on all monitors."
-msgstr "Tüm ekranlarda göster."
+msgid "Show on all monitors"
+msgstr "Tüm ekranlarda göster"
 
 #: Settings.ui.h:28
 msgid "Position on screen"
@@ -359,20 +359,20 @@ msgid "Show running applications"
 msgstr "Çalışan uygulamaları göster"
 
 #: Settings.ui.h:43
-msgid "Isolate workspaces."
-msgstr "Çalışma alanlarını ayır."
+msgid "Isolate workspaces"
+msgstr "Çalışma alanlarını ayır"
 
 #: Settings.ui.h:44
-msgid "Show urgent windows despite current workspace."
-msgstr "Geçerli çalışma alanına rağmen acil pencereleri göster."
+msgid "Show urgent windows despite current workspace"
+msgstr "Geçerli çalışma alanına rağmen acil pencereleri göster"
 
 #: Settings.ui.h:45
-msgid "Isolate monitors."
-msgstr "Ekranları ayır."
+msgid "Isolate monitors"
+msgstr "Ekranları ayır"
 
 #: Settings.ui.h:46
-msgid "Show open windows previews."
-msgstr "Açık pencere önizlemelerini göster."
+msgid "Show open windows previews"
+msgstr "Açık pencere önizlemelerini göster"
 
 #: Settings.ui.h:47
 msgid "Keep the focused application always visible in the dash"
@@ -393,12 +393,12 @@ msgid "Show <i>Applications</i> icon"
 msgstr "<i>Uygulamalar</i> simgesini göster"
 
 #: Settings.ui.h:50
-msgid "Move the applications button at the beginning of the dock."
-msgstr "Uygulamalar simgesini rıhtım'ın başlangıcına taşı."
+msgid "Move the applications button at the beginning of the dock"
+msgstr "Uygulamalar simgesini rıhtım'ın başlangıcına taşı"
 
 #: Settings.ui.h:51
-msgid "Animate <i>Show Applications</i>."
-msgstr "<i>Uygulamalar</i> açılırken canlandırma göster."
+msgid "Animate <i>Show Applications</i>"
+msgstr "<i>Uygulamalar</i> açılırken canlandırma göster"
 
 #: Settings.ui.h:52
 msgid "Show trash can"

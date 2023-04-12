@@ -161,8 +161,8 @@ msgid "Show the dock on"
 msgstr "Zobraziť dok na"
 
 #: Settings.ui.h:24
-msgid "Show on all monitors."
-msgstr "Zobraziť na všetkých monitoroch."
+msgid "Show on all monitors"
+msgstr "Zobraziť na všetkých monitoroch"
 
 #: Settings.ui.h:25
 msgid "Position on screen"
@@ -217,12 +217,12 @@ msgid "Show running applications"
 msgstr "Zobraziť spustené aplikácie"
 
 #: Settings.ui.h:39
-msgid "Isolate workspaces."
-msgstr "Oddelené pracovné priestory."
+msgid "Isolate workspaces"
+msgstr "Oddelené pracovné priestory"
 
 #: Settings.ui.h:40
-msgid "Show open windows previews."
-msgstr "Zobraziť náhľady otvorených okien."
+msgid "Show open windows previews"
+msgstr "Zobraziť náhľady otvorených okien"
 
 #: Settings.ui.h:41
 msgid ""
@@ -237,12 +237,12 @@ msgid "Show <i>Applications</i> icon"
 msgstr "Zobraziť ikonu <i>Aplikácie</i>"
 
 #: Settings.ui.h:43
-msgid "Move the applications button at the beginning of the dock."
-msgstr "Premiestni tlačidlo aplikácií na začiatok doku."
+msgid "Move the applications button at the beginning of the dock"
+msgstr "Premiestni tlačidlo aplikácií na začiatok doku"
 
 #: Settings.ui.h:44
-msgid "Animate <i>Show Applications</i>."
-msgstr "Animovať položku <i>Zobraziť aplikácie</i>."
+msgid "Animate <i>Show Applications</i>"
+msgstr "Animovať položku <i>Zobraziť aplikácie</i>"
 
 #: Settings.ui.h:45
 msgid "Launchers"

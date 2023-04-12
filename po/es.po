@@ -49,10 +49,10 @@ msgid "Reset to defaults"
 msgstr "Restablecer la configuración predeterminada"
 
 #: prefs.js:678
-msgid "Managed by GNOME Multitasking's Application Switching setting"
+msgid "Managed by GNOME Multitasking's Application Switching setting."
 msgstr ""
 "Gestionado en la configuración Multitarea de GNOME en la opción Cambio de "
-"aplicaciones"
+"aplicaciones."
 
 #: prefs.js:807
 msgid "Show dock and application numbers"
@@ -242,8 +242,8 @@ msgid "Show the dock on"
 msgstr "Mostrar el dock en"
 
 #: Settings.ui.h:27
-msgid "Show on all monitors."
-msgstr "Mostrar en todos los monitores."
+msgid "Show on all monitors"
+msgstr "Mostrar en todos los monitores"
 
 #: Settings.ui.h:28
 msgid "Position on screen"
@@ -302,20 +302,20 @@ msgid "Show running applications"
 msgstr "Mostrar aplicaciones en ejecución"
 
 #: Settings.ui.h:43
-msgid "Isolate workspaces."
-msgstr "Aislar los espacios de trabajo."
+msgid "Isolate workspaces"
+msgstr "Aislar los espacios de trabajo"
 
 #: Settings.ui.h:44
-msgid "Show urgent windows despite current workspace."
-msgstr "Mostrar ventanas urgentes sin importar el espacio de trabajo actual."
+msgid "Show urgent windows despite current workspace"
+msgstr "Mostrar ventanas urgentes sin importar el espacio de trabajo actual"
 
 #: Settings.ui.h:45
-msgid "Isolate monitors."
-msgstr "Aislar los monitores."
+msgid "Isolate monitors"
+msgstr "Aislar los monitores"
 
 #: Settings.ui.h:46
-msgid "Show open windows previews."
-msgstr "Mostrar previsualización de ventanas abiertas."
+msgid "Show open windows previews"
+msgstr "Mostrar previsualización de ventanas abiertas"
 
 #: Settings.ui.h:47
 msgid "Keep the focused application always visible in the dash"
@@ -334,12 +334,12 @@ msgid "Show <i>Applications</i> icon"
 msgstr "Mostrar el icono <i>Aplicaciones</i>"
 
 #: Settings.ui.h:50
-msgid "Move the applications button at the beginning of the dock."
-msgstr "Mover el botón de aplicaciones al comienzo del dock."
+msgid "Move the applications button at the beginning of the dock"
+msgstr "Mover el botón de aplicaciones al comienzo del dock"
 
 #: Settings.ui.h:51
-msgid "Animate <i>Show Applications</i>."
-msgstr "Animar <i>Mostrar aplicaciones</i>."
+msgid "Animate <i>Show Applications</i>"
+msgstr "Animar <i>Mostrar aplicaciones</i>"
 
 #: Settings.ui.h:52
 msgid "Show trash can"
@@ -378,7 +378,7 @@ msgstr ""
 #: Settings.ui.h:60
 msgid ""
 "When enabled application icons will show notification counters and progress-"
-"bars (if Unity API is used)"
+"bars (if Unity API is used)."
 msgstr ""
 
 #: Settings.ui.h:61
