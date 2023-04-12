@@ -1661,13 +1661,29 @@ var DockManager = class DashToDockDockManager {
         this._mapSettingsValues();
 
         this._iconTheme = new Utils.IconTheme();
-        this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
 
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass();
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
         this._appSpread = new AppSpread.AppSpread();
         this._notificationsMonitor = new NotificationsMonitor.NotificationsMonitor();
+
+        const needsRemoteModel = () =>
+            !this._notificationsMonitor.dndMode && this._settings.showIconsEmblems;
+        if (needsRemoteModel)
+            this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
+
+        const ensureRemoteModel = () => {
+            if (needsRemoteModel && !this._remoteModel) {
+                this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
+            } else if (!needsRemoteModel && this._remoteModel) {
+                this._remoteModel.destroy();
+                delete this._remoteModel;
+            }
+        };
+
+        this._notificationsMonitor.connect('changed', ensureRemoteModel);
+        this._settings.connect('changed::show-icons-emblems', ensureRemoteModel);
 
         if (this._discreteGpuAvailable === undefined) {
             const updateDiscreteGpuAvailable = () => {
@@ -2554,7 +2570,7 @@ var DockManager = class DashToDockDockManager {
         this._removables?.destroy();
         this._removables = null;
         this._iconTheme.destroy();
-        this._remoteModel.destroy();
+        this._remoteModel?.destroy();
         this._settings.run_dispose();
         this._settings = null;
         this._appSwitcherSettings = null;
