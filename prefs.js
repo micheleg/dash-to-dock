@@ -753,6 +753,22 @@ var Settings = GObject.registerClass({
             notificationsCounterCheck,
             'sensitive',
             Gio.SettingsBindFlags.GET);
+
+        const applicationsOverrideCounter =
+            this._builder.get_object('applications_override_counter');
+        this._settings.bind('application-counter-overrides-notifications',
+            applicationsOverrideCounter,
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        notificationsCounterCheck.bind_property('active',
+            applicationsOverrideCounter, 'sensitive',
+            GObject.BindingFlags.SYNC_CREATE);
+        this._settings.connect('changed::show-icons-emblems', () => {
+            if (this._settings.get_boolean('show-icons-emblems'))
+                applicationsOverrideCounter.sensitive = notificationsCounterCheck.active;
+            else
+                applicationsOverrideCounter.sensitive = false;
+        });
         this._settings.bind('show-show-apps-button',
             this._builder.get_object('show_applications_button_switch'),
             'active',

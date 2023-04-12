@@ -789,6 +789,13 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
     _updateNotificationsCount() {
         const remoteCount = this._remoteEntry['count-visible']
             ? this._remoteEntry.count ?? 0 : 0;
+
+        if (remoteCount > 0 &&
+            Docking.DockManager.settings.applicationCounterOverridesNotifications) {
+            this.setNotificationCount(remoteCount);
+            return;
+        }
+
         const { notificationsMonitor } = Docking.DockManager.getDefault();
         const notificationsCount = notificationsMonitor.getAppNotificationsCount(
             this._source.app.id);
