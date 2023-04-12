@@ -2604,7 +2604,7 @@ var IconAnimator = class DashToDockIconAnimator {
             wiggle: [],
         };
         this._timeline = new Clutter.Timeline({
-            duration: Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION),
+            duration: Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION) || 1,
             repeat_count: -1,
             actor,
         });
@@ -2623,7 +2623,8 @@ var IconAnimator = class DashToDockIconAnimator {
     }
 
     _updateSettings() {
-        this._timeline.set_duration(Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION));
+        this._timeline.set_duration(
+            Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION) || 1);
     }
 
     destroy() {
