@@ -91,6 +91,15 @@ var NotificationsMonitor = class NotificationsManagerImpl {
                     const app = notification.source?.app ?? notification.source?._app;
 
                     if (app?.id) {
+                        if (notification.resident) {
+                            if (notification.acknowledged)
+                                return;
+
+                            this._signalsHandler.addWithLabel(Labels.NOTIFICATIONS,
+                                notification, 'notify::acknowledged',
+                                () => this._checkNotifications());
+                        }
+
                         this._signalsHandler.addWithLabel(Labels.NOTIFICATIONS,
                             notification, 'destroy', () => this._checkNotifications());
 
