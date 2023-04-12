@@ -631,5 +631,10 @@
       <summary>Show the number of unread notifications in icons</summary>
       <description>Show application icons emblems such as notification</description>
     </key>
+    <key name="application-counter-overrides-notifications" type="b">
+      <default>true</default>
+      <summary>Wether the application-provioded counter via Unity API should override the notifications or be summed to it</summary>
+      <description>If an application provides a counter through the Unity API, then such value will be used. Otherwise the counter will be summed with the unread notification numbers (if enabled)</description>
+    </key>
   </schema>
 </schemalist>

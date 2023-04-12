@@ -1428,6 +1428,26 @@
                               </object>
                             </child>
                             <child>
+                              <object class="GtkCheckButton" id="applications_override_counter">
+                                <style>
+                                  <class name="text-button"/>
+                                </style>
+                                <property name="margin_top">3</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="can_focus">0</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">Application-provided counter overrides the notifications counter</property>
+                                  </object>
+                                </child>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">3</property>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
+
                           </object>
                         </property>
                       </object>
