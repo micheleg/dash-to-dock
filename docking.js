@@ -1652,14 +1652,17 @@ var DockManager = class DashToDockDockManager {
 
         Me.imports.extension.dockManager = this;
 
-        this._iconTheme = new Utils.IconTheme();
-        this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._methodInjections = new Utils.InjectionsHandler(this);
         this._vfuncInjections = new Utils.VFuncInjectionsHandler(this);
         this._propertyInjections = new Utils.PropertyInjectionsHandler(this);
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._appSwitcherSettings = new Gio.Settings({ schema_id: 'org.gnome.shell.app-switcher' });
+        this._mapSettingsValues();
+
+        this._iconTheme = new Utils.IconTheme();
+        this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
+
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass();
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
@@ -1885,7 +1888,7 @@ var DockManager = class DashToDockDockManager {
             });
     }
 
-    _bindSettingsChanges() {
+    _mapSettingsValues() {
         this.settings.settingsSchema.list_keys().forEach(key => {
             const camelKey = key.replace(/-([a-z\d])/g, k => k[1].toUpperCase());
             const updateSetting = () => {
@@ -1906,7 +1909,9 @@ var DockManager = class DashToDockDockManager {
         Object.defineProperties(this.settings, {
             dockExtended: { get: () => this.settings.extendHeight },
         });
+    }
 
+    _bindSettingsChanges() {
         // Connect relevant signals to the toggling function
         this._signalsHandler.addWithLabel(Labels.SETTINGS, [
             Utils.getMonitorManager(),
