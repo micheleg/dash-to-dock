@@ -196,6 +196,7 @@ var DockAbstractAppIcon = GObject.registerClass({
             'apply-custom-theme',
             'running-indicator-style',
             'show-icons-emblems',
+            'show-icons-notifications-counter',
         ].forEach(key => {
             this._signalsHandler.add(
                 Docking.DockManager.settings,

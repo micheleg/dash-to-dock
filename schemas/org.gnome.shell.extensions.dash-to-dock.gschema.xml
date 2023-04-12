@@ -626,5 +626,10 @@
       <summary>Show application icons emblems</summary>
       <description>Show application icons emblems such as notification counters an progress bars.</description>
     </key>
+    <key name="show-icons-notifications-counter" type="b">
+      <default>true</default>
+      <summary>Show the number of unread notifications in icons</summary>
+      <description>Show application icons emblems such as notification</description>
+    </key>
   </schema>
 </schemalist>

@@ -1414,6 +1414,20 @@
                               </object>
                             </child>
 
+                            <child>
+                              <object class="GtkCheckButton" id="notifications_counter_check">
+                                <property name="label" translatable="yes">Show the number of unread notifications</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">12</property>
+
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">2</property>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
                           </object>
                         </property>
                       </object>

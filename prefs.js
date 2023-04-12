@@ -743,6 +743,16 @@ var Settings = GObject.registerClass({
             this._builder.get_object('show_icons_emblems_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        const notificationsCounterCheck = this._builder.get_object(
+            'notifications_counter_check');
+        this._settings.bind('show-icons-notifications-counter',
+            notificationsCounterCheck,
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-icons-emblems',
+            notificationsCounterCheck,
+            'sensitive',
+            Gio.SettingsBindFlags.GET);
         this._settings.bind('show-show-apps-button',
             this._builder.get_object('show_applications_button_switch'),
             'active',
