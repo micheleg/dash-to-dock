@@ -55,8 +55,8 @@ msgid "Reset to defaults"
 msgstr "Auf Vorgaben zurücksetzen"
 
 #: prefs.js:678
-msgid "Managed by GNOME Multitasking's Application Switching setting"
-msgstr "Verwaltet von der Anwendungswechseleinstellung von GNOME-Multitasking"
+msgid "Managed by GNOME Multitasking's Application Switching setting."
+msgstr "Verwaltet von der Anwendungswechseleinstellung von GNOME-Multitasking."
 
 #: prefs.js:807
 msgid "Show dock and application numbers"
@@ -246,8 +246,8 @@ msgid "Show the dock on"
 msgstr "Dock anzeigen auf"
 
 #: Settings.ui.h:27
-msgid "Show on all monitors."
-msgstr "Auf allen Bildschirmen anzeigen."
+msgid "Show on all monitors"
+msgstr "Auf allen Bildschirmen anzeigen"
 
 #: Settings.ui.h:28
 msgid "Position on screen"
@@ -306,20 +306,20 @@ msgid "Show running applications"
 msgstr "Laufende Anwendungen anzeigen"
 
 #: Settings.ui.h:43
-msgid "Isolate workspaces."
-msgstr "Arbeitsflächen isolieren."
+msgid "Isolate workspaces"
+msgstr "Arbeitsflächen isolieren"
 
 #: Settings.ui.h:44
-msgid "Show urgent windows despite current workspace."
-msgstr "Dringende Fenster trotz aktuellem Arbeitsfläche anzeigen."
+msgid "Show urgent windows despite current workspace"
+msgstr "Dringende Fenster trotz aktuellem Arbeitsfläche anzeigen"
 
 #: Settings.ui.h:45
-msgid "Isolate monitors."
-msgstr "Bildschirme isolieren."
+msgid "Isolate monitors"
+msgstr "Bildschirme isolieren"
 
 #: Settings.ui.h:46
-msgid "Show open windows previews."
-msgstr "Vorschauen der geöffneten Fenster anzeigen."
+msgid "Show open windows previews"
+msgstr "Vorschauen der geöffneten Fenster anzeigen"
 
 #: Settings.ui.h:47
 msgid "Keep the focused application always visible in the dash"
@@ -339,12 +339,12 @@ msgid "Show <i>Applications</i> icon"
 msgstr "Symbol <i>Anwendungen</i> anzeigen"
 
 #: Settings.ui.h:50
-msgid "Move the applications button at the beginning of the dock."
-msgstr "Die Anwendungen-Schaltfläche am Anfang des Docks verschieben."
+msgid "Move the applications button at the beginning of the dock"
+msgstr "Die Anwendungen-Schaltfläche am Anfang des Docks verschieben"
 
 #: Settings.ui.h:51
-msgid "Animate <i>Show Applications</i>."
-msgstr "<i>Anwendungen anzeigen</i> animieren."
+msgid "Animate <i>Show Applications</i>"
+msgstr "<i>Anwendungen anzeigen</i> animieren"
 
 #: Settings.ui.h:52
 msgid "Show trash can"
@@ -381,10 +381,10 @@ msgstr "Symbol-Embleme anzeigen"
 #: Settings.ui.h:60
 msgid ""
 "When enabled application icons will show notification counters and progress-"
-"bars (if Unity API is used)"
+"bars (if Unity API is used)."
 msgstr ""
 "Wenn aktiviert, zeigen die Anwendungssymbole Benachrichtigungszähler und "
-"Fortschrittsbalken an (wenn die Unity-API verwendet wird)"
+"Fortschrittsbalken an (wenn die Unity-API verwendet wird)."
 
 #: Settings.ui.h:61
 msgid "Launchers"

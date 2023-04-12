@@ -165,8 +165,8 @@ msgid "Show the dock on"
 msgstr "Εμφάνιση της μπάρας στην"
 
 #: Settings.ui.h:24
-msgid "Show on all monitors."
-msgstr "Εμφάνιση σε όλες τις οθόνες."
+msgid "Show on all monitors"
+msgstr "Εμφάνιση σε όλες τις οθόνες"
 
 #: Settings.ui.h:25
 msgid "Position on screen"
@@ -222,12 +222,12 @@ msgid "Show running applications"
 msgstr "Εμφάνιση εκτελούμενων εφαρμογών"
 
 #: Settings.ui.h:39
-msgid "Isolate workspaces."
-msgstr "Απομόνωση χώρων εργασίας."
+msgid "Isolate workspaces"
+msgstr "Απομόνωση χώρων εργασίας"
 
 #: Settings.ui.h:40
-msgid "Show open windows previews."
-msgstr "Εμφάνιση προεπισκόπησης ανοικτών παραθύρων."
+msgid "Show open windows previews"
+msgstr "Εμφάνιση προεπισκόπησης ανοικτών παραθύρων"
 
 #: Settings.ui.h:41
 msgid ""
@@ -242,12 +242,12 @@ msgid "Show <i>Applications</i> icon"
 msgstr "Εμφάνιση εικονιδίου <i>Εφαρμογές</i>"
 
 #: Settings.ui.h:43
-msgid "Move the applications button at the beginning of the dock."
-msgstr "Μετακίνηση του πλήκτρου εφαρμογών στην αρχή της μπάρας."
+msgid "Move the applications button at the beginning of the dock"
+msgstr "Μετακίνηση του πλήκτρου εφαρμογών στην αρχή της μπάρας"
 
 #: Settings.ui.h:44
-msgid "Animate <i>Show Applications</i>."
-msgstr "Ενεργοποίηση γραφικών κατά την <i>Εμφάνιση Εφαρμογών</i>."
+msgid "Animate <i>Show Applications</i>"
+msgstr "Ενεργοποίηση γραφικών κατά την <i>Εμφάνιση Εφαρμογών</i>"
 
 #: Settings.ui.h:45
 msgid "Launchers"

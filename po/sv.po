@@ -49,8 +49,8 @@ msgid "Reset to defaults"
 msgstr "Återställ till standardvärden"
 
 #: prefs.js:649
-msgid "Managed by GNOME Multitasking's Application Switching setting"
-msgstr "Hanteras av GNOME Multikörnings programväxlingsinställning"
+msgid "Managed by GNOME Multitasking's Application Switching setting."
+msgstr "Hanteras av GNOME Multikörnings programväxlingsinställning."
 
 #: prefs.js:767
 msgid "Show dock and application numbers"
@@ -240,8 +240,8 @@ msgid "Show the dock on"
 msgstr "Visa dockan på"
 
 #: Settings.ui.h:27
-msgid "Show on all monitors."
-msgstr "Visa på alla skärmar."
+msgid "Show on all monitors"
+msgstr "Visa på alla skärmar"
 
 #: Settings.ui.h:28
 msgid "Position on screen"
@@ -300,20 +300,20 @@ msgid "Show running applications"
 msgstr "Visa körande program"
 
 #: Settings.ui.h:43
-msgid "Isolate workspaces."
-msgstr "Visa endast arbetsytans fönster."
+msgid "Isolate workspaces"
+msgstr "Visa endast arbetsytans fönster"
 
 #: Settings.ui.h:44
-msgid "Show urgent windows despite current workspace."
-msgstr "Visa brådskande fönster även på aktuell arbetsyta."
+msgid "Show urgent windows despite current workspace"
+msgstr "Visa brådskande fönster även på aktuell arbetsyta"
 
 #: Settings.ui.h:45
-msgid "Isolate monitors."
-msgstr "Visa endast skärmens fönster."
+msgid "Isolate monitors"
+msgstr "Visa endast skärmens fönster"
 
 #: Settings.ui.h:46
-msgid "Show open windows previews."
-msgstr "Visa förhandsgranskningar av öppna fönster."
+msgid "Show open windows previews"
+msgstr "Visa förhandsgranskningar av öppna fönster"
 
 #: Settings.ui.h:47
 msgid "Keep the focused application always visible in the dash"
@@ -332,12 +332,12 @@ msgid "Show <i>Applications</i> icon"
 msgstr "Visa <i>Program</i>-ikon"
 
 #: Settings.ui.h:50
-msgid "Move the applications button at the beginning of the dock."
-msgstr "Flytta programknappen till början av dockan."
+msgid "Move the applications button at the beginning of the dock"
+msgstr "Flytta programknappen till början av dockan"
 
 #: Settings.ui.h:51
-msgid "Animate <i>Show Applications</i>."
-msgstr "Animera <i>Visa program</i>."
+msgid "Animate <i>Show Applications</i>"
+msgstr "Animera <i>Visa program</i>"
 
 #: Settings.ui.h:52
 msgid "Show trash can"
