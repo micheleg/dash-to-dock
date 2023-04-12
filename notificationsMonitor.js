@@ -16,6 +16,7 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
 const {
+    docking: Docking,
     utils: Utils,
 } = Me.imports;
 
@@ -35,16 +36,27 @@ var NotificationsMonitor = class NotificationsManagerImpl {
         this._appNotifications = Object.create(null);
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
 
-        this._isEnabled = this._settings.get_boolean('show-banners');
-        this._signalsHandler.add(this._settings, 'changed::show-banners', () => {
-            const isEnabled = this._settings.get_boolean('show-banners');
+        const getIsEnabled = () => !this.dndMode &&
+            Docking.DockManager.settings.showIconsNotificationsCounter;
+
+        this._isEnabled = getIsEnabled();
+        const checkIsEnabled = () => {
+            const isEnabled = getIsEnabled();
             if (isEnabled !== this._isEnabled) {
                 this._isEnabled = isEnabled;
                 this.emit('state-changed');
 
                 this._updateState();
             }
+        };
+
+        this._dndMode = !this._settings.get_boolean('show-banners');
+        this._signalsHandler.add(this._settings, 'changed::show-banners', () => {
+            this._dndMode = !this._settings.get_boolean('show-banners');
+            checkIsEnabled();
         });
+        this._signalsHandler.add(Docking.DockManager.settings,
+            'changed::show-icons-notifications-counter', checkIsEnabled);
 
         this._updateState();
     }
@@ -59,6 +71,10 @@ var NotificationsMonitor = class NotificationsManagerImpl {
 
     get enabled() {
         return this._isEnabled;
+    }
+
+    get dndMode() {
+        return this._dndMode;
     }
 
     getAppNotificationsCount(appId) {
