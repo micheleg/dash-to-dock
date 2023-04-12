@@ -748,8 +748,16 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
             fontSize /= 0.75;
         }
 
-        fontSize = Math.round((iconSize / defaultIconSize) * fontSize);
-        const leftMargin = Math.round((iconSize / defaultIconSize) * 3);
+        let sizeMultiplier;
+        if (iconSize < defaultIconSize) {
+            sizeMultiplier = Math.max(24, Math.min(iconSize +
+                iconSize * 0.3, defaultIconSize)) / defaultIconSize;
+        } else {
+            sizeMultiplier = iconSize / defaultIconSize;
+        }
+
+        fontSize = Math.round(sizeMultiplier * fontSize);
+        const leftMargin = Math.round(sizeMultiplier * 3);
 
         this._notificationBadgeLabel.set_style(
             `font-size: ${fontSize}px;` +
