@@ -1078,10 +1078,12 @@ function makeLocationApp(params) {
 
     shellApp._mi('open_new_window', function (_om, workspace) {
         const context = global.create_app_launch_context(0, workspace);
-        GLib.spawn_async(null,
-            [...this.appInfo.get_commandline().split(' ').filter(
-                t => !t.startsWith('%')), this.appInfo.location.get_uri()],
-            context.get_environment(), GLib.SpawnFlags.SEARCH_PATH, null);
+        const appId = this.appInfo.get_id();
+        Gio.AppInfo.create_from_commandline(this.appInfo.get_commandline(),
+            this.appInfo.get_id(), appId
+                ? Gio.AppInfoCreateFlags.SUPPORTS_STARTUP_NOTIFICATION
+                : Gio.AppInfoCreateFlags.NONE).launch_uris(
+            [this.appInfo.location.get_uri()], context);
     });
 
     if (shellApp.appInfo instanceof MountableVolumeAppInfo) {
