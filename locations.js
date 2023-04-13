@@ -327,7 +327,7 @@ var LocationAppInfo = GObject.registerClass({
             if (!GJS_SUPPORTS_FILE_IFACE_PROMISES) {
                 Gio._promisify(this.location.constructor.prototype,
                     'query_default_handler_async',
-                    'query_default_handler_async_finish');
+                    'query_default_handler_finish');
             }
 
             return await this.location.query_default_handler_async(
