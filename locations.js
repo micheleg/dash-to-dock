@@ -1067,6 +1067,9 @@ function makeLocationApp(params) {
     // FIXME: We need to add a new API to Nautilus to open new windows
     shellApp._mi('can_open_new_window', () => {
         try {
+            if (!shellApp.get_n_windows())
+                return true;
+
             const handlerApp = shellApp.appInfo.getHandlerApp();
 
             if (handlerApp.has_key('SingleMainWindow'))
@@ -1090,6 +1093,10 @@ function makeLocationApp(params) {
 
     shellApp._mi('open_new_window', function (_om, workspace) {
         const context = global.create_app_launch_context(0, workspace);
+        if (!this.get_n_windows()) {
+            this.appInfo.launch([], context);
+            return;
+        }
         const appId = this.appInfo.get_id();
         Gio.AppInfo.create_from_commandline(this.appInfo.get_commandline(),
             this.appInfo.get_id(), appId
