@@ -1,10 +1,10 @@
-gnome-shell-extension-ubuntu-dock (79ubuntu2) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (79ubuntu2) lunar; urgency=medium
 
   * locations: Use a CommandLine App to launch new windows
   * locations: Use an external helper to get the location handler (LP: #2013070)
   * locations: Use normal launch operation if location is not set yet
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 13 Apr 2023 06:12:13 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 13 Apr 2023 06:25:39 +0200
 
 gnome-shell-extension-ubuntu-dock (79ubuntu1) lunar; urgency=medium
 
