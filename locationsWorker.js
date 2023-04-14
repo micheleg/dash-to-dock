@@ -24,7 +24,7 @@ function getHandlerAppAsync(location, cancellable) {
         GLib.PRIORITY_DEFAULT, cancellable);
 }
 
-function main(argv) {
+async function mainAsync(argv) {
     if (argv.length < 1) {
         const currentBinary = GLib.path_get_basename(new Error().fileName);
         printerr(`Usage: ${currentBinary} <action> uri [ --timeout <value> ]`);
@@ -49,36 +49,45 @@ function main(argv) {
     // workaround this by using the async API in a sync way, but we need to
     // use a timeout to avoid this to hang forever, better than hang the
     // shell.
-    let handler, error, launchMaxWaitId;
-    Promise.race([
-        getHandlerAppAsync(location, cancellable),
-        new Promise((resolve, reject) => {
-            launchMaxWaitId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, timeout, () => {
-                launchMaxWaitId = 0;
-                cancellable.cancel();
-                reject(new GLib.Error(Gio.IOErrorEnum,
-                    Gio.IOErrorEnum.TIMED_OUT,
-                    `Searching for ${location.get_uri()} handler took too long`));
-                return GLib.SOURCE_REMOVE;
-            });
-        }),
-    ]).then(h => (handler = h)).catch(e => (error = e));
+    let launchMaxWaitId;
 
-    while (handler === undefined && error === undefined)
-        GLib.MainContext.default().iteration(false);
+    try {
+        const handler = await Promise.race([
+            getHandlerAppAsync(location, cancellable),
+            new Promise((_resolve, reject) => {
+                launchMaxWaitId = GLib.timeout_add(
+                    GLib.PRIORITY_DEFAULT, timeout, () => {
+                        launchMaxWaitId = 0;
+                        cancellable.cancel();
+                        reject(new GLib.Error(Gio.IOErrorEnum,
+                            Gio.IOErrorEnum.TIMED_OUT,
+                            `Searching for ${location.get_uri()} ` +
+                            'handler took too long'));
+                        return GLib.SOURCE_REMOVE;
+                    });
+            }),
+        ]);
 
-    if (launchMaxWaitId)
-        GLib.source_remove(launchMaxWaitId);
-
-    if (error) {
-        printerr(error.message);
-        logError(error);
-        return error.code ? error.code : GLib.MAXUINT8;
+        print(handler.get_id());
+    } catch (e) {
+        printerr(e.message);
+        logError(e);
+        return e.code ? e.code : GLib.MAXUINT8;
+    } finally {
+        if (launchMaxWaitId)
+            GLib.source_remove(launchMaxWaitId);
     }
 
-    print(handler.get_id());
-
     return 0;
+}
+
+function main(args) {
+    let ret;
+    const loop = new GLib.MainLoop(null, false);
+    mainAsync(args).then(r => (ret = r)).catch(logError).finally(() => loop.quit());
+    loop.run();
+
+    return ret;
 }
 
 main(ARGV);
