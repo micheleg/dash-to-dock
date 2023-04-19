@@ -179,12 +179,7 @@ var DockDash = GObject.registerClass({
         this._showAppsIcon.connect('menu-state-changed', (_icon, opened) => {
             this._itemMenuStateChanged(this._showAppsIcon, opened);
         });
-
-        if (Docking.DockManager.settings.showAppsAtTop)
-            this._dashContainer.insert_child_below(this._showAppsIcon, null);
-        else
-            this._dashContainer.insert_child_above(this._showAppsIcon, null);
-
+        this.updateShowAppsButton();
 
         this._background = new St.Widget({
             style_class: 'dash-background',
@@ -952,6 +947,8 @@ var DockDash = GObject.registerClass({
 
         // This will update the size, and the corresponding number for each icon
         this._updateNumberOverlay();
+
+        this.updateShowAppsButton();
     }
 
     _updateNumberOverlay() {
@@ -1028,6 +1025,7 @@ var DockDash = GObject.registerClass({
     showShowAppsButton() {
         this._showAppsIcon.visible = true;
         this._showAppsIcon.show(true);
+        this.updateShowAppsButton();
     }
 
     hideShowAppsButton() {
@@ -1045,16 +1043,30 @@ var DockDash = GObject.registerClass({
     }
 
     updateShowAppsButton() {
+        if (this._showAppsIcon.get_parent() && !this._showAppsIcon.visible)
+            return;
+
+        const { settings } = Docking.DockManager;
         const notifiedProperties = [];
+        const showAppsContainer = settings.dockExtended &&
+            settings.showAppsAlwaysInTheEdge ? this._dashContainer : this._box;
+
         this._signalsHandler.addWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND,
-            this._dashContainer, 'notify',
+            showAppsContainer, 'notify',
             (_obj, pspec) => notifiedProperties.push(pspec.name));
 
-        if (Docking.DockManager.settings.showAppsAtTop)
-            this._dashContainer.set_child_below_sibling(this._showAppsIcon, null);
-        else
-            this._dashContainer.set_child_above_sibling(this._showAppsIcon, null);
+        if (this._showAppsIcon.get_parent() !== showAppsContainer) {
+            this._showAppsIcon.get_parent()?.remove_child(this._showAppsIcon);
 
+            if (Docking.DockManager.settings.showAppsAtTop)
+                showAppsContainer.insert_child_below(this._showAppsIcon, null);
+            else
+                showAppsContainer.insert_child_above(this._showAppsIcon, null);
+        } else if (settings.showAppsAtTop) {
+            showAppsContainer.set_child_below_sibling(this._showAppsIcon, null);
+        } else {
+            showAppsContainer.set_child_above_sibling(this._showAppsIcon, null);
+        }
 
         this._signalsHandler.removeWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND);
 
@@ -1063,9 +1075,9 @@ var DockDash = GObject.registerClass({
         // mutter issue that is being fixed:
         // https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/2047
         if (!notifiedProperties.includes('first-child'))
-            this._dashContainer.notify('first-child');
+            showAppsContainer.notify('first-child');
         if (!notifiedProperties.includes('last-child'))
-            this._dashContainer.notify('last-child');
+            showAppsContainer.notify('last-child');
     }
 });
 

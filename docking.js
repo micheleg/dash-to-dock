@@ -583,6 +583,12 @@ const DockedDash = GObject.registerClass({
             },
         ], [
             settings,
+            'changed::show-apps-always-in-the-edge',
+            () => {
+                this.dash.updateShowAppsButton();
+            },
+        ], [
+            settings,
             'changed::show-apps-at-top',
             () => {
                 this.dash.updateShowAppsButton();

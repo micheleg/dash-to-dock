@@ -797,6 +797,14 @@ var Settings = GObject.registerClass({
             this._builder.get_object('application_button_animation_button'),
             'sensitive',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-apps-always-in-the-edge',
+            this._builder.get_object('show_apps_always_in_the_edge'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-show-apps-button',
+            this._builder.get_object('show_apps_always_in_the_edge'),
+            'sensitive',
+            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('scroll-to-focused-application',
             this._builder.get_object('scroll_to_icon_switch'),
             'active',
