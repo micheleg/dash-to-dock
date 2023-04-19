@@ -295,6 +295,10 @@
       <summary>Show application button on the left</summary>
       <description>Show application button on the left of the dash</description>
     </key>
+    <key type="b" name="show-apps-always-in-the-edge">
+      <default>true</default>
+      <summary>Show application button on the edge when using centered panel mode</summary>
+    </key>
     <key type="b" name="animate-show-apps">
       <default>true</default>
       <summary>Animate Show Applications from the desktop</summary>

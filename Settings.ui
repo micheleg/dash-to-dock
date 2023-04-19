@@ -1158,6 +1158,27 @@
                                 </layout>
                               </object>
                             </child>
+                            <child>
+                              <object class="GtkCheckButton" id="show_apps_always_in_the_edge">
+                                <style>
+                                  <class name="text-button"/>
+                                </style>
+                                <property name="margin_top">3</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="can_focus">0</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">Put &lt;i&gt;Show Applications&lt;/i&gt; in a dock edge when using Panel mode</property>
+                                    <property name="use_markup">1</property>
+                                  </object>
+                                </child>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">4</property>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
                           </object>
                         </property>
                       </object>
