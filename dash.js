@@ -106,12 +106,19 @@ var DockDash = GObject.registerClass({
 }, class DockDash extends St.Widget {
     _init(monitorIndex) {
         // Initialize icon variables and size
+        super._init({
+            name: 'dash',
+            offscreen_redirect: Clutter.OffscreenRedirect.ALWAYS,
+            layout_manager: new Clutter.BinLayout(),
+        });
+
         this._maxWidth = -1;
         this._maxHeight = -1;
         this.iconSize = Docking.DockManager.settings.dashMaxIconSize;
         this._availableIconSizes = baseIconSizes;
         this._shownInitially = false;
         this._initializeIconSize(this.iconSize);
+        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
 
         this._separator = null;
 
@@ -126,12 +133,6 @@ var DockDash = GObject.registerClass({
         this._showLabelTimeoutId = 0;
         this._resetHoverTimeoutId = 0;
         this._labelShowing = false;
-
-        super._init({
-            name: 'dash',
-            offscreen_redirect: Clutter.OffscreenRedirect.ALWAYS,
-            layout_manager: new Clutter.BinLayout(),
-        });
 
         this._dashContainer = new St.BoxLayout({
             name: 'dashtodockDashContainer',
@@ -222,7 +223,6 @@ var DockDash = GObject.registerClass({
 
         this.iconAnimator = new Docking.IconAnimator(this);
 
-        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._signalsHandler.add([
             this._appSystem,
             'installed-changed',
