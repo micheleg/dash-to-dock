@@ -650,6 +650,14 @@ var Settings = GObject.registerClass({
             this._builder.get_object('dock_size_scale'),
             'sensitive',
             Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this._settings.bind('always-center-icons',
+            this._builder.get_object('dock_center_icons_check'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('extend-height',
+            this._builder.get_object('dock_center_icons_check'),
+            'sensitive',
+            Gio.SettingsBindFlags.DEFAULT);
 
         this._settings.bind('multi-monitor',
             this._builder.get_object('dock_monitor_combo'),

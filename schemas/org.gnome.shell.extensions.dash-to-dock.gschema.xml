@@ -313,6 +313,10 @@
       <default>false</default>
       <summary>Extend the dock container to all the available height/width</summary>
     </key>
+    <key type="b" name="always-center-icons">
+      <default>false</default>
+      <summary>Center icons when dock container is extended to all the available size</summary>
+    </key>
     <key type="i" name="preferred-monitor">
       <default>-2</default>
       <summary>DEPRECATED: Monitor on which putting the dock (by index)</summary>

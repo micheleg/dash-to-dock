@@ -152,13 +152,6 @@ var DockDash = GObject.registerClass({
             enable_mouse_scrolling: false,
         });
 
-        if (Docking.DockManager.settings.dockExtended) {
-            if (!this._isHorizontal)
-                this._scrollView.y_align = Clutter.ActorAlign.START;
-            else
-                this._scrollView.x_align = Clutter.ActorAlign.START;
-        }
-
         this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
 
         const rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
@@ -746,6 +739,20 @@ var DockDash = GObject.registerClass({
         let running = this._appSystem.get_running();
         const dockManager = Docking.DockManager.getDefault();
         const { settings } = dockManager;
+
+        this._scrollView.set({
+            xAlign: Clutter.ActorAlign.FILL,
+            yAlign: Clutter.ActorAlign.FILL,
+        });
+        if (dockManager.settings.dockExtended) {
+            if (!this._isHorizontal) {
+                this._scrollView.yAlign = dockManager.settings.alwaysCenterIcons
+                    ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START;
+            } else {
+                this._scrollView.xAlign = dockManager.settings.alwaysCenterIcons
+                    ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START;
+            }
+        }
 
         if (settings.isolateWorkspaces ||
             settings.isolateMonitors) {

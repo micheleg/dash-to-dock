@@ -19,14 +19,10 @@ const {
     docking: Docking,
     utils: Utils,
 } = Me.imports;
-
-
 const Labels = Object.freeze({
     SOURCES: Symbol('sources'),
     NOTIFICATIONS: Symbol('notifications'),
 });
-
-
 var NotificationsMonitor = class NotificationsManagerImpl {
     constructor() {
         this._settings = new Gio.Settings({

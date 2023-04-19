@@ -655,6 +655,10 @@ const DockedDash = GObject.registerClass({
             this._resetPosition.bind(this),
         ], [
             settings,
+            'changed::always-center-icons',
+            () => this.dash.resetAppIcons(),
+        ], [
+            settings,
             'changed::require-pressure-to-show',
             () => this._updateAutoHideBarriers(),
         ], [
