@@ -1146,15 +1146,12 @@ const DockedDash = GObject.registerClass({
         else
             this.remove_style_class_name('fixed');
 
-
         // Note: do not use the workarea coordinates in the direction on which the dock is placed,
         // to avoid a loop [position change -> workArea change -> position change] with
         // fixed dock.
         const workArea = Main.layoutManager.getWorkAreaForMonitor(this.monitorIndex);
 
-
         let fraction = DockManager.settings.heightFraction;
-
         if (extendHeight)
             fraction = 1;
         else if ((fraction < 0) || (fraction > 1))
