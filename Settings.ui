@@ -1126,7 +1126,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="application_button_first_button">
-                                <property name="label" translatable="yes">Move the applications button at the beginning of the dock</property>
+                                <property name="label" translatable="yes">Move at beginning of the dock</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">12</property>
 
