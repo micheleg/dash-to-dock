@@ -307,11 +307,11 @@
     </key>
     <key type="d" name="height-fraction">
       <default>0.90</default>
-      <summary>Dock max height (fraction of available space)</summary>
+      <summary>Dock max height/width (fraction of available space)</summary>
     </key>
     <key type="b" name="extend-height">
       <default>false</default>
-      <summary>Extend the dock container to all the available height</summary>
+      <summary>Extend the dock container to all the available height/width</summary>
     </key>
     <key type="i" name="preferred-monitor">
       <default>-2</default>
