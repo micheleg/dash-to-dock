@@ -403,18 +403,7 @@ const DockedDash = GObject.registerClass({
         this._box.add_actor(this.dash);
 
         // Add aligning container without tracking it for input region
-        Main.uiGroup.add_child(this);
-        if (Main.uiGroup.contains(global.top_window_group))
-            Main.uiGroup.set_child_below_sibling(this, global.top_window_group);
-
-        if (settings.dockFixed) {
-            // Note: tracking the fullscreen directly on the slider actor causes
-            // some hiccups when fullscreening windows of certain applications
-            Main.layoutManager._trackActor(this, { affectsInputRegion: false, trackFullscreen: true });
-            Main.layoutManager._trackActor(this._slider, { affectsStruts: true });
-        } else {
-            Main.layoutManager._trackActor(this._slider);
-        }
+        this._trackDock();
 
         // Create and apply height/width constraint to the dash.
         if (this._isHorizontal) {
@@ -450,18 +439,18 @@ const DockedDash = GObject.registerClass({
     }
 
     _untrackDock() {
-        Main.layoutManager._untrackActor(this);
-        Main.layoutManager._untrackActor(this._slider);
+        Main.layoutManager.untrackChrome(this);
     }
 
     _trackDock() {
         if (DockManager.settings.dockFixed) {
-            if (Main.layoutManager._findActor(this) === -1)
-                Main.layoutManager._trackActor(this, { affectsInputRegion: false, trackFullscreen: true });
-            if (Main.layoutManager._findActor(this._slider) === -1)
-                Main.layoutManager._trackActor(this._slider, { affectsStruts: true });
-        } else if (Main.layoutManager._findActor(this._slider) === -1) {
-            Main.layoutManager._trackActor(this._slider);
+            Main.layoutManager.addChrome(this, {
+                affectsInputRegion: false,
+                trackFullscreen: true,
+                affectsStruts: true,
+            });
+        } else {
+            Main.layoutManager.addChrome(this);
         }
     }
 
