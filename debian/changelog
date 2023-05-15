@@ -1,3 +1,33 @@
+gnome-shell-extension-ubuntu-dock (72~ubuntu5.22.04.2) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * debian/control: Update maintainer to myself
+  * Ensure startup animations are performed on monitor changes (LP: #2019751):
+    - utils: Ensure we destroy the Signals handler as last thing on destroy
+    - docking: Do not wait for dash animation two times with no overview
+    - docking: Ensure we perform the startup animation completely on docks
+      updates (LP: #1965208)
+    - docking: Use a try/catch statement on our promise to show errors in case
+    - docking: Cleanup startup animation injections once done
+    - docking: Handle monitors changed events while preparing startup animation
+    - docking: Keep clip and coverPane size matching current setup
+    - docking: Handle when dash is destroyed during the login animation
+  * Do not hide the dock when menus are closed (LP: #1983130):
+    - docking: Ignore hover changes if overview is visible (LP: #1983130)
+    - docking: Check if autohide or intellihide is enabled on menu closed
+  * Keep shell overview always visible and usable (LP: #1979096):
+    - docking: Also reduce the app grid area when in auto-hide mode
+      (LP: #1992847)
+    - docking: Use an even width for the overview content area
+    - docking: Keep overview controls layout proportions when resizing it
+      (LP: #1992847)
+
+  [ Daniel van Vugt ]
+  * docking: Handle when dash is destroyed during the login animation
+    (LP: #2019751)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 15 May 2023 21:04:12 +0200
+
 gnome-shell-extension-ubuntu-dock (72~ubuntu5.22.04.1) jammy; urgency=medium
 
   [ Daniel van Vugt ]
