@@ -2076,7 +2076,16 @@ var DockManager = class DashToDock_DockManager {
 
         const { ControlsManager, ControlsManagerLayout } = OverviewControls;
 
-        this._methodInjections.addWithLabel('main-dash', ControlsManager.prototype,
+        this._methodInjections.removeWithLabel('startup-animation');
+        this._methodInjections.addWithLabel('startup-animation',
+            Main.layoutManager.constructor.prototype, '_startupAnimationComplete',
+            originalMethod => {
+                originalMethod.call(Main.layoutManager);
+                this._methodInjections.removeWithLabel('startup-animation');
+                this._signalsHandler.removeWithLabel('startup-animation');
+            });
+
+        this._methodInjections.addWithLabel('startup-animation', ControlsManager.prototype,
             'runStartupAnimation', async function (originalMethod, callback) {
                 try {
                     const injections = new Utils.InjectionsHandler();
@@ -2258,7 +2267,7 @@ var DockManager = class DashToDock_DockManager {
 
         if (Main.layoutManager._startingUp && Main.sessionMode.hasOverview &&
             this._settings.disableOverviewOnStartup) {
-            this._methodInjections.addWithLabel('main-dash',
+            this._methodInjections.addWithLabel('startup-animation',
                 Overview.Overview.prototype,
                 'runStartupAnimation', (_originalFunction, callback) => {
                     const monitor = Main.layoutManager.primaryMonitor;
