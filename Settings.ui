@@ -520,7 +520,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="multi_monitor_button">
-                                <property name="label" translatable="yes">Show on all monitors.</property>
+                                <property name="label" translatable="yes">Show on all monitors</property>
                                 <property name="margin_top">12</property>
 
                                 <layout>
@@ -764,6 +764,16 @@
                                 </layout>
                               </object>
                             </child>
+                            <child>
+                              <object class="GtkCheckButton" id="dock_center_icons_check">
+                                <property name="label" translatable="yes">Place icons to the center</property>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">2</property>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
                           </object>
                         </property>
                       </object>
@@ -974,7 +984,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="application_button_isolation_button">
-                                <property name="label" translatable="yes">Isolate workspaces.</property>
+                                <property name="label" translatable="yes">Isolate workspaces</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">12</property>
 
@@ -987,7 +997,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="application_button_urgent_button">
-                                <property name="label" translatable="yes">Show urgent windows despite current workspace.</property>
+                                <property name="label" translatable="yes">Show urgent windows despite current workspace</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">12</property>
 
@@ -1000,7 +1010,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="application_button_monitor_isolation_button">
-                                <property name="label" translatable="yes">Isolate monitors.</property>
+                                <property name="label" translatable="yes">Isolate monitors</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">12</property>
 
@@ -1014,7 +1024,7 @@
                             <child>
                               <object class="GtkCheckButton" id="windows_preview_button">
                                 <property name="margin_top">3</property>
-                                <property name="label" translatable="yes">Show open windows previews.</property>
+                                <property name="label" translatable="yes">Show open windows' previews</property>
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">1</property>
@@ -1116,7 +1126,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="application_button_first_button">
-                                <property name="label" translatable="yes">Move the applications button at the beginning of the dock.</property>
+                                <property name="label" translatable="yes">Move at beginning of the dock</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">12</property>
 
@@ -1137,13 +1147,34 @@
                                   <object class="GtkLabel" id="label3">
                                     <property name="can_focus">0</property>
                                     <property name="halign">start</property>
-                                    <property name="label" translatable="yes">Animate &lt;i&gt;Show Applications&lt;/i&gt;.</property>
+                                    <property name="label" translatable="yes">Animate &lt;i&gt;Show Applications&lt;/i&gt;</property>
                                     <property name="use_markup">1</property>
                                   </object>
                                 </child>
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">3</property>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="show_apps_always_in_the_edge">
+                                <style>
+                                  <class name="text-button"/>
+                                </style>
+                                <property name="margin_top">3</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="can_focus">0</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">Put &lt;i&gt;Show Applications&lt;/i&gt; in a dock edge when using Panel mode</property>
+                                    <property name="use_markup">1</property>
+                                  </object>
+                                </child>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">4</property>
                                   <property name="column-span">2</property>
                                 </layout>
                               </object>
@@ -1290,7 +1321,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkListBoxRow" id="dance_urgent_applications_row">
+                      <object class="GtkListBoxRow" id="wiggle_urgent_applications_row">
                         <property name="child">
                           <object class="GtkGrid">
                             <property name="can_focus">0</property>
@@ -1300,7 +1331,7 @@
                             <property name="margin_bottom">12</property>
                             <property name="column_spacing">32</property>
                             <child>
-                              <object class="GtkSwitch" id="dance_urgent_applications_switch">
+                              <object class="GtkSwitch" id="wiggle_urgent_applications_switch">
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
                                 <layout>
@@ -1314,7 +1345,7 @@
                                 <property name="can_focus">0</property>
                                 <property name="hexpand">1</property>
                                 <property name="halign">start</property>
-                                <property name="label" translatable="yes">Dance urgent applications</property>
+                                <property name="label" translatable="yes">Wiggle urgent applications</property>
 
                                 <layout>
                                   <property name="column">0</property>
@@ -1401,7 +1432,7 @@
                               <object class="GtkLabel">
                                 <property name="can_focus">0</property>
                                 <property name="hexpand">1</property>
-                                <property name="label" translatable="yes">When enabled application icons will show notification counters and progress-bars (if Unity API is used)</property>
+                                <property name="label" translatable="yes">When enabled application icons will show notification counters and progress-bars (if Unity API is used).</property>
                                 <property name="wrap">1</property>
                                 <property name="xalign">0</property>
                                 <style>
@@ -1410,6 +1441,40 @@
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">1</property>
+                                </layout>
+                              </object>
+                            </child>
+
+                            <child>
+                              <object class="GtkCheckButton" id="notifications_counter_check">
+                                <property name="label" translatable="yes">Show the number of unread notifications</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">12</property>
+
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">2</property>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="applications_override_counter">
+                                <style>
+                                  <class name="text-button"/>
+                                </style>
+                                <property name="margin_top">3</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="can_focus">0</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">Application-provided counter overrides the notifications counter</property>
+                                  </object>
+                                </child>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">3</property>
+                                  <property name="column-span">2</property>
                                 </layout>
                               </object>
                             </child>

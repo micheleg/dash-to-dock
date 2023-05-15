@@ -53,7 +53,7 @@ var AppIconIndicator = class DashToDockAppIconIndicator {
             ({ runningIndicatorStyle } = settings);
 
         if (settings.showIconsEmblems &&
-            Docking.DockManager.getDefault().notificationsMonitor.enabled) {
+            !Docking.DockManager.getDefault().notificationsMonitor.dndMode) {
             const unityIndicator = new UnityIndicator(source);
             this._indicators.push(unityIndicator);
         }
@@ -748,8 +748,16 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
             fontSize /= 0.75;
         }
 
-        fontSize = Math.round((iconSize / defaultIconSize) * fontSize);
-        const leftMargin = Math.round((iconSize / defaultIconSize) * 3);
+        let sizeMultiplier;
+        if (iconSize < defaultIconSize) {
+            sizeMultiplier = Math.max(24, Math.min(iconSize +
+                iconSize * 0.3, defaultIconSize)) / defaultIconSize;
+        } else {
+            sizeMultiplier = iconSize / defaultIconSize;
+        }
+
+        fontSize = Math.round(sizeMultiplier * fontSize);
+        const leftMargin = Math.round(sizeMultiplier * 3);
 
         this._notificationBadgeLabel.set_style(
             `font-size: ${fontSize}px;` +
@@ -781,6 +789,13 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
     _updateNotificationsCount() {
         const remoteCount = this._remoteEntry['count-visible']
             ? this._remoteEntry.count ?? 0 : 0;
+
+        if (remoteCount > 0 &&
+            Docking.DockManager.settings.applicationCounterOverridesNotifications) {
+            this.setNotificationCount(remoteCount);
+            return;
+        }
+
         const { notificationsMonitor } = Docking.DockManager.getDefault();
         const notificationsCount = notificationsMonitor.getAppNotificationsCount(
             this._source.app.id);

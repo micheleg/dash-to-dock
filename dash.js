@@ -106,12 +106,19 @@ var DockDash = GObject.registerClass({
 }, class DockDash extends St.Widget {
     _init(monitorIndex) {
         // Initialize icon variables and size
+        super._init({
+            name: 'dash',
+            offscreen_redirect: Clutter.OffscreenRedirect.ALWAYS,
+            layout_manager: new Clutter.BinLayout(),
+        });
+
         this._maxWidth = -1;
         this._maxHeight = -1;
         this.iconSize = Docking.DockManager.settings.dashMaxIconSize;
         this._availableIconSizes = baseIconSizes;
         this._shownInitially = false;
         this._initializeIconSize(this.iconSize);
+        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
 
         this._separator = null;
 
@@ -126,12 +133,6 @@ var DockDash = GObject.registerClass({
         this._showLabelTimeoutId = 0;
         this._resetHoverTimeoutId = 0;
         this._labelShowing = false;
-
-        super._init({
-            name: 'dash',
-            offscreen_redirect: Clutter.OffscreenRedirect.ALWAYS,
-            layout_manager: new Clutter.BinLayout(),
-        });
 
         this._dashContainer = new St.BoxLayout({
             name: 'dashtodockDashContainer',
@@ -150,13 +151,6 @@ var DockDash = GObject.registerClass({
             y_expand: !this._isHorizontal,
             enable_mouse_scrolling: false,
         });
-
-        if (Docking.DockManager.settings.dockExtended) {
-            if (!this._isHorizontal)
-                this._scrollView.y_align = Clutter.ActorAlign.START;
-            else
-                this._scrollView.x_align = Clutter.ActorAlign.START;
-        }
 
         this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
 
@@ -185,12 +179,7 @@ var DockDash = GObject.registerClass({
         this._showAppsIcon.connect('menu-state-changed', (_icon, opened) => {
             this._itemMenuStateChanged(this._showAppsIcon, opened);
         });
-
-        if (Docking.DockManager.settings.showAppsAtTop)
-            this._dashContainer.insert_child_below(this._showAppsIcon, null);
-        else
-            this._dashContainer.insert_child_above(this._showAppsIcon, null);
-
+        this.updateShowAppsButton();
 
         this._background = new St.Widget({
             style_class: 'dash-background',
@@ -222,7 +211,6 @@ var DockDash = GObject.registerClass({
 
         this.iconAnimator = new Docking.IconAnimator(this);
 
-        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._signalsHandler.add([
             this._appSystem,
             'installed-changed',
@@ -747,6 +735,20 @@ var DockDash = GObject.registerClass({
         const dockManager = Docking.DockManager.getDefault();
         const { settings } = dockManager;
 
+        this._scrollView.set({
+            xAlign: Clutter.ActorAlign.FILL,
+            yAlign: Clutter.ActorAlign.FILL,
+        });
+        if (dockManager.settings.dockExtended) {
+            if (!this._isHorizontal) {
+                this._scrollView.yAlign = dockManager.settings.alwaysCenterIcons
+                    ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START;
+            } else {
+                this._scrollView.xAlign = dockManager.settings.alwaysCenterIcons
+                    ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START;
+            }
+        }
+
         if (settings.isolateWorkspaces ||
             settings.isolateMonitors) {
             // When using isolation, we filter out apps that have no windows in
@@ -945,6 +947,8 @@ var DockDash = GObject.registerClass({
 
         // This will update the size, and the corresponding number for each icon
         this._updateNumberOverlay();
+
+        this.updateShowAppsButton();
     }
 
     _updateNumberOverlay() {
@@ -1021,6 +1025,7 @@ var DockDash = GObject.registerClass({
     showShowAppsButton() {
         this._showAppsIcon.visible = true;
         this._showAppsIcon.show(true);
+        this.updateShowAppsButton();
     }
 
     hideShowAppsButton() {
@@ -1038,16 +1043,30 @@ var DockDash = GObject.registerClass({
     }
 
     updateShowAppsButton() {
+        if (this._showAppsIcon.get_parent() && !this._showAppsIcon.visible)
+            return;
+
+        const { settings } = Docking.DockManager;
         const notifiedProperties = [];
+        const showAppsContainer = settings.dockExtended &&
+            settings.showAppsAlwaysInTheEdge ? this._dashContainer : this._box;
+
         this._signalsHandler.addWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND,
-            this._dashContainer, 'notify',
+            showAppsContainer, 'notify',
             (_obj, pspec) => notifiedProperties.push(pspec.name));
 
-        if (Docking.DockManager.settings.showAppsAtTop)
-            this._dashContainer.set_child_below_sibling(this._showAppsIcon, null);
-        else
-            this._dashContainer.set_child_above_sibling(this._showAppsIcon, null);
+        if (this._showAppsIcon.get_parent() !== showAppsContainer) {
+            this._showAppsIcon.get_parent()?.remove_child(this._showAppsIcon);
 
+            if (Docking.DockManager.settings.showAppsAtTop)
+                showAppsContainer.insert_child_below(this._showAppsIcon, null);
+            else
+                showAppsContainer.insert_child_above(this._showAppsIcon, null);
+        } else if (settings.showAppsAtTop) {
+            showAppsContainer.set_child_below_sibling(this._showAppsIcon, null);
+        } else {
+            showAppsContainer.set_child_above_sibling(this._showAppsIcon, null);
+        }
 
         this._signalsHandler.removeWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND);
 
@@ -1056,9 +1075,9 @@ var DockDash = GObject.registerClass({
         // mutter issue that is being fixed:
         // https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/2047
         if (!notifiedProperties.includes('first-child'))
-            this._dashContainer.notify('first-child');
+            showAppsContainer.notify('first-child');
         if (!notifiedProperties.includes('last-child'))
-            this._dashContainer.notify('last-child');
+            showAppsContainer.notify('last-child');
     }
 });
 

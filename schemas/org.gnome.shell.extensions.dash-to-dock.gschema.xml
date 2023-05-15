@@ -282,8 +282,8 @@
     </key>
     <key type="b" name="dance-urgent-applications">
       <default>true</default>
-      <summary>Dance urgent applications</summary>
-      <description>Dance urgent application icons in the dash</description>
+      <summary>Wiggle urgent applications</summary>
+      <description>Wiggle urgent application icons in the dash</description>
     </key>
     <key type="b" name="show-show-apps-button">
       <default>true</default>
@@ -294,6 +294,10 @@
       <default>false</default>
       <summary>Show application button on the left</summary>
       <description>Show application button on the left of the dash</description>
+    </key>
+    <key type="b" name="show-apps-always-in-the-edge">
+      <default>true</default>
+      <summary>Show application button on the edge when using centered panel mode</summary>
     </key>
     <key type="b" name="animate-show-apps">
       <default>true</default>
@@ -307,11 +311,15 @@
     </key>
     <key type="d" name="height-fraction">
       <default>0.90</default>
-      <summary>Dock max height (fraction of available space)</summary>
+      <summary>Dock max height/width (fraction of available space)</summary>
     </key>
     <key type="b" name="extend-height">
       <default>false</default>
-      <summary>Extend the dock container to all the available height</summary>
+      <summary>Extend the dock container to all the available height/width</summary>
+    </key>
+    <key type="b" name="always-center-icons">
+      <default>false</default>
+      <summary>Center icons when dock container is extended to all the available size</summary>
     </key>
     <key type="i" name="preferred-monitor">
       <default>-2</default>
@@ -625,6 +633,16 @@
       <default>true</default>
       <summary>Show application icons emblems</summary>
       <description>Show application icons emblems such as notification counters an progress bars.</description>
+    </key>
+    <key name="show-icons-notifications-counter" type="b">
+      <default>true</default>
+      <summary>Show the number of unread notifications in icons</summary>
+      <description>Show application icons emblems such as notification</description>
+    </key>
+    <key name="application-counter-overrides-notifications" type="b">
+      <default>true</default>
+      <summary>Wether the application-provioded counter via Unity API should override the notifications or be summed to it</summary>
+      <description>If an application provides a counter through the Unity API, then such value will be used. Otherwise the counter will be summed with the unread notification numbers (if enabled)</description>
     </key>
   </schema>
 </schemalist>

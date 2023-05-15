@@ -331,7 +331,7 @@ var LocationAppInfo = GObject.registerClass({
             if (!GJS_SUPPORTS_FILE_IFACE_PROMISES) {
                 Gio._promisify(this.location.constructor.prototype,
                     'query_default_handler_async',
-                    'query_default_handler_async_finish');
+                    'query_default_handler_finish');
             }
 
             return await this.location.query_default_handler_async(
@@ -363,12 +363,12 @@ var LocationAppInfo = GObject.registerClass({
             subProcess.wait(cancellable);
             const errorCode = subProcess.get_exit_status();
 
-            if (errorCode !== GLib.MAXUINT8) {
+            if (errorCode) {
                 const errorLines = imports.byteArray.toString(
                     stdErr.get_data()).split('\n');
 
                 const error = new GLib.Error(Gio.IOErrorEnum,
-                    errorCode, errorLines[0]);
+                    errorCode === GLib.MAXUINT8 ? 0 : errorCode, errorLines[0]);
                 error.stack = `${errorLines.slice(3).join('\n')}${error.stack}`;
                 throw error;
             }

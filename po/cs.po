@@ -186,7 +186,7 @@ msgid "Show the dock on"
 msgstr "Kde zobrazit dok"
 
 #: Settings.ui.h:23
-msgid "Show on all monitors."
+msgid "Show on all monitors"
 msgstr "Zobrazit na všech obrazovkách"
 
 #: Settings.ui.h:24
@@ -243,15 +243,15 @@ msgid "Show running applications"
 msgstr "Zobrazit spuštěné aplikace"
 
 #: Settings.ui.h:38
-msgid "Isolate workspaces."
+msgid "Isolate workspaces"
 msgstr "Izolovat pracovní plochy"
 
 #: Settings.ui.h:39
-msgid "Isolate monitors."
+msgid "Isolate monitors"
 msgstr "Izolovat obrazovky"
 
 #: Settings.ui.h:40
-msgid "Show open windows previews."
+msgid "Show open windows previews"
 msgstr "Zobrazit náhledy oken"
 
 #: Settings.ui.h:41
@@ -267,11 +267,11 @@ msgid "Show <i>Applications</i> icon"
 msgstr "Tlačítko přístupu ke všem aplikacím"
 
 #: Settings.ui.h:43
-msgid "Move the applications button at the beginning of the dock."
+msgid "Move the applications button at the beginning of the dock"
 msgstr "Přesunout tlačítko přístupu ke všem aplikacím na začátek doku"
 
 #: Settings.ui.h:44
-msgid "Animate <i>Show Applications</i>."
+msgid "Animate <i>Show Applications</i>"
 msgstr "Animace při zobrazení všech aplikací"
 
 #: Settings.ui.h:45

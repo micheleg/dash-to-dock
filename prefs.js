@@ -227,7 +227,7 @@ var Settings = GObject.registerClass({
         // Set a reasonable initial window height
         this.widget.connect('realize', () => {
             const rootWindow = this.widget.get_root();
-            rootWindow.set_size_request(-1, 850);
+            rootWindow.set_default_size(-1, 850);
             rootWindow.connect('close-request', () => this._onWindowsClosed());
         });
 
@@ -650,6 +650,14 @@ var Settings = GObject.registerClass({
             this._builder.get_object('dock_size_scale'),
             'sensitive',
             Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this._settings.bind('always-center-icons',
+            this._builder.get_object('dock_center_icons_check'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('extend-height',
+            this._builder.get_object('dock_center_icons_check'),
+            'sensitive',
+            Gio.SettingsBindFlags.DEFAULT);
 
         this._settings.bind('multi-monitor',
             this._builder.get_object('dock_monitor_combo'),
@@ -675,7 +683,7 @@ var Settings = GObject.registerClass({
                     [check.label] = check.label.split('\n');
                 } else {
                     check.label += `\n${
-                        __('Managed by GNOME Multitasking\'s Application Switching setting')}`;
+                        __('Managed by GNOME Multitasking\'s Application Switching setting.')}`;
                 }
             });
         this._appSwitcherSettings.bind('current-workspace-only',
@@ -732,7 +740,7 @@ var Settings = GObject.registerClass({
         isolateLocationsBindings.forEach(s => this._builder.get_object(s).connect(
             'notify::active', () => updateIsolateLocations()));
         this._settings.bind('dance-urgent-applications',
-            this._builder.get_object('dance_urgent_applications_switch'),
+            this._builder.get_object('wiggle_urgent_applications_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('hide-tooltip',
@@ -743,6 +751,32 @@ var Settings = GObject.registerClass({
             this._builder.get_object('show_icons_emblems_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        const notificationsCounterCheck = this._builder.get_object(
+            'notifications_counter_check');
+        this._settings.bind('show-icons-notifications-counter',
+            notificationsCounterCheck,
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-icons-emblems',
+            notificationsCounterCheck,
+            'sensitive',
+            Gio.SettingsBindFlags.GET);
+
+        const applicationsOverrideCounter =
+            this._builder.get_object('applications_override_counter');
+        this._settings.bind('application-counter-overrides-notifications',
+            applicationsOverrideCounter,
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        notificationsCounterCheck.bind_property('active',
+            applicationsOverrideCounter, 'sensitive',
+            GObject.BindingFlags.SYNC_CREATE);
+        this._settings.connect('changed::show-icons-emblems', () => {
+            if (this._settings.get_boolean('show-icons-emblems'))
+                applicationsOverrideCounter.sensitive = notificationsCounterCheck.active;
+            else
+                applicationsOverrideCounter.sensitive = false;
+        });
         this._settings.bind('show-show-apps-button',
             this._builder.get_object('show_applications_button_switch'),
             'active',
@@ -761,6 +795,14 @@ var Settings = GObject.registerClass({
             Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-show-apps-button',
             this._builder.get_object('application_button_animation_button'),
+            'sensitive',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-apps-always-in-the-edge',
+            this._builder.get_object('show_apps_always_in_the_edge'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-show-apps-button',
+            this._builder.get_object('show_apps_always_in_the_edge'),
             'sensitive',
             Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('scroll-to-focused-application',

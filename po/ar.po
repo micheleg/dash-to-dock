@@ -178,7 +178,7 @@ msgstr "أظهر المرساة فوق"
 
 #: Settings.ui.h:24
 #, fuzzy
-msgid "Show on all monitors."
+msgid "Show on all monitors"
 msgstr "الشاشة الثانوية"
 
 #: Settings.ui.h:25
@@ -232,12 +232,12 @@ msgid "Show running applications"
 msgstr "أظهر التطبيقات قيد التشغيل"
 
 #: Settings.ui.h:39
-msgid "Isolate workspaces."
-msgstr "عزل مساحات العمل."
+msgid "Isolate workspaces"
+msgstr "عزل مساحات العمل"
 
 #: Settings.ui.h:40
-msgid "Show open windows previews."
-msgstr "عرض معاينات النوافذ المفتوحة."
+msgid "Show open windows previews"
+msgstr "عرض معاينات النوافذ المفتوحة"
 
 #: Settings.ui.h:41
 msgid ""
@@ -254,12 +254,12 @@ msgid "Show <i>Applications</i> icon"
 msgstr "أظهر أيقونة التطبيقات أولا"
 
 #: Settings.ui.h:43
-msgid "Move the applications button at the beginning of the dock."
-msgstr "تحريك زر التطبيقات في بداية الشريط."
+msgid "Move the applications button at the beginning of the dock"
+msgstr "تحريك زر التطبيقات في بداية الشريط"
 
 #: Settings.ui.h:44
 #, fuzzy
-msgid "Animate <i>Show Applications</i>."
+msgid "Animate <i>Show Applications</i>"
 msgstr "أظهر أيقونة التطبيقات أولا"
 
 #: Settings.ui.h:45

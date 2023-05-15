@@ -174,8 +174,8 @@ msgid "Show the dock on"
 msgstr "Показувати Док на"
 
 #: Settings.ui.h:26
-msgid "Show on all monitors."
-msgstr "Показувати Док на усіх моніторах."
+msgid "Show on all monitors"
+msgstr "Показувати Док на усіх моніторах"
 
 #: Settings.ui.h:27
 msgid "Position on screen"
@@ -232,16 +232,16 @@ msgid "Show running applications"
 msgstr "Показувати запущені програми"
 
 #: Settings.ui.h:41
-msgid "Isolate workspaces."
-msgstr "Обмежити робочим простором."
+msgid "Isolate workspaces"
+msgstr "Обмежити робочим простором"
 
 #: Settings.ui.h:42
-msgid "Isolate monitors."
-msgstr "Обмежити монітором."
+msgid "Isolate monitors"
+msgstr "Обмежити монітором"
 
 #: Settings.ui.h:43
-msgid "Show open windows previews."
-msgstr "Показувати мініатюри відкритих вікон."
+msgid "Show open windows previews"
+msgstr "Показувати мініатюри відкритих вікон"
 
 #: Settings.ui.h:44
 msgid ""
@@ -256,12 +256,12 @@ msgid "Show <i>Applications</i> icon"
 msgstr "Показувати піктограму <i>Програми</i>"
 
 #: Settings.ui.h:46
-msgid "Move the applications button at the beginning of the dock."
-msgstr "Кнопка \"Програми\" з іншої сторони Дока."
+msgid "Move the applications button at the beginning of the dock"
+msgstr "Кнопка \"Програми\" з іншої сторони Дока"
 
 #: Settings.ui.h:47
-msgid "Animate <i>Show Applications</i>."
-msgstr "Анімувати показ програм."
+msgid "Animate <i>Show Applications</i>"
+msgstr "Анімувати показ програм"
 
 #: Settings.ui.h:48
 msgid "Launchers"

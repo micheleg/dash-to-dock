@@ -16,16 +16,13 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
 const {
+    docking: Docking,
     utils: Utils,
 } = Me.imports;
-
-
 const Labels = Object.freeze({
     SOURCES: Symbol('sources'),
     NOTIFICATIONS: Symbol('notifications'),
 });
-
-
 var NotificationsMonitor = class NotificationsManagerImpl {
     constructor() {
         this._settings = new Gio.Settings({
@@ -35,16 +32,27 @@ var NotificationsMonitor = class NotificationsManagerImpl {
         this._appNotifications = Object.create(null);
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
 
-        this._isEnabled = this._settings.get_boolean('show-banners');
-        this._signalsHandler.add(this._settings, 'changed::show-banners', () => {
-            const isEnabled = this._settings.get_boolean('show-banners');
+        const getIsEnabled = () => !this.dndMode &&
+            Docking.DockManager.settings.showIconsNotificationsCounter;
+
+        this._isEnabled = getIsEnabled();
+        const checkIsEnabled = () => {
+            const isEnabled = getIsEnabled();
             if (isEnabled !== this._isEnabled) {
                 this._isEnabled = isEnabled;
                 this.emit('state-changed');
 
                 this._updateState();
             }
+        };
+
+        this._dndMode = !this._settings.get_boolean('show-banners');
+        this._signalsHandler.add(this._settings, 'changed::show-banners', () => {
+            this._dndMode = !this._settings.get_boolean('show-banners');
+            checkIsEnabled();
         });
+        this._signalsHandler.add(Docking.DockManager.settings,
+            'changed::show-icons-notifications-counter', checkIsEnabled);
 
         this._updateState();
     }
@@ -59,6 +67,10 @@ var NotificationsMonitor = class NotificationsManagerImpl {
 
     get enabled() {
         return this._isEnabled;
+    }
+
+    get dndMode() {
+        return this._dndMode;
     }
 
     getAppNotificationsCount(appId) {
@@ -91,6 +103,15 @@ var NotificationsMonitor = class NotificationsManagerImpl {
                     const app = notification.source?.app ?? notification.source?._app;
 
                     if (app?.id) {
+                        if (notification.resident) {
+                            if (notification.acknowledged)
+                                return;
+
+                            this._signalsHandler.addWithLabel(Labels.NOTIFICATIONS,
+                                notification, 'notify::acknowledged',
+                                () => this._checkNotifications());
+                        }
+
                         this._signalsHandler.addWithLabel(Labels.NOTIFICATIONS,
                             notification, 'destroy', () => this._checkNotifications());
 

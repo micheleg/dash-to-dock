@@ -173,7 +173,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                 if (Docking.DockManager.settings.danceUrgentApplications &&
                     notificationsMonitor.enabled) {
                     icon.set_pivot_point(0.5, 0.5);
-                    this.iconAnimator.addAnimation(icon, 'dance');
+                    this.iconAnimator.addAnimation(icon, 'wiggle');
                 }
                 if (this.running && !this._urgentWindows.size) {
                     const urgentWindows = this.getInterestingWindows();
@@ -181,7 +181,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                     this._updateUrgentWindows(urgentWindows);
                 }
             } else {
-                this.iconAnimator.removeAnimation(icon, 'dance');
+                this.iconAnimator.removeAnimation(icon, 'wiggle');
                 icon.rotation_angle_z = 0;
                 this._urgentWindows.forEach(w => delete w._manualUrgency);
                 this._updateUrgentWindows();
@@ -196,6 +196,8 @@ var DockAbstractAppIcon = GObject.registerClass({
             'apply-custom-theme',
             'running-indicator-style',
             'show-icons-emblems',
+            'show-icons-notifications-counter',
+            'application-counter-overrides-notifications',
         ].forEach(key => {
             this._signalsHandler.add(
                 Docking.DockManager.settings,

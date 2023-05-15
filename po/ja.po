@@ -219,7 +219,7 @@ msgid "Show the dock on"
 msgstr "ドックを表示するモニター"
 
 #: Settings.ui.h:23
-msgid "Show on all monitors."
+msgid "Show on all monitors"
 msgstr "すべてのモニターで表示"
 
 #: Settings.ui.h:24
@@ -275,15 +275,15 @@ msgid "Show running applications"
 msgstr "実行中アプリケーションの表示"
 
 #: Settings.ui.h:38
-msgid "Isolate workspaces."
+msgid "Isolate workspaces"
 msgstr "現在のワークスペースのみ表示"
 
 #: Settings.ui.h:39
-msgid "Isolate monitors."
+msgid "Isolate monitors"
 msgstr "現在のモニターのみ表示"
 
 #: Settings.ui.h:40
-msgid "Show open windows previews."
+msgid "Show open windows previews"
 msgstr "ウィンドウのプレビューを右クリックで表示可能にする"
 
 #: Settings.ui.h:41
@@ -299,11 +299,11 @@ msgid "Show <i>Applications</i> icon"
 msgstr "[アプリケーションを表示する] アイコンの表示"
 
 #: Settings.ui.h:43
-msgid "Move the applications button at the beginning of the dock."
+msgid "Move the applications button at the beginning of the dock"
 msgstr "ドックの先頭 (最上段または左端) に表示"
 
 #: Settings.ui.h:44
-msgid "Animate <i>Show Applications</i>."
+msgid "Animate <i>Show Applications</i>"
 msgstr "アニメーションしながらアプリケーション一覧を表示"
 
 #: Settings.ui.h:45

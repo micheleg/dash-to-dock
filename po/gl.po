@@ -162,8 +162,8 @@ msgid "Show the dock on"
 msgstr "Mostrar o dock en"
 
 #: Settings.ui.h:24
-msgid "Show on all monitors."
-msgstr "Mostrar en todos os monitores."
+msgid "Show on all monitors"
+msgstr "Mostrar en todos os monitores"
 
 #: Settings.ui.h:25
 msgid "Position on screen"
@@ -218,12 +218,12 @@ msgid "Show running applications"
 msgstr "Mostrar aplicativos en execución"
 
 #: Settings.ui.h:39
-msgid "Isolate workspaces."
-msgstr "Illar os espazos de traballo."
+msgid "Isolate workspaces"
+msgstr "Illar os espazos de traballo"
 
 #: Settings.ui.h:40
-msgid "Show open windows previews."
-msgstr "Mostrar vista rápida de ventás."
+msgid "Show open windows previews"
+msgstr "Mostrar vista rápida de ventás"
 
 #: Settings.ui.h:41
 msgid ""
@@ -238,11 +238,11 @@ msgid "Show <i>Applications</i> icon"
 msgstr "Mostrar a icona <i>Aplicativos</i>"
 
 #: Settings.ui.h:43
-msgid "Move the applications button at the beginning of the dock."
+msgid "Move the applications button at the beginning of the dock"
 msgstr "Mover o botón de aplicativos ao principio do dock"
 
 #: Settings.ui.h:44
-msgid "Animate <i>Show Applications</i>."
+msgid "Animate <i>Show Applications</i>"
 msgstr "Animar <i>Mostrar aplicativos</i>"
 
 #: Settings.ui.h:45

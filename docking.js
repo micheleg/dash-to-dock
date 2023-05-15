@@ -583,6 +583,12 @@ const DockedDash = GObject.registerClass({
             },
         ], [
             settings,
+            'changed::show-apps-always-in-the-edge',
+            () => {
+                this.dash.updateShowAppsButton();
+            },
+        ], [
+            settings,
             'changed::show-apps-at-top',
             () => {
                 this.dash.updateShowAppsButton();
@@ -653,6 +659,10 @@ const DockedDash = GObject.registerClass({
             settings,
             'changed::height-fraction',
             this._resetPosition.bind(this),
+        ], [
+            settings,
+            'changed::always-center-icons',
+            () => this.dash.resetAppIcons(),
         ], [
             settings,
             'changed::require-pressure-to-show',
@@ -1146,15 +1156,12 @@ const DockedDash = GObject.registerClass({
         else
             this.remove_style_class_name('fixed');
 
-
         // Note: do not use the workarea coordinates in the direction on which the dock is placed,
         // to avoid a loop [position change -> workArea change -> position change] with
         // fixed dock.
         const workArea = Main.layoutManager.getWorkAreaForMonitor(this.monitorIndex);
 
-
         let fraction = DockManager.settings.heightFraction;
-
         if (extendHeight)
             fraction = 1;
         else if ((fraction < 0) || (fraction > 1))
@@ -1652,19 +1659,38 @@ var DockManager = class DashToDockDockManager {
 
         Me.imports.extension.dockManager = this;
 
-        this._iconTheme = new Utils.IconTheme();
-        this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._methodInjections = new Utils.InjectionsHandler(this);
         this._vfuncInjections = new Utils.VFuncInjectionsHandler(this);
         this._propertyInjections = new Utils.PropertyInjectionsHandler(this);
         this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
         this._appSwitcherSettings = new Gio.Settings({ schema_id: 'org.gnome.shell.app-switcher' });
+        this._mapSettingsValues();
+
+        this._iconTheme = new Utils.IconTheme();
+
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass();
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
         this._appSpread = new AppSpread.AppSpread();
         this._notificationsMonitor = new NotificationsMonitor.NotificationsMonitor();
+
+        const needsRemoteModel = () =>
+            !this._notificationsMonitor.dndMode && this._settings.showIconsEmblems;
+        if (needsRemoteModel)
+            this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
+
+        const ensureRemoteModel = () => {
+            if (needsRemoteModel && !this._remoteModel) {
+                this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
+            } else if (!needsRemoteModel && this._remoteModel) {
+                this._remoteModel.destroy();
+                delete this._remoteModel;
+            }
+        };
+
+        this._notificationsMonitor.connect('changed', ensureRemoteModel);
+        this._settings.connect('changed::show-icons-emblems', ensureRemoteModel);
 
         if (this._discreteGpuAvailable === undefined) {
             const updateDiscreteGpuAvailable = () => {
@@ -1885,7 +1911,7 @@ var DockManager = class DashToDockDockManager {
             });
     }
 
-    _bindSettingsChanges() {
+    _mapSettingsValues() {
         this.settings.settingsSchema.list_keys().forEach(key => {
             const camelKey = key.replace(/-([a-z\d])/g, k => k[1].toUpperCase());
             const updateSetting = () => {
@@ -1906,7 +1932,9 @@ var DockManager = class DashToDockDockManager {
         Object.defineProperties(this.settings, {
             dockExtended: { get: () => this.settings.extendHeight },
         });
+    }
 
+    _bindSettingsChanges() {
         // Connect relevant signals to the toggling function
         this._signalsHandler.addWithLabel(Labels.SETTINGS, [
             Utils.getMonitorManager(),
@@ -2179,7 +2207,84 @@ var DockManager = class DashToDockDockManager {
 
         const { ControlsManager, ControlsManagerLayout } = OverviewControls;
 
-        this._methodInjections.addWithLabel(Labels.MAIN_DASH, ControlsManager.prototype,
+        this._methodInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
+        this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
+            Main.layoutManager.constructor.prototype, '_startupAnimationComplete',
+            originalMethod => {
+                originalMethod.call(Main.layoutManager);
+                this._methodInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
+                this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
+            });
+
+        if (Main.layoutManager._startingUp && Main.layoutManager._waitLoaded) {
+            // Disable this on versions that will include:
+            //  https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2763
+            this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
+                Main.layoutManager.constructor.prototype,
+                '_prepareStartupAnimation', function (originalMethod, ...args) {
+                    /* eslint-disable no-invalid-this */
+                    const dockManager = DockManager.getDefault();
+                    const temporaryInjections = new Utils.InjectionsHandler(
+                        dockManager);
+
+                    const waitLoadedHandlingMonitors = (_, bgManager) => {
+                        return new Promise((resolve, reject) => {
+                            const connections = new Utils.GlobalSignalsHandler(
+                                dockManager);
+                            connections.add(bgManager, 'loaded', () => {
+                                connections.destroy();
+                                resolve();
+                            });
+
+                            connections.add(Utils.getMonitorManager(), 'monitors-changed', () => {
+                                connections.destroy();
+
+                                reject(new GLib.Error(Gio.IOErrorEnum,
+                                    Gio.IOErrorEnum.CANCELLED, 'Loading was cancelled'));
+                            });
+                        });
+                    };
+
+                    async function updateBg(originalUpdateBg, ...bgArgs) {
+                        while (true) {
+                            try {
+                                // eslint-disable-next-line no-await-in-loop
+                                await originalUpdateBg.call(this, ...bgArgs);
+                                break;
+                            } catch (e) {
+                                if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
+                                    logError(e);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    temporaryInjections.add(this.constructor.prototype,
+                        '_waitLoaded', waitLoadedHandlingMonitors);
+                    temporaryInjections.add(this.constructor.prototype,
+                        '_updateBackgrounds', updateBg);
+
+                    dockManager._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
+                        Utils.getMonitorManager(), 'monitors-changed', () => {
+                            const { x, y, width, height } = this.primaryMonitor;
+                            global.window_group.set_clip(x, y, width, height);
+                            this._coverPane?.set({
+                                width: global.screen_width,
+                                height: global.screen_height,
+                            });
+                        });
+
+                    try {
+                        originalMethod.call(this, ...args);
+                    } finally {
+                        temporaryInjections.destroy();
+                    }
+                    /* eslint-enable no-invalid-this */
+                });
+        }
+
+        this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION, ControlsManager.prototype,
             'runStartupAnimation', async function (originalMethod, callback) {
                 /* eslint-disable no-invalid-this */
                 try {
@@ -2401,7 +2506,7 @@ var DockManager = class DashToDockDockManager {
 
         if (Main.layoutManager._startingUp && Main.sessionMode.hasOverview &&
             this._settings.disableOverviewOnStartup) {
-            this._methodInjections.addWithLabel(Labels.MAIN_DASH,
+            this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
                 Overview.Overview.prototype,
                 'runStartupAnimation', (_originalFunction, callback) => {
                     const monitor = Main.layoutManager.primaryMonitor;
@@ -2549,7 +2654,7 @@ var DockManager = class DashToDockDockManager {
         this._removables?.destroy();
         this._removables = null;
         this._iconTheme.destroy();
-        this._remoteModel.destroy();
+        this._remoteModel?.destroy();
         this._settings.run_dispose();
         this._settings = null;
         this._appSwitcherSettings = null;
@@ -2601,10 +2706,10 @@ var IconAnimator = class DashToDockIconAnimator {
         this._count = 0;
         this._started = false;
         this._animations = {
-            dance: [],
+            wiggle: [],
         };
         this._timeline = new Clutter.Timeline({
-            duration: Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION),
+            duration: Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION) || 1,
             repeat_count: -1,
             actor,
         });
@@ -2615,15 +2720,16 @@ var IconAnimator = class DashToDockIconAnimator {
 
         this._timeline.connect('new-frame', () => {
             const progress = this._timeline.get_progress();
-            const danceRotation = progress < 1 / 6 ? 15 * Math.sin(progress * 24 * Math.PI) : 0;
-            const dancers = this._animations.dance;
-            for (let i = 0, iMax = dancers.length; i < iMax; i++)
-                dancers[i].target.rotation_angle_z = danceRotation;
+            const wiggleRotation = progress < 1 / 6 ? 15 * Math.sin(progress * 24 * Math.PI) : 0;
+            const wigglers = this._animations.wiggle;
+            for (let i = 0, iMax = wigglers.length; i < iMax; i++)
+                wigglers[i].target.rotation_angle_z = wiggleRotation;
         });
     }
 
     _updateSettings() {
-        this._timeline.set_duration(Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION));
+        this._timeline.set_duration(
+            Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION) || 1);
     }
 
     destroy() {
