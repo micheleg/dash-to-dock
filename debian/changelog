@@ -1,3 +1,47 @@
+gnome-shell-extension-ubuntu-dock (81ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+  * docking: Set dance timeline duration to 1 if animations are disabled
+  * appInconIndicators: Improve the computing of the counter badge size
+  * notificationsMonitor: Do not count the acknowledged resident notifications
+  * docking: Initialize settings before than other classes that could use them
+  * notificationsMonitor: Add an options to disable notifications counter only
+  * appIconIndicators: Add an option to control whether the counters are summed
+  * docking: Initialize the Launcher remote model only if needed
+  * locations: Use correct name for default handler finish function
+  * locationsWorker: Use more async awaitness
+  * docking: Cleanup startup animation injections once done
+  * docking: Handling monitors changed events while preparing startup animation
+    (LP: #2019751)
+  * docking: Keep clip and coverPane size matching current setup (LP: #2019751)
+  * schemas: Update some descriptions to match actual behavior
+  * docking: Cleanup some stray lines
+  * dash: Do DockDash class initialization at first thing
+  * dash: Add option to keep the icons always centered in extended mode
+  * Settings: improve wording on show-apps option
+  * dash: Add option to show the show-apps button bound to icons in panel mode
+
+  [ Amr Ibrahim ]
+  * Update German translation
+  * Change "dance" to "wiggle"
+
+  [ hasecilu ]
+  * Update Spanish translation
+  * Update potfile changes to es.po
+
+  [ Daniel van Vugt ]
+  * prefs: Set default window height to 850, if it fits
+
+  [ stuarthayhurst ]
+  * Fix consistency of fullstops in strings
+  * Updated translations
+
+  [ Yaroslav Pronin ]
+  * Update Russian translation
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 16 May 2023 01:17:18 +0200
+
 gnome-shell-extension-ubuntu-dock (79ubuntu2) lunar; urgency=medium
 
   * locations: Use a CommandLine App to launch new windows
