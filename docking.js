@@ -2237,6 +2237,16 @@ var DockManager = class DashToDockDockManager {
                     temporaryInjections.add(this.constructor.prototype,
                         '_updateBackgrounds', updateBg);
 
+                    dockManager._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
+                        Utils.getMonitorManager(), 'monitors-changed', () => {
+                            const { x, y, width, height } = this.primaryMonitor;
+                            global.window_group.set_clip(x, y, width, height);
+                            this._coverPane?.set({
+                                width: global.screen_width,
+                                height: global.screen_height,
+                            });
+                        });
+
                     try {
                         originalMethod.call(this, ...args);
                     } finally {
