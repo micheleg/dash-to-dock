@@ -2188,6 +2188,64 @@ var DockManager = class DashToDockDockManager {
                 this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
             });
 
+        if (Main.layoutManager._startingUp && Main.layoutManager._waitLoaded) {
+            // Disable this on versions that will include:
+            //  https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2763
+            this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
+                Main.layoutManager.constructor.prototype,
+                '_prepareStartupAnimation', function (originalMethod, ...args) {
+                    /* eslint-disable no-invalid-this */
+                    const dockManager = DockManager.getDefault();
+                    const temporaryInjections = new Utils.InjectionsHandler(
+                        dockManager);
+
+                    const waitLoadedHandlingMonitors = (_, bgManager) => {
+                        return new Promise((resolve, reject) => {
+                            const connections = new Utils.GlobalSignalsHandler(
+                                dockManager);
+                            connections.add(bgManager, 'loaded', () => {
+                                connections.destroy();
+                                resolve();
+                            });
+
+                            connections.add(Utils.getMonitorManager(), 'monitors-changed', () => {
+                                connections.destroy();
+
+                                reject(new GLib.Error(Gio.IOErrorEnum,
+                                    Gio.IOErrorEnum.CANCELLED, 'Loading was cancelled'));
+                            });
+                        });
+                    };
+
+                    async function updateBg(originalUpdateBg, ...bgArgs) {
+                        while (true) {
+                            try {
+                                // eslint-disable-next-line no-await-in-loop
+                                await originalUpdateBg.call(this, ...bgArgs);
+                                break;
+                            } catch (e) {
+                                if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
+                                    logError(e);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    temporaryInjections.add(this.constructor.prototype,
+                        '_waitLoaded', waitLoadedHandlingMonitors);
+                    temporaryInjections.add(this.constructor.prototype,
+                        '_updateBackgrounds', updateBg);
+
+                    try {
+                        originalMethod.call(this, ...args);
+                    } finally {
+                        temporaryInjections.destroy();
+                    }
+                    /* eslint-enable no-invalid-this */
+                });
+        }
+
         this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION, ControlsManager.prototype,
             'runStartupAnimation', async function (originalMethod, callback) {
                 /* eslint-disable no-invalid-this */
