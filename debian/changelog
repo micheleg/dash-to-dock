@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (79ubuntu2.23.04.1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (79ubuntu2.23.04.1) lunar; urgency=medium
 
   * debian: Update VCS references to ubuntu-dock-lunar branch
   * docking: Handle monitors changes during early startup (LP: #2019751)
@@ -6,7 +6,7 @@ gnome-shell-extension-ubuntu-dock (79ubuntu2.23.04.1) UNRELEASED; urgency=medium
     - docking: Handle monitors changed events while preparing startup animation
     - docking: Keep clip and coverPane size matching current setup
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 16 May 2023 01:44:22 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 16 May 2023 01:47:35 +0200
 
 gnome-shell-extension-ubuntu-dock (79ubuntu2) lunar; urgency=medium
 
