@@ -37,7 +37,8 @@ const handledWindowTypes = [
     Meta.WindowType.TOOLBAR,
     Meta.WindowType.MENU,
     Meta.WindowType.UTILITY,
-    Meta.WindowType.SPLASHSCREEN
+    Meta.WindowType.SPLASHSCREEN,
+    Meta.WindowType.DROPDOWN_MENU,
 ];
 
 /**
