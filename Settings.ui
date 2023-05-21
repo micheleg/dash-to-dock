@@ -764,6 +764,16 @@
                                 </layout>
                               </object>
                             </child>
+                            <child>
+                              <object class="GtkCheckButton" id="dock_center_icons_check">
+                                <property name="label" translatable="yes">Place icons to the center</property>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">2</property>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
                           </object>
                         </property>
                       </object>
@@ -1116,7 +1126,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="application_button_first_button">
-                                <property name="label" translatable="yes">Move the applications button at the beginning of the dock</property>
+                                <property name="label" translatable="yes">Move at beginning of the dock</property>
                                 <property name="halign">start</property>
                                 <property name="margin_top">12</property>
 
@@ -1144,6 +1154,27 @@
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">3</property>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="show_apps_always_in_the_edge">
+                                <style>
+                                  <class name="text-button"/>
+                                </style>
+                                <property name="margin_top">3</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="can_focus">0</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">Put &lt;i&gt;Show Applications&lt;/i&gt; in a dock edge when using Panel mode</property>
+                                    <property name="use_markup">1</property>
+                                  </object>
+                                </child>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">4</property>
                                   <property name="column-span">2</property>
                                 </layout>
                               </object>

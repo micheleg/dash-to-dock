@@ -295,6 +295,10 @@
       <summary>Show application button on the left</summary>
       <description>Show application button on the left of the dash</description>
     </key>
+    <key type="b" name="show-apps-always-in-the-edge">
+      <default>true</default>
+      <summary>Show application button on the edge when using centered panel mode</summary>
+    </key>
     <key type="b" name="animate-show-apps">
       <default>true</default>
       <summary>Animate Show Applications from the desktop</summary>
@@ -307,11 +311,15 @@
     </key>
     <key type="d" name="height-fraction">
       <default>0.90</default>
-      <summary>Dock max height (fraction of available space)</summary>
+      <summary>Dock max height/width (fraction of available space)</summary>
     </key>
     <key type="b" name="extend-height">
       <default>false</default>
-      <summary>Extend the dock container to all the available height</summary>
+      <summary>Extend the dock container to all the available height/width</summary>
+    </key>
+    <key type="b" name="always-center-icons">
+      <default>false</default>
+      <summary>Center icons when dock container is extended to all the available size</summary>
     </key>
     <key type="i" name="preferred-monitor">
       <default>-2</default>

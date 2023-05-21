@@ -583,6 +583,12 @@ const DockedDash = GObject.registerClass({
             },
         ], [
             settings,
+            'changed::show-apps-always-in-the-edge',
+            () => {
+                this.dash.updateShowAppsButton();
+            },
+        ], [
+            settings,
             'changed::show-apps-at-top',
             () => {
                 this.dash.updateShowAppsButton();
@@ -653,6 +659,10 @@ const DockedDash = GObject.registerClass({
             settings,
             'changed::height-fraction',
             this._resetPosition.bind(this),
+        ], [
+            settings,
+            'changed::always-center-icons',
+            () => this.dash.resetAppIcons(),
         ], [
             settings,
             'changed::require-pressure-to-show',
@@ -1146,15 +1156,12 @@ const DockedDash = GObject.registerClass({
         else
             this.remove_style_class_name('fixed');
 
-
         // Note: do not use the workarea coordinates in the direction on which the dock is placed,
         // to avoid a loop [position change -> workArea change -> position change] with
         // fixed dock.
         const workArea = Main.layoutManager.getWorkAreaForMonitor(this.monitorIndex);
 
-
         let fraction = DockManager.settings.heightFraction;
-
         if (extendHeight)
             fraction = 1;
         else if ((fraction < 0) || (fraction > 1))
@@ -2200,7 +2207,84 @@ var DockManager = class DashToDockDockManager {
 
         const { ControlsManager, ControlsManagerLayout } = OverviewControls;
 
-        this._methodInjections.addWithLabel(Labels.MAIN_DASH, ControlsManager.prototype,
+        this._methodInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
+        this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
+            Main.layoutManager.constructor.prototype, '_startupAnimationComplete',
+            originalMethod => {
+                originalMethod.call(Main.layoutManager);
+                this._methodInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
+                this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
+            });
+
+        if (Main.layoutManager._startingUp && Main.layoutManager._waitLoaded) {
+            // Disable this on versions that will include:
+            //  https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2763
+            this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
+                Main.layoutManager.constructor.prototype,
+                '_prepareStartupAnimation', function (originalMethod, ...args) {
+                    /* eslint-disable no-invalid-this */
+                    const dockManager = DockManager.getDefault();
+                    const temporaryInjections = new Utils.InjectionsHandler(
+                        dockManager);
+
+                    const waitLoadedHandlingMonitors = (_, bgManager) => {
+                        return new Promise((resolve, reject) => {
+                            const connections = new Utils.GlobalSignalsHandler(
+                                dockManager);
+                            connections.add(bgManager, 'loaded', () => {
+                                connections.destroy();
+                                resolve();
+                            });
+
+                            connections.add(Utils.getMonitorManager(), 'monitors-changed', () => {
+                                connections.destroy();
+
+                                reject(new GLib.Error(Gio.IOErrorEnum,
+                                    Gio.IOErrorEnum.CANCELLED, 'Loading was cancelled'));
+                            });
+                        });
+                    };
+
+                    async function updateBg(originalUpdateBg, ...bgArgs) {
+                        while (true) {
+                            try {
+                                // eslint-disable-next-line no-await-in-loop
+                                await originalUpdateBg.call(this, ...bgArgs);
+                                break;
+                            } catch (e) {
+                                if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
+                                    logError(e);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    temporaryInjections.add(this.constructor.prototype,
+                        '_waitLoaded', waitLoadedHandlingMonitors);
+                    temporaryInjections.add(this.constructor.prototype,
+                        '_updateBackgrounds', updateBg);
+
+                    dockManager._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
+                        Utils.getMonitorManager(), 'monitors-changed', () => {
+                            const { x, y, width, height } = this.primaryMonitor;
+                            global.window_group.set_clip(x, y, width, height);
+                            this._coverPane?.set({
+                                width: global.screen_width,
+                                height: global.screen_height,
+                            });
+                        });
+
+                    try {
+                        originalMethod.call(this, ...args);
+                    } finally {
+                        temporaryInjections.destroy();
+                    }
+                    /* eslint-enable no-invalid-this */
+                });
+        }
+
+        this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION, ControlsManager.prototype,
             'runStartupAnimation', async function (originalMethod, callback) {
                 /* eslint-disable no-invalid-this */
                 try {
@@ -2422,7 +2506,7 @@ var DockManager = class DashToDockDockManager {
 
         if (Main.layoutManager._startingUp && Main.sessionMode.hasOverview &&
             this._settings.disableOverviewOnStartup) {
-            this._methodInjections.addWithLabel(Labels.MAIN_DASH,
+            this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
                 Overview.Overview.prototype,
                 'runStartupAnimation', (_originalFunction, callback) => {
                     const monitor = Main.layoutManager.primaryMonitor;
