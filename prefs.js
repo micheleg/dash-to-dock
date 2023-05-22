@@ -16,9 +16,13 @@ function init() {
 }
 
 function fillPreferencesWindow(window) {
-    window.add(new posAndSize());
-    window.add(new Launchers());
-    window.add(new Behavior());
-    window.add(new Apparence());
+    // Use the same GSettings schema as in `extension.js`
+    const settings = ExtensionUtils.getSettings(
+        'org.gnome.shell.extensions.dash-to-dock');
+
+    window.add(new posAndSize(settings));
+    window.add(new Launchers(settings));
+    window.add(new Behavior(settings));
+    window.add(new Apparence(settings));
     window.search_enabled = true;
 }
