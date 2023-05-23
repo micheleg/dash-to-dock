@@ -161,6 +161,7 @@
 	(4,25,"GtkWidget","valign","center",None,None,None,None,None),
 	(4,28,"AdwExpanderRow","enable-expansion","False",None,None,None,None,None),
 	(4,28,"AdwExpanderRow","expanded","True",None,None,None,None,None),
+	(4,28,"AdwExpanderRow","show-enable-switch","True",None,None,None,None,None),
 	(4,28,"AdwExpanderRow","subtitle","Show or hide mounted volume and device icons in the dash",1,None,None,None,None),
 	(4,28,"AdwPreferencesRow","title","Show mounted volumes and devices",1,None,None,None,None),
 	(4,29,"AdwActionRow","activatable-widget","30",None,None,None,None,None),
