@@ -8,8 +8,46 @@ const Me = ExtensionUtils.getCurrentExtension();
 var Behavior = GObject.registerClass({
     GTypeName: 'Behavior',
     Template: `file://${GLib.build_filenamev([Me.path, 'ui', 'behavior.ui'])}`,
+    InternalChildren: [
+        'showWindowsPreview',
+        'isolateWorkspaces',
+        'isolateMonitors',
+        'showMounts',
+        'showMountsOnlyMounted',
+        'showMountsNetwork',
+        'isolateLocations'
+    ]
 }, class Behavior extends Adw.PreferencesPage {
-    constructor() {
+    constructor(settings) {
         super({});
+
+        settings.bind(
+            'show-windows-preview', this._showWindowsPreview, 'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+        settings.bind(
+            'isolate-workspaces', this._isolateWorkspaces, 'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+        settings.bind(
+            'isolate-monitors', this._isolateMonitors, 'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+        settings.bind(
+            'show-mounts', this._showMounts, 'enable-expansion',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+        settings.bind(
+            'show-mounts-only-mounted', this._showMountsOnlyMounted, 'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+        settings.bind(
+            'show-mounts-network', this._showMountsNetwork, 'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+        settings.bind(
+            'isolate-locations', this._isolateLocations, 'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
     }
 });
