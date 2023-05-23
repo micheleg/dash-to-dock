@@ -7,12 +7,12 @@ const Me = ExtensionUtils.getCurrentExtension();
 
 // import pages
 const { Behavior } = Me.imports.preferences.behavior;
-const { posAndSize } = Me.imports.preferences.posandsize;
+const { General } = Me.imports.preferences.general;
 const { Launchers } = Me.imports.preferences.launchers;
 const { Apparence } = Me.imports.preferences.apparence;
 
 function init() {
-    ExtensionUtils.initTranslations();
+    ExtensionUtils.initTranslations('dashtodock');
 }
 
 function fillPreferencesWindow(window) {
@@ -20,7 +20,7 @@ function fillPreferencesWindow(window) {
     const settings = ExtensionUtils.getSettings(
         'org.gnome.shell.extensions.dash-to-dock');
 
-    window.add(new posAndSize(settings));
+    window.add(new General(settings));
     window.add(new Launchers(settings));
     window.add(new Behavior(settings));
     window.add(new Apparence(settings));
