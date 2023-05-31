@@ -2289,17 +2289,13 @@ var DockManager = class DashToDockDockManager {
                     box.y1 += spacing;
 
                 box.y2 -= searchBox.get_height() + spacing;
-
-                if (!wsThumbnails && this.mainDock.position === St.Side.BOTTOM)
-                    box.y2 -= spacing;
+                box.y2 -= spacing;
             }
 
             return box;
         };
 
         const maybeAdjustBoxToDock = (state, box, spacing) => {
-            const initialRatio = box.get_width() / box.get_height();
-
             maybeAdjustBoxSize(state, box, spacing);
 
             if (this.mainDock.isHorizontal || this.settings.dockFixed)
@@ -2312,11 +2308,6 @@ var DockManager = class DashToDockDockManager {
                 box.x1 += preferredWidth;
             else if (this.mainDock.position === St.Side.RIGHT)
                 box.x2 -= preferredWidth;
-
-            // Reduce the box height too, to keep the initial proportions
-            const heightAdjustment = (preferredWidth / initialRatio) / 2;
-            box.y1 += heightAdjustment;
-            box.y2 -= heightAdjustment;
 
             return box;
         };
