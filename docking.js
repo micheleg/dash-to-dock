@@ -2180,8 +2180,10 @@ var DockManager = class DashToDock_DockManager {
                 const searchBox = this.overviewControls._searchEntry.get_allocation_box();
                 const { shouldShow: wsThumbnails } = this.overviewControls._thumbnailsBox;
 
-                if (!wsThumbnails)
+                if (!wsThumbnails) {
                     box.y1 += spacing;
+                    box.y2 -= spacing;
+                }
 
                 box.y2 -= searchBox.get_height() + spacing;
                 box.y2 -= spacing;
