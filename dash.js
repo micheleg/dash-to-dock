@@ -154,6 +154,12 @@ var DockDash = GObject.registerClass({
 
         this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
 
+        this._boxContainer = new St.BoxLayout({
+            x_align: Clutter.ActorAlign.FILL,
+            y_align: Clutter.ActorAlign.FILL,
+            vertical: !this._isHorizontal,
+        });
+
         const rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
         this._box = new St.BoxLayout({
             vertical: !this._isHorizontal,
@@ -166,13 +172,18 @@ var DockDash = GObject.registerClass({
         });
         this._box._delegate = this;
         this._dashContainer.add_actor(this._scrollView);
-        this._scrollView.add_actor(this._box);
+        this._boxContainer.add_actor(this._box);
+        this._scrollView.add_actor(this._boxContainer);
 
         this._showAppsIcon = new AppIcons.DockShowAppsIcon(this._position);
         this._showAppsIcon.show(false);
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._showAppsIcon.x_expand = false;
         this._showAppsIcon.y_expand = false;
+        this.showAppsButton.connect('notify::hover', a => {
+            if (this._showAppsIcon.get_parent() === this._boxContainer)
+                this._ensureItemVisibility(a);
+        });
         if (!this._isHorizontal)
             this._showAppsIcon.y_align = Clutter.ActorAlign.START;
         this._hookUpLabel(this._showAppsIcon);
@@ -1048,8 +1059,8 @@ var DockDash = GObject.registerClass({
 
         const { settings } = Docking.DockManager;
         const notifiedProperties = [];
-        const showAppsContainer = settings.dockExtended &&
-            settings.showAppsAlwaysInTheEdge ? this._dashContainer : this._box;
+        const showAppsContainer = settings.showAppsAlwaysInTheEdge || !settings.dockExtended
+            ? this._dashContainer : this._boxContainer;
 
         this._signalsHandler.addWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND,
             showAppsContainer, 'notify',
