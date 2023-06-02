@@ -851,8 +851,8 @@ var DockDash = GObject.registerClass({
         let newIndex = 0;
         let oldIndex = 0;
         while (newIndex < newApps.length || oldIndex < oldApps.length) {
-            const oldApp = oldApps.length > oldIndex ? oldApps[oldIndex] : null;
-            const newApp = newApps.length > newIndex ? newApps[newIndex] : null;
+            const oldApp = oldApps.at(oldIndex);
+            const newApp = newApps.at(newIndex);
 
             // No change at oldIndex/newIndex
             if (oldApp === newApp) {
@@ -870,9 +870,11 @@ var DockDash = GObject.registerClass({
 
             // App added at newIndex
             if (newApp && !oldApps.includes(newApp)) {
-                addedItems.push({ app: newApp,
+                addedItems.push({
+                    app: newApp,
                     item: this._createAppItem(newApp),
-                    pos: newIndex });
+                    pos: newIndex,
+                });
                 newIndex++;
                 continue;
             }
@@ -888,9 +890,11 @@ var DockDash = GObject.registerClass({
 
             if (insertHere || alreadyRemoved) {
                 const newItem = this._createAppItem(newApp);
-                addedItems.push({ app: newApp,
+                addedItems.push({
+                    app: newApp,
                     item: newItem,
-                    pos: newIndex + removedActors.length });
+                    pos: newIndex + removedActors.length,
+                });
                 newIndex++;
             } else {
                 removedActors.push(children[oldIndex]);
@@ -951,8 +955,7 @@ var DockDash = GObject.registerClass({
         if (!this._shownInitially)
             this._shownInitially = true;
 
-        for (let i = 0; i < addedItems.length; i++)
-            addedItems[i].item.show(animate);
+        addedItems.forEach(({ item }) => item.show(animate));
 
         // Workaround for https://bugzilla.gnome.org/show_bug.cgi?id=692744
         // Without it, StBoxLayout may use a stale size cache
