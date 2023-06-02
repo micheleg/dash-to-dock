@@ -825,6 +825,7 @@ var DockDash = GObject.registerClass({
         }
 
         // Temporary remove the separator so that we don't compute to position icons
+        const oldSeparatorPos = this._box.get_children().indexOf(this._separator);
         if (this._separator)
             this._box.remove_child(this._separator);
 
@@ -939,6 +940,9 @@ var DockDash = GObject.registerClass({
             let pos = nFavorites + this._animatingPlaceholdersCount;
             if (this._dragPlaceholder)
                 pos++;
+            const removedFavorites = removedActors.filter(a =>
+                children.indexOf(a) < oldSeparatorPos);
+            pos += removedFavorites.length;
             this._box.insert_child_at_index(this._separator, pos);
         } else if (this._separator) {
             this._separator.destroy();
