@@ -792,6 +792,10 @@ var DockDash = GObject.registerClass({
             oldApps = oldApps.filter(app => !app.isTrash)
         }
 
+        // Temporary remove the separator so that we don't compute to position icons
+        if (this._separator)
+            this._box.remove_child(this._separator);
+
         // Figure out the actual changes to the list of items; we iterate
         // over both the list of items currently in the dash and the list
         // of items expected there, and collect additions and removals.
@@ -878,20 +882,6 @@ var DockDash = GObject.registerClass({
                 item.destroy();
         }
 
-        this._adjustIconSize();
-
-        // Skip animations on first run when adding the initial set
-        // of items, to avoid all items zooming in at once
-
-        let animate = this._shownInitially &&
-            !Main.overview.animationInProgress;
-
-        if (!this._shownInitially)
-            this._shownInitially = true;
-
-        for (let i = 0; i < addedItems.length; i++)
-            addedItems[i].item.show(animate);
-
         // Update separator
         const nFavorites = Object.keys(favorites).length;
         const nIcons = children.length + addedItems.length - removedActors.length;
@@ -909,16 +899,27 @@ var DockDash = GObject.registerClass({
                     track_hover: true,
                 });
                 this._separator.connect('notify::hover', a => this._ensureItemVisibility(a));
-                this._box.add_child(this._separator);
             }
             let pos = nFavorites + this._animatingPlaceholdersCount;
             if (this._dragPlaceholder)
                 pos++;
-            this._box.set_child_at_index(this._separator, pos);
+            this._box.insert_child_at_index(this._separator, pos);
         } else if (this._separator) {
             this._separator.destroy();
             this._separator = null;
         }
+
+        this._adjustIconSize();
+
+        // Skip animations on first run when adding the initial set
+        // of items, to avoid all items zooming in at once
+        const animate = this._shownInitially &&
+            !Main.overview.animationInProgress;
+
+        if (!this._shownInitially)
+            this._shownInitially = true;
+
+        addedItems.forEach(({ item }) => item.show(animate));
 
         // Workaround for https://bugzilla.gnome.org/show_bug.cgi?id=692744
         // Without it, StBoxLayout may use a stale size cache
