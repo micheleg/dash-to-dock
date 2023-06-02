@@ -154,6 +154,12 @@ var DockDash = GObject.registerClass({
 
         this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
 
+        this._boxContainer = new St.BoxLayout({
+            x_align: Clutter.ActorAlign.FILL,
+            y_align: Clutter.ActorAlign.FILL,
+            vertical: !this._isHorizontal,
+        });
+
         const rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
         this._box = new St.BoxLayout({
             vertical: !this._isHorizontal,
@@ -166,13 +172,18 @@ var DockDash = GObject.registerClass({
         });
         this._box._delegate = this;
         this._dashContainer.add_actor(this._scrollView);
-        this._scrollView.add_actor(this._box);
+        this._boxContainer.add_actor(this._box);
+        this._scrollView.add_actor(this._boxContainer);
 
         this._showAppsIcon = new AppIcons.DockShowAppsIcon(this._position);
         this._showAppsIcon.show(false);
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._showAppsIcon.x_expand = false;
         this._showAppsIcon.y_expand = false;
+        this.showAppsButton.connect('notify::hover', a => {
+            if (this._showAppsIcon.get_parent() === this._boxContainer)
+                this._ensureItemVisibility(a);
+        });
         if (!this._isHorizontal)
             this._showAppsIcon.y_align = Clutter.ActorAlign.START;
         this._hookUpLabel(this._showAppsIcon);
@@ -813,6 +824,10 @@ var DockDash = GObject.registerClass({
             oldApps = oldApps.filter(app => !app.isTrash);
         }
 
+        // Temporary remove the separator so that we don't compute to position icons
+        if (this._separator)
+            this._box.remove_child(this._separator);
+
         // Figure out the actual changes to the list of items; we iterate
         // over both the list of items currently in the dash and the list
         // of items expected there, and collect additions and removals.
@@ -836,8 +851,8 @@ var DockDash = GObject.registerClass({
         let newIndex = 0;
         let oldIndex = 0;
         while (newIndex < newApps.length || oldIndex < oldApps.length) {
-            const oldApp = oldApps.length > oldIndex ? oldApps[oldIndex] : null;
-            const newApp = newApps.length > newIndex ? newApps[newIndex] : null;
+            const oldApp = oldApps.at(oldIndex);
+            const newApp = newApps.at(newIndex);
 
             // No change at oldIndex/newIndex
             if (oldApp === newApp) {
@@ -855,9 +870,11 @@ var DockDash = GObject.registerClass({
 
             // App added at newIndex
             if (newApp && !oldApps.includes(newApp)) {
-                addedItems.push({ app: newApp,
+                addedItems.push({
+                    app: newApp,
                     item: this._createAppItem(newApp),
-                    pos: newIndex });
+                    pos: newIndex,
+                });
                 newIndex++;
                 continue;
             }
@@ -873,9 +890,11 @@ var DockDash = GObject.registerClass({
 
             if (insertHere || alreadyRemoved) {
                 const newItem = this._createAppItem(newApp);
-                addedItems.push({ app: newApp,
+                addedItems.push({
+                    app: newApp,
                     item: newItem,
-                    pos: newIndex + removedActors.length });
+                    pos: newIndex + removedActors.length,
+                });
                 newIndex++;
             } else {
                 removedActors.push(children[oldIndex]);
@@ -899,23 +918,9 @@ var DockDash = GObject.registerClass({
                 item.destroy();
         }
 
-        this._adjustIconSize();
-
-        // Skip animations on first run when adding the initial set
-        // of items, to avoid all items zooming in at once
-
-        const animate = this._shownInitially &&
-            !Main.overview.animationInProgress;
-
-        if (!this._shownInitially)
-            this._shownInitially = true;
-
-        for (let i = 0; i < addedItems.length; i++)
-            addedItems[i].item.show(animate);
-
         // Update separator
         const nFavorites = Object.keys(favorites).length;
-        const nIcons = children.length + addedItems.length - removedActors.length;
+        const nIcons = this._box.get_n_children() - removedActors.length;
         if (nFavorites > 0 && nFavorites < nIcons) {
             if (!this._separator) {
                 this._separator = new St.Widget({
@@ -930,16 +935,27 @@ var DockDash = GObject.registerClass({
                     track_hover: true,
                 });
                 this._separator.connect('notify::hover', a => this._ensureItemVisibility(a));
-                this._box.add_child(this._separator);
             }
             let pos = nFavorites + this._animatingPlaceholdersCount;
             if (this._dragPlaceholder)
                 pos++;
-            this._box.set_child_at_index(this._separator, pos);
+            this._box.insert_child_at_index(this._separator, pos);
         } else if (this._separator) {
             this._separator.destroy();
             this._separator = null;
         }
+
+        this._adjustIconSize();
+
+        // Skip animations on first run when adding the initial set
+        // of items, to avoid all items zooming in at once
+        const animate = this._shownInitially &&
+            !Main.layoutManager._startingUp;
+
+        if (!this._shownInitially)
+            this._shownInitially = true;
+
+        addedItems.forEach(({ item }) => item.show(animate));
 
         // Workaround for https://bugzilla.gnome.org/show_bug.cgi?id=692744
         // Without it, StBoxLayout may use a stale size cache
@@ -1048,8 +1064,8 @@ var DockDash = GObject.registerClass({
 
         const { settings } = Docking.DockManager;
         const notifiedProperties = [];
-        const showAppsContainer = settings.dockExtended &&
-            settings.showAppsAlwaysInTheEdge ? this._dashContainer : this._box;
+        const showAppsContainer = settings.showAppsAlwaysInTheEdge || !settings.dockExtended
+            ? this._dashContainer : this._boxContainer;
 
         this._signalsHandler.addWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND,
             showAppsContainer, 'notify',
