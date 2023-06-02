@@ -1,3 +1,12 @@
+gnome-shell-extension-ubuntu-dock (72~ubuntu5.22.04.2.1) UNRELEASED; urgency=medium
+
+  * Keep shell overview always visible and usable (LP: #1979096):
+    - docking: Do ControlsManagerLayout allocation with box-adjusted workArea
+    - docking: Be more consistent in reducing the overlay layout space
+    - docking: Add both bottom and top spacing when there are no workspaces
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 02 Jun 2023 04:09:41 +0200
+
 gnome-shell-extension-ubuntu-dock (72~ubuntu5.22.04.2) jammy; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
