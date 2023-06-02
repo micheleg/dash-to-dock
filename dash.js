@@ -950,7 +950,7 @@ var DockDash = GObject.registerClass({
         // Skip animations on first run when adding the initial set
         // of items, to avoid all items zooming in at once
         const animate = this._shownInitially &&
-            !Main.overview.animationInProgress;
+            !Main.layoutManager._startingUp;
 
         if (!this._shownInitially)
             this._shownInitially = true;
