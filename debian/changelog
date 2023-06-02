@@ -1,3 +1,27 @@
+gnome-shell-extension-ubuntu-dock (82ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New Upstream release v82
+  * debian/rules: Install prefs.js (it allows to tweak further settings)
+  * docking: Use upstream addChrome to track actors
+  * docking: Do ControlsManagerLayout allocation with box-adjusted workArea
+    (LP: #1979096)
+  * docking: Be more consistent in reducing the overlay layout space
+  * docking: Add both bottom and top spacing when there are no workspaces thumbs
+  * dash: Use a different container to hold floating ShowAppsIcon
+  * dash: Temporary remove separator when re-displaying icons (LP: #2017523)
+  * dash: Compute number of icons easily and correctly to show the separator
+  * dash: Cleanup a bit the icons ordering code
+  * dash: Animate icons during overview animation but not during startup
+
+  [ taoky ]
+  * intellihide: add dropdown menu to handled window types (LP: #1983456)
+
+  [ Sabri Ünal ]
+  * Update Turkish translation
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 02 Jun 2023 03:46:31 +0200
+
 gnome-shell-extension-ubuntu-dock (81ubuntu1) mantic; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
