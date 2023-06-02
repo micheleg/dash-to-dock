@@ -916,7 +916,7 @@ var DockDash = GObject.registerClass({
 
         // Update separator
         const nFavorites = Object.keys(favorites).length;
-        const nIcons = children.length + addedItems.length - removedActors.length;
+        const nIcons = this._box.get_n_children() - removedActors.length;
         if (nFavorites > 0 && nFavorites < nIcons) {
             if (!this._separator) {
                 this._separator = new St.Widget({
