@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (82ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (82ubuntu1) mantic; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * New Upstream release v82
@@ -20,7 +20,7 @@ gnome-shell-extension-ubuntu-dock (82ubuntu1) UNRELEASED; urgency=medium
   [ Sabri Ünal ]
   * Update Turkish translation
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 02 Jun 2023 03:46:31 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 02 Jun 2023 03:50:12 +0200
 
 gnome-shell-extension-ubuntu-dock (81ubuntu1) mantic; urgency=medium
 
