@@ -403,18 +403,7 @@ const DockedDash = GObject.registerClass({
         this._box.add_actor(this.dash);
 
         // Add aligning container without tracking it for input region
-        Main.uiGroup.add_child(this);
-        if (Main.uiGroup.contains(global.top_window_group))
-            Main.uiGroup.set_child_below_sibling(this, global.top_window_group);
-
-        if (settings.dockFixed) {
-            // Note: tracking the fullscreen directly on the slider actor causes
-            // some hiccups when fullscreening windows of certain applications
-            Main.layoutManager._trackActor(this, { affectsInputRegion: false, trackFullscreen: true });
-            Main.layoutManager._trackActor(this._slider, { affectsStruts: true });
-        } else {
-            Main.layoutManager._trackActor(this._slider);
-        }
+        this._trackDock();
 
         // Create and apply height/width constraint to the dash.
         if (this._isHorizontal) {
@@ -450,18 +439,18 @@ const DockedDash = GObject.registerClass({
     }
 
     _untrackDock() {
-        Main.layoutManager._untrackActor(this);
-        Main.layoutManager._untrackActor(this._slider);
+        Main.layoutManager.untrackChrome(this);
     }
 
     _trackDock() {
         if (DockManager.settings.dockFixed) {
-            if (Main.layoutManager._findActor(this) === -1)
-                Main.layoutManager._trackActor(this, { affectsInputRegion: false, trackFullscreen: true });
-            if (Main.layoutManager._findActor(this._slider) === -1)
-                Main.layoutManager._trackActor(this._slider, { affectsStruts: true });
-        } else if (Main.layoutManager._findActor(this._slider) === -1) {
-            Main.layoutManager._trackActor(this._slider);
+            Main.layoutManager.addChrome(this, {
+                affectsInputRegion: false,
+                trackFullscreen: true,
+                affectsStruts: true,
+            });
+        } else {
+            Main.layoutManager.addChrome(this);
         }
     }
 
@@ -2308,40 +2297,36 @@ var DockManager = class DashToDockDockManager {
                 /* eslint-enable no-invalid-this */
             });
 
-        const maybeAdjustBoxToDock = (state, box, spacing) => {
-            const initialRatio = box.get_width() / box.get_height();
-
+        const maybeAdjustBoxSize = (state, box, spacing) => {
             if (state === OverviewControls.ControlsState.WINDOW_PICKER) {
                 const searchBox = this.overviewControls._searchEntry.get_allocation_box();
                 const { shouldShow: wsThumbnails } = this.overviewControls._thumbnailsBox;
 
-                if (!wsThumbnails)
+                if (!wsThumbnails) {
                     box.y1 += spacing;
+                    box.y2 -= spacing;
+                }
 
                 box.y2 -= searchBox.get_height() + spacing;
-
-                if (!wsThumbnails && this.mainDock.position === St.Side.BOTTOM)
-                    box.y2 -= spacing;
+                box.y2 -= spacing;
             }
+
+            return box;
+        };
+
+        const maybeAdjustBoxToDock = (state, box, spacing) => {
+            maybeAdjustBoxSize(state, box, spacing);
 
             if (this.mainDock.isHorizontal || this.settings.dockFixed)
                 return box;
 
-            let [, preferredWidth] = this.mainDock.get_preferred_width(box.get_height());
+            const [, preferredWidth] = this.mainDock.get_preferred_width(
+                box.get_height());
 
-            // For some reason we need to use an even value for the box area
-            // or we may end up in allocation issues:
-            // https://github.com/micheleg/dash-to-dock/issues/1612
-            preferredWidth = Math.floor(preferredWidth / 2.0) * 2;
-
-            box.x2 -= preferredWidth;
             if (this.mainDock.position === St.Side.LEFT)
-                box.set_origin(box.x1 + preferredWidth, box.y1);
-
-            // Reduce the box height too, to keep the initial proportions
-            const heightAdjustment = (preferredWidth / initialRatio) / 2;
-            box.y1 += heightAdjustment;
-            box.y2 -= heightAdjustment;
+                box.x1 += preferredWidth;
+            else if (this.mainDock.position === St.Side.RIGHT)
+                box.x2 -= preferredWidth;
 
             return box;
         };
@@ -2360,17 +2345,19 @@ var DockManager = class DashToDockDockManager {
                 workAreaBox.set_origin(startX, startY);
                 workAreaBox.set_size(workArea.width, workArea.height);
 
+                maybeAdjustBoxToDock(undefined, workAreaBox, this.spacing);
+                const oldStartY = workAreaBox.y1;
+
                 const propertyInjections = new Utils.PropertyInjectionsHandler();
-                propertyInjections.add(Main.layoutManager.panelBox, 'height', { value: workAreaBox.y1 });
+                propertyInjections.add(Main.layoutManager.panelBox, 'height', { value: startY });
 
                 if (Main.layoutManager.panelBox.y === Main.layoutManager.primaryMonitor.y)
-                    workAreaBox.y1 -= startY;
+                    workAreaBox.y1 -= oldStartY;
 
                 this.vfunc_allocate(container, workAreaBox);
 
                 propertyInjections.destroy();
-                workAreaBox.y1 = startY;
-                maybeAdjustBoxToDock(undefined, workAreaBox, this.spacing);
+                workAreaBox.y1 = oldStartY;
 
                 const adjustActorHorizontalAllocation = actor => {
                     if (!actor.visible || !workAreaBox.x1)
@@ -2411,20 +2398,19 @@ var DockManager = class DashToDockDockManager {
             '_computeWorkspacesBoxForState',
             function (originalFunction, state, ...args) {
                 /* eslint-disable no-invalid-this */
+                if (state === OverviewControls.ControlsState.HIDDEN)
+                    return originalFunction.call(this, state, ...args);
+
                 const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
-                if (state !== OverviewControls.ControlsState.HIDDEN)
-                    maybeAdjustBoxToDock(state, box, this.spacing);
-                return box;
+                return maybeAdjustBoxSize(state, box, this.spacing);
                 /* eslint-enable no-invalid-this */
             },
         ], [
             ControlsManagerLayout.prototype,
             '_getAppDisplayBoxForState',
-            function (originalFunction, state, ...args) {
+            function (originalFunction, ...args) {
                 /* eslint-disable no-invalid-this */
-                const { spacing } = this;
-                const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
-                return maybeAdjustBoxToDock(state, box, spacing);
+                return workspaceBoxOriginFixer.call(this, originalFunction, ...args);
                 /* eslint-enable no-invalid-this */
             },
         ]);

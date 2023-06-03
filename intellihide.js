@@ -41,6 +41,7 @@ const handledWindowTypes = [
     Meta.WindowType.MENU,
     Meta.WindowType.UTILITY,
     Meta.WindowType.SPLASHSCREEN,
+    Meta.WindowType.DROPDOWN_MENU,
 ];
 
 // List of applications, ignore windows of these applications in considering intellihide
