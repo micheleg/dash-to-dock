@@ -1,0 +1,662 @@
+# Translation for de
+# Copyright (C) 2014 Michele
+# This file is distributed under the same license as the dash-to-dock package.
+#
+# Morris Jobke <hey@morrisjobke.de>, 2014.
+# Jonatan Zeidler <jonatan_zeidler@hotmail.de>, 2012.
+# jonius <jonatan_zeidler@gmx.de>, 2012.
+# Heimen Stoffels <vistausss@outlook.com>, 2015, 2019.
+msgid ""
+msgstr ""
+"Project-Id-Version: Dash to Dock\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-10-10 20:27+0200\n"
+"PO-Revision-Date: 2019-10-10 20:46+0200\n"
+"Last-Translator: Heimen Stoffels <vistausss@outlook.com>\n"
+"Language-Team: Dutch <kde-i18n-doc@kde.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 19.11.70\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: prefs.js:264
+msgid "Primary monitor"
+msgstr "Primair beeldscherm"
+
+#: prefs.js:273 prefs.js:280
+msgid "Secondary monitor "
+msgstr "Secundair beeldscherm"
+
+#: prefs.js:305 Settings.ui.h:28
+msgid "Right"
+msgstr "Rechts"
+
+#: prefs.js:306 Settings.ui.h:25
+msgid "Left"
+msgstr "Links"
+
+#: prefs.js:356
+msgid "Intelligent autohide customization"
+msgstr "Voorkeuren voor slim verbergen"
+
+#: prefs.js:363 prefs.js:556 prefs.js:612
+msgid "Reset to defaults"
+msgstr "Standaardwaarden"
+
+#: prefs.js:549
+msgid "Show dock and application numbers"
+msgstr "Dock en programmanummers tonen"
+
+#: prefs.js:605
+msgid "Customize middle-click behavior"
+msgstr "Middelste muisknop-gedrag aanpassen"
+
+#: prefs.js:688
+msgid "Customize running indicators"
+msgstr "Indicatoren van draaiende programma's aanpassen"
+
+#: prefs.js:800
+#: Settings.ui.h:74
+msgid "Customize opacity"
+msgstr "Doorzichtigheid aanpassen"
+
+#: appIcons.js:809
+msgid "All Windows"
+msgstr "Alle vensters"
+
+#. Translators: %s is "Settings", which is automatically translated. You
+#. can also translate the full message if this fits better your language.
+#: appIcons.js:1126
+#, javascript-format
+msgid "Dash to Dock %s"
+msgstr "Dash to Dock %s"
+
+#: Settings.ui.h:1
+msgid ""
+"When set to minimize, double clicking minimizes all the windows of the "
+"application."
+msgstr ""
+"Als je gekozen hebt voor minimaliseren, dan zorgt dubbelklikken ervoor dat "
+"alle vensters van het huidige programma worden geminimaliseerd."
+
+#: Settings.ui.h:2
+msgid "Shift+Click action"
+msgstr "Shift+klikken-actie"
+
+#: Settings.ui.h:3
+msgid "Raise window"
+msgstr "Venster naar voren halen"
+
+#: Settings.ui.h:4
+msgid "Minimize window"
+msgstr "Venster minimalisren"
+
+#: Settings.ui.h:5
+msgid "Launch new instance"
+msgstr "Nieuw proces openen"
+
+#: Settings.ui.h:6
+msgid "Cycle through windows"
+msgstr "Schakelen tussen vensters"
+
+#: Settings.ui.h:7
+msgid "Minimize or overview"
+msgstr "Minimaliseren of activiteitenoverzicht"
+
+#: Settings.ui.h:8
+msgid "Show window previews"
+msgstr "Venstervoorbeelden tonen"
+
+#: Settings.ui.h:9
+msgid "Minimize or show previews"
+msgstr "Minimaliseren of voorbeelden tonen"
+
+#: Settings.ui.h:10
+msgid "Focus or show previews"
+msgstr "Focussen of voorbeelden tonen"
+
+#: Settings.ui.h:11
+msgid "Quit"
+msgstr "Afsluiten"
+
+#: Settings.ui.h:12
+msgid "Behavior for Middle-Click."
+msgstr "Wat er gebeurt bij middelklikken."
+
+#: Settings.ui.h:13
+msgid "Middle-Click action"
+msgstr "Middelklikactie"
+
+#: Settings.ui.h:14
+msgid "Behavior for Shift+Middle-Click."
+msgstr "Wat er gebeurt bij Shift+middelklikken."
+
+#: Settings.ui.h:15
+msgid "Shift+Middle-Click action"
+msgstr "Shift+middelklik-actie"
+
+#: Settings.ui.h:16
+msgid "Enable Unity7 like glossy backlit items"
+msgstr "Unity7-achtige itemachtergrond gebruiken"
+
+#: Settings.ui.h:17
+msgid "Use dominant color"
+msgstr "Dominante kleur gebruiken"
+
+#: Settings.ui.h:18
+msgid "Customize indicator style"
+msgstr "Indicatorstijl aanpassen"
+
+#: Settings.ui.h:19
+msgid "Color"
+msgstr "Kleur"
+
+#: Settings.ui.h:20
+msgid "Border color"
+msgstr "Randkleur"
+
+#: Settings.ui.h:21
+msgid "Border width"
+msgstr "Randbreedte"
+
+#: Settings.ui.h:22
+msgid "Show the dock on"
+msgstr "Dock tonen op"
+
+#: Settings.ui.h:23
+msgid "Show on all monitors"
+msgstr "Tonen op alle beeldschermen"
+
+#: Settings.ui.h:24
+msgid "Position on screen"
+msgstr "Positie op het scherm"
+
+#: Settings.ui.h:26
+msgid "Bottom"
+msgstr "Onderaan"
+
+#: Settings.ui.h:27
+msgid "Top"
+msgstr "Bovenaan"
+
+#: Settings.ui.h:29
+msgid ""
+"Hide the dock when it obstructs a window of the current application. More "
+"refined settings are available."
+msgstr ""
+"Verberg het dock als het een venster van het huidige programma in de weg "
+"zit. Er zijn uitgebreide instellingen hiervoor beschikbaar."
+
+#: Settings.ui.h:30
+msgid "Intelligent autohide"
+msgstr "Slim verbergen"
+
+#: Settings.ui.h:31
+msgid "Dock size limit"
+msgstr "Maximale dockgrootte"
+
+#: Settings.ui.h:32
+msgid "Panel mode: extend to the screen edge"
+msgstr "Paneelmodus: uitrekken tot aan de schermrand"
+
+#: Settings.ui.h:33
+msgid "Icon size limit"
+msgstr "Maximale pictogramgrootte"
+
+#: Settings.ui.h:34
+msgid "Fixed icon size: scroll to reveal other icons"
+msgstr ""
+"Vastgezette pictogramgrootte: scroll om meer pictogrammen weer te geven"
+
+#: Settings.ui.h:35
+msgid "Position and size"
+msgstr "Positie en grootte"
+
+#: Settings.ui.h:36
+msgid "Show favorite applications"
+msgstr "Favoriete programma's tonen"
+
+#: Settings.ui.h:37
+msgid "Show running applications"
+msgstr "Geopende programma's tonen"
+
+#: Settings.ui.h:38
+msgid "Isolate workspaces"
+msgstr "Werkbladen isoleren"
+
+#: Settings.ui.h:39
+msgid "Isolate monitors"
+msgstr "Beeldschermen isoleren"
+
+#: Settings.ui.h:40
+msgid "Show open windows previews"
+msgstr "Voorbeelden van geopende vensters tonen"
+
+#: Settings.ui.h:41
+msgid ""
+"If disabled, these settings are accessible from gnome-tweak-tool or the "
+"extension website."
+msgstr ""
+"Als je dit uitschakelt, dan zijn deze instellingen toegankelijk via gnome-"
+"tweaks of de extensiesite."
+
+#: Settings.ui.h:42
+msgid "Show <i>Applications</i> icon"
+msgstr "Pictogram voor <i>Alle programma's</i> tonen"
+
+#: Settings.ui.h:43
+msgid "Move the applications button at the beginning of the dock"
+msgstr "Verplaatst de 'Alle programma's'-knop naar het begin van het dock"
+
+#: Settings.ui.h:44
+msgid "Animate <i>Show Applications</i>"
+msgstr "Animatie na klikken op <i>Alle programma's tonen</i>"
+
+#: Settings.ui.h:45
+msgid "Show trash can"
+msgstr "Prullenbak tonen"
+
+#: Settings.ui.h:46
+msgid "Show mounted volumes and devices"
+msgstr "Aangekoppelde schijven en apparaten tonen"
+
+#: Settings.ui.h:47
+msgid "Launchers"
+msgstr "Starters"
+
+#: Settings.ui.h:48
+msgid ""
+"Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
+"together with Shift and Ctrl."
+msgstr ""
+"Gebruik Super+(0-9) om programma's te openen en focussen. Kan ook worden "
+"gebruikt met Shift en Ctrl."
+
+#: Settings.ui.h:49
+msgid "Use keyboard shortcuts to activate apps"
+msgstr "Sneltoetsen gebruiken om programma's te openen/focussen"
+
+#: Settings.ui.h:50
+msgid "Behaviour when clicking on the icon of a running application."
+msgstr ""
+"Wat er gebeurt bij het klikken op het pictogram van een geopend programma."
+
+#: Settings.ui.h:51
+msgid "Click action"
+msgstr "Klikactie"
+
+#: Settings.ui.h:52
+msgid "Minimize"
+msgstr "Minimaliseren"
+
+#: Settings.ui.h:53
+msgid "Behaviour when scrolling on the icon of an application."
+msgstr ""
+"Wat er gebeurt bij het scrollen op het pictogram van een geopend programma."
+
+#: Settings.ui.h:54
+msgid "Scroll action"
+msgstr "Scrollactie"
+
+#: Settings.ui.h:55
+msgid "Do nothing"
+msgstr "Niets doen"
+
+#: Settings.ui.h:56
+msgid "Switch workspace"
+msgstr "Van werkblad wisselen"
+
+#: Settings.ui.h:57
+msgid "Behavior"
+msgstr "Gedrag"
+
+#: Settings.ui.h:58
+msgid ""
+"Few customizations meant to integrate the dock with the default GNOME theme. "
+"Alternatively, specific options can be enabled below."
+msgstr ""
+"Enkele aanpassingen, bedoeld om het dock te integreren met het standaard "
+"GNOME-thema. In plaats daarvan kun je hieronder specifieke opties inschakelen."
+
+#: Settings.ui.h:59
+msgid "Use built-in theme"
+msgstr "Ingebouwd thema gebruiken"
+
+#: Settings.ui.h:60
+msgid "Save space reducing padding and border radius."
+msgstr "Bespaar ruimte door de straal van de dikte en rand te verkleinen."
+
+#: Settings.ui.h:61
+msgid "Shrink the dash"
+msgstr "Snelstarter verkleinen"
+
+#: Settings.ui.h:62
+msgid "Customize windows counter indicators"
+msgstr "Vensterindicatoren aanpassen"
+
+#: Settings.ui.h:63
+msgid "Default"
+msgstr "Standaard"
+
+#: Settings.ui.h:64
+msgid "Dots"
+msgstr "Stipjes"
+
+#: Settings.ui.h:65
+msgid "Squares"
+msgstr "Vierkantjes"
+
+#: Settings.ui.h:66
+msgid "Dashes"
+msgstr "Streepjes"
+
+#: Settings.ui.h:67
+msgid "Segmented"
+msgstr "Gesegmenteerd"
+
+#: Settings.ui.h:68
+msgid "Solid"
+msgstr "Vast"
+
+#: Settings.ui.h:69
+msgid "Ciliora"
+msgstr "Ciliora"
+
+#: Settings.ui.h:70
+msgid "Metro"
+msgstr "Metro"
+
+#: Settings.ui.h:71
+msgid "Set the background color for the dash."
+msgstr "Stel de achtergrondkleur in van de snelstarter."
+
+#: Settings.ui.h:72
+msgid "Customize the dash color"
+msgstr "Snelstarterkleur aanpassen"
+
+#: Settings.ui.h:73
+msgid "Tune the dash background opacity."
+msgstr "Pas de doorzichtigheid van de snelstarterachtergrond aan."
+
+#: Settings.ui.h:75
+msgid "Fixed"
+msgstr "Vooringesteld"
+
+#: Settings.ui.h:76
+msgid "Dynamic"
+msgstr "Dynamisch"
+
+#: Settings.ui.h:77
+msgid "Opacity"
+msgstr "Doorzichtigheid"
+
+#: Settings.ui.h:78
+msgid "Force straight corner\n"
+msgstr "Rechte hoek afdwingen\n"
+
+#: Settings.ui.h:80
+msgid "Appearance"
+msgstr "Uiterlijk"
+
+#: Settings.ui.h:81
+msgid "version: "
+msgstr "versie: "
+
+#: Settings.ui.h:82
+msgid "Moves the dash out of the overview transforming it in a dock"
+msgstr ""
+"Toont de snelstarter buiten het activiteitenoverzicht zodat het een dock "
+"wordt"
+
+#: Settings.ui.h:83
+msgid "Created by"
+msgstr "Gemaakt door"
+
+#: Settings.ui.h:84
+msgid "Webpage"
+msgstr "Website"
+
+#: Settings.ui.h:85
+msgid ""
+"<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
+"See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+"\">GNU General Public License, version 2 or later</a> for details.</span>"
+msgstr ""
+"<span size=\"small\">Dit programma wordt geleverd ZONDER ENIGE GARANTIE.\n"
+"Lees de <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+"\">GNU General Public License, versie 2 of nieuwer</a>, voor meer informatie."
+"</span>"
+
+#: Settings.ui.h:87
+msgid "About"
+msgstr "Over"
+
+#: Settings.ui.h:88
+msgid "Customize minimum and maximum opacity values"
+msgstr "Minimum- en maximumwaarden van doorzichtigheid aanpassen"
+
+#: Settings.ui.h:89
+msgid "Minimum opacity"
+msgstr "Minimale doorzichtigheid"
+
+#: Settings.ui.h:90
+msgid "Maximum opacity"
+msgstr "Maximale doorzichtigheid"
+
+#: Settings.ui.h:91
+msgid "Number overlay"
+msgstr "Nummers tonen"
+
+#: Settings.ui.h:92
+msgid ""
+"Temporarily show the application numbers over the icons, corresponding to "
+"the shortcut."
+msgstr ""
+"Toon tijdelijk de programmanummers, behorende bij de sneltoets, op de "
+"pictogrammen."
+
+#: Settings.ui.h:93
+msgid "Show the dock if it is hidden"
+msgstr "Dock tonen indien verborgen"
+
+#: Settings.ui.h:94
+msgid ""
+"If using autohide, the dock will appear for a short time when triggering the "
+"shortcut."
+msgstr ""
+"Als je automatisch verbergen gebruikt, dan wordt het dock, middels de "
+"sneltoets, korte tijd getoond."
+
+#: Settings.ui.h:95
+msgid "Shortcut for the options above"
+msgstr "Sneltoets voor bovenstaande opties"
+
+#: Settings.ui.h:96
+msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
+msgstr "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
+
+#: Settings.ui.h:97
+msgid "Hide timeout (s)"
+msgstr "Verberginterval (s)"
+
+#: Settings.ui.h:98
+msgid "Show the dock by mouse hover on the screen edge."
+msgstr "Dock tonen door de muiscursor op de schermrand te plaatsen."
+
+#: Settings.ui.h:99
+msgid "Autohide"
+msgstr "Automatisch verbergen"
+
+#: Settings.ui.h:100
+msgid "Push to show: require pressure to show the dock"
+msgstr "Tonen middels druk: druk toepassen om het dock te tonen"
+
+#: Settings.ui.h:101
+msgid "Enable in fullscreen mode"
+msgstr "Inschakelen in beeldvullende modus"
+
+#: Settings.ui.h:102
+msgid "Show the dock when it doesn't obstruct application windows."
+msgstr "Toon het dock als het geen programmavensters in de weg zit."
+
+#: Settings.ui.h:103
+msgid "Dodge windows"
+msgstr "Vensters ontwijken"
+
+#: Settings.ui.h:104
+msgid "All windows"
+msgstr "Alle vensters"
+
+#: Settings.ui.h:105
+msgid "Only focused application's windows"
+msgstr "Alleen gefocuste programmavensters"
+
+#: Settings.ui.h:106
+msgid "Only maximized windows"
+msgstr "Alleen gemaximaliseerde vensters"
+
+#: Settings.ui.h:107
+msgid "Animation duration (s)"
+msgstr "Animatieduur (s)"
+
+#: Settings.ui.h:108
+msgid "Show timeout (s)"
+msgstr "Weergave-interval (s)"
+
+#: Settings.ui.h:109
+msgid "Pressure threshold"
+msgstr "Drukwaarde"
+
+#~ msgid "Show a dot for each windows of the application."
+#~ msgstr "Toon een stip voor elk geopend venster."
+
+#~ msgid "0.000"
+#~ msgstr "0.000"
+
+#, fuzzy
+#~ msgid ""
+#~ "With fixed icon size, only the edge of the dock and the <i>Show "
+#~ "Applications</i> icon are active."
+#~ msgstr ""
+#~ "Het gebied nabij de schermrand en de <i>Applicaties weergeven</i>-knop "
+#~ "zijn actief."
+
+#~ msgid "Switch workspace by scrolling on the dock"
+#~ msgstr "Van werkblad wisselen door te scrollen op het dock"
+
+#~ msgid "Only consider windows of the focused application"
+#~ msgstr "Alleen vensters van de huidige gefocuste applicatie overwegen"
+
+#~ msgid "Main Settings"
+#~ msgstr "Grundeinstellungen"
+
+#~ msgid "Dock Position"
+#~ msgstr "Dock-Position"
+
+#~ msgid "Dock is fixed and always visible"
+#~ msgstr "Das Dock hat eine feste Position und ist immer sichtbar"
+
+#~ msgid "Show delay [ms]"
+#~ msgstr "Einblendeverzögerung [ms]"
+
+#~ msgid "Hide delay [ms]"
+#~ msgstr "Ausblendeverzögerung [ms]"
+
+#~ msgid "Application based intellihide"
+#~ msgstr "Anwendungsbasiertes intelligentes Verstecken"
+
+#~ msgid "Show the dock on following monitor (if attached)"
+#~ msgstr "Zeige Dock auf folgendem Monitor (falls angeschlossen)"
+
+#~ msgid "Primary (default)"
+#~ msgstr "Primäranzeige (Standard)"
+
+#~ msgid "1"
+#~ msgstr "1"
+
+#~ msgid "2"
+#~ msgstr "2"
+
+#~ msgid "3"
+#~ msgstr "3"
+
+#~ msgid "4"
+#~ msgstr "4"
+
+#~ msgid "Max height"
+#~ msgstr "Maximale Höhe"
+
+#~ msgid "Expand (experimental and buggy)"
+#~ msgstr "Komplette Höhe (experimentell und fehlerbehaftet)"
+
+#~ msgid "Maximum icon size"
+#~ msgstr "Maximale Symbolgröße"
+
+#~ msgid "16"
+#~ msgstr "16"
+
+#~ msgid "24"
+#~ msgstr "24"
+
+#~ msgid "32"
+#~ msgstr "32"
+
+#~ msgid "48"
+#~ msgstr "48"
+
+#~ msgid "64"
+#~ msgstr "64"
+
+#~ msgid "Optional features"
+#~ msgstr "Optionale Funktionen"
+
+#~ msgid "Deadtime between each workspace switching [ms]"
+#~ msgstr "Stillstandszeit zwischen Arbeitsflächenwechsel [ms]"
+
+#~ msgid "Only a 1px wide area close to the screen edge is active"
+#~ msgstr "Nur einen 1 Pixel-breiten Bereich am Rand nutzen"
+
+#~ msgid "All the area of the dock is active"
+#~ msgstr "Den gesamten Bereich des Docks nutzen"
+
+#~ msgid "Customize actions on mouse click"
+#~ msgstr "Aktion bei Mausklick anpassen"
+
+#~ msgid "Action on clicking on running app"
+#~ msgstr "Aktion beim Klicken auf eine laufende Anwendung"
+
+#~ msgid "Minimize window on shift+click (double click for all app windows)"
+#~ msgstr ""
+#~ "Fenster mit Shift+Klick minimieren (Doppelklick für alle Fenster der "
+#~ "Anwendung)"
+
+#~ msgid "Appearence and Themes"
+#~ msgstr "Erscheinungsbild und Themen"
+
+#~ msgid ""
+#~ "A customized theme is built in the extension. This is meant to work with "
+#~ "the default Adwaita theme: the dash is shrunk to save space, its "
+#~ "background transparency reduced, and custom indicators for the number of "
+#~ "windows of each application are added."
+#~ msgstr ""
+#~ "Ein angepasstes Thema ist in dieser Erweiterung enthalten. Es ist für das "
+#~ "Vorgabe-Adwaita-Thema gedacht: Das Dash ist schmaler, um Platz zu sparen, "
+#~ "die Hintergrundtransparenz ist reduziert und für jede Anwendung wird ein "
+#~ "Indikator für die Anzahl der Fenster eingefügt."
+
+#~ msgid ""
+#~ "Alternatively, for a better integration with custom themes, each "
+#~ "customization can be applied indipendently"
+#~ msgstr ""
+#~ "Alternativ können für eine bessere Integration Anpassungen vorgenommen "
+#~ "werden"
+
+#~ msgid "Shrink the dash size by reducing padding"
+#~ msgstr "Das Dash schmaler machen durch Verkleinern des Abstands zum Rand"
+
+#~ msgid "Apply custom theme (work only with the default Adwaita theme)"
+#~ msgstr ""
+#~ "Benutzerdefiniertes Theme verwenden (funktioniert nur mit dem Standard-"
+#~ "Adwaita-Theme)"
