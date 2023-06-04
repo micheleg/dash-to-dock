@@ -6,9 +6,9 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Me = ExtensionUtils.getCurrentExtension();
 
 // import pages
-const { Behavior } = Me.imports.preferences.behavior;
 const { General } = Me.imports.preferences.general;
 const { Launchers } = Me.imports.preferences.launchers;
+const { Behavior } = Me.imports.preferences.behavior;
 const { Apparence } = Me.imports.preferences.apparence;
 const { About } = Me.imports.preferences.about;
 
