@@ -10,6 +10,7 @@ const { Behavior } = Me.imports.preferences.behavior;
 const { General } = Me.imports.preferences.general;
 const { Launchers } = Me.imports.preferences.launchers;
 const { Apparence } = Me.imports.preferences.apparence;
+const { About } = Me.imports.preferences.about;
 
 function init() {
     ExtensionUtils.initTranslations('dashtodock');
@@ -24,5 +25,7 @@ function fillPreferencesWindow(window) {
     window.add(new Launchers(settings));
     window.add(new Behavior(settings));
     window.add(new Apparence(settings));
+    window.add(new About(settings));
+
     window.search_enabled = true;
 }
