@@ -10,7 +10,6 @@ var Apparence = GObject.registerClass({
     Template: `file://${GLib.build_filenamev([Me.path, 'ui', 'apparence.ui'])}`,
     InternalChildren: [
         'customThemeShrink',
-        'disableOverviewOnStartup',
         'applyCustomTheme',
         'customBackgroundColor',
         'backgroundColor'
@@ -21,10 +20,6 @@ var Apparence = GObject.registerClass({
 
         settings.bind(
             'custom-theme-shrink', this._customThemeShrink, 'active',
-            Gio.SettingsBindFlags.DEFAULT
-        );
-        settings.bind(
-            'disable-overview-on-startup', this._disableOverviewOnStartup, 'active',
             Gio.SettingsBindFlags.DEFAULT
         );
         settings.bind(

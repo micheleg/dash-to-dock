@@ -12,6 +12,7 @@ var Behavior = GObject.registerClass({
         'showWindowsPreview',
         'isolateWorkspaces',
         'isolateMonitors',
+        'disableOverviewOnStartup',
         'showMounts',
         'showMountsOnlyMounted',
         'showMountsNetwork',
@@ -31,6 +32,10 @@ var Behavior = GObject.registerClass({
         );
         settings.bind(
             'isolate-monitors', this._isolateMonitors, 'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+        settings.bind(
+            'disable-overview-on-startup', this._disableOverviewOnStartup, 'active',
             Gio.SettingsBindFlags.DEFAULT
         );
         settings.bind(
