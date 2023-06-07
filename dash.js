@@ -852,8 +852,8 @@ var DockDash = GObject.registerClass({
         let newIndex = 0;
         let oldIndex = 0;
         while (newIndex < newApps.length || oldIndex < oldApps.length) {
-            const oldApp = oldApps.at(oldIndex);
-            const newApp = newApps.at(newIndex);
+            const oldApp = oldApps.length > oldIndex ? oldApps[oldIndex] : null;
+            const newApp = newApps.length > newIndex ? newApps[newIndex] : null;
 
             // No change at oldIndex/newIndex
             if (oldApp === newApp) {
