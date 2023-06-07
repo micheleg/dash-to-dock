@@ -14,6 +14,11 @@ const { About } = Me.imports.preferences.about;
 
 function init() {
     ExtensionUtils.initTranslations('dashtodock');
+
+    // load the icon theme
+    let iconPath = Me.dir.get_child("icons").get_path();
+    let iconTheme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default());
+    iconTheme.add_search_path(iconPath);
 }
 
 function fillPreferencesWindow(window) {
