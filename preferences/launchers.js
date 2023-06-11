@@ -26,7 +26,9 @@ var Launchers = GObject.registerClass({
         'animateApps', //animate-show-apps (b)
         'moveToEdge', //show-apps-always-in-the-edge (b)
 
-        'showTrash' //show-trash (b)
+        'showTrash', //show-trash (b)
+
+        'focusVisable' //scroll-to-focused-application (b)
     ]
 }, class Launchers extends Adw.PreferencesPage {
     constructor(settings) {
@@ -88,6 +90,11 @@ var Launchers = GObject.registerClass({
 
         settings.bind(
             'show-trash', this._showTrash, 'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+
+        settings.bind(
+            'scroll-to-focused-application', this._focusVisable, 'active',
             Gio.SettingsBindFlags.DEFAULT
         );
     }
