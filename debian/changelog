@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (84ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (84ubuntu1) mantic; urgency=medium
 
   [ WhiredPlanck ]
   * Update Simplified Chinese translation
@@ -14,7 +14,7 @@ gnome-shell-extension-ubuntu-dock (84ubuntu1) UNRELEASED; urgency=medium
   [ addieStarr ]
   * Fixed dash-js app issue
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 15 Jun 2023 22:50:36 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 15 Jun 2023 22:51:34 +0200
 
 gnome-shell-extension-ubuntu-dock (82ubuntu1) mantic; urgency=medium
 
