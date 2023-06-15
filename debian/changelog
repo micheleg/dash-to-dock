@@ -1,3 +1,21 @@
+gnome-shell-extension-ubuntu-dock (84ubuntu1) UNRELEASED; urgency=medium
+
+  [ WhiredPlanck ]
+  * Update Simplified Chinese translation
+  * Update Traditional Chinese translation
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+  * Revert "dash: Compute number of icons easily and correctly to show the
+    separator"
+  * dash: Take in account the number of removed favorites to add the separator
+  * docking: Always affect the input region when adding the dock (LP: #2022885)
+
+  [ addieStarr ]
+  * Fixed dash-js app issue
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 15 Jun 2023 22:50:36 +0200
+
 gnome-shell-extension-ubuntu-dock (82ubuntu1) mantic; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
