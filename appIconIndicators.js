@@ -974,26 +974,27 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
         if (!iconTexture)
             return null;
 
-
         if (iconTexture instanceof Gio.FileIcon) {
             // Use GdkPixBuf to load the pixel buffer from the provided file path
             return GdkPixbuf.Pixbuf.new_from_file(iconTexture.get_file().get_path());
         } else if (iconTexture instanceof Gio.ThemedIcon) {
-            // Get the pixel buffer from the icon theme
-            const [iconName] = iconTexture.get_names();
-            const iconInfo = themeLoader.lookup_icon(iconName,
-                DOMINANT_COLOR_ICON_SIZE, 0);
+            // Get the first pixel buffer available in the icon theme
+            const iconNames = iconTexture.get_names();
+            const iconInfo = themeLoader.choose_icon(iconNames, DOMINANT_COLOR_ICON_SIZE, 0);
 
-            if (iconInfo)
-                return iconInfo.load_icon();            
+            if (iconInfo) {
+                return iconInfo.load_icon();
+            } else {
+                return null;
+            }   
         }
 
         // Use GdkPixBuf to load the pixel buffer from memory
-        const [iconInfo] = iconTexture.load(DOMINANT_COLOR_ICON_SIZE, null);
-        if (iconInfo)
-            return GdkPixbuf.Pixbuf.new_from_stream(iconInfo, null);
-        else
-            return null;
+        // iconTexture.load is available unless iconTexture is not an instance of Gio.LoadableIcon
+        // this means that iconTexture is an instance of Gio.EmblemedIcon,
+        // which may be converted to a normal icon via iconTexture.get_icon?
+        const [iconBuffer] = iconTexture.load(DOMINANT_COLOR_ICON_SIZE, null);
+        return GdkPixbuf.Pixbuf.new_from_stream(iconBuffer, null);
     }
 
     /**
