@@ -375,6 +375,9 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
                 const colorPalette = this._dominantColorExtractor._getColorPalette();
                 if (colorPalette)
                     [, this._bodyColor] = Clutter.color_from_string(colorPalette.original);
+                else
+                    // Fallback
+                    [, this._bodyColor] = Clutter.color_from_string(settings.customThemeRunningDotsColor);
             }
 
             // Finally, use customize style if requested
