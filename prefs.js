@@ -111,26 +111,7 @@ class MonitorsConfig {
                 });
             }
 
-            for (const logicalMonitor of logicalMonitors) {
-                const [x_, y_, scale_, transform_, isPrimary, monitorsSpecs] =
-                    logicalMonitor;
-
-                // We only care about the first one really
-                for (const monitorSpecs of monitorsSpecs) {
-                    const [connector, vendor, product, serial] = monitorSpecs;
-                    const monitor = this._monitors.find(m =>
-                        m.connector === connector && m.vendor === vendor &&
-                        m.product === product && m.serial === serial);
-
-                    if (monitor) {
-                        monitor.active = true;
-                        monitor.isPrimary = isPrimary;
-                        if (monitor.isPrimary)
-                            this._primaryMonitor = monitor;
-                        break;
-                    }
-                }
-            }
+            this._setPrimaryMonitor(logicalMonitors);
 
             const activeMonitors = this._monitors.filter(m => m.active);
             if (activeMonitors.length > 1 && logicalMonitors.length === 1) {
@@ -142,6 +123,30 @@ class MonitorsConfig {
             this._updateMonitorsIndexes();
             this.emit('updated');
         });
+    }
+
+    _setPrimaryMonitor(logicalMonitors) {
+        for (const logicalMonitor of logicalMonitors) {
+            const [x_, y_, scale_, transform_, isPrimary, monitorsSpecs] =
+                logicalMonitor;
+
+            // We only care about the first one really
+            for (const monitorSpecs of monitorsSpecs) {
+                const [connector, vendor, product, serial] = monitorSpecs;
+                const monitor = this._monitors.find(m =>
+                    m.connector === connector && m.vendor === vendor &&
+                    m.product === product && m.serial === serial);
+
+                if (monitor) {
+                    monitor.active = true;
+                    monitor.isPrimary = isPrimary;
+                    if (monitor.isPrimary)
+                        this._primaryMonitor = monitor;
+
+                    return;
+                }
+            }
+        }
     }
 
     _updateMonitorsIndexes() {
