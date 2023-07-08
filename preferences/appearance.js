@@ -24,9 +24,9 @@ const RunningIndicatorStyle = Object.freeze({
     METRO: 7,
 });
 
-var Apparence = GObject.registerClass({
-    GTypeName: 'Apparence',
-    Template: `file://${GLib.build_filenamev([Me.path, 'ui', 'apparence.ui'])}`,
+var Appearance = GObject.registerClass({
+    GTypeName: 'Appearance',
+    Template: `file://${GLib.build_filenamev([Me.path, 'ui', 'appearance.ui'])}`,
     InternalChildren: [
         'applyCustomTheme', //apply-custom-theme (b)
 

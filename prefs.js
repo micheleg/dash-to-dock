@@ -9,7 +9,7 @@ const Me = ExtensionUtils.getCurrentExtension();
 const { General } = Me.imports.preferences.general;
 const { Launchers } = Me.imports.preferences.launchers;
 const { Behavior } = Me.imports.preferences.behavior;
-const { Apparence } = Me.imports.preferences.apparence;
+const { Appearance } = Me.imports.preferences.appearance;
 const { About } = Me.imports.preferences.about;
 
 function init() {
@@ -29,7 +29,7 @@ function fillPreferencesWindow(window) {
     window.add(new General(settings));
     window.add(new Launchers(settings));
     window.add(new Behavior(settings));
-    window.add(new Apparence(settings));
+    window.add(new Appearance(settings));
     window.add(new About(settings));
 
     window.search_enabled = true;
