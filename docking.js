@@ -754,6 +754,7 @@ const DockedDash = GObject.registerClass({
 
     _onOverviewHidden() {
         this.remove_style_class_name('overview');
+        this._updateDashVisibility();
     }
 
     _onMenuOpened() {
