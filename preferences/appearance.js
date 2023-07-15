@@ -39,8 +39,12 @@ var Appearance = GObject.registerClass({
         // indicatro border widht //custom-theme-running-dots-border-width (i)
         
         'dockSize',
+
         'pannelMode', //extend-height (b)
         'centerIcons', //always-center-icons (b)
+        'moveStart', //show-apps-at-top (b)
+        'moveToEdge', //show-apps-always-in-the-edge (b)
+
         'customThemeShrink', //custom-theme-shrink (b)
 
         'customBackgroundColor', //custom-background-color (b)
@@ -88,6 +92,7 @@ var Appearance = GObject.registerClass({
         setColorBTN(settings,this._IndicatorBorderColor,'custom-theme-running-dots-border-color');
                
         //dockSize
+
         //pannelMode
         settings.bind(
             'extend-height', this._pannelMode, 'enable-expansion',
@@ -98,6 +103,18 @@ var Appearance = GObject.registerClass({
             'always-center-icons', this._centerIcons, 'active',
             Gio.SettingsBindFlags.DEFAULT
         );
+        //moveToEdge
+        settings.bind(
+            'show-apps-always-in-the-edge', this._moveToEdge, 'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+
+        //moveStart
+        settings.bind(
+            'show-apps-at-top', this._moveStart, 'active',
+            Gio.SettingsBindFlags.DEFAULT
+        );
+
         //customThemeShrink
         settings.bind(
             'custom-theme-shrink', this._customThemeShrink, 'active',

@@ -22,9 +22,9 @@ var Launchers = GObject.registerClass({
         'isolateLocations', //isolate-locations (b)
 
         'showAppsButton', //show-show-apps-button (b)
-        'moveStart', //show-apps-at-top (b)
+        // 'moveStart', //show-apps-at-top (b)
         'animateApps', //animate-show-apps (b)
-        'moveToEdge', //show-apps-always-in-the-edge (b)
+        // 'moveToEdge', //show-apps-always-in-the-edge (b)
 
         'showTrash', //show-trash (b)
 
@@ -75,18 +75,18 @@ var Launchers = GObject.registerClass({
             'show-show-apps-button', this._showAppsButton, 'enable-expansion',
             Gio.SettingsBindFlags.DEFAULT
         );
-        settings.bind(
-            'show-apps-at-top', this._moveStart, 'active',
-            Gio.SettingsBindFlags.DEFAULT
-        );
+        // settings.bind(
+        //     'show-apps-at-top', this._moveStart, 'active',
+        //     Gio.SettingsBindFlags.DEFAULT
+        // );
         settings.bind(
             'animate-show-apps', this._animateApps, 'active',
             Gio.SettingsBindFlags.DEFAULT
         );
-        settings.bind(
-            'show-apps-always-in-the-edge', this._moveToEdge, 'active',
-            Gio.SettingsBindFlags.DEFAULT
-        );
+        // settings.bind(
+        //     'show-apps-always-in-the-edge', this._moveToEdge, 'active',
+        //     Gio.SettingsBindFlags.DEFAULT
+        // );
 
         settings.bind(
             'show-trash', this._showTrash, 'active',
