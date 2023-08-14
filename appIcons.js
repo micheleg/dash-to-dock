@@ -23,7 +23,7 @@ import {
     ParentalControlsManager
 } from './dependencies/shell/misc.js';
 
-import { Config } from './dependencies/shell/misc.js';
+import {Config} from './dependencies/shell/misc.js';
 
 import {
     AppIconIndicators,
@@ -35,11 +35,11 @@ import {
     WindowPreview
 } from './imports.js';
 
-import { Extension } from './dependencies/shell/extensions/extension.js';
+import {Extension} from './dependencies/shell/extensions/extension.js';
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
-const { gettext: __ } = Extension;
+const {gettext: __} = Extension;
 
 const DBusMenu = await DBusMenuUtils.haveDBusMenu();
 
@@ -162,7 +162,7 @@ const DockAbstractAppIcon = GObject.registerClass({
                 this.remove_style_class_name('focused');
         });
 
-        const { notificationsMonitor } = Docking.DockManager.getDefault();
+        const {notificationsMonitor} = Docking.DockManager.getDefault();
 
         this.connect('notify::urgent', () => {
             const icon = this.icon._iconBin;
@@ -238,7 +238,7 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     vfunc_scroll_event(scrollEvent) {
-        const { settings } = Docking.DockManager;
+        const {settings} = Docking.DockManager;
         const isEnabled = settings.scrollAction === scrollAction.CYCLE_WINDOWS;
         if (!isEnabled)
             return Clutter.EVENT_PROPAGATE;
@@ -393,7 +393,7 @@ const DockAbstractAppIcon = GObject.registerClass({
 
         let windows = this.getWindows();
         if (Docking.DockManager.settings.multiMonitor) {
-            const { monitorIndex } = this;
+            const {monitorIndex} = this;
             windows = windows.filter(w => w.get_monitor() === monitorIndex);
         }
         windows.forEach(w => w.set_icon_geometry(rect));
@@ -429,10 +429,10 @@ const DockAbstractAppIcon = GObject.registerClass({
                     const monitorIndex = Main.layoutManager.findIndexForActor(this);
                     const workArea = Main.layoutManager.getWorkAreaForMonitor(monitorIndex);
                     const position = Utils.getPosition();
-                    const { scaleFactor } = St.ThemeContext.get_for_stage(global.stage);
+                    const {scaleFactor} = St.ThemeContext.get_for_stage(global.stage);
                     const isHorizontal = position === St.Side.TOP || position === St.Side.BOTTOM;
                     // If horizontal also remove the height of the dash
-                    const { dockFixed: fixedDock } = Docking.DockManager.settings;
+                    const {dockFixed: fixedDock} = Docking.DockManager.settings;
                     const additionalMargin = isHorizontal && !fixedDock ? Main.overview.dash.height : 0;
                     const verticalMargins = this._menu.actor.margin_top + this._menu.actor.margin_bottom;
                     const maxMenuHeight = workArea.height - additionalMargin - verticalMargins;
@@ -482,7 +482,7 @@ const DockAbstractAppIcon = GObject.registerClass({
         // being used. We then define what buttonAction should be for this
         // event.
         let buttonAction = 0;
-        const { settings } = Docking.DockManager;
+        const {settings} = Docking.DockManager;
         if (button && button === 2) {
             if (modifiers & Clutter.ModifierType.SHIFT_MASK)
                 buttonAction = settings.shiftMiddleClickAction;
@@ -998,11 +998,11 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
 
         Main.uiGroup.add_actor(this.actor);
 
-        const { remoteModel } = Docking.DockManager.getDefault();
+        const {remoteModel} = Docking.DockManager.getDefault();
         const remoteModelApp = remoteModel?.lookupById(this._source?.app?.id);
         if (remoteModelApp && DBusMenu) {
             const [onQuicklist, onDynamicSection] = Utils.splitHandler((sender,
-                { quicklist }, dynamicSection) => {
+                {quicklist}, dynamicSection) => {
                 dynamicSection.removeAll();
                 if (quicklist) {
                     quicklist.get_children().forEach(remoteItem =>
@@ -1295,7 +1295,7 @@ function isWindowUrgent(w) {
  * @param monitorIndex
  */
 export function getInterestingWindows(windows, monitorIndex) {
-    const { settings } = Docking.DockManager;
+    const {settings} = Docking.DockManager;
 
     // When using workspace isolation, we filter out windows
     // that are neither in the current workspace nor marked urgent
@@ -1329,7 +1329,7 @@ export function getInterestingWindows(windows, monitorIndex) {
 
 export const DockShowAppsIcon = GObject.registerClass({
     Signals: {
-        'menu-state-changed': { param_types: [GObject.TYPE_BOOLEAN] },
+        'menu-state-changed': {param_types: [GObject.TYPE_BOOLEAN]},
         'sync-tooltip': {},
     },
 }
@@ -1338,7 +1338,7 @@ export const DockShowAppsIcon = GObject.registerClass({
         super._init();
 
         // Re-use appIcon methods
-        const { prototype: appIconPrototype } = AppDisplay.AppIcon;
+        const {prototype: appIconPrototype} = AppDisplay.AppIcon;
         this.toggleButton.y_expand = false;
         this.toggleButton.connect('popup-menu', () =>
             appIconPrototype._onKeyboardPopupMenu.call(this));

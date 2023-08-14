@@ -4,20 +4,23 @@ rules:
     - properties: never
       allow: [^vfunc_, ^on_]
   consistent-return: error
+  eqeqeq:
+    - error
+    - smart
   key-spacing:
     - error
     - mode: minimum
       beforeColon: false
       afterColon: true
-  object-curly-spacing:
-    - error
-    - always
   prefer-arrow-callback: error
 
 overrides:
-  - files: js/**
+  - files:
+      - js/**
+      - tests/shell/**
     excludedFiles:
       - js/portalHelper/*
+      - js/extensions/*
     globals:
       global: readonly
       _: readonly

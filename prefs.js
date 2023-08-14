@@ -131,9 +131,9 @@ class MonitorsConfig {
         // for monitors, it can be removed when we don't care about breaking
         // old user configurations or external apps configuring this extension
         // such as ubuntu's gnome-control-center.
-        const { index: primaryMonitorIndex } = this._primaryMonitor;
+        const {index: primaryMonitorIndex} = this._primaryMonitor;
         for (const monitor of this._monitors) {
-            let { index } = monitor;
+            let {index} = monitor;
             // The The dock uses the Gdk index for monitors, where the primary monitor
             // always has index 0, so let's follow what dash-to-dock does in docking.js
             // (as part of _createDocks), but using inverted math
@@ -180,7 +180,7 @@ const DockSettings = GObject.registerClass({
         this._extensionPreferences = extensionPreferences;
         this._settings = extensionPreferences.getSettings(
             'org.gnome.shell.extensions.dash-to-dock');
-        this._appSwitcherSettings = new Gio.Settings({ schema_id: 'org.gnome.shell.app-switcher' });
+        this._appSwitcherSettings = new Gio.Settings({schema_id: 'org.gnome.shell.app-switcher'});
         this._rtl = Gtk.Widget.get_default_direction() === Gtk.TextDirection.RTL;
 
         this._builder = new Gtk.Builder();
@@ -1164,7 +1164,7 @@ const DockSettings = GObject.registerClass({
 export default class DockPreferences extends ExtensionPreferences {
     getPreferencesWidget() {
         const settings = new DockSettings(this);
-        const { widget } = settings;
+        const {widget} = settings;
         return widget;
     }
 }

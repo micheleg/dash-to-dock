@@ -55,11 +55,11 @@
  *
  *******************************************************************************/
 
-import { GLib } from './dependencies/gi.js';
-import { Main } from './dependencies/shell/ui.js';
-import { ExtensionUtils } from './dependencies/shell/misc.js';
+import {GLib} from './dependencies/gi.js';
+import {Main} from './dependencies/shell/ui.js';
+import {ExtensionUtils} from './dependencies/shell/misc.js';
 
-import { DockManager } from './docking.js';
+import {DockManager} from './docking.js';
 
 const IDENTIFIER_UUID = '130cbc66-235c-4bd6-8571-98d2d8bba5e2';
 

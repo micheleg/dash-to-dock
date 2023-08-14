@@ -11,7 +11,7 @@ import {
     Utils
 } from './imports.js';
 
-const { signals: Signals } = imports;
+const {signals: Signals} = imports;
 
 // A good compromise between reactivity and efficiency; to be tuned.
 const INTELLIHIDE_CHECK_INTERVAL = 100;
@@ -290,7 +290,7 @@ export class Intellihide {
         case IntellihideMode.ALWAYS_ON_TOP:
             // Always on top, except for fullscreen windows
             if (this._focusApp) {
-                const { focusWindow } = global.display;
+                const {focusWindow} = global.display;
                 if (!focusWindow?.fullscreen)
                     return false;
             }

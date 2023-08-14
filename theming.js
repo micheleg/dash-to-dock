@@ -6,14 +6,14 @@ import {
     St
 } from './dependencies/gi.js';
 
-import { Main } from './dependencies/shell/ui.js';
+import {Main} from './dependencies/shell/ui.js';
 
 import {
     Docking,
     Utils
 } from './imports.js';
 
-const { signals: Signals } = imports;
+const {signals: Signals} = imports;
 
 /*
  * DEFAULT:  transparency given by theme
@@ -48,8 +48,8 @@ export class ThemeManager {
         this._dash = dock.dash;
 
         // initialize colors with generic values
-        this._customizedBackground = { red: 0, green: 0, blue: 0, alpha: 0 };
-        this._customizedBorder = { red: 0, green: 0, blue: 0, alpha: 0 };
+        this._customizedBackground = {red: 0, green: 0, blue: 0, alpha: 0};
+        this._customizedBorder = {red: 0, green: 0, blue: 0, alpha: 0};
         this._transparency = new Transparency(dock);
 
         this._signalsHandler.add([
@@ -156,7 +156,7 @@ export class ThemeManager {
         if (!backgroundColor)
             return;
 
-        const { settings } = Docking.DockManager;
+        const {settings} = Docking.DockManager;
 
         if (settings.customBackgroundColor) {
             // When applying a custom color, we need to check the alpha value,
@@ -165,7 +165,7 @@ export class ThemeManager {
             // the opacity will be set by the opaque/transparent styles anyway.
             let newAlpha = Math.round(backgroundColor.alpha / 2.55) / 100;
 
-            ({ backgroundColor } = settings);
+            ({backgroundColor} = settings);
             // backgroundColor is a string like rgb(0,0,0)
             const [ret, color] = Clutter.Color.from_string(backgroundColor);
             if (!ret) {
@@ -192,7 +192,7 @@ export class ThemeManager {
     }
 
     _updateCustomStyleClasses() {
-        const { settings } = Docking.DockManager;
+        const {settings} = Docking.DockManager;
 
         if (settings.applyCustomTheme)
             this._actor.add_style_class_name('dashtodock');
@@ -239,7 +239,7 @@ export class ThemeManager {
         if (!this._dash._background.get_stage())
             return;
 
-        const { settings } = Docking.DockManager;
+        const {settings} = Docking.DockManager;
 
         // Remove prior style edits
         this._dash._background.set_style(null);
@@ -547,7 +547,7 @@ class Transparency {
 
         Main.uiGroup.remove_child(dummyObject);
 
-        const { settings } = Docking.DockManager;
+        const {settings} = Docking.DockManager;
 
         if (settings.customizeAlphas) {
             this._opaqueAlpha = settings.maxAlpha;

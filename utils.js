@@ -13,7 +13,7 @@ import {
     Docking
 } from './imports.js';
 
-const { _gi: Gi } = imports;
+const {_gi: Gi} = imports;
 
 export const SignalsHandlerFlags = Object.freeze({
     NONE: 0,
@@ -232,7 +232,7 @@ export class ColorUtils {
     // Return {r:r, g:g, b:b} object.
     static HSVtoRGB(h, s, v) {
         if (arguments.length === 1)
-            ({ s, v, h } = h);
+            ({s, v, h} = h);
 
         let r, g, b;
         const c = v * s;
@@ -280,7 +280,7 @@ export class ColorUtils {
     // Return {h:h, s:s, v:v} object.
     static RGBtoHSV(r, g, b) {
         if (arguments.length === 1)
-            ({ r, g, b } = r);
+            ({r, g, b} = r);
 
         let h, s;
 
@@ -385,14 +385,14 @@ export class PropertyInjectionsHandler extends BasicHandler {
         if (!(name in instance))
             throw new Error(`Object ${instance} has no '${name}' property`);
 
-        const { prototype } = instance.constructor;
+        const {prototype} = instance.constructor;
         const originalPropertyDescriptor = Object.getOwnPropertyDescriptor(prototype, name) ??
             Object.getOwnPropertyDescriptor(instance, name);
 
         Object.defineProperty(instance, name, {
             ...originalPropertyDescriptor,
             ...injectedPropertyDescriptor,
-            ...{ configurable: true },
+            ...{configurable: true},
         });
         return [instance, name, originalPropertyDescriptor];
     }
@@ -478,7 +478,7 @@ export function splitHandler(handler) {
 
     const count = handler.length - 1;
     let missingValueBits = (1 << count) - 1;
-    const values = Array.from({ length: count });
+    const values = Array.from({length: count});
     return values.map((_ignored, i) => {
         const mask = ~(1 << i);
         return (obj, value) => {
@@ -522,7 +522,7 @@ export class IconTheme {
  */
 export function getWindowsByObjectPath() {
     const windowsByObjectPath = new Map();
-    const { workspaceManager } = global;
+    const {workspaceManager} = global;
     const workspaces = [...new Array(workspaceManager.nWorkspaces)].map(
         (_c, i) => workspaceManager.get_workspace_by_index(i));
 
@@ -615,7 +615,7 @@ class CancellableChild extends Gio.Cancellable {
         if (parent && !(parent instanceof Gio.Cancellable))
             throw TypeError('Not a valid cancellable');
 
-        super._init({ parent });
+        super._init({parent});
 
         if (parent?.is_cancelled()) {
             this.cancel();

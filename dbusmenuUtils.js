@@ -8,9 +8,9 @@ import {
     St
 } from './dependencies/gi.js';
 
-import { PopupMenu } from './dependencies/shell/ui.js';
+import {PopupMenu} from './dependencies/shell/ui.js';
 
-import { Utils } from './imports.js';
+import {Utils} from './imports.js';
 
 // Dbusmenu features not (yet) supported:
 //
@@ -40,7 +40,7 @@ import { Utils } from './imports.js';
  */
 export async function haveDBusMenu() {
     try {
-        const { default: DBusMenu } = await import('gi://Dbusmenu');
+        const {default: DBusMenu} = await import('gi://Dbusmenu');
         return DBusMenu;
     } catch (e) {
         log(`Failed to import DBusMenu, quicklists are not available: ${e}`);
