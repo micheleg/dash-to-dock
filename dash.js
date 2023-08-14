@@ -1,34 +1,31 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-/* exported DockDash */
-
-const {
+import {
     Clutter,
     Gio,
     GLib,
     GObject,
     Shell,
-    St,
-} = imports.gi;
+    St
+} from './dependencies/gi.js';
 
-const {
-    appFavorites: AppFavorites,
-    dash: Dash,
-    dnd: DND,
-    main: Main,
-} = imports.ui;
+import {
+    AppFavorites,
+    Dash,
+    DND,
+    Main
+} from './dependencies/shell/ui.js';
 
-const {
-    util: Util,
-} = imports.misc;
+import {
+    Util
+} from './dependencies/shell/misc.js';
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const {
-    appIcons: AppIcons,
-    docking: Docking,
-    theming: Theming,
-    utils: Utils,
-} = Me.imports;
+import {
+    AppIcons,
+    Docking,
+    Theming,
+    Utils
+} from './imports.js';
 
 const { DASH_ANIMATION_TIME } = Dash;
 const DASH_VISIBILITY_TIMEOUT = 3;
@@ -44,7 +41,7 @@ const Labels = Object.freeze({
  * - set label position based on dash orientation
  *
  */
-var DockDashItemContainer = GObject.registerClass(
+const DockDashItemContainer = GObject.registerClass(
 class DockDashItemContainer extends Dash.DashItemContainer {
     _init(position) {
         super._init();
@@ -91,7 +88,7 @@ const baseIconSizes = [16, 22, 24, 32, 48, 64, 96, 128];
  * - sync minimization application target position.
  * - keep running apps ordered.
  */
-var DockDash = GObject.registerClass({
+export const DockDash = GObject.registerClass({
     Properties: {
         'requires-visibility': GObject.ParamSpec.boolean(
             'requires-visibility', 'requires-visibility', 'requires-visibility',

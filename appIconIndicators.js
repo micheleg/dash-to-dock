@@ -1,22 +1,20 @@
-/* exported AppIconIndicator */
-
-const { cairo: Cairo } = imports;
-const { main: Main } = imports.ui;
-
-const {
+import {
     Clutter,
     GdkPixbuf,
     Gio,
     GObject,
     Pango,
-    St,
-} = imports.gi;
+    St
+} from './dependencies/gi.js';
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const {
-    docking: Docking,
-    utils: Utils,
-} = Me.imports;
+import { Main } from './dependencies/shell/ui.js';
+
+import {
+    Docking,
+    Utils
+} from './imports.js';
+
+const { cairo: Cairo } = imports;
 
 const RunningIndicatorStyle = Object.freeze({
     DEFAULT: 0,
@@ -38,7 +36,7 @@ const MAX_WINDOWS_CLASSES = 4;
  * obtained by composing the desired classes below based on the settings.
  *
  */
-var AppIconIndicator = class DashToDockAppIconIndicator {
+export class AppIconIndicator {
     constructor(source) {
         this._indicators = [];
 
@@ -114,12 +112,12 @@ var AppIconIndicator = class DashToDockAppIconIndicator {
             indicator.destroy();
         }
     }
-};
+}
 
 /*
  * Base class to be inherited by all indicators of any kind
 */
-var IndicatorBase = class DashToDockIndicatorBase {
+class IndicatorBase {
     constructor(source) {
         this._source = source;
         this._signalsHandler = new Utils.GlobalSignalsHandler(this._source);
@@ -133,14 +131,14 @@ var IndicatorBase = class DashToDockIndicatorBase {
         this._signalsHandler.destroy();
         this._signalsHandler = null;
     }
-};
+}
 
 /*
  * A base indicator class for running style, from which all other EunningIndicators should derive,
  * providing some basic methods, variables definitions and their update,  css style classes handling.
  *
  */
-var RunningIndicatorBase = class DashToDockRunningIndicatorBase extends IndicatorBase {
+class RunningIndicatorBase extends IndicatorBase {
     constructor(source) {
         super(source);
 
@@ -224,11 +222,11 @@ var RunningIndicatorBase = class DashToDockRunningIndicatorBase extends Indicato
 
         super.destroy();
     }
-};
+}
 
 // We add a css class so third parties themes can limit their indicaor customization
 // to the case we do nothing
-var RunningIndicatorDefault = class DashToDockRunningIndicatorDefault extends RunningIndicatorBase {
+class RunningIndicatorDefault extends RunningIndicatorBase {
     constructor(source) {
         super(source);
         this._source.add_style_class_name('default');
@@ -238,9 +236,9 @@ var RunningIndicatorDefault = class DashToDockRunningIndicatorDefault extends Ru
         this._source.remove_style_class_name('default');
         super.destroy();
     }
-};
+}
 
-var IndicatorDrawingArea = GObject.registerClass(
+const IndicatorDrawingArea = GObject.registerClass(
 class IndicatorDrawingArea extends St.DrawingArea {
     vfunc_allocate(box) {
         if (box.x1 !== 0 || box.y1 !== 0)
@@ -256,7 +254,7 @@ class IndicatorDrawingArea extends St.DrawingArea {
     }
 });
 
-var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningIndicatorBase {
+class RunningIndicatorDots extends RunningIndicatorBase {
     constructor(source) {
         super(source);
 
@@ -311,7 +309,8 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
         // Apply glossy background
         // TODO: move to enable/disableBacklit to apply itonly to the running apps?
         // TODO: move to css class for theming support
-        this._glossyBackgroundStyle = `background-image: url('${Me.path}/media/glossy.svg');` +
+        const { extension } = Docking.DockManager;
+        this._glossyBackgroundStyle = `background-image: url('${extension.path}/media/glossy.svg');` +
                                       'background-size: contain;';
     }
 
@@ -431,11 +430,11 @@ var RunningIndicatorDots = class DashToDockRunningIndicatorDots extends RunningI
         this._area.destroy();
         super.destroy();
     }
-};
+}
 
 // Adapted from dash-to-panel by Jason DeRose
 // https://github.com/jderose9/dash-to-panel
-var RunningIndicatorCiliora = class DashToDockRunningIndicatorCiliora extends RunningIndicatorDots {
+class RunningIndicatorCiliora extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
             const size =  Math.max(this._width / 20, this._borderWidth);
@@ -464,11 +463,11 @@ var RunningIndicatorCiliora = class DashToDockRunningIndicatorCiliora extends Ru
             cr.fill();
         }
     }
-};
+}
 
 // Adapted from dash-to-panel by Jason DeRose
 // https://github.com/jderose9/dash-to-panel
-var RunningIndicatorSegmented = class DashToDockRunningIndicatorSegmented extends RunningIndicatorDots {
+class RunningIndicatorSegmented extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
             const size =  Math.max(this._width / 20, this._borderWidth);
@@ -495,11 +494,11 @@ var RunningIndicatorSegmented = class DashToDockRunningIndicatorSegmented extend
             cr.fill();
         }
     }
-};
+}
 
 // Adapted from dash-to-panel by Jason DeRose
 // https://github.com/jderose9/dash-to-panel
-var RunningIndicatorSolid = class DashToDockRunningIndicatorSolid extends RunningIndicatorDots {
+class RunningIndicatorSolid extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
             const size =  Math.max(this._width / 20, this._borderWidth);
@@ -522,11 +521,11 @@ var RunningIndicatorSolid = class DashToDockRunningIndicatorSolid extends Runnin
             cr.fill();
         }
     }
-};
+}
 
 // Adapted from dash-to-panel by Jason DeRose
 // https://github.com/jderose9/dash-to-panel
-var RunningIndicatorSquares = class DashToDockRunningIndicatorSquares extends RunningIndicatorDots {
+class RunningIndicatorSquares extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
             const size =  Math.max(this._width / 11, this._borderWidth);
@@ -550,11 +549,11 @@ var RunningIndicatorSquares = class DashToDockRunningIndicatorSquares extends Ru
             cr.fill();
         }
     }
-};
+}
 
 // Adapted from dash-to-panel by Jason DeRose
 // https://github.com/jderose9/dash-to-panel
-var RunningIndicatorDashes = class DashToDockRunningIndicatorDashes extends RunningIndicatorDots {
+class RunningIndicatorDashes extends RunningIndicatorDots {
     _drawIndicator(cr) {
         if (this._source.running) {
             const size =  Math.max(this._width / 20, this._borderWidth);
@@ -580,11 +579,11 @@ var RunningIndicatorDashes = class DashToDockRunningIndicatorDashes extends Runn
             cr.fill();
         }
     }
-};
+}
 
 // Adapted from dash-to-panel by Jason DeRose
 // https://github.com/jderose9/dash-to-panel
-var RunningIndicatorMetro = class DashToDockRunningIndicatorMetro extends RunningIndicatorDots {
+class RunningIndicatorMetro extends RunningIndicatorDots {
     constructor(source) {
         super(source);
         this._source.add_style_class_name('metro');
@@ -637,9 +636,9 @@ var RunningIndicatorMetro = class DashToDockRunningIndicatorMetro extends Runnin
             }
         }
     }
-};
+}
 
-var RunningIndicatorBinary = class DashToDockRunningIndicatorBinary extends RunningIndicatorDots {
+class RunningIndicatorBinary extends RunningIndicatorDots {
     _drawIndicator(cr) {
         // Draw the required numbers of dots
         const n = Math.min(15, this._source.windowsCount);
@@ -672,12 +671,12 @@ var RunningIndicatorBinary = class DashToDockRunningIndicatorBinary extends Runn
             cr.fill();
         }
     }
-};
+}
 
 /*
  * Unity like notification and progress indicators
  */
-var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
+class UnityIndicator extends IndicatorBase {
     constructor(source) {
         super(source);
 
@@ -935,7 +934,7 @@ var UnityIndicator = class DashToDockUnityIndicator extends IndicatorBase {
         else
             delete this._isUrgent;
     }
-};
+}
 
 
 // Global icon cache. Used for Unity7 styling.
@@ -951,7 +950,7 @@ const DOMINANT_COLOR_ICON_SIZE = 64;
 
 // Compute dominant color frim the app icon.
 // The color is cached for efficiency.
-var DominantColorExtractor = class DashToDockDominantColorExtractor {
+class DominantColorExtractor {
     constructor(app) {
         this._app = app;
     }
@@ -1123,4 +1122,4 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
 
         return resampledPixels;
     }
-};
+}

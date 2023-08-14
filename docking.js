@@ -1,53 +1,50 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-/* exported DockManager, IconAnimator, State */
-
-const {
+import {
     Clutter,
     GLib,
     Gio,
     GObject,
     Meta,
     Shell,
-    St,
-} = imports.gi;
+    St
+} from './dependencies/gi.js';
+
+import {
+    AppDisplay,
+    Layout,
+    Main,
+    Overview,
+    OverviewControls,
+    PointerWatcher,
+    Workspace,
+    WorkspacesView,
+    WorkspaceSwitcherPopup
+} from './dependencies/shell/ui.js';
+
+import {
+    AnimationUtils
+} from './dependencies/shell/misc.js';
+
+import {
+    AppSpread,
+    DockDash,
+    DesktopIconsIntegration,
+    FileManager1API,
+    Intellihide,
+    LauncherAPI,
+    Locations,
+    NotificationsMonitor,
+    Theming,
+    Utils
+} from './imports.js';
 
 const { signals: Signals } = imports;
-
-const {
-    appDisplay: AppDisplay,
-    environment: Environment,
-    layout: Layout,
-    main: Main,
-    overview: Overview,
-    overviewControls: OverviewControls,
-    pointerWatcher: PointerWatcher,
-    workspace: Workspace,
-    workspacesView: WorkspacesView,
-    workspaceSwitcherPopup: WorkspaceSwitcherPopup,
-} = imports.ui;
-
-
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-
-const {
-    appSpread: AppSpread,
-    dash: DockDash,
-    desktopIconsIntegration: DesktopIconsIntegration,
-    fileManager1API: FileManager1API,
-    intellihide: Intellihide,
-    launcherAPI: LauncherAPI,
-    locations: Locations,
-    notificationsMonitor: NotificationsMonitor,
-    theming: Theming,
-    utils: Utils,
-} = Me.imports;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 const ICON_ANIMATOR_DURATION = 3000;
 
-var State = Object.freeze({
+export const State = Object.freeze({
     HIDDEN:  0,
     SHOWING: 1,
     SHOWN:   2,
@@ -1641,18 +1638,18 @@ const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
 };
 
 
-var DockManager = class DashToDockDockManager {
-    constructor() {
-        if (Me.imports.extension.dockManager)
+export class DockManager {
+    constructor(extension) {
+        if (DockManager._singleton)
             throw new Error('DashToDock has been already initialized');
-
-        Me.imports.extension.dockManager = this;
-
+        DockManager._singleton = this;
+        this._extension = extension;
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._methodInjections = new Utils.InjectionsHandler(this);
         this._vfuncInjections = new Utils.VFuncInjectionsHandler(this);
         this._propertyInjections = new Utils.PropertyInjectionsHandler(this);
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
+        this._settings = this._extension.getSettings(
+            'org.gnome.shell.extensions.dash-to-dock');
         this._appSwitcherSettings = new Gio.Settings({ schema_id: 'org.gnome.shell.app-switcher' });
         this._mapSettingsValues();
 
@@ -1711,15 +1708,23 @@ var DockManager = class DashToDockDockManager {
     }
 
     static getDefault() {
-        return Me.imports.extension.dockManager;
+        return DockManager._singleton;
     }
 
     static get allDocks() {
         return DockManager.getDefault()._allDocks;
     }
 
+    static get extension() {
+        return DockManager.getDefault().extension;
+    }
+
     static get settings() {
         return DockManager.getDefault().settings;
+    }
+
+    get extension() {
+        return this._extension;
     }
 
     get settings() {
@@ -2194,7 +2199,10 @@ var DockManager = class DashToDockDockManager {
                 return [0, 0];
             });
 
-        const { ControlsManager, ControlsManagerLayout } = OverviewControls;
+        const { ControlsManager } = OverviewControls;
+        // FIXME: https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2890
+        // const { ControlsManagerLayout } = OverviewControls;
+        const ControlsManagerLayout = this.overviewControls.layout_manager.constructor;
 
         this._methodInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
         this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
@@ -2648,7 +2656,8 @@ var DockManager = class DashToDockDockManager {
 
         this._desktopIconsUsableArea.destroy();
         this._desktopIconsUsableArea = null;
-        Me.imports.extension.dockManager = null;
+        this._extension = null;
+        DockManager._singleton = null;
     }
 
     /**
@@ -2682,12 +2691,12 @@ var DockManager = class DashToDockDockManager {
     _hasPanelCorners() {
         return !!Main.panel?._rightCorner && !!Main.panel?._leftCorner;
     }
-};
+}
 Signals.addSignalMethods(DockManager.prototype);
 
 // This class drives long-running icon animations, to keep them running in sync
 // with each other, and to save CPU by pausing them when the dock is hidden.
-var IconAnimator = class DashToDockIconAnimator {
+export class IconAnimator {
     constructor(actor) {
         this._count = 0;
         this._started = false;
@@ -2695,7 +2704,7 @@ var IconAnimator = class DashToDockIconAnimator {
             wiggle: [],
         };
         this._timeline = new Clutter.Timeline({
-            duration: Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION) || 1,
+            duration: AnimationUtils.adjustAnimationTime(ICON_ANIMATOR_DURATION) || 1,
             repeat_count: -1,
             actor,
         });
@@ -2715,7 +2724,7 @@ var IconAnimator = class DashToDockIconAnimator {
 
     _updateSettings() {
         this._timeline.set_duration(
-            Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION) || 1);
+            AnimationUtils.adjustAnimationTime(ICON_ANIMATOR_DURATION) || 1);
     }
 
     destroy() {
@@ -2770,4 +2779,4 @@ var IconAnimator = class DashToDockIconAnimator {
             }
         }
     }
-};
+}

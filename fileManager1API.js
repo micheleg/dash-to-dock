@@ -1,10 +1,9 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const { GLib, Gio } = imports.gi;
+import { GLib, Gio } from './dependencies/gi.js';
 const { signals: Signals } = imports;
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const { utils: Utils } = Me.imports;
+import { Utils } from './imports.js';
 
 const FileManager1Iface = '<node><interface name="org.freedesktop.FileManager1">\
                                <property name="OpenWindowsWithLocations" type="a{sas}" access="read"/>\
@@ -24,7 +23,7 @@ const Labels = Object.freeze({
  * The property is a map from window identifiers to a list of locations open in
  * the window.
  */
-var FileManager1Client = class DashToDockFileManager1Client {
+export class FileManager1Client {
     constructor() {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._cancellable = new Gio.Cancellable();
@@ -198,5 +197,5 @@ var FileManager1Client = class DashToDockFileManager1Client {
             this.emit('windows-changed');
         }
     }
-};
+}
 Signals.addSignalMethods(FileManager1Client.prototype);

@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: MIT OR LGPL-2.0-or-later
 # SPDX-FileCopyrightText: 2018 Claudio André <claudioandre.br@gmail.com>
 env:
-  es6: true
-  es2020: true
+  es2021: true
 extends: 'eslint:recommended'
 rules:
   array-bracket-newline:
@@ -241,4 +240,4 @@ globals:
   printerr: readonly
   window: readonly
 parserOptions:
-  ecmaVersion: 2020
+  ecmaVersion: 2022

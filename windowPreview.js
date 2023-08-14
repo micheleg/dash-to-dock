@@ -5,29 +5,26 @@
  * Some code was also adapted from the upstream Gnome Shell source code.
  */
 
-/* exported WindowPreviewMenu */
-
-const {
+import {
     Clutter,
     GLib,
     GObject,
     Meta,
-    St,
-} = imports.gi;
+    St
+} from './dependencies/gi.js';
 
-const {
-    boxpointer: BoxPointer,
-    main: Main,
-    popupMenu: PopupMenu,
-    workspace: Workspace,
-} = imports.ui;
+import {
+    BoxPointer,
+    Main,
+    PopupMenu,
+    Workspace
+} from './dependencies/shell/ui.js';
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const {
-    docking: Docking,
-    theming: Theming,
-    utils: Utils,
-} = Me.imports;
+import {
+    Docking,
+    Theming,
+    Utils
+} from './imports.js';
 
 const PREVIEW_MAX_WIDTH = 250;
 const PREVIEW_MAX_HEIGHT = 150;
@@ -37,7 +34,7 @@ const MAX_PREVIEW_GENERATION_ATTEMPTS = 15;
 
 const MENU_MARGINS = 10;
 
-var WindowPreviewMenu = class DashToDockWindowPreviewMenu extends PopupMenu.PopupMenu {
+export class WindowPreviewMenu extends PopupMenu.PopupMenu {
     constructor(source) {
         super(source, 0.5, Utils.getPosition());
 
@@ -93,9 +90,9 @@ var WindowPreviewMenu = class DashToDockWindowPreviewMenu extends PopupMenu.Popu
         if (this._destroyId)
             this._source.disconnect(this._destroyId);
     }
-};
+}
 
-var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.PopupMenuSection {
+class WindowPreviewList extends PopupMenu.PopupMenuSection {
     constructor(source) {
         super();
         this.actor = new St.ScrollView({
@@ -323,9 +320,9 @@ var WindowPreviewList = class DashToDockWindowPreviewList extends PopupMenu.Popu
             return result || actor.animatingOut;
         }, false);
     }
-};
+}
 
-var WindowPreviewMenuItem = GObject.registerClass(
+export const WindowPreviewMenuItem = GObject.registerClass(
 class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     _init(window, position, params) {
         super._init(params);
@@ -335,7 +332,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         this._windowAddedId = 0;
 
         // We don't want this: it adds spacing on the left of the item.
-        this.remove_child(this._ornamentLabel);
+        this.remove_child(this._ornamentIcon);
         this.add_style_class_name('dashtodock-app-well-preview-menu-item');
         this.add_style_class_name(Theming.PositionStyleClass[position]);
         if (Docking.DockManager.settings.customThemeShrink)
