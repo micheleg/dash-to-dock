@@ -7,14 +7,14 @@ import {
     St
 } from './dependencies/gi.js';
 
-import { Main } from './dependencies/shell/ui.js';
+import {Main} from './dependencies/shell/ui.js';
 
 import {
     Docking,
     Utils
 } from './imports.js';
 
-const { cairo: Cairo } = imports;
+const {cairo: Cairo} = imports;
 
 const RunningIndicatorStyle = Object.freeze({
     DEFAULT: 0,
@@ -44,11 +44,11 @@ export class AppIconIndicator {
         let runningIndicator = null;
         let runningIndicatorStyle;
 
-        const { settings } = Docking.DockManager;
+        const {settings} = Docking.DockManager;
         if (settings.applyCustomTheme)
             runningIndicatorStyle = RunningIndicatorStyle.DOTS;
         else
-            ({ runningIndicatorStyle } = settings);
+            ({runningIndicatorStyle} = settings);
 
         if (settings.showIconsEmblems &&
             !Docking.DockManager.getDefault().notificationsMonitor.dndMode) {
@@ -309,7 +309,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         // Apply glossy background
         // TODO: move to enable/disableBacklit to apply itonly to the running apps?
         // TODO: move to css class for theming support
-        const { extension } = Docking.DockManager;
+        const {extension} = Docking.DockManager;
         this._glossyBackgroundStyle = `background-image: url('${extension.path}/media/glossy.svg');` +
                                       'background-size: contain;';
     }
@@ -349,7 +349,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         this._borderWidth = themeNode.get_border_width(this._side);
         this._bodyColor = themeNode.get_background_color();
 
-        const { settings } = Docking.DockManager;
+        const {settings} = Docking.DockManager;
         if (!settings.applyCustomTheme) {
             // Adjust for the backlit case
             if (settings.unityBacklitItems) {
@@ -694,7 +694,7 @@ class UnityIndicator extends IndicatorBase {
         this._source._iconContainer.add_child(this._notificationBadgeBin);
         this.updateNotificationBadgeStyle();
 
-        const { remoteModel, notificationsMonitor } = Docking.DockManager.getDefault();
+        const {remoteModel, notificationsMonitor} = Docking.DockManager.getDefault();
         const remoteEntry = remoteModel.lookupById(this._source.app.id);
         this._remoteEntry = remoteEntry;
 
@@ -705,12 +705,12 @@ class UnityIndicator extends IndicatorBase {
         ], [
             remoteEntry,
             ['progress-changed', 'progress-visible-changed'],
-            (sender, { progress, progress_visible: progressVisible }) =>
+            (sender, {progress, progress_visible: progressVisible}) =>
                 this.setProgress(progressVisible ? progress : -1),
         ], [
             remoteEntry,
             'urgent-changed',
-            (sender, { urgent }) => this.setUrgent(urgent),
+            (sender, {urgent}) => this.setUrgent(urgent),
         ], [
             notificationsMonitor,
             'changed',
@@ -741,7 +741,7 @@ class UnityIndicator extends IndicatorBase {
         const fontDesc = themeContext.get_font();
         const defaultFontSize = fontDesc.get_size() / 1024;
         let fontSize = defaultFontSize * 0.9;
-        const { iconSize } = Main.overview.dash;
+        const {iconSize} = Main.overview.dash;
         const defaultIconSize = Docking.DockManager.settings.get_default_value(
             'dash-max-icon-size').unpack();
 
@@ -798,7 +798,7 @@ class UnityIndicator extends IndicatorBase {
             return;
         }
 
-        const { notificationsMonitor } = Docking.DockManager.getDefault();
+        const {notificationsMonitor} = Docking.DockManager.getDefault();
         const notificationsCount = notificationsMonitor.getAppNotificationsCount(
             this._source.app.id);
 
@@ -821,7 +821,7 @@ class UnityIndicator extends IndicatorBase {
             return;
         }
 
-        this._progressOverlayArea = new St.DrawingArea({ x_expand: true, y_expand: true });
+        this._progressOverlayArea = new St.DrawingArea({x_expand: true, y_expand: true});
         this._progressOverlayArea.add_style_class_name('progress-bar');
         this._progressOverlayArea.connect('repaint', () => {
             this._drawProgressOverlay(this._progressOverlayArea);
@@ -841,7 +841,7 @@ class UnityIndicator extends IndicatorBase {
     }
 
     _drawProgressOverlay(area) {
-        const { scaleFactor } = St.ThemeContext.get_for_stage(global.stage);
+        const {scaleFactor} = St.ThemeContext.get_for_stage(global.stage);
         const [surfaceWidth, surfaceHeight] = area.get_surface_size();
         const cr = area.get_context();
 
@@ -893,11 +893,11 @@ class UnityIndicator extends IndicatorBase {
 
         [hasColor, bg] = node.lookup_color('-progress-bar-background', false);
         if (!hasColor)
-            bg = new Clutter.Color({ red: 204, green: 204, blue: 204, alpha: 255 });
+            bg = new Clutter.Color({red: 204, green: 204, blue: 204, alpha: 255});
 
         [hasColor, bd] = node.lookup_color('-progress-bar-border', false);
         if (!hasColor)
-            bd = new Clutter.Color({ red: 230, green: 230, blue: 230, alpha: 255 });
+            bd = new Clutter.Color({red: 230, green: 230, blue: 230, alpha: 255});
 
         stroke = Cairo.SolidPattern.createRGBA(
             bd.red / 255, bd.green / 255, bd.blue / 255, bd.alpha / 255);

@@ -72,7 +72,10 @@ rules:
   linebreak-style:
     - error
     - unix
-  lines-between-class-members: error
+  lines-between-class-members:
+    - error
+    - always
+    - exceptAfterSingleLine: true
   max-nested-callbacks: error
   max-statements-per-line: error
   new-parens: error
@@ -111,12 +114,6 @@ rules:
   no-restricted-globals: [error, window]
   no-restricted-properties:
     - error
-    - object: imports
-      property: format
-      message: Use template strings
-    - object: pkg
-      property: initFormat
-      message: Use template strings
     - object: Lang
       property: copyProperties
       message: Use Object.assign()
@@ -175,6 +172,7 @@ rules:
   object-curly-newline:
     - error
     - consistent: true
+      multiline: true
   object-curly-spacing: error
   object-shorthand: error
   operator-assignment: error
@@ -239,5 +237,12 @@ globals:
   print: readonly
   printerr: readonly
   window: readonly
+  TextEncoder: readonly
+  TextDecoder: readonly
+  console: readonly
+  setTimeout: readonly
+  setInterval: readonly
+  clearTimeout: readonly
+  clearInterval: readonly
 parserOptions:
   ecmaVersion: 2022

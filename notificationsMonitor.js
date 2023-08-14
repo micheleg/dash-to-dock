@@ -1,14 +1,14 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-import { Gio } from './dependencies/gi.js';
-import { Main } from './dependencies/shell/ui.js';
+import {Gio} from './dependencies/gi.js';
+import {Main} from './dependencies/shell/ui.js';
 
 import {
     Docking,
     Utils
 } from './imports.js';
 
-const { signals: Signals } = imports;
+const {signals: Signals} = imports;
 
 const Labels = Object.freeze({
     SOURCES: Symbol('sources'),

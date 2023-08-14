@@ -1,7 +1,7 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-import { Gio } from './dependencies/gi.js';
-import { DBusMenuUtils } from './imports.js';
+import {Gio} from './dependencies/gi.js';
+import {DBusMenuUtils} from './imports.js';
 
 const DBusMenu = await DBusMenuUtils.haveDBusMenu();
 
@@ -178,7 +178,7 @@ const LauncherEntry = class DashToDockLauncherEntry {
 
         callback(this, this);
         const id = this._nextId++;
-        const handler = { id, callback };
+        const handler = {id, callback};
         eventNames.forEach(name => {
             let handlerList = this._handlers.get(name);
             if (!handlerList)
