@@ -23,3 +23,6 @@ overrides:
         - code: 110
           ignoreUrls: true
           ignoreTemplateLiterals: true
+
+parserOptions:
+  sourceType: module

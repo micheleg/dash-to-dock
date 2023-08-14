@@ -1,16 +1,15 @@
-/* exported AppSpread */
+import { Atk, Clutter } from './dependencies/gi.js';
 
-const { Atk, Clutter } = imports.gi;
+import {
+    Main,
+    SearchController,
+    Workspace,
+    WorkspaceThumbnail
+} from './dependencies/shell/ui.js';
 
-const Main = imports.ui.main;
-const SearchController = imports.ui.searchController;
-const Workspace = imports.ui.workspace;
-const WorkspaceThumbnail = imports.ui.workspaceThumbnail;
+import { Utils } from './imports.js';
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const { utils: Utils } = Me.imports;
-
-var AppSpread = class AppSpread {
+export class AppSpread {
     constructor() {
         this.app = null;
         this.supported = true;
@@ -208,4 +207,4 @@ var AppSpread = class AppSpread {
         if (Main.overview.searchEntry)
             Main.overview.searchEntry.opacity = 255;
     }
-};
+}

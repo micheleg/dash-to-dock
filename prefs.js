@@ -1,41 +1,23 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-/* exported init, buildPrefsWidget */
+import GLib from 'gi://GLib';
+import GObject from 'gi://GObject';
+import Gdk from 'gi://Gdk?version=4.0';
+import Gio from 'gi://Gio';
+import Gtk from 'gi://Gtk?version=4.0';
 
-imports.gi.versions.Gtk = '4.0';
-imports.gi.versions.Gdk = '4.0';
+import {
+    ExtensionPreferences,
 
-const { Gio } = imports.gi;
-const { GLib } = imports.gi;
-const { GObject } = imports.gi;
-const { Gtk } = imports.gi;
-const { Gdk } = imports.gi;
+    // Use __ () and N__() for the extension gettext domain, and reuse
+    // the shell domain with the default _() and N_()
+    gettext as __
+} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+
 const Signals = imports.signals;
-
-// Use __ () and N__() for the extension gettext domain, and reuse
-// the shell domain with the default _() and N_()
-const Gettext = imports.gettext.domain('dashtodock');
-const __ = Gettext.gettext;
-const N__ = e => e;
-
-try {
-    // eslint-disable-next-line no-unused-expressions
-    imports.misc.extensionUtils;
-} catch (e) {
-    const resource = Gio.Resource.load(
-        `${GLib.getenv('JHBUILD_PREFIX') || '/usr'
-        }/share/gnome-shell/org.gnome.Extensions.src.gresource`);
-    resource._register();
-    imports.searchPath.push('resource:///org/gnome/Extensions/js');
-}
-
-const Config = imports.misc.config;
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
 
 const SCALE_UPDATE_TIMEOUT = 500;
 const DEFAULT_ICONS_SIZES = [128, 96, 64, 48, 32, 24, 16];
-const [SHELL_VERSION] = Config?.PACKAGE_VERSION?.split('.') ?? [undefined];
 
 const TransparencyMode = Object.freeze({
     DEFAULT: 0,
@@ -189,40 +171,25 @@ function setShortcut(settings) {
     }
 }
 
-var Settings = GObject.registerClass({
+const DockSettings = GObject.registerClass({
     Implements: [Gtk.BuilderScope],
 }, class DashToDockSettings extends GObject.Object {
-    _init() {
+    _init(extensionPreferences) {
         super._init();
 
-        if (Me)
-            this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
-        else
-            this._settings = new Gio.Settings({ schema_id: 'org.gnome.shell.extensions.dash-to-dock' });
-
+        this._extensionPreferences = extensionPreferences;
+        this._settings = extensionPreferences.getSettings(
+            'org.gnome.shell.extensions.dash-to-dock');
         this._appSwitcherSettings = new Gio.Settings({ schema_id: 'org.gnome.shell.app-switcher' });
         this._rtl = Gtk.Widget.get_default_direction() === Gtk.TextDirection.RTL;
 
         this._builder = new Gtk.Builder();
         this._builder.set_scope(this);
-        if (Me) {
-            this._builder.set_translation_domain(Me.metadata['gettext-domain']);
-            this._builder.add_from_file(`${Me.path}/Settings.ui`);
-        } else {
-            this._builder.add_from_file('./Settings.ui');
-        }
+        this._builder.set_translation_domain(
+            extensionPreferences.metadata['gettext-domain']);
+        this._builder.add_from_file(`${extensionPreferences.path}/Settings.ui`);
 
-        this._notebook = this._builder.get_object('settings_notebook');
-
-        if (SHELL_VERSION >= 42) {
-            this.widget = this._notebook;
-        } else {
-            this.widget = new Gtk.ScrolledWindow({
-                hscrollbar_policy: Gtk.PolicyType.NEVER,
-                vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
-            });
-            this.widget.set_child(this._notebook);
-        }
+        this.widget = this._builder.get_object('settings_notebook');
 
         // Set a reasonable initial window height
         this.widget.connect('realize', () => {
@@ -235,12 +202,6 @@ var Settings = GObject.registerClass({
         this._dock_size_timeout = 0;
         this._icon_size_timeout = 0;
         this._opacity_timeout = 0;
-
-        if (SHELL_VERSION < 42) {
-            // Remove this when we won't support earlier versions
-            this._builder.get_object('shrink_dash_label1').label =
-                __('Show favorite applications');
-        }
 
         this._monitorsConfig = new MonitorsConfig();
         this._bindSettings();
@@ -1195,38 +1156,15 @@ var Settings = GObject.registerClass({
 
         // About Panel
 
-        if (Me)
-            this._builder.get_object('extension_version').set_label(Me.metadata.version.toString());
-        else
-            this._builder.get_object('extension_version').set_label('Unknown');
+        this._builder.get_object('extension_version').set_label(
+            `${this._extensionPreferences.metadata.version}`);
     }
 });
 
-/**
- *
- */
-function init() {
-    ExtensionUtils.initTranslations();
-}
-
-/**
- *
- */
-function buildPrefsWidget() {
-    const settings = new Settings();
-    const { widget } = settings;
-    return widget;
-}
-
-if (!Me) {
-    GLib.setenv('GSETTINGS_SCHEMA_DIR', './schemas', true);
-    Gtk.init();
-
-    const loop = GLib.MainLoop.new(null, false);
-    const win = new Gtk.Window();
-    win.set_child(buildPrefsWidget());
-    win.connect('close-request', () => loop.quit());
-    win.present();
-
-    loop.run();
+export default class DockPreferences extends ExtensionPreferences {
+    getPreferencesWidget() {
+        const settings = new DockSettings(this);
+        const { widget } = settings;
+        return widget;
+    }
 }

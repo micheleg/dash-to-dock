@@ -14,6 +14,7 @@ EXTRA_MODULES = \
                 appIcons.js \
                 appIconIndicators.js \
                 fileManager1API.js \
+                imports.js \
                 launcherAPI.js \
                 locations.js \
                 locationsWorker.js \
@@ -126,6 +127,7 @@ _build: all
 	-rm -fR ./_build
 	mkdir -p _build
 	cp $(BASE_MODULES) $(EXTRA_MODULES) _build
+	cp -a dependencies _build
 	cp stylesheet.css _build
 	mkdir -p _build/media
 	cd media ; cp $(EXTRA_MEDIA) ../_build/media/

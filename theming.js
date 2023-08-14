@@ -1,22 +1,19 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-/* exported PositionStyleClass */
-
-const { signals: Signals } = imports;
-
-const {
+import {
     Clutter,
     Meta,
-    St,
-} = imports.gi;
+    St
+} from './dependencies/gi.js';
 
-const { main: Main } = imports.ui;
+import { Main } from './dependencies/shell/ui.js';
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const {
-    docking: Docking,
-    utils: Utils,
-} = Me.imports;
+import {
+    Docking,
+    Utils
+} from './imports.js';
+
+const { signals: Signals } = imports;
 
 /*
  * DEFAULT:  transparency given by theme
@@ -33,7 +30,7 @@ const Labels = Object.freeze({
     TRANSPARENCY: Symbol('transparency'),
 });
 
-var PositionStyleClass = Object.freeze([
+export const PositionStyleClass = Object.freeze([
     'top',
     'right',
     'bottom',
@@ -43,7 +40,7 @@ var PositionStyleClass = Object.freeze([
 /**
  * Manage theme customization and custom theme support
  */
-var ThemeManager = class DashToDockThemeManager {
+export class ThemeManager {
     constructor(dock) {
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._bindSettingsChanges();
@@ -313,7 +310,7 @@ var ThemeManager = class DashToDockThemeManager {
             () => this.updateCustomTheme(),
         ]));
     }
-};
+}
 Signals.addSignalMethods(ThemeManager.prototype);
 
 /**
@@ -321,7 +318,7 @@ Signals.addSignalMethods(ThemeManager.prototype);
  * https://git.gnome.org/browse/gnome-shell/commit/?id=447bf55e45b00426ed908b1b1035f472c2466956
  * Transparency when free-floating
  */
-var Transparency = class DashToDockTransparency {
+class Transparency {
     constructor(dock) {
         this._dash = dock.dash;
         this._actor = this._dash._container;
@@ -559,5 +556,5 @@ var Transparency = class DashToDockTransparency {
             this._transparentAlphaBorder = this._transparentAlpha / 2;
         }
     }
-};
+}
 Signals.addSignalMethods(Transparency.prototype);
