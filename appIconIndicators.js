@@ -982,11 +982,10 @@ var DominantColorExtractor = class DashToDockDominantColorExtractor {
             const iconNames = iconTexture.get_names();
             const iconInfo = themeLoader.choose_icon(iconNames, DOMINANT_COLOR_ICON_SIZE, 0);
 
-            if (iconInfo) {
+            if (iconInfo)
                 return iconInfo.load_icon();
-            } else {
+            else
                 return null;
-            }   
         }
 
         // Use GdkPixBuf to load the pixel buffer from memory
