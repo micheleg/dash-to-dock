@@ -291,7 +291,6 @@ const DockSettings = GObject.registerClass({
             GLib.source_remove(this._icon_size_timeout);
         this._icon_size_timeout = GLib.timeout_add(
             GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-                log(scale.get_value());
                 this._settings.set_int('dash-max-icon-size', scale.get_value());
                 this._icon_size_timeout = 0;
                 return GLib.SOURCE_REMOVE;
