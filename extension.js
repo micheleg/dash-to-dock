@@ -17,9 +17,9 @@ export default class DashToDockExtension extends Extension.Extension {
     _conditionallyEnableDock() {
         const toEnable = !Main.extensionManager._extensionOrder.includes(
             'dash-to-dock@micxgx.gmail.com');
-        if (toEnable)
+        if (toEnable && !dockManager)
             dockManager = new DockManager(this);
-        else
+        else if (!toEnable && dockManager)
             dockManager?.destroy();
     }
 
