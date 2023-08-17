@@ -1,3 +1,14 @@
+gnome-shell-extension-ubuntu-dock (87ubuntu1) UNRELEASED; urgency=medium
+
+  * Releasing v87
+  * Imports: use less verbose export strategy
+  * prefs: Use GObject class for signal emission
+  * cleanup: Avoid setting modules versions
+  * prefs: Remove unneeded log line
+  * extension: Do not try to re-enable the extension when already is
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 18 Aug 2023 00:55:02 +0200
+
 gnome-shell-extension-ubuntu-dock (85ubuntu1) mantic; urgency=medium
 
   [ Stuart Hayhurst ]
