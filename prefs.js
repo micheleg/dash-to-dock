@@ -14,8 +14,6 @@ import {
     gettext as __
 } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-const Signals = imports.signals;
-
 const SCALE_UPDATE_TIMEOUT = 500;
 const DEFAULT_ICONS_SIZES = [128, 96, 64, 48, 32, 24, 16];
 
@@ -36,7 +34,11 @@ const RunningIndicatorStyle = Object.freeze({
     METRO: 7,
 });
 
-class MonitorsConfig {
+const MonitorsConfig = GObject.registerClass({
+    Signals: {
+        'updated': {},
+    },
+}, class MonitorsConfig extends GObject.Object {
     static get XML_INTERFACE() {
         return '<node>\
             <interface name="org.gnome.Mutter.DisplayConfig">\
@@ -56,6 +58,8 @@ class MonitorsConfig {
     }
 
     constructor() {
+        super();
+
         this._monitorsConfigProxy = new MonitorsConfig.ProxyWrapper(
             Gio.DBus.session,
             'org.gnome.Mutter.DisplayConfig',
@@ -153,8 +157,7 @@ class MonitorsConfig {
     get monitors() {
         return this._monitors;
     }
-}
-Signals.addSignalMethods(MonitorsConfig.prototype);
+});
 
 /**
  * @param settings
