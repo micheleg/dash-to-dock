@@ -2,9 +2,9 @@
 
 import GLib from 'gi://GLib';
 import GObject from 'gi://GObject';
-import Gdk from 'gi://Gdk?version=4.0';
+import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
-import Gtk from 'gi://Gtk?version=4.0';
+import Gtk from 'gi://Gtk';
 
 import {
     ExtensionPreferences,
@@ -13,8 +13,6 @@ import {
     // the shell domain with the default _() and N_()
     gettext as __
 } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
-
-const Signals = imports.signals;
 
 const SCALE_UPDATE_TIMEOUT = 500;
 const DEFAULT_ICONS_SIZES = [128, 96, 64, 48, 32, 24, 16];
@@ -36,7 +34,11 @@ const RunningIndicatorStyle = Object.freeze({
     METRO: 7,
 });
 
-class MonitorsConfig {
+const MonitorsConfig = GObject.registerClass({
+    Signals: {
+        'updated': {},
+    },
+}, class MonitorsConfig extends GObject.Object {
     static get XML_INTERFACE() {
         return '<node>\
             <interface name="org.gnome.Mutter.DisplayConfig">\
@@ -56,6 +58,8 @@ class MonitorsConfig {
     }
 
     constructor() {
+        super();
+
         this._monitorsConfigProxy = new MonitorsConfig.ProxyWrapper(
             Gio.DBus.session,
             'org.gnome.Mutter.DisplayConfig',
@@ -153,8 +157,7 @@ class MonitorsConfig {
     get monitors() {
         return this._monitors;
     }
-}
-Signals.addSignalMethods(MonitorsConfig.prototype);
+});
 
 /**
  * @param settings
@@ -288,7 +291,6 @@ const DockSettings = GObject.registerClass({
             GLib.source_remove(this._icon_size_timeout);
         this._icon_size_timeout = GLib.timeout_add(
             GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-                log(scale.get_value());
                 this._settings.set_int('dash-max-icon-size', scale.get_value());
                 this._icon_size_timeout = 0;
                 return GLib.SOURCE_REMOVE;
