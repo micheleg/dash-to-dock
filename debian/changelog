@@ -1,3 +1,26 @@
+gnome-shell-extension-ubuntu-dock (85ubuntu1) UNRELEASED; urgency=medium
+
+  [ Stuart Hayhurst ]
+  * docking: Update dock visibility after overview hide animation is done
+
+  [ Amr Ibrahim ]
+  * Update German translation
+
+  [ jrom99 ]
+  * Fix some icons missing dominant color
+  * Adds sensible fallback if dominant color is missing
+  * Fix mounted drives missing dominant color
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release 85
+  * appIconIndicators: Address eslint comments on dominant color fix
+  * extension: Port to ESM
+  * eslint: Update rules to match gnome-shell 45 and fix syntax
+  * eslint: Ignore some files that ubuntu's eslint can't parse yet
+  * debian/control: Bump gnome-shell dependency
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 17 Aug 2023 04:00:00 +0200
+
 gnome-shell-extension-ubuntu-dock (84ubuntu1) mantic; urgency=medium
 
   [ WhiredPlanck ]
