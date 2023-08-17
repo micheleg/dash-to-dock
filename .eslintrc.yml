@@ -27,3 +27,6 @@ overrides:
       # Ubuntu's eslint is not as good as upstream one :(
       camelcase: warn
       no-unused-expressions: warn
+
+parserOptions:
+  sourceType: module

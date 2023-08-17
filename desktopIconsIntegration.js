@@ -55,17 +55,15 @@
  *
  *******************************************************************************/
 
-/* exported DesktopIconsUsableAreaClass */
+import {GLib} from './dependencies/gi.js';
+import {Main} from './dependencies/shell/ui.js';
+import {ExtensionUtils} from './dependencies/shell/misc.js';
 
-const { GLib } = imports.gi;
-const { main: Main } = imports.ui;
-
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
+import {DockManager} from './docking.js';
 
 const IDENTIFIER_UUID = '130cbc66-235c-4bd6-8571-98d2d8bba5e2';
 
-var DesktopIconsUsableAreaClass = class {
+export class DesktopIconsUsableAreaClass {
     constructor() {
         this._extensionManager = Main.extensionManager;
         this._timedMarginsID = 0;
@@ -158,7 +156,9 @@ var DesktopIconsUsableAreaClass = class {
             return;
 
         const usableArea = extension?.stateObj?.DesktopIconsUsableArea;
-        if (usableArea?.uuid === IDENTIFIER_UUID)
-            usableArea.setMarginsForExtension(Me.uuid, this._margins);
+        if (usableArea?.uuid === IDENTIFIER_UUID) {
+            usableArea.setMarginsForExtension(
+                DockManager.extension.uuid, this._margins);
+        }
     }
-};
+}

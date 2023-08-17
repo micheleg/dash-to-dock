@@ -1,53 +1,50 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-/* exported DockManager, IconAnimator, State */
-
-const {
+import {
     Clutter,
     GLib,
     Gio,
     GObject,
     Meta,
     Shell,
-    St,
-} = imports.gi;
+    St
+} from './dependencies/gi.js';
 
-const { signals: Signals } = imports;
+import {
+    AppDisplay,
+    Layout,
+    Main,
+    Overview,
+    OverviewControls,
+    PointerWatcher,
+    Workspace,
+    WorkspacesView,
+    WorkspaceSwitcherPopup
+} from './dependencies/shell/ui.js';
 
-const {
-    appDisplay: AppDisplay,
-    environment: Environment,
-    layout: Layout,
-    main: Main,
-    overview: Overview,
-    overviewControls: OverviewControls,
-    pointerWatcher: PointerWatcher,
-    workspace: Workspace,
-    workspacesView: WorkspacesView,
-    workspaceSwitcherPopup: WorkspaceSwitcherPopup,
-} = imports.ui;
+import {
+    AnimationUtils
+} from './dependencies/shell/misc.js';
 
+import {
+    AppSpread,
+    DockDash,
+    DesktopIconsIntegration,
+    FileManager1API,
+    Intellihide,
+    LauncherAPI,
+    Locations,
+    NotificationsMonitor,
+    Theming,
+    Utils
+} from './imports.js';
 
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-
-const {
-    appSpread: AppSpread,
-    dash: DockDash,
-    desktopIconsIntegration: DesktopIconsIntegration,
-    fileManager1API: FileManager1API,
-    intellihide: Intellihide,
-    launcherAPI: LauncherAPI,
-    locations: Locations,
-    notificationsMonitor: NotificationsMonitor,
-    theming: Theming,
-    utils: Utils,
-} = Me.imports;
+const {signals: Signals} = imports;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 const ICON_ANIMATOR_DURATION = 3000;
 
-var State = Object.freeze({
+export const State = Object.freeze({
     HIDDEN:  0,
     SHOWING: 1,
     SHOWN:   2,
@@ -235,7 +232,7 @@ const DockedDash = GObject.registerClass({
         this._rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
 
         // Load settings
-        const { settings } = DockManager;
+        const {settings} = DockManager;
         this._isHorizontal = (this._position === St.Side.TOP) || (this._position === St.Side.BOTTOM);
 
         // Temporary ignore hover events linked to autohide for whatever reason
@@ -514,7 +511,7 @@ const DockedDash = GObject.registerClass({
     }
 
     _bindSettingsChanges() {
-        const { settings } = DockManager;
+        const {settings} = DockManager;
         this._signalsHandler.add([
             settings,
             'changed::scroll-action',
@@ -669,7 +666,7 @@ const DockedDash = GObject.registerClass({
      * This is call when visibility settings change
      */
     _updateVisibilityMode() {
-        const { settings } = DockManager;
+        const {settings} = DockManager;
         if (DockManager.settings.dockFixed || DockManager.settings.manualhide) {
             this._autohideIsEnabled = false;
             this._intellihideIsEnabled = false;
@@ -710,7 +707,7 @@ const DockedDash = GObject.registerClass({
         if (Main.overview.visibleTarget)
             return;
 
-        const { settings } = DockManager;
+        const {settings} = DockManager;
 
         if (DockManager.settings.dockFixed) {
             this._removeAnimations();
@@ -754,6 +751,7 @@ const DockedDash = GObject.registerClass({
 
     _onOverviewHidden() {
         this.remove_style_class_name('overview');
+        this._updateDashVisibility();
     }
 
     _onMenuOpened() {
@@ -799,7 +797,7 @@ const DockedDash = GObject.registerClass({
     _hide() {
         // If no hiding animation is running or queued
         if ((this._dockState === State.SHOWN) || (this._dockState === State.SHOWING)) {
-            const { settings } = DockManager;
+            const {settings} = DockManager;
             const delay = settings.hideDelay;
 
             if (this._dockState === State.SHOWING) {
@@ -955,9 +953,9 @@ const DockedDash = GObject.registerClass({
     }
 
     _updatePressureBarrier() {
-        const { settings } = DockManager;
+        const {settings} = DockManager;
         this._canUsePressure = global.display.supports_extended_barriers();
-        const { pressureThreshold } = settings;
+        const {pressureThreshold} = settings;
 
         // Remove existing pressure barrier
         if (this._pressureBarrier) {
@@ -1137,7 +1135,7 @@ const DockedDash = GObject.registerClass({
         // Ensure variables linked to settings are updated.
         this._updateVisibilityMode();
 
-        const { dockFixed: fixedIsEnabled, dockExtended: extendHeight } = DockManager.settings;
+        const {dockFixed: fixedIsEnabled, dockExtended: extendHeight} = DockManager.settings;
 
         if (fixedIsEnabled)
             this.add_style_class_name('fixed');
@@ -1196,7 +1194,7 @@ const DockedDash = GObject.registerClass({
         if (!this._intellihideIsEnabled)
             return;
 
-        const { desktopIconsUsableArea } = DockManager.getDefault();
+        const {desktopIconsUsableArea} = DockManager.getDefault();
         if (this._position === St.Side.BOTTOM)
             desktopIconsUsableArea.setMargins(this.monitorIndex, 0, this._box.height, 0, 0);
         else if (this._position === St.Side.TOP)
@@ -1249,7 +1247,7 @@ const DockedDash = GObject.registerClass({
         // Restore dash accessibility
         Main.ctrlAltTabManager.addGroup(
             this.dash, _('Dash'), 'user-bookmarks-symbolic',
-            { focusCallback: this._onAccessibilityFocus.bind(this) });
+            {focusCallback: this._onAccessibilityFocus.bind(this)});
     }
 
     /**
@@ -1439,7 +1437,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
 
         // Setup keyboard bindings for dash elements
         const keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
-        const { mainDock } = DockManager.getDefault();
+        const {mainDock} = DockManager.getDefault();
         keys.forEach(function (key) {
             for (let i = 0; i < NUM_HOTKEYS; i++) {
                 const appNum = i;
@@ -1470,7 +1468,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     }
 
     _optionalNumberOverlay() {
-        const { settings } = DockManager;
+        const {settings} = DockManager;
         this._shortcutIsSet = false;
         // Enable extra shortcut if either 'overlay' or 'show-dock' are true
         if (settings.hotKeys &&
@@ -1493,7 +1491,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     }
 
     _checkHotkeysOptions() {
-        const { settings } = DockManager;
+        const {settings} = DockManager;
 
         if (settings.hotKeys &&
            (settings.hotkeysOverlay || settings.hotkeysShowDock))
@@ -1558,7 +1556,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
  */
 const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
     constructor() {
-        const { settings } = DockManager;
+        const {settings} = DockManager;
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._injectionsHandler = new Utils.InjectionsHandler();
@@ -1640,19 +1638,19 @@ const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
 };
 
 
-var DockManager = class DashToDockDockManager {
-    constructor() {
-        if (Me.imports.extension.dockManager)
+export class DockManager {
+    constructor(extension) {
+        if (DockManager._singleton)
             throw new Error('DashToDock has been already initialized');
-
-        Me.imports.extension.dockManager = this;
-
+        DockManager._singleton = this;
+        this._extension = extension;
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._methodInjections = new Utils.InjectionsHandler(this);
         this._vfuncInjections = new Utils.VFuncInjectionsHandler(this);
         this._propertyInjections = new Utils.PropertyInjectionsHandler(this);
-        this._settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.dash-to-dock');
-        this._appSwitcherSettings = new Gio.Settings({ schema_id: 'org.gnome.shell.app-switcher' });
+        this._settings = this._extension.getSettings(
+            'org.gnome.shell.extensions.dash-to-dock');
+        this._appSwitcherSettings = new Gio.Settings({schema_id: 'org.gnome.shell.app-switcher'});
         this._mapSettingsValues();
 
         this._iconTheme = new Utils.IconTheme();
@@ -1710,15 +1708,23 @@ var DockManager = class DashToDockDockManager {
     }
 
     static getDefault() {
-        return Me.imports.extension.dockManager;
+        return DockManager._singleton;
     }
 
     static get allDocks() {
         return DockManager.getDefault()._allDocks;
     }
 
+    static get extension() {
+        return DockManager.getDefault().extension;
+    }
+
     static get settings() {
         return DockManager.getDefault().settings;
+    }
+
+    get extension() {
+        return this._extension;
     }
 
     get settings() {
@@ -1778,7 +1784,7 @@ var DockManager = class DashToDockDockManager {
     }
 
     _ensureLocations() {
-        const { showMounts, showTrash } = this.settings;
+        const {showMounts, showTrash} = this.settings;
 
         if (showTrash || showMounts) {
             if (!this._fm1Client)
@@ -1848,7 +1854,7 @@ var DockManager = class DashToDockDockManager {
                     },
                 ]);
 
-                const { get: defaultFocusAppGetter } = Object.getOwnPropertyDescriptor(
+                const {get: defaultFocusAppGetter} = Object.getOwnPropertyDescriptor(
                     Shell.WindowTracker.prototype, 'focus_app');
                 this._propertyInjections.addWithLabel(Labels.LOCATIONS,
                     Shell.WindowTracker.prototype, 'focus_app', {
@@ -1914,11 +1920,11 @@ var DockManager = class DashToDockDockManager {
                 `changed::${key}`, updateSetting);
             if (key !== camelKey) {
                 Object.defineProperty(this.settings, key,
-                    { get: () => this.settings[camelKey] });
+                    {get: () => this.settings[camelKey]});
             }
         });
         Object.defineProperties(this.settings, {
-            dockExtended: { get: () => this.settings.extendHeight },
+            dockExtended: {get: () => this.settings.extendHeight},
         });
     }
 
@@ -2042,7 +2048,7 @@ var DockManager = class DashToDockDockManager {
             for (let iMon = 0; iMon < nMon; iMon++) {
                 if (iMon === this._preferredMonitorIndex)
                     continue;
-                dock = new DockedDash({ monitorIndex: iMon });
+                dock = new DockedDash({monitorIndex: iMon});
                 this._allDocks.push(dock);
                 // connect app icon into the view selector
                 dock.dash.showAppsButton.connect('notify::checked',
@@ -2060,7 +2066,7 @@ var DockManager = class DashToDockDockManager {
 
     _prepareStartupAnimation(callback) {
         DockManager.allDocks.forEach(dock => {
-            const { dash } = dock;
+            const {dash} = dock;
 
             dock.opacity = 255;
             dash.set({
@@ -2097,10 +2103,10 @@ var DockManager = class DashToDockDockManager {
     }
 
     _runStartupAnimation(callback) {
-        const { STARTUP_ANIMATION_TIME } = Layout;
+        const {STARTUP_ANIMATION_TIME} = Layout;
 
         DockManager.allDocks.forEach(dock => {
-            const { dash } = dock;
+            const {dash} = dock;
 
             switch (dock.position) {
             case St.Side.LEFT:
@@ -2193,7 +2199,10 @@ var DockManager = class DashToDockDockManager {
                 return [0, 0];
             });
 
-        const { ControlsManager, ControlsManagerLayout } = OverviewControls;
+        const {ControlsManager} = OverviewControls;
+        // FIXME: https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2890
+        // const { ControlsManagerLayout } = OverviewControls;
+        const ControlsManagerLayout = this.overviewControls.layout_manager.constructor;
 
         this._methodInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
         this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
@@ -2255,7 +2264,7 @@ var DockManager = class DashToDockDockManager {
 
                     dockManager._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
                         Utils.getMonitorManager(), 'monitors-changed', () => {
-                            const { x, y, width, height } = this.primaryMonitor;
+                            const {x, y, width, height} = this.primaryMonitor;
                             global.window_group.set_clip(x, y, width, height);
                             this._coverPane?.set({
                                 width: global.screen_width,
@@ -2299,7 +2308,7 @@ var DockManager = class DashToDockDockManager {
         const maybeAdjustBoxSize = (state, box, spacing) => {
             if (state === OverviewControls.ControlsState.WINDOW_PICKER) {
                 const searchBox = this.overviewControls._searchEntry.get_allocation_box();
-                const { shouldShow: wsThumbnails } = this.overviewControls._thumbnailsBox;
+                const {shouldShow: wsThumbnails} = this.overviewControls._thumbnailsBox;
 
                 if (!wsThumbnails) {
                     box.y1 += spacing;
@@ -2348,7 +2357,7 @@ var DockManager = class DashToDockDockManager {
                 const oldStartY = workAreaBox.y1;
 
                 const propertyInjections = new Utils.PropertyInjectionsHandler();
-                propertyInjections.add(Main.layoutManager.panelBox, 'height', { value: startY });
+                propertyInjections.add(Main.layoutManager.panelBox, 'height', {value: startY});
 
                 if (Main.layoutManager.panelBox.y === Main.layoutManager.primaryMonitor.y)
                     workAreaBox.y1 -= oldStartY;
@@ -2497,7 +2506,7 @@ var DockManager = class DashToDockDockManager {
                     const monitor = Main.layoutManager.primaryMonitor;
                     const x = monitor.x + monitor.width / 2.0;
                     const y = monitor.y + monitor.height / 2.0;
-                    const { STARTUP_ANIMATION_TIME } = Layout;
+                    const {STARTUP_ANIMATION_TIME} = Layout;
 
                     this._prepareStartupAnimation(callback);
                     Main.uiGroup.set_pivot_point(
@@ -2565,8 +2574,8 @@ var DockManager = class DashToDockDockManager {
     }
 
     _onShowAppsButtonToggled(button) {
-        const { checked } = button;
-        const { overviewControls } = this;
+        const {checked} = button;
+        const {overviewControls} = this;
 
         if (!Main.overview.visible) {
             this.mainDock.dash.showAppsButton._fromDesktop = true;
@@ -2647,7 +2656,8 @@ var DockManager = class DashToDockDockManager {
 
         this._desktopIconsUsableArea.destroy();
         this._desktopIconsUsableArea = null;
-        Me.imports.extension.dockManager = null;
+        this._extension = null;
+        DockManager._singleton = null;
     }
 
     /**
@@ -2681,12 +2691,12 @@ var DockManager = class DashToDockDockManager {
     _hasPanelCorners() {
         return !!Main.panel?._rightCorner && !!Main.panel?._leftCorner;
     }
-};
+}
 Signals.addSignalMethods(DockManager.prototype);
 
 // This class drives long-running icon animations, to keep them running in sync
 // with each other, and to save CPU by pausing them when the dock is hidden.
-var IconAnimator = class DashToDockIconAnimator {
+export class IconAnimator {
     constructor(actor) {
         this._count = 0;
         this._started = false;
@@ -2694,7 +2704,7 @@ var IconAnimator = class DashToDockIconAnimator {
             wiggle: [],
         };
         this._timeline = new Clutter.Timeline({
-            duration: Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION) || 1,
+            duration: AnimationUtils.adjustAnimationTime(ICON_ANIMATOR_DURATION) || 1,
             repeat_count: -1,
             actor,
         });
@@ -2714,7 +2724,7 @@ var IconAnimator = class DashToDockIconAnimator {
 
     _updateSettings() {
         this._timeline.set_duration(
-            Environment.adjustAnimationTime(ICON_ANIMATOR_DURATION) || 1);
+            AnimationUtils.adjustAnimationTime(ICON_ANIMATOR_DURATION) || 1);
     }
 
     destroy() {
@@ -2747,7 +2757,7 @@ var IconAnimator = class DashToDockIconAnimator {
     addAnimation(target, name) {
         const targetDestroyId = target.connect('destroy',
             () => this.removeAnimation(target, name));
-        this._animations[name].push({ target, targetDestroyId });
+        this._animations[name].push({target, targetDestroyId});
         if (this._started && this._count === 0)
             this._timeline.start();
 
@@ -2769,4 +2779,4 @@ var IconAnimator = class DashToDockIconAnimator {
             }
         }
     }
-};
+}

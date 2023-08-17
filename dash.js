@@ -1,36 +1,33 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-/* exported DockDash */
-
-const {
+import {
     Clutter,
     Gio,
     GLib,
     GObject,
     Shell,
-    St,
-} = imports.gi;
+    St
+} from './dependencies/gi.js';
 
-const {
-    appFavorites: AppFavorites,
-    dash: Dash,
-    dnd: DND,
-    main: Main,
-} = imports.ui;
+import {
+    AppFavorites,
+    Dash,
+    DND,
+    Main
+} from './dependencies/shell/ui.js';
 
-const {
-    util: Util,
-} = imports.misc;
+import {
+    Util
+} from './dependencies/shell/misc.js';
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const {
-    appIcons: AppIcons,
-    docking: Docking,
-    theming: Theming,
-    utils: Utils,
-} = Me.imports;
+import {
+    AppIcons,
+    Docking,
+    Theming,
+    Utils
+} from './imports.js';
 
-const { DASH_ANIMATION_TIME } = Dash;
+const {DASH_ANIMATION_TIME} = Dash;
 const DASH_VISIBILITY_TIMEOUT = 3;
 
 const Labels = Object.freeze({
@@ -44,7 +41,7 @@ const Labels = Object.freeze({
  * - set label position based on dash orientation
  *
  */
-var DockDashItemContainer = GObject.registerClass(
+const DockDashItemContainer = GObject.registerClass(
 class DockDashItemContainer extends Dash.DashItemContainer {
     _init(position) {
         super._init();
@@ -91,7 +88,7 @@ const baseIconSizes = [16, 22, 24, 32, 48, 64, 96, 128];
  * - sync minimization application target position.
  * - keep running apps ordered.
  */
-var DockDash = GObject.registerClass({
+export const DockDash = GObject.registerClass({
     Properties: {
         'requires-visibility': GObject.ParamSpec.boolean(
             'requires-visibility', 'requires-visibility', 'requires-visibility',
@@ -164,7 +161,7 @@ var DockDash = GObject.registerClass({
         this._box = new St.BoxLayout({
             vertical: !this._isHorizontal,
             clip_to_allocation: false,
-            ...!this._isHorizontal ? { layout_manager: new DockDashIconsVerticalLayout() } : {},
+            ...!this._isHorizontal ? {layout_manager: new DockDashIconsVerticalLayout()} : {},
             x_align: rtl ? Clutter.ActorAlign.END : Clutter.ActorAlign.START,
             y_align: this._isHorizontal ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START,
             y_expand: !this._isHorizontal,
@@ -536,7 +533,7 @@ var DockDash = GObject.registerClass({
         });
 
         appIcon.connect('notify::focused', () => {
-            const { settings } = Docking.DockManager;
+            const {settings} = Docking.DockManager;
             if (appIcon.focused && settings.scrollToFocusedApplication)
                 ensureActorVisibleInScrollView(this._scrollView, item);
         });
@@ -648,8 +645,8 @@ var DockDash = GObject.registerClass({
 
         const spacing = themeNode.get_length('spacing');
 
-        const [{ child: firstButton }] = iconChildren;
-        const { child: firstIcon } = firstButton?.icon ?? { child: null };
+        const [{child: firstButton}] = iconChildren;
+        const {child: firstIcon} = firstButton?.icon ?? {child: null};
 
         // if no icons there's nothing to adjust
         if (!firstIcon)
@@ -681,7 +678,7 @@ var DockDash = GObject.registerClass({
         }
 
         const maxIconSize = availSpace / iconChildren.length;
-        const { scaleFactor } = St.ThemeContext.get_for_stage(global.stage);
+        const {scaleFactor} = St.ThemeContext.get_for_stage(global.stage);
         const iconSizes = this._availableIconSizes.map(s => s * scaleFactor);
 
         let [newIconSize] = this._availableIconSizes;
@@ -699,7 +696,7 @@ var DockDash = GObject.registerClass({
 
         const scale = oldIconSize / newIconSize;
         for (let i = 0; i < iconChildren.length; i++) {
-            const { icon } = iconChildren[i].child._delegate;
+            const {icon} = iconChildren[i].child._delegate;
 
             // Set the new size immediately, to keep the icons' sizes
             // in sync with this.iconSize
@@ -729,7 +726,7 @@ var DockDash = GObject.registerClass({
 
         if (this._separator) {
             const animateProperties = this._isHorizontal
-                ? { height: this.iconSize } : { width: this.iconSize };
+                ? {height: this.iconSize} : {width: this.iconSize};
 
             this._separator.ease({
                 ...animateProperties,
@@ -744,7 +741,7 @@ var DockDash = GObject.registerClass({
 
         let running = this._appSystem.get_running();
         const dockManager = Docking.DockManager.getDefault();
-        const { settings } = dockManager;
+        const {settings} = dockManager;
 
         this._scrollView.set({
             xAlign: Clutter.ActorAlign.FILL,
@@ -779,7 +776,7 @@ var DockDash = GObject.registerClass({
         // Apps supposed to be in the dash
         const newApps = [];
 
-        const { showFavorites } = settings;
+        const {showFavorites} = settings;
         if (showFavorites)
             newApps.push(...Object.values(favorites));
 
@@ -959,7 +956,7 @@ var DockDash = GObject.registerClass({
         if (!this._shownInitially)
             this._shownInitially = true;
 
-        addedItems.forEach(({ item }) => item.show(animate));
+        addedItems.forEach(({item}) => item.show(animate));
 
         // Workaround for https://bugzilla.gnome.org/show_bug.cgi?id=692744
         // Without it, StBoxLayout may use a stale size cache
@@ -1066,7 +1063,7 @@ var DockDash = GObject.registerClass({
         if (this._showAppsIcon.get_parent() && !this._showAppsIcon.visible)
             return;
 
-        const { settings } = Docking.DockManager;
+        const {settings} = Docking.DockManager;
         const notifiedProperties = [];
         const showAppsContainer = settings.showAppsAlwaysInTheEdge || !settings.dockExtended
             ? this._dashContainer : this._boxContainer;
@@ -1112,10 +1109,10 @@ var DockDash = GObject.registerClass({
  * @param actor
  */
 function ensureActorVisibleInScrollView(scrollView, actor) {
-    const { adjustment: vAdjustment } = scrollView.vscroll;
-    const { adjustment: hAdjustment } = scrollView.hscroll;
-    const { value: vValue0, pageSize: vPageSize, upper: vUpper } = vAdjustment;
-    const { value: hValue0, pageSize: hPageSize, upper: hUpper } = hAdjustment;
+    const {adjustment: vAdjustment} = scrollView.vscroll;
+    const {adjustment: hAdjustment} = scrollView.hscroll;
+    const {value: vValue0, pageSize: vPageSize, upper: vUpper} = vAdjustment;
+    const {value: hValue0, pageSize: hPageSize, upper: hUpper} = hAdjustment;
     let [hValue, vValue] = [hValue0, vValue0];
     let vOffset = 0;
     let hOffset = 0;
@@ -1126,7 +1123,7 @@ function ensureActorVisibleInScrollView(scrollView, actor) {
     }
 
     const box = actor.get_allocation_box();
-    let { y1 } = box, { y2 } = box, { x1 } = box, { x2 } = box;
+    let {y1} = box, {y2} = box, {x1} = box, {x2} = box;
 
     let parent = actor.get_parent();
     while (parent !== scrollView) {

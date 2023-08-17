@@ -1,18 +1,17 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-const {
+import {
     GLib,
     Meta,
-    Shell,
-} = imports.gi;
+    Shell
+} from './dependencies/gi.js';
 
-const { signals: Signals } = imports;
+import {
+    Docking,
+    Utils
+} from './imports.js';
 
-const Me = imports.misc.extensionUtils.getCurrentExtension();
-const {
-    docking: Docking,
-    utils: Utils,
-} = Me.imports;
+const {signals: Signals} = imports;
 
 // A good compromise between reactivity and efficiency; to be tuned.
 const INTELLIHIDE_CHECK_INTERVAL = 100;
@@ -52,7 +51,7 @@ const ignoreApps = ['com.rastersoft.ding', 'com.desktop.ding'];
  * Intallihide object: emit 'status-changed' signal when the overlap of windows
  * with the provided targetBoxClutter.ActorBox changes;
  */
-var Intellihide = class DashToDockIntellihide {
+export class Intellihide {
     constructor(monitorIndex) {
         // Load settings
         this._monitorIndex = monitorIndex;
@@ -291,7 +290,7 @@ var Intellihide = class DashToDockIntellihide {
         case IntellihideMode.ALWAYS_ON_TOP:
             // Always on top, except for fullscreen windows
             if (this._focusApp) {
-                const { focusWindow } = global.display;
+                const {focusWindow} = global.display;
                 if (!focusWindow?.fullscreen)
                     return false;
             }
@@ -325,7 +324,7 @@ var Intellihide = class DashToDockIntellihide {
 
         const wtype = metaWindow.get_window_type();
         for (let i = 0; i < handledWindowTypes.length; i++) {
-            var hwtype = handledWindowTypes[i];
+            const hwtype = handledWindowTypes[i];
             if (hwtype === wtype)
                 return true;
             else if (hwtype > wtype)
@@ -333,6 +332,6 @@ var Intellihide = class DashToDockIntellihide {
         }
         return false;
     }
-};
+}
 
 Signals.addSignalMethods(Intellihide.prototype);

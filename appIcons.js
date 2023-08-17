@@ -1,49 +1,47 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-/* exported DockShowAppsIcon, makeAppIcon, itemShowLabel, getInterestingWindows */
-
-const {
+import {
     Clutter,
     Gio,
     GLib,
     GObject,
     Meta,
     Shell,
-    St,
-} = imports.gi;
+    St
+} from './dependencies/gi.js';
+
+import {
+    AppDisplay,
+    AppFavorites,
+    BoxPointer,
+    Dash,
+    Main,
+    PopupMenu
+} from './dependencies/shell/ui.js';
+
+import {
+    ParentalControlsManager
+} from './dependencies/shell/misc.js';
+
+import {Config} from './dependencies/shell/misc.js';
+
+import {
+    AppIconIndicators,
+    DBusMenuUtils,
+    Docking,
+    Locations,
+    Theming,
+    Utils,
+    WindowPreview
+} from './imports.js';
+
+import {Extension} from './dependencies/shell/extensions/extension.js';
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
-const Gettext = imports.gettext.domain('dashtodock');
-const __ = Gettext.gettext;
-const N__ = e => e;
+const {gettext: __} = Extension;
 
-const Config = imports.misc.config;
-
-const {
-    appDisplay: AppDisplay,
-    appFavorites: AppFavorites,
-    boxpointer: BoxPointer,
-    dash: Dash,
-    main: Main,
-    popupMenu: PopupMenu,
-} = imports.ui;
-
-const {
-    parentalControlsManager: ParentalControlsManager,
-} = imports.misc;
-
-const ExtensionUtils = imports.misc.extensionUtils;
-const Me = ExtensionUtils.getCurrentExtension();
-const {
-    appIconIndicators: AppIconIndicators,
-    dbusmenuUtils: DbusmenuUtils,
-    docking: Docking,
-    locations: Locations,
-    theming: Theming,
-    utils: Utils,
-    windowPreview: WindowPreview,
-} = Me.imports;
+const DBusMenu = await DBusMenuUtils.haveDBusMenu();
 
 const tracker = Shell.WindowTracker.get_default();
 
@@ -92,7 +90,7 @@ let recentlyClickedAppMonitor = -1;
  * - Update minimization animation target
  * - Update menu if open on windows change
  */
-var DockAbstractAppIcon = GObject.registerClass({
+const DockAbstractAppIcon = GObject.registerClass({
     GTypeFlags: GObject.TypeFlags.ABSTRACT,
     Properties: {
         'focused': GObject.ParamSpec.boolean(
@@ -164,7 +162,7 @@ var DockAbstractAppIcon = GObject.registerClass({
                 this.remove_style_class_name('focused');
         });
 
-        const { notificationsMonitor } = Docking.DockManager.getDefault();
+        const {notificationsMonitor} = Docking.DockManager.getDefault();
 
         this.connect('notify::urgent', () => {
             const icon = this.icon._iconBin;
@@ -240,7 +238,7 @@ var DockAbstractAppIcon = GObject.registerClass({
     }
 
     vfunc_scroll_event(scrollEvent) {
-        const { settings } = Docking.DockManager;
+        const {settings} = Docking.DockManager;
         const isEnabled = settings.scrollAction === scrollAction.CYCLE_WINDOWS;
         if (!isEnabled)
             return Clutter.EVENT_PROPAGATE;
@@ -395,7 +393,7 @@ var DockAbstractAppIcon = GObject.registerClass({
 
         let windows = this.getWindows();
         if (Docking.DockManager.settings.multiMonitor) {
-            const { monitorIndex } = this;
+            const {monitorIndex} = this;
             windows = windows.filter(w => w.get_monitor() === monitorIndex);
         }
         windows.forEach(w => w.set_icon_geometry(rect));
@@ -431,10 +429,10 @@ var DockAbstractAppIcon = GObject.registerClass({
                     const monitorIndex = Main.layoutManager.findIndexForActor(this);
                     const workArea = Main.layoutManager.getWorkAreaForMonitor(monitorIndex);
                     const position = Utils.getPosition();
-                    const { scaleFactor } = St.ThemeContext.get_for_stage(global.stage);
+                    const {scaleFactor} = St.ThemeContext.get_for_stage(global.stage);
                     const isHorizontal = position === St.Side.TOP || position === St.Side.BOTTOM;
                     // If horizontal also remove the height of the dash
-                    const { dockFixed: fixedDock } = Docking.DockManager.settings;
+                    const {dockFixed: fixedDock} = Docking.DockManager.settings;
                     const additionalMargin = isHorizontal && !fixedDock ? Main.overview.dash.height : 0;
                     const verticalMargins = this._menu.actor.margin_top + this._menu.actor.margin_bottom;
                     const maxMenuHeight = workArea.height - additionalMargin - verticalMargins;
@@ -484,7 +482,7 @@ var DockAbstractAppIcon = GObject.registerClass({
         // being used. We then define what buttonAction should be for this
         // event.
         let buttonAction = 0;
-        const { settings } = Docking.DockManager;
+        const {settings} = Docking.DockManager;
         if (button && button === 2) {
             if (modifiers & Clutter.ModifierType.SHIFT_MASK)
                 buttonAction = settings.shiftMiddleClickAction;
@@ -914,7 +912,7 @@ var DockAbstractAppIcon = GObject.registerClass({
     }
 });
 
-var DockAppIcon = GObject.registerClass({
+const DockAppIcon = GObject.registerClass({
 }, class DockAppIcon extends DockAbstractAppIcon {
     _init(app, monitorIndex, iconAnimator) {
         super._init(app, monitorIndex, iconAnimator);
@@ -923,7 +921,7 @@ var DockAppIcon = GObject.registerClass({
     }
 });
 
-var DockLocationAppIcon = GObject.registerClass({
+const DockLocationAppIcon = GObject.registerClass({
 }, class DockLocationAppIcon extends DockAbstractAppIcon {
     _init(app, monitorIndex, iconAnimator) {
         if (!(app.appInfo instanceof Locations.LocationAppInfo))
@@ -960,7 +958,7 @@ var DockLocationAppIcon = GObject.registerClass({
  * @param monitorIndex
  * @param iconAnimator
  */
-function makeAppIcon(app, monitorIndex, iconAnimator) {
+export function makeAppIcon(app, monitorIndex, iconAnimator) {
     if (app.appInfo instanceof Locations.LocationAppInfo)
         return new DockLocationAppIcon(app, monitorIndex, iconAnimator);
 
@@ -1000,16 +998,16 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
 
         Main.uiGroup.add_actor(this.actor);
 
-        const { remoteModel } = Docking.DockManager.getDefault();
+        const {remoteModel} = Docking.DockManager.getDefault();
         const remoteModelApp = remoteModel?.lookupById(this._source?.app?.id);
-        if (remoteModelApp && DbusmenuUtils.haveDBusMenu()) {
+        if (remoteModelApp && DBusMenu) {
             const [onQuicklist, onDynamicSection] = Utils.splitHandler((sender,
-                { quicklist }, dynamicSection) => {
+                {quicklist}, dynamicSection) => {
                 dynamicSection.removeAll();
                 if (quicklist) {
                     quicklist.get_children().forEach(remoteItem =>
                         dynamicSection.addMenuItem(
-                            DbusmenuUtils.makePopupMenuItem(remoteItem, false)));
+                            DBusMenuUtils.makePopupMenuItem(remoteItem, false)));
                 }
             });
 
@@ -1296,8 +1294,8 @@ function isWindowUrgent(w) {
  * @param windows
  * @param monitorIndex
  */
-function getInterestingWindows(windows, monitorIndex) {
-    const { settings } = Docking.DockManager;
+export function getInterestingWindows(windows, monitorIndex) {
+    const {settings} = Docking.DockManager;
 
     // When using workspace isolation, we filter out windows
     // that are neither in the current workspace nor marked urgent
@@ -1329,9 +1327,9 @@ function getInterestingWindows(windows, monitorIndex) {
  *
  */
 
-var DockShowAppsIcon = GObject.registerClass({
+export const DockShowAppsIcon = GObject.registerClass({
     Signals: {
-        'menu-state-changed': { param_types: [GObject.TYPE_BOOLEAN] },
+        'menu-state-changed': {param_types: [GObject.TYPE_BOOLEAN]},
         'sync-tooltip': {},
     },
 }
@@ -1340,7 +1338,7 @@ var DockShowAppsIcon = GObject.registerClass({
         super._init();
 
         // Re-use appIcon methods
-        const { prototype: appIconPrototype } = AppDisplay.AppIcon;
+        const {prototype: appIconPrototype} = AppDisplay.AppIcon;
         this.toggleButton.y_expand = false;
         this.toggleButton.connect('popup-menu', () =>
             appIconPrototype._onKeyboardPopupMenu.call(this));
@@ -1400,7 +1398,7 @@ var DockShowAppsIcon = GObject.registerClass({
     }
 
     popupMenu() {
-        if (Me.metadata.uuid === 'ubuntu-dock@ubuntu.com')
+        if (Docking.DockManager.extension.uuid === 'ubuntu-dock@ubuntu.com')
             return false;
 
         this._removeMenuTimeout();
@@ -1445,16 +1443,16 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
         const name = __('Dash to Dock %s').format(_('Settings'));
         const item = this._appendMenuItem(name);
 
-        item.connect('activate', () => {
-            ExtensionUtils.openPrefs();
-        });
+        item.connect('activate', () =>
+            Docking.DockManager.extension.openPreferences());
     }
 }
 
 /**
  * This function is used for both DockShowAppsIcon and DockDashItemContainer
  */
-function itemShowLabel()  {
+export function itemShowLabel() {
+    /* eslint-disable no-invalid-this */
     // Check if the label is still present at all. When switching workpaces, the
     // item might have been destroyed in between.
     if (!this._labelText || !this.label.get_stage())
@@ -1522,4 +1520,5 @@ function itemShowLabel()  {
         duration: Dash.DASH_ITEM_LABEL_SHOW_TIME,
         mode: Clutter.AnimationMode.EASE_OUT_QUAD,
     });
+    /* eslint-enable no-invalid-this */
 }
