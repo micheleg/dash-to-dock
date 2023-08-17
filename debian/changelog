@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (87ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (87ubuntu1) mantic; urgency=medium
 
   * Releasing v87
   * Imports: use less verbose export strategy
@@ -7,7 +7,7 @@ gnome-shell-extension-ubuntu-dock (87ubuntu1) UNRELEASED; urgency=medium
   * prefs: Remove unneeded log line
   * extension: Do not try to re-enable the extension when already is
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 18 Aug 2023 00:55:02 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 18 Aug 2023 00:55:44 +0200
 
 gnome-shell-extension-ubuntu-dock (85ubuntu1) mantic; urgency=medium
 
