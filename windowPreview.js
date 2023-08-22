@@ -10,20 +10,20 @@ import {
     GLib,
     GObject,
     Meta,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {
     BoxPointer,
     Main,
     PopupMenu,
-    Workspace
+    Workspace,
 } from './dependencies/shell/ui.js';
 
 import {
     Docking,
     Theming,
-    Utils
+    Utils,
 } from './imports.js';
 
 const PREVIEW_MAX_WIDTH = 250;

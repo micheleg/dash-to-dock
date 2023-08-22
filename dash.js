@@ -6,25 +6,25 @@ import {
     GLib,
     GObject,
     Shell,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {
     AppFavorites,
     Dash,
     DND,
-    Main
+    Main,
 } from './dependencies/shell/ui.js';
 
 import {
-    Util
+    Util,
 } from './dependencies/shell/misc.js';
 
 import {
     AppIcons,
     Docking,
     Theming,
-    Utils
+    Utils,
 } from './imports.js';
 
 const {DASH_ANIMATION_TIME} = Dash;

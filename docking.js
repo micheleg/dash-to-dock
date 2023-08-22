@@ -7,7 +7,7 @@ import {
     GObject,
     Meta,
     Shell,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {
@@ -19,11 +19,11 @@ import {
     PointerWatcher,
     Workspace,
     WorkspacesView,
-    WorkspaceSwitcherPopup
+    WorkspaceSwitcherPopup,
 } from './dependencies/shell/ui.js';
 
 import {
-    AnimationUtils
+    AnimationUtils,
 } from './dependencies/shell/misc.js';
 
 import {
@@ -36,7 +36,7 @@ import {
     Locations,
     NotificationsMonitor,
     Theming,
-    Utils
+    Utils,
 } from './imports.js';
 
 const {signals: Signals} = imports;

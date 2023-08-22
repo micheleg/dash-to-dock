@@ -24,5 +24,12 @@ overrides:
           ignoreUrls: true
           ignoreTemplateLiterals: true
 
+      comma-dangle:
+        - error
+        - arrays: always-multiline
+          objects: always-multiline
+          imports: always-multiline
+          functions: never
+
 parserOptions:
   sourceType: module

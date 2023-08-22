@@ -5,14 +5,14 @@ import {
     GLib,
     GObject,
     Shell,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {ShellMountOperation} from './dependencies/shell/ui.js';
 
 import {
     Docking,
-    Utils
+    Utils,
 } from './imports.js';
 
 import {Extension} from './dependencies/shell/extensions/extension.js';

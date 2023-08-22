@@ -7,7 +7,7 @@ import {
     GObject,
     Meta,
     Shell,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {
@@ -16,11 +16,11 @@ import {
     BoxPointer,
     Dash,
     Main,
-    PopupMenu
+    PopupMenu,
 } from './dependencies/shell/ui.js';
 
 import {
-    ParentalControlsManager
+    ParentalControlsManager,
 } from './dependencies/shell/misc.js';
 
 import {Config} from './dependencies/shell/misc.js';
@@ -32,7 +32,7 @@ import {
     Locations,
     Theming,
     Utils,
-    WindowPreview
+    WindowPreview,
 } from './imports.js';
 
 import {Extension} from './dependencies/shell/extensions/extension.js';

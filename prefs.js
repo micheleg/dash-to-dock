@@ -11,7 +11,7 @@ import {
 
     // Use __ () and N__() for the extension gettext domain, and reuse
     // the shell domain with the default _() and N_()
-    gettext as __
+    gettext as __,
 } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 const SCALE_UPDATE_TIMEOUT = 500;
