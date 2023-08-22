@@ -6,11 +6,11 @@ import {
     Gtk,
     Meta,
     Shell,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {
-    Docking
+    Docking,
 } from './imports.js';
 
 const {_gi: Gi} = imports;

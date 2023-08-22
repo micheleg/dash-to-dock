@@ -4,7 +4,7 @@ import {
     Main,
     SearchController,
     Workspace,
-    WorkspaceThumbnail
+    WorkspaceThumbnail,
 } from './dependencies/shell/ui.js';
 
 import {Utils} from './imports.js';

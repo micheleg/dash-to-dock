@@ -4,14 +4,14 @@ import {
     Gio,
     GObject,
     Pango,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {Main} from './dependencies/shell/ui.js';
 
 import {
     Docking,
-    Utils
+    Utils,
 } from './imports.js';
 
 const {cairo: Cairo} = imports;
