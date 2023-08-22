@@ -1,27 +1,13 @@
-import Atk from 'gi://Atk';
-import Clutter from 'gi://Clutter';
-import GLib from 'gi://GLib';
-import GObject from 'gi://GObject';
-import Gdk from 'gi://Gdk';
-import GdkPixbuf from 'gi://GdkPixbuf';
-import Gio from 'gi://Gio';
-import Gtk from 'gi://Gtk';
-import Meta from 'gi://Meta';
-import Pango from 'gi://Pango';
-import Shell from 'gi://Shell';
-import St from 'gi://St';
+export {default as Atk} from 'gi://Atk';
+export {default as Clutter} from 'gi://Clutter';
+export {default as GLib} from 'gi://GLib';
+export {default as GObject} from 'gi://GObject';
+export {default as Gdk} from 'gi://Gdk';
+export {default as GdkPixbuf} from 'gi://GdkPixbuf';
+export {default as Gio} from 'gi://Gio';
+export {default as Gtk} from 'gi://Gtk';
+export {default as Meta} from 'gi://Meta';
+export {default as Pango} from 'gi://Pango';
+export {default as Shell} from 'gi://Shell';
+export {default as St} from 'gi://St';
 
-export {
-    Atk,
-    Clutter,
-    GLib,
-    GObject,
-    Gdk,
-    GdkPixbuf,
-    Gio,
-    Gtk,
-    Meta,
-    Pango,
-    Shell,
-    St
-};
