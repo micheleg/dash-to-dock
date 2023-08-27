@@ -5,12 +5,15 @@ import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/
 import Adw from 'gi://Adw';
 import GObject from 'gi://GObject';
 
+import { MonitorsConfig } from '../conveniences/monitorsconfig.js'
 
 const General = GObject.registerClass({
     GTypeName: 'General'
 },class General extends Adw.PreferencesPage{
     constructor(){
         super();
+
+        this._monitorsConfig = new MonitorsConfig();
 
         // Set headerbar page info
         this.title = _('General')
