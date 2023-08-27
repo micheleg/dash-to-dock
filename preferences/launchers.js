@@ -6,26 +6,24 @@ import Adw from 'gi://Adw';
 import GObject from 'gi://GObject';
 
 
-const General = GObject.registerClass({
-    GTypeName: 'General'
-},class General extends Adw.PreferencesPage{
+const Launchers = GObject.registerClass({
+    GTypeName: 'Launchers'
+},class Launchers extends Adw.PreferencesPage{
     constructor(){
         super();
 
-        // Set headerbar page info
-        this.title = _('General')
-        this.icon_name = 'dialog-information-symbolic'
-        
-        // create new preferences group
+        this.title = _('Launchers')
+        this.icon_name = 'utilities-terminal-symbolic'
+
         const group = new Adw.PreferencesGroup({
-            title: _('General'),
-            description: _('General Setting of the extension'),
+            title: _('Dock launchers'),
+            description: _('Configure the Launchers'),
         });
         this.add(group);
     
         // Create a new preferences row
         const row = new Adw.SwitchRow({
-            title: _('Show Indicator'),
+            title: _('Show Indicatorrrrrrrrrrrr'),
             subtitle: _('Whether to show the panel indicator'),
         });
         group.add(row);
@@ -34,4 +32,4 @@ const General = GObject.registerClass({
     }
 });
 
-export { General }
+export { Launchers }
