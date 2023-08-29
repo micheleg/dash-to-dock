@@ -88,4 +88,4 @@ function main(args) {
     return ret;
 }
 
-main(ARGV);
+imports.system.exit(main(ARGV));
