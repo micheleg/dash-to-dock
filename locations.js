@@ -393,6 +393,11 @@ export const LocationAppInfo = GObject.registerClass({
                 this._handlerApp = this._getHandlerAppFromWorker(cancellable);
             else
                 this._handlerApp = this.location.query_default_handler(cancellable);
+
+            if (!this._handlerApp) {
+                throw new GLib.Error(Gio.IOErrorEnum,
+                    Gio.IOErrorEnum.NOT_FOUND, `Handler for ${this.location} not found`);
+            }
         } catch (e) {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
                 return getFileManagerApp()?.appInfo;
