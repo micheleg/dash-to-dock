@@ -2,11 +2,14 @@
 
 import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
+import Gio from 'gi://Gio';
 import Adw from 'gi://Adw';
 import GObject from 'gi://GObject';
 import Gtk from 'gi://Gtk';
 
 import { MonitorsConfig } from '../conveniences/monitorsconfig.js'
+
+import { autoHidePageClass } from './_autohide.js';
 
 
 const General = GObject.registerClass({
@@ -62,7 +65,8 @@ class General extends Adw.PreferencesPage{
 
         // Set headerbar page info
         this.title = _('General')
-        this.icon_name = 'dialog-information-symbolic'
+        // this.icon_name = 'dialog-information-symbolic'
+        this.icon_name = 'dash-symbolic'
         
         // ---------------------------------
         // ## Position preferences group
@@ -79,6 +83,19 @@ class General extends Adw.PreferencesPage{
             title: _('Show the dock on')
         });
         PosGroup.add(monitorSelector);
+
+        // const monitorSelectorBox = new Gtk.ComboBoxText();
+        // monitorSelectorBox.valign = 'center';
+        // monitorSelector.append(monitorSelectorBox);
+
+        // monitorSelectorBox.selected = this._settings.get_enum('dock-position');
+
+        this._monitorsConfig.connect('updated',
+            () => this._updateMonitorsSettings());
+        // this._settings.connect('changed::preferred-monitor',
+        //     () => this._updateMonitorsSettings());
+        // this._settings.connect('changed::preferred-monitor-by-connector',
+        //     () => this._updateMonitorsSettings());
 
         // ## Dock Screen Position
         // ---------------------------------
@@ -100,6 +117,14 @@ class General extends Adw.PreferencesPage{
             this._settings.set_enum('dock-position', widget.selected);
         });
 
+
+        // Multi monitor toggle
+        // settings.bind(
+        //     'multi-monitor', this._showAllScreens, 'active',
+        //     Gio.SettingsBindFlags.DEFAULT
+        // );
+
+
         // ---------------------------------
         // ## ## auto hide preferences group
         // ---------------------------------
@@ -111,11 +136,58 @@ class General extends Adw.PreferencesPage{
 
         // ## Inteligent autohide
         // ---------------------------------
-        const row = new Adw.SwitchRow({
+        // const row = new Adw.SwitchRow({
+        //     title: _('Inteligent autohide'),
+        //     subtitle: _('Hide the dock when it obstrucs a windows of the current appliation.'),
+        // });
+        // AHGroup.add(row);
+
+
+        const autoHideRow = new Adw.ActionRow({
             title: _('Inteligent autohide'),
             subtitle: _('Hide the dock when it obstrucs a windows of the current appliation.'),
         });
-        AHGroup.add(row);
+        AHGroup.add(autoHideRow);
+
+        const goNextImage = new Gtk.Image({
+            gicon: Gio.icon_new_for_string('go-next-symbolic'),
+            halign: Gtk.Align.END,
+            valign: Gtk.Align.CENTER,
+            hexpand: false,
+            vexpand: false,
+        });
+        autoHideRow.add_suffix(goNextImage);
+
+
+
+        // const autoHideRow = new SettingRow({
+        //     title: _('Menu Layout'),
+        //     subtitle: _('Choose a layout style for the menu'),
+        //     icon_name: 'settings-layouts-symbolic',
+        // });     
+
+        // const autoHidePage = new autoHidePageClass(this._settings);
+        // autoHideRow.settingPage = autoHidePage;
+
+
+        // autoHideRow.connect('activated', () => {
+        //     if (settingPage.setActiveLayout)
+        //         settingPage.setActiveLayout(this._settings.get_enum('menu-layout'));
+
+        //     this._window.present_subpage(settingPage);
+        //     settingPage.resetScrollAdjustment();
+        // });
+
+        // autoHideRow.settingPage.connect('response', (_w, response) => {
+        //     // if (response === Gtk.ResponseType.APPLY) {
+        //     //     const layoutName = SettingsUtils.getMenuLayoutName(this._settings.get_enum('menu-layout'));
+        //     //     this.tweaksRow.title = _('%s Layout Tweaks').format(_(layoutName));
+        //     // }
+        // });
+
+
+
+
         
         return this
     }
