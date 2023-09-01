@@ -24,11 +24,6 @@ const Launchers = GObject.registerClass({
             });
         }
         
-
-        // row.connect('notify::selected', widget => {
-        //     this._settings.set_enum(schmeaOBKJ, widget.selected);
-        // });
-
         this._settings.bind(
             schmeaOBKJ, row, 'active',
             Gio.SettingsBindFlags.DEFAULT
@@ -45,92 +40,104 @@ const Launchers = GObject.registerClass({
         this.title = _('Launchers')
         this.icon_name = 'utilities-terminal-symbolic'
 
-        // a new group
-        const group = new Adw.PreferencesGroup({
-            title: _('Dock launchers'),
-            description: _('Configure the Launchers'),
+        // ## App Launchers
+        const appLaunchersGroup = new Adw.PreferencesGroup({
+            title: _('App launchers'),
+            description: _('Visable app types'),
         });
-        this.add(group);
-    
-        // Create a new preferences row
-        // const row = new Adw.SwitchRow({
-        //     title: _('Show Indicatorrrrrrrrrrrr'),
-        //     subtitle: _('Whether to show the panel indicator'),
-        // });
-        // group.add(row);
-
-        group.add(this._toggleRow(
+        this.add(appLaunchersGroup);
+        // show pined aplications
+        appLaunchersGroup.add(this._toggleRow(
             _('show pined aplications'),'',
             'show-favorites'
         ));
-        
-        group.add(this._toggleRow(
+        // Show running applications
+        appLaunchersGroup.add(this._toggleRow(
             _('Show running aplications'),'',
             'show-running'
         ));
+        
 
-        group.add(this._toggleRow(
-            _('Show urgent windows despite curren workspace'),'',
-            'workspace-agnostic-urgent-windows'
-        ));
-
-        group.add(this._toggleRow(
-            _('isolate workspaces'),'',
-            'isolate-monitors'
-        ));
-
-        group.add(this._toggleRow(
+        // Show volumes and devices
+        appLaunchersGroup.add(this._toggleRow(
             _('Show volumes and devices'),'',
             'show-mounts'
-        ));
+        ));        
+        // only is mounted
+        // include network volumes
 
-        group.add(this._toggleRow(
+
+        // Show Aplications icon
+        appLaunchersGroup.add(this._toggleRow(
             _('Show Aplications icon'),'',
             'show-show-apps-button'
         ));
-
-        group.add(this._toggleRow(
+        // show trash can
+        appLaunchersGroup.add(this._toggleRow(
             _('Show Trash Icon'),
             _('Whether to show the Trash Icon'),
             'show-trash'
         ));
+        // show icon emblems
+        appLaunchersGroup.add(this._toggleRow(
+            _('Show emblens on aplications'),'',
+            'show-icons-emblems'
+        ));
 
 
-        // To show group
-        const showGroup = new Adw.PreferencesGroup({
-            title: _('Show on dock'),
-            description: _('Configure the Launchers'),
+
+
+        
+        // ## Launchers Priorities
+        const launchersPrioritiesGroup = new Adw.PreferencesGroup({
+            title: _('launchers Priorities'),
+            // description: _('Prioritie launcher behavior'),
         });
-        this.add(showGroup);
-
-
-        // show pined aplications
-
-        // Show running aplications
-        // show open window previews
-        // isolate workspaces
+        this.add(launchersPrioritiesGroup);
         // Show urgent windows despite curren workspace
+        launchersPrioritiesGroup.add(this._toggleRow(
+            _('Show urgent windows despite curren workspace'),'',
+            'workspace-agnostic-urgent-windows'
+        ));
+        // isolate workspaces
+        launchersPrioritiesGroup.add(this._toggleRow(
+            _('isolate workspaces'),'',
+            'isolate-workspaces'
+        ));
         // Isolate monitors
-
+        launchersPrioritiesGroup.add(this._toggleRow(
+            _('isolate Monitors'),'',
+            'isolate-monitors'
+        ));
+        // Wiggle urgent aplications
+        launchersPrioritiesGroup.add(this._toggleRow(
+            _('Wiggle Urgent Aplications'),'',
+            'dance-urgent-applications'
+        ));
         // keep the focues application always visable in the dash
+        launchersPrioritiesGroup.add(this._toggleRow(
+            _('Keep focused aplications always visable'),'',
+            'scroll-to-focused-application'
+        ));
 
-        // Show Aplications icon ????
+        // ## Additional launcher preferences
+        const launchersPreferencesGroup = new Adw.PreferencesGroup({
+            title: _('Additional launcher preferences'),
+            // description: _('Prioritie launcher behavior'),
+        });
+        // show open window previews
+        launchersPreferencesGroup.add(this._toggleRow(
+            _('show open window previews'),'',
+            'show-windows-preview'
+        ));
+
+        
 
         // move ad bigginin of the dock
         // Animate Show Aplications
         // Put show aplications tn the edge when useing pannelmode
 
-        // show trash can
-        
-        // Show volumes and devices
-        // only is mounted
-        // include network volumes
-
         // isolate volumes, divices and track from windows file mananger
-
-        // Wiggle urgent aplications
-
-        // show icon emblems
 
         // show the numver of unread notifications
 
