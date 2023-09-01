@@ -41,29 +41,10 @@ const Appearance = GObject.registerClass({
         this.title = _('Appearance')
         this.icon_name = 'applications-graphics-symbolic'
 
-        // a new group 
-        const group = new Adw.PreferencesGroup({
-            title: _('Appearance'),
-            description: _('Configure the appearance of the extension'),
-        });
-        this.add(group);
-    
-        // Create a new preferences row
-        // const row = new Adw.SwitchRow({
-        //     title: _('Show Indicator'),
-        //     subtitle: _('Whether to show the panel indicator'),
-        // });
-        // group.add(row);
-
-        // Disable overvie toggle
-        // settings.bind(
-        //     'disable-overview-on-startup', this._disableOverviewOnStartup, 'active',
-        //     Gio.SettingsBindFlags.DEFAULT
-        // );
-
-        // ## Options Group
+        // ## Appearance Options Group
         const optionsGroup = new Adw.PreferencesGroup({
-            title: _('Options')
+            title: _(' Appearance Options'),
+            description: _('Configure the appearance of the extension'),
         });
         this.add(optionsGroup);
         // schrink the dach
