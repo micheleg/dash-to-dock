@@ -27,20 +27,20 @@ const Appearance = GObject.registerClass({
         this.add(optionsGroup);
         // schrink the dach
         optionsGroup.add(this._toggleRow(
+            'custom-theme-shrink',
             _('schrink the dach'),
-            _('Save space by redusic padding and border radius'),
-            'custom-theme-shrink'
+            _('Save space by redusic padding and border radius')
         ));
         // Show overview on startup
         optionsGroup.add(this._toggleRow(
-            _('Show overview on startup'),'',
-            'disable-overview-on-startup'
+            'disable-overview-on-startup',
+            _('Show overview on startup')
         ));
         // Use buildin theme
         optionsGroup.add(this._toggleRow(
+            'apply-custom-theme',
             _('Use buildin theme'),
-            _('Disable to customize to dock even more!'),
-            'apply-custom-theme'
+            _('Disable to customize to dock even more!')
         ));
 
         // ## Theme group
@@ -49,28 +49,6 @@ const Appearance = GObject.registerClass({
         });
         this.add(themeGroup);
         // customize windws counter indicators
-        // const RIStyleList = new Gtk.StringList()
-        // RIStyleList.append(_('DEFAULT'));
-        // RIStyleList.append(_('DOTS'));
-        // RIStyleList.append(_('SQUARES'));
-        // RIStyleList.append(_('DASHES'));
-        // RIStyleList.append(_('SEGMENTED'));
-        // RIStyleList.append(_('SOLID'));
-        // RIStyleList.append(_('CILIORA'));
-        // RIStyleList.append(_('METRO'));
-
-
-        // const RunningIndicatorStyle = new Adw.ComboRow({
-        //     title: _('Customize windws counter indicators'),
-        //     model: RIStyleList,
-        //     selected: this._settings.get_enum('running-indicator-style')
-        // });
-        // themeGroup.add(RunningIndicatorStyle);
-        // RunningIndicatorStyle.connect('notify::selected', widget => {
-        //     this._settings.set_enum('running-indicator-style', widget.selected);
-        // });  
-        
-        
         themeGroup.add(this._listRow(
             'running-indicator-style',
             [

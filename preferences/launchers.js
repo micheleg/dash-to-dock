@@ -27,20 +27,20 @@ const Launchers = GObject.registerClass({
         this.add(appLaunchersGroup);
         // show pined aplications
         appLaunchersGroup.add(this._toggleRow(
-            _('show pined aplications'),'',
-            'show-favorites'
+            'show-favorites',
+            _('show pined aplications')            
         ));
         // Show running applications
         appLaunchersGroup.add(this._toggleRow(
-            _('Show running aplications'),'',
-            'show-running'
+            'show-running',
+            _('Show running aplications')
         ));
         
 
         // Show volumes and devices
         appLaunchersGroup.add(this._toggleRow(
-            _('Show volumes and devices'),'',
-            'show-mounts'
+            'show-mounts',
+            _('Show volumes and devices')
         ));        
         // only is mounted
         // include network volumes
@@ -48,55 +48,53 @@ const Launchers = GObject.registerClass({
 
         // Show Aplications icon
         appLaunchersGroup.add(this._toggleRow(
-            _('Show Aplications icon'),'',
-            'show-show-apps-button'
+            'show-show-apps-button',
+            _('Show Aplications icon')
         ));
         // show trash can
         appLaunchersGroup.add(this._toggleRow(
+            'show-trash',
             _('Show Trash Icon'),
-            _('Whether to show the Trash Icon'),
-            'show-trash'
+            _('Whether to show the Trash Icon')
         ));
         // show icon emblems
         appLaunchersGroup.add(this._toggleRow(
-            _('Show emblens on aplications'),'',
-            'show-icons-emblems'
+            'show-icons-emblems',
+            _('Show emblens on aplications')
         ));
 
-
-
-
-        
+       
         // ## Launchers Priorities
         const launchersPrioritiesGroup = new Adw.PreferencesGroup({
             title: _('launchers Priorities'),
             // description: _('Prioritie launcher behavior'),
         });
         this.add(launchersPrioritiesGroup);
+
         // Show urgent windows despite curren workspace
         launchersPrioritiesGroup.add(this._toggleRow(
-            _('Show urgent windows despite curren workspace'),'',
-            'workspace-agnostic-urgent-windows'
+            'workspace-agnostic-urgent-windows',
+            _('Show urgent windows despite curren workspace')
         ));
         // isolate workspaces
         launchersPrioritiesGroup.add(this._toggleRow(
-            _('isolate workspaces'),'',
-            'isolate-workspaces'
+            'isolate-workspaces',
+            _('isolate workspaces')
         ));
         // Isolate monitors
         launchersPrioritiesGroup.add(this._toggleRow(
-            _('isolate Monitors'),'',
-            'isolate-monitors'
+            'isolate-monitors',
+            _('isolate Monitors')
         ));
         // Wiggle urgent aplications
         launchersPrioritiesGroup.add(this._toggleRow(
-            _('Wiggle Urgent Aplications'),'',
-            'dance-urgent-applications'
+            'dance-urgent-applications',
+            _('Wiggle Urgent Aplications')
         ));
         // keep the focues application always visable in the dash
         launchersPrioritiesGroup.add(this._toggleRow(
-            _('Keep focused aplications always visable'),'',
-            'scroll-to-focused-application'
+            'scroll-to-focused-application',
+            _('Keep focused aplications always visable')
         ));
 
         // ## Additional launcher preferences
@@ -106,8 +104,8 @@ const Launchers = GObject.registerClass({
         });
         // show open window previews
         launchersPreferencesGroup.add(this._toggleRow(
-            _('show open window previews'),'',
-            'show-windows-preview'
+            'show-windows-preview',
+            _('show open window previews')
         ));
 
         

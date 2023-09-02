@@ -24,6 +24,9 @@ const Behavior = GObject.registerClass({
         })
         this.add(keyboardGroup)
 
+
+        
+
         // ## mouseGroup
         const mouseGroup = new Adw.PreferencesGroup({
             title: _('Mouse Actions')
@@ -74,8 +77,12 @@ const Behavior = GObject.registerClass({
             _('Set the action that is executed when shift+middle-clicking on the icon of a running application')
         ))
 
+        // mouseScrollGroup
+        const mouseScrollGroup = new Adw.PreferencesGroup()
+        this.add(mouseScrollGroup)
+
         // scroll action
-        mouseGroup.add(this._listRow(
+        mouseScrollGroup.add(this._listRow(
             'scroll-action',
             [
                 _('Do noting'),
@@ -85,8 +92,6 @@ const Behavior = GObject.registerClass({
             _('Scroll action'),
             _('Set the action that is executed when scrolling on the application icon')
         ))
-        
-        
 
         return this
     }

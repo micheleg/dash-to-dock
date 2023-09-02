@@ -7,7 +7,7 @@ const d2dprefsspage = GObject.registerClass({
     GTypeName: 'd2dprefsspage'
 },class d2dprefsspage extends Adw.PreferencesPage{
 
-    _toggleRow(title,subtitle,schmeaOBKJ){
+    _toggleRow(setting,title,subtitle = ''){
         let row;
         if(subtitle == ''){
             row = new Adw.SwitchRow({
@@ -21,7 +21,7 @@ const d2dprefsspage = GObject.registerClass({
         }
         
         this._settings.bind(
-            schmeaOBKJ, row, 'active',
+            setting, row, 'active',
             Gio.SettingsBindFlags.DEFAULT
         );
 

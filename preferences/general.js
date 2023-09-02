@@ -1,33 +1,32 @@
 'use strict';
 
-import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
 
-import Gio from 'gi://Gio';
-import Adw from 'gi://Adw';
-import GObject from 'gi://GObject';
-import Gtk from 'gi://Gtk';
+import Gio from 'gi://Gio'
+import Adw from 'gi://Adw'
+import GObject from 'gi://GObject'
+import Gtk from 'gi://Gtk'
 
+import { d2dprefsspage } from '../conveniences/d2dprefsspage.js'
 import { MonitorsConfig } from '../conveniences/monitorsconfig.js'
-
-import { autoHidePageClass } from './_autohide.js';
-
+import { autoHidePageClass } from './_autohide.js'
 
 const General = GObject.registerClass({
     GTypeName: 'General'
 },
-class General extends Adw.PreferencesPage{
+class General extends d2dprefsspage{
 
-    _monitorsConfig = new MonitorsConfig();
+    _monitorsConfig = new MonitorsConfig()
 
     _updateMonitorsSettings() {
         // Monitor options
-        const preferredMonitor = this._settings.get_int('preferred-monitor');
-        const preferredMonitorByConnector = this._settings.get_string('preferred-monitor-by-connector');
-        const dockMonitorCombo = this._builder.get_object('dock_monitor_combo');
+        const preferredMonitor = this._settings.get_int('preferred-monitor')
+        const preferredMonitorByConnector = this._settings.get_string('preferred-monitor-by-connector')
+        const dockMonitorCombo = this._builder.get_object('dock_monitor_combo')
 
-        this._monitors = [];
-        dockMonitorCombo.remove_all();
-        let primaryIndex = -1;
+        this._monitors = []
+        dockMonitorCombo.remove_all()
+        let primaryIndex = -1
 
         // Add connected monitors
         for (const monitor of this._monitorsConfig.monitors) {
@@ -38,51 +37,50 @@ class General extends Adw.PreferencesPage{
                 dockMonitorCombo.append_text(
                     /* Translators: This will be followed by Display Name - Connector. */
                     `${__('Primary monitor: ') + monitor.displayName} - ${
-                        monitor.connector}`);
-                primaryIndex = this._monitors.length;
+                        monitor.connector}`)
+                primaryIndex = this._monitors.length
             } else {
                 dockMonitorCombo.append_text(
                     /* Translators: Followed by monitor index, Display Name - Connector. */
                     `${__('Secondary monitor ') + (monitor.index + 1)} - ${
-                        monitor.displayName} - ${monitor.connector}`);
+                        monitor.displayName} - ${monitor.connector}`)
             }
 
-            this._monitors.push(monitor);
+            this._monitors.push(monitor)
 
             if (monitor.index === preferredMonitor ||
                 (preferredMonitor === -2 && preferredMonitorByConnector === monitor.connector))
-                dockMonitorCombo.set_active(this._monitors.length - 1);
+                dockMonitorCombo.set_active(this._monitors.length - 1)
         }
 
         if (dockMonitorCombo.get_active() < 0 && primaryIndex >= 0)
-            dockMonitorCombo.set_active(primaryIndex);
+            dockMonitorCombo.set_active(primaryIndex)
     }
 
     constructor(settings,extPrefs){
-        super();
+        super(settings)
 
-        this._settings = settings;
+        this._settings = settings
 
         // Set headerbar page info
         this.title = _('General')
-        // this.icon_name = 'dialog-information-symbolic'
         this.icon_name = 'dash-symbolic'
         
-        // ---------------------------------
+
+        
         // ## Position preferences group
-        // ---------------------------------
         const PosGroup = new Adw.PreferencesGroup({
             title: _('Position'),
             description: _('General position of the dock'),
         });
-        this.add(PosGroup);
+        this.add(PosGroup)
     
-        // ## Dock Monitor Position
-        // ---------------------------------
+
+        // Dock Monitor Position
         const monitorSelector = new Adw.ActionRow({
             title: _('Show the dock on')
         });
-        PosGroup.add(monitorSelector);
+        PosGroup.add(monitorSelector)
 
         // const monitorSelectorBox = new Gtk.ComboBoxText();
         // monitorSelectorBox.valign = 'center';
@@ -91,51 +89,42 @@ class General extends Adw.PreferencesPage{
         // monitorSelectorBox.selected = this._settings.get_enum('dock-position');
 
         this._monitorsConfig.connect('updated',
-            () => this._updateMonitorsSettings());
+            () => this._updateMonitorsSettings())
         // this._settings.connect('changed::preferred-monitor',
         //     () => this._updateMonitorsSettings());
         // this._settings.connect('changed::preferred-monitor-by-connector',
         //     () => this._updateMonitorsSettings());
 
-        // ## Dock Screen Position
-        // ---------------------------------
-
-        const positionList = new Gtk.StringList()
-        positionList.append(_('Top'));
-        positionList.append(_('Right'));
-        positionList.append(_('Bottom'));
-        positionList.append(_('Left'));
-
-        const dockPositionSelector = new Adw.ComboRow({
-            title: _('Position on screen'),
-            model: positionList,
-            selected: this._settings.get_enum('dock-position')
-        });
-        PosGroup.add(dockPositionSelector);
-        
-        dockPositionSelector.connect('notify::selected', widget => {
-            this._settings.set_enum('dock-position', widget.selected);
-        });
-
 
         // Multi monitor toggle
-        // settings.bind(
-        //     'multi-monitor', this._showAllScreens, 'active',
-        //     Gio.SettingsBindFlags.DEFAULT
-        // );
+        PosGroup.add(this._toggleRow(
+            'multi-monitor',
+            _('Show on all monitors')
+        ));
+
+        // Dock Screen Position
+        PosGroup.add(this._listRow(
+            'dock-position',
+            [
+                _('Top'),
+                _('Right'),
+                _('Bottom'),
+                _('Left')
+            ],
+            _('Position on screen')
+        ))
 
 
-        // ---------------------------------
-        // ## ## auto hide preferences group
-        // ---------------------------------
+        // ## auto hide preferences group
         const AHGroup = new Adw.PreferencesGroup({
             title: _('Auto hide')
-        });
-        this.add(AHGroup);
+        })
+        this.add(AHGroup)
     
 
-        // ## Inteligent autohide
-        // ---------------------------------
+        // Inteligent autohide
+
+
         // const row = new Adw.SwitchRow({
         //     title: _('Inteligent autohide'),
         //     subtitle: _('Hide the dock when it obstrucs a windows of the current appliation.'),
@@ -146,8 +135,8 @@ class General extends Adw.PreferencesPage{
         const autoHideRow = new Adw.ActionRow({
             title: _('Inteligent autohide'),
             subtitle: _('Hide the dock when it obstrucs a windows of the current appliation.'),
-        });
-        AHGroup.add(autoHideRow);
+        })
+        AHGroup.add(autoHideRow)
 
         const goNextImage = new Gtk.Image({
             gicon: Gio.icon_new_for_string('go-next-symbolic'),
@@ -155,8 +144,8 @@ class General extends Adw.PreferencesPage{
             valign: Gtk.Align.CENTER,
             hexpand: false,
             vexpand: false,
-        });
-        autoHideRow.add_suffix(goNextImage);
+        })
+        autoHideRow.add_suffix(goNextImage)
 
 
 
@@ -187,11 +176,15 @@ class General extends Adw.PreferencesPage{
 
 
 
+        // ## Dock scale and size group
+        const sizeGroup = new Adw.PreferencesGroup({
+            title: _('Dock scale and size')
+        })
+        this.add(sizeGroup)
 
         
         return this
     }
-}
-);
+})
 
 export { General }
