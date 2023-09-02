@@ -2,39 +2,17 @@
 'use strict';
 // Import dependencies
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
-import Gio from 'gi://Gio';
 import Adw from 'gi://Adw';
 import GObject from 'gi://GObject';
-import Gtk from 'gi://Gtk';
+import { d2dprefsspage } from '../conveniences/d2dprefsspage.js'
 
 // register Appearance Page
 const Appearance = GObject.registerClass({
     GTypeName: 'Appearance'
-},class Appearance extends Adw.PreferencesPage{
-
-    _toggleRow(title,subtitle,schmeaOBKJ){
-        let row;
-        if(subtitle == ''){
-            row = new Adw.SwitchRow({
-                title: title
-            });
-        }else{
-            row = new Adw.SwitchRow({
-                title: title,
-                subtitle: subtitle,
-            });
-        }
-        
-        this._settings.bind(
-            schmeaOBKJ, row, 'active',
-            Gio.SettingsBindFlags.DEFAULT
-        );
-
-        return row;
-    }
+},class Appearance extends d2dprefsspage{
 
     constructor(settings){
-        super();
+        super(settings);
 
         this._settings = settings;
         // Set page Title and icon
@@ -71,37 +49,46 @@ const Appearance = GObject.registerClass({
         });
         this.add(themeGroup);
         // customize windws counter indicators
-        const RIStyleList = new Gtk.StringList()
-        RIStyleList.append(_('DEFAULT'));
-        RIStyleList.append(_('DOTS'));
-        RIStyleList.append(_('SQUARES'));
-        RIStyleList.append(_('DASHES'));
-        RIStyleList.append(_('SEGMENTED'));
-        RIStyleList.append(_('SOLID'));
-        RIStyleList.append(_('CILIORA'));
-        RIStyleList.append(_('METRO'));
+        // const RIStyleList = new Gtk.StringList()
+        // RIStyleList.append(_('DEFAULT'));
+        // RIStyleList.append(_('DOTS'));
+        // RIStyleList.append(_('SQUARES'));
+        // RIStyleList.append(_('DASHES'));
+        // RIStyleList.append(_('SEGMENTED'));
+        // RIStyleList.append(_('SOLID'));
+        // RIStyleList.append(_('CILIORA'));
+        // RIStyleList.append(_('METRO'));
 
 
-        const RunningIndicatorStyle = new Adw.ComboRow({
-            title: _('Customize windws counter indicators'),
-            model: RIStyleList,
-            selected: this._settings.get_enum('running-indicator-style')
-        });
-        themeGroup.add(RunningIndicatorStyle);
-        RunningIndicatorStyle.connect('notify::selected', widget => {
-            this._settings.set_enum('running-indicator-style', widget.selected);
-        });        
+        // const RunningIndicatorStyle = new Adw.ComboRow({
+        //     title: _('Customize windws counter indicators'),
+        //     model: RIStyleList,
+        //     selected: this._settings.get_enum('running-indicator-style')
+        // });
+        // themeGroup.add(RunningIndicatorStyle);
+        // RunningIndicatorStyle.connect('notify::selected', widget => {
+        //     this._settings.set_enum('running-indicator-style', widget.selected);
+        // });  
+        
+        
+        themeGroup.add(this._listRow(
+            'running-indicator-style',
+            [
+                _('DEFAULT'),
+                _('DOTS'),
+                _('SQUARES'),
+                _('DASHES'),
+                _('SEGMENTED'),
+                _('SOLID'),
+                _('CILIORA'),
+                _('METRO')
+            ],
+            _('Customize windws counter indicators')
+        ))
         // Customize dach color
         // Customize opacity
         // opacity
 
-
-        
-
-        
-
-
-        
         return this
     }
 });

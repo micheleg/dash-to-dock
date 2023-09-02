@@ -2,38 +2,17 @@
 'use strict';
 // Import dependencies
 import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
-import Gio from 'gi://Gio';
 import Adw from 'gi://Adw';
 import GObject from 'gi://GObject';
+
+import { d2dprefsspage } from '../conveniences/d2dprefsspage.js'
 
 // register Launchers Page
 const Launchers = GObject.registerClass({
     GTypeName: 'Launchers'
-},class Launchers extends Adw.PreferencesPage{
-
-    _toggleRow(title,subtitle,schmeaOBKJ){
-        let row;
-        if(subtitle == ''){
-            row = new Adw.SwitchRow({
-                title: title
-            });
-        }else{
-            row = new Adw.SwitchRow({
-                title: title,
-                subtitle: subtitle,
-            });
-        }
-        
-        this._settings.bind(
-            schmeaOBKJ, row, 'active',
-            Gio.SettingsBindFlags.DEFAULT
-        );
-
-        return row;
-    }
-
+},class Launchers extends d2dprefsspage{
     constructor(settings){
-        super();
+        super(settings);
 
         this._settings = settings;
         // Set page Title and icon
