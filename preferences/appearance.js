@@ -32,7 +32,7 @@ const Appearance = GObject.registerClass({
             _('Save space by redusic padding and border radius')
         ));
         // Show overview on startup
-        optionsGroup.add(this._toggleRow(
+        optionsGroup.add(this._toggleInvRow(
             'disable-overview-on-startup',
             _('Show overview on startup')
         ));
@@ -64,8 +64,28 @@ const Appearance = GObject.registerClass({
             _('Customize windws counter indicators')
         ))
         // Customize dach color
+        const BGExpander = this._expandRow(
+            'custom-background-color',
+            _('Customize the dach color'),
+            _('Turn on to change the background color of the dock')
+        )
+        BGExpander.add_row(this._colorRow(
+            'background-color',
+            _('Background Color')
+        ))
+        themeGroup.add(BGExpander)
         // Customize opacity
-        // opacity
+        themeGroup.add(this._listRow(
+            'transparency-mode',
+            [
+                _('DEFAULT'),
+                _('FIXED'),
+                _('DYNAMIC')
+            ],
+            _('Customize opacity mode')
+        ))
+        // opacity : background-opacity
+
 
         return this
     }
