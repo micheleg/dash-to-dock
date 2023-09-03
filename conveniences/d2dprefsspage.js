@@ -56,6 +56,20 @@ const d2dprefsspage = GObject.registerClass({
         return myListrow
     }
 
+    _expandRow(setting,title,subtitle = ''){
+        const row = new Adw.ExpanderRow({
+            title: title,
+            subtitle: subtitle,
+            expanded: true,
+            showEnableSwitch: true
+        })
+        this._settings.bind(
+            setting, row, 'enable-expansion',
+            Gio.SettingsBindFlags.DEFAULT
+        )
+        return row
+    }
+    
     constructor(settings){
         super()
 
