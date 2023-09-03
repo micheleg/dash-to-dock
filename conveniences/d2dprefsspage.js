@@ -69,6 +69,28 @@ const d2dprefsspage = GObject.registerClass({
         )
         return row
     }
+
+    _colorRow(setting,title,subtitle = ''){
+        const row = new Adw.ActionRow({
+            title: title,
+            subtitle: subtitle,
+        })
+        const color = new Gtk.ColorButton({
+            use_alpha: false,
+            valign: Gtk.Align.CENTER
+        })
+        const readColor = new Gdk.RGBA()
+        readColor.parse(
+            this._settings.get_string(setting)
+        )
+        color.set_rgba(readColor)
+        color.connect('notify::rgba', button => {
+            const colorString = button.get_rgba().to_string()
+            this._settings.set_string(setting, colorString)
+        })
+        row.add_suffix(color);
+        return row
+    }
     
     constructor(settings){
         super()
