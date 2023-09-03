@@ -1147,7 +1147,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop') &&
                 (this._source instanceof DockAppIcon)) {
                 this._appendSeparator();
-                const item = this._appendMenuItem(_('Show Details'));
+                const item = this._appendMenuItem(__('Show Details'));
                 item.connect('activate', () => {
                     const id = this._source.app.get_id();
                     const args = GLib.Variant.new('(ss)', [id, '']);

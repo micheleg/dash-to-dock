@@ -75,6 +75,10 @@ msgstr "自定义不透明度"
 msgid "All Windows"
 msgstr "所有窗口"
 
+#: appIcons.js:1150
+msgid "Show Details"
+msgstr "应用详细信息"
+
 #: appIcons.js:1203
 #, javascript-format
 msgid "Quit %d Windows"
