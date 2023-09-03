@@ -34,23 +34,52 @@ const Launchers = GObject.registerClass({
         appLaunchersGroup.add(this._toggleRow(
             'show-running',
             _('Show running aplications')
-        ));
-        
+        ))
+        // Show open window previews
+        appLaunchersGroup.add(this._toggleRow(
+            'show-windows-preview',
+            _("Show open window's"),
+            _('Replace open windows list with windows previews')
+        ))
 
         // Show volumes and devices
-        appLaunchersGroup.add(this._toggleRow(
+        const Mounts = this._expandRow(
             'show-mounts',
             _('Show volumes and devices')
-        ));        
+        )
         // only is mounted
+        Mounts.add_row(this._toggleRow(
+            'show-mounts-only-mounted',
+            _('only is mounted'),
+            _('Show or hide unmounted volume and device icons in the dash')
+        ))
         // include network volumes
+        Mounts.add_row(this._toggleRow(
+            'show-mounts-network',
+            _('include network volumes'),
+            _('Show or hide network volumes in the dash')
+        ))
+        appLaunchersGroup.add(Mounts)
 
 
         // Show Aplications icon
-        appLaunchersGroup.add(this._toggleRow(
+        const apps = this._expandRow(
             'show-show-apps-button',
             _('Show Aplications icon')
-        ));
+        )
+        apps.add_row(this._toggleRow(
+            'show-apps-at-top',
+            _('Move at biginning of the dock'),
+            _('Show application button on the left of the dash')
+        ))
+        apps.add_row(this._toggleRow(
+            'animate-show-apps',
+            _('Animate Show Aplications'),
+            _('Animate Show Applications from the desktop')
+        ))
+        appLaunchersGroup.add(apps)
+
+
         // show trash can
         appLaunchersGroup.add(this._toggleRow(
             'show-trash',
@@ -110,8 +139,7 @@ const Launchers = GObject.registerClass({
 
         
 
-        // move ad bigginin of the dock
-        // Animate Show Aplications
+
         // Put show aplications tn the edge when useing pannelmode
 
         // isolate volumes, divices and track from windows file mananger
