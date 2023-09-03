@@ -2,27 +2,35 @@ import Adw from 'gi://Adw'
 import GObject from 'gi://GObject';
 import Gio from 'gi://Gio'
 import Gtk from 'gi://Gtk'
+import Gdk from 'gi://Gdk'
 
 const d2dprefsspage = GObject.registerClass({
     GTypeName: 'd2dprefsspage'
 },class d2dprefsspage extends Adw.PreferencesPage{
 
     _toggleRow(setting,title,subtitle = ''){
-        let row;
-        if(subtitle == ''){
-            row = new Adw.SwitchRow({
-                title: title
-            });
-        }else{
-            row = new Adw.SwitchRow({
-                title: title,
-                subtitle: subtitle,
-            });
-        }
+        let row = new Adw.SwitchRow({
+            title: title,
+            subtitle: subtitle,
+        });
         
         this._settings.bind(
             setting, row, 'active',
             Gio.SettingsBindFlags.DEFAULT
+        );
+
+        return row
+    }
+
+    _toggleInvRow(setting,title,subtitle = ''){
+        let row = new Adw.SwitchRow({
+            title: title,
+            subtitle: subtitle,
+        });
+        
+        this._settings.bind(
+            setting, row, 'active',
+            Gio.SettingsBindFlags.INVERT_BOOLEAN
         );
 
         return row
@@ -47,12 +55,11 @@ const d2dprefsspage = GObject.registerClass({
 
         return myListrow
     }
-    
+
     constructor(settings){
         super()
 
         this._settings = settings
-
     }
 })
 
