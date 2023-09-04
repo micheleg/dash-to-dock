@@ -123,12 +123,14 @@ class About extends d2dprefsspage{
         })
 
         // link row stuff
-        const linkImage = new Gtk.Image({
+        websiteLinkRow.add_suffix(new Gtk.Image({
             icon_name: 'adw-external-link-symbolic',
             valign: Gtk.Align.CENTER
-        })
-        websiteLinkRow.add_suffix(linkImage)
-        sourceLinkRow.add_suffix(linkImage)
+        }))
+        sourceLinkRow.add_suffix(new Gtk.Image({
+            icon_name: 'adw-external-link-symbolic',
+            valign: Gtk.Align.CENTER
+        }))
         details.add(websiteLinkRow)        
         details.add(sourceLinkRow)
 
