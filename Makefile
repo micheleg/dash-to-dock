@@ -26,13 +26,22 @@ EXTRA_MODULES = \
                 utils.js \
                 dbusmenuUtils.js \
                 desktopIconsIntegration.js \
-                Settings.ui \
+				conveniences/d2dprefsspage.js \
+				conveniences/monitorsconfig.js \
+                preferences/about.js \
+                preferences/appearance.js \
+                preferences/behavior.js \
+                preferences/general.js \
+                preferences/launchers.js \
                 $(NULL)
 
 EXTRA_MEDIA = logo.svg \
               glossy.svg \
               highlight_stacked_bg.svg \
               highlight_stacked_bg_h.svg \
+			  icons/hicolor/scalable/actions/dash-symbolic.svg
+			  icons/hicolor/scalable/actions/general-symbolic.svg
+			  icons/hicolor/scalable/apps/dash-to-dock.svg
               $(NULL)
 
 TOLOCALIZE =  prefs.js \
@@ -85,7 +94,7 @@ mergepo: potfile
 	mkdir -p po
 	xgettext -k --keyword=__ --keyword=N__ --add-comments='Translators:' -o po/dashtodock.pot --package-name "Dash to Dock" --from-code=utf-8 $(TOLOCALIZE)
 	intltool-extract --type=gettext/glade Settings.ui
-	xgettext -k --keyword=_ --keyword=N_ --join-existing -o po/dashtodock.pot Settings.ui.h
+	xgettext -k --keyword=_ --keyword=N_ --join-existing -o po/dashtodock.pot preferences/*.js
 
 ./po/%.mo: ./po/%.po
 	msgfmt -c $< -o $@
