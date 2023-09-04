@@ -131,6 +131,11 @@ class General extends d2dprefsspage{
             _('Move edge of the dock'),
             _('Show application button on the edge when using centered panel mode')
         ))
+        pannelMode.add_row(this._toggleRow(
+            'show-apps-at-top',
+            _('Move at biginning of the dock'),
+            _('Show application button on the other side of the dock')
+        ))
         // Place icons tot the center
         pannelMode.add_row(this._toggleRow(
             'always-center-icons',
