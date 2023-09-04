@@ -8,6 +8,7 @@ import GLib from 'gi://GLib';
 import Adw from 'gi://Adw'
 import GObject from 'gi://GObject'
 import Gtk from 'gi://Gtk'
+import Gdk from 'gi://Gdk'
 
 import { d2dprefsspage } from '../conveniences/d2dprefsspage.js'
 
@@ -103,19 +104,34 @@ class About extends d2dprefsspage{
             css_classes: ['dim-label']
         }))
 
-        // const sourceLinkRow = new Adw.ActionRow({
-        //     title: _('Source code'),
-        //     activatable: true
-        // })
-        // details.add(sourceLinkRow)
-        // sourceLinkRow.connect('activated', () => {
-        //     Gtk.show_uri(window, metadata.url, Gdk.CURRENT_TIME)
-        // })
-        // const linkImage = new Gtk.Image({
-        //     icon_name: 'adw-external-link-symbolic',
-        //     valign: Gtk.Align.CENTER
-        // })
-        // sourceLinkRow.add_suffix(linkImage)
+
+        // Links
+        const websiteLinkRow = new Adw.ActionRow({
+            title: _('Website'),
+            activatable: true
+        })
+        websiteLinkRow.connect('activated', () => {
+            Gtk.show_uri(this.get_root(), metadata.url, Gdk.CURRENT_TIME)
+        })
+
+        const sourceLinkRow = new Adw.ActionRow({
+            title: _('Source code'),
+            activatable: true
+        })
+        sourceLinkRow.connect('activated', () => {
+            Gtk.show_uri(this.get_root(), 'https://github.com/micheleg/dash-to-dock', Gdk.CURRENT_TIME)
+        })
+
+        // link row stuff
+        const linkImage = new Gtk.Image({
+            icon_name: 'adw-external-link-symbolic',
+            valign: Gtk.Align.CENTER
+        })
+        websiteLinkRow.add_suffix(linkImage)
+        sourceLinkRow.add_suffix(linkImage)
+        details.add(websiteLinkRow)        
+        details.add(sourceLinkRow)
+
         
         return this
     }
