@@ -7,6 +7,7 @@ export {default as GdkPixbuf} from 'gi://GdkPixbuf';
 export {default as Gio} from 'gi://Gio';
 export {default as Gtk} from 'gi://Gtk';
 export {default as Meta} from 'gi://Meta';
+export {default as Mtk} from 'gi://Mtk';
 export {default as Pango} from 'gi://Pango';
 export {default as Shell} from 'gi://Shell';
 export {default as St} from 'gi://St';
