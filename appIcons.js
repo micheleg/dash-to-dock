@@ -6,6 +6,7 @@ import {
     GLib,
     GObject,
     Meta,
+    Mtk,
     Shell,
     St
 } from './dependencies/gi.js';
@@ -386,7 +387,7 @@ const DockAbstractAppIcon = GObject.registerClass({
         if (!this.get_stage())
             return;
 
-        const rect = new Meta.Rectangle();
+        const rect = new Mtk.Rectangle();
 
         [rect.x, rect.y] = this.get_transformed_position();
         [rect.width, rect.height] = this.get_transformed_size();
