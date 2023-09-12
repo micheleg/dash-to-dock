@@ -17,36 +17,30 @@ const General = GObject.registerClass({
 class General extends d2dprefsspage{
     constructor(settings,extPrefs){
         super(settings)
-
         this._settings = settings
-
         this._monitorsConfig = new MonitorsConfig()
 
         // Set headerbar page info
         this.title = _('General')
         this.icon_name = 'dash-symbolic'
         
-
-        
         // ## Position preferences group
         const PosGroup = new Adw.PreferencesGroup({
             title: _('Position'),
             description: _('General position of the dock'),
-        });
+        })
         this.add(PosGroup)
     
-
         // Dock Monitor Position
         const monitorSelector = new Adw.ActionRow({
             title: _('Show the dock on')
-        });
+        })
         PosGroup.add(monitorSelector)
 
         const monitorSelectorList = new Gtk.ComboBoxText({
             valign: Gtk.Align.CENTER
         })
         monitorSelectorList.selected = this._settings.get_enum('dock-position')
-
 
         // monitorSelectorList.append('1',_('some translatebale item 1'))
 
@@ -86,7 +80,6 @@ class General extends d2dprefsspage{
             _('Position on screen')
         ))
 
-
         // ## auto hide preferences group
         const AHGroup = new Adw.PreferencesGroup({
             title: _('Auto hide')
@@ -101,6 +94,18 @@ class General extends d2dprefsspage{
         })
         AHGroup.add(autoHideRow)
 
+        autoHideRow.connect('activated', () => {
+            this._autoHidePopup = new Adw.PreferencesWindow({
+                title: _('Intelligent autohide customization'),
+                transient_for: this.get_root(),
+                defaultWidth: 380,
+                defaultHeight: 460
+            })
+
+            this._autoHidePopup.set_search_enabled(false)
+            this._autoHidePopup.add(new autoHidePageClass(settings))
+            this._autoHidePopup.present()
+        })
 
         const goNextImage = new Gtk.Image({
             gicon: Gio.icon_new_for_string('go-next-symbolic'),
@@ -149,7 +154,7 @@ class General extends d2dprefsspage{
             'icon-size-fixed',
             _('fix icon size'),
             _('scroll to reveal other icons')
-        ));
+        ))
 
         // preview scale
        
