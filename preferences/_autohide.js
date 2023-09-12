@@ -30,7 +30,7 @@ const autoHidePageClass = GObject.registerClass({
             valign: Gtk.Align.CENTER
         })
         this._settings.bind(
-            'autohide', AutoHideGroupSwitch, 'active',
+            'intellihide', AutoHideGroupSwitch, 'active',
             Gio.SettingsBindFlags.DEFAULT
         )
         AutoHideGroup.set_header_suffix(AutoHideGroupSwitch)

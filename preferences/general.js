@@ -1,3 +1,4 @@
+// general.js
 'use strict';
 
 import { gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
@@ -84,6 +85,14 @@ class General extends d2dprefsspage{
         const AHGroup = new Adw.PreferencesGroup({
             title: _('Auto hide')
         })
+        const AHGroupSwitch = new Gtk.Switch({
+            valign: Gtk.Align.CENTER
+        })
+        this._settings.bind(
+            'autohide', AHGroupSwitch, 'active',
+            Gio.SettingsBindFlags.DEFAULT
+        )
+        AHGroup.set_header_suffix(AHGroupSwitch)
         this.add(AHGroup)
     
         // Inteligent autohide
@@ -98,8 +107,8 @@ class General extends d2dprefsspage{
             this._autoHidePopup = new Adw.PreferencesWindow({
                 title: _('Intelligent autohide customization'),
                 transient_for: this.get_root(),
-                defaultWidth: 380,
-                defaultHeight: 460
+                defaultWidth: 480, //380
+                defaultHeight: 550 //460
             })
 
             this._autoHidePopup.set_search_enabled(false)
