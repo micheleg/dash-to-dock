@@ -26,6 +26,9 @@ export default class DockPreferences extends ExtensionPreferences {
         const settings = this.getSettings('org.gnome.shell.extensions.dash-to-dock')
         const iconPath = `${this.path}/icons`
 
+        // Set default window size
+        window.set_default_size(750,650)
+
         // Add new icons
         const iconTheme = Gtk.IconTheme.get_for_display(Gdk.Display.get_default())
         if (!iconTheme.get_search_path().includes(iconPath))
@@ -38,7 +41,7 @@ export default class DockPreferences extends ExtensionPreferences {
         window.add(new Appearance(settings))
         window.add(new About(settings,this.metadata))
         
-        // window.search_enabled = true;
+        // window.search_enabled = true
         window.set_search_enabled(true)
     }
 }
