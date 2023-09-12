@@ -92,32 +92,66 @@ const d2dprefsspage = GObject.registerClass({
         return row
     }
 
-    _spinBTNRow(setting,adjustment, title, subtitle = '') {
+    _spinBTNRow(setting,digits,adjustment, title, subtitle = '') {
         const row = new Adw.ActionRow({
             title: title,
             subtitle: subtitle
         })
 
-        const rowScale = new Gtk.SpinButton({
+        const rowSpinBTN = new Gtk.SpinButton({
             adjustment: adjustment,
-            // adjustment: new Gtk.Adjustment({
-            //     lower: 0,
-            //     upper: 10000,
-            //     step_increment: 250,
-            //     page_increment: 1,
-            //     page_size: 0,
-            // }),
-            digits: 0,
+            digits: digits,
             valign: Gtk.Align.CENTER
         })
+        rowSpinBTN.set_value(this._settings.get_double(setting))
+        rowSpinBTN.connect('value-changed', () => {
+            this._settings.set_int(setting, rowSpinBTN.get_double())
+        })
+
+        row.add_suffix(rowSpinBTN)
+
+        return row
+    }
+
+    _scaleRow(setting, title, subtitle = '') {
+        const row = new Adw.ActionRow({
+            title: title,
+            subtitle: subtitle,
+        })
+        const rowScale = new Gtk.Scale({
+            draw_value: true,
+            valign: 'center',
+            hexpand: true,
+            width_request: '200px',
+            round_digits: false,
+            draw_value: false,
+            orientation: 'horizontal',
+            digits: 0,
+            adjustment: new Gtk.Adjustment({
+                lower: 0,
+                upper: 4,
+                step_increment: 0.1,
+                page_increment: 1
+            })
+        })
+
         rowScale.set_value(this._settings.get_double(setting))
         rowScale.connect('value-changed', () => {
-            this._settings.set_int(setting, rowScale.get_double())
+            // this._settings.set_int(setting, rowScale.get_double())
+            // this._settings.set_double(setting, rowScale.get_double())
+
+            // Avoid settings the opacity consinuosly as it's change is animated
+            if (this._scale_timeout > 0)
+                GLib.source_remove(this._scale_timeout)
+            this._scale_timeout = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+                this._settings.set_double(setting, rowScale.get_value());
+                this._scale_timeout = 0;
+                return GLib.SOURCE_REMOVE;
+            })
+            
         })
-        // paddingScale.set_value(this._settings.get_int('button-padding'));
-        // paddingScale.connect('value-changed', () => {
-        //     this._settings.set_int('button-padding', paddingScale.get_value());
-        // });
+
         row.add_suffix(rowScale)
 
         return row
@@ -148,6 +182,9 @@ const d2dprefsspage = GObject.registerClass({
         super()
 
         this._settings = settings
+
+        // Timeout to delay the update of the settings
+        this._scale_timeout = 0;
     }
 })
 
