@@ -91,10 +91,11 @@ const autoHidePageClass = GObject.registerClass({
         // Animation duration (s)
         TimeoutsThresholdsGroup.add(this._spinBTNRow(
             'animation-time',
+            3,
             new Gtk.Adjustment({
                 lower: 0,
                 upper: 10000,
-                step_increment: 250,
+                step_increment: 0.050,
                 page_increment: 1,
                 page_size: 0
             }),
@@ -103,10 +104,11 @@ const autoHidePageClass = GObject.registerClass({
         // Hide Timout (s)
         TimeoutsThresholdsGroup.add(this._spinBTNRow(
             'hide-delay',
+            3,
             new Gtk.Adjustment({
-                lower: 0,
+                lower: 0.000,
                 upper: 10000,
-                step_increment: 250,
+                step_increment: 0.050,
                 page_increment: 1,
                 page_size: 0
             }),
@@ -115,22 +117,24 @@ const autoHidePageClass = GObject.registerClass({
         // Show Timeout (s)
         TimeoutsThresholdsGroup.add(this._spinBTNRow(
             'show-delay',
+            3,
             new Gtk.Adjustment({
                 lower: 0,
                 upper: 10000,
-                step_increment: 250,
+                step_increment: 0.050,
                 page_increment: 1,
-                page_size: 0
+                page_size: 3
             }),
             _('Show Timeout (s)')
         ))
         // Presure Threshold (s)
         TimeoutsThresholdsGroup.add(this._spinBTNRow(
             'pressure-threshold',
+            0,
             new Gtk.Adjustment({
                 lower: 0,
                 upper: 10000,
-                step_increment: 250,
+                step_increment: 50,
                 page_increment: 1,
                 page_size: 0
             }),
