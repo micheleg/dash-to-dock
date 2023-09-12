@@ -1,9 +1,10 @@
 // appearance.js
 'use strict';
 // Import dependencies
-import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
-import Adw from 'gi://Adw';
-import GObject from 'gi://GObject';
+import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js'
+import Adw from 'gi://Adw'
+import Gtk from 'gi://Gtk'
+import GObject from 'gi://GObject'
 import { d2dprefsspage } from '../conveniences/d2dprefsspage.js'
 
 // register Appearance Page
@@ -22,32 +23,32 @@ const Appearance = GObject.registerClass({
         // ## Appearance Options Group
         const optionsGroup = new Adw.PreferencesGroup({
             title: _(' Appearance Options'),
-            description: _('Configure the appearance of the extension'),
-        });
+            description: _('Configure the appearance of the extension')
+        })
         this.add(optionsGroup);
         // schrink the dach
         optionsGroup.add(this._toggleRow(
             'custom-theme-shrink',
             _('schrink the dach'),
             _('Save space by redusic padding and border radius')
-        ));
+        ))
         // Show overview on startup
         optionsGroup.add(this._toggleInvRow(
             'disable-overview-on-startup',
             _('Show overview on startup')
-        ));
+        ))
         // Use buildin theme
         optionsGroup.add(this._toggleRow(
             'apply-custom-theme',
             _('Use buildin theme'),
             _('Disable to customize to dock even more!')
-        ));
+        ))
 
         // ## Theme group
         const themeGroup = new Adw.PreferencesGroup({
             title: _('Theme')
-        });
-        this.add(themeGroup);
+        })
+        this.add(themeGroup)
         // customize windws counter indicators
         themeGroup.add(this._listRow(
             'running-indicator-style',
@@ -74,7 +75,7 @@ const Appearance = GObject.registerClass({
             _('Background Color')
         ))
         themeGroup.add(BGExpander)
-        // Customize opacity
+        // Enable customize opacity
         themeGroup.add(this._listRow(
             'transparency-mode',
             [
@@ -84,11 +85,14 @@ const Appearance = GObject.registerClass({
             ],
             _('Customize opacity mode')
         ))
-        // opacity : background-opacity
-
+         // Customize background opacity : background-opacity
+        themeGroup.add(this._scaleRow(
+            'background-opacity',
+            _('Background Opacity')
+        ))
 
         return this
     }
-});
+})
 
 export { Appearance }
