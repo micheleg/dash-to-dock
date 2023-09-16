@@ -38,22 +38,12 @@ class General extends d2dprefsspage{
         })
         PosGroup.add(monitorSelector)
 
-        const monitorSelectorList = new Gtk.ComboBoxText({
+        this.monitorSelectorList = new Gtk.ComboBoxText({
             valign: Gtk.Align.CENTER
         })
-        monitorSelectorList.selected = this._settings.get_enum('dock-position')
+        this.monitorSelectorList.selected = this._settings.get_enum('dock-position')
 
-        // monitorSelectorList.append('1',_('some translatebale item 1'))
-
-        for (const monitor of this._monitorsConfig.monitors) {
-            monitorSelectorList.append(monitor.index, monitor.displayName)
-        }
-        // this._monitors.forEach((value) => {
-        //     monitorSelectorList.append(value.index, value.displayName)
-        // })
-
-
-        monitorSelector.add_suffix(monitorSelectorList)
+        monitorSelector.add_suffix(this.monitorSelectorList)
 
         this._monitorsConfig.connect('updated',
             () => this._updateMonitorsSettings())
@@ -209,6 +199,46 @@ class General extends d2dprefsspage{
         ))
        
         return this
+    }
+
+    _updateMonitorsSettings() {
+        // Monitor options
+        const preferredMonitor = this._settings.get_int('preferred-monitor');
+        const preferredMonitorByConnector = this._settings.get_string('preferred-monitor-by-connector');
+        // const dockMonitorCombo = this._builder.get_object('dock_monitor_combo');
+        const dockMonitorCombo = this.monitorSelectorList
+
+        this._monitors = [];
+        dockMonitorCombo.remove_all();
+        let primaryIndex = -1;
+
+        // Add connected monitors
+        for (const monitor of this._monitorsConfig.monitors) {
+            if (!monitor.active && monitor.index !== preferredMonitor)
+                continue;
+
+            if (monitor.isPrimary) {
+                dockMonitorCombo.append_text(
+                    /* Translators: This will be followed by Display Name - Connector. */
+                    `${_('Primary monitor: ') + monitor.displayName} - ${
+                        monitor.connector}`);
+                primaryIndex = this._monitors.length;
+            } else {
+                dockMonitorCombo.append_text(
+                    /* Translators: Followed by monitor index, Display Name - Connector. */
+                    `${_('Secondary monitor ') + (monitor.index + 1)} - ${
+                        monitor.displayName} - ${monitor.connector}`);
+            }
+
+            this._monitors.push(monitor);
+
+            if (monitor.index === preferredMonitor ||
+                (preferredMonitor === -2 && preferredMonitorByConnector === monitor.connector))
+                dockMonitorCombo.set_active(this._monitors.length - 1);
+        }
+
+        if (dockMonitorCombo.get_active() < 0 && primaryIndex >= 0)
+            dockMonitorCombo.set_active(primaryIndex);
     }
 })
 

@@ -126,4 +126,4 @@ const MonitorsConfig = GObject.registerClass({
     }
 });
 
-export { MonitorsConfig }
+ export { MonitorsConfig }
