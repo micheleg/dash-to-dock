@@ -113,42 +113,47 @@ const d2dprefsspage = GObject.registerClass({
         return row
     }
 
-    _scaleRow(setting, title, subtitle = '') {
-        const row = new Adw.ActionRow({
-            title: title,
-            subtitle: subtitle,
-        })
-        const rowScale = new Gtk.Scale({
-            draw_value: true,
+    _scaleRow(setting, scale = {}, title, subtitle = '') {
+
+        const defaultData = {
             valign: 'center',
             hexpand: true,
-            width_request: '200px',
+            // width_request: '200px',
             round_digits: false,
-            draw_value: false,
+            draw_value: true,
             orientation: 'horizontal',
             digits: 0,
             adjustment: new Gtk.Adjustment({
                 lower: 0,
                 upper: 4,
                 step_increment: 0.1,
-                page_increment: 1
+                page_increment: 0
             })
+        }
+
+
+        const scaleData = Object.assign({}, defaultData, scale);
+
+        const row = new Adw.ActionRow({
+            title: title,
+            // subtitle: subtitle,
         })
+        const rowScale = new Gtk.Scale(scaleData)
 
         rowScale.set_value(this._settings.get_double(setting))
         rowScale.connect('value-changed', () => {
             // this._settings.set_int(setting, rowScale.get_double())
-            // this._settings.set_double(setting, rowScale.get_double())
+            this._settings.set_double(setting, rowScale.get_double())
 
             // Avoid settings the opacity consinuosly as it's change is animated
-            if (this._scale_timeout > 0)
-                GLib.source_remove(this._scale_timeout)
-            this._scale_timeout = GLib.timeout_add(
-            GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
-                this._settings.set_double(setting, rowScale.get_value());
-                this._scale_timeout = 0;
-                return GLib.SOURCE_REMOVE;
-            })
+            // if (this._scale_timeout > 0)
+            //     GLib.source_remove(this._scale_timeout)
+            // this._scale_timeout = GLib.timeout_add(
+            // GLib.PRIORITY_DEFAULT, SCALE_UPDATE_TIMEOUT, () => {
+            //     this._settings.set_double(setting, rowScale.get_value());
+            //     this._scale_timeout = 0;
+            //     return GLib.SOURCE_REMOVE;
+            // })
             
         })
 
