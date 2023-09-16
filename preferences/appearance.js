@@ -88,6 +88,7 @@ const Appearance = GObject.registerClass({
          // Customize background opacity : background-opacity
         themeGroup.add(this._scaleRow(
             'background-opacity',
+            {},
             _('Background Opacity')
         ))
 

@@ -133,6 +133,20 @@ class General extends d2dprefsspage{
 
 
         // dock size limit
+        sizeGroup.add(this._scaleRow(
+            'height-fraction',
+            {
+                draw_value: false,
+                adjustment: new Gtk.Adjustment({
+                    lower: 0,
+                    upper: 100,
+                    step_increment: 1,
+                    page_increment: 0
+                })
+            },
+            _('dock size limit'),
+            _('Dock max height/width (fraction of available space)')
+        ))
         // Panel mode: extent to the screen edge
         const pannelMode = this._expandRow(
             'extend-height',
@@ -156,16 +170,43 @@ class General extends d2dprefsspage{
             _('Place icons tot the center')
         ))
         sizeGroup.add(pannelMode)
-
         // icon side limt
+        sizeGroup.add(this._scaleRow(
+            'dash-max-icon-size',
+            {
+                round_digits: false,
+                digits: 0,
+                adjustment: new Gtk.Adjustment({
+                    lower: 0,
+                    upper: 128,
+                    step_increment: 1,
+                    page_increment: 0
+                })
+            },
+            _('Icon size limit')
+        ))
         // fix icon size: scroll to reveal other icons
         sizeGroup.add(this._toggleRow(
             'icon-size-fixed',
             _('fix icon size'),
             _('scroll to reveal other icons')
         ))
-
         // preview scale
+        sizeGroup.add(this._scaleRow(
+            'preview-size-scale',
+            {
+                draw_value: false,
+                digits: 2,
+                adjustment: new Gtk.Adjustment({
+                    lower: 0,
+                    upper: 1,
+                    step_increment: 0.1,
+                    page_increment: 0
+                })
+            },
+            _('preview scale'),
+            _('Set the allowed maximum dash preview size scale. Allowed range: 0,00..1,00.')
+        ))
        
         return this
     }
