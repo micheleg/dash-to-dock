@@ -94,7 +94,7 @@ const autoHidePageClass = GObject.registerClass({
             3,
             new Gtk.Adjustment({
                 lower: 0,
-                upper: 10000,
+                upper: 1.000,
                 step_increment: 0.050,
                 page_increment: 1,
                 page_size: 0
@@ -107,7 +107,7 @@ const autoHidePageClass = GObject.registerClass({
             3,
             new Gtk.Adjustment({
                 lower: 0.000,
-                upper: 10000,
+                upper: 1.000,
                 step_increment: 0.050,
                 page_increment: 1,
                 page_size: 0
@@ -120,7 +120,7 @@ const autoHidePageClass = GObject.registerClass({
             3,
             new Gtk.Adjustment({
                 lower: 0,
-                upper: 10000,
+                upper: 1.000,
                 step_increment: 0.050,
                 page_increment: 1,
                 page_size: 3
@@ -133,7 +133,7 @@ const autoHidePageClass = GObject.registerClass({
             0,
             new Gtk.Adjustment({
                 lower: 0,
-                upper: 10000,
+                upper: 1000,
                 step_increment: 50,
                 page_increment: 1,
                 page_size: 0

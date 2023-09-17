@@ -67,15 +67,17 @@ const Behavior = GObject.registerClass({
 
         ANSGroup.add(this._spinBTNRow(
             'shortcut-timeout',
+            0,
             new Gtk.Adjustment({
                 lower: 0,
                 upper: 10000,
                 step_increment: 250,
-                page_increment: 3,
+                page_increment: 1,
                 page_size: 0
             }),
             _('Hide timeout')
         ))
+
 
         // ## mouseGroup
         const mouseGroup = new Adw.PreferencesGroup({
