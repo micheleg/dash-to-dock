@@ -93,22 +93,18 @@ const d2dprefsspage = GObject.registerClass({
     }
 
     _spinBTNRow(setting,digits,adjustment, title, subtitle = '') {
-        const row = new Adw.ActionRow({
+
+        const row = new Adw.SpinRow({
+            adjustment: adjustment,
+            digits: digits,
             title: title,
             subtitle: subtitle
         })
 
-        const rowSpinBTN = new Gtk.SpinButton({
-            adjustment: adjustment,
-            digits: digits,
-            valign: Gtk.Align.CENTER
-        })
-        rowSpinBTN.set_value(this._settings.get_double(setting))
-        rowSpinBTN.connect('value-changed', () => {
+        row.set_value(this._settings.get_double(setting))
+        row.connect('input', () => {
             this._settings.set_int(setting, rowSpinBTN.get_double())
         })
-
-        row.add_suffix(rowSpinBTN)
 
         return row
     }
