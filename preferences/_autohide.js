@@ -12,7 +12,7 @@ import { d2dprefsspage } from '../conveniences/d2dprefsspage.js'
 
 // register Launchers Page
 const autoHidePageClass = GObject.registerClass({
-    GTypeName: 'autoHidePage'
+    GTypeName: 'd2d_autoHidePage'
 },class autoHidePageClass extends d2dprefsspage{
     constructor(settings){
         super(settings)

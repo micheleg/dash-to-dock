@@ -9,7 +9,7 @@ import { d2dprefsspage } from '../conveniences/d2dprefsspage.js'
 
 // register Appearance Page
 const Appearance = GObject.registerClass({
-    GTypeName: 'Appearance'
+    GTypeName: 'd2d_Appearance'
 },class Appearance extends d2dprefsspage{
 
     constructor(settings){

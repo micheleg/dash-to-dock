@@ -9,7 +9,7 @@ import { d2dprefsspage } from '../conveniences/d2dprefsspage.js'
 
 // register Launchers Page
 const Launchers = GObject.registerClass({
-    GTypeName: 'Launchers'
+    GTypeName: 'd2d_Launchers'
 },class Launchers extends d2dprefsspage{
     constructor(settings){
         super(settings)

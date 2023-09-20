@@ -9,7 +9,7 @@ import { d2dprefsspage } from '../conveniences/d2dprefsspage.js'
 
 // register Behavior Page
 const Behavior = GObject.registerClass({
-    GTypeName: 'Behavior'
+    GTypeName: 'd2d_Behavior'
 }, class Behavior extends d2dprefsspage {
     constructor(settings) {
         super(settings)

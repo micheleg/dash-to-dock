@@ -13,7 +13,7 @@ import Gdk from 'gi://Gdk'
 import { d2dprefsspage } from '../conveniences/d2dprefsspage.js'
 
 const About = GObject.registerClass({
-    GTypeName: 'About'
+    GTypeName: 'd2d_About'
 },
 class About extends d2dprefsspage{
 

@@ -13,7 +13,7 @@ import { MonitorsConfig } from '../conveniences/monitorsconfig.js'
 import { autoHidePageClass } from './_autohide.js'
 
 const General = GObject.registerClass({
-    GTypeName: 'General'
+    GTypeName: 'd2d_General'
 },
 class General extends d2dprefsspage{
     constructor(settings,extPrefs){
