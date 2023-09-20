@@ -170,7 +170,7 @@ const d2dprefsspage = GObject.registerClass({
         })
 
         this._settings.bind(
-            setting, row, 'text',
+            setting, textBox, 'text',
             Gio.SettingsBindFlags.DEFAULT
         )
 
