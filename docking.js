@@ -1653,7 +1653,7 @@ export class DockManager {
         this._appSwitcherSettings = new Gio.Settings({schema_id: 'org.gnome.shell.app-switcher'});
         this._mapSettingsValues();
 
-        this._iconTheme = new Utils.IconTheme();
+        this._iconTheme = new St.IconTheme();
 
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass();
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
@@ -1740,7 +1740,7 @@ export class DockManager {
     }
 
     get iconTheme() {
-        return this._iconTheme.iconTheme;
+        return this._iconTheme;
     }
 
     get fm1Client() {
@@ -2647,7 +2647,7 @@ export class DockManager {
         Locations.unWrapFileManagerApp();
         this._removables?.destroy();
         this._removables = null;
-        this._iconTheme.destroy();
+        this._iconTheme = null;
         this._remoteModel?.destroy();
         this._settings = null;
         this._appSwitcherSettings = null;
