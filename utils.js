@@ -3,7 +3,6 @@ import {
     GLib,
     Gio,
     GObject,
-    Gtk,
     Meta,
     Shell,
     St,
@@ -488,33 +487,6 @@ export function splitHandler(handler) {
                 handler(obj, ...values);
         };
     });
-}
-
-export class IconTheme {
-    constructor() {
-        if (St.IconTheme) {
-            this._iconTheme = new St.IconTheme();
-            return;
-        }
-
-        const settings = St.Settings.get();
-        this._iconTheme = new Gtk.IconTheme();
-        this._iconTheme.set_custom_theme(settings.gtkIconTheme);
-        this._changesId = settings.connect('notify::gtk-icon-theme', () => {
-            this._iconTheme.set_custom_theme(settings.gtkIconTheme);
-        });
-    }
-
-    get iconTheme() {
-        return this._iconTheme;
-    }
-
-    destroy() {
-        if (this._changesId)
-            St.Settings.get().disconnect(this._changesId);
-
-        this._iconTheme = null;
-    }
 }
 
 /**
