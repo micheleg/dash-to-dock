@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (87ubuntu2) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (87ubuntu2) mantic; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * locationsWorker: Exit with the main script exit code (LP: #2038783)
@@ -6,7 +6,7 @@ gnome-shell-extension-ubuntu-dock (87ubuntu2) UNRELEASED; urgency=medium
   [ Stuart Hayhurst ]
   * appIcons: Use Mtk.Rectangle instead of Meta.Rectangle (LP: #2034664)
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 09 Oct 2023 03:04:40 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 09 Oct 2023 03:04:54 +0200
 
 gnome-shell-extension-ubuntu-dock (87ubuntu1) mantic; urgency=medium
 
