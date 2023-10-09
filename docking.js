@@ -2649,7 +2649,6 @@ export class DockManager {
         this._removables = null;
         this._iconTheme.destroy();
         this._remoteModel?.destroy();
-        this._settings.run_dispose();
         this._settings = null;
         this._appSwitcherSettings = null;
         this._oldDash = null;
