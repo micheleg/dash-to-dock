@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-16 14:41-0600\n"
-"PO-Revision-Date: 2023-03-16 15:02-0600\n"
+"PO-Revision-Date: 2023-10-09 22:22-0600\n"
 "Last-Translator: hasecilu <hasecilu@tuta.io>\n"
 "Language-Team: \n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #: prefs.js:242
 msgid "Show favorite applications"
@@ -369,17 +369,19 @@ msgstr "Bailotear aplicaciones urgentes"
 
 #: Settings.ui.h:58
 msgid "Hide application tooltip"
-msgstr ""
+msgstr "Ocultar consejo de aplicación"
 
 #: Settings.ui.h:59
 msgid "Show icons emblems"
-msgstr ""
+msgstr "Mostrar emblemas de iconos"
 
 #: Settings.ui.h:60
 msgid ""
 "When enabled application icons will show notification counters and progress-"
 "bars (if Unity API is used)."
 msgstr ""
+"Cuando está habilitado los iconos de la aplicación mostrarán contadores de "
+"notificaciones y barras de progreso (si la API de Unity es usada)"
 
 #: Settings.ui.h:61
 msgid "Launchers"
