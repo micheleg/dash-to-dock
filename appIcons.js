@@ -1200,7 +1200,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 this._quitMenuItem.label.set_text(_('Quit'));
             } else {
                 this._quitMenuItem.label.set_text(N__(
-                    'Quit %d Window', 'Quit %d Windows').format(
+                    'Quit %d Window', 'Quit %d Windows', this._source.windowsCount).format(
                     this._source.windowsCount));
             }
 
