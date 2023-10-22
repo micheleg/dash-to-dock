@@ -102,9 +102,10 @@ const d2dprefsspage = GObject.registerClass({
         })
 
         row.set_value(this._settings.get_double(setting))
-        row.connect('input', () => {
-            this._settings.set_int(setting, rowSpinBTN.get_double())
-        })
+        this._settings.bind(
+            setting, row, 'value',
+            Gio.SettingsBindFlags.DEFAULT
+        )
 
         return row
     }
