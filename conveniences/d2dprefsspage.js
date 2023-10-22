@@ -132,7 +132,7 @@ const d2dprefsspage = GObject.registerClass({
 
         const row = new Adw.ActionRow({
             title: title,
-            // subtitle: subtitle,
+            subtitle: subtitle,
         })
         const rowScale = new Gtk.Scale(scaleData)
 
