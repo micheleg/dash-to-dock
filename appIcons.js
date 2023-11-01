@@ -24,7 +24,7 @@ import {
     ParentalControlsManager,
 } from './dependencies/shell/misc.js';
 
-import { Config } from './dependencies/shell/misc.js';
+import {Config} from './dependencies/shell/misc.js';
 
 import {
     AppIconIndicators,
@@ -36,7 +36,7 @@ import {
     WindowPreview,
 } from './imports.js';
 
-import { Extension } from './dependencies/shell/extensions/extension.js';
+import {Extension} from './dependencies/shell/extensions/extension.js';
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
