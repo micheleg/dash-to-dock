@@ -24,7 +24,7 @@ import {
     ParentalControlsManager,
 } from './dependencies/shell/misc.js';
 
-import {Config} from './dependencies/shell/misc.js';
+import { Config } from './dependencies/shell/misc.js';
 
 import {
     AppIconIndicators,
@@ -36,7 +36,7 @@ import {
     WindowPreview,
 } from './imports.js';
 
-import {Extension} from './dependencies/shell/extensions/extension.js';
+import { Extension } from './dependencies/shell/extensions/extension.js';
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
@@ -1148,7 +1148,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop') &&
                 (this._source instanceof DockAppIcon)) {
                 this._appendSeparator();
-                const item = this._appendMenuItem(_('Show Details'));
+                const item = this._appendMenuItem(_('App Details'));
                 item.connect('activate', () => {
                     const id = this._source.app.get_id();
                     const args = GLib.Variant.new('(ss)', [id, '']);
