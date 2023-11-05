@@ -6,6 +6,7 @@ import {
     GLib,
     GObject,
     Meta,
+    Mtk,
     Shell,
     St,
 } from './dependencies/gi.js';
@@ -39,7 +40,7 @@ import {Extension} from './dependencies/shell/extensions/extension.js';
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
-const {gettext: __} = Extension;
+const {gettext: __, ngettext} = Extension;
 
 const DBusMenu = await DBusMenuUtils.haveDBusMenu();
 
@@ -386,7 +387,7 @@ const DockAbstractAppIcon = GObject.registerClass({
         if (!this.get_stage())
             return;
 
-        const rect = new Meta.Rectangle();
+        const rect = new Mtk.Rectangle();
 
         [rect.x, rect.y] = this.get_transformed_position();
         [rect.width, rect.height] = this.get_transformed_size();
@@ -1198,7 +1199,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             if (this._source.windowsCount === 1) {
                 this._quitMenuItem.label.set_text(_('Quit'));
             } else {
-                this._quitMenuItem.label.set_text(__('Quit %d Windows').format(
+                this._quitMenuItem.label.set_text(ngettext(
+                    'Quit %d Window', 'Quit %d Windows', this._source.windowsCount).format(
                     this._source.windowsCount));
             }
 
