@@ -1,4 +1,5 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
+const V_SHELL_ENABLED = true;
 
 import {
     Clutter,
@@ -7,7 +8,7 @@ import {
     GObject,
     Meta,
     Shell,
-    St,
+    St
 } from './dependencies/gi.js';
 
 import {
@@ -19,11 +20,11 @@ import {
     PointerWatcher,
     Workspace,
     WorkspacesView,
-    WorkspaceSwitcherPopup,
+    WorkspaceSwitcherPopup
 } from './dependencies/shell/ui.js';
 
 import {
-    AnimationUtils,
+    AnimationUtils
 } from './dependencies/shell/misc.js';
 
 import {
@@ -36,7 +37,7 @@ import {
     Locations,
     NotificationsMonitor,
     Theming,
-    Utils,
+    Utils
 } from './imports.js';
 
 const {signals: Signals} = imports;
@@ -2213,7 +2214,7 @@ export class DockManager {
                 this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
             });
 
-        if (Main.layoutManager._startingUp && Main.layoutManager._waitLoaded) {
+        if (!V_SHELL_ENABLED && Main.layoutManager._startingUp && Main.layoutManager._waitLoaded) {
             // Disable this on versions that will include:
             //  https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2763
             this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
@@ -2339,52 +2340,53 @@ export class DockManager {
             return box;
         };
 
-        this._vfuncInjections.addWithLabel(Labels.MAIN_DASH, ControlsManagerLayout.prototype,
-            'allocate', function (container) {
+        if (!V_SHELL_ENABLED) {
+            this._vfuncInjections.addWithLabel(Labels.MAIN_DASH, ControlsManagerLayout.prototype,
+                'allocate', function (container) {
                 /* eslint-disable no-invalid-this */
-                const oldPostAllocation = this._runPostAllocation;
-                this._runPostAllocation = () => {};
+                    const oldPostAllocation = this._runPostAllocation;
+                    this._runPostAllocation = () => {};
 
-                const monitor = Main.layoutManager.findMonitorForActor(this._container);
-                const workArea = Main.layoutManager.getWorkAreaForMonitor(monitor.index);
-                const startX = workArea.x - monitor.x;
-                const startY = workArea.y - monitor.y;
-                const workAreaBox = new Clutter.ActorBox();
-                workAreaBox.set_origin(startX, startY);
-                workAreaBox.set_size(workArea.width, workArea.height);
+                    const monitor = Main.layoutManager.findMonitorForActor(this._container);
+                    const workArea = Main.layoutManager.getWorkAreaForMonitor(monitor.index);
+                    const startX = workArea.x - monitor.x;
+                    const startY = workArea.y - monitor.y;
+                    const workAreaBox = new Clutter.ActorBox();
+                    workAreaBox.set_origin(startX, startY);
+                    workAreaBox.set_size(workArea.width, workArea.height);
 
-                maybeAdjustBoxToDock(undefined, workAreaBox, this.spacing);
-                const oldStartY = workAreaBox.y1;
+                    maybeAdjustBoxToDock(undefined, workAreaBox, this.spacing);
+                    const oldStartY = workAreaBox.y1;
 
-                const propertyInjections = new Utils.PropertyInjectionsHandler();
-                propertyInjections.add(Main.layoutManager.panelBox, 'height', {value: startY});
+                    const propertyInjections = new Utils.PropertyInjectionsHandler();
+                    propertyInjections.add(Main.layoutManager.panelBox, 'height', {value: startY});
 
-                if (Main.layoutManager.panelBox.y === Main.layoutManager.primaryMonitor.y)
-                    workAreaBox.y1 -= oldStartY;
+                    if (Main.layoutManager.panelBox.y === Main.layoutManager.primaryMonitor.y)
+                        workAreaBox.y1 -= oldStartY;
 
-                this.vfunc_allocate(container, workAreaBox);
+                    this.vfunc_allocate(container, workAreaBox);
 
-                propertyInjections.destroy();
-                workAreaBox.y1 = oldStartY;
+                    propertyInjections.destroy();
+                    workAreaBox.y1 = oldStartY;
 
-                const adjustActorHorizontalAllocation = actor => {
-                    if (!actor.visible || !workAreaBox.x1)
-                        return;
+                    const adjustActorHorizontalAllocation = actor => {
+                        if (!actor.visible || !workAreaBox.x1)
+                            return;
 
-                    const contentBox = actor.get_allocation_box();
-                    contentBox.set_size(workAreaBox.get_width(), contentBox.get_height());
-                    contentBox.set_origin(workAreaBox.x1, contentBox.y1);
-                    actor.allocate(contentBox);
-                };
+                        const contentBox = actor.get_allocation_box();
+                        contentBox.set_size(workAreaBox.get_width(), contentBox.get_height());
+                        contentBox.set_origin(workAreaBox.x1, contentBox.y1);
+                        actor.allocate(contentBox);
+                    };
 
-                [this._searchEntry, this._workspacesThumbnails, this._searchController].forEach(
-                    actor => adjustActorHorizontalAllocation(actor));
+                    [this._searchEntry, this._workspacesThumbnails, this._searchController].forEach(
+                        actor => adjustActorHorizontalAllocation(actor));
 
-                this._runPostAllocation = oldPostAllocation;
-                this._runPostAllocation();
+                    this._runPostAllocation = oldPostAllocation;
+                    this._runPostAllocation();
                 /* eslint-enable no-invalid-this */
-            });
-
+                });
+        }
         /**
          * This can be removed or bypassed when GNOME/gnome-shell!1892 will be merged
          *
@@ -2401,134 +2403,137 @@ export class DockManager {
             /* eslint-enable no-invalid-this */
         }
 
-        this._methodInjections.addWithLabel(Labels.MAIN_DASH, [
-            ControlsManagerLayout.prototype,
-            '_computeWorkspacesBoxForState',
-            function (originalFunction, state, ...args) {
+        if (!V_SHELL_ENABLED) {
+            this._methodInjections.addWithLabel(Labels.MAIN_DASH, [
+                ControlsManagerLayout.prototype,
+                '_computeWorkspacesBoxForState',
+                function (originalFunction, state, ...args) {
                 /* eslint-disable no-invalid-this */
-                if (state === OverviewControls.ControlsState.HIDDEN)
-                    return originalFunction.call(this, state, ...args);
+                    if (state === OverviewControls.ControlsState.HIDDEN)
+                        return originalFunction.call(this, state, ...args);
 
-                const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
-                return maybeAdjustBoxSize(state, box, this.spacing);
+                    const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
+                    return maybeAdjustBoxSize(state, box, this.spacing);
                 /* eslint-enable no-invalid-this */
-            },
-        ], [
-            ControlsManagerLayout.prototype,
-            '_getAppDisplayBoxForState',
-            function (originalFunction, ...args) {
+                },
+            ], [
+                ControlsManagerLayout.prototype,
+                '_getAppDisplayBoxForState',
+                function (originalFunction, ...args) {
                 /* eslint-disable no-invalid-this */
-                return workspaceBoxOriginFixer.call(this, originalFunction, ...args);
+                    return workspaceBoxOriginFixer.call(this, originalFunction, ...args);
                 /* eslint-enable no-invalid-this */
-            },
-        ]);
+                },
+            ]);
 
-        this._vfuncInjections.addWithLabel(Labels.MAIN_DASH, Workspace.WorkspaceBackground.prototype,
-            'allocate', function (box) {
+
+            this._vfuncInjections.addWithLabel(Labels.MAIN_DASH, Workspace.WorkspaceBackground.prototype,
+                'allocate', function (box) {
                 /* eslint-disable no-invalid-this */
-                this.vfunc_allocate(box);
+                    this.vfunc_allocate(box);
 
-                // This code has been submitted upstream via GNOME/gnome-shell!1892
-                // so can be removed when that gets merged (or bypassed on newer shell
-                // versions).
-                const monitor = Main.layoutManager.monitors[this._monitorIndex];
-                const [contentWidth, contentHeight] = this._bin.get_content_box().get_size();
-                const [mX1, mX2] = [monitor.x, monitor.x + monitor.width];
-                const [mY1, mY2] = [monitor.y, monitor.y + monitor.height];
-                const [wX1, wX2] = [this._workarea.x, this._workarea.x + this._workarea.width];
-                const [wY1, wY2] = [this._workarea.y, this._workarea.y + this._workarea.height];
-                const xScale = contentWidth / this._workarea.width;
-                const yScale = contentHeight / this._workarea.height;
-                const leftOffset = wX1 - mX1;
-                const topOffset = wY1 - mY1;
-                const rightOffset = mX2 - wX2;
-                const bottomOffset = mY2 - wY2;
+                    // This code has been submitted upstream via GNOME/gnome-shell!1892
+                    // so can be removed when that gets merged (or bypassed on newer shell
+                    // versions).
+                    const monitor = Main.layoutManager.monitors[this._monitorIndex];
+                    const [contentWidth, contentHeight] = this._bin.get_content_box().get_size();
+                    const [mX1, mX2] = [monitor.x, monitor.x + monitor.width];
+                    const [mY1, mY2] = [monitor.y, monitor.y + monitor.height];
+                    const [wX1, wX2] = [this._workarea.x, this._workarea.x + this._workarea.width];
+                    const [wY1, wY2] = [this._workarea.y, this._workarea.y + this._workarea.height];
+                    const xScale = contentWidth / this._workarea.width;
+                    const yScale = contentHeight / this._workarea.height;
+                    const leftOffset = wX1 - mX1;
+                    const topOffset = wY1 - mY1;
+                    const rightOffset = mX2 - wX2;
+                    const bottomOffset = mY2 - wY2;
 
-                const contentBox = new Clutter.ActorBox();
-                contentBox.set_origin(-leftOffset * xScale, -topOffset * yScale);
-                contentBox.set_size(
-                    contentWidth + (leftOffset + rightOffset) * xScale,
-                    contentHeight + (topOffset + bottomOffset) * yScale);
+                    const contentBox = new Clutter.ActorBox();
+                    contentBox.set_origin(-leftOffset * xScale, -topOffset * yScale);
+                    contentBox.set_size(
+                        contentWidth + (leftOffset + rightOffset) * xScale,
+                        contentHeight + (topOffset + bottomOffset) * yScale);
 
-                this._backgroundGroup.allocate(contentBox);
+                    this._backgroundGroup.allocate(contentBox);
                 /* eslint-enable no-invalid-this */
-            });
+                });
 
-        // Reduce the space that the workspaces can use in secondary monitors
-        this._methodInjections.addWithLabel(Labels.MAIN_DASH, WorkspacesView.WorkspacesView.prototype,
-            '_getFirstFitAllWorkspaceBox', function (originalFunction, ...args) {
+            // Reduce the space that the workspaces can use in secondary monitors
+            this._methodInjections.addWithLabel(Labels.MAIN_DASH, WorkspacesView.WorkspacesView.prototype,
+                '_getFirstFitAllWorkspaceBox', function (originalFunction, ...args) {
                 /* eslint-disable no-invalid-this */
-                const box = originalFunction.call(this, ...args);
-                if (DockManager.settings.dockFixed ||
+                    const box = originalFunction.call(this, ...args);
+                    if (DockManager.settings.dockFixed ||
                     this._monitorIndex === Main.layoutManager.primaryIndex)
-                    return box;
+                        return box;
 
-                const dock = DockManager.getDefault().getDockByMonitor(this._monitorIndex);
-                if (!dock)
-                    return box;
+                    const dock = DockManager.getDefault().getDockByMonitor(this._monitorIndex);
+                    if (!dock)
+                        return box;
 
-                if (dock.isHorizontal) {
-                    const [, preferredHeight] = dock.get_preferred_height(box.get_width());
-                    box.y2 -= preferredHeight;
-                    if (dock.position === St.Side.TOP)
-                        box.set_origin(box.x1, box.y1 + preferredHeight);
-                } else {
-                    const [, preferredWidth] = dock.get_preferred_width(box.get_height());
-                    box.x2 -= preferredWidth / 2;
-                    if (dock.position === St.Side.LEFT)
-                        box.set_origin(box.x1 + preferredWidth, box.y1);
-                }
-                return box;
+                    if (dock.isHorizontal) {
+                        const [, preferredHeight] = dock.get_preferred_height(box.get_width());
+                        box.y2 -= preferredHeight;
+                        if (dock.position === St.Side.TOP)
+                            box.set_origin(box.x1, box.y1 + preferredHeight);
+                    } else {
+                        const [, preferredWidth] = dock.get_preferred_width(box.get_height());
+                        box.x2 -= preferredWidth / 2;
+                        if (dock.position === St.Side.LEFT)
+                            box.set_origin(box.x1 + preferredWidth, box.y1);
+                    }
+                    return box;
                 /* eslint-enable no-invalid-this */
-            });
+                });
 
-        if (AppDisplay.BaseAppView?.prototype?._pageForCoords) {
+            if (AppDisplay.BaseAppView?.prototype?._pageForCoords) {
             // Ensure we handle Dnd events happening on the dock when we're
             // dragging from AppDisplay.
             // Remove when merged
             // https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2002
-            this._methodInjections.addWithLabel(Labels.MAIN_DASH,
-                AppDisplay.BaseAppView.prototype,
-                '_pageForCoords', function (originalFunction, ...args) {
+                this._methodInjections.addWithLabel(Labels.MAIN_DASH,
+                    AppDisplay.BaseAppView.prototype,
+                    '_pageForCoords', function (originalFunction, ...args) {
                     /* eslint-disable no-invalid-this */
-                    if (!this._scrollView.has_pointer)
-                        return AppDisplay.SidePages.NONE;
-                    return originalFunction.call(this, ...args);
+                        if (!this._scrollView.has_pointer)
+                            return AppDisplay.SidePages.NONE;
+                        return originalFunction.call(this, ...args);
                     /* eslint-enable no-invalid-this */
-                });
-        }
+                    });
+            }
 
-        if (Main.layoutManager._startingUp && Main.sessionMode.hasOverview &&
+            if (!V_SHELL_ENABLED && Main.layoutManager._startingUp && Main.sessionMode.hasOverview &&
             this._settings.disableOverviewOnStartup) {
-            this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
-                Overview.Overview.prototype,
-                'runStartupAnimation', (_originalFunction, callback) => {
-                    const monitor = Main.layoutManager.primaryMonitor;
-                    const x = monitor.x + monitor.width / 2.0;
-                    const y = monitor.y + monitor.height / 2.0;
-                    const {STARTUP_ANIMATION_TIME} = Layout;
+                this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
+                    Overview.Overview.prototype,
+                    'runStartupAnimation', (_originalFunction, callback) => {
+                        const monitor = Main.layoutManager.primaryMonitor;
+                        const x = monitor.x + monitor.width / 2.0;
+                        const y = monitor.y + monitor.height / 2.0;
+                        const {STARTUP_ANIMATION_TIME} = Layout;
 
-                    this._prepareStartupAnimation(callback);
-                    Main.uiGroup.set_pivot_point(
-                        x / global.screen_width,
-                        y / global.screen_height);
-                    Main.uiGroup.set({
-                        scale_x: 0.75,
-                        scale_y: 0.75,
-                        opacity: 0,
+                        this._prepareStartupAnimation(callback);
+                        Main.uiGroup.set_pivot_point(
+                            x / global.screen_width,
+                            y / global.screen_height);
+                        Main.uiGroup.set({
+                            scale_x: 0.75,
+                            scale_y: 0.75,
+                            opacity: 0,
+                        });
+
+                        Main.uiGroup.ease({
+                            scale_x: 1,
+                            scale_y: 1,
+                            opacity: 255,
+                            duration: STARTUP_ANIMATION_TIME,
+                            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+                            onComplete: callback,
+                        });
+
+                        this._runStartupAnimation();
                     });
-
-                    Main.uiGroup.ease({
-                        scale_x: 1,
-                        scale_y: 1,
-                        opacity: 255,
-                        duration: STARTUP_ANIMATION_TIME,
-                        mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-                        onComplete: callback,
-                    });
-
-                    this._runStartupAnimation();
-                });
+            }
         }
     }
 
