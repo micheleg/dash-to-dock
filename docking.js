@@ -1,6 +1,4 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
-const V_SHELL_ENABLED = true;
-
 import {
     Clutter,
     GLib,
@@ -1643,6 +1641,11 @@ export class DockManager {
     constructor(extension) {
         if (DockManager._singleton)
             throw new Error('DashToDock has been already initialized');
+
+        this._vShellEnabled = !!this._getEnabledExtensions('vertical-workspaces').length;
+        if (this._vShellEnabled)
+            console.warn('[Dash to Dock] Warning: V-Shell extension detected - skipping conflicting injections');
+
         DockManager._singleton = this;
         this._extension = extension;
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
@@ -2214,7 +2217,7 @@ export class DockManager {
                 this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
             });
 
-        if (!V_SHELL_ENABLED && Main.layoutManager._startingUp && Main.layoutManager._waitLoaded) {
+        if (!this._vShellEnabled && Main.layoutManager._startingUp && Main.layoutManager._waitLoaded) {
             // Disable this on versions that will include:
             //  https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2763
             this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
@@ -2280,31 +2283,32 @@ export class DockManager {
                     }
                     /* eslint-enable no-invalid-this */
                 });
-        }
 
-        this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION, ControlsManager.prototype,
-            'runStartupAnimation', async function (originalMethod, callback) {
+
+            this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION, ControlsManager.prototype,
+                'runStartupAnimation', async function (originalMethod, callback) {
                 /* eslint-disable no-invalid-this */
-                try {
-                    const injections = new Utils.InjectionsHandler();
-                    const dockManager = DockManager.getDefault();
-                    dockManager._prepareStartupAnimation(callback);
-                    injections.add(dockManager.mainDock.dash, 'ease', () => {});
-                    let callbackArgs = [];
-                    const ret = await originalMethod.call(this,
-                        (...args) => (callbackArgs = [...args]));
-                    injections.destroy();
+                    try {
+                        const injections = new Utils.InjectionsHandler();
+                        const dockManager = DockManager.getDefault();
+                        dockManager._prepareStartupAnimation(callback);
+                        injections.add(dockManager.mainDock.dash, 'ease', () => {});
+                        let callbackArgs = [];
+                        const ret = await originalMethod.call(this,
+                            (...args) => (callbackArgs = [...args]));
+                        injections.destroy();
 
-                    const onComplete = () => callback(...callbackArgs);
-                    dockManager._prepareStartupAnimation(onComplete);
-                    dockManager._runStartupAnimation(onComplete);
-                    return ret;
-                } catch (e) {
-                    logError(e);
-                    return undefined;
-                }
+                        const onComplete = () => callback(...callbackArgs);
+                        dockManager._prepareStartupAnimation(onComplete);
+                        dockManager._runStartupAnimation(onComplete);
+                        return ret;
+                    } catch (e) {
+                        logError(e);
+                        return undefined;
+                    }
                 /* eslint-enable no-invalid-this */
-            });
+                });
+        }
 
         const maybeAdjustBoxSize = (state, box, spacing) => {
             if (state === OverviewControls.ControlsState.WINDOW_PICKER) {
@@ -2340,7 +2344,7 @@ export class DockManager {
             return box;
         };
 
-        if (!V_SHELL_ENABLED) {
+        if (!this._vShellEnabled) {
             this._vfuncInjections.addWithLabel(Labels.MAIN_DASH, ControlsManagerLayout.prototype,
                 'allocate', function (container) {
                 /* eslint-disable no-invalid-this */
@@ -2403,7 +2407,7 @@ export class DockManager {
             /* eslint-enable no-invalid-this */
         }
 
-        if (!V_SHELL_ENABLED) {
+        if (!this._vShellEnabled) {
             this._methodInjections.addWithLabel(Labels.MAIN_DASH, [
                 ControlsManagerLayout.prototype,
                 '_computeWorkspacesBoxForState',
@@ -2502,7 +2506,7 @@ export class DockManager {
                     });
             }
 
-            if (!V_SHELL_ENABLED && Main.layoutManager._startingUp && Main.sessionMode.hasOverview &&
+            if (Main.layoutManager._startingUp && Main.sessionMode.hasOverview &&
             this._settings.disableOverviewOnStartup) {
                 this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
                     Overview.Overview.prototype,
@@ -2694,6 +2698,61 @@ export class DockManager {
 
     _hasPanelCorners() {
         return !!Main.panel?._rightCorner && !!Main.panel?._leftCorner;
+    }
+
+    _getEnabledExtensions(pattern = '') {
+        let result = [];
+        // extensionManager is unreliable at startup because it is uncertain whether all extensions have been loaded
+        // also gsettings key can contain already removed extensions (user deleted them without disabling them first)
+        // therefore we have to check what's really installed in the filesystem
+        if (!this._installedExtensions) {
+            const extensionFiles = [...this._collectFromDatadirs('extensions', true)];
+            this._installedExtensions = extensionFiles.map(({info}) => {
+                let fileType = info.get_file_type();
+                if (fileType !== Gio.FileType.DIRECTORY)
+                    return null;
+                const uuid = info.get_name();
+                return uuid;
+            });
+        }
+        // _enabledExtensions contains content of the enabled-extensions key from gsettings, not actual state
+        const enabled = Main.extensionManager._enabledExtensions;
+        result = this._installedExtensions.filter(ext => enabled.includes(ext));
+        // _extensions contains already loaded extensions, so we can try to filter out broken or incompatible extensions
+        const active = Main.extensionManager._extensions;
+        result = result.filter(ext => {
+            const extension = active.get(ext);
+            if (extension)
+                return ![3, 4].includes(extension.state); // 3 - ERROR, 4 - OUT_OF_TIME (not supported by shell-version in metadata)
+            // extension can be enabled but not yet loaded, we just cannot see its state at this moment, so let it pass as enabled
+            return true;
+        });
+        // return only extensions matching the search pattern
+        return result.filter(uuid => uuid !== null && uuid.includes(pattern));
+    }
+
+    *_collectFromDatadirs(subdir, includeUserDir) {
+        let dataDirs = GLib.get_system_data_dirs();
+        if (includeUserDir)
+            dataDirs.unshift(GLib.get_user_data_dir());
+
+        for (let i = 0; i < dataDirs.length; i++) {
+            let path = GLib.build_filenamev([dataDirs[i], 'gnome-shell', subdir]);
+            let dir = Gio.File.new_for_path(path);
+
+            let fileEnum;
+            try {
+                fileEnum = dir.enumerate_children('standard::name,standard::type',
+                    Gio.FileQueryInfoFlags.NONE, null);
+            } catch (e) {
+                fileEnum = null;
+            }
+            if (fileEnum !== null) {
+                let info;
+                while ((info = fileEnum.next_file(null)))
+                    yield {dir: fileEnum.get_child(info), info};
+            }
+        }
     }
 }
 Signals.addSignalMethods(DockManager.prototype);
