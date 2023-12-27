@@ -2,11 +2,11 @@
 "shell-version": [
     "45"
 ],
-"uuid": "dash-to-dock@micxgx.gmail.com",
+"uuid": "dash-to-dock-vshell@G-dH@GitHub.com",
 "name": "Dash to Dock",
-"description": "A dock for the Gnome Shell. This extension moves the dash out of the overview transforming it in a dock for an easier launching of applications and a faster switching between windows and desktops. Side and bottom placement options are available.",
+"description": "A Dash to Dock fork compatible with the V-Shell extension. This extension moves the dash out of the overview transforming it in a dock for an easier launching of applications and a faster switching between windows and desktops. Side and bottom placement options are available.",
 "original-author": "micxgx@gmail.com",
 "url": "https://micheleg.github.io/dash-to-dock/",
 "gettext-domain": "dashtodock",
-"version": 89
+"version-name": "45.1"
 }
