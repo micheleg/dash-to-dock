@@ -8,80 +8,120 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Dash to Dock 84\n"
+"Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-04 22:12+0200\n"
-"PO-Revision-Date: 2023-07-05 09:57+0200\n"
+"POT-Creation-Date: 2023-11-02 23:57+0100\n"
+"PO-Revision-Date: 2023-11-03 00:28+0100\n"
 "Last-Translator: Amr Ibrahim <amribrahim1987@hotmail.com>\n"
-"Language-Team: German <amribrahim1987@hotmail.com>\n"
+"Language-Team: \n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.3.2\n"
-
-#: prefs.js:242
-msgid "Show favorite applications"
-msgstr "Favoriten anzeigen"
+"X-Generator: Poedit 3.4\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 
 # Konjugation wegen Stellung im Satz
 #. Translators: This will be followed by Display Name - Connector.
-#: prefs.js:419
+#: prefs.js:382
 msgid "Primary monitor: "
 msgstr "Primärer Bildschirm: "
 
 # Konjugation wegen Stellung im Satz
 #. Translators: Followed by monitor index, Display Name - Connector.
-#: prefs.js:425
+#: prefs.js:388
 msgid "Secondary monitor "
 msgstr "Sekundärer Bildschirm "
 
-#: prefs.js:471 Settings.ui.h:32
+#: prefs.js:434 Settings.ui.h:32
 msgid "Right"
 msgstr "Rechts"
 
-#: prefs.js:472 Settings.ui.h:29
+#: prefs.js:435 Settings.ui.h:29
 msgid "Left"
 msgstr "Links"
 
-#: prefs.js:527
+#: prefs.js:490
 msgid "Intelligent autohide customization"
 msgstr "Anpassung des intelligenten automatischen Ausblendens"
 
 # Verwende Übersetzung aus Nautilus
-#: prefs.js:535 prefs.js:857 prefs.js:916
+#: prefs.js:498 prefs.js:820 prefs.js:879
 msgid "Reset to defaults"
 msgstr "Auf Vorgaben zurücksetzen"
 
-#: prefs.js:686
+#: prefs.js:649
 msgid "Managed by GNOME Multitasking's Application Switching setting."
 msgstr "Verwaltet von der Anwendungswechseleinstellung von GNOME-Multitasking."
 
-#: prefs.js:849
+#: prefs.js:812
 msgid "Show dock and application numbers"
 msgstr "Dock und Anwendungsnummern anzeigen"
 
-#: prefs.js:908
+#: prefs.js:871
 msgid "Customize middle-click behavior"
 msgstr "Verhalten des mittleren Klick anpassen"
 
-#: prefs.js:1005
+#: prefs.js:968
 msgid "Customize running indicators"
 msgstr "Laufende Anzeigen anpassen"
 
-#: prefs.js:1120 Settings.ui.h:95
+#: prefs.js:1083 Settings.ui.h:95
 msgid "Customize opacity"
 msgstr "Transparenz anpassen"
 
-#: appIcons.js:1051
+#: appIcons.js:1050
 msgid "All Windows"
 msgstr "Alle Fenster"
 
+#. Translators: This is the heading of a list of open windows
+#: appIcons.js:1062
+msgid "Open Windows"
+msgstr "Offene Fenster"
+
+#: appIcons.js:1082
+msgid "New Window"
+msgstr "Neues Fenster"
+
+#: appIcons.js:1100
+msgid "Launch using Integrated Graphics Card"
+msgstr "Mit integrierter Grafikkarte starten"
+
+#: appIcons.js:1101
+msgid "Launch using Discrete Graphics Card"
+msgstr "Mit diskreter Grafikkarte starten"
+
+#: appIcons.js:1130
+msgid "Unpin"
+msgstr "Losheften"
+
+#: appIcons.js:1131
+msgid "Remove from Favorites"
+msgstr "Aus Favoriten entfernen"
+
+#: appIcons.js:1138
+msgid "Pin to Dash"
+msgstr "An Dash anheften"
+
+#: appIcons.js:1139
+msgid "Add to Favorites"
+msgstr "Zu Favoriten hinzufügen"
+
+#: appIcons.js:1151
+msgid "Show Details"
+msgstr "Details anzeigen"
+
+#: appIcons.js:1188 appIcons.js:1200 Settings.ui.h:14
+msgid "Quit"
+msgstr "Beenden"
+
 #: appIcons.js:1203
 #, javascript-format
-msgid "Quit %d Windows"
-msgstr "%d Fenster beenden"
+msgid "Quit %d Window"
+msgid_plural "Quit %d Windows"
+msgstr[0] "%d Fenster beenden"
+msgstr[1] "%d Fenster beenden"
 
 #. Translators: %s is "Settings", which is automatically translated. You
 #. can also translate the full message if this fits better your language.
@@ -90,52 +130,61 @@ msgstr "%d Fenster beenden"
 msgid "Dash to Dock %s"
 msgstr "Dash-to-Dock-%s"
 
-#: locations.js:529
+#: appIcons.js:1442
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: locations.js:532
 msgid "Mount"
 msgstr "Einhängen"
 
-#: locations.js:531
+#: locations.js:534
 msgid "Unmount"
 msgstr "Aushängen"
 
-#: locations.js:533
+#: locations.js:536
 msgid "Eject"
 msgstr "Auswerfen"
 
-#: locations.js:592
+#: locations.js:595
 #, javascript-format
 msgid "Failed to mount “%s”"
 msgstr "Einhängen von „%s“ fehlgeschlagen"
 
-#: locations.js:595
+#: locations.js:598
 #, javascript-format
 msgid "Failed to umount “%s”"
 msgstr "Umhängen von „%s“ fehlgeschlagen"
 
-#: locations.js:598
+#: locations.js:601
 #, javascript-format
 msgid "Failed to eject “%s”"
 msgstr "Auswerfen von „%s“ fehlgeschlagen"
 
-#: locations.js:610
+#: locations.js:613
 msgid "Mount operation already in progress"
 msgstr "Einhängen-Vorgang läuft bereits"
 
-#: locations.js:613
+#: locations.js:616
 msgid "Umount operation already in progress"
 msgstr "Aushängen-Vorgang läuft bereits"
 
-#: locations.js:616
+#: locations.js:619
 msgid "Eject operation already in progress"
 msgstr "Auswurf-Vorgang läuft bereits"
 
-#: locations.js:695
+#: locations.js:698
 msgid "Trash"
 msgstr "Papierkorb"
 
-#: locations.js:736
+#: locations.js:739
 msgid "Empty Trash"
 msgstr "Papierkorb leeren"
+
+#: locations.js:1009
+#, javascript-format
+msgid "Failed to launch “%s”"
+msgstr "Starten von „%s“ fehlgeschlagen"
 
 #: Settings.ui.h:1
 msgid ""
@@ -192,10 +241,6 @@ msgstr "Fokussieren, minimieren oder Vorschauen anzeigen"
 #: Settings.ui.h:13
 msgid "Focus, minimize or app spread"
 msgstr "Fokussieren, minimieren oder App-Verbreitung"
-
-#: Settings.ui.h:14
-msgid "Quit"
-msgstr "Beenden"
 
 #: Settings.ui.h:15
 msgid "Behavior for Middle-Click."
@@ -501,7 +546,7 @@ msgstr "Quadrate"
 
 #: Settings.ui.h:86
 msgid "Dashes"
-msgstr ""
+msgstr "Dashes"
 
 #: Settings.ui.h:87
 msgid "Segmented"
@@ -513,11 +558,11 @@ msgstr "Solide"
 
 #: Settings.ui.h:89
 msgid "Ciliora"
-msgstr ""
+msgstr "Ciliora"
 
 #: Settings.ui.h:90
 msgid "Metro"
-msgstr ""
+msgstr "Metro"
 
 #: Settings.ui.h:91
 msgid "Binary"
