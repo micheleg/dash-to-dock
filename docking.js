@@ -243,6 +243,10 @@ const DockedDash = GObject.registerClass({
         this._autohideIsEnabled = null;
         this._intellihideIsEnabled = null;
 
+        // This variable counts how many times Meta.disable_unredirect_for_display() is called
+        // to help restore the original state when intelihide is disabled.
+        this._disableUnredirectCount = 0;
+
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.Intellihide(this.monitorIndex);
 
@@ -481,6 +485,8 @@ const DockedDash = GObject.registerClass({
         if (this._triggerTimeoutId)
             GLib.source_remove(this._triggerTimeoutId);
 
+        this._restoreUnredirect();
+
         // Remove barrier timeout
         if (this._removeBarrierTimeoutId > 0)
             GLib.source_remove(this._removeBarrierTimeoutId);
@@ -662,6 +668,12 @@ const DockedDash = GObject.registerClass({
         ]);
     }
 
+    _restoreUnredirect() {
+        for (let i = 0; i < this._disableUnredirectCount; i++)
+            Meta.enable_unredirect_for_display(global.display);
+        this._disableUnredirectCount = 0;
+    }
+
     /**
      * This is call when visibility settings change
      */
@@ -680,10 +692,12 @@ const DockedDash = GObject.registerClass({
         else
             this.remove_style_class_name('autohide');
 
-        if (this._intellihideIsEnabled)
+        if (this._intellihideIsEnabled) {
             this._intellihide.enable();
-        else
+        } else {
             this._intellihide.disable();
+            this._restoreUnredirect();
+        }
 
         this._updateDashVisibility();
     }
@@ -813,6 +827,10 @@ const DockedDash = GObject.registerClass({
     }
 
     _animateIn(time, delay) {
+        if (this._intellihideIsEnabled) {
+            Meta.disable_unredirect_for_display(global.display);
+            this._disableUnredirectCount++;
+        }
         this._dockState = State.SHOWING;
         this.dash.iconAnimator.start();
         this._delayedHide = false;
@@ -850,6 +868,10 @@ const DockedDash = GObject.registerClass({
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             onComplete: () => {
                 this._dockState = State.HIDDEN;
+                if (this._intellihideIsEnabled && this._disableUnredirectCount > 0) {
+                    Meta.enable_unredirect_for_display(global.display);
+                    this._disableUnredirectCount--;
+                }
                 // Remove queued barried removal if any
                 if (this._removeBarrierTimeoutId > 0)
                     GLib.source_remove(this._removeBarrierTimeoutId);
