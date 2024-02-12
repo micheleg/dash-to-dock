@@ -397,7 +397,7 @@ const DockedDash = GObject.registerClass({
         // Add dash container actor and the container to the Chrome.
         this.set_child(this._slider);
         this._slider.set_child(this._box);
-        this._box.add_actor(this.dash);
+        this._box.add_child(this.dash);
 
         // Add aligning container without tracking it for input region
         this._trackDock();

@@ -168,9 +168,9 @@ export const DockDash = GObject.registerClass({
             x_expand: this._isHorizontal,
         });
         this._box._delegate = this;
-        this._dashContainer.add_actor(this._scrollView);
-        this._boxContainer.add_actor(this._box);
-        this._scrollView.add_actor(this._boxContainer);
+        this._dashContainer.add_child(this._scrollView);
+        this._boxContainer.add_child(this._box);
+        this._scrollView.add_child(this._boxContainer);
 
         this._showAppsIcon = new AppIcons.DockShowAppsIcon(this._position);
         this._showAppsIcon.show(false);
