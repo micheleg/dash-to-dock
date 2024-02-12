@@ -51,6 +51,12 @@ export const State = Object.freeze({
     HIDING:  3,
 });
 
+if (!global.display.supports_extended_barriers) {
+    global.display.supports_extended_barriers = function () {
+        return true;
+    };
+}
+
 const scrollAction = Object.freeze({
     DO_NOTHING: 0,
     CYCLE_WINDOWS: 1,
@@ -397,7 +403,7 @@ const DockedDash = GObject.registerClass({
         // Add dash container actor and the container to the Chrome.
         this.set_child(this._slider);
         this._slider.set_child(this._box);
-        this._box.add_actor(this.dash);
+        Utils.addActor(this._box, this.dash);
 
         // Add aligning container without tracking it for input region
         this._trackDock();
@@ -1115,7 +1121,7 @@ const DockedDash = GObject.registerClass({
 
             if (this._pressureBarrier && this._dockState === State.HIDDEN) {
                 this._barrier = new Meta.Barrier({
-                    display: global.display,
+                    backend: global.backend,
                     x1,
                     x2,
                     y1,
