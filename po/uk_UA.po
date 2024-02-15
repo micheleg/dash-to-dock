@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-24 13:37+0300\n"
-"PO-Revision-Date: 2023-09-27 08:56+0300\n"
+"POT-Creation-Date: 2023-10-14 14:30+0300\n"
+"PO-Revision-Date: 2023-10-14 14:31+0300\n"
 "Last-Translator: Yevhen Popok <xalt7x.service@gmail.com>\n"
 "Language-Team: \n"
 "Language: uk_UA\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: Poedit 3.4\n"
 
 #. Translators: This will be followed by Display Name - Connector.
 #: prefs.js:382
@@ -109,21 +109,24 @@ msgstr "Подробиці щодо програми"
 msgid "Quit"
 msgstr "Закрити"
 
-#: appIcons.js:1202
+#: appIcons.js:1203
 #, javascript-format
-msgid "Quit %d Windows"
-msgstr "Закриття %d вікон"
+msgid "Quit %d Window"
+msgid_plural "Quit %d Windows"
+msgstr[0] "Закрити %d вікно"
+msgstr[1] "Закрити %d вікна"
+msgstr[2] "Закрити %d вікон"
 
 #. Translators: %s is "Settings", which is automatically translated. You
 #. can also translate the full message if this fits better your language.
-#: appIcons.js:1441
+#: appIcons.js:1442
 #, javascript-format
 msgid "Dash to Dock %s"
-msgstr "Dash to Dock %s"
+msgstr "%s Dash to Dock"
 
-#: appIcons.js:1441
+#: appIcons.js:1442
 msgid "Settings"
-msgstr "Загальні параметри"
+msgstr "Параметри"
 
 #: locations.js:532
 msgid "Mount"
