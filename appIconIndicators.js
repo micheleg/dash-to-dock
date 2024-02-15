@@ -7,6 +7,12 @@ import {
     St,
 } from './dependencies/gi.js';
 
+if (!Clutter.cairo_set_source_color) {
+    Clutter.cairo_set_source_color = function(cr, sourceColor) {
+        cr.setSourceColor(sourceColor);
+    }
+}
+
 import {Main} from './dependencies/shell/ui.js';
 
 import {
