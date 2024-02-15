@@ -27,7 +27,10 @@ import {
     Utils,
 } from './imports.js';
 
-const {DASH_ANIMATION_TIME} = Dash;
+// module "Dash" does not export DASH_ANIMATION_TIME
+// so we just define it like it is defined in Dash;
+// taken from https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/main/js/ui/dash.js
+const DASH_ANIMATION_TIME = 200;
 const DASH_VISIBILITY_TIMEOUT = 3;
 
 const Labels = Object.freeze({
@@ -53,6 +56,30 @@ class DockDashItemContainer extends Dash.DashItemContainer {
 
     showLabel() {
         return AppIcons.itemShowLabel.call(this);
+    }
+
+    // we override the method show taken from:
+    // https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/main/js/ui/dash.js
+    // in order to apply a little modification at the end of the animation
+    // which makes sure that the icon background is not blurry
+    show(animate) {
+        if (this.child == null)
+            return;
+
+        let time = animate ? DASH_ANIMATION_TIME : 0;
+        this.ease({
+            scale_x: 1,
+            scale_y: 1,
+            opacity: 255,
+            duration: time,
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+            onComplete: () => {
+                // when the animation is ended, we simulate
+                // a hover to gain back focus and unblur the
+                // background
+                this.set_hover(true);
+            },
+        });
     }
 });
 
