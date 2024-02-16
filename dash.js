@@ -66,12 +66,11 @@ class DockDashItemContainer extends Dash.DashItemContainer {
         if (this.child == null)
             return;
 
-        let time = animate ? DASH_ANIMATION_TIME : 0;
         this.ease({
             scale_x: 1,
             scale_y: 1,
             opacity: 255,
-            duration: time,
+            duration: animate ? DASH_ANIMATION_TIME : 0,
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             onComplete: () => {
                 // when the animation is ended, we simulate
