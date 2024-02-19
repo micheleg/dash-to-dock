@@ -657,7 +657,7 @@ export function laterRemove(id) {
 
 export function addActor(obj, actor) {
     if (obj.add_actor)
-        obj.add_actor(actor)
+        obj.add_actor(actor);
     else
-        obj.add_child(actor)
+        obj.add_child(actor);
 }
