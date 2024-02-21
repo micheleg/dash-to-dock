@@ -51,10 +51,11 @@ export const State = Object.freeze({
     HIDING:  3,
 });
 
-if (!global.display.supports_extended_barriers) {
-    global.display.supports_extended_barriers = function() {
-        return true;
-    }
+function _supports_extended_barriers() {
+    if (global.display.supports_extended_barriers)
+        return global.display.supports_extended_barriers();
+    const {capabilities} = global.backend;
+    return ((capabilities & Meta.BackendCapabilities.BARRIERS) !== 0);
 }
 
 const scrollAction = Object.freeze({
@@ -872,7 +873,7 @@ const DockedDash = GObject.registerClass({
         // If we don't have extended barrier features, then we need
         // to support the old tray dwelling mechanism.
         if (this._autohideIsEnabled &&
-            (!global.display.supports_extended_barriers() ||
+            (!_supports_extended_barriers() ||
              !DockManager.settings.requirePressureToShow)) {
             const pointerWatcher = PointerWatcher.getPointerWatcher();
             this._dockWatch = pointerWatcher.addWatch(
@@ -960,7 +961,7 @@ const DockedDash = GObject.registerClass({
 
     _updatePressureBarrier() {
         const {settings} = DockManager;
-        this._canUsePressure = global.display.supports_extended_barriers();
+        this._canUsePressure = _supports_extended_barriers();
         const {pressureThreshold} = settings;
 
         // Remove existing pressure barrier
