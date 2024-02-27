@@ -2325,8 +2325,7 @@ export class DockManager {
                     box.y2 -= spacing;
                 }
 
-                box.y2 -= searchBox.get_height() + spacing;
-                box.y2 -= spacing;
+                box.y2 -= searchBox.get_height() + 2 * spacing;
             }
 
             return box;
