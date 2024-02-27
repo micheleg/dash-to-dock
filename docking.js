@@ -2313,6 +2313,9 @@ export class DockManager {
             });
 
         const maybeAdjustBoxSize = (state, box, spacing) => {
+            // ensure that an undefined value will be converted into a valid one
+            if (!spacing)
+                spacing = 0;
             if (state === OverviewControls.ControlsState.WINDOW_PICKER) {
                 const searchBox = this.overviewControls._searchEntry.get_allocation_box();
                 const {shouldShow: wsThumbnails} = this.overviewControls._thumbnailsBox;
