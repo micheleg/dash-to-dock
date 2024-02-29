@@ -247,10 +247,20 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     }
 }
 
+.overview-tile {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+}
+
 @each $side in $dock_sides {
     @each $style_mode in $dock_style_modes {
         $is_shrink: str-index(#{$style_mode}, shrink) !=null;
         $is_extended: str-index(#{$style_mode}, extended) !=null;
+
+        #dashtodockBoxContainer.#{$side} {
+            padding-#{$side}: $dock_side_margin;
+        }
 
         #dashtodockContainer.#{$side} {
             $parameters: (

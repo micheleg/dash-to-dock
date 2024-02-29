@@ -152,10 +152,12 @@ export const DockDash = GObject.registerClass({
         this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
 
         this._boxContainer = new St.BoxLayout({
+            name: 'dashtodockBoxContainer',
             x_align: Clutter.ActorAlign.FILL,
             y_align: Clutter.ActorAlign.FILL,
             vertical: !this._isHorizontal,
         });
+        this._boxContainer.add_style_class_name(Theming.PositionStyleClass[this._position]);
 
         const rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
         this._box = new St.BoxLayout({

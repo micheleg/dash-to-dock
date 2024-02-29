@@ -377,7 +377,7 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     /**
-     * Update taraget for minimization animation
+     * Update target for minimization animation
      */
     updateIconGeometry() {
         // If (for unknown reason) the actor is not on the stage the reported size
