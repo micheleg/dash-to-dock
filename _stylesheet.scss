@@ -203,7 +203,8 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
                     0, $dock_icons_distance / 2);
 
                 .app-well-app,
-                .show-apps {
+                .show-apps,
+                .overview-tile {
                     @include set-internal-children-property($side, padding, $spacing);
                     padding-#{$side}: $padding + $side_margin;
                     padding-#{opposite($side)}: $padding;
