@@ -203,7 +203,8 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
                     0, $dock_icons_distance / 2);
 
                 .app-well-app,
-                .show-apps {
+                .show-apps,
+                .overview-tile {
                     @include set-internal-children-property($side, padding, $spacing);
                     padding-#{$side}: $padding + $side_margin;
                     padding-#{opposite($side)}: $padding;
@@ -257,19 +258,6 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     @each $style_mode in $dock_style_modes {
         $is_shrink: str-index(#{$style_mode}, shrink) !=null;
         $is_extended: str-index(#{$style_mode}, extended) !=null;
-
-        @if is_horizontal($side) {
-            #dashtodockBoxContainer.#{$side} {
-                padding-#{$side}: $dock_side_margin;
-            }
-        }
-        #dashtodockBoxContainer.left {
-            padding-left: $dock_side_margin + $base_padding;
-        }
-
-        #dashtodockBoxContainer.right {
-            padding-left: $base_padding;
-        }
 
         #dashtodockContainer.#{$side} {
             $parameters: (
