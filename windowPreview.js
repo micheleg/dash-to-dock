@@ -60,7 +60,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
         });
         this._destroyId = this._source.connect('destroy', this.destroy.bind(this));
 
-        Utils.addActor(Main.uiGroup, this.actor);
+        Main.uiGroup.add_child(this.actor);
 
         this.connect('destroy', this._onDestroy.bind(this));
     }
@@ -109,7 +109,7 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
         this.isHorizontal = position === St.Side.BOTTOM || position === St.Side.TOP;
         this.box.set_vertical(!this.isHorizontal);
         this.box.set_name('dashtodockWindowList');
-        Utils.addActor(this.actor, this.box);
+        this.actor.add_child(this.box);
         this.actor._delegate = this;
 
         this._shownInitially = false;
@@ -359,7 +359,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
                 ? Clutter.ActorAlign.START : Clutter.ActorAlign.END,
             y_align: Clutter.ActorAlign.START,
         });
-        Utils.addActor(this.closeButton, new St.Icon({icon_name: 'window-close-symbolic'}));
+        this.closeButton.add_child(new St.Icon({icon_name: 'window-close-symbolic'}));
         this.closeButton.connect('clicked', () => this._closeWindow());
 
         const overlayGroup = new Clutter.Actor({
@@ -367,8 +367,8 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             y_expand: true,
         });
 
-        Utils.addActor(overlayGroup, this._cloneBin);
-        Utils.addActor(overlayGroup, this.closeButton);
+        overlayGroup.add_child(this._cloneBin);
+        overlayGroup.add_child(this.closeButton);
 
         const label = new St.Label({text: window.get_title()});
         label.set_style(`max-width: ${PREVIEW_MAX_WIDTH}px`);
@@ -394,7 +394,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             box.add_child(labelBin);
         }
         this._box = box;
-        Utils.addActor(this, box);
+        this.add_child(box);
 
         this._cloneTexture(window);
 

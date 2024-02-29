@@ -997,7 +997,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         });
         source.connect('destroy', () => this.destroy());
 
-        Utils.addActor(Main.uiGroup, this.actor);
+        Main.uiGroup.add_child(this.actor);
 
         const {remoteModel} = Docking.DockManager.getDefault();
         const remoteModelApp = remoteModel?.lookupById(this._source?.app?.id);

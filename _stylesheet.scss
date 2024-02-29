@@ -247,6 +247,20 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     }
 }
 
+.overview-tile {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+}
+
+.overview-tile .overview-icon {
+    background-color: rgba(255,255,255,0);
+}
+
+.overview-tile:hover .overview-icon, .overview-tile.focused .overview-icon, .show-apps:hover .overview-icon {
+    background-color: $remark_color;
+}
+
 @each $side in $dock_sides {
     @each $style_mode in $dock_style_modes {
         $is_shrink: str-index(#{$style_mode}, shrink) !=null;
