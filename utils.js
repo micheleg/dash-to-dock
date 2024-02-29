@@ -654,3 +654,9 @@ export function laterRemove(id) {
     else
         Meta.later_remove(id);
 }
+
+export function supportsExtendedBarriers() {
+    if (global.display.supports_extended_barriers)
+        return global.display.supports_extended_barriers();
+    return !!(global.backend.capabilities & Meta.BackendCapabilities.BARRIERS);
+}
