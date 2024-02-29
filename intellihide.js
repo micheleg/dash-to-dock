@@ -3,12 +3,12 @@
 import {
     GLib,
     Meta,
-    Shell
+    Shell,
 } from './dependencies/gi.js';
 
 import {
     Docking,
-    Utils
+    Utils,
 } from './imports.js';
 
 const {signals: Signals} = imports;

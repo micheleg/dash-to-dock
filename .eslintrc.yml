@@ -24,6 +24,13 @@ overrides:
           ignoreUrls: true
           ignoreTemplateLiterals: true
 
+      comma-dangle:
+        - error
+        - arrays: always-multiline
+          objects: always-multiline
+          imports: always-multiline
+          functions: never
+
       # Ubuntu's eslint is not as good as upstream one :(
       camelcase: warn
       no-unused-expressions: warn

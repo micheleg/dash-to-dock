@@ -5,7 +5,7 @@ import {
     Clutter,
     Gio,
     GLib,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {PopupMenu} from './dependencies/shell/ui.js';

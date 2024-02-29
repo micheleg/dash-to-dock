@@ -6,25 +6,25 @@ import {
     GLib,
     GObject,
     Shell,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {
     AppFavorites,
     Dash,
     DND,
-    Main
+    Main,
 } from './dependencies/shell/ui.js';
 
 import {
-    Util
+    Util,
 } from './dependencies/shell/misc.js';
 
 import {
     AppIcons,
     Docking,
     Theming,
-    Utils
+    Utils,
 } from './imports.js';
 
 const {DASH_ANIMATION_TIME} = Dash;
@@ -152,10 +152,12 @@ export const DockDash = GObject.registerClass({
         this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
 
         this._boxContainer = new St.BoxLayout({
+            name: 'dashtodockBoxContainer',
             x_align: Clutter.ActorAlign.FILL,
             y_align: Clutter.ActorAlign.FILL,
             vertical: !this._isHorizontal,
         });
+        this._boxContainer.add_style_class_name(Theming.PositionStyleClass[this._position]);
 
         const rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
         this._box = new St.BoxLayout({
@@ -168,9 +170,12 @@ export const DockDash = GObject.registerClass({
             x_expand: this._isHorizontal,
         });
         this._box._delegate = this;
-        this._dashContainer.add_actor(this._scrollView);
-        this._boxContainer.add_actor(this._box);
-        this._scrollView.add_actor(this._boxContainer);
+        this._boxContainer.add_child(this._box);
+        if (this._scrollView.add_actor)
+            this._scrollView.add_actor(this._boxContainer);
+        else
+            this._scrollView.add_child(this._boxContainer);
+        this._dashContainer.add_child(this._scrollView);
 
         this._showAppsIcon = new AppIcons.DockShowAppsIcon(this._position);
         this._showAppsIcon.show(false);

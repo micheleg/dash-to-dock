@@ -5,14 +5,14 @@ import {
     GLib,
     GObject,
     Shell,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {ShellMountOperation} from './dependencies/shell/ui.js';
 
 import {
     Docking,
-    Utils
+    Utils,
 } from './imports.js';
 
 import {Extension} from './dependencies/shell/extensions/extension.js';
@@ -361,18 +361,17 @@ export const LocationAppInfo = GObject.registerClass({
             const [, stdOut, stdErr] = subProcess.communicate(null, cancellable);
             subProcess.wait(cancellable);
             const errorCode = subProcess.get_exit_status();
+            const textDecoder = new TextDecoder();
 
             if (errorCode) {
-                const errorLines = imports.byteArray.toString(
-                    stdErr.get_data()).split('\n');
-
+                const errorLines = textDecoder.decode(stdErr.toArray()).split('\n');
                 const error = new GLib.Error(Gio.IOErrorEnum,
                     errorCode === GLib.MAXUINT8 ? 0 : errorCode, errorLines[0]);
                 error.stack = `${errorLines.slice(3).join('\n')}${error.stack}`;
                 throw error;
             }
 
-            const desktopId = imports.byteArray.toString(stdOut.get_data()).trim();
+            const desktopId = textDecoder.decode(stdOut.toArray()).trim();
             const handlerApp = Shell.AppSystem.get_default().lookup_app(desktopId)?.appInfo;
             return handlerApp;
         } finally {
@@ -394,6 +393,11 @@ export const LocationAppInfo = GObject.registerClass({
                 this._handlerApp = this._getHandlerAppFromWorker(cancellable);
             else
                 this._handlerApp = this.location.query_default_handler(cancellable);
+
+            if (!this._handlerApp) {
+                throw new GLib.Error(Gio.IOErrorEnum,
+                    Gio.IOErrorEnum.NOT_FOUND, `Handler for ${this.location} not found`);
+            }
         } catch (e) {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
                 return getFileManagerApp()?.appInfo;

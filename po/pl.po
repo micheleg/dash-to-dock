@@ -78,7 +78,7 @@ msgstr "Kosz"
 
 #: locations.js:74
 msgid "Empty Trash"
-msgstr "Pusty kosz"
+msgstr "Opróźnij kosz"
 
 #: locations.js:182
 msgid "Mount"

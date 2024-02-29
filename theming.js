@@ -2,15 +2,16 @@
 
 import {
     Clutter,
+    GObject,
     Meta,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {Main} from './dependencies/shell/ui.js';
 
 import {
     Docking,
-    Utils
+    Utils,
 } from './imports.js';
 
 const {signals: Signals} = imports;
@@ -353,13 +354,20 @@ class Transparency {
             this._base_actor_style = '';
 
 
+        if (GObject.signal_lookup("actor-added", global.window_group) == 0) {
+            var added_signal = "child-added";
+            var removed_signal = "child-removed";
+        } else {
+            var added_signal = "actor-added";
+            var removed_signal = "actor-removed";
+        }
         this._signalsHandler.addWithLabel(Labels.TRANSPARENCY, [
             global.window_group,
-            'actor-added',
+            added_signal,
             this._onWindowActorAdded.bind(this),
         ], [
             global.window_group,
-            'actor-removed',
+            removed_signal,
             this._onWindowActorRemoved.bind(this),
         ], [
             global.window_manager,

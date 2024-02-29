@@ -3,14 +3,13 @@ import {
     GLib,
     Gio,
     GObject,
-    Gtk,
     Meta,
     Shell,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {
-    Docking
+    Docking,
 } from './imports.js';
 
 const {_gi: Gi} = imports;
@@ -490,33 +489,6 @@ export function splitHandler(handler) {
     });
 }
 
-export class IconTheme {
-    constructor() {
-        if (St.IconTheme) {
-            this._iconTheme = new St.IconTheme();
-            return;
-        }
-
-        const settings = St.Settings.get();
-        this._iconTheme = new Gtk.IconTheme();
-        this._iconTheme.set_custom_theme(settings.gtkIconTheme);
-        this._changesId = settings.connect('notify::gtk-icon-theme', () => {
-            this._iconTheme.set_custom_theme(settings.gtkIconTheme);
-        });
-    }
-
-    get iconTheme() {
-        return this._iconTheme;
-    }
-
-    destroy() {
-        if (this._changesId)
-            St.Settings.get().disconnect(this._changesId);
-
-        this._iconTheme = null;
-    }
-}
-
 /**
  * Construct a map of gtk application window object paths to MetaWindows.
  */
@@ -682,4 +654,3 @@ export function laterRemove(id) {
     else
         Meta.later_remove(id);
 }
-

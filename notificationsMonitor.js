@@ -5,7 +5,7 @@ import {Main} from './dependencies/shell/ui.js';
 
 import {
     Docking,
-    Utils
+    Utils,
 } from './imports.js';
 
 const {signals: Signals} = imports;

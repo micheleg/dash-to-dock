@@ -8,7 +8,7 @@ import {
     Meta,
     Mtk,
     Shell,
-    St
+    St,
 } from './dependencies/gi.js';
 
 import {
@@ -17,11 +17,11 @@ import {
     BoxPointer,
     Dash,
     Main,
-    PopupMenu
+    PopupMenu,
 } from './dependencies/shell/ui.js';
 
 import {
-    ParentalControlsManager
+    ParentalControlsManager,
 } from './dependencies/shell/misc.js';
 
 import {Config} from './dependencies/shell/misc.js';
@@ -33,14 +33,14 @@ import {
     Locations,
     Theming,
     Utils,
-    WindowPreview
+    WindowPreview,
 } from './imports.js';
 
 import {Extension} from './dependencies/shell/extensions/extension.js';
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
-const {gettext: __} = Extension;
+const {gettext: __, ngettext} = Extension;
 
 const DBusMenu = await DBusMenuUtils.haveDBusMenu();
 
@@ -377,7 +377,7 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     /**
-     * Update taraget for minimization animation
+     * Update target for minimization animation
      */
     updateIconGeometry() {
         // If (for unknown reason) the actor is not on the stage the reported size
@@ -997,7 +997,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         });
         source.connect('destroy', () => this.destroy());
 
-        Main.uiGroup.add_actor(this.actor);
+        Main.uiGroup.add_child(this.actor);
 
         const {remoteModel} = Docking.DockManager.getDefault();
         const remoteModelApp = remoteModel?.lookupById(this._source?.app?.id);
@@ -1199,7 +1199,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             if (this._source.windowsCount === 1) {
                 this._quitMenuItem.label.set_text(_('Quit'));
             } else {
-                this._quitMenuItem.label.set_text(__('Quit %d Windows').format(
+                this._quitMenuItem.label.set_text(ngettext(
+                    'Quit %d Window', 'Quit %d Windows', this._source.windowsCount).format(
                     this._source.windowsCount));
             }
 
