@@ -260,7 +260,7 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     background-color: rgba(255,255,255,0);
 }
 
-.overview-tile:hover .overview-icon, .show-apps:hover .overview-icon {
+.overview-tile:hover .overview-icon, .overview-tile.focused .overview-icon, .show-apps:hover .overview-icon {
     background-color: $remark_color;
 }
 
