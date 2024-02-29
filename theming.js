@@ -353,21 +353,19 @@ class Transparency {
         if (!this._base_actor_style)
             this._base_actor_style = '';
 
-
-        if (GObject.signal_lookup("actor-added", global.window_group) == 0) {
-            var added_signal = "child-added";
-            var removed_signal = "child-removed";
-        } else {
-            var added_signal = "actor-added";
-            var removed_signal = "actor-removed";
+        let addedSignal = 'actor-added';
+        let removedSignal = 'actor-removed';
+        if (!GObject.signal_lookup('actor-added', global.window_group)) {
+            addedSignal = 'child-added';
+            removedSignal = 'child-removed';
         }
         this._signalsHandler.addWithLabel(Labels.TRANSPARENCY, [
             global.window_group,
-            added_signal,
+            addedSignal,
             this._onWindowActorAdded.bind(this),
         ], [
             global.window_group,
-            removed_signal,
+            removedSignal,
             this._onWindowActorRemoved.bind(this),
         ], [
             global.window_manager,
