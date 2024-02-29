@@ -1,3 +1,62 @@
+gnome-shell-extension-ubuntu-dock (89ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * metadata: Bump to version 89
+  * dependencies/gi: Use shorter syntax for dependencies imports
+  * eslint: Force dangle comma on multi-line imports
+  * locations: Use TextDecoder instead of deprecated ByteArray
+  * locations: Throw a clearer error if handlerApp is not found
+  * locationsWorker: Exit with the main script exit code
+  * docking: Do not manually dispose the settings object
+  * docking: Use St.IconTheme directly, without wrappers
+  * dependencies/gi: Do not import Gdk or Gtk into the shell
+  * appIcons: Add support for translating plural forms
+  * Utils: add supportsExtendedBarriers
+  * cleanup: Style fixes
+
+  [ Sergio Costas Rodriguez ]
+  * Update for Gnome Shell 46
+  * Preserve Gnome Shell 45 compatibility
+  * Fix lack of Clutter.cairo_set_source_color
+  * Use add_child in all the possible places
+  * Remove the gray background in each icon
+  * Show the currently focused application
+
+  [ Stuart Hayhurst ]
+  * appIcons: Use Mtk.Rectangle instead of Meta.Rectangle
+
+  [ xalt7x.service ]
+  * Update Ukrainian translation
+  * Fix dashtodock.pot generation
+  * Add missing third argument
+  * Use the function ngettext directly
+  * Update Ukrainian translation
+
+  [ Balázs Úr ]
+  * Update Hungarian translation
+
+  [ Matej ]
+  * Created sl-po
+
+  [ hasecilu ]
+  * Update Spanish translations
+
+  [ Amr Ibrahim ]
+  * Update German translation
+
+  [ Piotr Wieczorek ]
+  * Fix Polish translation of "Empty Trash"
+
+  [ Yaroslav Pronin ]
+  * Change "Show Details" to GNOME's "App Details"
+  * Fix auto format indents
+
+  [ Vincenzo ]
+  * Fix for blurry background when opening a new application (LP: #1965123)
+  * Simplify animation duration expression into one-liner
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 01 Mar 2024 00:41:45 +0100
+
 gnome-shell-extension-ubuntu-dock (87ubuntu2) mantic; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
