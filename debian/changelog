@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (89ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (89ubuntu1) noble; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * metadata: Bump to version 89
@@ -55,7 +55,7 @@ gnome-shell-extension-ubuntu-dock (89ubuntu1) UNRELEASED; urgency=medium
   * Fix for blurry background when opening a new application (LP: #1965123)
   * Simplify animation duration expression into one-liner
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 01 Mar 2024 00:41:45 +0100
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 01 Mar 2024 00:51:05 +0100
 
 gnome-shell-extension-ubuntu-dock (87ubuntu2) mantic; urgency=medium
 
