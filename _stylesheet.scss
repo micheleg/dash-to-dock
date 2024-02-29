@@ -13,6 +13,8 @@ $_dark_base_color: darken(desaturate(#241f31, 100%), 2%);
 $base_color: if($variant =='light', #fff, $_dark_base_color);
 $system_bg_color: $base_color;
 
+$remark_color: rgba(238, 238, 236, 0.2);
+
 // From https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/43.0/data/theme/gnome-shell-sass/widgets/_dash.scss
 $dash_background_color: lighten($system_bg_color, 5%);
 $dash_placeholder_size: 32px;
@@ -215,7 +217,7 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
                         background-image: none;
                     }
                     &.focused .overview-icon {
-                        background-color: rgba(238, 238, 236, 0.2);
+                        background-color: $remark_color;
                     }
 
                     .app-well-app-running-dot {
@@ -252,6 +254,14 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     margin: 0px;
     padding: 0px;
     border: 0px;
+}
+
+.overview-icon {
+    background-color: rgba(255,255,255,0);
+}
+
+.overview-tile:hover .overview-icon, .show-apps:hover .overview-icon {
+    background-color: $remark_color;
 }
 
 @each $side in $dock_sides {
