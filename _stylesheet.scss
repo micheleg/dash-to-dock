@@ -258,8 +258,17 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
         $is_shrink: str-index(#{$style_mode}, shrink) !=null;
         $is_extended: str-index(#{$style_mode}, extended) !=null;
 
-        #dashtodockBoxContainer.#{$side} {
-            padding-#{$side}: $dock_side_margin;
+        @if is_horizontal($side) {
+            #dashtodockBoxContainer.#{$side} {
+                padding-#{$side}: $dock_side_margin;
+            }
+        }
+        #dashtodockBoxContainer.left {
+            padding-left: $dock_side_margin + $base_padding;
+        }
+
+        #dashtodockBoxContainer.right {
+            padding-left: $base_padding;
         }
 
         #dashtodockContainer.#{$side} {
