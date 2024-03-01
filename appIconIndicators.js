@@ -7,12 +7,6 @@ import {
     St,
 } from './dependencies/gi.js';
 
-if (!Clutter.cairo_set_source_color) {
-    Clutter.cairo_set_source_color = function (cr, sourceColor) {
-        cr.setSourceColor(sourceColor);
-    };
-}
-
 import {Main} from './dependencies/shell/ui.js';
 
 import {
@@ -413,7 +407,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         const n = this._number;
 
         cr.setLineWidth(this._borderWidth);
-        Clutter.cairo_set_source_color(cr, this._borderColor);
+        Utils.cairoSetSourceColor(cr, this._borderColor);
 
         // draw for the bottom case:
         cr.translate(
@@ -428,7 +422,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         }
 
         cr.strokePreserve();
-        Clutter.cairo_set_source_color(cr, this._bodyColor);
+        Utils.cairoSetSourceColor(cr, this._bodyColor);
         cr.fill();
     }
 
@@ -454,7 +448,7 @@ class RunningIndicatorCiliora extends RunningIndicatorDots {
             const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
-            Clutter.cairo_set_source_color(cr, this._borderColor);
+            Utils.cairoSetSourceColor(cr, this._borderColor);
 
             cr.translate(0, yOffset);
             cr.newSubPath();
@@ -465,7 +459,7 @@ class RunningIndicatorCiliora extends RunningIndicatorDots {
             }
 
             cr.strokePreserve();
-            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
     }
@@ -487,7 +481,7 @@ class RunningIndicatorSegmented extends RunningIndicatorDots {
             const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
-            Clutter.cairo_set_source_color(cr, this._borderColor);
+            Utils.cairoSetSourceColor(cr, this._borderColor);
 
             cr.translate(0, yOffset);
             for (let i = 0; i < this._number; i++) {
@@ -496,7 +490,7 @@ class RunningIndicatorSegmented extends RunningIndicatorDots {
             }
 
             cr.strokePreserve();
-            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
     }
@@ -516,14 +510,14 @@ class RunningIndicatorSolid extends RunningIndicatorDots {
             const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
-            Clutter.cairo_set_source_color(cr, this._borderColor);
+            Utils.cairoSetSourceColor(cr, this._borderColor);
 
             cr.translate(0, yOffset);
             cr.newSubPath();
             cr.rectangle(0, 0, this._width, size);
 
             cr.strokePreserve();
-            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
     }
@@ -540,7 +534,7 @@ class RunningIndicatorSquares extends RunningIndicatorDots {
             const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
-            Clutter.cairo_set_source_color(cr, this._borderColor);
+            Utils.cairoSetSourceColor(cr, this._borderColor);
 
             cr.translate(
                 Math.floor((this._width - this._number * size - (this._number - 1) * spacing) / 2),
@@ -551,7 +545,7 @@ class RunningIndicatorSquares extends RunningIndicatorDots {
                 cr.rectangle(i * size + i * spacing, 0, size, size);
             }
             cr.strokePreserve();
-            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
     }
@@ -569,7 +563,7 @@ class RunningIndicatorDashes extends RunningIndicatorDots {
             const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
-            Clutter.cairo_set_source_color(cr, this._borderColor);
+            Utils.cairoSetSourceColor(cr, this._borderColor);
 
             cr.translate(
                 Math.floor((this._width - this._number * dashLength - (this._number - 1) * spacing) / 2),
@@ -581,7 +575,7 @@ class RunningIndicatorDashes extends RunningIndicatorDots {
             }
 
             cr.strokePreserve();
-            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
     }
@@ -613,7 +607,7 @@ class RunningIndicatorMetro extends RunningIndicatorDots {
             const n = this._number;
             if (n <= 1) {
                 cr.translate(0, yOffset);
-                Clutter.cairo_set_source_color(cr, this._bodyColor);
+                Utils.cairoSetSourceColor(cr, this._bodyColor);
                 cr.newSubPath();
                 cr.rectangle(0, 0, this._width, size);
                 cr.fill();
@@ -627,15 +621,15 @@ class RunningIndicatorMetro extends RunningIndicatorDots {
 
                 cr.translate(0, yOffset);
 
-                Clutter.cairo_set_source_color(cr, this._bodyColor);
+                Utils.cairoSetSourceColor(cr, this._bodyColor);
                 cr.newSubPath();
                 cr.rectangle(0, 0, this._width - darkenedLength - blackenedLength, size);
                 cr.fill();
-                Clutter.cairo_set_source_color(cr, blackenedColor);
+                Utils.cairoSetSourceColor(cr, blackenedColor);
                 cr.newSubPath();
                 cr.rectangle(this._width - darkenedLength - blackenedLength, 0, 1, size);
                 cr.fill();
-                Clutter.cairo_set_source_color(cr, darkenedColor);
+                Utils.cairoSetSourceColor(cr, darkenedColor);
                 cr.newSubPath();
                 cr.rectangle(this._width - darkenedLength, 0, darkenedLength, size);
                 cr.fill();
@@ -656,7 +650,7 @@ class RunningIndicatorBinary extends RunningIndicatorDots {
             const binaryValue = String(`0000${(n >>> 0).toString(2)}`).slice(-4);
 
             cr.setLineWidth(this._borderWidth);
-            Clutter.cairo_set_source_color(cr, this._borderColor);
+            Utils.cairoSetSourceColor(cr, this._borderColor);
 
             cr.translate(Math.floor((this._width - 4 * size - (4 - 1) * spacing) / 2), yOffset);
             for (let i = 0; i < binaryValue.length; i++) {
@@ -673,7 +667,7 @@ class RunningIndicatorBinary extends RunningIndicatorDots {
                 }
             }
             cr.strokePreserve();
-            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
     }
