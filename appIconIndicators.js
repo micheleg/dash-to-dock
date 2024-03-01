@@ -859,24 +859,26 @@ class UnityIndicator extends IndicatorBase {
 
         cr.setLineWidth(lineWidth);
 
-        // Draw the outer stroke
-        let stroke = new Cairo.LinearGradient(0, y, 0, y + height);
-        let fill = null;
-        stroke.addColorStopRGBA(0.5, 0.5, 0.5, 0.5, 0.1);
-        stroke.addColorStopRGBA(0.9, 0.8, 0.8, 0.8, 0.4);
-        Utils.drawRoundedLine(cr, x + lineWidth / 2.0,
-            y + lineWidth / 2.0, width, height, true, true, stroke, fill);
-
         // Draw the background
         x += lineWidth;
         y += lineWidth;
         width -= 2.0 * lineWidth;
         height -= 2.0 * lineWidth;
 
-        stroke = Cairo.SolidPattern.createRGBA(0.20, 0.20, 0.20, 0.9);
-        fill = new Cairo.LinearGradient(0, y, 0, y + height);
-        fill.addColorStopRGBA(0.4, 0.25, 0.25, 0.25, 1.0);
-        fill.addColorStopRGBA(0.9, 0.35, 0.35, 0.35, 1.0);
+        let hasColor, bg, bd, fg;
+        const node = this._progressOverlayArea.get_theme_node();
+
+        [hasColor, bg] = node.lookup_color('-progress-bar-base-background', false);
+        if (!hasColor)
+            bg = new Clutter.Color({red: 64, green: 64, blue: 64, alpha: 192});
+
+        [hasColor, fg] = node.lookup_color('-progress-bar-base-border', false);
+        if (!hasColor)
+            fg = new Clutter.Color({red: 192, green: 192, blue: 192, alpha: 64});
+
+        let fill = Cairo.SolidPattern.createRGBA(bg.red / 255, bg.green / 255, bg.blue / 255, bg.alpha / 255);
+        let stroke = Cairo.SolidPattern.createRGBA(
+            fg.red / 255, fg.green / 255, fg.blue / 255, fg.alpha / 255);
         Utils.drawRoundedLine(cr, x + lineWidth / 2.0,
             y + lineWidth / 2.0, width, height, true, true, stroke, fill);
 
@@ -887,9 +889,6 @@ class UnityIndicator extends IndicatorBase {
         height -= 2.0 * lineWidth;
 
         const finishedWidth = Math.ceil(this._progress * width);
-
-        let hasColor, bg, bd;
-        const node = this._progressOverlayArea.get_theme_node();
 
         [hasColor, bg] = node.lookup_color('-progress-bar-background', false);
         if (!hasColor)

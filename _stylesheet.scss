@@ -355,6 +355,10 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
 
 #dashtodockContainer.dashtodock .progress-bar {
     /* Customization of the progress bar style, e.g.:
+      // base colors (the "background")
+      -progress-bar-base-background: rgba(0.25, 0.25, 0.25, 0,75);
+      -progress-bar-base-border: rgba(0.75, 0.75, 0.75, 0,25);
+      // progress bar colors
       -progress-bar-background: rgba(0.8, 0.8, 0.8, 1);
       -progress-bar-border: rgba(0.9, 0.9, 0.9, 1);
     */
