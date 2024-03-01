@@ -868,11 +868,11 @@ class UnityIndicator extends IndicatorBase {
         let hasColor, bg, bd, fg;
         const node = this._progressOverlayArea.get_theme_node();
 
-        [hasColor, bg] = node.lookup_color('-progress-bar-base-background', false);
+        [hasColor, bg] = node.lookup_color('-progress-bar-track-filling', false);
         if (!hasColor)
             bg = new Clutter.Color({red: 64, green: 64, blue: 64, alpha: 192});
 
-        [hasColor, fg] = node.lookup_color('-progress-bar-base-border', false);
+        [hasColor, fg] = node.lookup_color('-progress-bar-track-border', false);
         if (!hasColor)
             fg = new Clutter.Color({red: 192, green: 192, blue: 192, alpha: 64});
 
