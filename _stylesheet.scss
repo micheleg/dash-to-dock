@@ -250,12 +250,6 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     }
 }
 
-.overview-tile {
-    margin: 0px;
-    padding: 0px;
-    border: 0px;
-}
-
 .overview-tile .overview-icon, .show-apps .overview-icon {
     background-color: rgba(255,255,255,0);
 }
