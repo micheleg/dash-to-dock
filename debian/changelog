@@ -1,3 +1,10 @@
+gnome-shell-extension-ubuntu-dock (89ubuntu2) UNRELEASED; urgency=medium
+
+  [ Daniel van Vugt ]
+  * windowPreview: Use set_child instead of add_child (LP: #2056506)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 12 Mar 2024 19:04:50 +0100
+
 gnome-shell-extension-ubuntu-dock (89ubuntu1) noble; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
