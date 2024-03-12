@@ -359,7 +359,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
                 ? Clutter.ActorAlign.START : Clutter.ActorAlign.END,
             y_align: Clutter.ActorAlign.START,
         });
-        this.closeButton.add_child(new St.Icon({icon_name: 'window-close-symbolic'}));
+        this.closeButton.set_child(new St.Icon({icon_name: 'window-close-symbolic'}));
         this.closeButton.connect('clicked', () => this._closeWindow());
 
         const overlayGroup = new Clutter.Actor({
