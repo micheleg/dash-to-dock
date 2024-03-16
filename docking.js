@@ -2277,7 +2277,31 @@ export class DockManager {
                 const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
                 // GNOME 46 changes "spacing" to "_spacing".
                 const spacing = this.spacing ?? this._spacing;
-                return maybeAdjustBoxSize(state, box, spacing);
+                const dock = DockManager.getDefault().getDockByMonitor(Main.layoutManager.primaryIndex);
+                if (!dock)
+                    return box;
+                else
+                    return maybeAdjustBoxSize(state, box, spacing);
+                /* eslint-enable no-invalid-this */
+            },
+        ], [
+            WorkspacesView.SecondaryMonitorDisplay.prototype,
+            '_getWorkspacesBoxForState',
+            function (originalFunction, state, ...args) {
+                /* eslint-disable no-invalid-this */
+                if (state === OverviewControls.ControlsState.HIDDEN)
+                    return originalFunction.call(this, state, ...args);
+
+                const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
+                const dock = DockManager.getDefault().getDockByMonitor(this._monitorIndex);
+                if (!dock)
+                    return box;
+                if (state === OverviewControls.ControlsState.WINDOW_PICKER &&
+                    dock.position === St.Side.BOTTOM) {
+                    const [, preferredHeight] = dock.get_preferred_height(box.get_width());
+                    box.y2 -= preferredHeight;
+                }
+                return box;
                 /* eslint-enable no-invalid-this */
             },
         ], [
