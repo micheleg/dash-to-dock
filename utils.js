@@ -322,9 +322,16 @@ export class InjectionsHandler extends BasicHandler {
         if (!(original instanceof Function))
             throw new Error(`Virtual function ${name}() is not available for ${object}`);
 
-        object[name] = function (...args) {
-            return injectedFunction.call(this, original, ...args);
-        };
+        if (original.constructor.name === 'AsyncFunction') {
+            // eslint-disable-next-line require-await
+            object[name] = async function (...args) {
+                return injectedFunction.call(this, original, ...args);
+            };
+        } else {
+            object[name] = function (...args) {
+                return injectedFunction.call(this, original, ...args);
+            };
+        }
         return [object, name, original];
     }
 
