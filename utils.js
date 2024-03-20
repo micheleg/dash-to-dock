@@ -655,3 +655,34 @@ export function laterRemove(id) {
         Meta.later_remove(id);
 }
 
+/**
+ * Up to Gnome Shell 45, the Cairo Context object didn't export the
+ * `setSourceColor()` method, so Clutter included a function call for
+ * that, written in C. In Gnome Shell 46, the method was finally exported,
+ * so that function was removed.
+ *
+ * This function is, thus, required for Gnome Shell 45 compatibility.
+ *
+ * @param {*} cr A cairo context
+ * @param {*} sourceColor The new color for source
+ */
+export function cairoSetSourceColor(cr, sourceColor) {
+    if (Clutter.cairo_set_source_color)
+        Clutter.cairo_set_source_color(cr, sourceColor);
+    else
+        cr.setSourceColor(sourceColor);
+}
+
+/**
+ * Specifies if the system supports extended barriers. This function
+ * is required for Gnome Shell 45 compatibility, which used
+ * `global.display.supports_extended_barriers`. Gnome Shell 46 moved
+ * that into global.backend.capabilities.
+ *
+ * @returns True if the system supports extended barriers.
+ */
+export function supportsExtendedBarriers() {
+    if (global.display.supports_extended_barriers)
+        return global.display.supports_extended_barriers();
+    return !!(global.backend.capabilities & Meta.BackendCapabilities.BARRIERS);
+}

@@ -397,7 +397,7 @@ const DockedDash = GObject.registerClass({
         // Add dash container actor and the container to the Chrome.
         this.set_child(this._slider);
         this._slider.set_child(this._box);
-        this._box.add_actor(this.dash);
+        this._box.add_child(this.dash);
 
         // Add aligning container without tracking it for input region
         this._trackDock();
@@ -866,7 +866,7 @@ const DockedDash = GObject.registerClass({
         // If we don't have extended barrier features, then we need
         // to support the old tray dwelling mechanism.
         if (this._autohideIsEnabled &&
-            (!global.display.supports_extended_barriers() ||
+            (!Utils.supportsExtendedBarriers() ||
              !DockManager.settings.requirePressureToShow)) {
             const pointerWatcher = PointerWatcher.getPointerWatcher();
             this._dockWatch = pointerWatcher.addWatch(
@@ -954,7 +954,7 @@ const DockedDash = GObject.registerClass({
 
     _updatePressureBarrier() {
         const {settings} = DockManager;
-        this._canUsePressure = global.display.supports_extended_barriers();
+        this._canUsePressure = Utils.supportsExtendedBarriers();
         const {pressureThreshold} = settings;
 
         // Remove existing pressure barrier
@@ -1115,7 +1115,7 @@ const DockedDash = GObject.registerClass({
 
             if (this._pressureBarrier && this._dockState === State.HIDDEN) {
                 this._barrier = new Meta.Barrier({
-                    display: global.display,
+                    backend: global.backend,
                     x1,
                     x2,
                     y1,
@@ -2306,6 +2306,9 @@ export class DockManager {
             });
 
         const maybeAdjustBoxSize = (state, box, spacing) => {
+            // ensure that an undefined value will be converted into a valid one
+            spacing = spacing ?? 0;
+
             if (state === OverviewControls.ControlsState.WINDOW_PICKER) {
                 const searchBox = this.overviewControls._searchEntry.get_allocation_box();
                 const {shouldShow: wsThumbnails} = this.overviewControls._thumbnailsBox;
@@ -2315,8 +2318,7 @@ export class DockManager {
                     box.y2 -= spacing;
                 }
 
-                box.y2 -= searchBox.get_height() + spacing;
-                box.y2 -= spacing;
+                box.y2 -= searchBox.get_height() + 2 * spacing;
             }
 
             return box;
