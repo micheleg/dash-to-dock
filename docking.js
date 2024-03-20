@@ -2475,6 +2475,7 @@ export class DockManager {
 
         if (Main.layoutManager._startingUp && Main.sessionMode.hasOverview &&
             this._settings.disableOverviewOnStartup) {
+            this._prepareStartupAnimation();
             this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
                 Overview.Overview.prototype,
                 'runStartupAnimation', (_originalFunction, callback) => {
@@ -2482,7 +2483,6 @@ export class DockManager {
                     const x = monitor.x + monitor.width / 2.0;
                     const y = monitor.y + monitor.height / 2.0;
 
-                    this._prepareStartupAnimation();
                     Main.uiGroup.set_pivot_point(
                         x / global.screen_width,
                         y / global.screen_height);
