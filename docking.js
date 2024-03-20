@@ -43,6 +43,7 @@ const {signals: Signals} = imports;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 const ICON_ANIMATOR_DURATION = 3000;
+const STARTUP_ANIMATION_TIME = 500;
 
 export const State = Object.freeze({
     HIDDEN:  0,
@@ -2103,8 +2104,6 @@ export class DockManager {
     }
 
     _runStartupAnimation(callback) {
-        const {STARTUP_ANIMATION_TIME} = Layout;
-
         DockManager.allDocks.forEach(dock => {
             const {dash} = dock;
 
@@ -2513,7 +2512,6 @@ export class DockManager {
                     const monitor = Main.layoutManager.primaryMonitor;
                     const x = monitor.x + monitor.width / 2.0;
                     const y = monitor.y + monitor.height / 2.0;
-                    const {STARTUP_ANIMATION_TIME} = Layout;
 
                     this._prepareStartupAnimation(callback);
                     Main.uiGroup.set_pivot_point(
