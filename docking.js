@@ -2218,7 +2218,7 @@ export class DockManager {
             //  https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2763
             this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
                 Main.layoutManager.constructor.prototype,
-                '_prepareStartupAnimation', function (originalMethod, ...args) {
+                '_prepareStartupAnimation', async function (originalMethod, ...args) {
                     /* eslint-disable no-invalid-this */
                     const dockManager = DockManager.getDefault();
                     const temporaryInjections = new Utils.InjectionsHandler(
