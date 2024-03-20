@@ -2065,7 +2065,7 @@ export class DockManager {
         this.emit('docks-ready');
     }
 
-    _prepareStartupAnimation(callback) {
+    _prepareStartupAnimation() {
         DockManager.allDocks.forEach(dock => {
             const {dash} = dock;
 
@@ -2076,31 +2076,6 @@ export class DockManager {
                 translation_y: 0,
             });
         });
-
-        // We need to ensure that if docks are destroyed before animation is
-        // completed, then we still ensure the animation runs anyways.
-        const label = Labels.STARTUP_ANIMATION;
-        this._signalsHandler.removeWithLabel(label);
-
-        // This shouldn't really ever happen, but in theory the manager
-        // could be destroyed at any time, in such case complete the animation
-        this._signalsHandler.addWithLabel(label, this, 'destroy', () =>
-            Main.overview.runStartupAnimation(callback));
-
-        const waitForDocksReady = () => {
-            global.window_group.remove_clip();
-            this._signalsHandler.addWithLabel(label, this, 'docks-ready', () => {
-                this._signalsHandler.removeWithLabel(label);
-                Main.overview.runStartupAnimation(callback);
-            });
-        };
-
-        if (this._allDocks.length) {
-            this._signalsHandler.addWithLabel(label, this, 'docks-destroyed',
-                () => waitForDocksReady());
-        } else {
-            waitForDocksReady();
-        }
     }
 
     _runStartupAnimation(callback) {
@@ -2286,7 +2261,7 @@ export class DockManager {
                 try {
                     const injections = new Utils.InjectionsHandler();
                     const dockManager = DockManager.getDefault();
-                    dockManager._prepareStartupAnimation(callback);
+                    dockManager._prepareStartupAnimation();
                     injections.add(dockManager.mainDock.dash, 'ease', () => {});
                     let callbackArgs = [];
                     const ret = await originalMethod.call(this,
@@ -2294,7 +2269,7 @@ export class DockManager {
                     injections.destroy();
 
                     const onComplete = () => callback(...callbackArgs);
-                    dockManager._prepareStartupAnimation(onComplete);
+                    dockManager._prepareStartupAnimation();
                     dockManager._runStartupAnimation(onComplete);
                     return ret;
                 } catch (e) {
@@ -2508,7 +2483,7 @@ export class DockManager {
                     const x = monitor.x + monitor.width / 2.0;
                     const y = monitor.y + monitor.height / 2.0;
 
-                    this._prepareStartupAnimation(callback);
+                    this._prepareStartupAnimation();
                     Main.uiGroup.set_pivot_point(
                         x / global.screen_width,
                         y / global.screen_height);
