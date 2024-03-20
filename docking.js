@@ -2269,7 +2269,6 @@ export class DockManager {
                     injections.destroy();
 
                     const onComplete = () => callback(...callbackArgs);
-                    dockManager._prepareStartupAnimation();
                     dockManager._runStartupAnimation(onComplete);
                     return ret;
                 } catch (e) {
