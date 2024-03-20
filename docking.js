@@ -65,7 +65,6 @@ const Labels = Object.freeze({
     MAIN_DASH: Symbol('main-dash'),
     OLD_DASH_CHANGES: Symbol('old-dash-changes'),
     SETTINGS: Symbol('settings'),
-    STARTUP_ANIMATION: Symbol('startup-animation'),
     WORKSPACE_SWITCH_SCROLL: Symbol('workspace-switch-scroll'),
 });
 
@@ -2065,7 +2064,7 @@ export class DockManager {
         this.emit('docks-ready');
     }
 
-    _prepareStartupAnimation(callback) {
+    _prepareStartupAnimation() {
         DockManager.allDocks.forEach(dock => {
             const {dash} = dock;
 
@@ -2076,34 +2075,9 @@ export class DockManager {
                 translation_y: 0,
             });
         });
-
-        // We need to ensure that if docks are destroyed before animation is
-        // completed, then we still ensure the animation runs anyways.
-        const label = Labels.STARTUP_ANIMATION;
-        this._signalsHandler.removeWithLabel(label);
-
-        // This shouldn't really ever happen, but in theory the manager
-        // could be destroyed at any time, in such case complete the animation
-        this._signalsHandler.addWithLabel(label, this, 'destroy', () =>
-            Main.overview.runStartupAnimation(callback));
-
-        const waitForDocksReady = () => {
-            global.window_group.remove_clip();
-            this._signalsHandler.addWithLabel(label, this, 'docks-ready', () => {
-                this._signalsHandler.removeWithLabel(label);
-                Main.overview.runStartupAnimation(callback);
-            });
-        };
-
-        if (this._allDocks.length) {
-            this._signalsHandler.addWithLabel(label, this, 'docks-destroyed',
-                () => waitForDocksReady());
-        } else {
-            waitForDocksReady();
-        }
     }
 
-    _runStartupAnimation(callback) {
+    _runStartupAnimation() {
         DockManager.allDocks.forEach(dock => {
             const {dash} = dock;
 
@@ -2122,23 +2096,12 @@ export class DockManager {
                 break;
             }
 
-            const mainDockProperties = {};
-            if (dock === this.mainDock) {
-                mainDockProperties.onComplete = () => {
-                    this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
-                    if (callback)
-                        callback();
-                };
-            }
-
             dash.ease({
                 opacity: 255,
                 translation_x: 0,
                 translation_y: 0,
-                delay: STARTUP_ANIMATION_TIME,
                 duration: STARTUP_ANIMATION_TIME,
                 mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-                ...mainDockProperties,
             });
         });
     }
@@ -2198,111 +2161,9 @@ export class DockManager {
                 return [0, 0];
             });
 
-        const {ControlsManager} = OverviewControls;
         // FIXME: https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2890
         // const { ControlsManagerLayout } = OverviewControls;
         const ControlsManagerLayout = this.overviewControls.layout_manager.constructor;
-
-        this._methodInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
-        this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
-            Main.layoutManager.constructor.prototype, '_startupAnimationComplete',
-            originalMethod => {
-                originalMethod.call(Main.layoutManager);
-                this._methodInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
-                this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
-            });
-
-        if (Main.layoutManager._startingUp && Main.layoutManager._waitLoaded) {
-            // Disable this on versions that will include:
-            //  https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2763
-            this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
-                Main.layoutManager.constructor.prototype,
-                '_prepareStartupAnimation', function (originalMethod, ...args) {
-                    /* eslint-disable no-invalid-this */
-                    const dockManager = DockManager.getDefault();
-                    const temporaryInjections = new Utils.InjectionsHandler(
-                        dockManager);
-
-                    const waitLoadedHandlingMonitors = (_, bgManager) => {
-                        return new Promise((resolve, reject) => {
-                            const connections = new Utils.GlobalSignalsHandler(
-                                dockManager);
-                            connections.add(bgManager, 'loaded', () => {
-                                connections.destroy();
-                                resolve();
-                            });
-
-                            connections.add(Utils.getMonitorManager(), 'monitors-changed', () => {
-                                connections.destroy();
-
-                                reject(new GLib.Error(Gio.IOErrorEnum,
-                                    Gio.IOErrorEnum.CANCELLED, 'Loading was cancelled'));
-                            });
-                        });
-                    };
-
-                    async function updateBg(originalUpdateBg, ...bgArgs) {
-                        while (true) {
-                            try {
-                                // eslint-disable-next-line no-await-in-loop
-                                await originalUpdateBg.call(this, ...bgArgs);
-                                break;
-                            } catch (e) {
-                                if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
-                                    logError(e);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-
-                    temporaryInjections.add(this.constructor.prototype,
-                        '_waitLoaded', waitLoadedHandlingMonitors);
-                    temporaryInjections.add(this.constructor.prototype,
-                        '_updateBackgrounds', updateBg);
-
-                    dockManager._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
-                        Utils.getMonitorManager(), 'monitors-changed', () => {
-                            const {x, y, width, height} = this.primaryMonitor;
-                            global.window_group.set_clip(x, y, width, height);
-                            this._coverPane?.set({
-                                width: global.screen_width,
-                                height: global.screen_height,
-                            });
-                        });
-
-                    try {
-                        originalMethod.call(this, ...args);
-                    } finally {
-                        temporaryInjections.destroy();
-                    }
-                    /* eslint-enable no-invalid-this */
-                });
-        }
-
-        this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION, ControlsManager.prototype,
-            'runStartupAnimation', async function (originalMethod, callback) {
-                /* eslint-disable no-invalid-this */
-                try {
-                    const injections = new Utils.InjectionsHandler();
-                    const dockManager = DockManager.getDefault();
-                    dockManager._prepareStartupAnimation(callback);
-                    injections.add(dockManager.mainDock.dash, 'ease', () => {});
-                    let callbackArgs = [];
-                    const ret = await originalMethod.call(this,
-                        (...args) => (callbackArgs = [...args]));
-                    injections.destroy();
-
-                    const onComplete = () => callback(...callbackArgs);
-                    dockManager._prepareStartupAnimation(onComplete);
-                    dockManager._runStartupAnimation(onComplete);
-                    return ret;
-                } catch (e) {
-                    logError(e);
-                    return undefined;
-                }
-                /* eslint-enable no-invalid-this */
-            });
 
         const maybeAdjustBoxSize = (state, box, spacing) => {
             // ensure that an undefined value will be converted into a valid one
@@ -2504,36 +2365,20 @@ export class DockManager {
                 });
         }
 
-        if (Main.layoutManager._startingUp && Main.sessionMode.hasOverview &&
-            this._settings.disableOverviewOnStartup) {
-            this._methodInjections.addWithLabel(Labels.STARTUP_ANIMATION,
-                Overview.Overview.prototype,
-                'runStartupAnimation', (_originalFunction, callback) => {
-                    const monitor = Main.layoutManager.primaryMonitor;
-                    const x = monitor.x + monitor.width / 2.0;
-                    const y = monitor.y + monitor.height / 2.0;
+        if (Main.layoutManager._startingUp) {
+            this._prepareStartupAnimation();
 
-                    this._prepareStartupAnimation(callback);
-                    Main.uiGroup.set_pivot_point(
-                        x / global.screen_width,
-                        y / global.screen_height);
-                    Main.uiGroup.set({
-                        scale_x: 0.75,
-                        scale_y: 0.75,
-                        opacity: 0,
-                    });
+            const hadOverview = Main.sessionMode.hasOverview;
 
-                    Main.uiGroup.ease({
-                        scale_x: 1,
-                        scale_y: 1,
-                        opacity: 255,
-                        duration: STARTUP_ANIMATION_TIME,
-                        mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-                        onComplete: callback,
-                    });
+            // Convince LayoutManager to use the legacy startup animation:
+            if (this._settings.disableOverviewOnStartup)
+                Main.sessionMode.hasOverview = false;
 
-                    this._runStartupAnimation();
-                });
+            const id = Main.layoutManager.connect('startup-complete', () => {
+                Main.sessionMode.hasOverview = hadOverview;
+                Main.layoutManager.disconnect(id);
+                this._runStartupAnimation();
+            });
         }
     }
 
