@@ -353,12 +353,16 @@ class Transparency {
         if (!this._base_actor_style)
             this._base_actor_style = '';
 
-        let addedSignal = 'actor-added';
-        let removedSignal = 'actor-removed';
-        if (!GObject.signal_lookup('actor-added', global.window_group)) {
-            addedSignal = 'child-added';
-            removedSignal = 'child-removed';
+
+        let addedSignal = 'child-added';
+        let removedSignal = 'child-removed';
+
+        // for compatibility with Gnome Shell 45
+        if (GObject.signal_lookup('actor-added', global.window_group)) {
+            addedSignal = 'actor-added';
+            removedSignal = 'actor-removed';
         }
+
         this._signalsHandler.addWithLabel(Labels.TRANSPARENCY, [
             global.window_group,
             addedSignal,

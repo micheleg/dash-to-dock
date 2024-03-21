@@ -7,12 +7,6 @@ import {
     St,
 } from './dependencies/gi.js';
 
-if (!Clutter.cairo_set_source_color) {
-    Clutter.cairo_set_source_color = function (cr, sourceColor) {
-        cr.setSourceColor(sourceColor);
-    };
-}
-
 import {Main} from './dependencies/shell/ui.js';
 
 import {
@@ -413,7 +407,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         const n = this._number;
 
         cr.setLineWidth(this._borderWidth);
-        Clutter.cairo_set_source_color(cr, this._borderColor);
+        Utils.cairoSetSourceColor(cr, this._borderColor);
 
         // draw for the bottom case:
         cr.translate(
@@ -428,7 +422,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         }
 
         cr.strokePreserve();
-        Clutter.cairo_set_source_color(cr, this._bodyColor);
+        Utils.cairoSetSourceColor(cr, this._bodyColor);
         cr.fill();
     }
 
@@ -454,7 +448,7 @@ class RunningIndicatorCiliora extends RunningIndicatorDots {
             const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
-            Clutter.cairo_set_source_color(cr, this._borderColor);
+            Utils.cairoSetSourceColor(cr, this._borderColor);
 
             cr.translate(0, yOffset);
             cr.newSubPath();
@@ -465,7 +459,7 @@ class RunningIndicatorCiliora extends RunningIndicatorDots {
             }
 
             cr.strokePreserve();
-            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
     }
@@ -487,7 +481,7 @@ class RunningIndicatorSegmented extends RunningIndicatorDots {
             const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
-            Clutter.cairo_set_source_color(cr, this._borderColor);
+            Utils.cairoSetSourceColor(cr, this._borderColor);
 
             cr.translate(0, yOffset);
             for (let i = 0; i < this._number; i++) {
@@ -496,7 +490,7 @@ class RunningIndicatorSegmented extends RunningIndicatorDots {
             }
 
             cr.strokePreserve();
-            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
     }
@@ -516,14 +510,14 @@ class RunningIndicatorSolid extends RunningIndicatorDots {
             const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
-            Clutter.cairo_set_source_color(cr, this._borderColor);
+            Utils.cairoSetSourceColor(cr, this._borderColor);
 
             cr.translate(0, yOffset);
             cr.newSubPath();
             cr.rectangle(0, 0, this._width, size);
 
             cr.strokePreserve();
-            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
     }
@@ -540,7 +534,7 @@ class RunningIndicatorSquares extends RunningIndicatorDots {
             const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
-            Clutter.cairo_set_source_color(cr, this._borderColor);
+            Utils.cairoSetSourceColor(cr, this._borderColor);
 
             cr.translate(
                 Math.floor((this._width - this._number * size - (this._number - 1) * spacing) / 2),
@@ -551,7 +545,7 @@ class RunningIndicatorSquares extends RunningIndicatorDots {
                 cr.rectangle(i * size + i * spacing, 0, size, size);
             }
             cr.strokePreserve();
-            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
     }
@@ -569,7 +563,7 @@ class RunningIndicatorDashes extends RunningIndicatorDots {
             const yOffset = this._height - padding - size;
 
             cr.setLineWidth(this._borderWidth);
-            Clutter.cairo_set_source_color(cr, this._borderColor);
+            Utils.cairoSetSourceColor(cr, this._borderColor);
 
             cr.translate(
                 Math.floor((this._width - this._number * dashLength - (this._number - 1) * spacing) / 2),
@@ -581,7 +575,7 @@ class RunningIndicatorDashes extends RunningIndicatorDots {
             }
 
             cr.strokePreserve();
-            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
     }
@@ -613,7 +607,7 @@ class RunningIndicatorMetro extends RunningIndicatorDots {
             const n = this._number;
             if (n <= 1) {
                 cr.translate(0, yOffset);
-                Clutter.cairo_set_source_color(cr, this._bodyColor);
+                Utils.cairoSetSourceColor(cr, this._bodyColor);
                 cr.newSubPath();
                 cr.rectangle(0, 0, this._width, size);
                 cr.fill();
@@ -627,15 +621,15 @@ class RunningIndicatorMetro extends RunningIndicatorDots {
 
                 cr.translate(0, yOffset);
 
-                Clutter.cairo_set_source_color(cr, this._bodyColor);
+                Utils.cairoSetSourceColor(cr, this._bodyColor);
                 cr.newSubPath();
                 cr.rectangle(0, 0, this._width - darkenedLength - blackenedLength, size);
                 cr.fill();
-                Clutter.cairo_set_source_color(cr, blackenedColor);
+                Utils.cairoSetSourceColor(cr, blackenedColor);
                 cr.newSubPath();
                 cr.rectangle(this._width - darkenedLength - blackenedLength, 0, 1, size);
                 cr.fill();
-                Clutter.cairo_set_source_color(cr, darkenedColor);
+                Utils.cairoSetSourceColor(cr, darkenedColor);
                 cr.newSubPath();
                 cr.rectangle(this._width - darkenedLength, 0, darkenedLength, size);
                 cr.fill();
@@ -656,7 +650,7 @@ class RunningIndicatorBinary extends RunningIndicatorDots {
             const binaryValue = String(`0000${(n >>> 0).toString(2)}`).slice(-4);
 
             cr.setLineWidth(this._borderWidth);
-            Clutter.cairo_set_source_color(cr, this._borderColor);
+            Utils.cairoSetSourceColor(cr, this._borderColor);
 
             cr.translate(Math.floor((this._width - 4 * size - (4 - 1) * spacing) / 2), yOffset);
             for (let i = 0; i < binaryValue.length; i++) {
@@ -673,7 +667,7 @@ class RunningIndicatorBinary extends RunningIndicatorDots {
                 }
             }
             cr.strokePreserve();
-            Clutter.cairo_set_source_color(cr, this._bodyColor);
+            Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
     }
@@ -683,6 +677,34 @@ class RunningIndicatorBinary extends RunningIndicatorDots {
  * Unity like notification and progress indicators
  */
 class UnityIndicator extends IndicatorBase {
+    static defaultProgressBar = {
+        // default values for the progress bar itself
+        background: {
+            colorStart: {red: 204, green: 204, blue: 204, alpha: 255},
+            colorEnd: null,
+        },
+        border: {
+            colorStart: {red: 230, green: 230, blue: 230, alpha: 255},
+            colorEnd: null,
+        },
+    };
+
+    static defaultProgressBarTrack = {
+        // default values for the progress bar track
+        background: {
+            colorStart: {red: 64, green: 64, blue: 64, alpha: 255},
+            colorEnd: {red: 89, green: 89, blue: 89, alpha: 255},
+            offsetStart: 0.4,
+            offsetEnd: 0.9,
+        },
+        border: {
+            colorStart: {red: 128, green: 128, blue: 128, alpha: 26},
+            colorEnd: {red: 204, green: 204, blue: 204, alpha: 102},
+            offsetStart: 0.5,
+            offsetEnd: 0.9,
+        },
+    };
+
     constructor(source) {
         super(source);
 
@@ -846,6 +868,72 @@ class UnityIndicator extends IndicatorBase {
         this._progressOverlayArea?.queue_repaint();
     }
 
+    _readGradientData(node, elementName, defaultValues) {
+        const output = {
+            colorStart: defaultValues.colorStart,
+            colorEnd: defaultValues.colorEnd,
+            offsetStart: defaultValues.offsetStart ?? 0.0,
+            offsetEnd: defaultValues.offsetEnd ?? 1.0,
+        };
+
+        const [hasElementName, elementNameValue] = node.lookup_color(elementName, false);
+        if (hasElementName) {
+            output.colorStart = elementNameValue;
+            output.colorEnd = null;
+        } else {
+            const [hasColorStart, colorStartValue] = node.lookup_color(`${elementName}-color-start`, false);
+            const [hasColorEnd, colorEndValue] = node.lookup_color(`${elementName}-color-end`, false);
+            if (hasColorStart && hasColorEnd) {
+                output.colorStart = colorStartValue;
+                output.colorEnd = colorEndValue;
+            }
+        }
+
+        const [hasOffsetStart, offsetStartvalue] = node.lookup_color(`${elementName}-offset-start`, false);
+        if (hasOffsetStart)
+            output.offsetStart = offsetStartvalue;
+
+        const [hasOffsetEnd, offsetEndValue] = node.lookup_color(`${elementName}-offset-end`, false);
+        if (hasOffsetEnd)
+            output.offsetEnd = offsetEndValue;
+
+        return output;
+    }
+
+    _readElementData(node, elementName, defaultValues) {
+        const defaultLineWidth = defaultValues.lineWidth ?? 1.0;
+        const [hasValue, lineWidth] = node.lookup_double(`${elementName}-line-width`, false);
+
+        return {
+            background: this._readGradientData(node, `${elementName}-background`, defaultValues.background),
+            border: this._readGradientData(node, `${elementName}-border`, defaultValues.border),
+            lineWidth: hasValue ? lineWidth : defaultLineWidth,
+        };
+    }
+
+    _createGradient(values, x0, y0, x1, y1) {
+        if (values.colorEnd) {
+            const gradient = new Cairo.LinearGradient(x0, y0, x1, y1);
+            gradient.addColorStopRGBA(values.offsetStart,
+                values.colorStart.red / 255,
+                values.colorStart.green / 255,
+                values.colorStart.blue / 255,
+                values.colorStart.alpha / 255);
+            gradient.addColorStopRGBA(values.offsetEnd,
+                values.colorEnd.red / 255,
+                values.colorEnd.green / 255,
+                values.colorEnd.blue / 255,
+                values.colorEnd.alpha / 255);
+            return gradient;
+        } else {
+            const gradient = Cairo.SolidPattern.createRGBA(values.colorStart.red / 255,
+                values.colorStart.green / 255,
+                values.colorStart.blue / 255,
+                values.colorStart.alpha / 255);
+            return gradient;
+        }
+    }
+
     _drawProgressOverlay(area) {
         const {scaleFactor} = St.ThemeContext.get_for_stage(global.stage);
         const [surfaceWidth, surfaceHeight] = area.get_surface_size();
@@ -856,59 +944,49 @@ class UnityIndicator extends IndicatorBase {
         let x = Math.floor((surfaceWidth - iconSize) / 2);
         let y = Math.floor((surfaceHeight - iconSize) / 2);
 
-        const lineWidth = Math.floor(Number(scaleFactor));
+        const baseLineWidth = Math.floor(Number(scaleFactor));
         const padding = Math.floor(iconSize * 0.05);
         let width = iconSize - 2.0 * padding;
         let height = Math.floor(Math.min(18.0 * scaleFactor, 0.20 * iconSize));
         x += padding;
         y += iconSize - height - padding;
 
+        const node = this._progressOverlayArea.get_theme_node();
+
+        const progressBarTrack = this._readElementData(node,
+            '-progress-bar-track',
+            UnityIndicator.defaultProgressBarTrack);
+
+        const progressBar = this._readElementData(node,
+            '-progress-bar',
+            UnityIndicator.defaultProgressBar);
+
+        // Draw the track
+        let lineWidth = baseLineWidth * progressBarTrack.lineWidth;
         cr.setLineWidth(lineWidth);
 
-        // Draw the outer stroke
-        let stroke = new Cairo.LinearGradient(0, y, 0, y + height);
-        let fill = null;
-        stroke.addColorStopRGBA(0.5, 0.5, 0.5, 0.5, 0.1);
-        stroke.addColorStopRGBA(0.9, 0.8, 0.8, 0.8, 0.4);
-        Utils.drawRoundedLine(cr, x + lineWidth / 2.0,
-            y + lineWidth / 2.0, width, height, true, true, stroke, fill);
-
-        // Draw the background
         x += lineWidth;
         y += lineWidth;
         width -= 2.0 * lineWidth;
         height -= 2.0 * lineWidth;
 
-        stroke = Cairo.SolidPattern.createRGBA(0.20, 0.20, 0.20, 0.9);
-        fill = new Cairo.LinearGradient(0, y, 0, y + height);
-        fill.addColorStopRGBA(0.4, 0.25, 0.25, 0.25, 1.0);
-        fill.addColorStopRGBA(0.9, 0.35, 0.35, 0.35, 1.0);
+        let fill = this._createGradient(progressBarTrack.background, 0, y, 0, y + height);
+        let stroke = this._createGradient(progressBarTrack.border, 0, y, 0, y + height);
         Utils.drawRoundedLine(cr, x + lineWidth / 2.0,
             y + lineWidth / 2.0, width, height, true, true, stroke, fill);
 
         // Draw the finished bar
+        lineWidth = baseLineWidth * progressBar.lineWidth;
+        cr.setLineWidth(lineWidth);
+
         x += lineWidth;
         y += lineWidth;
         width -= 2.0 * lineWidth;
         height -= 2.0 * lineWidth;
 
         const finishedWidth = Math.ceil(this._progress * width);
-
-        let hasColor, bg, bd;
-        const node = this._progressOverlayArea.get_theme_node();
-
-        [hasColor, bg] = node.lookup_color('-progress-bar-background', false);
-        if (!hasColor)
-            bg = new Clutter.Color({red: 204, green: 204, blue: 204, alpha: 255});
-
-        [hasColor, bd] = node.lookup_color('-progress-bar-border', false);
-        if (!hasColor)
-            bd = new Clutter.Color({red: 230, green: 230, blue: 230, alpha: 255});
-
-        stroke = Cairo.SolidPattern.createRGBA(
-            bd.red / 255, bd.green / 255, bd.blue / 255, bd.alpha / 255);
-        fill = Cairo.SolidPattern.createRGBA(
-            bg.red / 255, bg.green / 255, bg.blue / 255, bg.alpha / 255);
+        fill = this._createGradient(progressBar.background, 0, y, 0, y + height);
+        stroke = this._createGradient(progressBar.border, 0, y, 0, y + height);
 
         if (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL) {
             Utils.drawRoundedLine(cr,

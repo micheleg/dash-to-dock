@@ -386,13 +386,9 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             reactive: true,
             x_expand: true,
         });
-        if (box.add) {
-            box.add(overlayGroup);
-            box.add(labelBin);
-        } else {
-            box.add_child(overlayGroup);
-            box.add_child(labelBin);
-        }
+
+        box.add_child(overlayGroup);
+        box.add_child(labelBin);
         this._box = box;
         this.add_child(box);
 
