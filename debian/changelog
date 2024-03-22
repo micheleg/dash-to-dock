@@ -1,3 +1,24 @@
+gnome-shell-extension-ubuntu-dock (89ubuntu3) UNRELEASED; urgency=medium
+
+  [ Sergio Costas Rodriguez ]
+  * Update for Gnome Shell 46
+  * Fix hover highlight in Gnome Shell 45
+  * Right detection of barriers
+  * Fix Overview mode
+  * Remove the gray background in each icon
+  * Show the currently focused application
+  * appIndicators: Update progress bar colors to be more modern
+  * appIndicators: Use track instead of background
+  * stylesheet: Allow to use CSS to fully set gradient colors
+
+  [ Daniel van Vugt ]
+  * windowPreview: Use set_child instead of add_child
+
+  [ Sundeep Mediratta ]
+  * Remove any dependency on dockmanager in desktopIconsIntegration.js
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 22 Mar 2024 10:03:32 +0100
+
 gnome-shell-extension-ubuntu-dock (89ubuntu2) noble; urgency=medium
 
   [ Daniel van Vugt ]
