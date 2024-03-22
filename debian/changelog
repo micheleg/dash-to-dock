@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (89ubuntu3) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (89ubuntu3) noble; urgency=medium
 
   [ Sergio Costas Rodriguez ]
   * Update for Gnome Shell 46
@@ -17,7 +17,7 @@ gnome-shell-extension-ubuntu-dock (89ubuntu3) UNRELEASED; urgency=medium
   [ Sundeep Mediratta ]
   * Remove any dependency on dockmanager in desktopIconsIntegration.js
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 22 Mar 2024 10:03:32 +0100
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 22 Mar 2024 10:08:15 +0100
 
 gnome-shell-extension-ubuntu-dock (89ubuntu2) noble; urgency=medium
 
