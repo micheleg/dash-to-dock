@@ -2355,7 +2355,10 @@ export class DockManager {
                 workAreaBox.set_origin(startX, startY);
                 workAreaBox.set_size(workArea.width, workArea.height);
 
-                maybeAdjustBoxToDock(undefined, workAreaBox, this.spacing);
+                // GNOME 46 changes "spacing" to "_spacing".
+                const spacing = this.spacing ?? this._spacing;
+
+                maybeAdjustBoxToDock(undefined, workAreaBox, spacing);
                 const oldStartY = workAreaBox.y1;
 
                 const propertyInjections = new Utils.PropertyInjectionsHandler();
@@ -2412,7 +2415,9 @@ export class DockManager {
                     return originalFunction.call(this, state, ...args);
 
                 const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
-                return maybeAdjustBoxSize(state, box, this.spacing);
+                // GNOME 46 changes "spacing" to "_spacing".
+                const spacing = this.spacing ?? this._spacing;
+                return maybeAdjustBoxSize(state, box, spacing);
                 /* eslint-enable no-invalid-this */
             },
         ], [
