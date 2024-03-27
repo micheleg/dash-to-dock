@@ -20,6 +20,7 @@ $dash_background_color: lighten($system_bg_color, 5%);
 $dash_placeholder_size: 32px;
 $dash_padding: $base_padding*2; // 12px
 $dash_border_radius: $modal_radius + $dash_padding;
+$dash_padding_gnome: $dash_padding;
 
 // Dash to dock specifics
 $dash_padding: $base_padding + 4px; // 10px
@@ -259,6 +260,10 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
 .dash-item-container .overview-tile.focused .overview-icon,
 .dash-item-container .show-apps:hover .overview-icon {
     background-color: $remark_color;
+}
+
+.dash-item-container .overview-tile .app-grid-running-dot {
+    margin-bottom: $dash_padding_gnome - 4px;
 }
 
 @each $side in $dock_sides {
