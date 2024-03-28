@@ -1140,10 +1140,8 @@ export const DockDash = GObject.registerClass({
  * @param actor
  */
 function ensureActorVisibleInScrollView(scrollView, actor) {
-    const {adjustment: vAdjustment} = scrollView.vscroll;
-    const {adjustment: hAdjustment} = scrollView.hscroll;
-    const {value: vValue0, pageSize: vPageSize, upper: vUpper} = vAdjustment;
-    const {value: hValue0, pageSize: hPageSize, upper: hUpper} = hAdjustment;
+    const {value: vValue0, pageSize: vPageSize, upper: vUpper} = scrollView.vadjustment;
+    const {value: hValue0, pageSize: hPageSize, upper: hUpper} = scrollView.hadjustment;
     let [hValue, vValue] = [hValue0, vValue0];
     let vOffset = 0;
     let hOffset = 0;
