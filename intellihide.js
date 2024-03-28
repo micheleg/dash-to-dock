@@ -283,7 +283,7 @@ export class Intellihide {
 
         case IntellihideMode.MAXIMIZED_WINDOWS:
             // Skip unmaximized windows
-            if (!metaWin.maximized_vertically && !metaWin.maximized_horizontally)
+            if (!metaWin.maximized_vertically && !metaWin.maximized_horizontally && !metaWin.fullscreen)
                 return false;
             break;
 
