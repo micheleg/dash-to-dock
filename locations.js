@@ -1095,7 +1095,7 @@ function makeLocationApp(params) {
                 return window.get_gtk_application_id() === null;
 
             return true;
-        } catch (e) {
+        } catch {
             return false;
         }
     });
