@@ -152,4 +152,4 @@ ifneq ($(strip $(ESLINT_TAP)),)
 endif
 
 check:
-	$(ESLINT) $(ESLINT_ARGS) .
+	ESLINT_USE_FLAT_CONFIG=false $(ESLINT) $(ESLINT_ARGS) .
