@@ -1,3 +1,23 @@
+gnome-shell-extension-ubuntu-dock (89ubuntu4) noble; urgency=medium
+
+  [ Julian Kandlhofer ]
+  * Fix deprecated "St.ScrollView.[hv]scroll" property
+
+  [ Sergio Costas ]
+  * Fix dot height in default mode (#2168)
+
+  [ taoky ]
+  * docking: adapt ControlsManagerLayout spacing for GNOME 46
+
+  [ Daniel van Vugt ]
+  * docking: Hard code the startup animation time
+  * docking: Use the upstream gnome-shell startup animation code (LP: #2058468)
+
+  [ Sabri Ünal ]
+  * i18n: Fix sl-po file extension
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Wed, 10 Apr 2024 16:28:01 +0800
+
 gnome-shell-extension-ubuntu-dock (89ubuntu3) noble; urgency=medium
 
   [ Sergio Costas Rodriguez ]
