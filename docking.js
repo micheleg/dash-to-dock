@@ -243,9 +243,9 @@ const DockedDash = GObject.registerClass({
         this._autohideIsEnabled = null;
         this._intellihideIsEnabled = null;
 
-        // This variable counts how many times Meta.disable_unredirect_for_display() is called
+        // This variable marks if Meta.disable_unredirect_for_display() is called
         // to help restore the original state when intelihide is disabled.
-        this._disableUnredirectCount = 0;
+        this._unredirectDisabled = false;
 
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.Intellihide(this.monitorIndex);
@@ -669,9 +669,10 @@ const DockedDash = GObject.registerClass({
     }
 
     _restoreUnredirect() {
-        for (let i = 0; i < this._disableUnredirectCount; i++)
+        if (this._unredirectDisabled) {
             Meta.enable_unredirect_for_display(global.display);
-        this._disableUnredirectCount = 0;
+            this._unredirectDisabled = false;
+        }
     }
 
     /**
@@ -827,9 +828,9 @@ const DockedDash = GObject.registerClass({
     }
 
     _animateIn(time, delay) {
-        if (this._intellihideIsEnabled) {
+        if (!this._unredirectDisabled && this._intellihideIsEnabled) {
             Meta.disable_unredirect_for_display(global.display);
-            this._disableUnredirectCount++;
+            this._unredirectDisabled = true;
         }
         this._dockState = State.SHOWING;
         this.dash.iconAnimator.start();
@@ -868,9 +869,9 @@ const DockedDash = GObject.registerClass({
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             onComplete: () => {
                 this._dockState = State.HIDDEN;
-                if (this._intellihideIsEnabled && this._disableUnredirectCount > 0) {
+                if (this._intellihideIsEnabled && this._unredirectDisabled) {
                     Meta.enable_unredirect_for_display(global.display);
-                    this._disableUnredirectCount--;
+                    this._unredirectDisabled = false;
                 }
                 // Remove queued barried removal if any
                 if (this._removeBarrierTimeoutId > 0)
