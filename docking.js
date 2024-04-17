@@ -243,6 +243,10 @@ const DockedDash = GObject.registerClass({
         this._autohideIsEnabled = null;
         this._intellihideIsEnabled = null;
 
+        // This variable marks if Meta.disable_unredirect_for_display() is called
+        // to help restore the original state when intelihide is disabled.
+        this._unredirectDisabled = false;
+
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.Intellihide(this.monitorIndex);
 
@@ -481,6 +485,8 @@ const DockedDash = GObject.registerClass({
         if (this._triggerTimeoutId)
             GLib.source_remove(this._triggerTimeoutId);
 
+        this._restoreUnredirect();
+
         // Remove barrier timeout
         if (this._removeBarrierTimeoutId > 0)
             GLib.source_remove(this._removeBarrierTimeoutId);
@@ -662,6 +668,13 @@ const DockedDash = GObject.registerClass({
         ]);
     }
 
+    _restoreUnredirect() {
+        if (this._unredirectDisabled) {
+            Meta.enable_unredirect_for_display(global.display);
+            this._unredirectDisabled = false;
+        }
+    }
+
     /**
      * This is call when visibility settings change
      */
@@ -680,10 +693,12 @@ const DockedDash = GObject.registerClass({
         else
             this.remove_style_class_name('autohide');
 
-        if (this._intellihideIsEnabled)
+        if (this._intellihideIsEnabled) {
             this._intellihide.enable();
-        else
+        } else {
             this._intellihide.disable();
+            this._restoreUnredirect();
+        }
 
         this._updateDashVisibility();
     }
@@ -813,6 +828,10 @@ const DockedDash = GObject.registerClass({
     }
 
     _animateIn(time, delay) {
+        if (!this._unredirectDisabled && this._intellihideIsEnabled) {
+            Meta.disable_unredirect_for_display(global.display);
+            this._unredirectDisabled = true;
+        }
         this._dockState = State.SHOWING;
         this.dash.iconAnimator.start();
         this._delayedHide = false;
@@ -850,6 +869,10 @@ const DockedDash = GObject.registerClass({
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             onComplete: () => {
                 this._dockState = State.HIDDEN;
+                if (this._intellihideIsEnabled && this._unredirectDisabled) {
+                    Meta.enable_unredirect_for_display(global.display);
+                    this._unredirectDisabled = false;
+                }
                 // Remove queued barried removal if any
                 if (this._removeBarrierTimeoutId > 0)
                     GLib.source_remove(this._removeBarrierTimeoutId);
@@ -2277,7 +2300,31 @@ export class DockManager {
                 const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
                 // GNOME 46 changes "spacing" to "_spacing".
                 const spacing = this.spacing ?? this._spacing;
-                return maybeAdjustBoxSize(state, box, spacing);
+                const dock = DockManager.getDefault().getDockByMonitor(Main.layoutManager.primaryIndex);
+                if (!dock)
+                    return box;
+                else
+                    return maybeAdjustBoxSize(state, box, spacing);
+                /* eslint-enable no-invalid-this */
+            },
+        ], [
+            WorkspacesView.SecondaryMonitorDisplay.prototype,
+            '_getWorkspacesBoxForState',
+            function (originalFunction, state, ...args) {
+                /* eslint-disable no-invalid-this */
+                if (state === OverviewControls.ControlsState.HIDDEN)
+                    return originalFunction.call(this, state, ...args);
+
+                const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
+                const dock = DockManager.getDefault().getDockByMonitor(this._monitorIndex);
+                if (!dock)
+                    return box;
+                if (state === OverviewControls.ControlsState.WINDOW_PICKER &&
+                    dock.position === St.Side.BOTTOM) {
+                    const [, preferredHeight] = dock.get_preferred_height(box.get_width());
+                    box.y2 -= preferredHeight;
+                }
+                return box;
                 /* eslint-enable no-invalid-this */
             },
         ], [

@@ -1364,6 +1364,14 @@ export const DockShowAppsIcon = GObject.registerClass({
         this._menuTimeoutId = 0;
     }
 
+    _createIcon(size) {
+        this._iconActor = super._createIcon(size);
+        this._iconActor.fallbackIconName = this._iconActor.iconName;
+        this._iconActor.fallbackGicon = this._iconActor.gicon;
+        this._iconActor.iconName = `view-app-grid-${Main.sessionMode.currentMode}-symbolic`;
+        return this._iconActor;
+    }
+
     vfunc_leave_event(...args) {
         return AppDisplay.AppIcon.prototype.vfunc_leave_event.call(
             this.toggleButton, ...args);
