@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (90ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (90ubuntu1) noble; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * New upstream release: dash-to-dock v90
@@ -13,7 +13,7 @@ gnome-shell-extension-ubuntu-dock (90ubuntu1) UNRELEASED; urgency=medium
   [ Jichi Zhang ]
   * intellihide: treat fullscreen windows as maximized
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 17 Apr 2024 20:58:04 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 17 Apr 2024 21:09:42 +0200
 
 gnome-shell-extension-ubuntu-dock (89ubuntu4) noble; urgency=medium
 
