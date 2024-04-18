@@ -274,7 +274,8 @@ export const LocationAppInfo = GObject.registerClass({
                 iconsQuery.join(','),
                 Gio.FileQueryInfoFlags.NONE,
                 GLib.PRIORITY_LOW, cancellable);
-            icons.standard = info.get_icon();
+            if (info.has_attribute(Gio.FILE_ATTRIBUTE_STANDARD_ICON))
+                icons.standard = info.get_icon();
         } catch (e) {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_FOUND) ||
                 e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
