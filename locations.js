@@ -93,7 +93,7 @@ var LocationAppInfo = GObject.registerClass({
             Gio.Icon.$gtype),
         'cancellable': GObject.ParamSpec.object(
             'cancellable', 'cancellable', 'cancellable',
-            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            GObject.ParamFlags.READWRITE,
             Gio.Cancellable.$gtype),
     },
 }, class LocationAppInfo extends Gio.DesktopAppInfo {
@@ -1328,6 +1328,8 @@ var Removables = class DashToDock_Removables {
             appInfo.volume === volume);
         if (volumeIndex !== -1) {
             const [volumeApp] = this._volumeApps.splice(volumeIndex, 1);
+            // We don't care about cancelling the ongoing operations from now on.
+            volumeApp.appInfo.cancellable = null;
             volumeApp.destroy();
             this.emit('changed');
         }
