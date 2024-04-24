@@ -686,3 +686,10 @@ export function supportsExtendedBarriers() {
         return global.display.supports_extended_barriers();
     return !!(global.backend.capabilities & Meta.BackendCapabilities.BARRIERS);
 }
+
+export function addActor(element, actor) {
+    if (element.add_actor)
+        element.add_actor(actor);
+    else
+        element.add_child(actor);
+}
