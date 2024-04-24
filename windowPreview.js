@@ -60,10 +60,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
         });
         this._destroyId = this._source.connect('destroy', this.destroy.bind(this));
 
-        if (Main.uiGroup.add_actor)
-            Main.uiGroup.add_actor(this.actor);
-        else
-            Main.uiGroup.add_child(this.actor);
+        Utils.addActor(Main.uiGroup, this.actor);
 
         this.connect('destroy', this._onDestroy.bind(this));
     }
@@ -112,10 +109,7 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
         this.isHorizontal = position === St.Side.BOTTOM || position === St.Side.TOP;
         this.box.set_vertical(!this.isHorizontal);
         this.box.set_name('dashtodockWindowList');
-        if (this.actor.add_actor)
-            this.actor.add_actor(this.box);
-        else
-            this.actor.add_child(this.box);
+        Utils.addActor(this.actor, this.box);
         this.actor._delegate = this;
 
         this._shownInitially = false;
@@ -365,10 +359,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
                 ? Clutter.ActorAlign.START : Clutter.ActorAlign.END,
             y_align: Clutter.ActorAlign.START,
         });
-        if (this.closeButton.add_actor)
-            this.closeButton.add_actor(new St.Icon({icon_name: 'window-close-symbolic'}));
-        else
-            this.closeButton.add_child(new St.Icon({icon_name: 'window-close-symbolic'}));
+        Utils.addActor(this.closeButton, new St.Icon({icon_name: 'window-close-symbolic'}));
         this.closeButton.connect('clicked', () => this._closeWindow());
 
         const overlayGroup = new Clutter.Actor({
