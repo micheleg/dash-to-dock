@@ -1662,10 +1662,42 @@ const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
 
 
 export class DockManager {
+    _restoreLock() {
+        Main.screenShield.__proto__.lock = this._oldLock;
+        Main.overview.disconnect(this._lockHiddenID);
+        this._lockHiddenID = 0;
+    }
+
+    _modifyLock() {
+        // This replaces the Lock() method in ScreenShield singleton
+        // to ensure that trying to lock the screen in Overview mode will return first
+        // to normal mode. This is needed to avoid https://github.com/micheleg/dash-to-dock/issues/2214
+        // until a definitive fix is sent.
+        let oldLock = Main.screenShield.__proto__.lock;
+        this._oldLock = oldLock;
+        this._lockHiddenID = Main.overview.connect("hidden", () => {
+            if (this._lockAfterHide) {
+                this._lockAfterHide = false;
+                if (!Main.overview.visible) {
+                    oldLock.bind(Main.screenShield)(this._lockAnimate);
+                }
+            }
+        });
+        Main.screenShield.__proto__.lock = function(animate) {
+            if (!Main.overview.visible) {
+                oldLock.bind(Main.screenShield)(animate);
+                return;
+            }
+            this._lockAfterHide = true;
+            this._lockAnimate = animate;
+            Main.overview.hide();
+        }.bind(this);
+    }
     constructor(extension) {
         if (DockManager._singleton)
             throw new Error('DashToDock has been already initialized');
         DockManager._singleton = this;
+        this._modifyLock();
         this._extension = extension;
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._methodInjections = new Utils.InjectionsHandler(this);
@@ -2531,6 +2563,7 @@ export class DockManager {
         }
         this._restoreDash();
         this._deleteDocks();
+        this._restoreLock();
         this._revertPanelCorners();
         if (this._oldSelectorMargin)
             this.searchController.margin_bottom = this._oldSelectorMargin;
