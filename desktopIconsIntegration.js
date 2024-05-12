@@ -153,7 +153,8 @@ export class DesktopIconsUsableAreaClass {
     _sendMarginsToExtension(extension) {
         // check that the extension is an extension that has the logic to accept
         // working margins
-        if (extension?.state !== ExtensionUtils.ExtensionState.ENABLED)
+        if ((extension?.state !== ExtensionUtils.ExtensionState.ENABLED) &&
+            (extension?.state !== ExtensionUtils.ExtensionState.ACTIVE))
             return;
 
         const usableArea = extension?.stateObj?.DesktopIconsUsableArea;
