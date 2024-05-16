@@ -64,7 +64,8 @@ const IDENTIFIER_UUID = '130cbc66-235c-4bd6-8571-98d2d8bba5e2';
 
 export class DesktopIconsUsableAreaClass {
     _checkIfExtensionIsEnabled(extension) {
-        return ((extension?.state === ExtensionUtils.ExtensionState.ENABLED) || (extension?.state === ExtensionUtils.ExtensionState.ACTIVE));
+        return (extension?.state === ExtensionUtils.ExtensionState.ENABLED) ||
+               (extension?.state === ExtensionUtils.ExtensionState.ACTIVE);
     }
 
     constructor() {
