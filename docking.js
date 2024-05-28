@@ -2230,7 +2230,7 @@ export class DockManager {
                 const oldPostAllocation = this._runPostAllocation;
                 this._runPostAllocation = () => {};
 
-                const monitor = Main.layoutManager.findMonitorForActor(this._container);
+                const monitor = Main.layoutManager.findMonitorForActor(container);
                 const workArea = Main.layoutManager.getWorkAreaForMonitor(monitor.index);
                 const startX = workArea.x - monitor.x;
                 const startY = workArea.y - monitor.y;
