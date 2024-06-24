@@ -50,7 +50,7 @@ export class NotificationsMonitor {
 
     destroy() {
         this.emit('destroy');
-        this._signalsHandler.destroy();
+        this._signalsHandler?.destroy();
         this._signalsHandler = null;
         this._appNotifications = null;
         this._settings = null;

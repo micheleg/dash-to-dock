@@ -2551,7 +2551,7 @@ export class DockManager {
         this._appSwitcherSettings = null;
         this._oldDash = null;
 
-        this._desktopIconsUsableArea.destroy();
+        this._desktopIconsUsableArea?.destroy();
         this._desktopIconsUsableArea = null;
         this._extension = null;
         DockManager._singleton = null;
