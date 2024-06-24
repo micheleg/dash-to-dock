@@ -65,6 +65,7 @@ const Labels = Object.freeze({
     MAIN_DASH: Symbol('main-dash'),
     OLD_DASH_CHANGES: Symbol('old-dash-changes'),
     SETTINGS: Symbol('settings'),
+    STARTUP_ANIMATION: Symbol('startup-animation'),
     WORKSPACE_SWITCH_SCROLL: Symbol('workspace-switch-scroll'),
 });
 
@@ -466,7 +467,6 @@ const DockedDash = GObject.registerClass({
         // for instance on unlocking the screen if it was locked with the overview open.
         if (Main.overview.visibleTarget)
             this._onOverviewShowing();
-
 
         this._updateAutoHideBarriers();
     }
@@ -2421,11 +2421,12 @@ export class DockManager {
             if (this._settings.disableOverviewOnStartup)
                 Main.sessionMode.hasOverview = false;
 
-            const id = Main.layoutManager.connect('startup-complete', () => {
-                Main.sessionMode.hasOverview = hadOverview;
-                Main.layoutManager.disconnect(id);
-                this._runStartupAnimation();
-            });
+            this._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
+                Main.layoutManager, 'startup-complete', () => {
+                    this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
+                    Main.sessionMode.hasOverview = hadOverview;
+                    this._runStartupAnimation();
+                });
         }
     }
 
@@ -2550,7 +2551,7 @@ export class DockManager {
         this._appSwitcherSettings = null;
         this._oldDash = null;
 
-        this._desktopIconsUsableArea.destroy();
+        this._desktopIconsUsableArea?.destroy();
         this._desktopIconsUsableArea = null;
         this._extension = null;
         DockManager._singleton = null;
