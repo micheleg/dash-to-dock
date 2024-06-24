@@ -107,7 +107,7 @@ export const LocationAppInfo = GObject.registerClass({
             Gio.Icon.$gtype),
         'cancellable': GObject.ParamSpec.object(
             'cancellable', 'cancellable', 'cancellable',
-            GObject.ParamFlags.READWRITE | GObject.ParamFlags.CONSTRUCT_ONLY,
+            GObject.ParamFlags.READWRITE,
             Gio.Cancellable.$gtype),
     },
 }, class LocationAppInfo extends Gio.DesktopAppInfo {
@@ -274,7 +274,8 @@ export const LocationAppInfo = GObject.registerClass({
                 iconsQuery.join(','),
                 Gio.FileQueryInfoFlags.NONE,
                 GLib.PRIORITY_LOW, cancellable);
-            icons.standard = info.get_icon();
+            if (info.has_attribute(Gio.FILE_ATTRIBUTE_STANDARD_ICON))
+                icons.standard = info.get_icon();
         } catch (e) {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_FOUND) ||
                 e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
@@ -655,6 +656,12 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.FAILED))
                 this._notifyActionError(action, e.message);
 
+            if (action === 'mount' && this._isEncryptedMountError(e)) {
+                delete this._currentAction;
+                operation.close();
+                return this.launchAction(action);
+            }
+
             if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
                 logError(e, 'Impossible to %s removable %s'.format(action,
                     removable.get_name()));
@@ -667,6 +674,39 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             this._update();
             operation.close();
         }
+    }
+
+    _isEncryptedMountError(error) {
+        // FIXME: we will always get G_IO_ERROR_FAILED from the gvfs udisks
+        // backend, see https://bugs.freedesktop.org/show_bug.cgi?id=51271
+
+        if (!error.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.FAILED))
+            return false;
+
+        // cryptsetup
+        if (error.message.includes('No key available with this passphrase'))
+            return true;
+
+        // udisks (no password)
+        if (error.message.includes('No key available to unlock device'))
+            return true;
+
+        // libblockdev wrong password opening LUKS device
+        if (error.message.includes('Failed to activate device: Incorrect passphrase'))
+            return true;
+
+        // cryptsetup returns EINVAL in many cases, including wrong TCRYPT password/parameters
+        if (error.message.includes('Failed to load device\'s parameters: Invalid argument') ||
+            error.message.includes(`Failed to load device's parameters: ${GLib.strerror(22 /* EINVAL */)}`))
+            return true;
+
+        // cryptsetup returns EPERM when the TCRYPT header can't be decrypted
+        // with the provided password/parameters.
+        if (error.message.includes('Failed to load device\'s parameters: Operation not permitted') ||
+            error.message.includes(`Failed to load device's parameters: ${GLib.strerror(1 /* EPERM */)}`))
+            return true;
+
+        return false;
     }
 });
 
@@ -1410,6 +1450,8 @@ export class Removables {
             appInfo.volume === volume);
         if (volumeIndex !== -1) {
             const [volumeApp] = this._volumeApps.splice(volumeIndex, 1);
+            // We don't care about cancelling the ongoing operations from now on.
+            volumeApp.appInfo.cancellable = null;
             volumeApp.destroy();
             this.emit('changed');
         }
