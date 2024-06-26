@@ -160,6 +160,7 @@ const launcherEntryDefaults = Object.freeze({
     count: 0,
     progress: 0,
     urgent: false,
+    updating: false,
     quicklist: null,
     'count-visible': false,
     'progress-visible': false,
