@@ -740,6 +740,10 @@ class UnityIndicator extends IndicatorBase {
             'urgent-changed',
             (sender, {urgent}) => this.setUrgent(urgent),
         ], [
+            remoteEntry,
+            'updating-changed',
+            (sender, {updating}) => this.setUpdating(updating),
+        ], [
             notificationsMonitor,
             'changed',
             () => this._updateNotificationsCount(),
@@ -759,6 +763,7 @@ class UnityIndicator extends IndicatorBase {
         this._notificationBadgeBin = null;
         this._hideProgressOverlay();
         this.setUrgent(false);
+        this.setUpdating(false);
         this._remoteEntry = null;
 
         super.destroy();
@@ -1017,6 +1022,16 @@ class UnityIndicator extends IndicatorBase {
             this._isUrgent = urgent;
         else
             delete this._isUrgent;
+    }
+
+    setUpdating(updating) {
+        if (updating || this._isUpdating !== undefined)
+            this._source.updating = updating;
+
+        if (updating)
+            this._isUpdating = updating;
+        else
+            delete this._isUpdating;
     }
 }
 
