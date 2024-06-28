@@ -1025,13 +1025,7 @@ class UnityIndicator extends IndicatorBase {
     }
 
     setUpdating(updating) {
-        if (updating || this._isUpdating !== undefined)
-            this._source.updating = updating;
-
-        if (updating)
-            this._isUpdating = updating;
-        else
-            delete this._isUpdating;
+        this._source.updating = updating;
     }
 }
 
