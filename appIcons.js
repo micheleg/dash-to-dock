@@ -106,6 +106,10 @@ const DockAbstractAppIcon = GObject.registerClass({
             'urgent', 'urgent', 'urgent',
             GObject.ParamFlags.READWRITE,
             false),
+        'updating': GObject.ParamSpec.boolean(
+            'updating', 'updating', 'updating',
+            GObject.ParamFlags.READWRITE,
+            false),
         'windows-count': GObject.ParamSpec.uint(
             'windows-count', 'windows-count', 'windows-count',
             GObject.ParamFlags.READWRITE,
@@ -187,6 +191,13 @@ const DockAbstractAppIcon = GObject.registerClass({
             }
         });
 
+        this.connect('notify::updating', () => {
+            const icon = this.icon._iconBin;
+            if (this.updating)
+                icon.set_opacity(128);
+            else
+                icon.set_opacity(255);
+        });
         this._urgentWindows = new Set();
         this._progressOverlayArea = null;
         this._progress = 0;
