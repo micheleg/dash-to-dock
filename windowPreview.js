@@ -645,8 +645,8 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     }
 
     activate() {
-        this._getTopMenu().close();
         Main.activateWindow(this._window);
+        this._getTopMenu().close();
     }
 
     _onDestroy() {
