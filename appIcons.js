@@ -191,13 +191,24 @@ const DockAbstractAppIcon = GObject.registerClass({
             }
         });
 
-        this.connect('notify::updating', () => {
-            const icon = this.icon._iconBin;
+        const updateUpdatingState = () => {
             if (this.updating)
-                icon.set_opacity(128);
+                this.add_style_class_name('updating');
             else
-                icon.set_opacity(255);
+                this.remove_style_class_name('updating');
+        };
+        this.connect('style-changed', () => {
+            const opacityLookup =
+                this.get_theme_node().lookup_double('opacity', true);
+            const [hasOpacity] = opacityLookup;
+            let [, opacity] = opacityLookup;
+            if (!hasOpacity)
+                opacity = this.updating ? 0.5 : 1;
+            this.icon.set_opacity(255 * opacity);
         });
+        this.connect('notify::updating', updateUpdatingState);
+        updateUpdatingState();
+
         this._urgentWindows = new Set();
         this._progressOverlayArea = null;
         this._progress = 0;
