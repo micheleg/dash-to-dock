@@ -752,6 +752,9 @@ const DockAbstractAppIcon = GObject.registerClass({
     // particular, if the application doens't allow to launch a new window, activate
     // the existing window instead.
     launchNewWindow() {
+        if (this.updating)
+            return;
+
         if (this.app.state === Shell.AppState.RUNNING &&
             this.app.can_open_new_window()) {
             this.animateLaunch();
