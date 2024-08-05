@@ -1101,8 +1101,9 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             this._appendSeparator();
 
             const appInfo = this._source.app.get_app_info();
-            const actions = appInfo.list_actions();
-            if (this._source.app.can_open_new_window() &&
+            const actions = this._source.updating ? [] : appInfo.list_actions();
+            if (!this._source.updating &&
+                this._source.app.can_open_new_window() &&
                 actions.indexOf('new-window') === -1) {
                 this._newWindowMenuItem = this._appendMenuItem(_('New Window'));
                 this._newWindowMenuItem.connect('activate', () => {
@@ -1115,7 +1116,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 this._appendSeparator();
             }
 
-            if (Docking.DockManager.getDefault().discreteGpuAvailable &&
+            if (!this._source.updating &&
+                Docking.DockManager.getDefault().discreteGpuAvailable &&
                 this._source.app.state === Shell.AppState.STOPPED) {
                 const appPrefersNonDefaultGPU = appInfo.get_boolean('PrefersNonDefaultGPU');
                 const gpuPref = appPrefersNonDefaultGPU
