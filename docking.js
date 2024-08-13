@@ -11,6 +11,7 @@ import {
 } from './dependencies/gi.js';
 
 import {
+    AppMenu,
     AppDisplay,
     Layout,
     Main,
@@ -1725,6 +1726,8 @@ export class DockManager {
         this._allDocks = [];
         this._createDocks();
 
+        this._overrideAppMenus();
+
         // status variable: true when the overview is shown through the dash
         // applications button.
         this._forcedOverview = false;
@@ -2521,6 +2524,21 @@ export class DockManager {
 
         // Because we "disconnected" from the search controller, we have to manage its state.
         this.searchController._setSearchActive(false);
+    }
+
+    _overrideAppMenus() {
+        this._methodInjections.add(AppMenu.AppMenu.prototype,
+            '_updateFavoriteItem', function (originalFunction, ...args) {
+                /* eslint-disable no-invalid-this */
+                originalFunction.call(this, ...args);
+                if (!this._toggleFavoriteItem.visible)
+                    return;
+
+                const {id} = this._app;
+                this._toggleFavoriteItem.label.text = this._appFavorites.isFavorite(id)
+                    ? _('Unpin') : _('Pin to Dock');
+                /* eslint-enable no-invalid-this */
+            });
     }
 
     destroy() {

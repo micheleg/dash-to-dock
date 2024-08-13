@@ -94,8 +94,8 @@ msgid "Remove from Favorites"
 msgstr "즐겨찾기에서 제거"
 
 #: appIcons.js:1138
-msgid "Pin to Dash"
-msgstr "Dash에 고정"
+msgid "Pin to Dock"
+msgstr "Dock에 고정"
 
 #: appIcons.js:1139
 msgid "Add to Favorites"
