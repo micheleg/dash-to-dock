@@ -1090,8 +1090,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         const appItemLabel = this.sourceActor.updating
             ? _('%s is being updated...').format(this.sourceActor.name)
             : this.sourceActor.name;
-        this._appendMenuItem(appItemLabel).sensitive = false;
-        this._appendSeparator();
+        this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(appItemLabel));
 
         const {app} = this.sourceActor;
 
