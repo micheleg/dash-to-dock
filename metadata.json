@@ -1,7 +1,8 @@
 {
 "shell-version": [
     "45",
-    "46"
+    "46",
+    "47"
 ],
 "uuid": "ubuntu-dock@ubuntu.com",
 "name": "Ubuntu Dock",
@@ -9,5 +10,5 @@
 "original-author": "micxgx@gmail.com",
 "url": "https://micheleg.github.io/dash-to-dock/",
 "gettext-domain": "dashtodock",
-"version": 90
+"version": 93
 }

@@ -211,6 +211,10 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
                     @include set-internal-children-property($side, padding, $spacing);
                     padding-#{$side}: $padding + $side_margin;
                     padding-#{opposite($side)}: $padding;
+
+                    &.updating {
+                        opacity: 0.5;
+                    };
                 }
 
                 .app-well-app {
