@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (93ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (93ubuntu1) oracular; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * New upstream release
@@ -32,7 +32,7 @@ gnome-shell-extension-ubuntu-dock (93ubuntu1) UNRELEASED; urgency=medium
   [ Andrew Skalski ]
   * Fix window selected from preview not getting focus
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 13 Aug 2024 13:19:37 -0400
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 13 Aug 2024 13:32:02 -0400
 
 gnome-shell-extension-ubuntu-dock (90ubuntu1) noble; urgency=medium
 
