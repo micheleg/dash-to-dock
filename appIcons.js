@@ -24,8 +24,6 @@ import {
     ParentalControlsManager,
 } from './dependencies/shell/misc.js';
 
-import {Config} from './dependencies/shell/misc.js';
-
 import {
     AppIconIndicators,
     DBusMenuUtils,
@@ -1177,20 +1175,14 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 this._appendSeparator();
 
                 const isFavorite = AppFavorites.getAppFavorites().isFavorite(app.get_id());
-                const [majorVersion] = Config.PACKAGE_VERSION.split('.');
-
                 if (isFavorite) {
-                    const label = majorVersion >= 42 ? _('Unpin')
-                        : _('Remove from Favorites');
-                    const item = this._appendMenuItem(label);
+                    const item = this._appendMenuItem(_('Unpin'));
                     item.connect('activate', () => {
                         const favs = AppFavorites.getAppFavorites();
                         favs.removeFavorite(app.get_id());
                     });
                 } else {
-                    const label = majorVersion >= 42 ? _('Pin to Dock')
-                        : _('Add to Favorites');
-                    const item = this._appendMenuItem(label);
+                    const item = this._appendMenuItem(_('Pin to Dock'));
                     item.connect('activate', () => {
                         const favs = AppFavorites.getAppFavorites();
                         favs.addFavorite(app.get_id());
