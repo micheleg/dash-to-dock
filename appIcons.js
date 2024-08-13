@@ -141,7 +141,7 @@ const DockAbstractAppIcon = GObject.registerClass({
             this._onWindowDemandsAttention(window));
 
         // In Wayland sessions, this signal is needed to track the state of windows dragged
-        // from one monitor to another. As this is triggered quite often (whenever a new winow
+        // from one monitor to another. As this is triggered quite often (whenever a new window
         // of any application opened or moved to a different desktop),
         // we restrict this signal to  the case when 'isolate-monitors' is true,
         // and if there are at least 2 monitors.
@@ -246,7 +246,7 @@ const DockAbstractAppIcon = GObject.registerClass({
 
         // This is necessary due to an upstream bug
         // https://bugzilla.gnome.org/show_bug.cgi?id=757556
-        // It can be safely removed once it get solved upstrea.
+        // It can be safely removed once it get solved upstream.
         if (this._menu)
             this._menu.close(false);
     }
@@ -491,10 +491,10 @@ const DockAbstractAppIcon = GObject.registerClass({
         // Only consider SHIFT and CONTROL as modifiers (exclude SUPER, CAPS-LOCK, etc.)
         modifiers &= Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CONTROL_MASK;
 
-        // We don't change the CTRL-click behaviour: in such case we just chain
+        // We don't change the CTRL-click behavior: in such case we just chain
         // up the parent method and return.
         if (modifiers & Clutter.ModifierType.CONTROL_MASK) {
-            // Keep default behaviour: launch new window
+            // Keep default behavior: launch new window
             // By calling the parent method I make it compatible
             // with other extensions tweaking ctrl + click
             super.activate(button);
@@ -544,7 +544,7 @@ const DockAbstractAppIcon = GObject.registerClass({
             const singleOrUrgentWindows = windows.length === 1 || hasUrgentWindows;
             switch (buttonAction) {
             case clickAction.MINIMIZE:
-                // In overview just activate the app, unless the acion is explicitely
+                // In overview just activate the app, unless the action is explicitly
                 // requested with a keyboard modifier
                 if (!Main.overview.visible || modifiers) {
                     // If we have button=2 or a modifier, allow minimization even if
@@ -636,7 +636,7 @@ const DockAbstractAppIcon = GObject.registerClass({
             case clickAction.PREVIEWS:
                 if (!Main.overview.visible) {
                     // If only one windows is present just switch to it,
-                    // but only when trigggered with the simple click action
+                    // but only when triggered with the simple click action
                     // (no modifiers, no middle click).
                     if (singleOrUrgentWindows && !modifiers && button === 1) {
                         const [w] = windows;
@@ -652,7 +652,7 @@ const DockAbstractAppIcon = GObject.registerClass({
             case clickAction.MINIMIZE_OR_PREVIEWS:
                 // When a single window is present, toggle minimization
                 // If only one windows is present toggle minimization, but only
-                // when trigggered with the imple click action (no modifiers,
+                // when triggered with the standard click action (no modifiers,
                 // no middle click).
                 if (!Main.overview.visible) {
                     if (singleOrUrgentWindows && !modifiers && button === 1) {
@@ -749,7 +749,7 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     // Try to do the right thing when attempting to launch a new window of an app. In
-    // particular, if the application doens't allow to launch a new window, activate
+    // particular, if the application doesn't allow to launch a new window, activate
     // the existing window instead.
     launchNewWindow() {
         if (this.updating)
@@ -762,7 +762,7 @@ const DockAbstractAppIcon = GObject.registerClass({
         } else {
             // Try to manually activate the first window. Otherwise, when the
             // app is activated by switching to a different workspace, a launch
-            // spinning icon is shown and disappers only after a timeout.
+            // spinning icon is shown and disappears only after a timeout.
             const windows = this.getWindows();
             if (windows.length > 0) {
                 Main.activateWindow(windows[0]);
@@ -1258,7 +1258,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 this._allWindowsMenuItem.width =  this._allWindowsMenuItem.menu.actor.width + 15;
             }
 
-            // The menu is created hidden and never hidded after being shown.
+            // The menu is created hidden and never hidden after being shown.
             // Instead, a signal connected to its items destroy will set is
             // insensitive if no more windows preview are shown.
             if (windows.length > 0) {
@@ -1298,7 +1298,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                     this.emit('activate-window', window);
                 });
 
-                // This is to achieve a more gracefull transition when the last windows is closed.
+                // This is to achieve a more graceful transition when the last
+                // window is closed.
                 item.connect('destroy', () => {
                     // It's still counting the item just going to be destroyed
                     if (this._allWindowsMenuItem.menu._getMenuItems().length === 1)
@@ -1487,7 +1488,7 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
  */
 export function itemShowLabel() {
     /* eslint-disable no-invalid-this */
-    // Check if the label is still present at all. When switching workpaces, the
+    // Check if the label is still present at all. When switching workspace, the
     // item might have been destroyed in between.
     if (!this._labelText || !this.label.get_stage())
         return;

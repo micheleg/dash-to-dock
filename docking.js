@@ -74,9 +74,9 @@ const Labels = Object.freeze({
  * slide out of its child via the slide-x property ([0:1]).
  *
  * Required since I want to track the input region of this container which is
- * based on its allocation even if the child overlows the parent actor. By doing
- * this the region of the dash that is slideout is not steling anymore the input
- * regions making the extesion usable when the primary monitor is the right one.
+ * based on its allocation even if the child overflows the parent actor. By doing
+ * this the region of the dash that is slide-out is not stealing anymore the input
+ * regions making the extension usable when the primary monitor is the right one.
  *
  * The slide-x parameter can be used to directly animate the sliding. The parent
  * must have a WEST (SOUTH) anchor_point to achieve the sliding to the RIGHT (BOTTOM)
@@ -225,7 +225,7 @@ const DockedDash = GObject.registerClass({
         });
 
         if (this.monitorIndex === undefined) {
-            // Hello turkish locale, gjs has instead defined this.monitorİndex
+            // Hello turkish locale, gjs has instead defined this.monitorIndex
             // See: https://gitlab.gnome.org/GNOME/gjs/-/merge_requests/742
             this.monitorIndex = this.monitor_index;
         }
@@ -238,7 +238,7 @@ const DockedDash = GObject.registerClass({
 
         // Temporary ignore hover events linked to autohide for whatever reason
         this._ignoreHover = false;
-        this._oldignoreHover = null;
+        this._oldIgnoreHover = null;
         // This variables are linked to the settings regardles of autohide or intellihide
         // being temporary disable. Get set by _updateVisibilityMode;
         this._autohideIsEnabled = null;
@@ -458,7 +458,7 @@ const DockedDash = GObject.registerClass({
     _initialize() {
         this._signalsHandler.removeWithLabel(Labels.INITIALIZE);
 
-        // Apply custome css class according to the settings
+        // Apply custom css class according to the settings
         this._themeManager.updateCustomTheme();
 
         this._updateVisibilityMode();
@@ -873,7 +873,7 @@ const DockedDash = GObject.registerClass({
                     Meta.enable_unredirect_for_display(global.display);
                     this._unredirectDisabled = false;
                 }
-                // Remove queued barried removal if any
+                // Remove queued barrier removal timeout if any
                 if (this._removeBarrierTimeoutId > 0)
                     GLib.source_remove(this._removeBarrierTimeoutId);
                 this._updateBarrier();
@@ -1245,15 +1245,15 @@ const DockedDash = GObject.registerClass({
     }
 
     _onDragStart() {
-        this._oldignoreHover = this._ignoreHover;
+        this._oldIgnoreHover = this._ignoreHover;
         this._ignoreHover = true;
         this._animateIn(DockManager.settings.animationTime, 0);
     }
 
     _onDragEnd() {
-        if (this._oldignoreHover)
-            this._ignoreHover = this._oldignoreHover;
-        this._oldignoreHover = null;
+        if (this._oldIgnoreHover)
+            this._ignoreHover = this._oldIgnoreHover;
+        this._oldIgnoreHover = null;
         this._box.sync_hover();
     }
 
@@ -1343,8 +1343,8 @@ const DockedDash = GObject.registerClass({
 
             if (direction) {
                 // Prevent scroll events from triggering too many workspace switches
-                // by adding a 250ms deadtime between each scroll event.
-                // Usefull on laptops when using a touchpad.
+                // by adding a 250ms dead time between each scroll event.
+                // Useful on laptops when using a touch pad.
 
                 // During the deadtime do nothing
                 if (this._optionalScrollWorkspaceSwitchDeadTimeId) {
@@ -1378,7 +1378,7 @@ const DockedDash = GObject.registerClass({
                     Main.wm._workspaceSwitcherPopup = null;
                 });
 
-                // If Workspace Grid is installed, let them handle the scroll behaviour.
+                // If Workspace Grid is installed, let them handle the scroll behavior.
                 if (global.workspace_manager.workspace_grid !== undefined)
                     ws = global.workspace_manager.workspace_grid.actionMoveWorkspace(direction);
                 else
@@ -1414,7 +1414,7 @@ const DockedDash = GObject.registerClass({
 });
 
 /*
- * Handle keybaord shortcuts
+ * Handle keyboard shortcuts
  */
 const NUM_HOTKEYS = 10;
 
@@ -1573,7 +1573,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
 
 /**
  * Isolate overview to open new windows for inactive apps
- * Note: the future implementaion is not fully contained here.
+ * Note: the future implementation is not fully contained here.
  * Some bits are around in other methods of other classes.
  * This class just take care of enabling/disabling the option.
  */
@@ -2149,10 +2149,10 @@ export class DockManager {
         this._oldDash.hide();
 
         // Also set dash width to 1, so it's almost not taken into account by code
-        // calculaing the reserved space in the overview. The reason to keep it at 1 is
-        // to allow its visibility change to trigger an allocaion of the appGrid which
-        // in turn is triggergin the appsIcon spring animation, required when no other
-        // actors has this effect, i.e in horizontal mode and without the workspaceThumnails
+        // calculating the reserved space in the overview. The reason to keep it at 1 is
+        // to allow its visibility change to trigger an allocation of the appGrid which
+        // in turn is triggering the appsIcon spring animation, required when no other
+        // actors has this effect, i.e in horizontal mode and without the workspaceThumbnails
         // 1 static workspace only)
         this._oldDash.set_height(1);
 
@@ -2166,7 +2166,7 @@ export class DockManager {
             () => this._oldDash.set_height(1),
         ]);
 
-        // Pretend I'm the dash: meant to make appgrid swarm animation come from
+        // Pretend I'm the dash: meant to make app grid swarm animation come from
         // the right position of the appShowButton.
         this.overviewControls.dash = this.mainDock.dash;
         this.searchController._showAppsButton = this.mainDock.dash.showAppsButton;
