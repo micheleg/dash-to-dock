@@ -141,8 +141,8 @@ const DockAbstractAppIcon = GObject.registerClass({
             this._onWindowDemandsAttention(window));
 
         // In Wayland sessions, this signal is needed to track the state of windows dragged
-        // from one monitor to another. As this is triggered quite often (whenever a new window
-        // of any application opened or moved to a different desktop),
+        // from one monitor to another. As this is triggered quite often (whenever a new
+        // window of any application opened or moved to a different desktop),
         // we restrict this signal to  the case when Labels.ISOLATE_MONITORS is true,
         // and if there are at least 2 monitors.
         if (Docking.DockManager.settings.isolateMonitors &&
