@@ -1,3 +1,39 @@
+gnome-shell-extension-ubuntu-dock (93ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+  * docking: Use the signal handler to disconnect on startup-completed signal
+  * locations: Do not cancel operations after a volume has been umounted/removed
+    (LP: #1993054)
+  * locations: Do not warn if a file info has not the icon attribute
+  * locations: Ask again for password on encryption failures
+  * appIcons: Make possible to override updating icons style from css
+  * appIcons: Do not allow launching a new window if the app is updating
+  * appIcons: Hide launch menu items and generic actions if the app is updating
+  * docking: Use the signal handler to disconnect on startup-completed signal
+  * appIcons: Show an OSD error if trying to launch an updating app
+  * appIcons: Always add a disabled menu item with the app title
+  * appIcons: Inform in menu items that the app is being being updated
+  * debian/control: Add support for GNOME Shell 47
+
+  [ Byoungchan Lee ]
+  * i18n: Add Korean translation
+
+  [ Sergio Costas Rodriguez ]
+  * Fix window preview in Gnome 45
+  * Move .actor test to its own function
+  * Fix communication with DING
+  * Allow to disable an icon in the dock during updates
+
+  [ Daniel van Vugt ]
+  * docking: Fix allocation failure in GNOME 47 that completely broke the shell
+  * metadata.json: Enable support for gnome-shell 47
+
+  [ Andrew Skalski ]
+  * Fix window selected from preview not getting focus
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 13 Aug 2024 13:19:37 -0400
+
 gnome-shell-extension-ubuntu-dock (90ubuntu1) noble; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
