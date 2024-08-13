@@ -217,7 +217,8 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
                     };
                 }
 
-                .app-well-app {
+                .app-well-app,
+                .overview-tile {
                     &.running .overview-icon {
                         background-image: none;
                     }
@@ -225,7 +226,8 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
                         background-color: $remark_color;
                     }
 
-                    .app-well-app-running-dot {
+                    .app-well-app-running-dot,
+                    .app-grid-running-dot {
                         margin-bottom: 2px;
                     }
                 }
