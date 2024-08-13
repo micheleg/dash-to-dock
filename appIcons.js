@@ -1189,7 +1189,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                         favs.removeFavorite(app.get_id());
                     });
                 } else {
-                    const label = majorVersion >= 42 ? _('Pin to Dash')
+                    const label = majorVersion >= 42 ? _('Pin to Dock')
                         : _('Add to Favorites');
                     const item = this._appendMenuItem(label);
                     item.connect('activate', () => {

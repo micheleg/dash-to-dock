@@ -36,6 +36,7 @@ EXTRA_MEDIA = logo.svg \
               $(NULL)
 
 TOLOCALIZE =  prefs.js \
+			  docking.js \
               appIcons.js \
               locations.js \
               $(NULL)
