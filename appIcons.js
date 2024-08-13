@@ -1067,8 +1067,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem());
     }
 
-    _appendMenuItem(labelText) {
-        const item = new PopupMenu.PopupMenuItem(labelText);
+    _appendMenuItem(labelText, params) {
+        const item = new PopupMenu.PopupMenuItem(labelText, params);
         this.addMenuItem(item);
         return item;
     }
@@ -1087,6 +1087,9 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
 
     _rebuildMenu() {
         this.removeAll();
+
+        this._appendMenuItem(this.sourceActor.name).sensitive = false;
+        this._appendSeparator();
 
         const {app} = this.sourceActor;
 
