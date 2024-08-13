@@ -719,9 +719,8 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     shouldShowTooltip() {
-        return this.hover && (!this._menu || !this._menu.isOpen) &&
-                            (!this._previewMenu || !this._previewMenu.isOpen) &&
-                            !Docking.DockManager.settings.hideTooltip;
+        return super.shouldShowTooltip() && !this._previewMenu?.isOpen &&
+            !Docking.DockManager.settings.hideTooltip;
     }
 
     _windowPreviews() {
