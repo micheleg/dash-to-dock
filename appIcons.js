@@ -1088,7 +1088,10 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
     _rebuildMenu() {
         this.removeAll();
 
-        this._appendMenuItem(this.sourceActor.name).sensitive = false;
+        const appItemLabel = this.sourceActor.updating
+            ? _('%s is being updated...').format(this.sourceActor.name)
+            : this.sourceActor.name;
+        this._appendMenuItem(appItemLabel).sensitive = false;
         this._appendSeparator();
 
         const {app} = this.sourceActor;
