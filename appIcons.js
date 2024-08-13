@@ -758,8 +758,13 @@ const DockAbstractAppIcon = GObject.registerClass({
     // particular, if the application doesn't allow to launch a new window, activate
     // the existing window instead.
     launchNewWindow() {
-        if (this.updating)
+        if (this.updating) {
+            const icon = Gio.Icon.new_for_string('action-unavailable-symbolic');
+            Main.osdWindowManager.show(-1, icon,
+                _('%s is currently updating, cannot launch it!').format(this.name),
+                null);
             return;
+        }
 
         if (this.app.state === Shell.AppState.RUNNING &&
             this.app.can_open_new_window()) {
