@@ -1,3 +1,29 @@
+gnome-shell-extension-ubuntu-dock (72~ubuntu5.22.04.3) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * windowPreviews: Take global scaling in account to set the clone sizes
+    (LP: #1992843)
+  * windowPreviews, appIcons: set maximum width/height on menus taking scaling
+    into account (LP: #1992980)
+  * appIcons: Ensure icons are animated when new instances are launched
+    (LP: #1992845)
+  * appIcons: Monitor windows workspace changes when isolating workspaces
+    (LP: #1971012)
+  * locations: Make FileManagerApp emit windows-changed on workspace switches
+    (LP: #1971012)
+  * locations: Use async API to get the handler APP for uri (LP: #1997264)
+  * locations: Use an external helper to get the location handler (LP: #1997264)
+  * dash: Temporary remove separator when re-displaying icons (LP: #2017523)
+  * dash: Compute number of icons easily and correctly to show the separator
+    (LP: #2017523)
+  * locations: Do not cancel operations after a volume has been
+    umounted / removed (LP: #1993054)
+
+  [ taoky ]
+  * intellihide: add dropdown menu to handled window types (LP: #1983456)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 23 Aug 2024 14:18:47 -0400
+
 gnome-shell-extension-ubuntu-dock (72~ubuntu5.22.04.2.1) jammy; urgency=medium
 
   * Keep shell overview always visible and usable (LP: #1979096):
