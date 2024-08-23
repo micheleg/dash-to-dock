@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (72~ubuntu5.22.04.3) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (72~ubuntu5.22.04.3) jammy; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * windowPreviews: Take global scaling in account to set the clone sizes
@@ -22,7 +22,7 @@ gnome-shell-extension-ubuntu-dock (72~ubuntu5.22.04.3) UNRELEASED; urgency=mediu
   [ taoky ]
   * intellihide: add dropdown menu to handled window types (LP: #1983456)
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 23 Aug 2024 14:18:47 -0400
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 23 Aug 2024 15:01:45 -0400
 
 gnome-shell-extension-ubuntu-dock (72~ubuntu5.22.04.2.1) jammy; urgency=medium
 
