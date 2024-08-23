@@ -1,10 +1,10 @@
-gnome-shell-extension-ubuntu-dock (90ubuntu2) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (90ubuntu2) noble; urgency=medium
 
   * debian: Update references to the noble branch
   * locations: Do not cancel operations after a volume has been
     umounted / removed (LP: #1993054)
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 23 Aug 2024 14:02:54 -0400
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 23 Aug 2024 14:08:50 -0400
 
 gnome-shell-extension-ubuntu-dock (90ubuntu1) noble; urgency=medium
 
