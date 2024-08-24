@@ -12,6 +12,7 @@ EXTRA_MODULES = \
                 dash.js \
                 docking.js \
                 appIcons.js \
+				appIconsDecorator.js \
                 appIconIndicators.js \
                 fileManager1API.js \
                 imports.js \
@@ -38,6 +39,7 @@ EXTRA_MEDIA = logo.svg \
 TOLOCALIZE =  prefs.js \
 			  docking.js \
               appIcons.js \
+              appIconsDecorator.js \
               locations.js \
               $(NULL)
 

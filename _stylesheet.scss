@@ -364,7 +364,9 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     background: $dash_background_color;
 }
 
-#dashtodockContainer.dashtodock .progress-bar {
+#dashtodockContainer.dashtodock .progress-bar,
+.overview-tile .progress-bar,
+.icon-grid .progress-bar {
     /* Customization of the progress bar style. The possible elements
      * are:
      *
@@ -442,13 +444,17 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     transition-duration: 500ms;
 }
 
-#dashtodockContainer .number-overlay {
+#dashtodockContainer .number-overlay,
+.overview-tile .number-overlay,
+.icon-grid .number-overlay {
     color: rgba(255, 255, 255, 1);
     background-color: rgba(0, 0, 0, 0.8);
     text-align: center;
 }
 
-#dashtodockContainer .notification-badge {
+#dashtodockContainer .notification-badge,
+.overview-tile .notification-badge,
+.icon-grid .notification-badge {
     color: rgba(255, 255, 255, 1);
     background-color: rgba(255, 0, 0, 1);
     padding: 0.2em 0.5em;
