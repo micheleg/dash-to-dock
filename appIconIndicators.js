@@ -953,20 +953,30 @@ export class UnityIndicator extends IndicatorBase {
         const {scaleFactor} = St.ThemeContext.get_for_stage(global.stage);
         const [surfaceWidth, surfaceHeight] = area.get_surface_size();
         const cr = area.get_context();
-
+        const node = this._progressOverlayArea.get_theme_node();
         const iconSize = this._source.icon.iconSize * scaleFactor;
 
         let x = Math.floor((surfaceWidth - iconSize) / 2);
         let y = Math.floor((surfaceHeight - iconSize) / 2);
+
+        const [hasTopOffset, topOffset] = node.lookup_double(
+            '-progress-bar-top-offset', false);
+        if (hasTopOffset)
+            y = topOffset;
 
         const baseLineWidth = Math.floor(Number(scaleFactor));
         const padding = Math.floor(iconSize * 0.05);
         let width = iconSize - 2.0 * padding;
         let height = Math.floor(Math.min(18.0 * scaleFactor, 0.20 * iconSize));
         x += padding;
-        y += iconSize - height - padding;
 
-        const node = this._progressOverlayArea.get_theme_node();
+        const valignParameters = node.lookup_double(
+            '-progress-bar-valign', false);
+        const [hasValign] = valignParameters;
+        let [, valign] = valignParameters;
+        if (!hasValign)
+            valign = 1.0;
+        y += (iconSize - height - padding) * valign;
 
         const progressBarTrack = this._readElementData(node,
             '-progress-bar-track',
