@@ -760,6 +760,12 @@ class UnityIndicator extends IndicatorBase {
             'style-changed',
             () => this._updateIconStyle(),
         ]);
+
+        this._updateNotificationsCount();
+        this.setProgress(this._remoteEntry.progress_visible
+            ? this._remoteEntry.progress : -1);
+        this.setUrgent(this._remoteEntry.urgent);
+        this.setUpdating(this._remoteEntry.updating);
     }
 
     destroy() {
