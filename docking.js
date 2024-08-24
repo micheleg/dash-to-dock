@@ -28,6 +28,7 @@ import {
 } from './dependencies/shell/misc.js';
 
 import {
+    AppIconsDecorator,
     AppSpread,
     DockDash,
     DesktopIconsIntegration,
@@ -1687,17 +1688,19 @@ export class DockManager {
 
         const needsRemoteModel = () =>
             !this._notificationsMonitor.dndMode && this._settings.showIconsEmblems;
-        if (needsRemoteModel)
-            this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
 
         const ensureRemoteModel = () => {
             if (needsRemoteModel && !this._remoteModel) {
                 this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
-            } else if (!needsRemoteModel && this._remoteModel) {
-                this._remoteModel.destroy();
+                this._appIconsDecorator = new AppIconsDecorator.AppIconsDecorator();
+            } else if (!needsRemoteModel) {
+                this._remoteModel?.destroy();
                 delete this._remoteModel;
+                this._appIconsDecorator?.destroy();
+                delete this._appIconsDecorator;
             }
         };
+        ensureRemoteModel();
 
         this._notificationsMonitor.connect('changed', ensureRemoteModel);
         this._settings.connect('changed::show-icons-emblems', ensureRemoteModel);
@@ -2565,6 +2568,7 @@ export class DockManager {
         this._removables = null;
         this._iconTheme = null;
         this._remoteModel?.destroy();
+        this._appIconsDecorator?.destroy();
         this._settings = null;
         this._appSwitcherSettings = null;
         this._oldDash = null;

@@ -676,7 +676,7 @@ class RunningIndicatorBinary extends RunningIndicatorDots {
 /*
  * Unity like notification and progress indicators
  */
-class UnityIndicator extends IndicatorBase {
+export class UnityIndicator extends IndicatorBase {
     static defaultProgressBar = {
         // default values for the progress bar itself
         background: {

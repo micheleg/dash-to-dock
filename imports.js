@@ -1,5 +1,6 @@
 export * as AppIconIndicators from './appIconIndicators.js';
 export * as AppIcons from './appIcons.js';
+export * as AppIconsDecorator from './appIconsDecorator.js';
 export * as AppSpread from './appSpread.js';
 export * as DockDash from './dash.js';
 export * as DBusMenuUtils from './dbusmenuUtils.js';
