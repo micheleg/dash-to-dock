@@ -12,8 +12,10 @@ import {
 } from './dependencies/gi.js';
 
 import {
+    AppMenu,
     AppDisplay,
     Main,
+    PopupMenu,
 } from './dependencies/shell/ui.js';
 
 export class AppIconsDecorator {
@@ -127,5 +129,34 @@ export class AppIconsDecorator {
                     /* eslint-enable no-invalid-this */
                 },
             }));
+
+        this._methodInjections.add(AppMenu.AppMenu.prototype,
+            'open', function (originalFunction, ...args) {
+                /* eslint-disable no-invalid-this */
+                if (!this.sourceActor.updating) {
+                    originalFunction.call(this, ...args);
+                    return;
+                }
+
+                if (this.isOpen)
+                    return;
+
+                if (this.isEmpty())
+                    return;
+
+                // Temporarily hide all the menu items a part the Pinning one
+                // while we're updating.
+                const items = this._getMenuItems().filter(
+                    i => i !== this._toggleFavoriteItem).map(i =>
+                    i instanceof PopupMenu.PopupMenuBase ? i.actor : i);
+                const itemsVisibility = items.map(i => i.visible);
+                items.forEach(i => (i.visible = false));
+                const menuClosedId = this.connect('menu-closed', () => {
+                    this.disconnect(menuClosedId);
+                    items.forEach((i, idx) => (i.visible = itemsVisibility[idx]));
+                });
+                originalFunction.call(this, ...args);
+                /* eslint-enable no-invalid-this */
+            });
     }
 }
