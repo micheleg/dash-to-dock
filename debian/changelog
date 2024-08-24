@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (94ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (94ubuntu1) oracular; urgency=medium
 
   * New upstream release
   * cleanup: Fix various comments and code typos
@@ -26,7 +26,7 @@ gnome-shell-extension-ubuntu-dock (94ubuntu1) UNRELEASED; urgency=medium
   * appIconsDecorator: Do not allow launching any application in updating state
   * appIconsDecorator: Hide all menu items except unpinning ones on updating
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Sat, 24 Aug 2024 00:37:35 -0400
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Sat, 24 Aug 2024 00:53:35 -0400
 
 gnome-shell-extension-ubuntu-dock (93ubuntu1) oracular; urgency=medium
 
