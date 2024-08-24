@@ -217,7 +217,8 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
                     };
                 }
 
-                .app-well-app {
+                .app-well-app,
+                .overview-tile {
                     &.running .overview-icon {
                         background-image: none;
                     }
@@ -225,7 +226,8 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
                         background-color: $remark_color;
                     }
 
-                    .app-well-app-running-dot {
+                    .app-well-app-running-dot,
+                    .app-grid-running-dot {
                         margin-bottom: 2px;
                     }
                 }
@@ -362,7 +364,9 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     background: $dash_background_color;
 }
 
-#dashtodockContainer.dashtodock .progress-bar {
+#dashtodockContainer.dashtodock .progress-bar,
+.overview-tile .progress-bar,
+.icon-grid .progress-bar {
     /* Customization of the progress bar style. The possible elements
      * are:
      *
@@ -407,11 +411,21 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
      *   -progress-bar-background: 204, 204, 204, 1.0
      *   -progress-bar-border: 230, 230, 230, 1.0
      *   -progress-bar-line-width: 1
+     *   -progress-bar-top-offset: undefined
+     *   -progress-bar-valign: 1.0
      */
     -progress-bar-track-background: rgba(0, 0, 0, 0.45);
     -progress-bar-track-border: rgba(0, 0, 0, 0.7);
     -progress-bar-background: rgba(255, 255, 255, 1.0);
     -progress-bar-border: rgba(255, 255, 255, 1.0);
+}
+
+#overview,
+.apps-scroll-view {
+    .progress-bar {
+        -progress-bar-top-offset: 0;
+        -progress-bar-valign: 0.8;
+    }
 }
 
 #dashtodockContainer.top #dash .placeholder,
@@ -440,13 +454,17 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     transition-duration: 500ms;
 }
 
-#dashtodockContainer .number-overlay {
+#dashtodockContainer .number-overlay,
+.overview-tile .number-overlay,
+.icon-grid .number-overlay {
     color: rgba(255, 255, 255, 1);
     background-color: rgba(0, 0, 0, 0.8);
     text-align: center;
 }
 
-#dashtodockContainer .notification-badge {
+#dashtodockContainer .notification-badge,
+.overview-tile .notification-badge,
+.icon-grid .notification-badge {
     color: rgba(255, 255, 255, 1);
     background-color: rgba(255, 0, 0, 1);
     padding: 0.2em 0.5em;

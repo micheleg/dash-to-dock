@@ -32,7 +32,7 @@ const MAX_WINDOWS_CLASSES = 4;
 
 
 /*
- * This is the main indicator class to be used. The desired bahviour is
+ * This is the main indicator class to be used. The desired behavior is
  * obtained by composing the desired classes below based on the settings.
  *
  */
@@ -134,7 +134,7 @@ class IndicatorBase {
 }
 
 /*
- * A base indicator class for running style, from which all other EunningIndicators should derive,
+ * A base indicator class for running style, from which all other RunningIndicators should derive,
  * providing some basic methods, variables definitions and their update,  css style classes handling.
  *
  */
@@ -224,7 +224,7 @@ class RunningIndicatorBase extends IndicatorBase {
     }
 }
 
-// We add a css class so third parties themes can limit their indicaor customization
+// We add a css class so third parties themes can limit their indicator customization
 // to the case we do nothing
 class RunningIndicatorDefault extends RunningIndicatorBase {
     constructor(source) {
@@ -266,7 +266,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         });
 
         // We draw for the bottom case and rotate the canvas for other placements
-        // set center of rotatoins to the center
+        // set center of rotations to the center
         this._area.set_pivot_point(0.5, 0.5);
 
         switch (this._side) {
@@ -307,7 +307,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         }, this);
 
         // Apply glossy background
-        // TODO: move to enable/disableBacklit to apply itonly to the running apps?
+        // TODO: move to enable/disableBacklit to apply it only to the running apps?
         // TODO: move to css class for theming support
         const {extension} = Docking.DockManager;
         this._glossyBackgroundStyle = `background-image: url('${extension.path}/media/glossy.svg');` +
@@ -342,7 +342,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         this._width = height;
         this._height = width;
 
-        // By defaut re-use the style - background color, and border width and color -
+        // By default re-use the style - background color, and border width and color -
         // of the default dot
         const themeNode = this._source._dot.get_theme_node();
         this._borderColor = themeNode.get_border_color(this._side);
@@ -676,7 +676,7 @@ class RunningIndicatorBinary extends RunningIndicatorDots {
 /*
  * Unity like notification and progress indicators
  */
-class UnityIndicator extends IndicatorBase {
+export class UnityIndicator extends IndicatorBase {
     static defaultProgressBar = {
         // default values for the progress bar itself
         background: {
@@ -755,7 +755,17 @@ class UnityIndicator extends IndicatorBase {
             this._source._iconContainer,
             'notify::size',
             this.updateNotificationBadgeStyle.bind(this),
+        ], [
+            this._source,
+            'style-changed',
+            () => this._updateIconStyle(),
         ]);
+
+        this._updateNotificationsCount();
+        this.setProgress(this._remoteEntry.progress_visible
+            ? this._remoteEntry.progress : -1);
+        this.setUrgent(this._remoteEntry.urgent);
+        this.setUpdating(this._remoteEntry.updating);
     }
 
     destroy() {
@@ -779,7 +789,7 @@ class UnityIndicator extends IndicatorBase {
             'dash-max-icon-size').unpack();
 
         if (!fontDesc.get_size_is_absolute()) {
-            // fontSize was exprimed in points, so convert to pixel
+            // fontSize was expressed in points, so convert to pixel
             fontSize /= 0.75;
         }
 
@@ -894,9 +904,9 @@ class UnityIndicator extends IndicatorBase {
             }
         }
 
-        const [hasOffsetStart, offsetStartvalue] = node.lookup_color(`${elementName}-offset-start`, false);
+        const [hasOffsetStart, offsetStartValue] = node.lookup_color(`${elementName}-offset-start`, false);
         if (hasOffsetStart)
-            output.offsetStart = offsetStartvalue;
+            output.offsetStart = offsetStartValue;
 
         const [hasOffsetEnd, offsetEndValue] = node.lookup_color(`${elementName}-offset-end`, false);
         if (hasOffsetEnd)
@@ -943,20 +953,30 @@ class UnityIndicator extends IndicatorBase {
         const {scaleFactor} = St.ThemeContext.get_for_stage(global.stage);
         const [surfaceWidth, surfaceHeight] = area.get_surface_size();
         const cr = area.get_context();
-
+        const node = this._progressOverlayArea.get_theme_node();
         const iconSize = this._source.icon.iconSize * scaleFactor;
 
         let x = Math.floor((surfaceWidth - iconSize) / 2);
         let y = Math.floor((surfaceHeight - iconSize) / 2);
+
+        const [hasTopOffset, topOffset] = node.lookup_double(
+            '-progress-bar-top-offset', false);
+        if (hasTopOffset)
+            y = topOffset;
 
         const baseLineWidth = Math.floor(Number(scaleFactor));
         const padding = Math.floor(iconSize * 0.05);
         let width = iconSize - 2.0 * padding;
         let height = Math.floor(Math.min(18.0 * scaleFactor, 0.20 * iconSize));
         x += padding;
-        y += iconSize - height - padding;
 
-        const node = this._progressOverlayArea.get_theme_node();
+        const valignParameters = node.lookup_double(
+            '-progress-bar-valign', false);
+        const [hasValign] = valignParameters;
+        let [, valign] = valignParameters;
+        if (!hasValign)
+            valign = 1.0;
+        y += (iconSize - height - padding) * valign;
 
         const progressBarTrack = this._readElementData(node,
             '-progress-bar-track',
@@ -1027,6 +1047,16 @@ class UnityIndicator extends IndicatorBase {
     setUpdating(updating) {
         this._source.updating = updating;
     }
+
+    _updateIconStyle() {
+        const opacityLookup =
+            this._source.get_theme_node().lookup_double('opacity', true);
+        const [hasOpacity] = opacityLookup;
+        let [, opacity] = opacityLookup;
+        if (!hasOpacity)
+            opacity = this._source.updating ? 0.5 : 1;
+        this._source.icon.set_opacity(255 * opacity);
+    }
 }
 
 
@@ -1041,7 +1071,7 @@ const  BATCH_SIZE_TO_DELETE = 50;
 // The icon size used to extract the dominant color
 const DOMINANT_COLOR_ICON_SIZE = 64;
 
-// Compute dominant color frim the app icon.
+// Compute dominant color from the app icon.
 // The color is cached for efficiency.
 class DominantColorExtractor {
     constructor(app) {
@@ -1118,8 +1148,8 @@ class DominantColorExtractor {
         // We resample icons larger than twice the desired size, as the resampling
         // to a size s
         // DOMINANT_COLOR_ICON_SIZE < s < 2*DOMINANT_COLOR_ICON_SIZE,
-        // most of the case exactly DOMINANT_COLOR_ICON_SIZE as the icon size is tipycally
-        // a multiple of it.
+        // most of the case exactly DOMINANT_COLOR_ICON_SIZE as the icon size is
+        // typically a multiple of it.
         const width = pixBuf.get_width();
         const height = pixBuf.get_height();
 
@@ -1189,7 +1219,7 @@ class DominantColorExtractor {
     }
 
     /**
-     * Downsample large icons before scanning for the backlight color to
+     * Downscale large icons before scanning for the backlight color to
      * improve performance.
      *
      * @param pixBuf

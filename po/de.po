@@ -101,8 +101,8 @@ msgid "Remove from Favorites"
 msgstr "Aus Favoriten entfernen"
 
 #: appIcons.js:1138
-msgid "Pin to Dash"
-msgstr "An Dash anheften"
+msgid "Pin to Dock"
+msgstr "An Dock anheften"
 
 #: appIcons.js:1139
 msgid "Add to Favorites"

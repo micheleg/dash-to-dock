@@ -320,7 +320,7 @@ export class InjectionsHandler extends BasicHandler {
         const original = object[name];
 
         if (!(original instanceof Function))
-            throw new Error(`Virtual function ${name}() is not available for ${object}`);
+            throw new Error(`Function ${name}() is not available for ${object}`);
 
         object[name] = function (...args) {
             return injectedFunction.call(this, original, ...args);
@@ -380,8 +380,13 @@ export class VFuncInjectionsHandler extends BasicHandler {
  * and restored
  */
 export class PropertyInjectionsHandler extends BasicHandler {
+    constructor(params) {
+        super();
+        this._params = params;
+    }
+
     _create(instance, name, injectedPropertyDescriptor) {
-        if (!(name in instance))
+        if (!this._params?.allowNewProperty && !(name in instance))
             throw new Error(`Object ${instance} has no '${name}' property`);
 
         const {prototype} = instance.constructor;

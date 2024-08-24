@@ -24,8 +24,6 @@ import {
     ParentalControlsManager,
 } from './dependencies/shell/misc.js';
 
-import {Config} from './dependencies/shell/misc.js';
-
 import {
     AppIconIndicators,
     DBusMenuUtils,
@@ -125,6 +123,7 @@ const DockAbstractAppIcon = GObject.registerClass({
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this.iconAnimator = iconAnimator;
         this._indicator = new AppIconIndicators.AppIconIndicator(this);
+        this._urgentWindows = new Set();
 
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
@@ -141,8 +140,8 @@ const DockAbstractAppIcon = GObject.registerClass({
             this._onWindowDemandsAttention(window));
 
         // In Wayland sessions, this signal is needed to track the state of windows dragged
-        // from one monitor to another. As this is triggered quite often (whenever a new winow
-        // of any application opened or moved to a different desktop),
+        // from one monitor to another. As this is triggered quite often (whenever a new
+        // window of any application opened or moved to a different desktop),
         // we restrict this signal to  the case when Labels.ISOLATE_MONITORS is true,
         // and if there are at least 2 monitors.
         if (Docking.DockManager.settings.isolateMonitors &&
@@ -159,6 +158,7 @@ const DockAbstractAppIcon = GObject.registerClass({
             else
                 this.remove_style_class_name('running');
         });
+        this.notify('running');
 
         this.connect('notify::focused', () => {
             if (this.focused)
@@ -166,6 +166,15 @@ const DockAbstractAppIcon = GObject.registerClass({
             else
                 this.remove_style_class_name('focused');
         });
+        this.notify('focused');
+
+        this.connect('notify::updating', () => {
+            if (this.updating)
+                this.add_style_class_name('updating');
+            else
+                this.remove_style_class_name('updating');
+        });
+        this.notify('updating');
 
         const {notificationsMonitor} = Docking.DockManager.getDefault();
 
@@ -190,26 +199,8 @@ const DockAbstractAppIcon = GObject.registerClass({
                 this._updateUrgentWindows();
             }
         });
+        this.notify('urgent');
 
-        const updateUpdatingState = () => {
-            if (this.updating)
-                this.add_style_class_name('updating');
-            else
-                this.remove_style_class_name('updating');
-        };
-        this.connect('style-changed', () => {
-            const opacityLookup =
-                this.get_theme_node().lookup_double('opacity', true);
-            const [hasOpacity] = opacityLookup;
-            let [, opacity] = opacityLookup;
-            if (!hasOpacity)
-                opacity = this.updating ? 0.5 : 1;
-            this.icon.set_opacity(255 * opacity);
-        });
-        this.connect('notify::updating', updateUpdatingState);
-        updateUpdatingState();
-
-        this._urgentWindows = new Set();
         this._progressOverlayArea = null;
         this._progress = 0;
 
@@ -246,9 +237,9 @@ const DockAbstractAppIcon = GObject.registerClass({
 
         // This is necessary due to an upstream bug
         // https://bugzilla.gnome.org/show_bug.cgi?id=757556
-        // It can be safely removed once it get solved upstrea.
-        if (this._menu)
-            this._menu.close(false);
+        // It can be safely removed once it get solved upstream.
+        this._menu?.close(false);
+        delete this._menu;
     }
 
     ownsWindow(window) {
@@ -362,6 +353,12 @@ const DockAbstractAppIcon = GObject.registerClass({
     _onWindowDemandsAttention(window) {
         if (this.ownsWindow(window) && isWindowUrgent(window))
             this._addUrgentWindow(window);
+    }
+
+    _updateDotStyle() {
+        super._updateDotStyle();
+        const themeNode = this._dot.get_theme_node();
+        this._dot.translationX = themeNode.get_length('offset-x');
     }
 
     _addUrgentWindow(window) {
@@ -491,10 +488,10 @@ const DockAbstractAppIcon = GObject.registerClass({
         // Only consider SHIFT and CONTROL as modifiers (exclude SUPER, CAPS-LOCK, etc.)
         modifiers &= Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CONTROL_MASK;
 
-        // We don't change the CTRL-click behaviour: in such case we just chain
+        // We don't change the CTRL-click behavior: in such case we just chain
         // up the parent method and return.
         if (modifiers & Clutter.ModifierType.CONTROL_MASK) {
-            // Keep default behaviour: launch new window
+            // Keep default behavior: launch new window
             // By calling the parent method I make it compatible
             // with other extensions tweaking ctrl + click
             super.activate(button);
@@ -544,7 +541,7 @@ const DockAbstractAppIcon = GObject.registerClass({
             const singleOrUrgentWindows = windows.length === 1 || hasUrgentWindows;
             switch (buttonAction) {
             case clickAction.MINIMIZE:
-                // In overview just activate the app, unless the acion is explicitely
+                // In overview just activate the app, unless the action is explicitly
                 // requested with a keyboard modifier
                 if (!Main.overview.visible || modifiers) {
                     // If we have button=2 or a modifier, allow minimization even if
@@ -636,7 +633,7 @@ const DockAbstractAppIcon = GObject.registerClass({
             case clickAction.PREVIEWS:
                 if (!Main.overview.visible) {
                     // If only one windows is present just switch to it,
-                    // but only when trigggered with the simple click action
+                    // but only when triggered with the simple click action
                     // (no modifiers, no middle click).
                     if (singleOrUrgentWindows && !modifiers && button === 1) {
                         const [w] = windows;
@@ -652,7 +649,7 @@ const DockAbstractAppIcon = GObject.registerClass({
             case clickAction.MINIMIZE_OR_PREVIEWS:
                 // When a single window is present, toggle minimization
                 // If only one windows is present toggle minimization, but only
-                // when trigggered with the imple click action (no modifiers,
+                // when triggered with the standard click action (no modifiers,
                 // no middle click).
                 if (!Main.overview.visible) {
                     if (singleOrUrgentWindows && !modifiers && button === 1) {
@@ -713,9 +710,8 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     shouldShowTooltip() {
-        return this.hover && (!this._menu || !this._menu.isOpen) &&
-                            (!this._previewMenu || !this._previewMenu.isOpen) &&
-                            !Docking.DockManager.settings.hideTooltip;
+        return super.shouldShowTooltip() && !this._previewMenu?.isOpen &&
+            !Docking.DockManager.settings.hideTooltip;
     }
 
     _windowPreviews() {
@@ -749,7 +745,7 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     // Try to do the right thing when attempting to launch a new window of an app. In
-    // particular, if the application doens't allow to launch a new window, activate
+    // particular, if the application doesn't allow to launch a new window, activate
     // the existing window instead.
     launchNewWindow() {
         if (this.updating) {
@@ -767,7 +763,7 @@ const DockAbstractAppIcon = GObject.registerClass({
         } else {
             // Try to manually activate the first window. Otherwise, when the
             // app is activated by switching to a different workspace, a launch
-            // spinning icon is shown and disappers only after a timeout.
+            // spinning icon is shown and disappears only after a timeout.
             const windows = this.getWindows();
             if (windows.length > 0) {
                 Main.activateWindow(windows[0]);
@@ -1014,9 +1010,6 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         // We want to keep the item hovered while the menu is up
         this.blockSourceEvents = true;
 
-        this._source = source;
-        this._parentalControlsManager = ParentalControlsManager.getDefault();
-
         this.actor.add_style_class_name('app-menu');
         this.actor.add_style_class_name('dock-app-menu');
 
@@ -1030,9 +1023,9 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         Main.uiGroup.add_child(this.actor);
 
         const {remoteModel} = Docking.DockManager.getDefault();
-        const remoteModelApp = remoteModel?.lookupById(this._source?.app?.id);
+        const remoteModelApp = remoteModel?.lookupById(this.sourceActor?.app?.id);
         if (remoteModelApp && DBusMenu) {
-            const [onQuicklist, onDynamicSection] = Utils.splitHandler((sender,
+            const [onQuickList, onDynamicSection] = Utils.splitHandler((sender,
                 {quicklist}, dynamicSection) => {
                 dynamicSection.removeAll();
                 if (quicklist) {
@@ -1045,13 +1038,19 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             this._signalsHandler.add([
                 remoteModelApp,
                 'quicklist-changed',
-                onQuicklist,
+                onQuickList,
             ], [
                 this,
                 'dynamic-section-changed',
                 onDynamicSection,
             ]);
         }
+    }
+
+    destroy() {
+        super.destroy();
+        delete this.sourceActor;
+        delete this._signalsHandler;
     }
 
     _appendSeparator() {
@@ -1069,19 +1068,27 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         this.open(BoxPointer.PopupAnimation.FULL);
     }
 
+    removeAll() {
+        super.removeAll();
+
+        delete this._allWindowsMenuItem;
+        delete this._quitMenuItem;
+    }
+
     _rebuildMenu() {
         this.removeAll();
 
         const appItemLabel = this.sourceActor.updating
             ? _('%s is being updated...').format(this.sourceActor.name)
             : this.sourceActor.name;
-        this._appendMenuItem(appItemLabel).sensitive = false;
-        this._appendSeparator();
+        this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(appItemLabel));
+
+        const {app} = this.sourceActor;
 
         if (Docking.DockManager.settings.showWindowsPreview) {
             // Display the app windows menu items and the separator between windows
             // of the current desktop and other windows.
-            const windows = this._source.getInterestingWindows();
+            const windows = this.sourceActor.getInterestingWindows();
 
             this._allWindowsMenuItem = new PopupMenu.PopupSubMenuMenuItem(__('All Windows'), false);
             if (this._allWindowsMenuItem.menu?.actor)
@@ -1090,7 +1097,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             if (windows.length > 0)
                 this.addMenuItem(this._allWindowsMenuItem);
         } else {
-            const windows = this._source.getInterestingWindows();
+            const windows = this.sourceActor.getInterestingWindows();
 
             if (windows.length > 0) {
                 this.addMenuItem(
@@ -1099,8 +1106,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             }
 
             windows.forEach(window => {
-                const title = window.title
-                    ? window.title : this._source.app.get_name();
+                const title = window.title ? window.title : app.get_name();
                 const item = this._appendMenuItem(title);
                 item.connect('activate', () => {
                     this.emit('activate-window', window);
@@ -1108,38 +1114,38 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             });
         }
 
-        if (!this._source.app.is_window_backed()) {
+        if (!app.is_window_backed()) {
             this._appendSeparator();
 
-            const appInfo = this._source.app.get_app_info();
-            const actions = this._source.updating ? [] : appInfo.list_actions();
-            if (!this._source.updating &&
-                this._source.app.can_open_new_window() &&
+            const appInfo = app.get_app_info();
+            const actions = this.sourceActor.updating ? [] : appInfo.list_actions();
+            if (!this.sourceActor.updating &&
+                app.can_open_new_window() &&
                 actions.indexOf('new-window') === -1) {
-                this._newWindowMenuItem = this._appendMenuItem(_('New Window'));
-                this._newWindowMenuItem.connect('activate', () => {
-                    if (this._source.app.state === Shell.AppState.STOPPED)
-                        this._source.animateLaunch();
+                const newMenuItem = this._appendMenuItem(_('New Window'));
+                newMenuItem.connect('activate', () => {
+                    if (app.state === Shell.AppState.STOPPED)
+                        this.sourceActor.animateLaunch();
 
-                    this._source.app.open_new_window(-1);
+                    app.open_new_window(-1);
                     this.emit('activate-window', null);
                 });
                 this._appendSeparator();
             }
 
-            if (!this._source.updating &&
+            if (!this.sourceActor.updating &&
                 Docking.DockManager.getDefault().discreteGpuAvailable &&
-                this._source.app.state === Shell.AppState.STOPPED) {
+                app.state === Shell.AppState.STOPPED) {
                 const appPrefersNonDefaultGPU = appInfo.get_boolean('PrefersNonDefaultGPU');
                 const gpuPref = appPrefersNonDefaultGPU
                     ? Shell.AppLaunchGpu.DEFAULT
                     : Shell.AppLaunchGpu.DISCRETE;
-                this._onGpuMenuItem = this._appendMenuItem(appPrefersNonDefaultGPU
+                const gpuMenuItem = this._appendMenuItem(appPrefersNonDefaultGPU
                     ? _('Launch using Integrated Graphics Card')
                     : _('Launch using Discrete Graphics Card'));
-                this._onGpuMenuItem.connect('activate', () => {
-                    this._source.animateLaunch();
-                    this._source.app.launch(0, -1, gpuPref);
+                gpuMenuItem.connect('activate', () => {
+                    this.sourceActor.animateLaunch();
+                    app.launch(0, -1, gpuPref);
                     this.emit('activate-window', null);
                 });
             }
@@ -1149,46 +1155,40 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 const item = this._appendMenuItem(appInfo.get_action_name(action));
                 item.sensitive = !appInfo.busy;
                 item.connect('activate', (emitter, event) => {
-                    this._source.app.launch_action(action, event.get_time(), -1);
+                    app.launch_action(action, event.get_time(), -1);
                     this.emit('activate-window', null);
                 });
             }
 
             const canFavorite = global.settings.is_writable('favorite-apps') &&
-                (this._source instanceof DockAppIcon) &&
-                this._parentalControlsManager.shouldShowApp(this._source.app.app_info);
+                (this.sourceActor instanceof DockAppIcon) &&
+                ParentalControlsManager.getDefault().shouldShowApp(app.appInfo);
 
             if (canFavorite) {
                 this._appendSeparator();
 
-                const isFavorite = AppFavorites.getAppFavorites().isFavorite(this._source.app.get_id());
-                const [majorVersion] = Config.PACKAGE_VERSION.split('.');
-
+                const isFavorite = AppFavorites.getAppFavorites().isFavorite(app.get_id());
                 if (isFavorite) {
-                    const label = majorVersion >= 42 ? _('Unpin')
-                        : _('Remove from Favorites');
-                    const item = this._appendMenuItem(label);
+                    const item = this._appendMenuItem(_('Unpin'));
                     item.connect('activate', () => {
                         const favs = AppFavorites.getAppFavorites();
-                        favs.removeFavorite(this._source.app.get_id());
+                        favs.removeFavorite(app.get_id());
                     });
                 } else {
-                    const label = majorVersion >= 42 ? _('Pin to Dash')
-                        : _('Add to Favorites');
-                    const item = this._appendMenuItem(label);
+                    const item = this._appendMenuItem(_('Pin to Dock'));
                     item.connect('activate', () => {
                         const favs = AppFavorites.getAppFavorites();
-                        favs.addFavorite(this._source.app.get_id());
+                        favs.addFavorite(app.get_id());
                     });
                 }
             }
 
             if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop') &&
-                (this._source instanceof DockAppIcon)) {
+                (this.sourceActor instanceof DockAppIcon)) {
                 this._appendSeparator();
                 const item = this._appendMenuItem(_('App Details'));
                 item.connect('activate', () => {
-                    const id = this._source.app.get_id();
+                    const id = app.get_id();
                     const args = GLib.Variant.new('(ss)', [id, '']);
                     Gio.DBus.get(Gio.BusType.SESSION, null,
                         (o, res) => {
@@ -1224,7 +1224,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         // quit menu
         this._appendSeparator();
         this._quitMenuItem = this._appendMenuItem(_('Quit'));
-        this._quitMenuItem.connect('activate', () => this._source.closeAllWindows());
+        this._quitMenuItem.connect('activate', () => this.sourceActor.closeAllWindows());
 
         this.update();
     }
@@ -1233,13 +1233,13 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
     // acting on windows (closing) are performed while the menu is shown.
     update() {
         // update, show or hide the quit menu
-        if (this._source.windowsCount > 0) {
-            if (this._source.windowsCount === 1) {
+        if (this.sourceActor.windowsCount > 0) {
+            if (this.sourceActor.windowsCount === 1) {
                 this._quitMenuItem.label.set_text(_('Quit'));
             } else {
                 this._quitMenuItem.label.set_text(ngettext(
-                    'Quit %d Window', 'Quit %d Windows', this._source.windowsCount).format(
-                    this._source.windowsCount));
+                    'Quit %d Window', 'Quit %d Windows', this.sourceActor.windowsCount).format(
+                    this.sourceActor.windowsCount));
             }
 
             this._quitMenuItem.actor.show();
@@ -1248,7 +1248,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         }
 
         if (Docking.DockManager.settings.showWindowsPreview) {
-            const windows = this._source.getInterestingWindows();
+            const windows = this.sourceActor.getInterestingWindows();
 
             // update, show, or hide the allWindows menu
             // Check if there are new windows not already displayed. In such case,
@@ -1269,7 +1269,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 this._allWindowsMenuItem.width =  this._allWindowsMenuItem.menu.actor.width + 15;
             }
 
-            // The menu is created hidden and never hidded after being shown.
+            // The menu is created hidden and never hidden after being shown.
             // Instead, a signal connected to its items destroy will set is
             // insensitive if no more windows preview are shown.
             if (windows.length > 0) {
@@ -1309,7 +1309,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                     this.emit('activate-window', window);
                 });
 
-                // This is to achieve a more gracefull transition when the last windows is closed.
+                // This is to achieve a more graceful transition when the last
+                // window is closed.
                 item.connect('destroy', () => {
                     // It's still counting the item just going to be destroyed
                     if (this._allWindowsMenuItem.menu._getMenuItems().length === 1)
@@ -1501,7 +1502,7 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
  */
 export function itemShowLabel() {
     /* eslint-disable no-invalid-this */
-    // Check if the label is still present at all. When switching workpaces, the
+    // Check if the label is still present at all. When switching workspace, the
     // item might have been destroyed in between.
     if (!this._labelText || !this.label.get_stage())
         return;

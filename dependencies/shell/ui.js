@@ -1,4 +1,5 @@
 export * as AppDisplay from 'resource:///org/gnome/shell/ui/appDisplay.js';
+export * as AppMenu from 'resource:///org/gnome/shell/ui/appMenu.js';
 export * as AppFavorites from 'resource:///org/gnome/shell/ui/appFavorites.js';
 export * as BoxPointer from 'resource:///org/gnome/shell/ui/boxpointer.js';
 export * as DND from 'resource:///org/gnome/shell/ui/dnd.js';
