@@ -1,3 +1,33 @@
+gnome-shell-extension-ubuntu-dock (94ubuntu1) UNRELEASED; urgency=medium
+
+  * New upstream release
+  * cleanup: Fix various comments and code typos
+  * notificationsMonitor: Try to get appId from the source if set
+  * appIcons: Sync comment change with ubuntu-dock
+  * appIcons: Fix comment typo
+  * appIcons: Remove duplicate source definition on DockAppIconMenu
+  * stylesheet: Add missing declaration for overview tile states
+  * appIcons: Allow to update the dot style offset in x too
+  * appIcons: Show an OSD error if trying to launch an updating app
+  * appIcons: Always add a disabled menu item with the app title
+  * appIcons: Inform in menu items that the app is being being updated
+  * appIcons: Delete menu instance from app icon on destruction
+  * appIcons: use upstream definition of shouldShowTooltip
+  * docking: Patch AppIcon to have more consistent Pin labels
+  * appIcons: Use a labeled menu item separator for application title
+  * appIcons: Drop code that is not used anymore by any supported version
+  * appIconIndicator: Move style handling for updating state here
+  * appIcons: Setup unity indicator properties on construction
+  * appIconsDecorator: Support decorating app icons with emblems everywhere
+  * launcherAPI: Avoid using regexes to replace all values in a string
+  * appIndicators: Allow theming progress offsets
+  * utils: Support injecting properties that are not on the main object
+  * appIconsDecorator: Update icons style on updating changes
+  * appIconsDecorator: Do not allow launching any application in updating state
+  * appIconsDecorator: Hide all menu items except unpinning ones on updating
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Sat, 24 Aug 2024 00:37:35 -0400
+
 gnome-shell-extension-ubuntu-dock (93ubuntu1) oracular; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
