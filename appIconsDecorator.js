@@ -8,7 +8,12 @@ import {
 } from './imports.js';
 
 import {
+    Gio,
+} from './dependencies/gi.js';
+
+import {
     AppDisplay,
+    Main,
 } from './dependencies/shell/ui.js';
 
 export class AppIconsDecorator {
@@ -82,6 +87,21 @@ export class AppIconsDecorator {
                 if (result instanceof AppDisplay.AppIcon)
                     self._decorateIcon(result);
                 return result;
+                /* eslint-enable no-invalid-this */
+            });
+
+        this._methodInjections.add(AppDisplay.AppIcon.prototype,
+            'activate', function (originalFunction, ...args) {
+                /* eslint-disable no-invalid-this */
+                if (this.updating) {
+                    const icon = Gio.Icon.new_for_string('action-unavailable-symbolic');
+                    Main.osdWindowManager.show(-1, icon,
+                        _('%s is currently updating, cannot launch it!').format(this.name),
+                        null);
+                    return;
+                }
+
+                originalFunction.call(this, ...args);
                 /* eslint-enable no-invalid-this */
             });
 
