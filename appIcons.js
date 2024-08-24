@@ -123,6 +123,7 @@ const DockAbstractAppIcon = GObject.registerClass({
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this.iconAnimator = iconAnimator;
         this._indicator = new AppIconIndicators.AppIconIndicator(this);
+        this._urgentWindows = new Set();
 
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
@@ -157,6 +158,7 @@ const DockAbstractAppIcon = GObject.registerClass({
             else
                 this.remove_style_class_name('running');
         });
+        this.notify('running');
 
         this.connect('notify::focused', () => {
             if (this.focused)
@@ -164,6 +166,7 @@ const DockAbstractAppIcon = GObject.registerClass({
             else
                 this.remove_style_class_name('focused');
         });
+        this.notify('focused');
 
         this.connect('notify::updating', () => {
             if (this.updating)
@@ -171,6 +174,7 @@ const DockAbstractAppIcon = GObject.registerClass({
             else
                 this.remove_style_class_name('updating');
         });
+        this.notify('updating');
 
         const {notificationsMonitor} = Docking.DockManager.getDefault();
 
@@ -195,8 +199,8 @@ const DockAbstractAppIcon = GObject.registerClass({
                 this._updateUrgentWindows();
             }
         });
+        this.notify('urgent');
 
-        this._urgentWindows = new Set();
         this._progressOverlayArea = null;
         this._progress = 0;
 
