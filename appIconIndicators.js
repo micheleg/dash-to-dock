@@ -755,6 +755,10 @@ class UnityIndicator extends IndicatorBase {
             this._source._iconContainer,
             'notify::size',
             this.updateNotificationBadgeStyle.bind(this),
+        ], [
+            this._source,
+            'style-changed',
+            () => this._updateIconStyle(),
         ]);
     }
 
@@ -1026,6 +1030,16 @@ class UnityIndicator extends IndicatorBase {
 
     setUpdating(updating) {
         this._source.updating = updating;
+    }
+
+    _updateIconStyle() {
+        const opacityLookup =
+            this._source.get_theme_node().lookup_double('opacity', true);
+        const [hasOpacity] = opacityLookup;
+        let [, opacity] = opacityLookup;
+        if (!hasOpacity)
+            opacity = this._source.updating ? 0.5 : 1;
+        this._source.icon.set_opacity(255 * opacity);
     }
 }
 
