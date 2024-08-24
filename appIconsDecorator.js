@@ -16,6 +16,7 @@ export class AppIconsDecorator {
         this._signals = new Utils.GlobalSignalsHandler();
         this._iconSignals = new Utils.GlobalSignalsHandler();
         this._methodInjections = new Utils.InjectionsHandler();
+        this._propertyInjections = new Utils.PropertyInjectionsHandler({allowNewProperty: true});
         this._indicators = new Set();
 
         this._patchAppIcons();
@@ -29,6 +30,8 @@ export class AppIconsDecorator {
         delete this._iconSignals;
         this._methodInjections?.destroy();
         delete this._methodInjections;
+        this._propertyInjections?.destroy();
+        delete this._propertyInjections;
         this._indicators?.clear();
         delete this._indicators;
     }
@@ -81,5 +84,28 @@ export class AppIconsDecorator {
                 return result;
                 /* eslint-enable no-invalid-this */
             });
+
+        const appIconsTypes = [
+            AppDisplay.AppSearchProvider,
+            AppDisplay.AppIcon,
+        ];
+        appIconsTypes.forEach(type =>
+            this._propertyInjections.add(type.prototype, 'updating', {
+                get() {
+                    // eslint-disable-line no-invalid-this
+                    return !!this.__d2dUpdating;
+                },
+                set(updating) {
+                    /* eslint-disable no-invalid-this */
+                    if (this.updating === updating)
+                        return;
+                    this.__d2dUpdating = updating;
+                    if (updating)
+                        this.add_style_class_name('updating');
+                    else
+                        this.remove_style_class_name('updating');
+                    /* eslint-enable no-invalid-this */
+                },
+            }));
     }
 }
