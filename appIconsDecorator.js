@@ -18,10 +18,14 @@ import {
     PopupMenu,
 } from './dependencies/shell/ui.js';
 
+const Labels = Object.freeze({
+    GENERIC: Symbol('generic'),
+    ICONS: Symbol('icons'),
+});
+
 export class AppIconsDecorator {
     constructor() {
         this._signals = new Utils.GlobalSignalsHandler();
-        this._iconSignals = new Utils.GlobalSignalsHandler();
         this._methodInjections = new Utils.InjectionsHandler();
         this._propertyInjections = new Utils.PropertyInjectionsHandler({allowNewProperty: true});
         this._indicators = new Set();
@@ -33,8 +37,6 @@ export class AppIconsDecorator {
     destroy() {
         this._signals?.destroy();
         delete this._signals;
-        this._iconSignals?.destroy();
-        delete this._iconSignals;
         this._methodInjections?.destroy();
         delete this._methodInjections;
         this._propertyInjections?.destroy();
@@ -44,10 +46,10 @@ export class AppIconsDecorator {
         delete this._indicators;
     }
 
-    _decorateIcon(parentIcon, signalsHandler) {
+    _decorateIcon(parentIcon, signalLabel = Labels.GENERIC) {
         const indicator = new AppIconIndicators.UnityIndicator(parentIcon);
         this._indicators.add(indicator);
-        (signalsHandler ?? this._signals).add(parentIcon, 'destroy', () => {
+        this._signals.addWithLabel(signalLabel, parentIcon, 'destroy', () => {
             this._indicators.delete(indicator);
             indicator.destroy();
         });
@@ -60,17 +62,17 @@ export class AppIconsDecorator {
         const decorateAppIcons = () => {
             this._indicators.forEach(i => i.destroy());
             this._indicators.clear();
-            this._iconSignals.clear();
+            this._signals.removeWithLabel(Labels.ICONS);
 
             const decorateViewIcons = view => {
                 const items = view.getAllItems();
                 items.forEach(i => {
                     if (i instanceof AppDisplay.AppIcon) {
-                        this._decorateIcon(i, this._iconSignals);
+                        this._decorateIcon(i, Labels.ICONS);
                     } else if (i instanceof AppDisplay.FolderIcon) {
                         decorateViewIcons(i.view);
-                        this._iconSignals.add(i.view, 'view-loaded', () =>
-                            decorateAppIcons());
+                        this._signals.addWithLabel(Labels.ICONS, i.view,
+                            'view-loaded', () => decorateAppIcons());
                     }
                 });
             };
