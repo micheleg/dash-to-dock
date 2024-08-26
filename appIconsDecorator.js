@@ -39,6 +39,7 @@ export class AppIconsDecorator {
         delete this._methodInjections;
         this._propertyInjections?.destroy();
         delete this._propertyInjections;
+        this._indicators?.forEach(i => i.destroy());
         this._indicators?.clear();
         delete this._indicators;
     }
@@ -57,6 +58,7 @@ export class AppIconsDecorator {
         const {appDisplay} = Docking.DockManager.getDefault().overviewControls;
 
         const decorateAppIcons = () => {
+            this._indicators.forEach(i => i.destroy());
             this._indicators.clear();
             this._iconSignals.clear();
 
