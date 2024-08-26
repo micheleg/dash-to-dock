@@ -1484,6 +1484,9 @@ Signals.addSignalMethods(Removables.prototype);
  */
 function getApps() {
     const dockManager = Docking.DockManager.getDefault();
+    if (dockManager == null) {
+        return [];
+    }
     const locationApps = [];
 
     if (dockManager.removables)

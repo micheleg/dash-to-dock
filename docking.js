@@ -1749,7 +1749,7 @@ export class DockManager {
     }
 
     static get settings() {
-        return DockManager.getDefault().settings;
+        return DockManager.getDefault()?.settings;
     }
 
     get extension() {
@@ -2545,6 +2545,7 @@ export class DockManager {
     }
 
     destroy() {
+        this._signalsHandler.destroy();
         this.emit('destroy');
         if (this._toggleLater) {
             Utils.laterRemove(this._toggleLater);

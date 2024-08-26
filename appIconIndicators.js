@@ -785,8 +785,8 @@ export class UnityIndicator extends IndicatorBase {
         const defaultFontSize = fontDesc.get_size() / 1024;
         let fontSize = defaultFontSize * 0.9;
         const {iconSize} = Main.overview.dash;
-        const defaultIconSize = Docking.DockManager.settings.get_default_value(
-            'dash-max-icon-size').unpack();
+        const defaultIconSize = Docking.DockManager.settings?.get_default_value(
+            'dash-max-icon-size').unpack() ?? 64;
 
         if (!fontDesc.get_size_is_absolute()) {
             // fontSize was expressed in points, so convert to pixel
