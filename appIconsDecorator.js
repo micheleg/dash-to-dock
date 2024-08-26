@@ -116,11 +116,9 @@ export class AppIconsDecorator {
         appIconsTypes.forEach(type =>
             this._propertyInjections.add(type.prototype, 'updating', {
                 get() {
-                    // eslint-disable-line no-invalid-this
                     return !!this.__d2dUpdating;
                 },
                 set(updating) {
-                    /* eslint-disable no-invalid-this */
                     if (this.updating === updating)
                         return;
                     this.__d2dUpdating = updating;
@@ -128,7 +126,6 @@ export class AppIconsDecorator {
                         this.add_style_class_name('updating');
                     else
                         this.remove_style_class_name('updating');
-                    /* eslint-enable no-invalid-this */
                 },
             }));
 
