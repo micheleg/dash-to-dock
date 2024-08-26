@@ -43,10 +43,10 @@ export class AppIconsDecorator {
         delete this._indicators;
     }
 
-    _decorateIcon(parentIcon) {
+    _decorateIcon(parentIcon, signalsHandler) {
         const indicator = new AppIconIndicators.UnityIndicator(parentIcon);
         this._indicators.add(indicator);
-        this._signals.add(parentIcon, 'destroy', () => {
+        (signalsHandler ?? this._signals).add(parentIcon, 'destroy', () => {
             this._indicators.delete(indicator);
             indicator.destroy();
         });
@@ -64,7 +64,7 @@ export class AppIconsDecorator {
                 const items = view.getAllItems();
                 items.forEach(i => {
                     if (i instanceof AppDisplay.AppIcon) {
-                        this._decorateIcon(i);
+                        this._decorateIcon(i, this._iconSignals);
                     } else if (i instanceof AppDisplay.FolderIcon) {
                         decorateViewIcons(i.view);
                         this._iconSignals.add(i.view, 'view-loaded', () =>
