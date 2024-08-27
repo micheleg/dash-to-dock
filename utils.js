@@ -110,6 +110,16 @@ const BasicHandler = class DashToDockBasicHandler {
         (this._storage[label] || []).forEach(item => this._unblock(item));
     }
 
+    _removeByItem(item) {
+        Object.getOwnPropertySymbols(this._storage).forEach(label =>
+            (this._storage[label] = this._storage[label].filter(it => {
+                if (!this._itemsEqual(it, item))
+                    return true;
+                this._remove(item);
+                return false;
+            })));
+    }
+
     // Virtual methods to be implemented by subclass
 
     /**
@@ -149,6 +159,16 @@ const BasicHandler = class DashToDockBasicHandler {
     _unblock(_item) {
         throw new GObject.NotImplementedError(`_unblock in ${this.constructor.name}`);
     }
+
+    _itemsEqual(itemA, itemB) {
+        if (itemA === itemB)
+            return true;
+
+        if (itemA.length !== itemB.length)
+            return false;
+
+        return itemA.every((_, idx) => itemA[idx] === itemB[idx]);
+    }
 };
 
 /**
@@ -168,15 +188,27 @@ export class GlobalSignalsHandler extends BasicHandler {
                 `found in ${object.constructor.name}`);
         }
 
-        const id = connector.call(object, event, callback);
+        const item = [object];
+        const isDestroy = event === 'destroy';
+        const isParentObject = object === this._parentObject;
 
-        if (event === 'destroy' && object === this._parentObject) {
+        if (isDestroy && !isParentObject) {
+            const originalCallback = callback;
+            callback = () => {
+                this._removeByItem(item);
+                originalCallback();
+            };
+        }
+        const id = connector.call(object, event, callback);
+        item.push(id);
+
+        if (isDestroy && isParentObject) {
             this._parentObject.disconnect(this._destroyId);
             this._destroyId =
                 this._parentObject.connect('destroy', () => this.destroy());
         }
 
-        return [object, id];
+        return item;
     }
 
     _remove(item) {

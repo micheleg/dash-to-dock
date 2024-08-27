@@ -750,11 +750,11 @@ export class UnityIndicator extends IndicatorBase {
         ], [
             St.ThemeContext.get_for_stage(global.stage),
             'changed',
-            this.updateNotificationBadgeStyle.bind(this),
+            () => this.updateNotificationBadgeStyle(),
         ], [
             this._source._iconContainer,
             'notify::size',
-            this.updateNotificationBadgeStyle.bind(this),
+            () => this.updateNotificationBadgeStyle(),
         ], [
             this._source,
             'style-changed',
