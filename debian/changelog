@@ -1,3 +1,15 @@
+gnome-shell-extension-ubuntu-dock (95ubuntu1) UNRELEASED; urgency=medium
+
+  * New upstream release
+  * appIconsDecorator: Use the generic icons signal handler for result
+  * appIconsDecorator: Destroy indicators on removal
+  * appIconsDecorator: Drop unneeded eslint ignores
+  * appIconsDecorator: Use a signal signals handler with labels
+  * appIconIndicators: Use lambda-style callbacks for better debugging
+  * utils: Remove signal handler item on object destruction
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 27 Aug 2024 18:00:46 -0400
+
 gnome-shell-extension-ubuntu-dock (94ubuntu1) oracular; urgency=medium
 
   * New upstream release
