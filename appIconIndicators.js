@@ -26,6 +26,7 @@ const RunningIndicatorStyle = Object.freeze({
     CILIORA: 6,
     METRO: 7,
     BINARY: 8,
+    DOT: 9,
 });
 
 const MAX_WINDOWS_CLASSES = 4;
@@ -88,8 +89,13 @@ export class AppIconIndicator {
         case RunningIndicatorStyle.METRO:
             runningIndicator = new RunningIndicatorMetro(source);
             break;
+
         case RunningIndicatorStyle.BINARY:
             runningIndicator = new RunningIndicatorBinary(source);
+            break;
+
+        case RunningIndicatorStyle.DOT:
+            runningIndicator = new RunningIndicatorDot(source);
             break;
 
         default:
@@ -670,6 +676,35 @@ class RunningIndicatorBinary extends RunningIndicatorDots {
             Utils.cairoSetSourceColor(cr, this._bodyColor);
             cr.fill();
         }
+    }
+}
+
+class RunningIndicatorDot extends RunningIndicatorDots {
+    _computeStyle() {
+        super._computeStyle();
+
+        this._radius = Math.max(this._width / 26, this._borderWidth / 2);
+    }
+
+    _drawIndicator(cr) {
+        if (!this._source.running)
+            return;
+
+        cr.setLineWidth(this._borderWidth);
+        Utils.cairoSetSourceColor(cr, this._borderColor);
+
+        // draw from the bottom case:
+        cr.translate(
+            (this._width - 2 * this._radius) / 2,
+            this._height - this._padding);
+        cr.newSubPath();
+        cr.arc(this._radius,
+            -this._radius - this._borderWidth / 2,
+            this._radius, 0, 2 * Math.PI);
+
+        cr.strokePreserve();
+        Utils.cairoSetSourceColor(cr, this._bodyColor);
+        cr.fill();
     }
 }
 
