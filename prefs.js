@@ -752,10 +752,6 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('application_button_first_button'),
             'sensitive',
             Gio.SettingsBindFlags.DEFAULT);
-        this._settings.bind('animate-show-apps',
-            this._builder.get_object('application_button_animation_button'),
-            'active',
-            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-show-apps-button',
             this._builder.get_object('application_button_animation_button'),
             'sensitive',
