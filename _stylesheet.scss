@@ -426,9 +426,15 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
 #overview,
 .apps-scroll-view {
     .progress-bar {
+        -progress-bar-height-factor: 0.15;
         -progress-bar-top-offset: 0;
         -progress-bar-valign: 0.95;
     }
+}
+
+#overview .grid-search-results .overview-tile .progress-bar,
+#overview .app-folder-dialog .progress-bar {
+    -progress-bar-height-factor: 0.13;
 }
 
 #dashtodockContainer.top #dash .placeholder,
