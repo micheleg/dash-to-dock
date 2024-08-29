@@ -413,6 +413,8 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
      *   -progress-bar-line-width: 1
      *   -progress-bar-top-offset: undefined
      *   -progress-bar-valign: 1.0
+     *   -progress-bar-horizontal-padding: 0.05 (5% of icon size)
+     *   -progress-bar-vertical-padding: 0.05 (5% of icon size)
      */
     -progress-bar-track-background: rgba(0, 0, 0, 0.45);
     -progress-bar-track-border: rgba(0, 0, 0, 0.7);
