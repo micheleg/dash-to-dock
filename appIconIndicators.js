@@ -950,14 +950,17 @@ export class UnityIndicator extends IndicatorBase {
         return output;
     }
 
-    _readElementData(node, elementName, defaultValues) {
-        const defaultLineWidth = defaultValues.lineWidth ?? 1.0;
-        const [hasValue, lineWidth] = node.lookup_double(`${elementName}-line-width`, false);
+    _readThemeDoubleValue(node, elementName, defaultValue) {
+        const [hasValue, value] = node.lookup_double(elementName, false);
+        return hasValue ? value : defaultValue;
+    }
 
+    _readElementData(node, elementName, defaultValues) {
         return {
             background: this._readGradientData(node, `${elementName}-background`, defaultValues.background),
             border: this._readGradientData(node, `${elementName}-border`, defaultValues.border),
-            lineWidth: hasValue ? lineWidth : defaultLineWidth,
+            lineWidth: this._readThemeDoubleValue(node, `${elementName}-line-width`,
+                defaultValues.lineWidth ?? 1.0),
         };
     }
 
@@ -994,10 +997,10 @@ export class UnityIndicator extends IndicatorBase {
         let x = Math.floor((surfaceWidth - iconSize) / 2);
         let y = Math.floor((surfaceHeight - iconSize) / 2);
 
-        const [hasTopOffset, topOffset] = node.lookup_double(
-            '-progress-bar-top-offset', false);
-        if (hasTopOffset)
-            y = topOffset;
+        const readThemeValue = element =>
+            this._readThemeDoubleValue(node, `-progress-bar-${element}`);
+
+        y = readThemeValue('top-offset') ?? y;
 
         const baseLineWidth = Math.floor(Number(scaleFactor));
         const padding = Math.floor(iconSize * 0.05);
@@ -1005,11 +1008,7 @@ export class UnityIndicator extends IndicatorBase {
         let height = Math.floor(Math.min(18.0 * scaleFactor, 0.20 * iconSize));
         x += padding;
 
-        const valignParameters = node.lookup_double(
-            '-progress-bar-valign', false);
-        const [hasValign] = valignParameters;
-        let [, valign] = valignParameters;
-        valign = Utils.clampDouble(hasValign ? valign : 1);
+        const valign = Utils.clampDouble(readThemeValue('valign') ?? 1);
         y += (iconSize - height - padding) * valign;
 
         const progressBarTrack = this._readElementData(node,
@@ -1083,12 +1082,8 @@ export class UnityIndicator extends IndicatorBase {
     }
 
     _updateIconStyle() {
-        const opacityLookup =
-            this._source.get_theme_node().lookup_double('opacity', true);
-        const [hasOpacity] = opacityLookup;
-        let [, opacity] = opacityLookup;
-        if (!hasOpacity)
-            opacity = this._source.updating ? 0.5 : 1;
+        const opacity = this._readThemeDoubleValue(this._source.get_theme_node(),
+            'opacity') ?? (this._source.updating ? 0.5 : 1);
         this._source.icon.set_opacity(255 * opacity);
     }
 }
