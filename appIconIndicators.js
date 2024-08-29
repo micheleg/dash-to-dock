@@ -1007,9 +1007,11 @@ export class UnityIndicator extends IndicatorBase {
             Utils.clampDouble(readThemeValue('horizontal-padding') ?? 0.05);
         const verticalPadding = iconSize *
             Utils.clampDouble(readThemeValue('vertical-padding') ?? 0.05);
+        const heightFactor =
+            Utils.clampDouble(readThemeValue('height-factor') ?? 0.20);
 
         let width = iconSize - 2.0 * horizontalPadding;
-        let height = Math.floor(Math.min(18.0 * scaleFactor, 0.20 * iconSize));
+        let height = Math.floor(Math.min(18.0 * scaleFactor, heightFactor * iconSize));
         x += horizontalPadding;
 
         const valign = Utils.clampDouble(readThemeValue('valign') ?? 1);
