@@ -1003,13 +1003,17 @@ export class UnityIndicator extends IndicatorBase {
         y = readThemeValue('top-offset') ?? y;
 
         const baseLineWidth = Math.floor(Number(scaleFactor));
-        const padding = Math.floor(iconSize * 0.05);
-        let width = iconSize - 2.0 * padding;
+        const horizontalPadding = iconSize *
+            Utils.clampDouble(readThemeValue('horizontal-padding') ?? 0.05);
+        const verticalPadding = iconSize *
+            Utils.clampDouble(readThemeValue('vertical-padding') ?? 0.05);
+
+        let width = iconSize - 2.0 * horizontalPadding;
         let height = Math.floor(Math.min(18.0 * scaleFactor, 0.20 * iconSize));
-        x += padding;
+        x += horizontalPadding;
 
         const valign = Utils.clampDouble(readThemeValue('valign') ?? 1);
-        y += (iconSize - height - padding) * valign;
+        y += (iconSize - height - verticalPadding) * valign;
 
         const progressBarTrack = this._readElementData(node,
             '-progress-bar-track',
