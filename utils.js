@@ -730,3 +730,6 @@ export function addActor(element, actor) {
     else
         element.add_child(actor);
 }
+
+export const clamp = (v, m, M) => Math.min(Math.max(v, m), M);
+export const clampDouble = v => clamp(v, 0, 1);
