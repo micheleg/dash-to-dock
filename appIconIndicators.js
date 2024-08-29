@@ -1009,8 +1009,7 @@ export class UnityIndicator extends IndicatorBase {
             '-progress-bar-valign', false);
         const [hasValign] = valignParameters;
         let [, valign] = valignParameters;
-        if (!hasValign)
-            valign = 1.0;
+        valign = Utils.clampDouble(hasValign ? valign : 1);
         y += (iconSize - height - padding) * valign;
 
         const progressBarTrack = this._readElementData(node,
