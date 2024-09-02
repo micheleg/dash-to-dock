@@ -740,22 +740,10 @@ export class UnityIndicator extends IndicatorBase {
         },
     };
 
+    static notificationBadgeSignals = Symbol('notification-badge-signals');
+
     constructor(source) {
         super(source);
-
-        this._notificationBadgeLabel = new St.Label();
-        this._notificationBadgeBin = new St.Bin({
-            child: this._notificationBadgeLabel,
-            x_align: Clutter.ActorAlign.END,
-            y_align: Clutter.ActorAlign.START,
-            x_expand: true, y_expand: true,
-        });
-        this._notificationBadgeLabel.add_style_class_name('notification-badge');
-        this._notificationBadgeLabel.clutter_text.ellipsize = Pango.EllipsizeMode.MIDDLE;
-        this._notificationBadgeBin.hide();
-
-        this._source._iconContainer.add_child(this._notificationBadgeBin);
-        this.updateNotificationBadgeStyle();
 
         const {remoteModel, notificationsMonitor} = Docking.DockManager.getDefault();
         const remoteEntry = remoteModel.lookupById(this._source.app.id);
@@ -783,14 +771,6 @@ export class UnityIndicator extends IndicatorBase {
             'changed',
             () => this._updateNotificationsCount(),
         ], [
-            St.ThemeContext.get_for_stage(global.stage),
-            'changed',
-            () => this.updateNotificationBadgeStyle(),
-        ], [
-            this._source._iconContainer,
-            'notify::size',
-            () => this.updateNotificationBadgeStyle(),
-        ], [
             this._source,
             'style-changed',
             () => this._updateIconStyle(),
@@ -804,7 +784,7 @@ export class UnityIndicator extends IndicatorBase {
     }
 
     destroy() {
-        this._notificationBadgeBin.destroy();
+        this._notificationBadgeBin?.destroy();
         this._notificationBadgeBin = null;
         this._hideProgressOverlay();
         this.setUrgent(false);
@@ -814,7 +794,7 @@ export class UnityIndicator extends IndicatorBase {
         super.destroy();
     }
 
-    updateNotificationBadgeStyle() {
+    _updateNotificationBadgeStyle() {
         const themeContext = St.ThemeContext.get_for_stage(global.stage);
         const fontDesc = themeContext.get_font();
         const defaultFontSize = fontDesc.get_size() / 1024;
@@ -839,7 +819,7 @@ export class UnityIndicator extends IndicatorBase {
         fontSize = Math.round(sizeMultiplier * fontSize);
         const leftMargin = Math.round(sizeMultiplier * 3);
 
-        this._notificationBadgeLabel.set_style(
+        this._notificationBadgeBin.child.set_style(
             `font-size: ${fontSize}px;` +
             `margin-left: ${leftMargin}px`
         );
@@ -883,13 +863,52 @@ export class UnityIndicator extends IndicatorBase {
         this.setNotificationCount(remoteCount + notificationsCount);
     }
 
+    _updateNotificationsBadge(text) {
+        if (this._notificationBadgeBin) {
+            this._notificationBadgeBin.child.text = text;
+            return;
+        }
+
+        this._notificationBadgeBin = new St.Bin({
+            child: new St.Label({
+                styleClass: 'notification-badge',
+                text,
+            }),
+            xAlign: Clutter.ActorAlign.END,
+            yAlign: Clutter.ActorAlign.START,
+            xExpand: true,
+            yExpand: true,
+        });
+        this._notificationBadgeBin.child.clutterText.ellipsize =
+            Pango.EllipsizeMode.MIDDLE;
+
+        this._source._iconContainer.add_child(this._notificationBadgeBin);
+        this._updateNotificationBadgeStyle();
+
+        const themeContext = St.ThemeContext.get_for_stage(global.stage);
+        this._signalsHandler.addWithLabel(UnityIndicator.notificationBadgeSignals, [
+            themeContext,
+            'changed',
+            () => this._updateNotificationBadgeStyle(),
+        ], [
+            themeContext,
+            'notify::scale-factor',
+            () => this._updateNotificationBadgeStyle(),
+        ], [
+            this._source._iconContainer,
+            'notify::size',
+            () => this._updateNotificationBadgeStyle(),
+        ]);
+    }
+
     setNotificationCount(count) {
         if (count > 0) {
             const text = this._notificationBadgeCountToText(count);
-            this._notificationBadgeLabel.set_text(text);
-            this._notificationBadgeBin.show();
-        } else {
-            this._notificationBadgeBin.hide();
+            this._updateNotificationsBadge(text);
+        } else if (this._notificationBadgeBin) {
+            this._signalsHandler.removeWithLabel(UnityIndicator.notificationBadgeSignals);
+            this._notificationBadgeBin.destroy();
+            this._notificationBadgeBin = null;
         }
     }
 
