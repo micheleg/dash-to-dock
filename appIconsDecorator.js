@@ -102,7 +102,7 @@ export class AppIconsDecorator {
                 if (this.updating) {
                     const icon = Gio.Icon.new_for_string('action-unavailable-symbolic');
                     Main.osdWindowManager.show(-1, icon,
-                        _('%s is currently updating, cannot launch it!').format(this.name),
+                        _('%s is updating, try again later').format(this.name),
                         null);
                     return;
                 }
