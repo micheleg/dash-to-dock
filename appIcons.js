@@ -751,7 +751,7 @@ const DockAbstractAppIcon = GObject.registerClass({
         if (this.updating) {
             const icon = Gio.Icon.new_for_string('action-unavailable-symbolic');
             Main.osdWindowManager.show(-1, icon,
-                _('%s is currently updating, cannot launch it!').format(this.name),
+                _('%s is updating, try again later').format(this.name),
                 null);
             return;
         }
@@ -1079,7 +1079,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         this.removeAll();
 
         const appItemLabel = this.sourceActor.updating
-            ? _('%s is being updated...').format(this.sourceActor.name)
+            ? _('%s is being updated…').format(this.sourceActor.name)
             : this.sourceActor.name;
         this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(appItemLabel));
 
