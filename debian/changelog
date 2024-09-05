@@ -1,3 +1,25 @@
+gnome-shell-extension-ubuntu-dock (96ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New Upstream Release
+  * utils: Add clamp function and use it for Indicators values
+  * appIndicators: Add function to read theme values in a more JS way
+  * appIconIndicators: Make progress bar paddings styled
+  * stylesheet: Make alignment in progress overview icons more consistent
+  * appIconIndicators: Make progress bar height factor styled
+  * stylesheet: Use lighter progress bar on bigger overview icons
+  * appIconIndicators: Do not add notification badge code unless needed
+  * appIcons[Decorator]: Improve wording on updating messages
+
+  [ Sergio Costas Rodriguez ]
+  * Fix "Show Applications" button
+
+  [ Yaroslav Pronin ]
+  * Add `Dot` running indicator style
+  * Update Russian translations
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 05 Sep 2024 20:57:08 +0200
+
 gnome-shell-extension-ubuntu-dock (95ubuntu1) oracular; urgency=medium
 
   * New upstream release
