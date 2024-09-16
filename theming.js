@@ -2,6 +2,7 @@
 
 import {
     Clutter,
+    Cogl,
     GObject,
     Meta,
     St,
@@ -168,7 +169,8 @@ export class ThemeManager {
 
             ({backgroundColor} = settings);
             // backgroundColor is a string like rgb(0,0,0)
-            const [ret, color] = Clutter.Color.from_string(backgroundColor);
+            const clutterColor = Clutter.Color ?? Cogl.Color;
+            const [ret, color] = clutterColor.from_string(backgroundColor);
             if (!ret) {
                 logError(new Error(`${backgroundColor} is not a valid color string`));
                 return;
