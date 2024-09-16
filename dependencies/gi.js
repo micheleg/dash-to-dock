@@ -1,5 +1,6 @@
 export {default as Atk} from 'gi://Atk';
 export {default as Clutter} from 'gi://Clutter';
+export {default as Cogl} from 'gi://Cogl';
 export {default as GLib} from 'gi://GLib';
 export {default as GObject} from 'gi://GObject';
 export {default as GdkPixbuf} from 'gi://GdkPixbuf';
