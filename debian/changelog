@@ -1,8 +1,8 @@
-gnome-shell-extension-ubuntu-dock (96ubuntu2) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (96ubuntu2) oracular; urgency=medium
 
   * appIcons: Show app details menu for snap applications
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 16 Sep 2024 23:17:27 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 16 Sep 2024 23:23:01 +0200
 
 gnome-shell-extension-ubuntu-dock (96ubuntu1) oracular; urgency=medium
 
