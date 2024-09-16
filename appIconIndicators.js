@@ -1,5 +1,6 @@
 import {
     Clutter,
+    Cogl,
     GdkPixbuf,
     Gio,
     GObject,
@@ -358,6 +359,8 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         const {settings} = Docking.DockManager;
         if (!settings.applyCustomTheme) {
             // Adjust for the backlit case
+            const Color = Cogl.Color ?? Clutter.Color;
+
             if (settings.unityBacklitItems) {
                 // Use dominant color for dots too if the backlit is enables
                 const colorPalette = this._dominantColorExtractor._getColorPalette();
@@ -366,12 +369,12 @@ class RunningIndicatorDots extends RunningIndicatorBase {
                 this._borderWidth = 2;
 
                 if (colorPalette) {
-                    [, this._borderColor] = Clutter.color_from_string(colorPalette.lighter);
-                    [, this._bodyColor] = Clutter.color_from_string(colorPalette.darker);
+                    [, this._borderColor] = Color.from_string(colorPalette.lighter);
+                    [, this._bodyColor] = Color.from_string(colorPalette.darker);
                 } else {
                     // Fallback
-                    [, this._borderColor] = Clutter.color_from_string('white');
-                    [, this._bodyColor] = Clutter.color_from_string('gray');
+                    [, this._borderColor] = Color.from_string('white');
+                    [, this._bodyColor] = Color.from_string('gray');
                 }
             }
 
@@ -379,17 +382,17 @@ class RunningIndicatorDots extends RunningIndicatorBase {
             if (settings.runningIndicatorDominantColor) {
                 const colorPalette = this._dominantColorExtractor._getColorPalette();
                 if (colorPalette)
-                    [, this._bodyColor] = Clutter.color_from_string(colorPalette.original);
+                    [, this._bodyColor] = Color.from_string(colorPalette.original);
                 else
                     // Fallback
-                    [, this._bodyColor] = Clutter.color_from_string(settings.customThemeRunningDotsColor);
+                    [, this._bodyColor] = Color.from_string(settings.customThemeRunningDotsColor);
             }
 
             // Finally, use customize style if requested
             if (settings.customThemeCustomizeRunningDots) {
-                [, this._borderColor] = Clutter.color_from_string(settings.customThemeRunningDotsBorderColor);
+                [, this._borderColor] = Color.from_string(settings.customThemeRunningDotsBorderColor);
                 this._borderWidth = settings.customThemeRunningDotsBorderWidth;
-                [, this._bodyColor] =  Clutter.color_from_string(settings.customThemeRunningDotsColor);
+                [, this._bodyColor] =  Color.from_string(settings.customThemeRunningDotsColor);
             }
         }
 

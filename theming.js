@@ -169,8 +169,8 @@ export class ThemeManager {
 
             ({backgroundColor} = settings);
             // backgroundColor is a string like rgb(0,0,0)
-            const clutterColor = Clutter.Color ?? Cogl.Color;
-            const [ret, color] = clutterColor.from_string(backgroundColor);
+            const Color = Cogl.Color ?? Clutter.Color;
+            const [ret, color] = Color.from_string(backgroundColor);
             if (!ret) {
                 logError(new Error(`${backgroundColor} is not a valid color string`));
                 return;
@@ -189,7 +189,7 @@ export class ThemeManager {
             color.alpha = newAlpha * 255;
             this._transparency.setColor(color);
         } else {
-            // backgroundColor is a Clutter.Color object
+            // backgroundColor is a {Clutter,Cogl}.Color object
             this._transparency.setColor(backgroundColor);
         }
     }
