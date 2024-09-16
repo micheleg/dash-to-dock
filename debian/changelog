@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (96ubuntu3) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (96ubuntu3) oracular; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * appIconsDecorator: Keep showing the details items when updating
@@ -7,7 +7,7 @@ gnome-shell-extension-ubuntu-dock (96ubuntu3) UNRELEASED; urgency=medium
   [ Daniel van Vugt ]
   * theming: Add support for Cogl.Color since Clutter.Color is deprecated in 47
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 17 Sep 2024 00:16:22 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 17 Sep 2024 00:16:44 +0200
 
 gnome-shell-extension-ubuntu-dock (96ubuntu2) oracular; urgency=medium
 
