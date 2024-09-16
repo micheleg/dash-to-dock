@@ -22,6 +22,7 @@ import {
 
 import {
     ParentalControlsManager,
+    Util,
 } from './dependencies/shell/misc.js';
 
 import {
@@ -937,6 +938,10 @@ const DockAbstractAppIcon = GObject.registerClass({
 
         return [...new Set([...this._urgentWindows, ...interestingWindows])];
     }
+
+    getSnapName() {
+        return this.app.appInfo?.get_string('X-SnapInstanceName');
+    }
 });
 
 const DockAppIcon = GObject.registerClass({
@@ -1184,7 +1189,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             }
 
             if (Shell.AppSystem.get_default().lookup_app('org.gnome.Software.desktop') &&
-                (this.sourceActor instanceof DockAppIcon)) {
+                this.sourceActor instanceof DockAppIcon &&
+                !this.sourceActor.getSnapName()) {
                 this._appendSeparator();
                 const item = this._appendMenuItem(_('App Details'));
                 item.connect('activate', () => {
@@ -1202,6 +1208,24 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                             Main.overview.hide();
                         });
                 });
+            }
+
+            if (this.sourceActor instanceof DockAppIcon) {
+                const snapName = this.sourceActor.getSnapName();
+                const snapStore = snapName
+                    ? Shell.AppSystem.get_default().lookup_app(
+                        'snap-store_snap-store.desktop') : null;
+
+                if (snapStore) {
+                    this._appendSeparator();
+                    const item = this._appendMenuItem(_('App Details'));
+                    item.connect('activate', (_, event) => {
+                        snapStore.activate_full(-1, event.get_time());
+                        Util.spawnApp(
+                            [...snapStore.appInfo.get_commandline().split(' '), snapName]);
+                        Main.overview.hide();
+                    });
+                }
             }
         }
 
