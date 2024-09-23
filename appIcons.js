@@ -1219,7 +1219,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 if (snapStore) {
                     this._appendSeparator();
                     const item = this._appendMenuItem(_('App Details'));
-                    item.connect('activate', () => {
+                    item.connect('activate', (_, event) => {
+                        snapStore.activate_full(-1, event.get_time());
                         Util.spawnApp(
                             [...snapStore.appInfo.get_commandline().split(' '), snapName]);
                         Main.overview.hide();
