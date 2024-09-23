@@ -1486,12 +1486,13 @@ function getApps() {
     const dockManager = Docking.DockManager.getDefault();
     const locationApps = [];
 
-    if (dockManager.removables)
-        locationApps.push(...dockManager.removables.getApps());
+    if (dockManager) {
+        if (dockManager.removables)
+            locationApps.push(...dockManager.removables.getApps());
 
-    if (dockManager.trash)
-        locationApps.push(dockManager.trash.getApp());
-
+        if (dockManager.trash)
+            locationApps.push(dockManager.trash.getApp());
+    }
     return locationApps;
 }
 
