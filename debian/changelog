@@ -1,8 +1,13 @@
-gnome-shell-extension-ubuntu-dock (96ubuntu4) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (97ubuntu1) UNRELEASED; urgency=medium
 
+  [ Marco Trevisan (Treviño) ]
+  * New upstream bugfix release
   * appIcons: Raise the snap store before selecting a snap (LP: #2081716)
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 23 Sep 2024 16:55:19 +0200
+  [ vinchatl ]
+  * Update French translation
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 02 Oct 2024 01:31:21 +0200
 
 gnome-shell-extension-ubuntu-dock (96ubuntu3) oracular; urgency=medium
 
