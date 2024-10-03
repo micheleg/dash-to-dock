@@ -1,3 +1,16 @@
+gnome-shell-extension-ubuntu-dock (99ubuntu1) UNRELEASED; urgency=medium
+
+  * New uptream bugfix release
+  * theming: Give Clutter.Color priority over Cogl.Color.
+    While now there's only Cogl.Color, in previous versions we had both so
+    giving Cogl priority broke the theming support
+  * utils: Use an extra parameter for property injector constructor.
+    By adding parameters in commit 611690cc33 we ended up hiding the base
+    object constructor parameter, and so the support for automatic
+    disconnection on parent object destruction. (LP: #2083621)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 03 Oct 2024 17:27:16 +0200
+
 gnome-shell-extension-ubuntu-dock (97ubuntu1) oracular; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
