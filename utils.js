@@ -412,8 +412,8 @@ export class VFuncInjectionsHandler extends BasicHandler {
  * and restored
  */
 export class PropertyInjectionsHandler extends BasicHandler {
-    constructor(params) {
-        super();
+    constructor(parentObject, params) {
+        super(parentObject);
         this._params = params;
     }
 

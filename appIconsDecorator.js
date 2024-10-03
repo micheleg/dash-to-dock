@@ -27,7 +27,8 @@ export class AppIconsDecorator {
     constructor() {
         this._signals = new Utils.GlobalSignalsHandler();
         this._methodInjections = new Utils.InjectionsHandler();
-        this._propertyInjections = new Utils.PropertyInjectionsHandler({allowNewProperty: true});
+        this._propertyInjections = new Utils.PropertyInjectionsHandler(
+            null, {allowNewProperty: true});
         this._indicators = new Set();
 
         this._patchAppIcons();
