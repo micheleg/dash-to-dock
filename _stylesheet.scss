@@ -272,7 +272,7 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
 
 .dash-item-container .overview-tile .app-grid-running-dot {
     margin-bottom: $dash_padding_gnome - 4px;
-    //offset-y: -$dash_padding + $dash_edge_offset;
+    offset-y: -$dash_padding + $dash_edge_offset;
 }
 
 @each $side in $dock_sides {
