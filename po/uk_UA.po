@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-14 14:30+0300\n"
-"PO-Revision-Date: 2023-10-14 14:31+0300\n"
+"POT-Creation-Date: 2024-12-11 22:05+0200\n"
+"PO-Revision-Date: 2024-12-11 22:35+0200\n"
 "Last-Translator: Yevhen Popok <xalt7x.service@gmail.com>\n"
 "Language-Team: \n"
 "Language: uk_UA\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
-"X-Generator: Poedit 3.4\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #. Translators: This will be followed by Display Name - Connector.
 #: prefs.js:382
@@ -26,11 +26,11 @@ msgstr "Основний монітор: "
 msgid "Secondary monitor "
 msgstr "Додатковий монітор "
 
-#: prefs.js:434 Settings.ui:597
+#: prefs.js:434 Settings.ui.h:32
 msgid "Right"
 msgstr "Праворуч"
 
-#: prefs.js:435 Settings.ui:569
+#: prefs.js:435 Settings.ui.h:29
 msgid "Left"
 msgstr "Ліворуч"
 
@@ -38,7 +38,7 @@ msgstr "Ліворуч"
 msgid "Intelligent autohide customization"
 msgstr "Налаштувати розумне автоприховування"
 
-#: prefs.js:498 prefs.js:820 prefs.js:879
+#: prefs.js:498 prefs.js:816 prefs.js:875
 msgid "Reset to defaults"
 msgstr "Скинути налаштування"
 
@@ -47,69 +47,74 @@ msgid "Managed by GNOME Multitasking's Application Switching setting."
 msgstr ""
 "Керується опцією Перемикання програм в налаштуваннях Багатозадачності GNOME."
 
-#: prefs.js:812
+#: prefs.js:808
 msgid "Show dock and application numbers"
-msgstr "Показувати Док та номер програми"
+msgstr "Показати Док та номери програм"
 
-#: prefs.js:871
+#: prefs.js:867
 msgid "Customize middle-click behavior"
 msgstr "Налаштувати поведінку при Середньому кліку"
 
-#: prefs.js:968
+#: prefs.js:964
 msgid "Customize running indicators"
 msgstr "Налаштувати індикатори активності"
 
-#: prefs.js:1083 Settings.ui:2196
+#: prefs.js:1079 Settings.ui.h:96
 msgid "Customize opacity"
 msgstr "Налаштувати непрозорість"
 
-#: appIcons.js:1050
+#: docking.js:1273
+msgid "Dash"
+msgstr "Рисочки"
+
+#: docking.js:2514 appIcons.js:1177
+msgid "Unpin"
+msgstr "Відшпилити"
+
+#: docking.js:2514 appIcons.js:1183
+msgid "Pin to Dock"
+msgstr "Пришпилити до дока"
+
+#: appIcons.js:755 appIconsDecorator.js:106
+#, javascript-format
+msgid "%s is updating, try again later"
+msgstr "%s оновлюється, спробуйте пізніше"
+
+#: appIcons.js:1087
+#, javascript-format
+msgid "%s is being updated…"
+msgstr "%s оновлюється..."
+
+#: appIcons.js:1098
 msgid "All Windows"
 msgstr "Усі вікна"
 
 #. Translators: This is the heading of a list of open windows
-#: appIcons.js:1062
+#: appIcons.js:1110
 msgid "Open Windows"
-msgstr "Усі вікна"
+msgstr "Відкрити вікна"
 
-#: appIcons.js:1082
+#: appIcons.js:1130
 msgid "New Window"
 msgstr "Нове вікно"
 
-#: appIcons.js:1100
+#: appIcons.js:1149
 msgid "Launch using Integrated Graphics Card"
 msgstr "Запустити через інтегровану графічну плату"
 
-#: appIcons.js:1101
+#: appIcons.js:1150
 msgid "Launch using Discrete Graphics Card"
 msgstr "Запустити через дискретну графічну плату"
 
-#: appIcons.js:1130
-msgid "Unpin"
-msgstr "Відшпилити"
-
-#: appIcons.js:1131
-msgid "Remove from Favorites"
-msgstr "Вилучити з улюбленого"
-
-#: appIcons.js:1138
-msgid "Pin to Dash"
-msgstr "Пришпилити до панелі приладів"
-
-#: appIcons.js:1139
-msgid "Add to Favorites"
-msgstr "Додати до улюбленого"
-
-#: appIcons.js:1151
-msgid "Show Details"
+#: appIcons.js:1195 appIcons.js:1221
+msgid "App Details"
 msgstr "Подробиці щодо програми"
 
-#: appIcons.js:1188 appIcons.js:1200 Settings.ui:84 Settings.ui:156
-#: Settings.ui:228
+#: appIcons.js:1250 appIcons.js:1262 Settings.ui.h:14
 msgid "Quit"
 msgstr "Закрити"
 
-#: appIcons.js:1203
+#: appIcons.js:1265
 #, javascript-format
 msgid "Quit %d Window"
 msgid_plural "Quit %d Windows"
@@ -119,257 +124,256 @@ msgstr[2] "Закрити %d вікон"
 
 #. Translators: %s is "Settings", which is automatically translated. You
 #. can also translate the full message if this fits better your language.
-#: appIcons.js:1442
+#: appIcons.js:1513
 #, javascript-format
 msgid "Dash to Dock %s"
 msgstr "%s Dash to Dock"
 
-#: appIcons.js:1442
+#: appIcons.js:1513
 msgid "Settings"
 msgstr "Параметри"
 
-#: locations.js:532
+#: locations.js:533
 msgid "Mount"
 msgstr "Змонтувати"
 
-#: locations.js:534
+#: locations.js:535
 msgid "Unmount"
 msgstr "Демонтувати"
 
-#: locations.js:536
+#: locations.js:537
 msgid "Eject"
 msgstr "Витягнути"
 
-#: locations.js:595
+#: locations.js:596
 #, javascript-format
 msgid "Failed to mount “%s”"
 msgstr "Не вдалося змонтувати “%s”"
 
-#: locations.js:598
+#: locations.js:599
 #, javascript-format
 msgid "Failed to umount “%s”"
 msgstr "Не вдалося демонтувати “%s”"
 
-#: locations.js:601
+#: locations.js:602
 #, javascript-format
 msgid "Failed to eject “%s”"
 msgstr "Не вдалося витягнути “%s”"
 
-#: locations.js:613
+#: locations.js:614
 msgid "Mount operation already in progress"
 msgstr "Процес монтування вже триває"
 
-#: locations.js:616
+#: locations.js:617
 msgid "Umount operation already in progress"
 msgstr "Процес демонтування вже триває"
 
-#: locations.js:619
+#: locations.js:620
 msgid "Eject operation already in progress"
 msgstr "Процес витягання вже триває"
 
-#: locations.js:698
+#: locations.js:738
 msgid "Trash"
 msgstr "Смітник"
 
-#: locations.js:739
+#: locations.js:779
 msgid "Empty Trash"
 msgstr "Очистити смітник"
 
-#: locations.js:1009
+#: locations.js:1049
 #, javascript-format
 msgid "Failed to launch “%s”"
 msgstr "Не вдалося запустити “%s”"
 
-#: Settings.ui:41
+#: Settings.ui.h:1
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
 msgstr ""
 "Якщо вибрано \"Згорнути\", подвійний клік буде згортати всі вікна програми."
 
-#: Settings.ui:59
+#: Settings.ui.h:2
 msgid "Shift+Click action"
 msgstr "Дія при Shift+клік"
 
-#: Settings.ui:73 Settings.ui:145 Settings.ui:217 Settings.ui:1684
+#: Settings.ui.h:3
 msgid "Raise window"
-msgstr "Показати вікно"
+msgstr "Підняти вікно"
 
-#: Settings.ui:74 Settings.ui:146 Settings.ui:218
+#: Settings.ui.h:4
 msgid "Minimize window"
 msgstr "Згорнути вікно"
 
-#: Settings.ui:75 Settings.ui:147 Settings.ui:219 Settings.ui:1686
+#: Settings.ui.h:5
 msgid "Launch new instance"
 msgstr "Відкрити нове вікно"
 
-#: Settings.ui:76 Settings.ui:148 Settings.ui:220 Settings.ui:1687
-#: Settings.ui:1775
+#: Settings.ui.h:6
 msgid "Cycle through windows"
 msgstr "Циклічно перемикати вікна"
 
-#: Settings.ui:77 Settings.ui:149 Settings.ui:221 Settings.ui:1688
+#: Settings.ui.h:7
 msgid "Minimize or overview"
-msgstr "Згорнути або викликати Огляд"
+msgstr "Згортання чи Огляд"
 
-#: Settings.ui:78 Settings.ui:150 Settings.ui:222 Settings.ui:1689
+#: Settings.ui.h:8
 msgid "Show window previews"
 msgstr "Показувати мініатюри вікон"
 
-#: Settings.ui:79 Settings.ui:151 Settings.ui:223 Settings.ui:1690
+#: Settings.ui.h:9
 msgid "Minimize or show previews"
-msgstr "Згорнути або показувати мініатюри"
+msgstr "Згортання чи показ мініатюр"
 
-#: Settings.ui:80 Settings.ui:152 Settings.ui:224 Settings.ui:1691
+#: Settings.ui.h:10
 msgid "Focus or show previews"
 msgstr "Фокусування чи показ мініатюр"
 
-#: Settings.ui:81 Settings.ui:153 Settings.ui:225 Settings.ui:1692
+#: Settings.ui.h:11
 msgid "Focus or app spread"
 msgstr "Фокусування чи показ вікон"
 
-#: Settings.ui:82 Settings.ui:154 Settings.ui:226 Settings.ui:1693
+#: Settings.ui.h:12
 msgid "Focus, minimize or show previews"
 msgstr "Фокусування, згортання чи показ мініатюр"
 
-#: Settings.ui:83 Settings.ui:155 Settings.ui:227 Settings.ui:1694
+#: Settings.ui.h:13
 msgid "Focus, minimize or app spread"
 msgstr "Фокусування, згортання чи показ вікон"
 
-#: Settings.ui:113
+#: Settings.ui.h:15
 msgid "Behavior for Middle-Click."
 msgstr "Поведінка при Середньому кліку."
 
-#: Settings.ui:131
+#: Settings.ui.h:16
 msgid "Middle-Click action"
 msgstr "Дія при Середньому кліку"
 
-#: Settings.ui:185
+#: Settings.ui.h:17
 msgid "Behavior for Shift+Middle-Click."
 msgstr "Поведінка при Shift+Середній клік."
 
-#: Settings.ui:203
+#: Settings.ui.h:18
 msgid "Shift+Middle-Click action"
 msgstr "Дія при Shift+Середній клік"
 
-#: Settings.ui:305
+#: Settings.ui.h:19
 msgid "Enable Unity7 like glossy backlit items"
 msgstr "Увімкнути глянцеве підсвічування елементів як в Unity7"
 
-#: Settings.ui:318
+#: Settings.ui.h:20
 msgid "Apply glossy effect."
 msgstr "Застосувати ефект глянцю."
 
-#: Settings.ui:330
+#: Settings.ui.h:21
 msgid "Use dominant color"
 msgstr "Використовувати домінуючий колір"
 
-#: Settings.ui:355
+#: Settings.ui.h:22
 msgid "Customize indicator style"
 msgstr "Налаштувати стиль індикатора"
 
-#: Settings.ui:381
+#: Settings.ui.h:23
 msgid "Color"
 msgstr "Колір"
 
-#: Settings.ui:401
+#: Settings.ui.h:24
 msgid "Border color"
 msgstr "Колір контуру"
 
-#: Settings.ui:421
+#: Settings.ui.h:25
 msgid "Border width"
 msgstr "Товщина контуру"
 
-#: Settings.ui:502
+#: Settings.ui.h:26
 msgid "Show the dock on"
 msgstr "Показувати Док на"
 
-#: Settings.ui:523
+#: Settings.ui.h:27
 msgid "Show on all monitors"
 msgstr "Показувати Док на всіх моніторах"
 
-#: Settings.ui:559
+#: Settings.ui.h:28
 msgid "Position on screen"
 msgstr "Позиція на екрані"
 
-#: Settings.ui:578
+#: Settings.ui.h:30
 msgid "Bottom"
 msgstr "Знизу"
 
-#: Settings.ui:587
+#: Settings.ui.h:31
 msgid "Top"
 msgstr "Зверху"
 
-#: Settings.ui:642
+#: Settings.ui.h:33
 msgid ""
 "Hide the dock when it obstructs a window of the current application. More "
 "refined settings are available."
 msgstr ""
-"Приховувати Док якщо він перекривається вікном активної програми. Доступні "
+"Приховувати Док, коли той перекривається вікном активної програми. Доступні "
 "додаткові налаштування."
 
-#: Settings.ui:659
+#: Settings.ui.h:34
 msgid "Intelligent autohide"
 msgstr "Розумне авто-приховування"
 
-#: Settings.ui:735
+#: Settings.ui.h:35
 msgid "Dock size limit"
 msgstr "Обмеження розміру Дока"
 
-#: Settings.ui:757
+#: Settings.ui.h:36
 msgid "Panel mode: extend to the screen edge"
 msgstr "Режим панелі: Док заповнює всю сторону екрану"
 
-#: Settings.ui:769
+#: Settings.ui.h:37
 msgid "Place icons to the center"
 msgstr "Центрувати піктограми"
 
-#: Settings.ui:794
+#: Settings.ui.h:38
 msgid "Icon size limit"
 msgstr "Обмеження розміру піктограм"
 
-#: Settings.ui:820
+#: Settings.ui.h:39
 msgid "Fixed icon size: scroll to reveal other icons"
 msgstr "Фіксований розмір піктограм: прокрутіть, щоб побачити інші піктограми"
 
-#: Settings.ui:848
+#: Settings.ui.h:40
 msgid "Preview size scale"
 msgstr "Масштабування попереднього перегляду"
 
-#: Settings.ui:890
+#: Settings.ui.h:41
 msgid "Position and size"
 msgstr "Позиція та розмір"
 
-#: Settings.ui:940
+#: Settings.ui.h:42
 msgid "Show pinned applications"
 msgstr "Показувати пришпилені програми"
 
-#: Settings.ui:977
+#: Settings.ui.h:43
 msgid "Show running applications"
 msgstr "Показувати запущені програми"
 
-#: Settings.ui:987
+#: Settings.ui.h:44
 msgid "Isolate workspaces"
 msgstr "Ізолювати робочі простори"
 
-#: Settings.ui:1000
+#: Settings.ui.h:45
 msgid "Show urgent windows despite current workspace"
 msgstr ""
 "Показувати вікна, що потребують уваги, незважаючи на поточний робочий простір"
 
-#: Settings.ui:1013
+#: Settings.ui.h:46
 msgid "Isolate monitors"
 msgstr "Ізолювати монітори"
 
-#: Settings.ui:1027
+#: Settings.ui.h:47
 msgid "Show open windows' previews"
 msgstr "Показувати мініатюри відкритих вікон"
 
-#: Settings.ui:1064
+#: Settings.ui.h:48
 msgid "Keep the focused application always visible in the dash"
 msgstr "Лишати активну програму завжди видимою на панелі приладів"
 
-#: Settings.ui:1101
+#: Settings.ui.h:49
 msgid ""
 "If disabled, these settings are accessible from gnome-tweak-tool or the "
 "extension website."
@@ -377,55 +381,55 @@ msgstr ""
 "Якщо вимкнено, ці налаштування доступні в gnome-tweak-tool або на сайті "
 "розширення."
 
-#: Settings.ui:1118
+#: Settings.ui.h:50
 msgid "Show <i>Applications</i> icon"
 msgstr "Показувати піктограму <i>Програми</i>"
 
-#: Settings.ui:1129
+#: Settings.ui.h:51
 msgid "Move at beginning of the dock"
 msgstr "Перемістити на початок Дока"
 
-#: Settings.ui:1150
+#: Settings.ui.h:52
 msgid "Animate <i>Show Applications</i>"
 msgstr "Анімувати <i>Показати Програми</i>"
 
-#: Settings.ui:1171
+#: Settings.ui.h:53
 msgid "Put <i>Show Applications</i> in a dock edge when using Panel mode"
-msgstr "В режимі панелі розмістити <i>Показати Програми</i> на краю Дока"
+msgstr "У режимі панелі розмістити <i>Показати Програми</i> на краю Дока"
 
-#: Settings.ui:1211
+#: Settings.ui.h:54
 msgid "Show trash can"
 msgstr "Показувати Смітник на"
 
-#: Settings.ui:1248
+#: Settings.ui.h:55
 msgid "Show volumes and devices"
 msgstr "Показувати розділи та диски"
 
-#: Settings.ui:1258
+#: Settings.ui.h:56
 msgid "Only if mounted"
 msgstr "Лише змонтовані"
 
-#: Settings.ui:1271
+#: Settings.ui.h:57
 msgid "Include network volumes"
 msgstr "Додати мережеві томи"
 
-#: Settings.ui:1311
+#: Settings.ui.h:58
 msgid "Isolate volumes, devices and trash windows from file manager"
 msgstr "Відокремити від файлового менеджера вікна томів, пристроїв та смітника"
 
-#: Settings.ui:1348
+#: Settings.ui.h:59
 msgid "Wiggle urgent applications"
 msgstr "Погойдувати програми, що потребують уваги"
 
-#: Settings.ui:1385
+#: Settings.ui.h:60
 msgid "Hide application tooltip"
 msgstr "Приховати підказку щодо програми"
 
-#: Settings.ui:1422
+#: Settings.ui.h:61
 msgid "Show icons emblems"
 msgstr "Показувати емблеми на піктограмах"
 
-#: Settings.ui:1435
+#: Settings.ui.h:62
 msgid ""
 "When enabled application icons will show notification counters and progress-"
 "bars (if Unity API is used)."
@@ -433,19 +437,19 @@ msgstr ""
 "Після увімкнення піктограми програм отримають лічильники сповіщень та "
 "індикатори прогресу (за умови використання Unity API)"
 
-#: Settings.ui:1450
+#: Settings.ui.h:63
 msgid "Show the number of unread notifications"
 msgstr "Показувати кількість непрочитаних сповіщень"
 
-#: Settings.ui:1471
+#: Settings.ui.h:64
 msgid "Application-provided counter overrides the notifications counter"
 msgstr "Лічильник програми замінює лічильник сповіщень"
 
-#: Settings.ui:1498
+#: Settings.ui.h:65
 msgid "Launchers"
 msgstr "Пускачі"
 
-#: Settings.ui:1538
+#: Settings.ui.h:66
 msgid ""
 "Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
 "together with Shift and Ctrl."
@@ -453,61 +457,61 @@ msgstr ""
 "Використовувати сполучення клавіш Super+(0-9) для активації програм. Можливе "
 "використання в поєднанні з Shift та Ctrl."
 
-#: Settings.ui:1557
+#: Settings.ui.h:67
 msgid "Use keyboard shortcuts to activate apps"
 msgstr "Використовувати сполучення клавіш для вибору програми"
 
-#: Settings.ui:1633
+#: Settings.ui.h:68
 msgid "Behaviour when clicking on the icon of a running application."
 msgstr "Поведінка при натисканні на піктограму запущеної програми."
 
-#: Settings.ui:1651
+#: Settings.ui.h:69
 msgid "Click action"
 msgstr "Дія при кліку"
 
-#: Settings.ui:1685
+#: Settings.ui.h:70
 msgid "Minimize"
 msgstr "Згорнути"
 
-#: Settings.ui:1739
+#: Settings.ui.h:71
 msgid "Behaviour when scrolling on the icon of an application."
 msgstr "Поведінка при прокручуванні на піктограмі програми."
 
-#: Settings.ui:1757
+#: Settings.ui.h:72
 msgid "Scroll action"
 msgstr "Дія при прокручуванні"
 
-#: Settings.ui:1774
+#: Settings.ui.h:73
 msgid "Do nothing"
 msgstr "Не призводить до якихось дій"
 
-#: Settings.ui:1776
+#: Settings.ui.h:74
 msgid "Switch workspace"
 msgstr "Перемкнути робочій простір"
 
-#: Settings.ui:1804
+#: Settings.ui.h:75
 msgid "Behavior"
 msgstr "Поведінка"
 
-#: Settings.ui:1854
+#: Settings.ui.h:76
 msgid "Save space reducing padding and border radius."
 msgstr ""
 "Заощадження використаного простору за рахунок зменшення проміжків та "
 "застосування заокруглених кутів."
 
-#: Settings.ui:1870
+#: Settings.ui.h:77
 msgid "Shrink the dash"
 msgstr "Стиснути Док"
 
-#: Settings.ui:1900
+#: Settings.ui.h:78
 msgid "Force straight corner"
 msgstr "Примусові прямі кути"
 
-#: Settings.ui:1930
+#: Settings.ui.h:79
 msgid "Show overview on startup"
 msgstr "Відкривати Огляд під час запуску"
 
-#: Settings.ui:1972
+#: Settings.ui.h:80
 msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
@@ -515,95 +519,99 @@ msgstr ""
 "Декілька налаштувань для поєднання Дока зі стандартною темою GNOME. Нижче "
 "можна встановити власні параметри."
 
-#: Settings.ui:1990
+#: Settings.ui.h:81
 msgid "Use built-in theme"
 msgstr "Використовувати вбудовану тему"
 
-#: Settings.ui:2032
+#: Settings.ui.h:82
 msgid "Customize windows counter indicators"
 msgstr "Налаштувати індикатори кількості вікон"
 
-#: Settings.ui:2065 Settings.ui:2229
+#: Settings.ui.h:83
 msgid "Default"
 msgstr "Типовий"
 
-#: Settings.ui:2066
+#: Settings.ui.h:84
 msgid "Dots"
 msgstr "Крапки"
 
-#: Settings.ui:2067
+#: Settings.ui.h:85
 msgid "Squares"
 msgstr "Квадрати"
 
-#: Settings.ui:2068
+#: Settings.ui.h:86
 msgid "Dashes"
 msgstr "Рисочки"
 
-#: Settings.ui:2069
+#: Settings.ui.h:87
 msgid "Segmented"
 msgstr "Сегментований"
 
-#: Settings.ui:2070
+#: Settings.ui.h:88
 msgid "Solid"
 msgstr "Суцільний"
 
-#: Settings.ui:2071
+#: Settings.ui.h:89
 msgid "Ciliora"
 msgstr "Циліора"
 
-#: Settings.ui:2072
+#: Settings.ui.h:90
 msgid "Metro"
 msgstr "Метро"
 
-#: Settings.ui:2073
+#: Settings.ui.h:91
 msgid "Binary"
 msgstr "Двійковий"
 
-#: Settings.ui:2106
+#: Settings.ui.h:92
+msgid "Dot"
+msgstr "Крапки"
+
+#: Settings.ui.h:93
 msgid "Set the background color for the dash."
 msgstr "Встановити колір фону для панелі приладів."
 
-#: Settings.ui:2124
+#: Settings.ui.h:94
 msgid "Customize the dash color"
 msgstr "Змінити колір фону панелі приладів"
 
-#: Settings.ui:2180
+#: Settings.ui.h:95
 msgid "Tune the dash background opacity."
 msgstr "Налаштувати непрозорість фону."
 
-#: Settings.ui:2230
+#: Settings.ui.h:97
 msgid "Fixed"
 msgstr "Фіксована"
 
-#: Settings.ui:2231
+#: Settings.ui.h:98
 msgid "Dynamic"
 msgstr "Динамічна"
 
-#: Settings.ui:2255
+#: Settings.ui.h:99
 msgid "Opacity"
 msgstr "Непрозорість"
 
-#: Settings.ui:2292
+#: Settings.ui.h:100
 msgid "Appearance"
 msgstr "Зовнішній вигляд"
 
-#: Settings.ui:2331
+#: Settings.ui.h:101
 msgid "version: "
 msgstr "версія: "
 
-#: Settings.ui:2346
+#: Settings.ui.h:102
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "Витягає панель з Огляду та перетворює її на Док"
 
-#: Settings.ui:2360
+#: Settings.ui.h:103
 msgid "Created by"
 msgstr "Створено"
 
-#: Settings.ui:2373
+#: Settings.ui.h:104
 msgid "Webpage"
-msgstr "Домашня сторінка"
+msgstr "Сторінка в Інтернеті"
 
-#: Settings.ui:2384
+#: Settings.ui.h:105
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0."
@@ -614,27 +622,27 @@ msgstr ""
 "licenses/gpl-2.0.html\">Загальна громадська ліцензія GNU (GNU GPL), версія 2 "
 "або новіша.</a></span>"
 
-#: Settings.ui:2397
+#: Settings.ui.h:107
 msgid "About"
 msgstr "Інформація"
 
-#: Settings.ui:2455
+#: Settings.ui.h:108
 msgid "Customize minimum and maximum opacity values"
 msgstr "Налаштувати мінімальне та максимальне значення непрозорості"
 
-#: Settings.ui:2477
+#: Settings.ui.h:109
 msgid "Minimum opacity"
 msgstr "Мінімальна непрозорість"
 
-#: Settings.ui:2507
+#: Settings.ui.h:110
 msgid "Maximum opacity"
 msgstr "Максимальна непрозорість"
 
-#: Settings.ui:2588
+#: Settings.ui.h:111
 msgid "Number overlay"
 msgstr "Накладання номерів"
 
-#: Settings.ui:2599
+#: Settings.ui.h:112
 msgid ""
 "Temporarily show the application numbers over the icons, corresponding to "
 "the shortcut."
@@ -642,11 +650,11 @@ msgstr ""
 "Тимчасово накласти на піктограму застосунку номер, відповідно до сполучення "
 "клавіш."
 
-#: Settings.ui:2645
+#: Settings.ui.h:113
 msgid "Show the dock if it is hidden"
 msgstr "Викликати Док, якщо той прихований"
 
-#: Settings.ui:2656
+#: Settings.ui.h:114
 msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
@@ -654,70 +662,70 @@ msgstr ""
 "Коли активне авто-приховування, сполучення клавіш може викликати Док на "
 "короткий час."
 
-#: Settings.ui:2699
+#: Settings.ui.h:115
 msgid "Shortcut for the options above"
 msgstr "Сполучення клавіш для вказаних параметрів"
 
-#: Settings.ui:2710
+#: Settings.ui.h:116
 msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
 msgstr "Синтаксис: <Shift>, <Ctrl>, <Alt>, <Super>"
 
-#: Settings.ui:2757 Settings.ui:3055
+#: Settings.ui.h:117
 msgid "Hide timeout (s)"
 msgstr "Затримка приховування (сек.)"
 
-#: Settings.ui:2814
+#: Settings.ui.h:118
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr "Показувати Док при наведенні курсора на краю екрана."
+msgstr "Показувати Док при наведенні вказівника миші на край екрана."
 
-#: Settings.ui:2831
+#: Settings.ui.h:119
 msgid "Autohide"
 msgstr "Автоматично приховувати"
 
-#: Settings.ui:2852
+#: Settings.ui.h:120
 msgid "Push to show: require pressure to show the dock"
 msgstr "Зусилля для появи: потрібне сильніше притискати для появи Дока"
 
-#: Settings.ui:2863
+#: Settings.ui.h:121
 msgid "Enable in fullscreen mode"
 msgstr "Застосувати для повноекранного режиму"
 
-#: Settings.ui:2875
+#: Settings.ui.h:122
 msgid "Show dock for urgent notifications"
 msgstr "Показувати Док для важливих сповіщень"
 
-#: Settings.ui:2904
+#: Settings.ui.h:123
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr "Показувати Док, якщо він не заважає вікну програми."
+msgstr "Показувати Док, коли той не заважає вікну програми."
 
-#: Settings.ui:2921
+#: Settings.ui.h:124
 msgid "Dodge windows"
 msgstr "Перекривання вікнами"
 
-#: Settings.ui:2946
+#: Settings.ui.h:125
 msgid "All windows"
 msgstr "Усі вікна"
 
-#: Settings.ui:2954
+#: Settings.ui.h:126
 msgid "Only focused application's windows"
 msgstr "Лише вікна програми у фокусі"
 
-#: Settings.ui:2961
+#: Settings.ui.h:127
 msgid "Only maximized windows"
 msgstr "Лише розгорнуті вікна"
 
-#: Settings.ui:2968
+#: Settings.ui.h:128
 msgid "Always on top"
 msgstr "Завжди зверху"
 
-#: Settings.ui:3011
+#: Settings.ui.h:129
 msgid "Animation duration (s)"
 msgstr "Час анімації (сек.)"
 
-#: Settings.ui:3067
+#: Settings.ui.h:130
 msgid "Show timeout (s)"
 msgstr "Затримка появи (сек.)"
 
-#: Settings.ui:3079
+#: Settings.ui.h:131
 msgid "Pressure threshold"
 msgstr "Поріг притискання"
