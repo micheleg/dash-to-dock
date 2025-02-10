@@ -1,3 +1,9 @@
+gnome-shell-extension-ubuntu-dock (99ubuntu3) plucky; urgency=medium
+
+  * control: Bump dependency to gnome-shell (<< 49~)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Mon, 10 Feb 2025 17:03:06 +0800
+
 gnome-shell-extension-ubuntu-dock (99ubuntu2) plucky; urgency=medium
 
   [ Sergio Costas ]
