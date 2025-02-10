@@ -2,7 +2,8 @@
 "shell-version": [
     "45",
     "46",
-    "47"
+    "47",
+    "48"
 ],
 "uuid": "ubuntu-dock@ubuntu.com",
 "name": "Ubuntu Dock",
