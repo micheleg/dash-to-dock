@@ -1,3 +1,19 @@
+gnome-shell-extension-ubuntu-dock (99ubuntu2) plucky; urgency=medium
+
+  [ Sergio Costas ]
+  * Fix dot position on Gnome 46.2 and greater (dash-to-dock issue #2222)
+  * Make the 'Pin to Dock' label translatable (dash-to-dock issue #2330)
+
+  [ Daniel van Vugt ]
+  * docking: Generalize unredirect toggling to support GNOME 48 and earlier
+    (dash-to-dock issue #2347)
+  * metadata.json: Enable GNOME 48 support
+
+  [ César Quintana ]
+  * Fix autohide after drag event (dash-to-dock issue #2174)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Mon, 10 Feb 2025 16:45:30 +0800
+
 gnome-shell-extension-ubuntu-dock (99ubuntu1) oracular; urgency=medium
 
   * New uptream bugfix release
