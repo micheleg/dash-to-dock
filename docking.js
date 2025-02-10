@@ -1265,6 +1265,7 @@ const DockedDash = GObject.registerClass({
             this._ignoreHover = this._oldIgnoreHover;
         this._oldIgnoreHover = null;
         this._box.sync_hover();
+        this._updateDashVisibility();
     }
 
     /**
