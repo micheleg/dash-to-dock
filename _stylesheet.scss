@@ -259,11 +259,6 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     }
 }
 
-.dash-item-container .overview-tile .overview-icon,
-.dash-item-container .show-apps .overview-icon {
-    background-color: rgba(255,255,255,0);
-}
-
 .dash-item-container .overview-tile:hover .overview-icon,
 .dash-item-container .overview-tile.focused .overview-icon,
 .dash-item-container .show-apps:hover .overview-icon {
