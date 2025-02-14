@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (100ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (100ubuntu1) plucky; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * New upstream release
@@ -10,7 +10,7 @@ gnome-shell-extension-ubuntu-dock (100ubuntu1) UNRELEASED; urgency=medium
   [ Amr Ibrahim ]
   * Update German translation
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 14 Feb 2025 18:43:59 +0100
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 14 Feb 2025 18:45:02 +0100
 
 gnome-shell-extension-ubuntu-dock (99ubuntu3) plucky; urgency=medium
 
