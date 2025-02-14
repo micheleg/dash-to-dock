@@ -1,3 +1,17 @@
+gnome-shell-extension-ubuntu-dock (100ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+  * appIcons: Be consistent on menu items styles
+
+  [ Yevhen Popok ]
+  * Update uk_UA.po
+
+  [ Amr Ibrahim ]
+  * Update German translation
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 14 Feb 2025 18:43:59 +0100
+
 gnome-shell-extension-ubuntu-dock (99ubuntu3) plucky; urgency=medium
 
   * control: Bump dependency to gnome-shell (<< 49~)
