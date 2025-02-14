@@ -1508,11 +1508,9 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
     _rebuildMenu() {
         this.removeAll();
 
-        /* Translators: %s is "Settings", which is automatically translated. You
-           can also translate the full message if this fits better your language. */
-        const name = __('Dash to Dock %s').format(_('Settings'));
-        const item = this._appendMenuItem(name);
+        this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(__('Dash to Dock')));
 
+        const item = this._appendMenuItem(_('Settings'));
         item.connect('activate', () =>
             Docking.DockManager.extension.openPreferences());
     }
