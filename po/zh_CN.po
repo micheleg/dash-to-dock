@@ -4,15 +4,16 @@
 # tuhaihe <1132321739qq@gmail.com>, 2013.
 # 绿色圣光 <lishaohui.qd@163.com>, 2015, 2016, 2017.
 # zhmars <1403122061@qq.com>, 2019, 2020, 2021.
-# WhiredPlanck <whiredplanck[at]outlook.com, 2023
+# WhiredPlanck <whiredplanck@outlook.com>, 2023.
+# 巴神汜 <19842332557@163.com>, 2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-06 16:45+0800\n"
-"PO-Revision-Date: 2023-06-06 18:10+0800\n"
-"Last-Translator: WhiredPlanck <whiredplanck[at]outlook.com>\n"
+"POT-Creation-Date: 2025-02-23 13:54+0800\n"
+"PO-Revision-Date: 2025-02-23 13:54+0800\n"
+"Last-Translator: 巴神汜 <19842332557@163.com>\n"
 "Language-Team: Chinese (Simplified) <>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
@@ -45,7 +46,7 @@ msgstr "左侧"
 
 #: prefs.js:527
 msgid "Intelligent autohide customization"
-msgstr "智能自动隐藏自定义"
+msgstr "智能的自动隐藏自定义"
 
 #: prefs.js:535 prefs.js:857 prefs.js:916
 msgid "Reset to defaults"
@@ -57,7 +58,7 @@ msgstr "由 GNOME 多任务应用程序切换设置管理。"
 
 #: prefs.js:849
 msgid "Show dock and application numbers"
-msgstr "显示 Dock 和应用程序编号"
+msgstr "显示快捷栏和应用程序编号"
 
 #: prefs.js:908
 msgid "Customize middle-click behavior"
@@ -238,7 +239,7 @@ msgstr "边框宽度"
 
 #: Settings.ui.h:26
 msgid "Show the dock on"
-msgstr "显示 Dock 于"
+msgstr "显示快捷栏于"
 
 #: Settings.ui.h:27
 msgid "Show on all monitors"
@@ -261,8 +262,8 @@ msgid ""
 "Hide the dock when it obstructs a window of the current application. More "
 "refined settings are available."
 msgstr ""
-"当 Dock 会挡住当前应用程序的某个窗口时，将其隐藏。点击右侧设置按钮可以设置更"
-"多细节。"
+"当快捷栏挡住当前应用程序的某个窗口时，将其隐藏。"
+"点击右侧设置按钮可以设置更多细节。"
 
 #: Settings.ui.h:34
 msgid "Intelligent autohide"
@@ -270,7 +271,7 @@ msgstr "智能隐藏"
 
 #: Settings.ui.h:35
 msgid "Dock size limit"
-msgstr "Dock 大小限制"
+msgstr "快捷栏大小限制"
 
 #: Settings.ui.h:36
 msgid "Panel mode: extend to the screen edge"
@@ -328,7 +329,8 @@ msgstr "保持焦点窗口在 Dash 中始终可见"
 msgid ""
 "If disabled, these settings are accessible from gnome-tweak-tool or the "
 "extension website."
-msgstr "禁用之后，可以通过 gnome-tweak-tool 或者扩展网站来访问这些设置。"
+msgstr "禁用之后，可以通过 gnome-tweak-tool 或者扩展网站"
+"来访问这些设置。"
 
 #: Settings.ui.h:50
 msgid "Show <i>Applications</i> icon"
@@ -336,7 +338,7 @@ msgstr "显示 <i>应用程序</i> 图标"
 
 #: Settings.ui.h:51
 msgid "Move at beginning of the dock"
-msgstr "移至 Dock 的起始位置"
+msgstr "移至快捷栏的起始位置"
 
 #: Settings.ui.h:52
 msgid "Animate <i>Show Applications</i>"
@@ -444,7 +446,7 @@ msgstr "减小填充和边框半径以节省空间。"
 
 #: Settings.ui.h:77
 msgid "Shrink the dash"
-msgstr "收缩 Dash"
+msgstr "收缩快捷栏"
 
 #: Settings.ui.h:78
 msgid "Force straight corner"
@@ -459,8 +461,8 @@ msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
-"几个自定义项可以将 Dock 整合到默认 GNOME 主题中。或者，也可以启动下面的几个特"
-"殊选项。"
+"几个自定义项可以将快捷栏整合到默认 GNOME 主题中。"
+"或者，也可以启动下面的几个特殊选项。"
 
 #: Settings.ui.h:81
 msgid "Use built-in theme"
@@ -508,15 +510,15 @@ msgstr "二进制"
 
 #: Settings.ui.h:92
 msgid "Set the background color for the dash."
-msgstr "设置 Dash 的背景颜色。"
+msgstr "设置快捷栏的背景颜色。"
 
 #: Settings.ui.h:93
 msgid "Customize the dash color"
-msgstr "自定义 Dash 颜色"
+msgstr "自定义快捷栏颜色"
 
 #: Settings.ui.h:94
 msgid "Tune the dash background opacity."
-msgstr "调整 Dash 的背景不透明度。"
+msgstr "调整快捷栏的背景不透明度。"
 
 #: Settings.ui.h:96
 msgid "Fixed"
@@ -540,7 +542,7 @@ msgstr "版本："
 
 #: Settings.ui.h:101
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr "让 Dash 跳出概览之外，转化为一个 Dock"
+msgstr "让内置快捷栏跳出概览之外，转化为一个外置快捷栏"
 
 #: Settings.ui.h:102
 msgid "Created by"
@@ -566,7 +568,7 @@ msgstr "关于"
 
 #: Settings.ui.h:107
 msgid "Customize minimum and maximum opacity values"
-msgstr "自定义窗口最小化和最大化时 Dock 的不透明度"
+msgstr "自定义窗口最小化和最大化时快捷栏的不透明度"
 
 #: Settings.ui.h:108
 msgid "Minimum opacity"
@@ -588,13 +590,13 @@ msgstr "临时显示与快捷键对应的图标上的应用程序编号。"
 
 #: Settings.ui.h:112
 msgid "Show the dock if it is hidden"
-msgstr "若 Dock 已隐藏，将其显示"
+msgstr "若快捷栏已隐藏，将其显示"
 
 #: Settings.ui.h:113
 msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
-msgstr "如果使用了自动隐藏，Dock 将在触发快捷键时短暂显示。"
+msgstr "如果使用了自动隐藏，快捷栏将在触发快捷键时短暂显示。"
 
 #: Settings.ui.h:114
 msgid "Shortcut for the options above"
@@ -610,7 +612,7 @@ msgstr "隐藏超时时间（秒）"
 
 #: Settings.ui.h:117
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr "鼠标移至屏幕边缘时显示 Dock。"
+msgstr "鼠标移至屏幕边缘时显示快捷栏。"
 
 #: Settings.ui.h:118
 msgid "Autohide"
@@ -618,7 +620,7 @@ msgstr "自动隐藏"
 
 #: Settings.ui.h:119
 msgid "Push to show: require pressure to show the dock"
-msgstr "推压以显示：需要一定压力来显示 Dock"
+msgstr "推压以显示：需要一定压力来显示快捷栏"
 
 #: Settings.ui.h:120
 msgid "Enable in fullscreen mode"
@@ -626,11 +628,11 @@ msgstr "在全屏模式下启用"
 
 #: Settings.ui.h:121
 msgid "Show dock for urgent notifications"
-msgstr "有紧急通知是显示 Dock"
+msgstr "有紧急通知时显示快捷栏"
 
 #: Settings.ui.h:122
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr "在不妨碍应用程序窗口时，显示 Dock。"
+msgstr "在不妨碍应用程序窗口时，显示快捷栏。"
 
 #: Settings.ui.h:123
 msgid "Dodge windows"
@@ -674,17 +676,17 @@ msgstr "压力阈值"
 #~ "With fixed icon size, only the edge of the dock and the <i>Show "
 #~ "Applications</i> icon are active."
 #~ msgstr ""
-#~ "如果固定了图标大小，只有 dock 边缘和“<i>显示应用程序</i>”图标会激活该功"
-#~ "能。"
+#~ "如果固定了图标大小，只有快捷栏边缘和“<i>显示应用程序</i>”图标"
+#~ "会激活该功能。"
 
 #~ msgid "Switch workspace by scrolling on the dock"
-#~ msgstr "通过滚动 dock 来切换工作区"
+#~ msgstr "通过滚动快捷栏来切换工作区"
 
 #~ msgid "Main Settings"
 #~ msgstr "主设置"
 
 #~ msgid "Dock is fixed and always visible"
-#~ msgstr "Dock 固定且总是可见"
+#~ msgstr "快捷栏固定且总是可见"
 
 #~ msgid "Show delay [ms]"
 #~ msgstr "显示延迟(毫秒)"
@@ -696,7 +698,7 @@ msgstr "压力阈值"
 #~ msgstr "应用程序基于智能隐藏"
 
 #~ msgid "Show the dock on following monitor (if attached)"
-#~ msgstr "Dock 将在如下显示器显示(如果已连接)"
+#~ msgstr "快捷栏将在如下显示器显示(如果已连接)"
 
 #~ msgid "Primary (default)"
 #~ msgstr "主显示器(默认)"
