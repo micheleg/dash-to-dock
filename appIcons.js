@@ -1180,7 +1180,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                         favs.removeFavorite(app.get_id());
                     });
                 } else {
-                    const item = this._appendMenuItem(__('Pin to Dock'));
+                    const item = this._appendMenuItem(__('Pin to Dash'));
                     item.connect('activate', () => {
                         const favs = AppFavorites.getAppFavorites();
                         favs.addFavorite(app.get_id());

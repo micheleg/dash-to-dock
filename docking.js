@@ -2521,7 +2521,7 @@ export class DockManager {
 
                 const {id} = this._app;
                 this._toggleFavoriteItem.label.text = this._appFavorites.isFavorite(id)
-                    ? _('Unpin') : _('Pin to Dock');
+                    ? _('Unpin') : _('Pin to Dash');
                 /* eslint-enable no-invalid-this */
             });
     }
