@@ -628,7 +628,7 @@ msgstr "在全屏模式下启用"
 
 #: Settings.ui.h:121
 msgid "Show dock for urgent notifications"
-msgstr "有紧急通知是显示快捷栏"
+msgstr "有紧急通知时显示快捷栏"
 
 #: Settings.ui.h:122
 msgid "Show the dock when it doesn't obstruct application windows."
