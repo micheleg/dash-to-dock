@@ -1,759 +1,1843 @@
-# Simplified Chinese translation of dash-to-dock
-# Copyright (C) 2013 tuhaihe
-# This file is distributed under the same license as the dash-to-dock package.
-# tuhaihe <1132321739qq@gmail.com>, 2013.
-# 绿色圣光 <lishaohui.qd@163.com>, 2015, 2016, 2017.
-# zhmars <1403122061@qq.com>, 2019, 2020, 2021.
-# WhiredPlanck <whiredplanck[at]outlook.com, 2023
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: Dash to Dock\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-06-06 16:45+0800\n"
-"PO-Revision-Date: 2023-06-06 18:10+0800\n"
-"Last-Translator: WhiredPlanck <whiredplanck[at]outlook.com>\n"
-"Language-Team: Chinese (Simplified) <>\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2025-02-24 21:32+0800\n"
+"PO-Revision-Date: 2025-02-24 22:58+0800\n"
+"Last-Translator: 巴神汜 <19842332557@163.com>\n"
+"Language-Team: \n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: Poedit 3.5\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SearchPath-0: .\n"
 
-#: prefs.js:242
-msgid "Show favorite applications"
-msgstr "显示收藏的应用程序"
-
-#. Translators: This will be followed by Display Name - Connector.
-#: prefs.js:419
-msgid "Primary monitor: "
-msgstr "主显示器："
-
-#. Translators: Followed by monitor index, Display Name - Connector.
-#: prefs.js:425
-msgid "Secondary monitor "
-msgstr "副显示器 "
-
-#: prefs.js:471 Settings.ui.h:32
-msgid "Right"
-msgstr "右侧"
-
-#: prefs.js:472 Settings.ui.h:29
-msgid "Left"
-msgstr "左侧"
-
-#: prefs.js:527
-msgid "Intelligent autohide customization"
-msgstr "智能自动隐藏自定义"
-
-#: prefs.js:535 prefs.js:857 prefs.js:916
-msgid "Reset to defaults"
-msgstr "重置为默认值"
-
-#: prefs.js:686
-msgid "Managed by GNOME Multitasking's Application Switching setting."
-msgstr "由 GNOME 多任务应用程序切换设置管理。"
-
-#: prefs.js:849
-msgid "Show dock and application numbers"
-msgstr "显示 Dock 和应用程序编号"
-
-#: prefs.js:908
-msgid "Customize middle-click behavior"
-msgstr "自定义中键点击行为"
-
-#: prefs.js:1005
-msgid "Customize running indicators"
-msgstr "自定义“运行中”指示器"
-
-#: prefs.js:1120 Settings.ui.h:95
-msgid "Customize opacity"
-msgstr "自定义不透明度"
-
-#: appIcons.js:1051
-msgid "All Windows"
-msgstr "所有窗口"
-
-#: appIcons.js:1203
-#, javascript-format
-msgid "Quit %d Windows"
-msgstr "退出 %d 个窗口"
-
-#. Translators: %s is "Settings", which is automatically translated. You
-#. can also translate the full message if this fits better your language.
-#: appIcons.js:1442
-#, javascript-format
-msgid "Dash to Dock %s"
-msgstr "Dash to Dock %s"
-
-#: locations.js:529
-msgid "Mount"
-msgstr "挂载"
-
-#: locations.js:531
-msgid "Unmount"
-msgstr "卸载"
-
-#: locations.js:533
-msgid "Eject"
-msgstr "弹出"
-
-#: locations.js:592
-#, javascript-format
-msgid "Failed to mount “%s”"
-msgstr "挂载“%s”失败"
-
-#: locations.js:595
-#, javascript-format
-msgid "Failed to umount “%s”"
-msgstr "卸载“%s”失败"
-
-#: locations.js:598
-#, javascript-format
-msgid "Failed to eject “%s”"
-msgstr "弹出“%s”失败"
-
-#: locations.js:610
-msgid "Mount operation already in progress"
-msgstr "挂载操作已在进行中"
-
-#: locations.js:613
-msgid "Umount operation already in progress"
-msgstr "卸载操作已在进行中"
-
-#: locations.js:616
-msgid "Eject operation already in progress"
-msgstr "弹出操作已在进行中"
-
-#: locations.js:695
-msgid "Trash"
-msgstr "回收站"
-
-#: locations.js:736
-msgid "Empty Trash"
-msgstr "清空回收站"
-
-#: Settings.ui.h:1
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:41
+#: 桌面/dash-to-dock/Settings.ui:41
 msgid ""
 "When set to minimize, double clicking minimizes all the windows of the "
 "application."
-msgstr "当设置为最小化时，双击会最小化应用程序的所有窗口。"
+msgstr "设为最小化时，双击会最小化该应用程序的所有窗口。"
 
-#: Settings.ui.h:2
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:59
+#: 桌面/dash-to-dock/Settings.ui:59
 msgid "Shift+Click action"
-msgstr "Shift+点击动作"
+msgstr "Shift+点击操作"
 
-#: Settings.ui.h:3
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:73
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:145
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:217
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1684
+#: 桌面/dash-to-dock/Settings.ui:73 桌面/dash-to-dock/Settings.ui:145
+#: 桌面/dash-to-dock/Settings.ui:217 桌面/dash-to-dock/Settings.ui:1684
 msgid "Raise window"
 msgstr "提升窗口"
 
-#: Settings.ui.h:4
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:74
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:146
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:218
+#: 桌面/dash-to-dock/Settings.ui:74 桌面/dash-to-dock/Settings.ui:146
+#: 桌面/dash-to-dock/Settings.ui:218
 msgid "Minimize window"
 msgstr "最小化窗口"
 
-#: Settings.ui.h:5
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:75
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:147
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:219
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1686
+#: 桌面/dash-to-dock/Settings.ui:75 桌面/dash-to-dock/Settings.ui:147
+#: 桌面/dash-to-dock/Settings.ui:219 桌面/dash-to-dock/Settings.ui:1686
 msgid "Launch new instance"
 msgstr "启动新实例"
 
-#: Settings.ui.h:6
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:76
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:148
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:220
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1687
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1775
+#: 桌面/dash-to-dock/Settings.ui:76 桌面/dash-to-dock/Settings.ui:148
+#: 桌面/dash-to-dock/Settings.ui:220 桌面/dash-to-dock/Settings.ui:1687
+#: 桌面/dash-to-dock/Settings.ui:1775
 msgid "Cycle through windows"
-msgstr "在窗口间循环"
+msgstr "循环切换窗口"
 
-#: Settings.ui.h:7
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:77
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:149
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:221
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1688
+#: 桌面/dash-to-dock/Settings.ui:77 桌面/dash-to-dock/Settings.ui:149
+#: 桌面/dash-to-dock/Settings.ui:221 桌面/dash-to-dock/Settings.ui:1688
 msgid "Minimize or overview"
-msgstr "最小化或概览"
+msgstr "最小化或显示概览"
 
-#: Settings.ui.h:8
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:78
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:150
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:222
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1689
+#: 桌面/dash-to-dock/Settings.ui:78 桌面/dash-to-dock/Settings.ui:150
+#: 桌面/dash-to-dock/Settings.ui:222 桌面/dash-to-dock/Settings.ui:1689
 msgid "Show window previews"
-msgstr "显示打开窗口预览"
+msgstr "显示窗口预览"
 
-#: Settings.ui.h:9
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:79
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:151
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:223
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1690
+#: 桌面/dash-to-dock/Settings.ui:79 桌面/dash-to-dock/Settings.ui:151
+#: 桌面/dash-to-dock/Settings.ui:223 桌面/dash-to-dock/Settings.ui:1690
 msgid "Minimize or show previews"
 msgstr "最小化或显示预览"
 
-#: Settings.ui.h:10
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:80
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:152
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:224
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1691
+#: 桌面/dash-to-dock/Settings.ui:80 桌面/dash-to-dock/Settings.ui:152
+#: 桌面/dash-to-dock/Settings.ui:224 桌面/dash-to-dock/Settings.ui:1691
 msgid "Focus or show previews"
 msgstr "聚焦或显示预览"
 
-#: Settings.ui.h:11
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:81
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:153
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:225
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1692
+#: 桌面/dash-to-dock/Settings.ui:81 桌面/dash-to-dock/Settings.ui:153
+#: 桌面/dash-to-dock/Settings.ui:225 桌面/dash-to-dock/Settings.ui:1692
 msgid "Focus or app spread"
-msgstr "聚焦或显示应用分览"
+msgstr "聚焦或展开应用"
 
-#: Settings.ui.h:12
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:82
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:154
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:226
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1693
+#: 桌面/dash-to-dock/Settings.ui:82 桌面/dash-to-dock/Settings.ui:154
+#: 桌面/dash-to-dock/Settings.ui:226 桌面/dash-to-dock/Settings.ui:1693
 msgid "Focus, minimize or show previews"
 msgstr "聚焦、最小化或显示预览"
 
-#: Settings.ui.h:13
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:83
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:155
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:227
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1694
+#: 桌面/dash-to-dock/Settings.ui:83 桌面/dash-to-dock/Settings.ui:155
+#: 桌面/dash-to-dock/Settings.ui:227 桌面/dash-to-dock/Settings.ui:1694
 msgid "Focus, minimize or app spread"
-msgstr "聚焦、最小化或显示应用分览"
+msgstr "聚焦、最小化或展开应用"
 
-#: Settings.ui.h:14
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:84
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:156
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:228
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:1250
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:1262
+#: 桌面/dash-to-dock/Settings.ui:84 桌面/dash-to-dock/Settings.ui:156
+#: 桌面/dash-to-dock/Settings.ui:228 桌面/dash-to-dock/appIcons.js:1250
+#: 桌面/dash-to-dock/appIcons.js:1262
 msgid "Quit"
 msgstr "退出"
 
-#: Settings.ui.h:15
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:113
+#: 桌面/dash-to-dock/Settings.ui:113
 msgid "Behavior for Middle-Click."
-msgstr "中键点击的行为。"
+msgstr "中键点击行为。"
 
-#: Settings.ui.h:16
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:131
+#: 桌面/dash-to-dock/Settings.ui:131
 msgid "Middle-Click action"
-msgstr "中键点击动作"
+msgstr "中键点击操作"
 
-#: Settings.ui.h:17
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:185
+#: 桌面/dash-to-dock/Settings.ui:185
 msgid "Behavior for Shift+Middle-Click."
-msgstr "Shift+中键点击的行为。"
+msgstr "Shift+中键点击行为。"
 
-#: Settings.ui.h:18
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:203
+#: 桌面/dash-to-dock/Settings.ui:203
 msgid "Shift+Middle-Click action"
-msgstr "Shift+中键点击动作"
+msgstr "Shift+中键点击操作"
 
-#: Settings.ui.h:19
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:305
+#: 桌面/dash-to-dock/Settings.ui:305
 msgid "Enable Unity7 like glossy backlit items"
-msgstr "启用类似 Unity 7 的高亮阴影"
+msgstr "启用类似Unity7的镜面背光效果"
 
-#: Settings.ui.h:20
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:318
+#: 桌面/dash-to-dock/Settings.ui:318
 msgid "Apply glossy effect."
-msgstr "应用高光效果。"
+msgstr "应用镜面效果。"
 
-#: Settings.ui.h:21
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:330
+#: 桌面/dash-to-dock/Settings.ui:330
 msgid "Use dominant color"
 msgstr "使用主色调"
 
-#: Settings.ui.h:22
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:355
+#: 桌面/dash-to-dock/Settings.ui:355
 msgid "Customize indicator style"
 msgstr "自定义指示器样式"
 
-#: Settings.ui.h:23
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:381
+#: 桌面/dash-to-dock/Settings.ui:381
 msgid "Color"
 msgstr "颜色"
 
-#: Settings.ui.h:24
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:401
+#: 桌面/dash-to-dock/Settings.ui:401
 msgid "Border color"
 msgstr "边框颜色"
 
-#: Settings.ui.h:25
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:421
+#: 桌面/dash-to-dock/Settings.ui:421
 msgid "Border width"
 msgstr "边框宽度"
 
-#: Settings.ui.h:26
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:502
+#: 桌面/dash-to-dock/Settings.ui:502
 msgid "Show the dock on"
-msgstr "显示 Dock 于"
+msgstr "显示程序坞在"
 
-#: Settings.ui.h:27
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:523
+#: 桌面/dash-to-dock/Settings.ui:523
 msgid "Show on all monitors"
-msgstr "所有显示器上都显示"
+msgstr "在所有显示器显示"
 
-#: Settings.ui.h:28
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:559
+#: 桌面/dash-to-dock/Settings.ui:559
 msgid "Position on screen"
-msgstr "屏幕中的位置"
+msgstr "屏幕上的位置"
 
-#: Settings.ui.h:30
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:569
+#: 桌面/dash-to-dock/Settings.ui:569
+msgid "Left"
+msgstr "左侧"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:578
+#: 桌面/dash-to-dock/Settings.ui:578
 msgid "Bottom"
 msgstr "底部"
 
-#: Settings.ui.h:31
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:587
+#: 桌面/dash-to-dock/Settings.ui:587
 msgid "Top"
 msgstr "顶部"
 
-#: Settings.ui.h:33
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:597
+#: 桌面/dash-to-dock/Settings.ui:597
+msgid "Right"
+msgstr "右侧"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:642
+#: 桌面/dash-to-dock/Settings.ui:642
 msgid ""
 "Hide the dock when it obstructs a window of the current application. More "
 "refined settings are available."
-msgstr ""
-"当 Dock 会挡住当前应用程序的某个窗口时，将其隐藏。点击右侧设置按钮可以设置更"
-"多细节。"
+msgstr "当遮挡当前应用程序窗口时自动隐藏快捷栏，可进行更多精细设置。"
 
-#: Settings.ui.h:34
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:659
+#: 桌面/dash-to-dock/Settings.ui:659
 msgid "Intelligent autohide"
-msgstr "智能隐藏"
+msgstr "智能自动隐藏"
 
-#: Settings.ui.h:35
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:735
+#: 桌面/dash-to-dock/Settings.ui:735
 msgid "Dock size limit"
-msgstr "Dock 大小限制"
+msgstr "程序坞尺寸限制"
 
-#: Settings.ui.h:36
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:757
+#: 桌面/dash-to-dock/Settings.ui:757
 msgid "Panel mode: extend to the screen edge"
-msgstr "面板模式：延伸到屏幕边缘"
+msgstr "面板模式：延伸至屏幕边缘"
 
-#: Settings.ui.h:37
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:769
+#: 桌面/dash-to-dock/Settings.ui:769
 msgid "Place icons to the center"
-msgstr "将图标居中"
+msgstr "将图标居中放置"
 
-#: Settings.ui.h:38
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:794
+#: 桌面/dash-to-dock/Settings.ui:794
 msgid "Icon size limit"
-msgstr "图标大小限制"
+msgstr "图标尺寸限制"
 
-#: Settings.ui.h:39
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:820
+#: 桌面/dash-to-dock/Settings.ui:820
 msgid "Fixed icon size: scroll to reveal other icons"
-msgstr "固定图标大小：滚动显示其它图标"
+msgstr "固定图标尺寸：滚动显示其他图标"
 
-#: Settings.ui.h:40
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:848
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:181
+#: 桌面/dash-to-dock/Settings.ui:848
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:181
 msgid "Preview size scale"
-msgstr "预览大小比例"
+msgstr "预览尺寸比例"
 
-#: Settings.ui.h:41
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:890
+#: 桌面/dash-to-dock/Settings.ui:890
 msgid "Position and size"
-msgstr "位置和大小"
+msgstr "位置与尺寸"
 
-#: Settings.ui.h:42
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:940
+#: 桌面/dash-to-dock/Settings.ui:940
 msgid "Show pinned applications"
-msgstr "显示被固定的应用程序"
+msgstr "显示已固定的应用程序"
 
-#: Settings.ui.h:43
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:977
+#: 桌面/dash-to-dock/Settings.ui:977
 msgid "Show running applications"
 msgstr "显示正在运行的应用程序"
 
-#: Settings.ui.h:44
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:987
+#: 桌面/dash-to-dock/Settings.ui:987
 msgid "Isolate workspaces"
 msgstr "隔离工作区"
 
-#: Settings.ui.h:45
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1000
+#: 桌面/dash-to-dock/Settings.ui:1000
 msgid "Show urgent windows despite current workspace"
-msgstr "在当前工作区显示紧急窗口"
+msgstr "显示所有工作区的紧急窗口"
 
-#: Settings.ui.h:46
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1013
+#: 桌面/dash-to-dock/Settings.ui:1013
 msgid "Isolate monitors"
 msgstr "隔离显示器"
 
-#: Settings.ui.h:47
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1027
+#: 桌面/dash-to-dock/Settings.ui:1027
 msgid "Show open windows' previews"
-msgstr "显示打开窗口预览"
+msgstr "显示已打开窗口的预览"
 
-#: Settings.ui.h:48
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1064
+#: 桌面/dash-to-dock/Settings.ui:1064
 msgid "Keep the focused application always visible in the dash"
-msgstr "保持焦点窗口在 Dash 中始终可见"
+msgstr "始终保持聚焦的应用程序在快捷栏中可见"
 
-#: Settings.ui.h:49
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1101
+#: 桌面/dash-to-dock/Settings.ui:1101
 msgid ""
 "If disabled, these settings are accessible from gnome-tweak-tool or the "
 "extension website."
-msgstr "禁用之后，可以通过 gnome-tweak-tool 或者扩展网站来访问这些设置。"
+msgstr "若禁用，可通过gnome-tweak工具或扩展网站访问这些设置。"
 
-#: Settings.ui.h:50
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1118
+#: 桌面/dash-to-dock/Settings.ui:1118
 msgid "Show <i>Applications</i> icon"
-msgstr "显示 <i>应用程序</i> 图标"
+msgstr "显示<b>应用程序</b>图标"
 
-#: Settings.ui.h:51
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1129
+#: 桌面/dash-to-dock/Settings.ui:1129
 msgid "Move at beginning of the dock"
-msgstr "移至 Dock 的起始位置"
+msgstr "移至程序坞起始位置"
 
-#: Settings.ui.h:52
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1150
+#: 桌面/dash-to-dock/Settings.ui:1150
 msgid "Animate <i>Show Applications</i>"
-msgstr "<i>显示应用程序</i>时播放动画"
+msgstr "启用<b>显示应用程序</b>动画"
 
-#: Settings.ui.h:53
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1171
+#: 桌面/dash-to-dock/Settings.ui:1171
 msgid "Put <i>Show Applications</i> in a dock edge when using Panel mode"
-msgstr "使用面板模式时将 <i>显示应用</i> 放到 Dock 的边缘"
+msgstr "在面板模式下将<b>显示应用程序</b>置于程序坞边缘"
 
-#: Settings.ui.h:54
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1211
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:261
+#: 桌面/dash-to-dock/Settings.ui:1211
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:261
 msgid "Show trash can"
 msgstr "显示回收站"
 
-#: Settings.ui.h:55
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1248
+#: 桌面/dash-to-dock/Settings.ui:1248
 msgid "Show volumes and devices"
-msgstr "显示宗卷和设备"
+msgstr "显示存储卷和设备"
 
-#: Settings.ui.h:56
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1258
+#: 桌面/dash-to-dock/Settings.ui:1258
 msgid "Only if mounted"
-msgstr "仅显示已挂载"
+msgstr "仅已挂载时显示"
 
-#: Settings.ui.h:57
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1271
+#: 桌面/dash-to-dock/Settings.ui:1271
 msgid "Include network volumes"
-msgstr "包括网络宗卷"
+msgstr "包含网络存储卷"
 
-#: Settings.ui.h:58
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1311
+#: 桌面/dash-to-dock/Settings.ui:1311
 msgid "Isolate volumes, devices and trash windows from file manager"
-msgstr "从文件管理器中分离显示宗卷、设备和回收站窗口"
+msgstr "将存储卷、设备和回收站窗口与文件管理器隔离"
 
-#: Settings.ui.h:59
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1348
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:286
+#: 桌面/dash-to-dock/Settings.ui:1348
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:286
 msgid "Wiggle urgent applications"
-msgstr "摇动紧急应用"
+msgstr "紧急应用程序图标晃动提示"
 
-#: Settings.ui.h:60
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1385
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:625
+#: 桌面/dash-to-dock/Settings.ui:1385
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:625
 msgid "Hide application tooltip"
-msgstr "隐藏应用工具提示"
+msgstr "隐藏应用程序提示信息"
 
-#: Settings.ui.h:61
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1422
+#: 桌面/dash-to-dock/Settings.ui:1422
 msgid "Show icons emblems"
-msgstr "显示图标角标"
+msgstr "显示图标徽章"
 
-#: Settings.ui.h:62
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1435
+#: 桌面/dash-to-dock/Settings.ui:1435
 msgid ""
 "When enabled application icons will show notification counters and progress-"
 "bars (if Unity API is used)."
-msgstr "启用时应用图标会显示通知计数器和进度条（如果使用了 Unity API）"
+msgstr "启用后应用程序图标将显示通知计数和进度条（若使用Unity API）"
 
-#: Settings.ui.h:63
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1450
+#: 桌面/dash-to-dock/Settings.ui:1450
 msgid "Show the number of unread notifications"
 msgstr "显示未读通知数量"
 
-#: Settings.ui.h:64
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1471
+#: 桌面/dash-to-dock/Settings.ui:1471
 msgid "Application-provided counter overrides the notifications counter"
-msgstr "使用应用提供计数器替代通知计数器"
+msgstr "应用程序提供的计数器覆盖通知计数器"
 
-#: Settings.ui.h:65
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1498
+#: 桌面/dash-to-dock/Settings.ui:1498
 msgid "Launchers"
 msgstr "启动器"
 
-#: Settings.ui.h:66
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1538
+#: 桌面/dash-to-dock/Settings.ui:1538
 msgid ""
 "Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
 "together with Shift and Ctrl."
-msgstr "启用 Super+(0-9) 作为快捷键来激活应用。也可与 Shift 和 Ctrl 一起使用。"
+msgstr "启用Super+(0-9)作为应用程序激活快捷键，可与Shift和Ctrl组合使用。"
 
-#: Settings.ui.h:67
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1557
+#: 桌面/dash-to-dock/Settings.ui:1557
 msgid "Use keyboard shortcuts to activate apps"
-msgstr "使用键盘快捷键激活应用"
+msgstr "使用键盘快捷键激活应用程序"
 
-#: Settings.ui.h:68
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1633
+#: 桌面/dash-to-dock/Settings.ui:1633
 msgid "Behaviour when clicking on the icon of a running application."
-msgstr "点击一个正在运行的应用程序图标时的行为。"
+msgstr "点击正在运行的应用程序图标时的行为。"
 
-#: Settings.ui.h:69
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1651
+#: 桌面/dash-to-dock/Settings.ui:1651
 msgid "Click action"
-msgstr "点击动作"
+msgstr "点击操作"
 
-#: Settings.ui.h:70
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1685
+#: 桌面/dash-to-dock/Settings.ui:1685
 msgid "Minimize"
 msgstr "最小化"
 
-#: Settings.ui.h:71
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1739
+#: 桌面/dash-to-dock/Settings.ui:1739
 msgid "Behaviour when scrolling on the icon of an application."
-msgstr "在一个应用程序图标上滚动时的行为。"
+msgstr "在应用程序图标上滚动时的行为。"
 
-#: Settings.ui.h:72
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1757
+#: 桌面/dash-to-dock/Settings.ui:1757
 msgid "Scroll action"
-msgstr "滚动动作"
+msgstr "滚动操作"
 
-#: Settings.ui.h:73
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1774
+#: 桌面/dash-to-dock/Settings.ui:1774
 msgid "Do nothing"
-msgstr "无动作"
+msgstr "无操作"
 
-#: Settings.ui.h:74
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1776
+#: 桌面/dash-to-dock/Settings.ui:1776
 msgid "Switch workspace"
 msgstr "切换工作区"
 
-#: Settings.ui.h:75
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1804
+#: 桌面/dash-to-dock/Settings.ui:1804
 msgid "Behavior"
 msgstr "行为"
 
-#: Settings.ui.h:76
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1854
+#: 桌面/dash-to-dock/Settings.ui:1854
 msgid "Save space reducing padding and border radius."
-msgstr "减小填充和边框半径以节省空间。"
+msgstr "通过减少内边距和边框圆角来节省空间。"
 
-#: Settings.ui.h:77
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1870
+#: 桌面/dash-to-dock/Settings.ui:1870
 msgid "Shrink the dash"
-msgstr "收缩 Dash"
+msgstr "缩小快捷栏"
 
-#: Settings.ui.h:78
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1900
+#: 桌面/dash-to-dock/Settings.ui:1900
 msgid "Force straight corner"
-msgstr "强制边框直角"
+msgstr "强制直角"
 
-#: Settings.ui.h:79
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1930
+#: 桌面/dash-to-dock/Settings.ui:1930
 msgid "Show overview on startup"
 msgstr "启动时显示概览"
 
-#: Settings.ui.h:80
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1972
+#: 桌面/dash-to-dock/Settings.ui:1972
 msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
-msgstr ""
-"几个自定义项可以将 Dock 整合到默认 GNOME 主题中。或者，也可以启动下面的几个特"
-"殊选项。"
+msgstr "少量自定义设置可使程序坞与GNOME默认主题集成，也可启用下方特定选项。"
 
-#: Settings.ui.h:81
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:1990
+#: 桌面/dash-to-dock/Settings.ui:1990
 msgid "Use built-in theme"
 msgstr "使用内置主题"
 
-#: Settings.ui.h:82
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2032
+#: 桌面/dash-to-dock/Settings.ui:2032
 msgid "Customize windows counter indicators"
-msgstr "显示窗口个数指示器"
+msgstr "自定义窗口计数器指示器"
 
-#: Settings.ui.h:83
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2065
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2230
+#: 桌面/dash-to-dock/Settings.ui:2065 桌面/dash-to-dock/Settings.ui:2230
 msgid "Default"
 msgstr "默认"
 
-#: Settings.ui.h:84
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2066
+#: 桌面/dash-to-dock/Settings.ui:2066
 msgid "Dots"
 msgstr "圆点"
 
-#: Settings.ui.h:85
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2067
+#: 桌面/dash-to-dock/Settings.ui:2067
 msgid "Squares"
-msgstr "正方形"
+msgstr "方块"
 
-#: Settings.ui.h:86
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2068
+#: 桌面/dash-to-dock/Settings.ui:2068
 msgid "Dashes"
-msgstr "破折号"
+msgstr "短横线"
 
-#: Settings.ui.h:87
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2069
+#: 桌面/dash-to-dock/Settings.ui:2069
 msgid "Segmented"
-msgstr "分段"
+msgstr "分段式"
 
-#: Settings.ui.h:88
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2070
+#: 桌面/dash-to-dock/Settings.ui:2070
 msgid "Solid"
 msgstr "实心"
 
-#: Settings.ui.h:89
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2071
+#: 桌面/dash-to-dock/Settings.ui:2071
 msgid "Ciliora"
-msgstr "Ciliora"
+msgstr "纤毛样式"
 
-#: Settings.ui.h:90
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2072
+#: 桌面/dash-to-dock/Settings.ui:2072
 msgid "Metro"
-msgstr "现代"
+msgstr "地铁样式"
 
-#: Settings.ui.h:91
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2073
+#: 桌面/dash-to-dock/Settings.ui:2073
 msgid "Binary"
-msgstr "二进制"
+msgstr "二进制样式"
 
-#: Settings.ui.h:92
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2074
+#: 桌面/dash-to-dock/Settings.ui:2074
+msgid "Dot"
+msgstr "点状"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2107
+#: 桌面/dash-to-dock/Settings.ui:2107
 msgid "Set the background color for the dash."
-msgstr "设置 Dash 的背景颜色。"
+msgstr "设置快捷栏背景颜色。"
 
-#: Settings.ui.h:93
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2125
+#: 桌面/dash-to-dock/Settings.ui:2125
 msgid "Customize the dash color"
-msgstr "自定义 Dash 颜色"
+msgstr "自定义快捷栏颜色"
 
-#: Settings.ui.h:94
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2181
+#: 桌面/dash-to-dock/Settings.ui:2181
 msgid "Tune the dash background opacity."
-msgstr "调整 Dash 的背景不透明度。"
+msgstr "调整快捷栏背景不透明度。"
 
-#: Settings.ui.h:96
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2197
+#: 桌面/dash-to-dock/Settings.ui:2197
+msgid "Customize opacity"
+msgstr "自定义不透明度"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2231
+#: 桌面/dash-to-dock/Settings.ui:2231
 msgid "Fixed"
 msgstr "固定"
 
-#: Settings.ui.h:97
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2232
+#: 桌面/dash-to-dock/Settings.ui:2232
 msgid "Dynamic"
 msgstr "动态"
 
-#: Settings.ui.h:98
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2256
+#: 桌面/dash-to-dock/Settings.ui:2256
 msgid "Opacity"
 msgstr "不透明度"
 
-#: Settings.ui.h:99
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2293
+#: 桌面/dash-to-dock/Settings.ui:2293
 msgid "Appearance"
 msgstr "外观"
 
-#: Settings.ui.h:100
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2332
+#: 桌面/dash-to-dock/Settings.ui:2332
 msgid "version: "
 msgstr "版本："
 
-#: Settings.ui.h:101
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2347
+#: 桌面/dash-to-dock/Settings.ui:2347
 msgid "Moves the dash out of the overview transforming it in a dock"
-msgstr "让 Dash 跳出概览之外，转化为一个 Dock"
+msgstr "将快捷栏移出概览视图并转换为程序坞"
 
-#: Settings.ui.h:102
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2361
+#: 桌面/dash-to-dock/Settings.ui:2361
 msgid "Created by"
-msgstr "作者："
+msgstr "创建者"
 
-#: Settings.ui.h:103
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2374
+#: 桌面/dash-to-dock/Settings.ui:2374
 msgid "Webpage"
-msgstr "网站主页"
+msgstr "网页"
 
-#: Settings.ui.h:104
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2385
+#: 桌面/dash-to-dock/Settings.ui:2385
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0."
 "html\">GNU General Public License, version 2 or later</a> for details.</span>"
 msgstr ""
 "<span size=\"small\">本程序不提供任何担保。\n"
-"参见 <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\">GNU "
-"通用公共许可证，第二版或更高版本</a>以了解更多细节。</span>"
+"详情请参阅 <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0."
+"html\">GNU通用公共许可证第二版或更新版本</a>。</span>"
 
-#: Settings.ui.h:106
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2398
+#: 桌面/dash-to-dock/Settings.ui:2398
 msgid "About"
 msgstr "关于"
 
-#: Settings.ui.h:107
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2456
+#: 桌面/dash-to-dock/Settings.ui:2456
 msgid "Customize minimum and maximum opacity values"
-msgstr "自定义窗口最小化和最大化时 Dock 的不透明度"
+msgstr "自定义最小和最大不透明度值"
 
-#: Settings.ui.h:108
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2478
+#: 桌面/dash-to-dock/Settings.ui:2478
 msgid "Minimum opacity"
-msgstr "最小化不透明度"
+msgstr "最小不透明度"
 
-#: Settings.ui.h:109
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2508
+#: 桌面/dash-to-dock/Settings.ui:2508
 msgid "Maximum opacity"
-msgstr "最大化不透明度"
+msgstr "最大不透明度"
 
-#: Settings.ui.h:110
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2589
+#: 桌面/dash-to-dock/Settings.ui:2589
 msgid "Number overlay"
-msgstr "编号覆盖"
+msgstr "数字叠加显示"
 
-#: Settings.ui.h:111
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2600
+#: 桌面/dash-to-dock/Settings.ui:2600
 msgid ""
 "Temporarily show the application numbers over the icons, corresponding to "
 "the shortcut."
-msgstr "临时显示与快捷键对应的图标上的应用程序编号。"
+msgstr "临时在图标上显示对应快捷键的应用程序编号。"
 
-#: Settings.ui.h:112
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2646
+#: 桌面/dash-to-dock/Settings.ui:2646
 msgid "Show the dock if it is hidden"
-msgstr "若 Dock 已隐藏，将其显示"
+msgstr "若隐藏则显示程序坞"
 
-#: Settings.ui.h:113
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2657
+#: 桌面/dash-to-dock/Settings.ui:2657
 msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
-msgstr "如果使用了自动隐藏，Dock 将在触发快捷键时短暂显示。"
+msgstr "若启用自动隐藏，触发快捷键时将短暂显示程序坞。"
 
-#: Settings.ui.h:114
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2700
+#: 桌面/dash-to-dock/Settings.ui:2700
 msgid "Shortcut for the options above"
-msgstr "以上选项的快捷键"
+msgstr "上述选项的快捷键"
 
-#: Settings.ui.h:115
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2711
+#: 桌面/dash-to-dock/Settings.ui:2711
 msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
-msgstr "语法：<Shift>，<Ctrl>，<Alt>，<Super>"
+msgstr "语法：<Shift>、<Ctrl>、<Alt>、<Super>"
 
-#: Settings.ui.h:116
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2758
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:3056
+#: 桌面/dash-to-dock/Settings.ui:2758 桌面/dash-to-dock/Settings.ui:3056
 msgid "Hide timeout (s)"
-msgstr "隐藏超时时间（秒）"
+msgstr "隐藏超时（秒）"
 
-#: Settings.ui.h:117
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2815
+#: 桌面/dash-to-dock/Settings.ui:2815
 msgid "Show the dock by mouse hover on the screen edge."
-msgstr "鼠标移至屏幕边缘时显示 Dock。"
+msgstr "鼠标悬停屏幕边缘时显示程序坞。"
 
-#: Settings.ui.h:118
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2832
+#: 桌面/dash-to-dock/Settings.ui:2832
 msgid "Autohide"
 msgstr "自动隐藏"
 
-#: Settings.ui.h:119
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2853
+#: 桌面/dash-to-dock/Settings.ui:2853
 msgid "Push to show: require pressure to show the dock"
-msgstr "推压以显示：需要一定压力来显示 Dock"
+msgstr "按压显示：需要施压才显示程序坞"
 
-#: Settings.ui.h:120
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2864
+#: 桌面/dash-to-dock/Settings.ui:2864
 msgid "Enable in fullscreen mode"
 msgstr "在全屏模式下启用"
 
-#: Settings.ui.h:121
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2876
+#: 桌面/dash-to-dock/Settings.ui:2876
 msgid "Show dock for urgent notifications"
-msgstr "有紧急通知是显示 Dock"
+msgstr "显示紧急通知的程序坞"
 
-#: Settings.ui.h:122
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2905
+#: 桌面/dash-to-dock/Settings.ui:2905
 msgid "Show the dock when it doesn't obstruct application windows."
-msgstr "在不妨碍应用程序窗口时，显示 Dock。"
+msgstr "当不遮挡应用程序窗口时显示程序坞。"
 
-#: Settings.ui.h:123
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2922
+#: 桌面/dash-to-dock/Settings.ui:2922
 msgid "Dodge windows"
 msgstr "避开窗口"
 
-#: Settings.ui.h:124
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2947
+#: 桌面/dash-to-dock/Settings.ui:2947
 msgid "All windows"
 msgstr "所有窗口"
 
-#: Settings.ui.h:125
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2955
+#: 桌面/dash-to-dock/Settings.ui:2955
 msgid "Only focused application's windows"
-msgstr "仅焦点程序窗口"
+msgstr "仅聚焦应用程序的窗口"
 
-#: Settings.ui.h:126
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2962
+#: 桌面/dash-to-dock/Settings.ui:2962
 msgid "Only maximized windows"
-msgstr "仅最大化窗口"
+msgstr "仅最大化的窗口"
 
-#: Settings.ui.h:127
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:2969
+#: 桌面/dash-to-dock/Settings.ui:2969
 msgid "Always on top"
-msgstr "总显示在顶部"
+msgstr "始终置顶"
 
-#: Settings.ui.h:128
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:3012
+#: 桌面/dash-to-dock/Settings.ui:3012
 msgid "Animation duration (s)"
-msgstr "动画持续时间（秒）"
+msgstr "动画时长（秒）"
 
-#: Settings.ui.h:129
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:3068
+#: 桌面/dash-to-dock/Settings.ui:3068
 msgid "Show timeout (s)"
-msgstr "显示超时时间（秒）"
+msgstr "显示超时（秒）"
 
-#: Settings.ui.h:130
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/Settings.ui:3080
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:151
+#: 桌面/dash-to-dock/Settings.ui:3080
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:151
 msgid "Pressure threshold"
 msgstr "压力阈值"
 
-#~ msgid "Show a dot for each windows of the application."
-#~ msgstr "为应用程序的每个窗口显示一个点。"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:755
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIconsDecorator.js:106
+#: 桌面/dash-to-dock/appIcons.js:755
+#: 桌面/dash-to-dock/appIconsDecorator.js:106
+#, javascript-format
+msgid "%s is updating, try again later"
+msgstr "%s 正在更新，请稍后重试"
 
-#~ msgid "0.000"
-#~ msgstr "0.000"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:1087
+#: 桌面/dash-to-dock/appIcons.js:1087
+#, javascript-format
+msgid "%s is being updated…"
+msgstr "%s 正在更新中…"
 
-#~ msgid ""
-#~ "With fixed icon size, only the edge of the dock and the <i>Show "
-#~ "Applications</i> icon are active."
-#~ msgstr ""
-#~ "如果固定了图标大小，只有 dock 边缘和“<i>显示应用程序</i>”图标会激活该功"
-#~ "能。"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:1110
+#: 桌面/dash-to-dock/appIcons.js:1110
+msgid "Open Windows"
+msgstr "打开窗口"
 
-#~ msgid "Switch workspace by scrolling on the dock"
-#~ msgstr "通过滚动 dock 来切换工作区"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:1130
+#: 桌面/dash-to-dock/appIcons.js:1130
+msgid "New Window"
+msgstr "新建窗口"
 
-#~ msgid "Main Settings"
-#~ msgstr "主设置"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:1149
+#: 桌面/dash-to-dock/appIcons.js:1149
+msgid "Launch using Integrated Graphics Card"
+msgstr "使用集成显卡启动"
 
-#~ msgid "Dock is fixed and always visible"
-#~ msgstr "Dock 固定且总是可见"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:1150
+#: 桌面/dash-to-dock/appIcons.js:1150
+msgid "Launch using Discrete Graphics Card"
+msgstr "使用独立显卡启动"
 
-#~ msgid "Show delay [ms]"
-#~ msgstr "显示延迟(毫秒)"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:1177
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/docking.js:2524
+#: 桌面/dash-to-dock/appIcons.js:1177 桌面/dash-to-dock/docking.js:2524
+msgid "Unpin"
+msgstr "取消固定"
 
-#~ msgid "Hide delay [ms]"
-#~ msgstr "隐藏延迟(毫秒)"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:1195
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:1221
+#: 桌面/dash-to-dock/appIcons.js:1195 桌面/dash-to-dock/appIcons.js:1221
+msgid "App Details"
+msgstr "应用详情"
 
-#~ msgid "Application based intellihide"
-#~ msgstr "应用程序基于智能隐藏"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:1265
+#: 桌面/dash-to-dock/appIcons.js:1265
+#, javascript-format
+msgid "Quit %d Window"
+msgid_plural "Quit %d Windows"
+msgstr[0] "退出 %d 个窗口"
 
-#~ msgid "Show the dock on following monitor (if attached)"
-#~ msgstr "Dock 将在如下显示器显示(如果已连接)"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/appIcons.js:1516
+#: 桌面/dash-to-dock/appIcons.js:1513
+msgid "Settings"
+msgstr "设置"
 
-#~ msgid "Primary (default)"
-#~ msgstr "主显示器(默认)"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/docking.js:1283
+#: 桌面/dash-to-dock/docking.js:1283
+msgid "Dash"
+msgstr "快捷栏"
 
-#~ msgid "1"
-#~ msgstr "1"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/locations.js:1049
+#: 桌面/dash-to-dock/locations.js:1049
+#, javascript-format
+msgid "Failed to launch “%s”"
+msgstr "启动“%s”失败"
 
-#~ msgid "2"
-#~ msgstr "2"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:56
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:56
+msgid "Dock position"
+msgstr "程序坞位置"
 
-#~ msgid "3"
-#~ msgstr "3"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:57
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:57
+msgid "Dock is shown on the Left, Right, Top or Bottom side of the screen."
+msgstr "程序坞显示在屏幕的左侧、右侧、顶部或底部。"
 
-#~ msgid "4"
-#~ msgstr "4"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:61
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:61
+msgid "Animation time"
+msgstr "动画时间"
 
-#~ msgid "Max height"
-#~ msgstr "最大高度"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:62
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:62
+msgid "Sets the time duration of the autohide effect."
+msgstr "设置自动隐藏效果的持续时间。"
 
-#~ msgid "Expand (experimental and buggy)"
-#~ msgstr "全部展开(实验阶段且存在问题)"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:66
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:71
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:66
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:71
+msgid "Show delay"
+msgstr "显示延迟"
 
-#~ msgid "Maximum icon size"
-#~ msgstr "最大图标尺寸"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:67
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:67
+msgid ""
+"Sets the delay after the mouse reaches the screen border before showing the "
+"dock."
+msgstr "设置鼠标到达屏幕边缘后显示程序坞前的延迟时间。"
 
-#~ msgid "16"
-#~ msgstr "16"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:72
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:72
+msgid "Sets the delay after the mouse left the dock before hiding it."
+msgstr "设置鼠标离开快捷栏后隐藏前的延迟时间。"
 
-#~ msgid "24"
-#~ msgstr "24"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:76
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:76
+msgid "Do not show overview on startup"
+msgstr "启动时不显示概览"
 
-#~ msgid "32"
-#~ msgstr "32"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:77
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:77
+msgid "Whether to show or not the overview during startup animation."
+msgstr "是否在启动动画期间显示概览。"
 
-#~ msgid "48"
-#~ msgstr "48"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:81
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:81
+msgid "Set a custom dash background background color"
+msgstr "设置自定义快捷栏背景颜色"
 
-#~ msgid "64"
-#~ msgstr "64"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:82
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:82
+msgid "Sets the color for the dash background."
+msgstr "设置快捷栏的背景颜色。"
 
-#~ msgid "Optional features"
-#~ msgstr "可选功能"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:86
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:86
+msgid "Dash background color."
+msgstr "快捷栏背景颜色。"
 
-#~ msgid "Only a 1px wide area close to the screen edge is active"
-#~ msgstr "仅当靠近屏幕边缘1像素宽区域时启用"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:87
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:87
+msgid "Customize the background color of the dash."
+msgstr "自定义快捷栏的背景颜色。"
 
-#~ msgid "All the area of the dock is active"
-#~ msgstr "Dock 全部区域时启用"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:91
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:91
+msgid "Transparency mode for the dock"
+msgstr "程序坞透明模式"
 
-#~ msgid "Customize actions on mouse click"
-#~ msgstr "自定义鼠标点击动作"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:92
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:92
+msgid ""
+"FIXED: constant transparency. DYNAMIC: dock takes the opaque style only when "
+"windows are close to it."
+msgstr "固定：恒定透明度。动态：仅当窗口靠近时程序坞采用不透明样式。"
 
-#~ msgid "Action on clicking on running app"
-#~ msgstr "点击正在运行程序的动作"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:96
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:96
+msgid "..."
+msgstr "..."
 
-#~ msgid "Minimize window on shift+click (double click for all app windows)"
-#~ msgstr "当按下“Shift+单击”(双击适用于全部程序窗口)时最小化窗口"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:97
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:97
+msgid "DEFAULT: .... DOTS: ...."
+msgstr "默认：.... 圆点：...."
 
-#~ msgid "Only when in autohide"
-#~ msgstr "仅当自动隐藏时"
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:101
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:101
+msgid "Use application icon dominant color for the indicator color"
+msgstr "使用应用程序图标主色作为指示器颜色"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:106
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:106
+msgid "Manually set the min and max opacity"
+msgstr "手动设置最小和最大不透明度"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:107
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:107
+msgid ""
+"For the dynamic mode, the min/max opacity values will be given by 'min-"
+"alpha' and 'max-alpha'."
+msgstr "在动态模式下，最小/最大不透明度值将由'min-alpha'和'max-alpha'设定。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:111
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:111
+msgid "Opacity of the dash background when free-floating"
+msgstr "自由浮动时快捷栏背景的不透明度"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:112
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:112
+msgid "Sets the opacity of the dash background when no windows are close."
+msgstr "设置无窗口靠近时快捷栏背景的不透明度。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:116
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:116
+msgid "Opacity of the dash background when windows are close."
+msgstr "窗口靠近时快捷栏背景的不透明度。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:117
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:117
+msgid "Sets the opacity of the dash background when windows are close."
+msgstr "设置窗口靠近时快捷栏背景的不透明度。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:121
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:121
+msgid "Opacity of the dash background"
+msgstr "快捷栏背景不透明度"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:122
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:122
+msgid "Sets the opacity of the dash background when in autohide mode."
+msgstr "设置自动隐藏模式下快捷栏背景的不透明度。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:126
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:126
+msgid "Dock not shown on desktop"
+msgstr "桌面上不显示程序坞"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:127
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:127
+msgid "Enable or disable manualhide mode"
+msgstr "启用或禁用手动隐藏模式"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:131
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:131
+msgid "Dock dodges windows"
+msgstr "程序坞避开窗口"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:132
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:132
+msgid "Enable or disable intellihide mode"
+msgstr "启用或禁用智能隐藏模式"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:136
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:136
+msgid "Define which windows are considered for intellihide."
+msgstr "定义哪些窗口需要智能隐藏。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:141
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:141
+msgid "Dock shown on mouse over"
+msgstr "鼠标悬停时显示程序坞"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:142
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:142
+msgid "Enable or disable autohide mode"
+msgstr "启用或禁用自动隐藏模式"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:146
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:146
+msgid "Require pressure to show dash"
+msgstr "需要施压才显示快捷栏"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:147
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:147
+msgid "Enable or disable requiring pressure to show the dash"
+msgstr "启用或禁用需要施压才显示快捷栏"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:152
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:152
+msgid "Sets how much pressure is needed to show the dash."
+msgstr "设置显示快捷栏所需的压力大小。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:156
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:157
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:156
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:157
+msgid "Enable autohide in fullscreen mode."
+msgstr "在全屏模式下启用自动隐藏。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:161
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:161
+msgid "Show dock for urgent notifications."
+msgstr "显示紧急通知的程序坞。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:162
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:162
+msgid "Show dock when urgent notifications are received."
+msgstr "收到紧急通知时显示程序坞。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:166
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:166
+msgid "Dock always visible"
+msgstr "程序坞始终可见"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:167
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:167
+msgid "Dock is always visible"
+msgstr "程序坞始终保持可见"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:171
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:171
+msgid "Switch workspace by scrolling over the dock"
+msgstr "通过滚动程序坞切换工作区"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:172
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:172
+msgid ""
+"Add the possibility to switch workspace by mouse scrolling over the dock."
+msgstr "添加通过鼠标滚动程序坞切换工作区的功能。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:176
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:176
+msgid "Maximum dash icon size"
+msgstr "快捷栏图标最大尺寸"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:177
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:177
+msgid "Set the allowed maximum dash icon size. Allowed range: 16..64."
+msgstr "设置快捷栏图标允许的最大尺寸（有效范围：16-64）"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:182
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:182
+msgid ""
+"Set the allowed maximum dash preview size scale. Allowed range: 0,00..1,00."
+msgstr "设置快捷栏预览尺寸的最大缩放比例（有效范围：0.00-1.00）"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:186
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:186
+msgid "Fixed icon size"
+msgstr "固定图标尺寸"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:187
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:187
+msgid "Keep the icon size fixed by scrolling the dock."
+msgstr "通过滚动程序坞保持图标尺寸固定。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:191
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:191
+msgid "Apply custom theme"
+msgstr "应用自定义主题"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:192
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:192
+msgid "Apply customization to the dash appearance"
+msgstr "对快捷栏外观应用自定义设置"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:196
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:197
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:196
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:197
+msgid "TODO"
+msgstr ""
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:201
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:202
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:201
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:202
+msgid "Customize the style of the running application indicators."
+msgstr "自定义正在运行应用程序的指示器样式。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:206
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:206
+msgid "Running application indicators color"
+msgstr "正在运行应用程序的指示器颜色"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:207
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:207
+msgid "Customize the color of the running application indicators."
+msgstr "自定义正在运行应用程序的指示器颜色。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:211
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:211
+msgid "Running application indicators border color."
+msgstr "正在运行应用程序的指示器边框颜色。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:212
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:212
+msgid "Customize the border color of the running application indicators."
+msgstr "自定义正在运行应用程序的指示器边框颜色。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:216
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:216
+msgid "Running application indicators border width."
+msgstr "正在运行应用程序的指示器边框宽度。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:217
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:217
+msgid "Customize the border width of the running application indicators."
+msgstr "自定义正在运行应用程序的指示器边框宽度。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:221
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:221
+msgid "Show running apps"
+msgstr "显示正在运行的应用程序"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:222
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:222
+msgid "Show or hide running applications icons in the dash"
+msgstr "在快捷栏中显示或隐藏正在运行的应用程序图标"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:226
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:226
+msgid "Provide workspace isolation"
+msgstr "提供工作区隔离"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:227
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:227
+msgid ""
+"Dash shows only windows from the current workspace, this is applied only if "
+"gnome-shell 'current-workspace-only' app-switcher settings is disabled"
+msgstr ""
+"快捷栏仅显示当前工作区的窗口，仅在禁用gnome-shell的“仅当前工作区”应用切换器设"
+"置时生效"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:231
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:231
+msgid "Show urgent windows on each workspace"
+msgstr "在每个工作区显示紧急窗口"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:232
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:232
+msgid "Show or hide urgent windows on each workspace in the dash"
+msgstr "在快捷栏中显示或隐藏每个工作区的紧急窗口"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:236
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:236
+msgid "Provide monitor isolation"
+msgstr "提供显示器隔离"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:237
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:237
+msgid "Dash shows only windows from the monitor"
+msgstr "快捷栏仅显示当前显示器的窗口"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:241
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:241
+msgid "Scroll to focused application"
+msgstr "滚动至聚焦的应用程序"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:242
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:242
+msgid "Ensure that the focused application icon is always visible in the dash"
+msgstr "确保聚焦的应用程序图标始终在快捷栏中可见"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:246
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:246
+msgid "Show preview of the open windows"
+msgstr "显示已打开窗口的预览"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:247
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:247
+msgid "Replace open windows list with windows previews"
+msgstr "用窗口预览替代已打开窗口列表"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:251
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:251
+msgid "Open windows preview by default"
+msgstr "默认显示窗口预览"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:252
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:252
+msgid ""
+"Window previews will show windows by default, rather than hide them behind a "
+"drop dowm menu."
+msgstr "窗口预览将默认显示窗口内容，而非隐藏在下拉菜单之后。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:256
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:256
+msgid "Show favorites apps"
+msgstr "显示收藏的应用程序"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:257
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:257
+msgid "Show or hide favorite applications icons in the dash"
+msgstr "在快捷栏中显示或隐藏收藏的应用程序图标"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:262
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:262
+msgid "Show or hide the trash can icon in the dash"
+msgstr "在快捷栏中显示或隐藏回收站图标"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:266
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:266
+msgid "Show mounted volumes and devices"
+msgstr "显示已挂载的存储卷和设备"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:267
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:267
+msgid "Show or hide mounted volume and device icons in the dash"
+msgstr "在快捷栏中显示或隐藏已挂载存储卷和设备图标"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:271
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:271
+msgid "Only show mounted volumes and devices"
+msgstr "仅显示已挂载的存储卷和设备"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:272
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:272
+msgid "Show or hide unmounted volume and device icons in the dash"
+msgstr "在快捷栏中显示或隐藏未挂载存储卷和设备图标"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:276
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:276
+msgid "Show network mounted volumes"
+msgstr "显示网络存储卷"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:277
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:277
+msgid "Show or hide network volumes in the dash"
+msgstr "在快捷栏中显示或隐藏网络存储卷"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:281
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:281
+msgid "Isolate volumes, devices and trash windows"
+msgstr "隔离存储卷、设备和回收站窗口"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:282
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:282
+msgid ""
+"Consider volume, devices and trash as different application windows and not "
+"part of the file manager"
+msgstr "将存储卷、设备和回收站视为独立应用程序窗口，而非文件管理器的一部分"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:287
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:287
+msgid "Wiggle urgent application icons in the dash"
+msgstr "在快捷栏中晃动紧急应用程序图标"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:291
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:291
+msgid "Show applications button"
+msgstr "显示应用程序按钮"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:292
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:292
+msgid "Show applications button in the dash"
+msgstr "在快捷栏中显示应用程序按钮"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:296
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:296
+msgid "Show application button on the left"
+msgstr "在左侧显示应用程序按钮"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:297
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:297
+msgid "Show application button on the left of the dash"
+msgstr "在快捷栏左侧显示应用程序按钮"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:301
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:301
+msgid "Show application button on the edge when using centered panel mode"
+msgstr "在居中面板模式下将应用程序按钮置于边缘"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:305
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:305
+msgid "Basic compatibility with bolt extensions"
+msgstr "与Bolt扩展的基本兼容性"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:306
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:306
+msgid "Make the extension work properly when bolt extensions is enabled"
+msgstr "启用Bolt扩展时确保本扩展正常工作"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:310
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:310
+msgid "Dock max height/width (fraction of available space)"
+msgstr "程序坞最大高度/宽度（可用空间比例）"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:314
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:314
+msgid "Extend the dock container to all the available height/width"
+msgstr "将程序坞容器扩展至全部可用高度/宽度"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:318
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:318
+msgid "Center icons when dock container is extended to all the available size"
+msgstr "当程序坞容器扩展至全尺寸时居中图标"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:322
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:322
+msgid "DEPRECATED: Monitor on which putting the dock (by index)"
+msgstr "已弃用：放置程序坞的显示器（通过索引）"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:323
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:323
+msgid ""
+"Set on which monitor to put the dock, use -1 for the primary one. Use -2 "
+"refer to the 'preferred-monitor-by-connector' setting instead (this is the "
+"preferred value)."
+msgstr ""
+"设置放置程序坞的显示器索引，-1表示主显示器，-2表示使用‘首选连接器显示器’设置"
+"（推荐值）"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:327
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:327
+msgid "Monitor on which putting the dock (by connector)"
+msgstr "放置程序坞的显示器（通过连接器名称）"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:328
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:328
+msgid ""
+"Set on which monitor to put the dock, for example 'DisplayPort-0'. Use "
+"'primary' for primary one. This setting is only used if 'preferred-monitor' "
+"is -2."
+msgstr ""
+"设置放置程序坞的显示器（如'DisplayPort-0'），'primary'表示主显示器，仅在‘首选"
+"显示器’设为-2时生效。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:332
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:332
+msgid "Enable multi-monitor docks"
+msgstr "启用多显示器程序坞"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:333
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:333
+msgid "Show a dock on every monitor"
+msgstr "在每个显示器显示程序坞"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:337
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:337
+msgid "Minimize on shift+click"
+msgstr "Shift+点击时最小化"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:341
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:341
+msgid "Activate only one window"
+msgstr "仅激活一个窗口"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:345
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:360
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:365
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:345
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:360
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:365
+msgid "Action when clicking on a running app"
+msgstr "点击正在运行的应用程序时的操作"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:346
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:346
+msgid ""
+"Set the action that is executed when clicking on the icon of a running "
+"application"
+msgstr "设置点击正在运行的应用程序图标时执行的操作"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:350
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:350
+msgid "Action when scrolling app"
+msgstr "滚动应用程序时的操作"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:351
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:351
+msgid "Set the action that is executed when scrolling on the application icon"
+msgstr "设置滚动应用程序图标时执行的操作"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:355
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:355
+msgid "Action when shift+clicking on a running app"
+msgstr "Shift+点击正在运行的应用程序时的操作"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:356
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:356
+msgid ""
+"Set the action that is executed when shift+clicking on the icon of a running "
+"application"
+msgstr "设置Shift+点击正在运行的应用程序图标时执行的操作"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:361
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:361
+msgid ""
+"Set the action that is executed when middle-clicking on the icon of a "
+"running application"
+msgstr "设置中键点击正在运行的应用程序图标时执行的操作"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:366
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:366
+msgid ""
+"Set the action that is executed when shift+middle-clicking on the icon of a "
+"running application"
+msgstr "设置Shift+中键点击正在运行的应用程序图标时执行的操作"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:370
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:370
+msgid "Super Hot-Keys"
+msgstr "超级热键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:371
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:371
+msgid "Launch and switch between dash items using Super+(0-9)"
+msgstr "使用Super+(0-9)启动和切换快捷栏项目"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:375
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:395
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:375
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:395
+msgid "Show the dock when using the hotkeys"
+msgstr "使用热键时显示程序坞"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:376
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:396
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:376
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:396
+msgid ""
+"The dock will be quickly shown so that the number-overlay is visible and app "
+"activation is easier"
+msgstr "将短暂显示程序坞以便查看数字叠加并更易激活应用程序"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:380
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:385
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:380
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:385
+msgid "Keybinding to show the dock and the number overlay."
+msgstr "显示程序坞和数字叠加的快捷键绑定。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:381
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:386
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:381
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:386
+msgid "Behavior depends on hotkeys-show-dock and hotkeys-overlay."
+msgstr "具体行为取决于热键显示程序坞和热键叠加设置。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:390
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:390
+msgid "Timeout to hide the dock"
+msgstr "隐藏程序坞的超时时间"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:391
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:391
+msgid "Sets the time duration before the dock is hidden again."
+msgstr "设置程序坞再次隐藏前的等待时间。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:400
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:400
+msgid "Keybinding to launch 1st dash app"
+msgstr "启动快捷栏第1个应用程序的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:401
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:401
+msgid "Keybinding to launch 1st app."
+msgstr "启动第1个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:407
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:407
+msgid "Keybinding to launch 2nd dash app"
+msgstr "启动快捷栏第2个应用程序的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:408
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:408
+msgid "Keybinding to launch 2nd app."
+msgstr "启动第2个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:414
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:414
+msgid "Keybinding to launch 3rd dash app"
+msgstr "启动快捷栏第3个应用程序的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:415
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:415
+msgid "Keybinding to launch 3rd app."
+msgstr "启动第3个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:421
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:421
+msgid "Keybinding to launch 4th dash app"
+msgstr "启动快捷栏第4个应用程序的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:422
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:422
+msgid "Keybinding to launch 4th app."
+msgstr "启动第4个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:428
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:428
+msgid "Keybinding to launch 5th dash app"
+msgstr "启动快捷栏第5个应用程序的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:429
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:429
+msgid "Keybinding to launch 5th app."
+msgstr "启动第5个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:435
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:435
+msgid "Keybinding to launch 6th dash app"
+msgstr "启动快捷栏第6个应用程序的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:436
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:436
+msgid "Keybinding to launch 6th app."
+msgstr "启动第6个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:442
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:442
+msgid "Keybinding to launch 7th dash app"
+msgstr "启动快捷栏第7个应用程序的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:443
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:443
+msgid "Keybinding to launch 7th app."
+msgstr "启动第7个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:449
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:449
+msgid "Keybinding to launch 8th dash app"
+msgstr "启动快捷栏第8个应用程序的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:450
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:450
+msgid "Keybinding to launch 8th app."
+msgstr "启动第8个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:456
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:456
+msgid "Keybinding to launch 9th dash app"
+msgstr "启动快捷栏第9个应用程序的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:457
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:457
+msgid "Keybinding to launch 9th app."
+msgstr "启动第9个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:463
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:463
+msgid "Keybinding to launch 10th dash app"
+msgstr "启动快捷栏第10个应用程序的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:464
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:464
+msgid "Keybinding to launch 10th app."
+msgstr "启动第10个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:470
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:470
+msgid "Keybinding to trigger 1st dash app with shift behavior"
+msgstr "带Shift功能的快捷栏第1个应用触发快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:471
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:471
+msgid "Keybinding to trigger 1st app with shift behavior."
+msgstr "带Shift功能的第1个应用触发快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:477
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:477
+msgid "Keybinding to trigger 2nd dash app with shift behavior"
+msgstr "带Shift功能的快捷栏第2个应用触发快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:478
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:478
+msgid "Keybinding to trigger 2nd app with shift behavior."
+msgstr "带Shift功能的第2个应用触发快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:484
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:484
+msgid "Keybinding to trigger 3rd dash app with shift behavior"
+msgstr "带Shift功能的快捷栏第3个应用触发快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:485
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:485
+msgid "Keybinding to trigger 3rd app with shift behavior."
+msgstr "带Shift功能的第3个应用触发快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:491
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:491
+msgid "Keybinding to trigger 4th dash app with shift behavior"
+msgstr "带Shift功能的快捷栏第4个应用触发快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:492
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:492
+msgid "Keybinding to trigger 4th app with shift behavior."
+msgstr "带Shift功能的第4个应用触发快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:498
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:498
+msgid "Keybinding to trigger 5th dash app with shift behavior"
+msgstr "带Shift功能的快捷栏第5个应用触发快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:499
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:499
+msgid "Keybinding to trigger 5th app with shift behavior."
+msgstr "带Shift功能的第5个应用触发快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:505
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:505
+msgid "Keybinding to trigger 6th dash app with shift behavior"
+msgstr "带Shift功能的快捷栏第6个应用触发快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:506
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:506
+msgid "Keybinding to trigger 6th app with shift behavior."
+msgstr "带Shift功能的第6个应用触发快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:512
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:512
+msgid "Keybinding to trigger 7th dash app with shift behavior"
+msgstr "带Shift功能的快捷栏第7个应用触发快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:513
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:513
+msgid "Keybinding to trigger 7th app with shift behavior."
+msgstr "带Shift功能的第7个应用触发快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:519
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:519
+msgid "Keybinding to trigger 8th dash app with shift behavior"
+msgstr "带Shift功能的快捷栏第8个应用触发快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:520
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:520
+msgid "Keybinding to trigger 8th app with shift behavior."
+msgstr "带Shift功能的第8个应用触发快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:526
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:526
+msgid "Keybinding to trigger 9th dash app with shift behavior"
+msgstr "带Shift功能的快捷栏第9个应用触发快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:527
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:527
+msgid "Keybinding to trigger 9th app with shift behavior."
+msgstr "带Shift功能的第9个应用触发快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:533
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:533
+msgid "Keybinding to trigger 10th dash app with shift behavior"
+msgstr "带Shift功能的快捷栏第10个应用触发快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:534
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:534
+msgid "Keybinding to trigger 10th app with shift behavior."
+msgstr "带Shift功能的第10个应用触发快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:540
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:540
+msgid "Keybinding to trigger 1st dash app"
+msgstr "触发快捷栏第1个应用的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:541
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:541
+msgid "Keybinding to either show or launch the 1st application in the dash."
+msgstr "显示或启动快捷栏第1个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:547
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:547
+msgid "Keybinding to trigger 2nd dash app"
+msgstr "触发快捷栏第2个应用的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:548
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:548
+msgid "Keybinding to either show or launch the 2nd application in the dash."
+msgstr "显示或启动快捷栏第2个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:554
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:554
+msgid "Keybinding to trigger 3rd dash app"
+msgstr "触发快捷栏第3个应用的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:555
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:555
+msgid "Keybinding to either show or launch the 3rd application in the dash."
+msgstr "显示或启动快捷栏第3个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:561
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:561
+msgid "Keybinding to trigger 4th dash app"
+msgstr "触发快捷栏第4个应用的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:562
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:562
+msgid "Keybinding to either show or launch the 4th application in the dash."
+msgstr "显示或启动快捷栏第4个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:568
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:568
+msgid "Keybinding to trigger 5th dash app"
+msgstr "触发快捷栏第5个应用的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:569
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:569
+msgid "Keybinding to either show or launch the 5th application in the dash."
+msgstr "显示或启动快捷栏第5个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:575
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:575
+msgid "Keybinding to trigger 6th dash app"
+msgstr "触发快捷栏第6个应用的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:576
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:576
+msgid "Keybinding to either show or launch the 6th application in the dash."
+msgstr "显示或启动快捷栏第6个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:582
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:582
+msgid "Keybinding to trigger 7th dash app"
+msgstr "触发快捷栏第7个应用的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:583
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:583
+msgid "Keybinding to either show or launch the 7th application in the dash."
+msgstr "显示或启动快捷栏第7个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:589
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:589
+msgid "Keybinding to trigger 8th dash app"
+msgstr "触发快捷栏第8个应用的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:590
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:590
+msgid "Keybinding to either show or launch the 8th application in the dash."
+msgstr "显示或启动快捷栏第8个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:596
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:596
+msgid "Keybinding to trigger 9th dash app"
+msgstr "触发快捷栏第9个应用的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:597
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:597
+msgid "Keybinding to either show or launch the 9th application in the dash."
+msgstr "显示或启动快捷栏第9个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:603
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:603
+msgid "Keybinding to trigger 10th dash app"
+msgstr "触发快捷栏第10个应用的快捷键"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:604
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:604
+msgid "Keybinding to either show or launch the 10th application in the dash."
+msgstr "显示或启动快捷栏第10个应用程序的快捷键。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:610
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:610
+msgid "Force straight corners in dash"
+msgstr "强制快捷栏直角显示"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:611
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:611
+msgid "Make the borders in the dash non rounded"
+msgstr "使快捷栏边框不使用圆角"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:615
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:615
+msgid "Enable unity7 like glossy backlit items"
+msgstr "启用类似Unity7的背光光泽效果"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:616
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:616
+msgid "Emulate the unity7 backlit glossy items behaviour"
+msgstr "模拟Unity7的背光光泽项目行为"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:620
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:620
+msgid "Enable glossy effect"
+msgstr "启用光泽效果"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:621
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:621
+msgid "Toggle the glossy effect of the unity7 backlit feature."
+msgstr "切换Unity7背光功能的光泽效果。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:626
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:626
+msgid "Hide tooltip when hovering application in the dash."
+msgstr "悬停快捷栏应用时隐藏工具提示。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:630
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:630
+msgid "Show application icons emblems"
+msgstr "显示应用图标徽章"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:631
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:631
+msgid ""
+"Show application icons emblems such as notification counters an progress "
+"bars."
+msgstr "显示应用图标徽章，如通知计数和进度条。"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:635
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:635
+msgid "Show the number of unread notifications in icons"
+msgstr "在图标上显示未读通知数量"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:636
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:636
+msgid "Show application icons emblems such as notification"
+msgstr "显示应用图标通知徽章"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:640
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:640
+msgid ""
+"Wether the application-provioded counter via Unity API should override the "
+"notifications or be summed to it"
+msgstr "应用通过Unity API提供的计数器是否覆盖通知计数或与其累加"
+
+#: 桌面/bashensi-dock/dash-to-dock-v1.0.1/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:641
+#: 桌面/dash-to-dock/schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml:641
+msgid ""
+"If an application provides a counter through the Unity API, then such value "
+"will be used. Otherwise the counter will be summed with the unread "
+"notification numbers (if enabled)"
+msgstr ""
+"若应用通过Unity API提供计数器，则使用该值。否则计数器将与未读通知数累加（若启"
+"用）"
+
+#: 桌面/dash-to-dock/docking.js:2524
+msgid "Pin to Dock"
+msgstr "固定到程序坞"
