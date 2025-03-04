@@ -41,6 +41,7 @@ TOLOCALIZE =  prefs.js \
               appIcons.js \
               appIconsDecorator.js \
               locations.js \
+	      ./schemas/org.gnome.shell.extensions.dash-to-dock.gschema.xml \
               $(NULL)
 
 MSGSRC = $(wildcard po/*.po)
@@ -88,7 +89,8 @@ mergepo: potfile
 	mkdir -p po
 	xgettext --keyword=__ --keyword=N__ --add-comments='Translators:' -o po/dashtodock.pot --package-name "Dash to Dock" --from-code=utf-8 $(TOLOCALIZE)
 	intltool-extract --type=gettext/glade Settings.ui
-	xgettext --keyword=_ --keyword=N_ --join-existing -o po/dashtodock.pot Settings.ui.h
+	intltool-extract --type=gettext/schemas schemas/*.xml
+	xgettext --keyword=_ --keyword=N_ --join-existing -o po/dashtodock.pot Settings.ui.h schemas/*.xml.h
 
 ./po/%.mo: ./po/%.po
 	msgfmt -c $< -o $@
