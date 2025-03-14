@@ -452,9 +452,7 @@ export const DockDash = GObject.registerClass({
         this._ensureItemVisibility(null);
 
         // Skip to avoid double events mouse
-        // TODO: Horizontal events are emulated, potentially due to a conflict
-        // with the workspace switching gesture.
-        if (!this._isHorizontal && event.is_pointer_emulated())
+        if (event.get_scroll_direction() !== Clutter.ScrollDirection.SMOOTH)
             return Clutter.EVENT_STOP;
 
 
@@ -471,36 +469,12 @@ export const DockDash = GObject.registerClass({
         }
 
         const increment = adjustment.step_increment;
+        const [dx, dy] = event.get_scroll_delta();
 
-        if (this._isHorizontal) {
-            switch (event.get_scroll_direction()) {
-            case Clutter.ScrollDirection.LEFT:
-                delta = -increment;
-                break;
-            case Clutter.ScrollDirection.RIGHT:
-                delta = Number(increment);
-                break;
-            case Clutter.ScrollDirection.SMOOTH: {
-                const [dx] = event.get_scroll_delta();
-                delta = dx * increment;
-                break;
-            }
-            }
-        } else {
-            switch (event.get_scroll_direction()) {
-            case Clutter.ScrollDirection.UP:
-                delta = -increment;
-                break;
-            case Clutter.ScrollDirection.DOWN:
-                delta = Number(increment);
-                break;
-            case Clutter.ScrollDirection.SMOOTH: {
-                const [, dy] = event.get_scroll_delta();
-                delta = dy * increment;
-                break;
-            }
-            }
-        }
+        if (this._isHorizontal)
+            delta = dx * increment;
+        else
+            delta = dy * increment;
 
         const value = adjustment.get_value();
 
