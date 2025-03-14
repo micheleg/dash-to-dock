@@ -460,10 +460,15 @@ export const DockDash = GObject.registerClass({
 
         let adjustment, delta = 0;
 
-        if (this._isHorizontal)
-            adjustment = this._scrollView.get_hscroll_bar().get_adjustment();
-        else
-            adjustment = this._scrollView.get_vscroll_bar().get_adjustment();
+        if (this._isHorizontal) {
+            adjustment = this._scrollView.get_hadjustment
+                ? this._scrollView.get_hadjustment()
+                : this._scrollView.get_hscroll_bar().get_adjustment();
+        } else {
+            adjustment = this._scrollView.get_vadjustment
+                ? this._scrollView.get_vadjustment()
+                : this._scrollView.get_vscroll_bar().get_adjustment();
+        }
 
         const increment = adjustment.step_increment;
 
