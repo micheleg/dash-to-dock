@@ -472,7 +472,7 @@ export const DockDash = GObject.registerClass({
         const [dx, dy] = event.get_scroll_delta();
 
         if (this._isHorizontal)
-            delta = dx * increment;
+            delta = (Math.abs(dx) > Math.abs(dy) ? dx : dy) * increment;
         else
             delta = dy * increment;
 
