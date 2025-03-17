@@ -1,3 +1,12 @@
+gnome-shell-extension-ubuntu-dock (100ubuntu2) plucky; urgency=medium
+
+  [ Alessandro Astone ]
+  * dash: Support new API for retrieving scroll adjustment (LP: #2102002)
+  * dash: Simplify scroll computation by always using the SMOOTH events
+  * dash: Handle vertical scrolling on a horizontal dock
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Mon, 17 Mar 2025 18:57:25 +0800
+
 gnome-shell-extension-ubuntu-dock (100ubuntu1) plucky; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
