@@ -40,6 +40,12 @@ import {
     Utils,
 } from './imports.js';
 
+import {Extension} from './dependencies/shell/extensions/extension.js';
+
+// Use __ () and N__() for the extension gettext domain, and reuse
+// the shell domain with the default _() and N_()
+const {gettext: __} = Extension;
+
 const {signals: Signals} = imports;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
@@ -2521,7 +2527,7 @@ export class DockManager {
 
                 const {id} = this._app;
                 this._toggleFavoriteItem.label.text = this._appFavorites.isFavorite(id)
-                    ? _('Unpin') : _('Pin to Dock');
+                    ? _('Unpin') : __('Pin to Dock');
                 /* eslint-enable no-invalid-this */
             });
     }
