@@ -1,3 +1,10 @@
+gnome-shell-extension-ubuntu-dock (90ubuntu3) noble; urgency=medium
+
+  [ Alessandro Astone ]
+  * Fix window selected from preview not getting focus (LP: #1997550)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Thu, 03 Apr 2025 14:00:19 +0800
+
 gnome-shell-extension-ubuntu-dock (90ubuntu2) noble; urgency=medium
 
   * debian: Update references to the noble branch
