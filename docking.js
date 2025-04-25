@@ -538,6 +538,11 @@ const DockedDash = GObject.registerClass({
                 this.dash.setIconSize(settings.dashMaxIconSize);
             },
         ], [
+            settings, 
+            "changed::dock-margin-size", 
+            this._resetPosition.bind(this)
+
+        ], [
             settings,
             'changed::show-favorites',
             () => {
@@ -1168,7 +1173,7 @@ const DockedDash = GObject.registerClass({
         // Ensure variables linked to settings are updated.
         this._updateVisibilityMode();
 
-        const {dockFixed: fixedIsEnabled, dockExtended: extendHeight} = DockManager.settings;
+        const {dockFixed: fixedIsEnabled, dockExtended: extendHeight, dockMarginSize: margin} = DockManager.settings;
 
         if (fixedIsEnabled)
             this.add_style_class_name('fixed');
@@ -1197,7 +1202,7 @@ const DockedDash = GObject.registerClass({
             this.y = posY;
 
             if (extendHeight) {
-                this.dash._container.set_width(this.width);
+                this.dash._container.set_width(this.width - margin * 2);
                 this.add_style_class_name('extended');
             } else {
                 this.dash._container.set_width(-1);
@@ -1214,7 +1219,7 @@ const DockedDash = GObject.registerClass({
             this.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
 
             if (extendHeight) {
-                this.dash._container.set_height(this.height);
+                this.dash._container.set_height(this.height - margin * 2);
                 this.add_style_class_name('extended');
             } else {
                 this.dash._container.set_height(-1);

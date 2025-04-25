@@ -285,6 +285,14 @@ const DockSettings = GObject.registerClass({
             });
     }
 
+    dock_margin_size_value_changed_cb(scale) {
+        // Get the current value of the scale
+        const value = scale.get_value();
+  
+        // Update the GSettings key
+        this._settings.set_int("dock-margin-size", value);
+      }
+
     icon_size_scale_value_changed_cb(scale) {
         // Avoid settings the size consinuosly
         if (this._icon_size_timeout > 0)
@@ -587,18 +595,44 @@ const DockSettings = GObject.registerClass({
         });
         this._builder.get_object('preview_size_scale').set_value(
             this._settings.get_double('preview-size-scale'));
+        
+
+        // Dock Margin Size
+        const dockMarginSizeScale = this._builder.get_object(
+            "dock_margin_size_scale"
+        );
+        dockMarginSizeScale.set_range(0, 300); // Set the range for the margin size
+        dockMarginSizeScale.set_value(this._settings.get_int("dock-margin-size")); // Initialize with the current value
+        dockMarginSizeScale.set_format_value_func((_, value) => {
+            return `${value} px`; // Display the value in pixels
+        });
+
+        dockMarginSizeScale.connect("value-changed", (scale) => {
+            // Update the GSettings key when the value changes
+            this._settings.set_int("dock-margin-size", scale.get_value());
+        });
+
+        this._settings.bind(
+            "dock-margin-size",
+            dockMarginSizeScale,
+            "value",
+            Gio.SettingsBindFlags.DEFAULT
+        );
 
         // Corrent for rtl languages
         if (this._rtl) {
             // Flip value position: this is not done automatically
             dockSizeScale.set_value_pos(Gtk.PositionType.LEFT);
             iconSizeScale.set_value_pos(Gtk.PositionType.LEFT);
+            dockMarginSizeScale.set_value_pos(Gtk.PositionType.LEFT);
             // I suppose due to a bug, having a more than one mark and one above
             // a value of 100 makes the rendering of the marks wrong in rtl.
             // This doesn't happen setting the scale as not flippable
             // and then manually inverting it
             iconSizeScale.set_flippable(false);
+            dockMarginSizeScale.set_flippable(false);
             iconSizeScale.set_inverted(true);
+            dockMarginSizeScale.set_inverted(true);
         }
 
         this._settings.bind('icon-size-fixed',
@@ -613,6 +647,11 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('dock_size_scale'),
             'sensitive',
             Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        this._settings.bind(
+            "extend-height",
+            this._builder.get_object("dock_margin_size_scale"),
+            "sensitive",
+            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('always-center-icons',
             this._builder.get_object('dock_center_icons_check'),
             'active',
