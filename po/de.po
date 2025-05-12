@@ -743,7 +743,7 @@ msgstr "Einblende-Verzögerung in s"
 
 #: Settings.ui.h:131
 msgid "Pressure threshold"
-msgstr "Stoßschwellwert"
+msgstr "Stoßschwellenwert"
 
 #~ msgid "Remove from Favorites"
 #~ msgstr "Aus Favoriten entfernen"
