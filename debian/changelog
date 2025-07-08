@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (101ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (101ubuntu1) questing; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * Release dash-to-dock v101
@@ -16,7 +16,7 @@ gnome-shell-extension-ubuntu-dock (101ubuntu1) UNRELEASED; urgency=medium
   [ Tommimon ]
   * Fixing "Pin to Dock" translation in app grid menu
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 08 Jul 2025 04:25:01 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 08 Jul 2025 04:27:54 +0200
 
 gnome-shell-extension-ubuntu-dock (100ubuntu2) plucky; urgency=medium
 
