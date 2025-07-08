@@ -1,3 +1,23 @@
+gnome-shell-extension-ubuntu-dock (101ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * Release dash-to-dock v101
+  * docking: Drop unused variable definition
+  * metadata: Add support for GNOME 49
+  * debian/{rules,control}: Automatically define gnome-shell deps based on
+    extension metadata
+
+  [ Peter Bittner ]
+  * Correct German translation of threshold
+
+  [ Morgan Antonsson ]
+  * Update Swedish translation
+
+  [ Tommimon ]
+  * Fixing "Pin to Dock" translation in app grid menu
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 08 Jul 2025 04:25:01 +0200
+
 gnome-shell-extension-ubuntu-dock (100ubuntu2) plucky; urgency=medium
 
   [ Alessandro Astone ]
