@@ -23,7 +23,7 @@ jobs:
         run: make
 
       - name: Install modules
-        run: sudo npm install eslint -g
+        run: sudo npm install eslint@9.x -g
 
       - name: Make Check
         run: make check
