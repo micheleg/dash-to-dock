@@ -9,6 +9,7 @@ Build-Depends: debhelper (>= 10),
                node-chalk <!nocheck>,
                node-js-yaml <!nocheck>,
                node-strip-ansi <!nocheck>,
+               python3,
                sassc,
 Standards-Version: 4.1.1
 Vcs-Git: https://github.com/micheleg/dash-to-dock.git -b ubuntu-dock
@@ -17,8 +18,8 @@ Homepage: https://github.com/micheleg/dash-to-dock/blob/ubuntu-dock/README.md
 
 Package: gnome-shell-extension-ubuntu-dock
 Architecture: all
-Depends: gnome-shell (<< 49~),
-         gnome-shell (>= 45~),
+Depends: gnome-shell (>= ${gnome:MinimumVersion}~),
+         gnome-shell (<< ${gnome:MaximumVersion}~),
          ${misc:Depends},
          ${shlibs:Depends}
 Replaces: gnome-shell-extension-dashtodock,

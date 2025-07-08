@@ -13,5 +13,10 @@ override_dh_translations:
 	make ./po/dashtodock.pot
 	dh_translations
 
+override_dh_gencontrol:
+	dh_gencontrol -- \
+		-Vgnome:MinimumVersion=$(shell python3 -c "import json; print(min(int(x) for x in json.load(open('metadata.json', 'rt'))['shell-version']))") \
+		-Vgnome:MaximumVersion=$(shell python3 -c "import json; print(1+max(int(x) for x in json.load(open('metadata.json', 'rt'))['shell-version']))")
+
 override_dh_auto_test:
 	env ESLINT_TAP=1 dh_auto_test
