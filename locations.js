@@ -649,7 +649,7 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             if (action === 'mount' &&
                 e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.ALREADY_MOUNTED))
                 return true;
-            else if (action === 'umount' &&
+            else if (action === 'unmount' &&
                      e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
                 return true;
 
