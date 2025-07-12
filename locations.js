@@ -596,7 +596,7 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             global.notify_error(__('Failed to mount “%s”'.format(
                 this.get_name())), message);
         } else if (action === 'unmount') {
-            global.notify_error(__('Failed to umount “%s”'.format(
+            global.notify_error(__('Failed to unmount “%s”'.format(
                 this.get_name())), message);
         } else if (action === 'eject') {
             global.notify_error(__('Failed to eject “%s”'.format(
@@ -614,7 +614,7 @@ class MountableVolumeAppInfo extends LocationAppInfo {
                     __('Mount operation already in progress'));
             } else if (this._currentAction === 'unmount') {
                 this._notifyActionError(action,
-                    __('Umount operation already in progress'));
+                    __('Unmount operation already in progress'));
             } else if (this._currentAction === 'eject') {
                 this._notifyActionError(action,
                     __('Eject operation already in progress'));
@@ -649,7 +649,7 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             if (action === 'mount' &&
                 e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.ALREADY_MOUNTED))
                 return true;
-            else if (action === 'umount' &&
+            else if (action === 'unmount' &&
                      e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
                 return true;
 
