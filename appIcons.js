@@ -59,11 +59,12 @@ const clickAction = Object.freeze({
     MINIMIZE_OR_OVERVIEW: 4,
     PREVIEWS: 5,
     MINIMIZE_OR_PREVIEWS: 6,
-    FOCUS_OR_PREVIEWS: 7,
-    FOCUS_OR_APP_SPREAD: 8,
-    FOCUS_MINIMIZE_OR_PREVIEWS: 9,
-    FOCUS_MINIMIZE_OR_APP_SPREAD: 10,
-    QUIT: 11,
+    MINIMIZE_OR_APP_SPREAD: 7,
+    FOCUS_OR_PREVIEWS: 8,
+    FOCUS_OR_APP_SPREAD: 9,
+    FOCUS_MINIMIZE_OR_PREVIEWS: 10,
+    FOCUS_MINIMIZE_OR_APP_SPREAD: 11,
+    QUIT: 12,
 });
 
 const scrollAction = Object.freeze({
@@ -517,6 +518,10 @@ const DockAbstractAppIcon = GObject.registerClass({
         }
 
         switch (buttonAction) {
+        case clickAction.MINIMIZE_OR_APP_SPREAD:
+            if (!Docking.DockManager.getDefault().appSpread.supported)
+                buttonAction = clickAction.MINIMIZE_OR_PREVIEWS;
+            break;
         case clickAction.FOCUS_OR_APP_SPREAD:
             if (!Docking.DockManager.getDefault().appSpread.supported)
                 buttonAction = clickAction.FOCUS_OR_PREVIEWS;
@@ -668,6 +673,15 @@ const DockAbstractAppIcon = GObject.registerClass({
                     }
                 } else {
                     this.app.activate();
+                }
+                break;
+
+            case clickAction.MINIMIZE_OR_APP_SPREAD:
+                if (this.focused && !modifiers && button === 1) {
+                    this._minimizeWindow();
+                } else {
+                    shouldHideOverview = false;
+                    Docking.DockManager.getDefault().appSpread.toggle(this.app);
                 }
                 break;
 
