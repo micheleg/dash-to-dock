@@ -82,6 +82,7 @@
                           <item translatable="yes">Focus, minimize or show previews</item>
                           <item translatable="yes">Focus, minimize or app spread</item>
                           <item translatable="yes">Quit</item>
+                          <item translatable="yes">Minimize or app spread</item>
                         </items>
                         <layout>
                           <property name="column">1</property>
@@ -154,6 +155,7 @@
                           <item translatable="yes">Focus, minimize or show previews</item>
                           <item translatable="yes">Focus, minimize or app spread</item>
                           <item translatable="yes">Quit</item>
+                          <item translatable="yes">Minimize or app spread</item>
                         </items>
                         <layout>
                           <property name="column">1</property>
@@ -226,6 +228,7 @@
                           <item translatable="yes">Focus, minimize or show previews</item>
                           <item translatable="yes">Focus, minimize or app spread</item>
                           <item translatable="yes">Quit</item>
+                          <item translatable="yes">Minimize or app spread</item>
                         </items>
                         <layout>
                           <property name="column">1</property>
@@ -1692,6 +1695,8 @@
                                       <item translatable="yes">Focus or app spread</item>
                                       <item translatable="yes">Focus, minimize or show previews</item>
                                       <item translatable="yes">Focus, minimize or app spread</item>
+                                      <item translatable="yes">Quit</item>
+                                      <item translatable="yes">Minimize or app spread</item>
                                     </items>
                                   </object>
                                 </child>

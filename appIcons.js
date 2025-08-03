@@ -64,6 +64,7 @@ const clickAction = Object.freeze({
     FOCUS_MINIMIZE_OR_PREVIEWS: 9,
     FOCUS_MINIMIZE_OR_APP_SPREAD: 10,
     QUIT: 11,
+    MINIMIZE_OR_APP_SPREAD: 12,
 });
 
 const scrollAction = Object.freeze({
@@ -517,6 +518,10 @@ const DockAbstractAppIcon = GObject.registerClass({
         }
 
         switch (buttonAction) {
+        case clickAction.MINIMIZE_OR_APP_SPREAD:
+            if (!Docking.DockManager.getDefault().appSpread.supported)
+                buttonAction = clickAction.MINIMIZE_OR_PREVIEWS;
+            break;
         case clickAction.FOCUS_OR_APP_SPREAD:
             if (!Docking.DockManager.getDefault().appSpread.supported)
                 buttonAction = clickAction.FOCUS_OR_PREVIEWS;
@@ -665,6 +670,23 @@ const DockAbstractAppIcon = GObject.registerClass({
                     } else {
                         // Launch previews when multiple windows are present
                         this._windowPreviews();
+                    }
+                } else {
+                    this.app.activate();
+                }
+                break;
+
+            case clickAction.MINIMIZE_OR_APP_SPREAD:
+                if (!Main.overview.visible) {
+                    if (singleOrUrgentWindows && !modifiers && button === 1) {
+                        const [w] = windows;
+                        if (this.focused)
+                            this._minimizeWindow(w);
+                        else
+                            Main.activateWindow(w);
+                    } else {
+                        shouldHideOverview = false;
+                        Docking.DockManager.getDefault().appSpread.toggle(this.app);
                     }
                 } else {
                     this.app.activate();
