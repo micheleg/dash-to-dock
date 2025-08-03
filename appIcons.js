@@ -677,11 +677,19 @@ const DockAbstractAppIcon = GObject.registerClass({
                 break;
 
             case clickAction.MINIMIZE_OR_APP_SPREAD:
-                if (this.focused && !modifiers && button === 1) {
-                    this._minimizeWindow();
+                if (!Main.overview.visible) {
+                    if (singleOrUrgentWindows && !modifiers && button === 1) {
+                        const [w] = windows;
+                        if (this.focused)
+                            this._minimizeWindow(w);
+                        else
+                            Main.activateWindow(w);
+                    } else {
+                        shouldHideOverview = false;
+                        Docking.DockManager.getDefault().appSpread.toggle(this.app);
+                    }
                 } else {
-                    shouldHideOverview = false;
-                    Docking.DockManager.getDefault().appSpread.toggle(this.app);
+                    this.app.activate();
                 }
                 break;
 
