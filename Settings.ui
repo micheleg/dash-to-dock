@@ -2537,9 +2537,9 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
     </child>
   </object>
   <object class="GtkAdjustment" id="pressure_threshold_adjustment">
-    <property name="upper">1000</property>
-    <property name="step-increment">50</property>
-    <property name="page-increment">250</property>
+    <property name="upper">100</property>
+    <property name="step-increment">5</property>
+    <property name="page-increment">25</property>
   </object>
   <object class="GtkAdjustment" id="shortcut_time_adjustment">
     <property name="upper">10</property>
