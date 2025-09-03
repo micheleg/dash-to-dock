@@ -1,11 +1,11 @@
-gnome-shell-extension-ubuntu-dock (101ubuntu2) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (101ubuntu2) questing; urgency=medium
 
   * d/control: Add explicit dependencies on gir packages
   * appSpread: Make the search entry insensitive during app spread
   * windowPreview: Fix typo
   * appIcons: Do not call missing functions in GNOME 49
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 03 Sep 2025 07:20:10 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 03 Sep 2025 07:20:37 +0200
 
 gnome-shell-extension-ubuntu-dock (101ubuntu1) questing; urgency=medium
 
