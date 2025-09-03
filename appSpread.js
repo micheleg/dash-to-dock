@@ -192,11 +192,13 @@ export class AppSpread {
     }
 
     _disableSearch() {
+        if (Main.overview.searchEntry) {
+            Main.overview.searchEntry.opacity = 0;
+            Main.overview.searchEntry.reactive = false;
+        }
+
         if (!SearchController.SearchController.prototype._shouldTriggerSearch)
             return;
-
-        if (Main.overview.searchEntry)
-            Main.overview.searchEntry.opacity = 0;
 
         this._methodInjections.add(
             SearchController.SearchController.prototype,
@@ -204,7 +206,9 @@ export class AppSpread {
     }
 
     _enableSearch() {
-        if (Main.overview.searchEntry)
+        if (Main.overview.searchEntry) {
             Main.overview.searchEntry.opacity = 255;
+            Main.overview.searchEntry.reactive = true;
+        }
     }
 }
