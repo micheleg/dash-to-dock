@@ -22,11 +22,11 @@ Depends: gnome-shell (>= ${gnome:MinimumVersion}~),
          gnome-shell (<< ${gnome:MaximumVersion}~),
          gir1.2-atk-1.0,
          gir1.2-glib-2.0,
-         gir1.2-dbusmenu-glib-0.4,
          gir1.2-gdkpixbuf-2.0,
          gir1.2-pango-1.0,
          ${misc:Depends},
          ${shlibs:Depends}
+Recommends: gir1.2-dbusmenu-glib-0.4,
 Replaces: gnome-shell-extension-dashtodock,
 Description: Ubuntu Dock for GNOME Shell
  A dock for the Gnome Shell, default Ubuntu experience.
