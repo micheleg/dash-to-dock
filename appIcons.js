@@ -427,9 +427,9 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     popupMenu() {
-        this._removeMenuTimeout();
+        this._removeMenuTimeout?.();
         this.fake_release();
-        this._draggable.fakeRelease();
+        this._draggable.fakeRelease?.();
 
         if (!this._menu) {
             this._menu = new DockAppIconMenu(this);
@@ -1441,7 +1441,7 @@ export const DockShowAppsIcon = GObject.registerClass({
     }
 
     vfunc_button_press_event(...args) {
-        return AppDisplay.AppIcon.prototype.vfunc_button_press_event.call(
+        return AppDisplay.AppIcon.prototype.vfunc_button_press_event?.call(
             this.toggleButton, ...args);
     }
 
@@ -1467,7 +1467,7 @@ export const DockShowAppsIcon = GObject.registerClass({
     }
 
     _removeMenuTimeout(...args) {
-        AppDisplay.AppIcon.prototype._removeMenuTimeout.call(this, ...args);
+        AppDisplay.AppIcon.prototype._removeMenuTimeout?.call(this, ...args);
     }
 
     popupMenu() {
