@@ -1,3 +1,9 @@
+gnome-shell-extension-ubuntu-dock (101ubuntu3) UNRELEASED; urgency=medium
+
+  * debian/control: Downgrade gir1.2-dbusmenu-glib-0.4 to recommends
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 03 Sep 2025 07:35:50 +0200
+
 gnome-shell-extension-ubuntu-dock (101ubuntu2) questing; urgency=medium
 
   * d/control: Add explicit dependencies on gir packages
