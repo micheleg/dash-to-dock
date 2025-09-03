@@ -551,7 +551,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     }
 
     _hasAttachedDialogs() {
-        // count trasient windows
+        // count transient windows
         let n = 0;
         this._window.foreach_transient(() => {
             n++;
