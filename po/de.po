@@ -159,7 +159,7 @@ msgstr "Einhängen von „%s“ fehlgeschlagen"
 
 #: locations.js:599
 #, javascript-format
-msgid "Failed to umount “%s”"
+msgid "Failed to unmount “%s”"
 msgstr "Umhängen von „%s“ fehlgeschlagen"
 
 #: locations.js:602
@@ -172,7 +172,7 @@ msgid "Mount operation already in progress"
 msgstr "Einhängen-Vorgang läuft bereits"
 
 #: locations.js:617
-msgid "Umount operation already in progress"
+msgid "Unmount operation already in progress"
 msgstr "Aushängen-Vorgang läuft bereits"
 
 #: locations.js:620

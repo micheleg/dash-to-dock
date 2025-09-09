@@ -107,7 +107,7 @@ msgstr "挂载“%s”失败"
 
 #: locations.js:595
 #, javascript-format
-msgid "Failed to umount “%s”"
+msgid "Failed to unmount “%s”"
 msgstr "卸载“%s”失败"
 
 #: locations.js:598
@@ -120,7 +120,7 @@ msgid "Mount operation already in progress"
 msgstr "挂载操作已在进行中"
 
 #: locations.js:613
-msgid "Umount operation already in progress"
+msgid "Unmount operation already in progress"
 msgstr "卸载操作已在进行中"
 
 #: locations.js:616

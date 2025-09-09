@@ -105,7 +105,7 @@ msgstr "Fallo al montar “%s”"
 
 #: locations.js:583
 #, javascript-format
-msgid "Failed to umount “%s”"
+msgid "Failed to unmount “%s”"
 msgstr "Fallo al desmontar “%s”"
 
 #: locations.js:586
@@ -118,7 +118,7 @@ msgid "Mount operation already in progress"
 msgstr "Operación de montaje ya en progreso"
 
 #: locations.js:601
-msgid "Umount operation already in progress"
+msgid "Unmount operation already in progress"
 msgstr "Operación de desmontaje ya en progreso"
 
 #: locations.js:604

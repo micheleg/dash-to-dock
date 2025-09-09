@@ -152,7 +152,7 @@ msgstr "Не вдалося змонтувати “%s”"
 
 #: locations.js:599
 #, javascript-format
-msgid "Failed to umount “%s”"
+msgid "Failed to unmount “%s”"
 msgstr "Не вдалося демонтувати “%s”"
 
 #: locations.js:602
@@ -165,7 +165,7 @@ msgid "Mount operation already in progress"
 msgstr "Процес монтування вже триває"
 
 #: locations.js:617
-msgid "Umount operation already in progress"
+msgid "Unmount operation already in progress"
 msgstr "Процес демонтування вже триває"
 
 #: locations.js:620

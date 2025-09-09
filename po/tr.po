@@ -701,7 +701,7 @@ msgstr "“%s” bağlanamadı."
 
 #: locations.js:595
 #, javascript-format
-msgid "Failed to umount “%s”"
+msgid "Failed to unmount “%s”"
 msgstr "“%s” bağı kaldırılamadı"
 
 #: locations.js:598
@@ -714,7 +714,7 @@ msgid "Mount operation already in progress"
 msgstr "Bağla işlemi zaten sürüyor"
 
 #: locations.js:613
-msgid "Umount operation already in progress"
+msgid "Unmount operation already in progress"
 msgstr "Bağı kaldır işlemi zaten sürüyor"
 
 #: locations.js:616

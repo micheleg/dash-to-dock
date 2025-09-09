@@ -155,7 +155,7 @@ msgstr "تعذَّر ضم «%s»"
 
 #: locations.js:599
 #, javascript-format
-msgid "Failed to umount “%s”"
+msgid "Failed to unmount “%s”"
 msgstr "تعذَّر فصل «%s»"
 
 #: locations.js:602
@@ -168,7 +168,7 @@ msgid "Mount operation already in progress"
 msgstr "عملية الضم تنفَّذ بالفعل"
 
 #: locations.js:617
-msgid "Umount operation already in progress"
+msgid "Unmount operation already in progress"
 msgstr "عملية الفصل تنفَّذ بالفعل"
 
 #: locations.js:620
