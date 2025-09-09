@@ -108,7 +108,7 @@ msgstr "Priklapljanje programa »%s« je spodletelo!"
 
 #: locations.js:595
 #, javascript-format
-msgid "Failed to umount “%s”"
+msgid "Failed to unmount “%s”"
 msgstr "Odklapljanje programa »%s« je spodletelo!"
 
 #: locations.js:598
@@ -121,7 +121,7 @@ msgid "Mount operation already in progress"
 msgstr "Priklapljanje je že v teku"
 
 #: locations.js:613
-msgid "Umount operation already in progress"
+msgid "Unmount operation already in progress"
 msgstr "Odklapljanje je že v teku"
 
 #: locations.js:616

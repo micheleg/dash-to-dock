@@ -145,7 +145,7 @@ msgstr "%s을(를) 마운트하지 못했습니다"
 
 #: locations.js:599
 #, javascript-format
-msgid "Failed to umount “%s”"
+msgid "Failed to unmount “%s”"
 msgstr "%s을(를) 언마운트하지 못했습니다"
 
 #: locations.js:602
@@ -158,7 +158,7 @@ msgid "Mount operation already in progress"
 msgstr "마운트 작업이 이미 진행 중입니다"
 
 #: locations.js:617
-msgid "Umount operation already in progress"
+msgid "Unmount operation already in progress"
 msgstr "언마운트 작업이 이미 진행 중입니다"
 
 #: locations.js:620
