@@ -1425,6 +1425,8 @@ export const DockShowAppsIcon = GObject.registerClass({
         this._menu = null;
         this._menuManager = new PopupMenu.PopupMenuManager(this);
         this._menuTimeoutId = 0;
+
+        this._maybeEnablePopupGestures();
     }
 
     _createIcon(size) {
@@ -1478,6 +1480,22 @@ export const DockShowAppsIcon = GObject.registerClass({
 
     _removeMenuTimeout(...args) {
         AppDisplay.AppIcon.prototype._removeMenuTimeout?.call(this, ...args);
+    }
+
+    _maybeEnablePopupGestures() {
+        if (!Clutter.LongPressGesture || !Clutter.ClickGesture)
+            return;
+
+        const longPressGesture = new Clutter.LongPressGesture();
+        longPressGesture.connect('recognize', () => this.popupMenu());
+        this.add_action(longPressGesture);
+
+        const rightClickGesture = new Clutter.ClickGesture({
+            required_button: Clutter.BUTTON_SECONDARY,
+            recognize_on_press: true,
+        });
+        rightClickGesture.connect('recognize', () => this.popupMenu());
+        this.add_action(rightClickGesture);
     }
 
     popupMenu() {
