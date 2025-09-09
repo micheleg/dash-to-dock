@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (102ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (102ubuntu1) questing; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * New upstream release
@@ -25,7 +25,7 @@ gnome-shell-extension-ubuntu-dock (102ubuntu1) UNRELEASED; urgency=medium
   * Update German translation
   * locations: Fix action typo leading to error not being handled
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 09 Sep 2025 17:35:49 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 09 Sep 2025 17:41:26 +0200
 
 gnome-shell-extension-ubuntu-dock (101ubuntu3) questing; urgency=medium
 
