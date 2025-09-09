@@ -99,7 +99,7 @@ msgstr "Nem sikerült a(z) „%s” csatolása"
 
 #: locations.js:598
 #, javascript-format
-msgid "Failed to umount “%s”"
+msgid "Failed to unmount “%s”"
 msgstr "Nem sikerült a(z) „%s” leválasztása"
 
 #: locations.js:601
@@ -112,7 +112,7 @@ msgid "Mount operation already in progress"
 msgstr "A csatolási művelet már folyamatban van"
 
 #: locations.js:616
-msgid "Umount operation already in progress"
+msgid "Unmount operation already in progress"
 msgstr "A leválasztási művelet már folyamatban van"
 
 #: locations.js:619

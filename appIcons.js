@@ -1425,6 +1425,8 @@ export const DockShowAppsIcon = GObject.registerClass({
         this._menu = null;
         this._menuManager = new PopupMenu.PopupMenuManager(this);
         this._menuTimeoutId = 0;
+
+        this._maybeEnablePopupGestures();
     }
 
     _createIcon(size) {
@@ -1441,13 +1443,23 @@ export const DockShowAppsIcon = GObject.registerClass({
     }
 
     vfunc_button_press_event(...args) {
-        return AppDisplay.AppIcon.prototype.vfunc_button_press_event?.call(
-            this.toggleButton, ...args);
+        try {
+            // TODO: Drop this when not supporting GNOME 48 (and older) anymore.
+            return AppDisplay.AppIcon.prototype.vfunc_button_press_event.call(
+                this.toggleButton, ...args);
+        } catch {
+            return Clutter.EVENT_PROPAGATE;
+        }
     }
 
     vfunc_touch_event(...args) {
-        return AppDisplay.AppIcon.prototype.vfunc_touch_event.call(
-            this.toggleButton, ...args);
+        try {
+            // TODO: Drop this when not supporting GNOME 48 (and older) anymore.
+            return AppDisplay.AppIcon.prototype.vfunc_touch_event.call(
+                this.toggleButton, ...args);
+        } catch {
+            return Clutter.EVENT_PROPAGATE;
+        }
     }
 
     showLabel(...args) {
@@ -1470,8 +1482,31 @@ export const DockShowAppsIcon = GObject.registerClass({
         AppDisplay.AppIcon.prototype._removeMenuTimeout?.call(this, ...args);
     }
 
+    _hasPopupMenu() {
+        return Docking.DockManager.extension.uuid !== 'ubuntu-dock@ubuntu.com';
+    }
+
+    _maybeEnablePopupGestures() {
+        if (!this._hasPopupMenu())
+            return;
+
+        if (!Clutter.LongPressGesture || !Clutter.ClickGesture)
+            return;
+
+        const longPressGesture = new Clutter.LongPressGesture();
+        longPressGesture.connect('recognize', () => this.popupMenu());
+        this.add_action(longPressGesture);
+
+        const rightClickGesture = new Clutter.ClickGesture({
+            required_button: Clutter.BUTTON_SECONDARY,
+            recognize_on_press: true,
+        });
+        rightClickGesture.connect('recognize', () => this.popupMenu());
+        this.add_action(rightClickGesture);
+    }
+
     popupMenu() {
-        if (Docking.DockManager.extension.uuid === 'ubuntu-dock@ubuntu.com')
+        if (!this._hasPopupMenu())
             return false;
 
         this._removeMenuTimeout();

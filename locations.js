@@ -423,6 +423,12 @@ export const LocationAppInfo = GObject.registerClass({
     }
 });
 
+const RemovableAction = Object.freeze({
+    MOUNT: 'mount',
+    UNMOUNT: 'unmount',
+    EJECT: 'eject',
+});
+
 const MountableVolumeAppInfo = GObject.registerClass({
     Implements: [Gio.AppInfo],
     Properties: {
@@ -512,28 +518,28 @@ class MountableVolumeAppInfo extends LocationAppInfo {
 
         if (mount) {
             if (this.mount.can_unmount())
-                actions.push('unmount');
+                actions.push(RemovableAction.UNMOUNT);
             if (this.mount.can_eject())
-                actions.push('eject');
+                actions.push(RemovableAction.EJECT);
 
             return actions;
         }
 
         if (this.volume.can_mount())
-            actions.push('mount');
+            actions.push(RemovableAction.MOUNT);
         if (this.volume.can_eject())
-            actions.push('eject');
+            actions.push(RemovableAction.EJECT);
 
         return actions;
     }
 
     get_action_name(action) {
         switch (action) {
-        case 'mount':
+        case RemovableAction.MOUNT:
             return __('Mount');
-        case 'unmount':
+        case RemovableAction.UNMOUNT:
             return __('Unmount');
-        case 'eject':
+        case RemovableAction.EJECT:
             return __('Eject');
         default:
             return null;
@@ -578,7 +584,7 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             return super.vfunc_launch(files, context);
 
         try {
-            await this.launchAction('mount');
+            await this.launchAction(RemovableAction.MOUNT);
             if (!this.mount) {
                 throw new Error('No mounted location to open for %s'.format(
                     this.get_id()));
@@ -592,15 +598,21 @@ class MountableVolumeAppInfo extends LocationAppInfo {
     }
 
     _notifyActionError(action, message) {
-        if (action === 'mount') {
+        switch (action) {
+        case RemovableAction.MOUNT:
             global.notify_error(__('Failed to mount “%s”'.format(
                 this.get_name())), message);
-        } else if (action === 'unmount') {
-            global.notify_error(__('Failed to umount “%s”'.format(
+            break;
+
+        case RemovableAction.UNMOUNT:
+            global.notify_error(__('Failed to unmount “%s”'.format(
                 this.get_name())), message);
-        } else if (action === 'eject') {
+            break;
+
+        case RemovableAction.EJECT:
             global.notify_error(__('Failed to eject “%s”'.format(
                 this.get_name())), message);
+            break;
         }
     }
 
@@ -608,20 +620,27 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         if (!this.list_actions().includes(action))
             throw new Error('Action %s is not supported by %s', action, this);
 
-        if (this._currentAction) {
-            if (this._currentAction === 'mount') {
-                this._notifyActionError(action,
-                    __('Mount operation already in progress'));
-            } else if (this._currentAction === 'unmount') {
-                this._notifyActionError(action,
-                    __('Umount operation already in progress'));
-            } else if (this._currentAction === 'eject') {
-                this._notifyActionError(action,
-                    __('Eject operation already in progress'));
-            }
+        switch (this._currentAction) {
+        case RemovableAction.MOUNT:
+            this._notifyActionError(action,
+                __('Mount operation already in progress'));
+            break;
 
-            throw new Error('Another action %s is being performed in %s'.format(
-                this._currentAction, this));
+        case RemovableAction.UNMOUNT:
+            this._notifyActionError(action,
+                __('Unmount operation already in progress'));
+            break;
+
+        case RemovableAction.EJECT:
+            this._notifyActionError(action,
+                __('Eject operation already in progress'));
+            break;
+
+        default:
+            if (this._currentAction) {
+                throw new Error('Another action %s is being performed in %s'.format(
+                    this._currentAction, this));
+            }
         }
 
         this._currentAction = action;
@@ -629,34 +648,39 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         const removable = this.mount ?? this.volume;
         const operation = new ShellMountOperation.ShellMountOperation(removable);
         try {
-            if (action === 'mount') {
+            switch (action) {
+            case RemovableAction.MOUNT:
                 await this.volume.mount(Gio.MountMountFlags.NONE, operation.mountOp,
                     this.cancellable);
-            } else if (action === 'unmount') {
+                return true;
+
+            case RemovableAction.UNMOUNT:
                 await this.mount.unmount_with_operation(Gio.MountUnmountFlags.FORCE,
                     operation.mountOp, this.cancellable);
-            } else if (action === 'eject') {
+                return true;
+
+            case RemovableAction.EJECT:
                 await removable.eject_with_operation(Gio.MountUnmountFlags.FORCE,
                     operation.mountOp, this.cancellable);
-            } else {
+                return true;
+
+            default:
                 logError(new Error(), 'No action %s on removable %s'.format(action,
                     removable.get_name()));
                 return false;
             }
-
-            return true;
         } catch (e) {
-            if (action === 'mount' &&
+            if (action === RemovableAction.MOUNT &&
                 e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.ALREADY_MOUNTED))
                 return true;
-            else if (action === 'umount' &&
+            else if (action === RemovableAction.UNMOUNT &&
                      e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.NOT_MOUNTED))
                 return true;
 
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.FAILED))
                 this._notifyActionError(action, e.message);
 
-            if (action === 'mount' && this._isEncryptedMountError(e)) {
+            if (action === RemovableAction.MOUNT && this._isEncryptedMountError(e)) {
                 delete this._currentAction;
                 operation.close();
                 return this.launchAction(action);
