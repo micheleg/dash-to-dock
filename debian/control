@@ -1,0 +1,36 @@
+Source: gnome-shell-extension-ubuntu-dock
+Section: gnome
+Priority: optional
+Maintainer: Marco Trevisan <marco@ubuntu.com>
+Build-Depends: debhelper (>= 10),
+               dh-translations,
+               eslint <!nocheck>,
+               libglib2.0-bin,
+               node-chalk <!nocheck>,
+               node-js-yaml <!nocheck>,
+               node-strip-ansi <!nocheck>,
+               python3,
+               sassc,
+Standards-Version: 4.1.1
+Vcs-Git: https://github.com/micheleg/dash-to-dock.git -b ubuntu-dock
+Vcs-Browser: https://github.com/micheleg/dash-to-dock/tree/ubuntu-dock
+Homepage: https://github.com/micheleg/dash-to-dock/blob/ubuntu-dock/README.md
+
+Package: gnome-shell-extension-ubuntu-dock
+Architecture: all
+Depends: gnome-shell (>= ${gnome:MinimumVersion}~),
+         gnome-shell (<< ${gnome:MaximumVersion}~),
+         gir1.2-atk-1.0,
+         gir1.2-glib-2.0,
+         gir1.2-dbusmenu-glib-0.4,
+         gir1.2-gdkpixbuf-2.0,
+         gir1.2-pango-1.0,
+         ${misc:Depends},
+         ${shlibs:Depends}
+Replaces: gnome-shell-extension-dashtodock,
+Description: Ubuntu Dock for GNOME Shell
+ A dock for the Gnome Shell, default Ubuntu experience.
+ .
+ This extension is a modified version of Dash To Dock with different defaults.
+ Dash To Dock can be installed to replace it and give more (but unsupported)
+ configuration options.

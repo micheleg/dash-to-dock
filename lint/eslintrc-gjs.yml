@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: MIT OR LGPL-2.0-or-later
 # SPDX-FileCopyrightText: 2018 Claudio André <claudioandre.br@gmail.com>
 env:
-  es2021: true
+  # FIXME: Ubuntu can't handle es2021
+  es2020: true
 extends: 'eslint:recommended'
 rules:
   array-bracket-newline:

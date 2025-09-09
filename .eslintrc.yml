@@ -1,5 +1,5 @@
-ignorePatterns:
-  - _build/**
+#ignorePatterns:
+#  - _build/**
 
 extends:
  - ./lint/eslintrc-gjs.yml
@@ -30,6 +30,10 @@ overrides:
           objects: always-multiline
           imports: always-multiline
           functions: never
+
+      # Ubuntu's eslint is not as good as upstream one :(
+      camelcase: warn
+      no-unused-expressions: warn
 
 parserOptions:
   sourceType: module

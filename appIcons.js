@@ -486,6 +486,9 @@ const DockAbstractAppIcon = GObject.registerClass({
         const event = Clutter.get_current_event();
         let modifiers = event ? event.get_state() : 0;
 
+        // Add this to get the clicked monitor index
+        const monitorIndex = this._dash.monitorIndex;
+
         // Only consider SHIFT and CONTROL as modifiers (exclude SUPER, CAPS-LOCK, etc.)
         modifiers &= Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CONTROL_MASK;
 
@@ -557,10 +560,14 @@ const DockAbstractAppIcon = GObject.registerClass({
                         const allWindows = (button === 1 && !modifiers) || clickCount > 1;
                         this._minimizeWindow(allWindows);
                     } else {
+                        // Move all interesting windows to the clicked monitor before activating
+                        this.getInterestingWindows().forEach(w => w.move_to_monitor(monitorIndex));
                         this._activateAllWindows();
                     }
                 } else {
                     const [w] = windows;
+                    // Move the window to the clicked monitor before activating
+                    w.move_to_monitor(monitorIndex);
                     Main.activateWindow(w);
                 }
                 break;
@@ -579,6 +586,8 @@ const DockAbstractAppIcon = GObject.registerClass({
                         }
                     } else {
                         // Window is minimized, raise it
+                        // Move the window to the clicked monitor before activating
+                        w.move_to_monitor(monitorIndex);
                         Main.activateWindow(w);
                     }
                     // Launch overview when multiple windows are present
@@ -596,10 +605,17 @@ const DockAbstractAppIcon = GObject.registerClass({
                     } else {
                         // Activate the first window
                         const [w] = windows;
+                        // Move the window to the clicked monitor before activating
+                        w.move_to_monitor(monitorIndex);
                         Main.activateWindow(w);
                     }
                 } else {
                     this.app.activate();
+                    // After activation, move the focused window to the clicked monitor if it's from this app
+                    const focusedWindow = global.display.get_focus_window();
+                    if (focusedWindow && this.app.get_windows().includes(focusedWindow)) {
+                        focusedWindow.move_to_monitor(monitorIndex);
+                    }
                 }
                 break;
 
@@ -610,6 +626,8 @@ const DockAbstractAppIcon = GObject.registerClass({
                 } else {
                     // Activate the first window
                     const [w] = windows;
+                    // Move the window to the clicked monitor before activating
+                    w.move_to_monitor(monitorIndex);
                     Main.activateWindow(w);
                 }
                 break;
@@ -623,11 +641,20 @@ const DockAbstractAppIcon = GObject.registerClass({
                 } else {
                     // Activate the first window
                     const [w] = windows;
+                    // Move the window to the clicked monitor before activating
+                    w.move_to_monitor(monitorIndex);
                     Main.activateWindow(w);
                 }
                 break;
 
             case clickAction.LAUNCH:
+                // Connect signal for new window creation and move to clicked monitor
+                let signalId = global.display.connect('window-created', (display, window) => {
+                    if (this.app.get_windows().includes(window)) {
+                        window.move_to_monitor(monitorIndex);
+                        global.display.disconnect(signalId);
+                    }
+                });
                 this.launchNewWindow();
                 break;
 
@@ -638,12 +665,19 @@ const DockAbstractAppIcon = GObject.registerClass({
                     // (no modifiers, no middle click).
                     if (singleOrUrgentWindows && !modifiers && button === 1) {
                         const [w] = windows;
+                        // Move the window to the clicked monitor before activating
+                        w.move_to_monitor(monitorIndex);
                         Main.activateWindow(w);
                     } else {
                         this._windowPreviews();
                     }
                 } else {
                     this.app.activate();
+                    // After activation, move the focused window to the clicked monitor if it's from this app
+                    const focusedWindow = global.display.get_focus_window();
+                    if (focusedWindow && this.app.get_windows().includes(focusedWindow)) {
+                        focusedWindow.move_to_monitor(monitorIndex);
+                    }
                 }
                 break;
 
@@ -660,6 +694,8 @@ const DockAbstractAppIcon = GObject.registerClass({
                             this._minimizeWindow(w);
                         } else {
                             // Window is minimized, raise it
+                            // Move the window to the clicked monitor before activating
+                            w.move_to_monitor(monitorIndex);
                             Main.activateWindow(w);
                         }
                     } else {
@@ -668,6 +704,11 @@ const DockAbstractAppIcon = GObject.registerClass({
                     }
                 } else {
                     this.app.activate();
+                    // After activation, move the focused window to the clicked monitor if it's from this app
+                    const focusedWindow = global.display.get_focus_window();
+                    if (focusedWindow && this.app.get_windows().includes(focusedWindow)) {
+                        focusedWindow.move_to_monitor(monitorIndex);
+                    }
                 }
                 break;
 
@@ -677,6 +718,8 @@ const DockAbstractAppIcon = GObject.registerClass({
                     Docking.DockManager.getDefault().appSpread.toggle(this.app);
                 } else {
                     // Activate the first window
+                    // Move the window to the clicked monitor before activating
+                    windows[0].move_to_monitor(monitorIndex);
                     Main.activateWindow(windows[0]);
                 }
                 break;
@@ -687,6 +730,8 @@ const DockAbstractAppIcon = GObject.registerClass({
                     Docking.DockManager.getDefault().appSpread.toggle(this.app);
                 } else if (!this.focused) {
                     // Activate the first window
+                    // Move the window to the clicked monitor before activating
+                    windows[0].move_to_monitor(monitorIndex);
                     Main.activateWindow(windows[0]);
                 } else {
                     this._minimizeWindow();
@@ -698,10 +743,19 @@ const DockAbstractAppIcon = GObject.registerClass({
                 break;
 
             case clickAction.SKIP:
+                // Move the window to the clicked monitor before activating
+                windows[0].move_to_monitor(monitorIndex);
                 Main.activateWindow(windows[0]);
                 break;
             }
         } else {
+            // Connect signal for new window creation and move to clicked monitor
+            let signalId = global.display.connect('window-created', (display, window) => {
+                if (this.app.get_windows().includes(window)) {
+                    window.move_to_monitor(monitorIndex);
+                    global.display.disconnect(signalId);
+                }
+            });
             this.launchNewWindow();
         }
 
@@ -1471,6 +1525,9 @@ export const DockShowAppsIcon = GObject.registerClass({
     }
 
     popupMenu() {
+        if (Docking.DockManager.extension.uuid === 'ubuntu-dock@ubuntu.com')
+            return false;
+
         this._removeMenuTimeout();
         this.toggleButton.fake_release();
 

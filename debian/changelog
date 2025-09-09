@@ -1,0 +1,1699 @@
+gnome-shell-extension-ubuntu-dock (101ubuntu1) questing; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * Release dash-to-dock v101
+  * docking: Drop unused variable definition
+  * metadata: Add support for GNOME 49
+  * debian/{rules,control}: Automatically define gnome-shell deps based on
+    extension metadata
+
+  [ Peter Bittner ]
+  * Correct German translation of threshold
+
+  [ Morgan Antonsson ]
+  * Update Swedish translation
+
+  [ Tommimon ]
+  * Fixing "Pin to Dock" translation in app grid menu
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 08 Jul 2025 04:27:54 +0200
+
+gnome-shell-extension-ubuntu-dock (100ubuntu2) plucky; urgency=medium
+
+  [ Alessandro Astone ]
+  * dash: Support new API for retrieving scroll adjustment (LP: #2102002)
+  * dash: Simplify scroll computation by always using the SMOOTH events
+  * dash: Handle vertical scrolling on a horizontal dock
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Mon, 17 Mar 2025 18:57:25 +0800
+
+gnome-shell-extension-ubuntu-dock (100ubuntu1) plucky; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+  * appIcons: Be consistent on menu items styles
+
+  [ Yevhen Popok ]
+  * Update uk_UA.po
+
+  [ Amr Ibrahim ]
+  * Update German translation
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 14 Feb 2025 18:45:02 +0100
+
+gnome-shell-extension-ubuntu-dock (99ubuntu3) plucky; urgency=medium
+
+  * control: Bump dependency to gnome-shell (<< 49~)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Mon, 10 Feb 2025 17:03:06 +0800
+
+gnome-shell-extension-ubuntu-dock (99ubuntu2) plucky; urgency=medium
+
+  [ Sergio Costas ]
+  * Fix dot position on Gnome 46.2 and greater (dash-to-dock issue #2222)
+  * Make the 'Pin to Dock' label translatable (dash-to-dock issue #2330)
+
+  [ Daniel van Vugt ]
+  * docking: Generalize unredirect toggling to support GNOME 48 and earlier
+    (dash-to-dock issue #2347)
+  * metadata.json: Enable GNOME 48 support
+
+  [ César Quintana ]
+  * Fix autohide after drag event (dash-to-dock issue #2174)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Mon, 10 Feb 2025 16:45:30 +0800
+
+gnome-shell-extension-ubuntu-dock (99ubuntu1) oracular; urgency=medium
+
+  * New uptream bugfix release
+  * theming: Give Clutter.Color priority over Cogl.Color.
+    While now there's only Cogl.Color, in previous versions we had both so
+    giving Cogl priority broke the theming support
+  * utils: Use an extra parameter for property injector constructor.
+    By adding parameters in commit 611690cc33 we ended up hiding the base
+    object constructor parameter, and so the support for automatic
+    disconnection on parent object destruction. (LP: #2083621)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 03 Oct 2024 17:36:01 +0200
+
+gnome-shell-extension-ubuntu-dock (97ubuntu1) oracular; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream bugfix release
+  * appIcons: Raise the snap store before selecting a snap (LP: #2081716)
+
+  [ vinchatl ]
+  * Update French translation
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 02 Oct 2024 01:33:52 +0200
+
+gnome-shell-extension-ubuntu-dock (96ubuntu3) oracular; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * appIconsDecorator: Keep showing the details items when updating
+  * theming, appIconIndicators: Support both Cogl.Color and Clutter.Color
+
+  [ Daniel van Vugt ]
+  * theming: Add support for Cogl.Color since Clutter.Color is deprecated in 47
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 17 Sep 2024 00:16:44 +0200
+
+gnome-shell-extension-ubuntu-dock (96ubuntu2) oracular; urgency=medium
+
+  * appIcons: Show app details menu for snap applications
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 16 Sep 2024 23:23:01 +0200
+
+gnome-shell-extension-ubuntu-dock (96ubuntu1) oracular; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New Upstream Release
+  * utils: Add clamp function and use it for Indicators values
+  * appIndicators: Add function to read theme values in a more JS way
+  * appIconIndicators: Make progress bar paddings styled
+  * stylesheet: Make alignment in progress overview icons more consistent
+  * appIconIndicators: Make progress bar height factor styled
+  * stylesheet: Use lighter progress bar on bigger overview icons
+  * appIconIndicators: Do not add notification badge code unless needed
+  * appIcons[Decorator]: Improve wording on updating messages
+
+  [ Sergio Costas Rodriguez ]
+  * Fix "Show Applications" button
+
+  [ Yaroslav Pronin ]
+  * Add `Dot` running indicator style
+  * Update Russian translations
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 05 Sep 2024 21:04:56 +0200
+
+gnome-shell-extension-ubuntu-dock (95ubuntu1) oracular; urgency=medium
+
+  * New upstream release
+  * appIconsDecorator: Use the generic icons signal handler for result
+  * appIconsDecorator: Destroy indicators on removal
+  * appIconsDecorator: Drop unneeded eslint ignores
+  * appIconsDecorator: Use a signal signals handler with labels
+  * appIconIndicators: Use lambda-style callbacks for better debugging
+  * utils: Remove signal handler item on object destruction
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 27 Aug 2024 18:01:33 -0400
+
+gnome-shell-extension-ubuntu-dock (94ubuntu1) oracular; urgency=medium
+
+  * New upstream release
+  * cleanup: Fix various comments and code typos
+  * notificationsMonitor: Try to get appId from the source if set
+  * appIcons: Sync comment change with ubuntu-dock
+  * appIcons: Fix comment typo
+  * appIcons: Remove duplicate source definition on DockAppIconMenu
+  * stylesheet: Add missing declaration for overview tile states
+  * appIcons: Allow to update the dot style offset in x too
+  * appIcons: Show an OSD error if trying to launch an updating app
+  * appIcons: Always add a disabled menu item with the app title
+  * appIcons: Inform in menu items that the app is being being updated
+  * appIcons: Delete menu instance from app icon on destruction
+  * appIcons: use upstream definition of shouldShowTooltip
+  * docking: Patch AppIcon to have more consistent Pin labels
+  * appIcons: Use a labeled menu item separator for application title
+  * appIcons: Drop code that is not used anymore by any supported version
+  * appIconIndicator: Move style handling for updating state here
+  * appIcons: Setup unity indicator properties on construction
+  * appIconsDecorator: Support decorating app icons with emblems everywhere
+  * launcherAPI: Avoid using regexes to replace all values in a string
+  * appIndicators: Allow theming progress offsets
+  * utils: Support injecting properties that are not on the main object
+  * appIconsDecorator: Update icons style on updating changes
+  * appIconsDecorator: Do not allow launching any application in updating state
+  * appIconsDecorator: Hide all menu items except unpinning ones on updating
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Sat, 24 Aug 2024 00:53:35 -0400
+
+gnome-shell-extension-ubuntu-dock (93ubuntu1) oracular; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+  * docking: Use the signal handler to disconnect on startup-completed signal
+  * locations: Do not cancel operations after a volume has been umounted/removed
+    (LP: #1993054)
+  * locations: Do not warn if a file info has not the icon attribute
+  * locations: Ask again for password on encryption failures
+  * appIcons: Make possible to override updating icons style from css
+  * appIcons: Do not allow launching a new window if the app is updating
+  * appIcons: Hide launch menu items and generic actions if the app is updating
+  * docking: Use the signal handler to disconnect on startup-completed signal
+  * appIcons: Show an OSD error if trying to launch an updating app
+  * appIcons: Always add a disabled menu item with the app title
+  * appIcons: Inform in menu items that the app is being being updated
+  * debian/control: Add support for GNOME Shell 47
+
+  [ Byoungchan Lee ]
+  * i18n: Add Korean translation
+
+  [ Sergio Costas Rodriguez ]
+  * Fix window preview in Gnome 45
+  * Move .actor test to its own function
+  * Fix communication with DING
+  * Allow to disable an icon in the dock during updates
+
+  [ Daniel van Vugt ]
+  * docking: Fix allocation failure in GNOME 47 that completely broke the shell
+  * metadata.json: Enable support for gnome-shell 47
+
+  [ Andrew Skalski ]
+  * Fix window selected from preview not getting focus
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 13 Aug 2024 13:32:02 -0400
+
+gnome-shell-extension-ubuntu-dock (90ubuntu1) noble; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release: dash-to-dock v90
+  * locations: Remove unused variable
+  * appIcon: Allow customizing the showAppsIcon based on the session mode
+    (LP: #2060816)
+
+  [ taoky ]
+  * docking: fix window picker space for multi-monitor environments
+  * intellihide: enable/disable unredirect when dock shows/hides
+
+  [ Jichi Zhang ]
+  * intellihide: treat fullscreen windows as maximized
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 17 Apr 2024 21:09:42 +0200
+
+gnome-shell-extension-ubuntu-dock (89ubuntu4) noble; urgency=medium
+
+  [ Julian Kandlhofer ]
+  * Fix deprecated "St.ScrollView.[hv]scroll" property
+
+  [ Sergio Costas ]
+  * Fix dot height in default mode (#2168)
+
+  [ taoky ]
+  * docking: adapt ControlsManagerLayout spacing for GNOME 46
+
+  [ Daniel van Vugt ]
+  * docking: Hard code the startup animation time
+  * docking: Use the upstream gnome-shell startup animation code (LP: #2058468)
+
+  [ Sabri Ünal ]
+  * i18n: Fix sl-po file extension
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Wed, 10 Apr 2024 16:28:01 +0800
+
+gnome-shell-extension-ubuntu-dock (89ubuntu3) noble; urgency=medium
+
+  [ Sergio Costas Rodriguez ]
+  * Update for Gnome Shell 46
+  * Fix hover highlight in Gnome Shell 45
+  * Right detection of barriers
+  * Fix Overview mode
+  * Remove the gray background in each icon
+  * Show the currently focused application
+  * appIndicators: Update progress bar colors to be more modern
+  * appIndicators: Use track instead of background
+  * stylesheet: Allow to use CSS to fully set gradient colors
+
+  [ Daniel van Vugt ]
+  * windowPreview: Use set_child instead of add_child
+
+  [ Sundeep Mediratta ]
+  * Remove any dependency on dockmanager in desktopIconsIntegration.js
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 22 Mar 2024 10:08:15 +0100
+
+gnome-shell-extension-ubuntu-dock (89ubuntu2) noble; urgency=medium
+
+  [ Daniel van Vugt ]
+  * windowPreview: Use set_child instead of add_child (LP: #2056506)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 12 Mar 2024 19:05:30 +0100
+
+gnome-shell-extension-ubuntu-dock (89ubuntu1) noble; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * metadata: Bump to version 89
+  * dependencies/gi: Use shorter syntax for dependencies imports
+  * eslint: Force dangle comma on multi-line imports
+  * locations: Use TextDecoder instead of deprecated ByteArray
+  * locations: Throw a clearer error if handlerApp is not found
+  * locationsWorker: Exit with the main script exit code
+  * docking: Do not manually dispose the settings object
+  * docking: Use St.IconTheme directly, without wrappers
+  * dependencies/gi: Do not import Gdk or Gtk into the shell
+  * appIcons: Add support for translating plural forms
+  * Utils: add supportsExtendedBarriers
+  * cleanup: Style fixes
+
+  [ Sergio Costas Rodriguez ]
+  * Update for Gnome Shell 46
+  * Preserve Gnome Shell 45 compatibility
+  * Fix lack of Clutter.cairo_set_source_color
+  * Use add_child in all the possible places
+  * Remove the gray background in each icon
+  * Show the currently focused application
+
+  [ Stuart Hayhurst ]
+  * appIcons: Use Mtk.Rectangle instead of Meta.Rectangle
+
+  [ xalt7x.service ]
+  * Update Ukrainian translation
+  * Fix dashtodock.pot generation
+  * Add missing third argument
+  * Use the function ngettext directly
+  * Update Ukrainian translation
+
+  [ Balázs Úr ]
+  * Update Hungarian translation
+
+  [ Matej ]
+  * Created sl-po
+
+  [ hasecilu ]
+  * Update Spanish translations
+
+  [ Amr Ibrahim ]
+  * Update German translation
+
+  [ Piotr Wieczorek ]
+  * Fix Polish translation of "Empty Trash"
+
+  [ Yaroslav Pronin ]
+  * Change "Show Details" to GNOME's "App Details"
+  * Fix auto format indents
+
+  [ Vincenzo ]
+  * Fix for blurry background when opening a new application (LP: #1965123)
+  * Simplify animation duration expression into one-liner
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 01 Mar 2024 00:51:05 +0100
+
+gnome-shell-extension-ubuntu-dock (87ubuntu2) mantic; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * locationsWorker: Exit with the main script exit code (LP: #2038783)
+
+  [ Stuart Hayhurst ]
+  * appIcons: Use Mtk.Rectangle instead of Meta.Rectangle (LP: #2034664)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 09 Oct 2023 03:04:54 +0200
+
+gnome-shell-extension-ubuntu-dock (87ubuntu1) mantic; urgency=medium
+
+  * Releasing v87
+  * Imports: use less verbose export strategy
+  * prefs: Use GObject class for signal emission
+  * cleanup: Avoid setting modules versions
+  * prefs: Remove unneeded log line
+  * extension: Do not try to re-enable the extension when already is
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 18 Aug 2023 00:55:44 +0200
+
+gnome-shell-extension-ubuntu-dock (85ubuntu1) mantic; urgency=medium
+
+  [ Stuart Hayhurst ]
+  * docking: Update dock visibility after overview hide animation is done
+
+  [ Amr Ibrahim ]
+  * Update German translation
+
+  [ jrom99 ]
+  * Fix some icons missing dominant color
+  * Adds sensible fallback if dominant color is missing
+  * Fix mounted drives missing dominant color
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release 85
+  * appIconIndicators: Address eslint comments on dominant color fix
+  * extension: Port to ESM
+  * eslint: Update rules to match gnome-shell 45 and fix syntax
+  * eslint: Ignore some files that ubuntu's eslint can't parse yet
+  * debian/control: Bump gnome-shell dependency
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 17 Aug 2023 04:04:06 +0200
+
+gnome-shell-extension-ubuntu-dock (84ubuntu1) mantic; urgency=medium
+
+  [ WhiredPlanck ]
+  * Update Simplified Chinese translation
+  * Update Traditional Chinese translation
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+  * Revert "dash: Compute number of icons easily and correctly to show the
+    separator"
+  * dash: Take in account the number of removed favorites to add the separator
+  * docking: Always affect the input region when adding the dock (LP: #2022885)
+
+  [ addieStarr ]
+  * Fixed dash-js app issue
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 15 Jun 2023 22:51:34 +0200
+
+gnome-shell-extension-ubuntu-dock (82ubuntu1) mantic; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New Upstream release v82
+  * debian/rules: Install prefs.js (it allows to tweak further settings)
+  * docking: Use upstream addChrome to track actors
+  * docking: Do ControlsManagerLayout allocation with box-adjusted workArea
+    (LP: #1979096)
+  * docking: Be more consistent in reducing the overlay layout space
+  * docking: Add both bottom and top spacing when there are no workspaces thumbs
+  * dash: Use a different container to hold floating ShowAppsIcon
+  * dash: Temporary remove separator when re-displaying icons (LP: #2017523)
+  * dash: Compute number of icons easily and correctly to show the separator
+  * dash: Cleanup a bit the icons ordering code
+  * dash: Animate icons during overview animation but not during startup
+
+  [ taoky ]
+  * intellihide: add dropdown menu to handled window types (LP: #1983456)
+
+  [ Sabri Ünal ]
+  * Update Turkish translation
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 02 Jun 2023 03:50:12 +0200
+
+gnome-shell-extension-ubuntu-dock (81ubuntu1) mantic; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+  * docking: Set dance timeline duration to 1 if animations are disabled
+  * appInconIndicators: Improve the computing of the counter badge size
+  * notificationsMonitor: Do not count the acknowledged resident notifications
+  * docking: Initialize settings before than other classes that could use them
+  * notificationsMonitor: Add an options to disable notifications counter only
+  * appIconIndicators: Add an option to control whether the counters are summed
+  * docking: Initialize the Launcher remote model only if needed
+  * locations: Use correct name for default handler finish function
+  * locationsWorker: Use more async awaitness
+  * docking: Cleanup startup animation injections once done
+  * docking: Handling monitors changed events while preparing startup animation
+    (LP: #2019751)
+  * docking: Keep clip and coverPane size matching current setup (LP: #2019751)
+  * schemas: Update some descriptions to match actual behavior
+  * docking: Cleanup some stray lines
+  * dash: Do DockDash class initialization at first thing
+  * dash: Add option to keep the icons always centered in extended mode
+  * Settings: improve wording on show-apps option
+  * dash: Add option to show the show-apps button bound to icons in panel mode
+
+  [ Amr Ibrahim ]
+  * Update German translation
+  * Change "dance" to "wiggle"
+
+  [ hasecilu ]
+  * Update Spanish translation
+  * Update potfile changes to es.po
+
+  [ Daniel van Vugt ]
+  * prefs: Set default window height to 850, if it fits
+
+  [ stuarthayhurst ]
+  * Fix consistency of fullstops in strings
+  * Updated translations
+
+  [ Yaroslav Pronin ]
+  * Update Russian translation
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 16 May 2023 01:21:24 +0200
+
+gnome-shell-extension-ubuntu-dock (79ubuntu2) lunar; urgency=medium
+
+  * locations: Use a CommandLine App to launch new windows
+  * locations: Use an external helper to get the location handler (LP: #2013070)
+  * locations: Use normal launch operation if location is not set yet
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 13 Apr 2023 06:25:39 +0200
+
+gnome-shell-extension-ubuntu-dock (79ubuntu1) lunar; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * locations: Keep track of launch wait timeouts
+  * locations: Ensure we always remove tracked launch timeout sources
+  * appIconIndicators: Unpack texture names, not the iconInfo
+  * locations: Create launchMaxWait in order
+  * windowPreview: Honor button layout settings for the window preview close
+  * docking: export Docking.State enum
+  * cleanup: get scaleFactor using deconstruction
+  * utils: Use St.IconTheme if available (required by GNOME 44)
+  * appIndicators: Destroy the notifications badge on destruction
+  * prefs: Use SHELL_VERSION not to depend on running shell
+  * prefs: Add ability to toggle visibility of icon emblems
+  * appIconIndicators: Add add unhanded notifications to icon count
+  * appIcons: Do not show icon emblems on do-not-disturb mode
+  * locations: Re-use cached handler app instead of querying it all the times
+
+  [ Davi Figueiredo ]
+  * fix: this._launchMaxWaitIds is undefined
+
+  [ SubZ69 ]
+  * Hide application tooltip option
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 07 Mar 2023 06:19:23 +0100
+
+gnome-shell-extension-ubuntu-dock (76ubuntu1) lunar; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release 76
+  * windowPreviews, appIcons: set maximum width/height on menus taking scaling
+    in account.
+    Even if St.Theme is supposed to scale down all the css values, this
+    doesn't seem to happen for the menus max-width / height values and so
+    we may end up having too big menus to be visible. (LP: #1992980)
+  * appIcons, windowPreview: Use overlay-scrollbars for window previews.
+    Helps to have them properly aligned
+  * appIcons: do not set isHorizontal parameter on AppIcon when opening a menu.
+    It's not an object property, so no need to keep it changed here.
+  * windowPreview: Improve style of menu-items depending on dock positioning.
+    Sadly this is not just a style change, because apparently St is bugged
+    when it comes to handle the first/last child properties so if we'd just
+    use normal allocation we would have lost the special padding for those
+    elements causing unwanted behavior.
+    In this way, instead we preserve the style-defined sizes also for
+    first/last children.
+  * utils: Use nicer syntax for later and MonitorManager wrappers
+  * Add gnome-suggested eslint and auto-fix main issues.
+  * extension: Cleanup code to be conform to ESLint rules
+  * docking: Remove autohide trigger timeout on destruction
+  * windowPreview: Get scale size without using an utility function.
+    That's simple enough to be handled internally
+  * appIcons: Allow marking urgent applications when not running.
+    This may be supported when using remote launcher actions
+  * appIconIndicators: Do not load theme node for off-stage widgets.
+    These information are only available when a widget is on the stage
+  * locations: Notify error message to the user, not the error itself
+  * locations: Ignore errors when mounting a mounted device or umounting an
+    umounted one
+  * locations: Do not try to use the handler app twice to launch if not found.
+    We're already doing a check for handler app in vfunc_launch(), so
+    there's no need to go through the same via vfunc_get_commandline()
+  * locations: Check for gjs version just once
+  * locations: Do not return anything on open_new_window.
+  * locations: Mark the application as stopped if launching fails.
+  * locations: Use async API to get the handler APP for uri.
+    GVfs implementations of GFile could cause the shell to hang while querying
+    the file infos, making the whole UI to freeze, and such actions can't be
+    cancelled, even if that's running in external processes.
+    To avoid this to happen, we need to use the async API and limit its
+    execution time to handle failures gracefully.
+    In case we also cache the last valid handler applications so that in case
+    we can re-use it on timeouts. (LP: #1997264)
+  * locations: Use better logic to check if a new window can be opened.
+    Sadly we can't use the new-window action directly because it does not
+    support adding further arguments.
+  * locations: Handle undefined error gracefully
+  * eslint: disable some options that are not working in ubuntu's eslint
+
+  [ Daniel van Vugt ]
+  * debian/control: Allow installing with gnome-shell 44.
+
+  [ Sabri Ünal ]
+  * Update Turkish translation
+
+  [ Sundeep Mediratta ]
+  * Dont detect and track DING windows for intellihide
+  * Move constant to global, to prevent recurrent assignments
+  * intellihide: Optimize intellihide for handled windows.
+  * Fix Transparency for Gtk4 DING
+
+  [ Brendan Weibrecht ]
+  * Make urgent application icon dance toggleable
+
+  [ Robert Strauch ]
+  * docs: add dependency for gettext to build section
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 24 Feb 2023 03:42:49 +0100
+
+gnome-shell-extension-ubuntu-dock (75ubuntu1) lunar; urgency=medium
+
+  * New upstream release 75.
+
+  [ Daniel van Vugt ]
+  * Add support for GNOME 44 (avoid deprecated functions).
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Mon, 20 Feb 2023 16:57:54 +0800
+
+gnome-shell-extension-ubuntu-dock (74ubuntu2) kinetic; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * debian/control: Update maintainer to myself
+  * docking: Don't try to call a null callback (LP: #1989170)
+  * docking: Do not wait for dash animation two times with no overview
+    (LP: #1965208)
+  * docking: Ensure we perform the startup animation completely on docks updates
+    (LP: #1965208, LP: #1989170)
+  * docking: Use a try/catch statement on our promise to show errors in case
+    (LP: #1989170)
+  * windowPreviews: Take global scaling in account to set the clone sizes
+    (LP: #1992843)
+  * docking: Keep overview controls layout proportions when resizing it
+    (LP: #1992847)
+  * docking: Also reduce the app grid area when in auto-hide mode (LP: #1992847)
+  * docking: Use an even width for the overview content area (LP: #1979096)
+  * docking: Check if autohide or intellihide is enabled on menu closed
+    (LP: #1983130)
+  * appIcons: Ensure icons are animated when new instances are launched
+    (LP: #1992845)
+  * docking: Do not try to focus potentially undefined window
+  * appSpread: Do not anything on destruction if not supported
+  * docking: Ignore hover changes if overview is visible (LP: #1983130)
+
+  [ Daniel van Vugt ]
+  * docking: Handle when dash is destroyed during the login animation
+    (LP: #1989170)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 13 Oct 2022 22:00:20 +0200
+
+gnome-shell-extension-ubuntu-dock (74ubuntu1) kinetic; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New EGO upstream bugfix release 74
+  * debian/control: Bump dependency on gnome-shell << 44 (LP: #1990423)
+  * docking: Respect St.Settings for animation duration
+  * stylesheet: Increase apps tooltips margins
+  * stylesheet: Set margin for default app-running dots
+  * stylesheet: Remove upstream defined dash-item-container's children margins
+    (LP: #1966167)
+  * stylesheet: Do not add edge padding to edge elements
+  * stylesheet: Fix definition for dash-separator in shrink mode
+  * appIcons: Add missing implementation of _setPoupTimeout to wrapped toggle
+  * appIcons: Also redirect arguments, to called methods if any
+  * appIcons: Implement setForcedHighlight function in DockShowAppsIcons
+  * appIcons: Modernize and cleanup DockShowAppsIcon code
+  * docking: Fix arguments for overridden _getAppDisplayBoxForState
+  * Settings: Move the Shrink option to the global theme settings
+  * prefs: Do not request resizing of our root widget on startup
+  * prefs: Never use a scrolled window in newer GNOME Shell
+  * appIcons: Monitor windows workspace changes when isolating workspaces
+  * locations: Make FileManagerApp emit windows-changed on workspace switches
+    (LP: #1971012)
+  * stylesheet: Take in account side margin and opposite padding in separators
+  * stylesheet: Explicitly use border radius and spacing from upstream
+  * stylesheet: Simplify dash separator definition based on upstream one
+  * stylesheet: Use unique function to handle padding/margin on internal
+    children
+  * stylesheet: avoid computing the shrunk dash padding multiple times
+  * stylesheet: Use generic style generator for shrink mode too
+  * stylesheet: Move mixins to the top of the file for easier re-usage
+  * stylesheet: Use dock-container-style to define the extended cases too
+  * docking: Move style classes names to Theming
+  * dash, stylesheet: Support shrink and position-based style for labels
+  * stylesheet: Move dock specific variables to dock namespace
+  * stylesheet: Sync global variable definitions with upstream
+
+  [ David Astillero Pérez ]
+  * Update Spanish translation
+
+  [ Jose Riha ]
+  * Update Slovak translation
+
+  [ rene-coty ]
+  * Updated French Translation
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Sat, 24 Sep 2022 10:02:45 +0200
+
+gnome-shell-extension-ubuntu-dock (72ubuntu6) kinetic; urgency=medium
+
+  [ David Astillero Pérez ]
+  * Update spanish (Spain) translation
+
+  [ Marco Trevisan (Treviño) ]
+  * utils: Support clearing wrappers
+  * utils: Only support using JS Symbol's as Handler's keys
+  * appIcons: Add Focus or App spread only (without minimization) too
+  * appSpread: Use native Object
+  * appSpread: Move AppSpread to docking
+  * appSpread: fallback to previews if not supported
+  * appSpread: Use utilities to manage methods monkey-patching
+  * appSpread: Monitor applications more than specific windows
+  * appIcons: Cleanup spread actions logic, so that it's less prone to errors
+  * appSpread: Always show all the app windows in the spread
+  * appSpread: Do not support it when we've a dummy overview
+  * appSpread: Restore default windows when switching to AppView
+  * appSpread: Don't mark the Activities button as checked in spread mode
+  * 10_ubuntu-dock.gschema.override: Use focus-or-appspread by default
+
+  [ ggcode ]
+  * implement "minimize or overview" with only current app windows
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 25 Aug 2022 22:28:23 +0200
+
+gnome-shell-extension-ubuntu-dock (72ubuntu5) kinetic; urgency=medium
+
+  * docking: Fix syntax to please eslint
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 25 Aug 2022 03:09:27 +0200
+
+gnome-shell-extension-ubuntu-dock (72ubuntu4) kinetic; urgency=medium
+
+  * docking: Check for corners availability using standard checks
+  * docking: Do not try to override removed old methods
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 25 Aug 2022 02:53:53 +0200
+
+gnome-shell-extension-ubuntu-dock (72ubuntu3) kinetic; urgency=medium
+
+  [ Alexandru Cheltuitor ]
+  * Ensure that PanelCorner has given properties before checking the value
+
+  [ Leandro Kemp ]
+  * Added option to turn on/off show dock for urgent notifications
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 24 Aug 2022 20:27:56 +0200
+
+gnome-shell-extension-ubuntu-dock (72ubuntu2) kinetic; urgency=medium
+
+  [ Patryk Skorupa ]
+  * Add compatibility with DING for Dynamic Transparency (LP: #1981837)
+
+  [ Daniel van Vugt ]
+  * Declare compatibility with gnome-shell 43 (LP: #1987272)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Mon, 22 Aug 2022 17:37:30 +0800
+
+gnome-shell-extension-ubuntu-dock (72ubuntu1) kinetic; urgency=medium
+
+  [ 13r0ck ]
+  * Implement manual hide
+  * get_preferred_height/width as 0 if NaN
+  * Add default-windows-preivew-to-open
+  * Do not animate manual hide
+  * Add back binary indicators
+  * Hide `All Windows` toggle button when no windows are open
+  * Keep Showing dock after hover in overview
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+  * locations: Use CancellableChild's for mountable app infos
+  * locations: Do not keep references on the Trash cancellable
+  * locations: Define a base destroy() function on LocationAppInfo and
+    use it in implementations
+  * prefs: Remove timeouts on window closed
+  * dash: Remove visibility timeout on destruction
+  * dash: Unset visibility timeout ID once removed
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 08 Jul 2022 06:00:07 +0200
+
+gnome-shell-extension-ubuntu-dock (72~ubuntu6) kinetic; urgency=medium
+
+  * Ignore loss of the hover state while a menu is open (LP: #1967121)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Thu, 26 May 2022 16:35:29 +0800
+
+gnome-shell-extension-ubuntu-dock (72~ubuntu5) jammy; urgency=medium
+
+  * docking: Use proper monitor index variable to support DING integration
+  * locations: Always ignore OR windows in windows-backed app implementation
+  * dash: Handle possible null first button
+  * appIcons: Use proper method on _setPopupTimeout call (LP: #1964996)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 14 Apr 2022 22:24:07 +0200
+
+gnome-shell-extension-ubuntu-dock (72~ubuntu4) jammy; urgency=medium
+
+  * locations: Reintroduce manual rate limiting for trash monitoring to
+    avoid large memory spikes and leaks when Nautilus deletes files
+    (LP: #1962699)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Tue, 12 Apr 2022 16:01:16 +0800
+
+gnome-shell-extension-ubuntu-dock (72~ubuntu3) jammy; urgency=medium
+
+  * Revert "debian/rules: Also provide an empty yaru.css file"
+    This may be provided also by yaru-theme-gnome-shell, as it should be.
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 25 Feb 2022 01:52:07 +0100
+
+gnome-shell-extension-ubuntu-dock (72~ubuntu2) jammy; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * schemas/10_ubuntu-dock.gschema.override: Remove hardcoded theme
+  * debian/rules: Also provide an empty yaru.css file
+  * debian: Support make check via eslint
+  * locations: Assign location to a const variable
+  * cleanup: Fix style to follow basic eslint rules
+  * cleanup: Fix case declaration scope
+  * .eslintrc: Add basic eslint rule to check main issues
+  * make: Add check case and use it before generating zip-file
+  * docking: Try to use g-s current-workspace-only before monitor isolation
+  * utils: Only block signal events for GObject classes
+  * locations: Do not try to add null volumes from valid mounts (LP: #1960898)
+  * locations: Ensure that cancellable is set during finally stanza
+  * prefs: Ensure display combo box is updated on settings changes
+  * prefs: Add support to show in GNOME 42 libadwaita-based dialog
+  * utils: Support vfunc injections on newer GObject classes as per gjs 1.71
+  * stylesheet: Use the same padding in both the sides in extended mode
+  * stylesheet: Do not shrink too much border radius and edge paddings
+  * stylesheet: Increase the side margin in shrink floating mode
+  * appIconIndicators: Use native actor rotation to rotate the drawing area
+  * appIconIndicators: Ensure that the drawing area is always a square
+
+  [ Stephen Gibbel ]
+  * Adds an intellihide mode for always-on-top (on non-fullscreen windows)
+
+  [ Sergio Costas ]
+  * Reset margins when 'intellihide' is disabled
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 24 Feb 2022 22:33:25 +0100
+
+gnome-shell-extension-ubuntu-dock (72~ubuntu1) jammy; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * Revert "extension: Disable starting in the overview"
+  * locations: Do not manually dispose objects (LP: #1949352, LP: #1951599)
+  * po/es.po: Remove duplicated entry for Quit translation
+  * docking: Delay dash animation callback at actual completion
+  * utils: Fix variable in error template string
+  * appIcons: In case we have no window to activate, let's just present it
+  * docking: Do not try to re-add a Meta.Later if one is already queued
+  * docking: Optionally disable animation to overview on startup
+  * dash: Track hover on separator item so that it can contribute to scrolling
+  * dash: Remove the scroll view visibility idle if triggering actor is
+    destroyed
+  * docking: Handle monitoring of discrete GPU not to leak signals
+  * appIcons: Random cleanups to use more relevant variable names
+  * appIcons: Compare workspaces instead of their indexes
+  * appIcons: Ensure we only consider as urgent the ones respecting our rules
+  * appIcons: Use new-window action only when requested, avoiding duplication
+  * appIcons: Fixed logic on handling preview click actions (LP: #1947445)
+  * stylesheet: Use some better naming for start marging value
+  * stylesheet: Use scss generation for overview-icon background
+  * stylesheet: Set the dash-separator color in both horizontal and vertical
+    mode
+  * windowPreview: Try generating previews clones on meta later only if have
+    valid size (LP: 1949572)
+  * utils: Remove handlers in reversed order
+  * Dash: Update appIcon geometry on parent geometry changes
+  * docking: Reduce the space used by the window picker / app grid
+  * cleanup: Use cached settings values instead of doing C calls
+  * locations: Use shell domain to translate reused strings
+  * locations: Use native GIcon as location Apps-icons (LP: #1874578)
+  * locations: Use native Gio.FileMonitor rate limit instead of a custom idle
+  * locations: Fix typo on FileManager app (un)wrapping functions
+  * locations: Fix handling of location apps on isolated workspaces mode
+  * locations: Also destroy all removable devices on Removables manager
+    destruction
+  * locations: Only emit changed signal if a monitored device has been removed
+  * locations: Only update Trash icon on changes
+  * locations: Remove unmounted locations by value
+  * locations: Use native AppInfo's and Shell mount operations
+  * metadata: Add support for gnome-shell 42
+  * fileManager1API: Cleanup the code to get windows from location path
+  * fileManager1API: Keep windows paths cached so we can monitor changes
+  * utils: Add support for (un)blocking signals handlers
+  * locations: Smart managing wrapped windows backed applications signal
+    connections
+  * locations: Use proxy properties to expose private items to public object
+  * locations: Chain up to parent destroy() function if any
+  * locations: Manage sources as part of DtdData
+  * locations: Manage windows changes in base class
+  * cleanup: Move shellAppCompare under Utils as it's a generic tool
+  * locations: Keep locations windows ordered following the shell algorithm
+  * locations: Use windows array directly where there's no need for method call
+  * locations: Resort and notify windows changes on user-time changes
+  * locations: Sort location windows apps only demand
+  * fileManager1API: Only emit windows-changed signal if windows / locations
+    changed
+  * fileManager1API: Manage unmanaged windows early
+  * locations: Include actual app ID in the string representation
+  * utils: Add CancellableChild, a GCancellable that monitors a parent instance
+  * locations: Get Trash icon from the folder attributes
+  * locations: Add support for showing custom icon files on mounts
+  * fileManager1API: Include transient windows as part of the location windows
+  * locations: Monitor windows-changed from apps and not from fm1Client
+    (LP: #1947476)
+  * locations: Ignore native file manager windows-changed signal emissions
+  * locations: Try to get trash status from metadata info before iterating
+  * locations: Move handling of trash logic into TrashAppInfo
+  * locations: Manage all mountable volumes, whether they're mounted or not
+  * locations: Add support for optionally showing all mountable devices
+  * locations: Add support for showing network volumes
+  * locations: Use ChildCancellable to avoid queuing multiple trash updates
+  * locations: Do not try to perform (un)mount actions concurrently
+  * appIcons: Show menu item as insensitive if the app is busy
+  * locations: Wait for location apps to own windows before updating
+    file-manager (LP: #1947476)
+  * locations: Add support for starting app state
+  * locations: Support opening new location windows when using nautilus
+  * 10_ubuntu-dock.gschema.override: Update settings override for ubuntu
+  * debian/control: Add support to GNOME 41 and 42
+
+  [ Timofey X ]
+  * Impove Russian localisation strings and fix javascript-format bug
+
+  [ jesusignazio ]
+  * Updated Spanish translation
+
+  [ rafal ]
+  * Add and translate few missing strings in Polish translation
+
+  [ nobodyatandnothing ]
+  * change README to document actual behavier
+
+  [ NicKoehler ]
+  * Updated italian strings (#1643)
+
+  [ Geoffrey Coulaud ]
+  * Fix window listing by excluding skip-taskbar windows
+
+  [ Laura Klünder ]
+  * add preferred-monitor-by-connector as an alternative to storing the index
+
+  [ Raghuveer Kasaraneni ]
+  * dash: Fixes wrong separator position
+
+  [ Sergio Costas ]
+  * Integration of Dash to Dock and DING (LP: #1723117)
+    Add API that DING can use to draw icons
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 24 Jan 2022 08:01:13 +0100
+
+gnome-shell-extension-ubuntu-dock (70~ubuntu3) impish; urgency=medium
+
+  [ Daniel van Vugt ]
+  * docking: Generalize the startup animation
+    - Applied addition to upstream PR #1512 (LP: #1942843).
+
+ -- Gunnar Hjalmarsson <gunnarhj@ubuntu.com>  Tue, 07 Sep 2021 12:18:14 +0200
+
+gnome-shell-extension-ubuntu-dock (70~ubuntu2) impish; urgency=medium
+
+  [ Daniel van Vugt ]
+  * extension: Disable starting in the overview
+    - We don't need it when the GNOME dash is being replaced.
+    - Applied upstream PR #1512 (LP: #1940925).
+
+ -- Gunnar Hjalmarsson <gunnarhj@ubuntu.com>  Thu, 26 Aug 2021 20:04:01 +0200
+
+gnome-shell-extension-ubuntu-dock (70~ubuntu1) impish; urgency=medium
+
+  [ Philipp Kitzberger ]
+  * Add new setting: preview size scale
+
+  [ Evan Welsh ]
+  * Initial port to GNOME 40.
+  * theming: Fix various theming issues
+  * Fix showing app icon at the start
+  * Use Graphene for indicator rendering.
+  * Fix show apps button toggling.
+  * Start fixing panel mode...
+  * Fix drag and drop and panel mode.
+  * Fix workspace scrolling.
+  * Fix icon scaling and size changes.
+  * Cleanup preferences.
+  * More theming and style fixes
+  * Convert stylesheet to SCSS.
+  * Improve overview animation and styling.
+  * Fix regression in panel mode padding.
+  * Avoid errors if already tracking the dock
+  * Make sassc the default sass compiler
+  * Initial fixes for horizontal scrolling.
+  * Initial fix for dynamic icon sizing...
+  * dash: Fix separator in vertical mode.
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream pre-release (LP: #1912211, LP: #1903582, LP: #1847650)
+  * prefs: Port code for the initial size request
+  * dash: Do not try to use an invalid value of dragPlaceholderPos
+  * cleanup: Remove the unused InjectionsHandler instances
+  * utils: Don't store the InjectedFunction on InjectionsHandler
+  * utils: Modernize BasicHandler making it possible to use non-array arguments
+  * cleanup: Connect to signals with non-array arguments when possible
+  * BasicHandler: Support auto-destruction when using a parent Object
+  * docking: Avoid recursion on _prepareMainDash()
+  * utils: Add PropertyInjectionsHandler to manage property overrides
+  * cleanup: Use PropertyInjectionsHandler
+  * Utils: Pass the original function to InjectionsHandler callback
+  * docking: Replace DashSpacer by overriding ControlsManagerLayout logic
+  * docking: Always show the thumbnails box in vertical mode
+  * Utils: Add class to inject virtual functions
+  * docking: Replace WorkspaceBackground allocation code taking care of the dock
+  * docking: Also ignore allocation requests on the original dash
+  * Settings: Fix dock size scale selector
+  * prefs: Disable monitor selection combo when multi-monitor is enabled
+  * theming: Properly parse color from string and set its alpha value
+  * theming: Do not try to set the background style with no style
+  * prefs: Support running as a standalone application
+  * prefs: Use Mutter DBus API to manage per-monitors configuration
+  * docking: Properly handle top-positioned dock
+  * docking: Use implicit properties features for slide-x
+  * docking: Adapt dash(es) startup animation effect to our positioning
+  * docking: Do not show the dash before startup animation has completed
+  * docking: Use workarea-based allocation in ControlsManagerLayout and
+    WorkspaceBackground
+  * docking: Adjust overview with vertical auto-hide dock
+  * docking: Adjust the AllWorkspaceBox size in secondary monitors
+  * docking: Keep cached settings values used during allocation
+  * appIcons: Move logic for computing the focused / running state here
+  * dash: Fix ensureActorVisibleInScrollView as per upstream changes
+  * cleanup: Modernize the code ensureActorVisibleInScrollView a bit
+  * docking: Add back support to disable animation on show-applications
+  * docking: Add and use property to access to upstream overviewControls
+  * dash: Cleanup the dash-separator styling, using a single scss definition
+  * dash: Include paddings and separator to compute available space
+  * prefs: Add back support for changing the overlay shortcut
+  * docking: Disconnect from after-paint signal if we destroy earlier
+  * theming: Never try to access to members when destroyed
+  * theming: Use signals handler auto-destruction
+  * theming: Never access to dash private member, move the logic in the dock
+  * docking: Define a global GtkIconTheme bound to the St's default
+  * fileManager1API: Drop XUbuntuOpenLocationsXids support
+  * locations: use org.Nautilus.FileOperations2 API to empty the trash
+  * dash: Optionally keep the focused application always visible in the dash
+  * appIcons: Use public visibile getter for Overview
+  * appIcons: Move urgency logic to the AppIcon
+  * dash: Ensure urgent applications are visible
+  * appIcons: Mark urgent apps whose windows are urgent or demands attention
+  * appIcons: Cleanup window-entered callback code
+  * dash: Add property to require visibility
+  * dash: Require visibility when an appicon is urgent
+  * locations: Use fully async and cancellable async operations
+  * locations: Do not use template literals as they may break translations
+  * docking: Move ownership of Removable locations and Trash to DockManager
+  * appIcons: Manage app-urgency per windows
+  * appIcons: Give urgent windows more priority on activation
+  * dash: Do not potentially duplicate location icons and really remove them
+  * docking: Do not pass LauncherRemoteModel around, but get from DockManager
+  * appIcons: Split Dock icons by type using sub-classing
+  * cleanup: Use "Dock" prefix for our implementations
+  * locations: Patch Shell.App to make location apps to behave as normal apps
+  * locations: Disable ability for opening new windows in location apps
+  * locations: Update app-system status on app state changed
+  * locations: Initial support for full location apps isolation from filemanager
+  * locations: Keep app focus state cached and notify tracker on changes
+  * locations: Add alt-tab and overview support for location applications
+  * locations: Ignore location windows in file manager in isolation mode
+  * locations: Use Nautilus FileOperations2 DBus API to empty the trash
+  * locations: Do not log errors on cancellations
+  * Makefile: Support localizing from utf-8 strings
+  * debian/control: Build-depend on sassc and bump dependency on gnome-shell 40
+  * schemas/10_ubuntu-dock.gschema.override: Set default position to the left
+  * schemas/10_ubuntu-dock.gschema.override: Show trash in the dock
+    (LP: #1711753)
+
+  [ Michele Gaio ]
+  * Add back the logic to prevent apps reordering.
+  * Fix drag and drop in vertical mode.
+  * Fix alignement in vertical mode.
+  * dash: Better support panel mode.
+  * Apply rounding to scss math.
+  * Add a gap between the dash and windows in fixed mode.
+  * Drop old compatibility code.
+  * pref.js: fix advance setitings dialogs.
+  * pref.js: fix dodge windows settings.
+  * pref.js: fix a bunch of label and button alignments issues.
+
+  [ Mildred Ki'Lya ]
+  * Make dash-to-dock work with both horizontal and vertical workspaces
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 07 Jul 2021 09:22:12 +0200
+
+gnome-shell-extension-ubuntu-dock (69ubuntu1) hirsute; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * appIcons: Set dependency on DBusmenu dynamic
+  * docking: Set the dash as the IconAnimator timeline actor
+  * Makefile: Include dbusmenuUtils.js
+  * docking: Replace anchor point with clutter translations
+  * docking: Disable the overview misplacement workaround
+  * docking: Make the overview visibleView code working in 3.38
+  * dash, docking: Update allocation method calls signature to upstream
+  * DockManager: Make allocation code to work in both 3.38 and 3.36
+  * metadata: Add 3.38 to supported versions
+
+  [ Mike DePaulo ]
+  * Update to latest wording of the GPLv2 license
+
+  [ UA27 ]
+  * Fix autohide glitches explainations
+
+  [ Недко Николов ]
+  * Fix getWindows for a location in the dock
+  * Make sure that location doesn't end with a '/'
+
+  [ Michele Gaio ]
+  * Bump version (v69).
+  * Revert "Fix #1232".
+  * Fix #1232 again.
+
+  [ Jan Němec ]
+  * windowPreviews now scale properly
+  * windowPreviews are now properly Y-centered on horizontal docks
+
+  [ l3nn4rt ]
+  * appIcons: Add 'Focus, minimize or show previews'
+
+  [ Michael Suhodolov ]
+  * Fix flickering on show-apps (LP: #11919972)
+
+  [ Ryan Hendrickson ]
+  * Do not animate disposed icons (LP: #1905519)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 26 Mar 2021 08:01:34 +0100
+
+gnome-shell-extension-ubuntu-dock (68ubuntu20.10.1) groovy; urgency=medium
+
+  [ Michele Gaio ]
+  * Remove padding the dock ends in panel mode.
+
+  [ Philip Langdale ]
+  * locations: Handle emblemed mount icons
+
+  [ ibaios ]
+  * Added Basque localization.
+
+  [ AsciiWolf ]
+  * Update Czech translation.
+  * appIcons: Fix translatable strings
+  * Update Czech translation.
+
+  [ sorin ]
+  * Fix autohide glitches (#1188)
+
+  [ Ryan Hendrickson ]
+  * appIconIndicators: Rewrite Unity integration
+  * appIcons: Support Unity quicklists
+  * appIconIndicators: Support urgent property
+
+  [ Pedro Paulo ]
+  * Fixes typo on org.gnome.shell.extensions.dash-to-dock
+
+  [ sicklylife.jp ]
+  * Update Japanese translation.
+  * Update Japanese translation.
+
+  [ Yi-Jyun Pan ]
+  * i18n: zh_TW: update and improve translation
+
+  [ Luis López ]
+  * Fixes #1265 - Showing trash icon causes system lock when moving items
+    to trash or empting it.
+
+  [ aimproxy ]
+  * Remove allocation-changed signal
+
+  [ UA27 ]
+  * Fix #1232
+
+  [ Morgan Antonsson ]
+  * Update Swedish translation
+
+  [ Marco Trevisan (Treviño) ]
+  * debian/control: Bump dependency on newer gnome-shell
+  * appIcons: Set dependency on DBusmenu dynamic
+  * docking: Set the dash as the IconAnimator timeline actor
+  * docking: Replace anchor point with clutter translations
+  * docking: Disable the overview misplacement workaround
+  * docking: Make the overview visibleView code working in 3.38
+  * dash, docking: Update allocation method calls signature to upstream
+  * metadata: Add 3.38 to supported versions
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 11 Sep 2020 01:47:20 +0200
+
+gnome-shell-extension-ubuntu-dock (68ubuntu1) groovy; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream stable release
+
+  [ Michele Gaio ]
+  * Get dash max size from the container and drop the
+    bindcontraint machinery (LP: #1870847)
+  * Remove padding the dock ends in panel mode (LP: #1873321)
+
+  [ Philip Langdale ]
+  * locations: Handle emblemed mount icons
+
+  [ ibaios ]
+  * Added Basque localization.
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 07 May 2020 23:02:27 +0200
+
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.5) focal; urgency=medium
+
+  [ Michele Gaio ]
+  * Fix regression (wrong parent method call).
+  * Fix regression (wrong sign when computing position). (LP: #1869571)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 20 Apr 2020 15:36:21 +0200
+
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.4) focal; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * appIcon: Don't show the ShowAppsIcon popup in ubuntu-dock (LP: #1869635)
+  * dash: Fix icons DnD when in horizontal mode and when the icons are using
+    a scrolled view (LP: #1867763, #1867613)
+  * stylesheet: Define width for top/bottom drop placeholder
+  * fixed various JS warnings and errors
+
+  [ jesusignacio ]
+  * Updated ES translation: show mounted devices + show trash icon
+
+  [ mars ]
+  * Update Simplified Chinese translation
+
+  [ Pavel Dvořák ]
+  * Update cs.po
+
+  [ Robert Mader ]
+  * Use new convenience function to open settings
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 16 Apr 2020 07:48:51 +0200
+
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.3) focal; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * docking: Don't use non-existent Utils.DisplayWrapper.getWorkspaceManager()
+  * dash: Use clutter alignment to ensure we properly arrange the dash
+  * metadata: Set extension compatible with shell 3.36 only
+  * dash: Sync some more to the upstream cleanups
+  * docking: Properly replace default dash in all modes (LP: #1795703,
+    LP: #1865865)
+  * docking: Delay hide requests if we're currently showing
+  * docking: Don't sync overview's iconSize anymore
+  * docking: Reset old dash changes if something changes it (LP: #1795703)
+  * docking: Cleanup the docks destruction code
+  * docking: Use parent vfunc results to get slider container sizes
+  * docking: Add mainDock property to DockManager and use it
+  * docking: Don't pass allDocks to every child
+  * docking: Ignore key-repeat
+  * fileManager1API: Use a cancellable to stop proxy creation on destruction
+  * dash: Cleanup preferred width/height vfuncs reusing upstream code
+  * dash: Get content box from the themeNode
+  * dash: Some code cleanups to match Upstream code better
+  * appIcons: Redirect events from the showAppIcon toggleButton to the parent
+  * general: Don't use Gtk enum definitions for St widgets
+  * docking: Apply the height/width dash constraint after adding to main uiGroup
+  * docking: Delay toggling to group multiple requests
+  * docking: Consider theming when computing the sliderContainer space
+  * docking: Reimplement Clutter.BindConstraint to bind to Maximum size only
+  * docking: Replace the dashSpacer instance in default controls
+  * docking: Make sure we don't send the overview offscreen in extended mode
+    (LP: #1834967)
+  * launcherAPI: Actually keep track of the unity bus ID and replace it
+    (LP: #1756837)
+
+  [ Michele Gaio ]
+  * Fix bug with xscreensaver.
+
+  [ Jordan Christiansen ]
+  * Update the screenshot to Gnome 3.34
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 18 Mar 2020 03:22:28 +0100
+
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.2) focal; urgency=medium
+
+  * general: Use Clutter.ActorAlign to set alignments
+  * docking: Ensure that all the slider children are properly centered
+  * dash: Properly respect RTL layout, applying the right box alignment
+  * dash, docking: Don't use the _delegate pattern
+  * dash: Reuse as much as possible upstream code
+  * appIconIndicators: Make the count badge text size relative to icon size
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 27 Feb 2020 23:34:18 +0100
+
+gnome-shell-extension-ubuntu-dock (67ubuntu20.04.1) focal; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * general: Update to gnome-shell 3.36 code, with more actor inheritance
+  * metadata: Set extension compatible with shell 3.36 only
+  * utils: Use more ES6-compliant code to override calls
+  * windowPreview: Only hide the close button if no entry child has pointer
+  * appIcons, windowPreview: Use vfunc instead of signals
+  * docking: Delay hide requests if we're currently showing
+  * debian/control: Bump dependency on gnome-shell 3.36
+
+  [ pyroxar ]
+  * Update polish translation
+
+  [ 賴家亨 ]
+  * Update Tradition Chinese
+  * Correct one translation.
+
+  [ Heimen Stoffels ]
+  * Updated Dutch translation
+
+  [ Serdar Sağlam ]
+  * Turkish translate update
+
+  [ Kiyotaka Nishibori ]
+  * fixed a typo in a translatable string.
+
+  [ Michele Gaio ]
+  * Amend po files accordingly.
+  * Fix broken po files (regression).
+  * Fix regression with border radius with built-in theme.
+  * Fix mouse trapped due to barrier set up with dock shown.
+
+  [ franglais125 ]
+  * Fix regression with _showOverlay hotkeys.
+  * Unity7 backlight: add toggle option for glossy effect.
+
+  [ Sergio Costas ]
+  * docking.js: fix warning when using wheel
+
+  [ Muntazar ]
+  * Fixed a typo
+
+  [ Philip Langdale ]
+  * locations: Add missing xdtduri property to Volume icons
+  * locations: Filter out network volume locations
+
+  [ mars ]
+  * update Simplified Chinese translation
+  * add translation for locations.js
+
+  [ Sabri Ünal ]
+  * Fix unnecessary new line
+  * Improve Turkish translation
+
+  [ vantu5z ]
+  * update Russian translation
+
+  [ VeryLoudMonstercat ]
+  * Fix border radius for built-in theme
+
+  [ Felipe Marinho ]
+  * add support to workspace-grid extension
+  * pass the correct index to workspaceSwitcher
+
+  [ Julien Humbert ]
+  * Update French translation
+
+  [ Joonas Henriksson ]
+  * Update AppIconMenu when window-previews are disabled
+
+  [ Florian Müllner ]
+  * docking: Handle no-overview case
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 25 Feb 2020 03:08:41 +0100
+
+gnome-shell-extension-ubuntu-dock (67ubuntu19.10.1) eoan; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * utils: Use GObject.NotImplementedError for such errors
+  * utils: Allow to pass flags to SignalsHandler's
+  * locations: Handle Trash Errors
+  * locations: Ensure volume monitor is destroyed on destruction
+  * dash: Destroy Removables and Trash if disabled
+  * DockManager: Keep a fm1Client reference and destroy it when unneeded
+  * docking: Use CONNNECT_AFTER for mounts changes in docked dash
+  * dash: Remove the show label timeout if actor got destroyed
+  * windowPreviewMenuItem: Disconnect to signals on destroy
+  * cleanup: Replace Mainloop functions with GLib ones
+  * DashSlideContainer: Inherit from St.Bin instead of widget
+  * MyAppIcon: Inherit from Dash.DashIcon (LP: #1846477, #1847102)
+  * debian/control: Depend on gnome-shell 3.34.0
+
+  [ Michele Gaio ]
+  * Fix a regression due to variable renaming.
+  * New upstream release (v67).
+
+  [ Twille ]
+  * add missing translation
+
+  [ Philip Langdale ]
+  * dash: Add Trash Icon
+  * dash: Add Removable drive/device icons
+  * prefs: Add prefs to toggle showing Trash and Mounted Volumes
+  * appIcons: Implement window tracking for removable devices and trash
+  * fileManager1API: Deduplicate window with related locations in tabs
+  * locations: Fix a remaining use of `nautilus` vs `gio open`
+
+  [ sicklylife.jp ]
+  * Update Japanese translation.
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 09 Oct 2019 17:30:41 +0200
+
+gnome-shell-extension-ubuntu-dock (66ubuntu19.10.2) eoan; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * windowPreview: Use the window actor as Clone source (LP: #1843520)
+  * appIcons: Don't warn if variable is undefined
+  * appIcons: Enable scroll handler if enabled on construction
+  * docking: Don't warn if variable is undefined
+  * ubuntu-gschema.override: Enable fixed transparency with opacity at 70%
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 16 Sep 2019 14:28:09 +0200
+
+gnome-shell-extension-ubuntu-dock (66ubuntu19.10.1) eoan; urgency=medium
+
+  [ Adolfo Jayme Barrientos ]
+  * Update Spanish and Portuguese translations
+
+  [ Serdar Sağlam ]
+  * Update Turkish translation.
+
+  [ Michele Gaio ]
+  * Bump version (v66).
+  * Fix regression with transparencey settings UI.
+
+  [ Carlo Lobrano ]
+  * LauncherAPI: use CSS to style progress bar color
+
+  [ Joonas Henriksson ]
+  * Don't reset border-radius for shrinked dash
+
+  [ Philip Langdale ]
+  * dash: Add Trash Icon
+  * dash: Add Removable drive/device icons
+  * prefs: Add prefs to toggle showing Trash and Mounted Volumes
+  * appIcons: Implement window tracking for removable devices and trash
+  * fileManager1API: Deduplicate window with related locations in tabs
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+  * WindowPreviewMenuItem: Inherit from GObject (LP: #1835706)
+  * Animations: Convert shell durations in seconds (LP: #1835706)
+  * appIcons: Show the ShowAppIcon by default
+  * metadata: Bump shell version to 3.34 (LP: #1835706)
+  * cleanup: Use inheritance for Actor classes instead of composition
+  * dash: Inherit DashItemContainer instead of adding methods
+  * appIcons: Pass icon actor to PopupMenuManager (LP: #1835706)
+  * docking: Don't use actor parameter for grid
+  * ShowAppsIcons: Inherit from Dash.ShowAppsIcon
+  * appIcons: Define re-used AppIcon methods as class methods
+  * Docking: Use the DockManager as a singleton and keep settings reference there
+  * DashSlideContainer: Use native GObject properties
+  * general: Use native clutter animations instead of Tweener
+  * extension: Use new Shell's ExtensionManager API (LP: #1835706)
+  * locations: Handle Trash Errors
+  * ubuntu: Disable trash in Ubuntu
+  * locations: Ensure volume monitor is destroyed on destruction
+  * dash: Destroy Removables and Trash if disabled
+  * DockManager: Keep a fm1Client reference and destroy it when unneeded
+  * debian/control: Bump dependency to gnome-shell 3.33
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 20 Aug 2019 12:52:06 +0200
+
+gnome-shell-extension-ubuntu-dock (64ubuntu7) disco; urgency=medium
+
+  * debian/rules: Ignore default stylesheet in ubuntu session (LP: #1824591)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Fri, 12 Apr 2019 17:03:43 -0500
+
+gnome-shell-extension-ubuntu-dock (64ubuntu6) disco; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * ubuntu-dock.gschema.override: apply settings to ubuntu sessions only
+  * ubuntu-dock.gschema.override: set intellihide to true by default
+  * ubuntu-dock.gschema.override: set transparency-mode to DEFAULT
+
+  [ Adolfo Jayme Barrientos ]
+  * Update Spanish and Portuguese translations
+
+  [ Serdar Sağlam ]
+  * Update Turkish translation.
+
+  [ Carlo Lobrano ]
+  * LauncherAPI: use CSS to style progress bar color
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 11 Apr 2019 11:33:24 -0500
+
+gnome-shell-extension-ubuntu-dock (64ubuntu5) disco; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * metadata: mark dash-to-dock as working only on 3.31+ versions
+  * dash-to-dock: rewrite classes using pure ES6 classes
+  * Remove usage of legacy Lang features
+  * Drop Convenience library
+  * docking: remove support for legacy tray
+  * utils: remove DisplayWrapper temporary workaround
+  * utils: use ES6 syntax to define _decimalToHex method
+  * appIcons: Add Focus or Previews click action
+  * theming: fix missing variable definition as per previous commit
+  * windowPreview: Use symbolic icon for close button
+  * d/schemas/10_ubuntu-dock.gschema.override: set focus-or-previews as default for click
+  * debian/gbp.conf: sign tags and use multimaint-merge in dch
+
+  [ Michele Gaio ]
+  * Remove all legacyTray code.
+  * Fix mixing of es6 class names with St names.
+  * AppIconIndicators: fix invalid dominant css color for certain icons.
+  * Remove the Adaptive transparency mode.
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 04 Mar 2019 18:02:16 +0100
+
+gnome-shell-extension-ubuntu-dock (64ubuntu4) disco; urgency=medium
+
+  * Re-upload to disco, with a dependency on gnome-shell versions that this
+    extension is declared to work on in its metadata.json:
+    - >= 3.31
+    - << 3.33
+
+ -- Iain Lane <iain@orangesquash.org.uk>  Sun, 24 Feb 2019 20:19:55 +0000
+
+gnome-shell-extension-ubuntu-dock (64ubuntu3) disco; urgency=medium
+
+  [ Andrea Azzarone ]
+  * theming: Ensure _trackingWindows contains valid windows (#868)
+
+  [ Serdar Sağlam ]
+  * Update tr.po
+
+  [ Rúben Lopes ]
+  * Update Portuguese translation (#878)
+
+  [ Michele ]
+  * Fix for border radius with adaptive/dynamic opacity.
+
+  [ Marco Trevisan (Treviño) ]
+  * metadata: mark dash-to-dock as working only on 3.31+ versions
+  * dash-to-dock: rewrite classes using pure ES6 classes
+  * Remove usage of legacy Lang features
+  * Drop Convenience library
+  * docking: remove support for legacy tray
+  * utils: remove DisplayWrapper temporary workaround
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 21 Feb 2019 16:31:00 +0100
+
+gnome-shell-extension-ubuntu-dock (64ubuntu2) disco; urgency=medium
+
+  * theming: Ensure _trackingWindows contains valid windows. (LP: #1769383)
+
+ -- Andrea Azzarone <andrea.azzarone@canonical.com>  Tue, 15 Jan 2019 15:47:54 +0000
+
+gnome-shell-extension-ubuntu-dock (64ubuntu1) disco; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release: 64
+  * dash, docking: remove Shell.GenericContainer.
+
+  [ Adolfo Jayme Barrientos ]
+  * Update Spanish translation.
+
+  [ franglais125 ]
+  * Settings.ui: Fix GtkEntry property to make the shortcut editable.
+
+  [ Michele ]
+  * Add Gnome Shell 3.30 support.
+  * Bump version (v64).
+
+  [ vantu5z ]
+  * Update Russian translation.
+
+  [ Andrea Azzarone ]
+  * docking: Fix leaking signal connection
+
+  [ Michele Gaio ]
+  * Update Readme with official extension badge.
+
+  [ Michele ]
+  * Add a .default class to the appiconindicators.
+  * Make window previews order stable in the dedicated popup (LP: #1809129).
+  * Recreate windows preview whenever the popup is open.
+
+  [ Daniel van Vugt ]
+  * Avoid repainting an unchanging dock.
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 19 Dec 2018 10:06:26 -0500
+
+gnome-shell-extension-ubuntu-dock (63ubuntu2) disco; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * debian/control:
+    - Point Vcs-Git and Vcs-Browser to proper locations
+  * dash, docking: remove Shell.GenericContainer
+
+  [ Andrea Azzarone ]
+  * docking: Fix leaking signal connection
+  * extension: Ensure that ubuntu-dock will not re-enable itself during
+    lockscreen if dash-to-dock is installed and enabled too. (LP: #1769383)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 27 Nov 2018 12:28:28 -0500
+
+gnome-shell-extension-ubuntu-dock (63ubuntu1) cosmic; urgency=medium
+
+  * Merged with latest master
+    - Fix crash connecting/disconnecting monitors (LP: #1712661)
+    - showApps button label position (LP: #1784920)
+    - Add wrapper to properly run in both gnome-shell 3.28 and 3.29.90
+    - Update translations, fixed settings typos
+  * Updated versioning to match with extensions.gnome.org
+  * debian/gbp.conf:
+    - updated branches and tags settings accordingly
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 02 Aug 2018 13:29:47 +0200
+
+gnome-shell-extension-ubuntu-dock (0.9.1) bionic; urgency=medium
+
+  * Rebased against latest dash to dock master with bug fixes:
+    - fix GJS warnings
+    - appIconIndicators: fix backLight for workspace/monitor isolation
+    - theming: update panel solid style on showing the overview
+    - translation updates
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 27 Mar 2018 09:22:53 +0200
+
+gnome-shell-extension-ubuntu-dock (0.9) bionic; urgency=medium
+
+  * Rebase on latest master.
+  * Disable "parameters" context menu on appIcon right click
+  * schemas/10_ubuntu-dock.gschema.override:
+    Adapt dot overrides to latest master, upstream changed dots
+    gsettings parameters, adapt our default.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 03 Jan 2018 10:59:16 +0100
+
+gnome-shell-extension-ubuntu-dock (0.8.1) bionic; urgency=medium
+
+  * Readd dynamic transparent override lost during rebase (LP: #1730489)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 07 Nov 2017 09:32:22 +0100
+
+gnome-shell-extension-ubuntu-dock (0.8) bionic; urgency=medium
+
+  * Sync with latest dash to dock upstream, bringing glossy and other small
+    upstream features.
+  * Remove now prefs.js at package install time to minimize upstream diff.
+  * Update Standards-Version to latest.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 06 Nov 2017 13:59:21 +0100
+
+gnome-shell-extension-ubuntu-dock (0.7.1) artful; urgency=medium
+
+  * Fix Ubuntu dock won't start after Dash to dock uninstalled (LP: #1726935)
+  * Cherry-pick couple of upstream Dash to Dock fixes: (LP: #1727242)
+    - warning fix with latest mozjs.
+    - expose the dash to dock main object for other extensions to pick it up.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 25 Oct 2017 10:51:28 +0200
+
+gnome-shell-extension-ubuntu-dock (0.7) artful; urgency=medium
+
+  * Cherry-pick 2 upstream fixes:
+    - Maximized windows get resized when returning from screensaver
+      (LP: #1719409)
+    - Mouse scrollwheel switches workspaces when mouse against the left
+      edge of screen (LP: #1719706)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Tue, 03 Oct 2017 10:30:10 +0200
+
+gnome-shell-extension-ubuntu-dock (0.6) artful; urgency=medium
+
+  * Badges and progress bar on dock. Thanks Andrea (LP: #1713712)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 25 Sep 2017 14:09:30 -0400
+
+gnome-shell-extension-ubuntu-dock (0.5) artful; urgency=medium
+
+  [ Didier Roche ]
+  * Cherry-pick dynamic and adaptive transparency feature to look and behave
+    better with GNOME Shell 3.26. We only enable adaptive transparency.
+    (LP: #1717509).
+  * Rationalize some keyboard and key + mouse shortcuts:
+    - Click is focus or showing up window previews. Same than Super + number
+      (was already the default)
+    - Shift + click launch a new instance. Same than Super + Shift + number
+    - Middle click launch a new instance as well. This is to be consistent
+      when middle clicking a link in a web browser opening a new tab.
+    - Shift + middle click minimize the last focused window from the selected
+      application.
+  * Cherry-pick some fixes from dash to dock branch (without taking the other
+    new features):
+    - Hotkeys: remove keypad hotkeys
+    - Define externally accessible classes and constants with 'var'
+  * Fix uninitialized value for dock disabled by default
+    (LP: #1712698, #1714219)
+  * updated translations
+  * Remove prefs.js as deleted from to localize list
+  * Add Vcs-Git reference
+
+  [ Sebastien Bacher ]
+  * debian/control, debian/rules:
+    - use dh_translations, update the template during the build
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 20 Sep 2017 08:01:22 +0200
+
+gnome-shell-extension-ubuntu-dock (0.4) artful; urgency=medium
+
+  * Switch click-action to previews multiple window instances by default.
+    This was discussed and acked in the Fit and Finish sprint.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Thu, 31 Aug 2017 11:50:47 +0200
+
+gnome-shell-extension-ubuntu-dock (0.3) artful; urgency=medium
+
+  * Rebase on latest dash to dock master to bring GNOME Shell 3.26 support.
+    Thanks Jeremy, Fran and Michele for the warning!
+  * debian/copyright: add Michele's name (Gaio).
+
+ -- Didier Roche <didrocks@ubuntu.com>  Mon, 21 Aug 2017 09:49:35 +0200
+
+gnome-shell-extension-ubuntu-dock (0.2) artful; urgency=medium
+
+  * Add Replaces temporarly against gnome-shell-extension-dashtodock package
+    which ships the same schema on purpose. This unblock users for the week-end
+    until we decide on the best strategy to keep the schema synced and not
+    diverge (should we conflicts and let people prefers installing dash to dock
+    from the online extensions website local to their users, not being affected
+    by our overrides… or have a separate binary package, common to both, and
+    thus diverge the dash to dock package from debian?)
+
+ -- Didier Roche <didrocks@ubuntu.com>  Fri, 18 Aug 2017 15:47:30 +0200
+
+gnome-shell-extension-ubuntu-dock (0.1) artful; urgency=medium
+
+  * Initial release of ubuntu tweaked Dash To Dock extension.
+
+ -- Didier Roche <didrocks@ubuntu.com>  Wed, 09 Aug 2017 09:47:49 +0200
