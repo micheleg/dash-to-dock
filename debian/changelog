@@ -1,3 +1,32 @@
+gnome-shell-extension-ubuntu-dock (102ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * New upstream release
+
+  [ Kevin Nause ]
+  * Settings UI update for pressure_threshold_adjustment fields:
+    upper, step-increment and page-increment
+
+  [ x9a ]
+  * po: update Arabic translation
+
+  [ 巴神汜 ]
+  * add 'Pin to Dock' zh_CN
+
+  [ Marco Trevisan (Treviño) ]
+  * appIcons: Do not throw if parent class does not define vfunc
+  * appIcons: Use clutter gestures if defined to show popup
+  * po: Update translations to be adjusted for the typo
+  * locations: Avoid using hardcoded strings for removable actions
+  * locations: Use switch cases to handle removable actions
+
+  [ Amr Ibrahim ]
+  * locations: Fix unmount typo
+  * Update German translation
+  * locations: Fix action typo leading to error not being handled
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Tue, 09 Sep 2025 17:35:49 +0200
+
 gnome-shell-extension-ubuntu-dock (101ubuntu3) questing; urgency=medium
 
   * debian/control: Downgrade gir1.2-dbusmenu-glib-0.4 to recommends
