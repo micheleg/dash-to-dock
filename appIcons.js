@@ -1482,7 +1482,14 @@ export const DockShowAppsIcon = GObject.registerClass({
         AppDisplay.AppIcon.prototype._removeMenuTimeout?.call(this, ...args);
     }
 
+    _hasPopupMenu() {
+        return Docking.DockManager.extension.uuid !== 'ubuntu-dock@ubuntu.com';
+    }
+
     _maybeEnablePopupGestures() {
+        if (!this._hasPopupMenu())
+            return;
+
         if (!Clutter.LongPressGesture || !Clutter.ClickGesture)
             return;
 
@@ -1499,6 +1506,9 @@ export const DockShowAppsIcon = GObject.registerClass({
     }
 
     popupMenu() {
+        if (!this._hasPopupMenu())
+            return false;
+
         this._removeMenuTimeout();
         this.toggleButton.fake_release();
 
