@@ -598,15 +598,21 @@ class MountableVolumeAppInfo extends LocationAppInfo {
     }
 
     _notifyActionError(action, message) {
-        if (action === RemovableAction.MOUNT) {
+        switch (action) {
+        case RemovableAction.MOUNT:
             global.notify_error(__('Failed to mount “%s”'.format(
                 this.get_name())), message);
-        } else if (action === RemovableAction.UNMOUNT) {
+            break;
+
+        case RemovableAction.UNMOUNT:
             global.notify_error(__('Failed to unmount “%s”'.format(
                 this.get_name())), message);
-        } else if (action === RemovableAction.EJECT) {
+            break;
+
+        case RemovableAction.EJECT:
             global.notify_error(__('Failed to eject “%s”'.format(
                 this.get_name())), message);
+            break;
         }
     }
 
@@ -614,20 +620,27 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         if (!this.list_actions().includes(action))
             throw new Error('Action %s is not supported by %s', action, this);
 
-        if (this._currentAction) {
-            if (this._currentAction === RemovableAction.MOUNT) {
-                this._notifyActionError(action,
-                    __('Mount operation already in progress'));
-            } else if (this._currentAction === RemovableAction.UNMOUNT) {
-                this._notifyActionError(action,
-                    __('Unmount operation already in progress'));
-            } else if (this._currentAction === RemovableAction.EJECT) {
-                this._notifyActionError(action,
-                    __('Eject operation already in progress'));
-            }
+        switch (this._currentAction) {
+        case RemovableAction.MOUNT:
+            this._notifyActionError(action,
+                __('Mount operation already in progress'));
+            break;
 
-            throw new Error('Another action %s is being performed in %s'.format(
-                this._currentAction, this));
+        case RemovableAction.UNMOUNT:
+            this._notifyActionError(action,
+                __('Unmount operation already in progress'));
+            break;
+
+        case RemovableAction.EJECT:
+            this._notifyActionError(action,
+                __('Eject operation already in progress'));
+            break;
+
+        default:
+            if (this._currentAction) {
+                throw new Error('Another action %s is being performed in %s'.format(
+                    this._currentAction, this));
+            }
         }
 
         this._currentAction = action;
@@ -635,22 +648,27 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         const removable = this.mount ?? this.volume;
         const operation = new ShellMountOperation.ShellMountOperation(removable);
         try {
-            if (action === RemovableAction.MOUNT) {
+            switch (action) {
+            case RemovableAction.MOUNT:
                 await this.volume.mount(Gio.MountMountFlags.NONE, operation.mountOp,
                     this.cancellable);
-            } else if (action === RemovableAction.UNMOUNT) {
+                return true;
+
+            case RemovableAction.UNMOUNT:
                 await this.mount.unmount_with_operation(Gio.MountUnmountFlags.FORCE,
                     operation.mountOp, this.cancellable);
-            } else if (action === RemovableAction.EJECT) {
+                return true;
+
+            case RemovableAction.EJECT:
                 await removable.eject_with_operation(Gio.MountUnmountFlags.FORCE,
                     operation.mountOp, this.cancellable);
-            } else {
+                return true;
+
+            default:
                 logError(new Error(), 'No action %s on removable %s'.format(action,
                     removable.get_name()));
                 return false;
             }
-
-            return true;
         } catch (e) {
             if (action === RemovableAction.MOUNT &&
                 e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.ALREADY_MOUNTED))
