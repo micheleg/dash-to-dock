@@ -946,7 +946,12 @@ export const DockDash = GObject.registerClass({
                 pos++;
             const removedFavorites = removedActors.filter(a =>
                 children.indexOf(a) < oldSeparatorPos);
-            pos += removedFavorites.length;
+
+            // Workaround: when a favorite app (running) located exactly one slot above the separator
+            // is unpinned, its icon does not automatically move below the separator.
+            // Fixes issue: https://github.com/micheleg/dash-to-dock/issues/2445
+            if (!removedFavorites.some(a => oldSeparatorPos - children.indexOf(a) === 1))
+                pos += removedFavorites.length;
             this._box.insert_child_at_index(this._separator, pos);
         } else if (this._separator) {
             this._separator.destroy();
