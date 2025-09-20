@@ -143,7 +143,8 @@ export const DockDash = GObject.registerClass({
         this._initializeIconSize(this.iconSize);
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
 
-        this._separator = null;
+        this._separatorFavorites = null;
+        this._separatorLocations = null;
 
         this._monitorIndex = monitorIndex;
         this._position = Utils.getPosition();
@@ -669,8 +670,13 @@ export const DockDash = GObject.registerClass({
             availSpace -= iconChildren.length * (buttonWidth - iconWidth) +
                            (iconChildren.length - 1) * spacing;
 
-            if (this._separator) {
-                const [, , separatorWidth] = this._separator.get_preferred_size();
+            if (this._separatorFavorites) {
+                const [, , separatorWidth] = this._separatorFavorites.get_preferred_size();
+                availSpace -= separatorWidth + spacing;
+            }
+
+            if (this._separatorLocations) {
+                const [, , separatorWidth] = this._separatorLocations.get_preferred_size();
                 availSpace -= separatorWidth + spacing;
             }
         } else {
@@ -678,8 +684,13 @@ export const DockDash = GObject.registerClass({
             availSpace -= iconChildren.length * (buttonHeight - iconHeight) +
                            (iconChildren.length - 1) * spacing;
 
-            if (this._separator) {
-                const [, , , separatorHeight] = this._separator.get_preferred_size();
+            if (this._separatorFavorites) {
+                const [, , , separatorHeight] = this._separatorFavorites.get_preferred_size();
+                availSpace -= separatorHeight + spacing;
+            }
+
+            if (this._separatorLocations) {
+                const [, , , separatorHeight] = this._separatorLocations.get_preferred_size();
                 availSpace -= separatorHeight + spacing;
             }
         }
@@ -731,16 +742,50 @@ export const DockDash = GObject.registerClass({
             });
         }
 
-        if (this._separator) {
+        if (this._separatorFavorites) {
             const animateProperties = this._isHorizontal
                 ? {height: this.iconSize} : {width: this.iconSize};
 
-            this._separator.ease({
+            this._separatorFavorites.ease({
                 ...animateProperties,
                 duration: DASH_ANIMATION_TIME,
                 mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             });
         }
+
+        if (this._separatorLocations) {
+            const animateProperties = this._isHorizontal
+                ? {height: this.iconSize} : {width: this.iconSize};
+
+            this._separatorLocations.ease({
+                ...animateProperties,
+                duration: DASH_ANIMATION_TIME,
+                mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+            });
+        }
+    }
+
+    _isLocationApp(app) {
+        return app && (app.isTrash || app.isMountableVolume);
+    }
+
+    _ensureSeparator(separator, pos) {
+        if (!separator) {
+            separator = new St.Widget({
+                style_class: 'dash-separator',
+                x_align: this._isHorizontal
+                    ? Clutter.ActorAlign.FILL : Clutter.ActorAlign.CENTER,
+                y_align: this._isHorizontal
+                    ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.FILL,
+                width: this._isHorizontal ? -1 : this.iconSize,
+                height: this._isHorizontal ? this.iconSize : -1,
+                reactive: true,
+                track_hover: true,
+            });
+            separator.connect('notify::hover', a => this._ensureItemVisibility(a));
+        }
+        this._box.insert_child_at_index(separator, pos);
+        return separator;
     }
 
     _redisplay() {
@@ -793,18 +838,24 @@ export const DockDash = GObject.registerClass({
 
             // First: add the apps from the oldApps list that are still running
             oldApps.forEach(oldApp => {
-                const index = running.indexOf(oldApp);
-                if (index > -1) {
-                    const [app] = running.splice(index, 1);
-                    if (!showFavorites || !(app.get_id() in favorites))
-                        newApps.push(app);
+                // prevent location apps from moving
+                if (!this._isLocationApp(oldApp)) {
+                    const index = running.indexOf(oldApp);
+                    if (index > -1) {
+                        const [app] = running.splice(index, 1);
+                        if (!showFavorites || !(app.get_id() in favorites))
+                            newApps.push(app);
+                    }
                 }
             });
 
             // Second: add the new apps
             running.forEach(app => {
-                if (!showFavorites || !(app.get_id() in favorites))
-                    newApps.push(app);
+                // prevent location apps from moving
+                if (!this._isLocationApp(app)) {
+                    if (!showFavorites || !(app.get_id() in favorites))
+                        newApps.push(app);
+                }
             });
         }
 
@@ -828,10 +879,12 @@ export const DockDash = GObject.registerClass({
             oldApps = oldApps.filter(app => !app.isTrash);
         }
 
-        // Temporary remove the separator so that we don't compute to position icons
-        const oldSeparatorPos = this._box.get_children().indexOf(this._separator);
-        if (this._separator)
-            this._box.remove_child(this._separator);
+        // Temporary remove the separators so that we don't compute to position icons
+        const oldSeparatorFavoritesPos = this._box.get_children().indexOf(this._separatorFavorites);
+        if (this._separatorFavorites)
+            this._box.remove_child(this._separatorFavorites);
+        if (this._separatorLocations)
+            this._box.remove_child(this._separatorLocations);
 
         // Figure out the actual changes to the list of items; we iterate
         // over both the list of items currently in the dash and the list
@@ -850,6 +903,9 @@ export const DockDash = GObject.registerClass({
         // to use a more sophisticated algorithm, e.g. Longest Common
         // Subsequence as used by diff.
 
+
+        let nLocationApps = 0;
+
         const addedItems = [];
         const removedActors = [];
 
@@ -863,6 +919,8 @@ export const DockDash = GObject.registerClass({
             if (oldApp === newApp) {
                 oldIndex++;
                 newIndex++;
+                if (this._isLocationApp(oldApp))
+                    nLocationApps++;
                 continue;
             }
 
@@ -880,6 +938,8 @@ export const DockDash = GObject.registerClass({
                     item: this._createAppItem(newApp),
                     pos: newIndex,
                 });
+                if (this._isLocationApp(newApp))
+                    nLocationApps++;
                 newIndex++;
                 continue;
             }
@@ -923,34 +983,49 @@ export const DockDash = GObject.registerClass({
                 item.destroy();
         }
 
-        // Update separator
+        /* Update separator for favorites */
         const nFavorites = Object.keys(favorites).length;
         const nIcons = children.length + addedItems.length - removedActors.length;
-        if (nFavorites > 0 && nFavorites < nIcons) {
-            if (!this._separator) {
-                this._separator = new St.Widget({
-                    style_class: 'dash-separator',
-                    x_align: this._isHorizontal
-                        ? Clutter.ActorAlign.FILL : Clutter.ActorAlign.CENTER,
-                    y_align: this._isHorizontal
-                        ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.FILL,
-                    width: this._isHorizontal ? -1 : this.iconSize,
-                    height: this._isHorizontal ? this.iconSize : -1,
-                    reactive: true,
-                    track_hover: true,
-                });
-                this._separator.connect('notify::hover', a => this._ensureItemVisibility(a));
-            }
-            let pos = nFavorites + this._animatingPlaceholdersCount;
-            if (this._dragPlaceholder)
-                pos++;
-            const removedFavorites = removedActors.filter(a =>
-                children.indexOf(a) < oldSeparatorPos);
+        let pos = nFavorites + this._animatingPlaceholdersCount;
+        if (this._dragPlaceholder)
+            pos++;
+        const removedFavorites = removedActors.filter(a =>
+            children.indexOf(a) < oldSeparatorFavoritesPos);
+
+        // Workaround: when a favorite app (running) located exactly one slot above the separator
+        // is unpinned, its icon does not automatically move below the separator.
+        // Fixes issue: https://github.com/micheleg/dash-to-dock/issues/2445
+        if (!removedFavorites.some(a =>
+            oldSeparatorFavoritesPos - children.indexOf(a) === 1))
             pos += removedFavorites.length;
-            this._box.insert_child_at_index(this._separator, pos);
-        } else if (this._separator) {
-            this._separator.destroy();
-            this._separator = null;
+
+        if (nFavorites > 0 && nFavorites < nIcons) {
+            this._separatorFavorites =
+                this._ensureSeparator(this._separatorFavorites, pos);
+        } else if (this._separatorFavorites) {
+            this._separatorFavorites.destroy();
+            this._separatorFavorites = null;
+        }
+
+        /* Update separator for locations */
+        const nBottomIcons = nIcons - pos;
+        const lastPos = pos;
+        pos += nBottomIcons - nLocationApps + this._animatingPlaceholdersCount;
+
+        if (this._dragPlaceholder)
+            pos++;
+        if (this._separatorFavorites)
+            pos++;
+        pos += removedFavorites.length;
+
+        const isReduduntSeparator = this._separatorFavorites && pos - lastPos <= 1;
+
+        if (nLocationApps > 0 && nLocationApps < nIcons && !isReduduntSeparator) {
+            this._separatorLocations =
+                this._ensureSeparator(this._separatorLocations, pos);
+        } else if (this._separatorLocations) {
+            this._separatorLocations.destroy();
+            this._separatorLocations = null;
         }
 
         this._adjustIconSize();
