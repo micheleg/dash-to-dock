@@ -1,0 +1,831 @@
+# Belarusian translation for dash-to-dock GNOME Shell extension
+# Łasačka <saikinmirai@gmail.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: dash-to-dock\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-08-30 10:20+0300\n"
+"PO-Revision-Date: 2025-10-15 12:42+0300\n"
+"Last-Translator: Łasačka <saikinmirai@gmail.com>\n"
+"Language-Team: Belarusian\n"
+"Language: be\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Gtranslator 49.0\n"
+
+#. Translators: This will be followed by Display Name - Connector.
+#: prefs.js:382
+msgid "Primary monitor: "
+msgstr "Асноўны дысплэй: "
+
+#. Translators: Followed by monitor index, Display Name - Connector.
+#: prefs.js:388
+msgid "Secondary monitor "
+msgstr "Дадатковы дыспллэй"
+
+#: prefs.js:434 Settings.ui.h:32
+msgid "Right"
+msgstr "Справа"
+
+#: prefs.js:435 Settings.ui.h:29
+msgid "Left"
+msgstr "Зьлева"
+
+#: prefs.js:490
+msgid "Intelligent autohide customization"
+msgstr "Наладжваньне разумнага аўтаскрываньня"
+
+#: prefs.js:498 prefs.js:816 prefs.js:875
+msgid "Reset to defaults"
+msgstr "Скінуць да стандартных"
+
+#: prefs.js:649
+msgid "Managed by GNOME Multitasking's Application Switching setting."
+msgstr "Кіруецца наладай пераключэньня праграм шматзадачнасьці GNOME."
+
+#: prefs.js:808
+msgid "Show dock and application numbers"
+msgstr "Паказваць док і нумары праграм"
+
+#: prefs.js:867
+msgid "Customize middle-click behavior"
+msgstr "Наладзіць паводзіны сярэдняй кнопкі мышы"
+
+#: prefs.js:964
+msgid "Customize running indicators"
+msgstr "Наладзіць індыкатары актыўных праграм"
+
+#: prefs.js:1079 Settings.ui.h:96
+msgid "Customize opacity"
+msgstr "Наладзіць празрыстасьць"
+
+#: docking.js:1273
+msgid "Dash"
+msgstr "Панэль"
+
+#: docking.js:2514 appIcons.js:1172
+msgid "Unpin"
+msgstr "Адмацаваць"
+
+#: docking.js:2514 appIcons.js:1178
+msgid "Pin to Dock"
+msgstr "Прымацаваць у Доку"
+
+#: appIcons.js:754 appIconsDecorator.js:105
+#, javascript-format
+msgid "%s is currently updating, cannot launch it!"
+msgstr "%s зараз абнаўляецца, немагчыма запусьціць!"
+
+#: appIcons.js:1082
+#, javascript-format
+msgid "%s is being updated..."
+msgstr "%s абнаўляецца..."
+
+#: appIcons.js:1093
+msgid "All Windows"
+msgstr "Усе вокны"
+
+#. Translators: This is the heading of a list of open windows
+#: appIcons.js:1105
+msgid "Open Windows"
+msgstr "Адкрыць окны"
+
+#: appIcons.js:1125
+msgid "New Window"
+msgstr "Новае вакно"
+
+#: appIcons.js:1144
+msgid "Launch using Integrated Graphics Card"
+msgstr "Запусьціць з выкарыстаньнем інтэграванае відэакарты"
+
+#: appIcons.js:1145
+msgid "Launch using Discrete Graphics Card"
+msgstr "Запусьціць з выкарыстаньнем дыскрэтнае відэакарты"
+
+#: appIcons.js:1189
+msgid "App Details"
+msgstr "Пра праграму"
+
+#: appIcons.js:1226 appIcons.js:1238 Settings.ui.h:14
+msgid "Quit"
+msgstr "Выйсьці"
+
+#: appIcons.js:1241
+#, javascript-format
+msgid "Quit %d Window"
+msgid_plural "Quit %d Windows"
+msgstr[0] "Закрыць %d акно"
+msgstr[1] "Закрыть %d вокны"
+msgstr[2] "Закрыть %d вокнаў"
+
+#. Translators: %s is "Settings", which is automatically translated. You
+#. can also translate the full message if this fits better your language.
+#: appIcons.js:1489
+#, javascript-format
+msgid "Dash to Dock %s"
+msgstr "Dash to Dock %s"
+
+#: appIcons.js:1489
+msgid "Settings"
+msgstr "Налады"
+
+#: locations.js:533
+msgid "Mount"
+msgstr "Прымантаваць"
+
+#: locations.js:535
+msgid "Unmount"
+msgstr "Адмантаваць"
+
+#: locations.js:537
+msgid "Eject"
+msgstr "Выняць"
+
+#: locations.js:596
+#, javascript-format
+msgid "Failed to mount “%s”"
+msgstr "Не атрымалася прымантаваць “%s”"
+
+#: locations.js:599
+#, javascript-format
+msgid "Failed to unmount “%s”"
+msgstr "Не атрымалася адмантаваць “%s”"
+
+#: locations.js:602
+#, javascript-format
+msgid "Failed to eject “%s”"
+msgstr "Не атрымалася выняць “%s”"
+
+#: locations.js:614
+msgid "Mount operation already in progress"
+msgstr "Апэрацыя мантаваньня ўжо выконваецца"
+
+#: locations.js:617
+msgid "Unmount operation already in progress"
+msgstr "Апэрацыя адмантаваньня ўжю выконваецца"
+
+#: locations.js:620
+msgid "Eject operation already in progress"
+msgstr "Апэрацыя выманьня ўжо выконваецца"
+
+#: locations.js:738
+msgid "Trash"
+msgstr "Сьметніца"
+
+#: locations.js:779
+msgid "Empty Trash"
+msgstr "Ачысьціць сьметніцу"
+
+#: locations.js:1049
+#, javascript-format
+msgid "Failed to launch “%s”"
+msgstr "Не атрымалася запусьціць “%s”"
+
+#: Settings.ui.h:1
+msgid ""
+"When set to minimize, double clicking minimizes all the windows of the "
+"application."
+msgstr ""
+"Калі ўсталявана на \"мінімізаваць\", падвойны клік мінімізуе ўсе вокны "
+"праграмы."
+
+#: Settings.ui.h:2
+msgid "Shift+Click action"
+msgstr "Дзеяньне для Shift+Click"
+
+#: Settings.ui.h:3
+msgid "Raise window"
+msgstr "Паказаць акно"
+
+#: Settings.ui.h:4
+msgid "Minimize window"
+msgstr "Мінімізаваць акно"
+
+#: Settings.ui.h:5
+msgid "Launch new instance"
+msgstr "Запусьціць новы экземпляр"
+
+#: Settings.ui.h:6
+msgid "Cycle through windows"
+msgstr "Прагортка вокнаў праграмы"
+
+#: Settings.ui.h:7
+msgid "Minimize or overview"
+msgstr "Мінімізацыя ці агляд"
+
+#: Settings.ui.h:8
+msgid "Show window previews"
+msgstr "Паказаць перадпрагляд вокнаў"
+
+#: Settings.ui.h:9
+msgid "Minimize or show previews"
+msgstr "Мінімізацыю ці перадпрагляд"
+
+#: Settings.ui.h:10
+msgid "Focus or show previews"
+msgstr "Фокус ці паказ перадпрагляду"
+
+#: Settings.ui.h:11
+msgid "Focus or app spread"
+msgstr "Фокус ці агляд окнаў"
+
+#: Settings.ui.h:12
+msgid "Focus, minimize or show previews"
+msgstr "Фокус, мінімізацыя ці паказ перадпрагляду"
+
+#: Settings.ui.h:13
+msgid "Focus, minimize or app spread"
+msgstr "Фокус, мінімізацыя ці агляд окнаў"
+
+#: Settings.ui.h:15
+msgid "Behavior for Middle-Click."
+msgstr "Паводзіны сярэдняй кнопкі мышы"
+
+#: Settings.ui.h:16
+msgid "Middle-Click action"
+msgstr "Дзеяньне для сярэдняй кнопкі мышы"
+
+#: Settings.ui.h:17
+msgid "Behavior for Shift+Middle-Click."
+msgstr "Паводзіны Shift + сярэдняя кнопка мышы."
+
+#: Settings.ui.h:18
+msgid "Shift+Middle-Click action"
+msgstr "Дзеяньне для Shift+Middle-Click"
+
+#: Settings.ui.h:19
+msgid "Enable Unity7 like glossy backlit items"
+msgstr "Уключыць падсветку элементаў як у Unity7"
+
+#: Settings.ui.h:20
+msgid "Apply glossy effect."
+msgstr "Прымяніць эфэкт бляску."
+
+#: Settings.ui.h:21
+msgid "Use dominant color"
+msgstr "Выкарыстоўваць акцэнтны колер"
+
+#: Settings.ui.h:22
+msgid "Customize indicator style"
+msgstr "Наладзіць стыль індыкатара"
+
+#: Settings.ui.h:23
+msgid "Color"
+msgstr "Колер"
+
+#: Settings.ui.h:24
+msgid "Border color"
+msgstr "Колер граніцы"
+
+#: Settings.ui.h:25
+msgid "Border width"
+msgstr "Вышыня граніцы"
+
+#: Settings.ui.h:26
+msgid "Show the dock on"
+msgstr "Паказваць док на:"
+
+#: Settings.ui.h:27
+msgid "Show on all monitors"
+msgstr "Паказваць на ўсіх дысплэях"
+
+#: Settings.ui.h:28
+msgid "Position on screen"
+msgstr "Пазыцыя на экране"
+
+#: Settings.ui.h:30
+msgid "Bottom"
+msgstr "Зьнізу"
+
+#: Settings.ui.h:31
+msgid "Top"
+msgstr "Зьверху"
+
+#: Settings.ui.h:33
+msgid ""
+"Hide the dock when it obstructs a window of the current application. More "
+"refined settings are available."
+msgstr ""
+"Хаваць док, калі ён перакрываецца актыўнай праграмай. Даступныя больш "
+"наладаў."
+
+#: Settings.ui.h:34
+msgid "Intelligent autohide"
+msgstr "Разумнае аўтаскрываньне"
+
+#: Settings.ui.h:35
+msgid "Dock size limit"
+msgstr "Ліміт памеру дока"
+
+#: Settings.ui.h:36
+msgid "Panel mode: extend to the screen edge"
+msgstr "Рэжым панэлі: павялічыць да граніцаў экрана"
+
+#: Settings.ui.h:37
+msgid "Place icons to the center"
+msgstr "Зьмясьціць абразкі ў цэнтры"
+
+#: Settings.ui.h:38
+msgid "Icon size limit"
+msgstr "Ліміт памеру абразкоў"
+
+#: Settings.ui.h:39
+msgid "Fixed icon size: scroll to reveal other icons"
+msgstr "Фіксаваны памер абразкоў: прагарніце, каб убачыць астатнія"
+
+#: Settings.ui.h:40
+msgid "Preview size scale"
+msgstr "Масштаб миніятураў"
+
+#: Settings.ui.h:41
+msgid "Position and size"
+msgstr "Становішча й памер"
+
+#: Settings.ui.h:42
+msgid "Show pinned applications"
+msgstr "Паказваць прымацаваныя праграмы"
+
+#: Settings.ui.h:43
+msgid "Show running applications"
+msgstr "Паказваць запушчаныя праграмы"
+
+#: Settings.ui.h:44
+msgid "Isolate workspaces"
+msgstr "Ізаляваць працоўныя прасторы"
+
+#: Settings.ui.h:45
+msgid "Show urgent windows despite current workspace"
+msgstr "Паказваць неадкладныя вокны незалежна ад бягучай працоўнай прасторы"
+
+#: Settings.ui.h:46
+msgid "Isolate monitors"
+msgstr "Ізаляваць дысплэі"
+
+#: Settings.ui.h:47
+msgid "Show open windows' previews"
+msgstr "Паказваць перадпрагляд адкрытых окнаў"
+
+#: Settings.ui.h:48
+msgid "Keep the focused application always visible in the dash"
+msgstr "Заўжды паказваць сфакусаваную праграму ў доку"
+
+#: Settings.ui.h:49
+msgid ""
+"If disabled, these settings are accessible from gnome-tweak-tool or the "
+"extension website."
+msgstr ""
+"Калі адключана, гэтыя налады даступныя праз gnome-tweak-tool ці праз сайт "
+"дадаткаў."
+
+#: Settings.ui.h:50
+msgid "Show <i>Applications</i> icon"
+msgstr "Паказваць абразок <i>«Праграмы»</i>"
+
+#: Settings.ui.h:51
+msgid "Move at beginning of the dock"
+msgstr "Перамясьціць у пачатак доку"
+
+#: Settings.ui.h:52
+msgid "Animate <i>Show Applications</i>"
+msgstr "Анімацыя пры націску <i>«Паказаць праграмы»</i>"
+
+#: Settings.ui.h:53
+msgid "Put <i>Show Applications</i> in a dock edge when using Panel mode"
+msgstr "Перамясьціць <i>«Паказаць праграмы»</i> на мяжу дока ў рэжыме панэлі"
+
+#: Settings.ui.h:54
+msgid "Show trash can"
+msgstr "Паказваць сьметніцу"
+
+#: Settings.ui.h:55
+msgid "Show volumes and devices"
+msgstr "Паказваць тамы і прылады"
+
+#: Settings.ui.h:56
+msgid "Only if mounted"
+msgstr "Толькі калі прымантаваныя"
+
+#: Settings.ui.h:57
+msgid "Include network volumes"
+msgstr "Уключаючы сеткавыя тамы"
+
+#: Settings.ui.h:58
+msgid "Isolate volumes, devices and trash windows from file manager"
+msgstr "Ізаляваць тамы, прылады і сьметніцу ад файлавага мэнэджарач"
+
+#: Settings.ui.h:59
+msgid "Wiggle urgent applications"
+msgstr "Паказваць неадкладныя праграмы"
+
+#: Settings.ui.h:60
+msgid "Hide application tooltip"
+msgstr "Схаваць усплываючую падказку праграмы"
+
+#: Settings.ui.h:61
+msgid "Show icons emblems"
+msgstr "Схаваць цэтлікі абразкоў"
+
+#: Settings.ui.h:62
+msgid ""
+"When enabled application icons will show notification counters and progress-"
+"bars (if Unity API is used)."
+msgstr ""
+"Калі ўключана, абразкі праграм будуць паказваць лічыльнікі апавяшчэньняў і "
+"прогрэс-бары (калі выкарыстоўваецца API Unity)."
+
+#: Settings.ui.h:63
+msgid "Show the number of unread notifications"
+msgstr "Паказваць колькасьць непрачытаных апавяшчэньняў"
+
+#: Settings.ui.h:64
+msgid "Application-provided counter overrides the notifications counter"
+msgstr "Натыўны лічыльнік праграмы перавызначае лічыльнік апавяшчэньняў"
+
+#: Settings.ui.h:65
+msgid "Launchers"
+msgstr "Абразкі"
+
+#: Settings.ui.h:66
+msgid ""
+"Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
+"together with Shift and Ctrl."
+msgstr ""
+"Уключыць скарот Super+(0-9) для выбору праграм Можа таксама выкарыстоўвацца "
+"з Shift і Ctrl."
+
+#: Settings.ui.h:67
+msgid "Use keyboard shortcuts to activate apps"
+msgstr "Выкарыстоўваць клявіятурныя скароты для выбару праграм"
+
+#: Settings.ui.h:68
+msgid "Behaviour when clicking on the icon of a running application."
+msgstr "Праводзіны пры націсканьні на абразок запушчанай праграмы."
+
+#: Settings.ui.h:69
+msgid "Click action"
+msgstr "Дзеяньне пры націсканьні"
+
+#: Settings.ui.h:70
+msgid "Minimize"
+msgstr "Мінімізаваць"
+
+#: Settings.ui.h:71
+msgid "Behaviour when scrolling on the icon of an application."
+msgstr "Паводзіны пры прагортцы па абразку праграмы."
+
+#: Settings.ui.h:72
+msgid "Scroll action"
+msgstr "Дзеяньне пры прагортцы"
+
+#: Settings.ui.h:73
+msgid "Do nothing"
+msgstr "Нічога не рабіць"
+
+#: Settings.ui.h:74
+msgid "Switch workspace"
+msgstr "Пераключыць працоўную прасторы"
+
+#: Settings.ui.h:75
+msgid "Behavior"
+msgstr "Паводзіны"
+
+#: Settings.ui.h:76
+msgid "Save space reducing padding and border radius."
+msgstr "Эканомія прасторы празь зьмяншэньне водступаў і радыусу граніцаў."
+
+#: Settings.ui.h:77
+msgid "Shrink the dash"
+msgstr "Сьціснуць док"
+
+#: Settings.ui.h:78
+msgid "Force straight corner"
+msgstr "Не скругляць куты"
+
+#: Settings.ui.h:79
+msgid "Show overview on startup"
+msgstr "Паказваць агляд пры запуску"
+
+#: Settings.ui.h:80
+msgid ""
+"Few customizations meant to integrate the dock with the default GNOME theme. "
+"Alternatively, specific options can be enabled below."
+msgstr ""
+"Некаторыя паляпшэньні для інтэграцыі дока з тэмай GNOME па змаўчаньні. "
+"Спэцыфічныя опцыі можна наладзіць ніжэй."
+
+#: Settings.ui.h:81
+msgid "Use built-in theme"
+msgstr "Выкарыстоўваць убудаваную тэму"
+
+#: Settings.ui.h:82
+msgid "Customize windows counter indicators"
+msgstr "Наладзіць індыкатары колькасьці вокнаў"
+
+#: Settings.ui.h:83
+msgid "Default"
+msgstr "Па змаўчаньні"
+
+#: Settings.ui.h:84
+msgid "Dots"
+msgstr "Кропкі"
+
+#: Settings.ui.h:85
+msgid "Squares"
+msgstr "Ква"
+
+#: Settings.ui.h:86
+msgid "Dashes"
+msgstr "Лініі"
+
+#: Settings.ui.h:87
+msgid "Segmented"
+msgstr "Сэгмэнты"
+
+#: Settings.ui.h:88
+msgid "Solid"
+msgstr "Зьлітна"
+
+#: Settings.ui.h:89
+msgid "Ciliora"
+msgstr "Ciliora"
+
+#: Settings.ui.h:90
+msgid "Metro"
+msgstr "Metro"
+
+#: Settings.ui.h:91
+msgid "Binary"
+msgstr "Бінарны"
+
+#: Settings.ui.h:92
+msgid "Dot"
+msgstr "Кропка"
+
+#: Settings.ui.h:93
+msgid "Set the background color for the dash."
+msgstr "Усталяваць фонавы колер для панэлі."
+
+#: Settings.ui.h:94
+msgid "Customize the dash color"
+msgstr "Наладзіць колер панэлі"
+
+#: Settings.ui.h:95
+msgid "Tune the dash background opacity."
+msgstr "Наладка празрыстасьці фону панэлі."
+
+#: Settings.ui.h:97
+msgid "Fixed"
+msgstr "Фіксаваная"
+
+#: Settings.ui.h:98
+msgid "Dynamic"
+msgstr "Дынамічная"
+
+#: Settings.ui.h:99
+msgid "Opacity"
+msgstr "Непразрыстасьць"
+
+#: Settings.ui.h:100
+msgid "Appearance"
+msgstr "Вонкавы выгляд"
+
+#: Settings.ui.h:101
+msgid "version: "
+msgstr "вэрсія:"
+
+#: Settings.ui.h:102
+msgid "Moves the dash out of the overview transforming it in a dock"
+msgstr "Перамяшчае панэль з рэжыму агляду, ператвараючы яе ў док"
+
+#: Settings.ui.h:103
+msgid "Created by"
+msgstr "Аўтар"
+
+#: Settings.ui.h:104
+msgid "Webpage"
+msgstr "Вэб-старонка"
+
+#: Settings.ui.h:105
+msgid ""
+"<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
+"See the <a href=\"https://www.gnu.org/licenses/old-licenses/"
+"gpl-2.0.html\">GNU General Public License, version 2 or later</a> for "
+"details.</span>"
+msgstr ""
+"<span size=\"small\">Гэтая праграма распаўсюджваецца БЕЗ ХОЦЬ-ЯКІХ "
+"ГАРАНТЫЙ.\n"
+"Глядзі <a href=\"https://www.gnu.org/licenses/old-licenses/"
+"gpl-2.0.html\">GNU General Public License, вэрсія 2 ці пазьнейшая</a> для "
+"інфармацыі.</span>"
+
+#: Settings.ui.h:107
+msgid "About"
+msgstr "Пра пашырэньне"
+
+#: Settings.ui.h:108
+msgid "Customize minimum and maximum opacity values"
+msgstr "Налада мінімальнага і максымальнага значэньня непразрыстасьці"
+
+#: Settings.ui.h:109
+msgid "Minimum opacity"
+msgstr "Мінімальная непразрыстасьць"
+
+#: Settings.ui.h:110
+msgid "Maximum opacity"
+msgstr "Максымальная непразрыстасьць"
+
+#: Settings.ui.h:111
+msgid "Number overlay"
+msgstr "Паказаць нумары"
+
+#: Settings.ui.h:112
+msgid ""
+"Temporarily show the application numbers over the icons, corresponding to "
+"the shortcut."
+msgstr ""
+"Часова паказваць нумары праграм побач з абразкамі пры націсканьні скароту."
+
+#: Settings.ui.h:113
+msgid "Show the dock if it is hidden"
+msgstr "Паказваць док, калі ён схаваны"
+
+#: Settings.ui.h:114
+msgid ""
+"If using autohide, the dock will appear for a short time when triggering the "
+"shortcut."
+msgstr ""
+"Калі выкарыстоўваецца аўтаскрываньне, док зьявіцца на хвілю пры націсканьні "
+"скароту."
+
+#: Settings.ui.h:115
+msgid "Shortcut for the options above"
+msgstr "Скарот для пазначаных опцыяў"
+
+#: Settings.ui.h:116
+msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
+msgstr "Сынтаксіс: <Shift>, <Ctrl>, <Alt>, <Super>"
+
+#: Settings.ui.h:117
+msgid "Hide timeout (s)"
+msgstr "Затрымка схаваньня (сэк.)"
+
+#: Settings.ui.h:118
+msgid "Show the dock by mouse hover on the screen edge."
+msgstr "Паказваць док пры падвядзеньні мышы да мяжы экрана."
+
+#: Settings.ui.h:119
+msgid "Autohide"
+msgstr "Аўтаскрываньне"
+
+#: Settings.ui.h:120
+msgid "Push to show: require pressure to show the dock"
+msgstr "Націснуць для паказу: неабходны націск, каб паказаць док"
+
+#: Settings.ui.h:121
+msgid "Enable in fullscreen mode"
+msgstr "Уключыць у поўнаэкранным рэжыме"
+
+#: Settings.ui.h:122
+msgid "Show dock for urgent notifications"
+msgstr "Паказваць док для неадкладных апавяшчэньняў"
+
+#: Settings.ui.h:123
+msgid "Show the dock when it doesn't obstruct application windows."
+msgstr "Хаваць док, калі ён перакрываецца вакном праграмы."
+
+#: Settings.ui.h:124
+msgid "Dodge windows"
+msgstr "Перакрыцьцё вокнамі"
+
+#: Settings.ui.h:125
+msgid "All windows"
+msgstr "Усе вокны"
+
+#: Settings.ui.h:126
+msgid "Only focused application's windows"
+msgstr "Толькі актыўнае акно праграмы"
+
+#: Settings.ui.h:127
+msgid "Only maximized windows"
+msgstr "Толькі разгорнутыя вокны"
+
+#: Settings.ui.h:128
+msgid "Always on top"
+msgstr "Заўжды зьверху"
+
+#: Settings.ui.h:129
+msgid "Animation duration (s)"
+msgstr "Працягласьць анімацыі (сэк.)"
+
+#: Settings.ui.h:130
+msgid "Show timeout (s)"
+msgstr "Затрымка адкрыцьця (сэк.)"
+
+#: Settings.ui.h:131
+msgid "Pressure threshold"
+msgstr "Мяжа ціску"
+
+#~ msgid "Show favorite applications"
+#~ msgstr "Паказваць абраныя праграмы"
+
+#~ msgid "Adaptive"
+#~ msgstr "Адаптыўная"
+
+#~ msgid "Show a dot for each windows of the application."
+#~ msgstr "Паказвае кропку для кожнага акна праграмы."
+
+#~ msgid ""
+#~ "With fixed icon size, only the edge of the dock and the <i>Show "
+#~ "Applications</i> icon are active."
+#~ msgstr ""
+#~ "Пры фіксаваным памеры абразкоў актыўныя толькі "
+#~ "<i>Паказаць праграмы</i> иі мяжа дока."
+
+#~ msgid "Switch workspace by scrolling on the dock"
+#~ msgstr "Пераключыць працоўныя прасторы прагорткаю па доку"
+
+#~ msgid "Only consider windows of the focused application"
+#~ msgstr "Прымяніць толькі да актыўных окнаў праграмы"
+
+#~ msgid "Dock Position"
+#~ msgstr "Разьмяшчэньне дока"
+
+#~ msgid "Dock is fixed and always visible"
+#~ msgstr "Док фіксаваны й заўжды бачны"
+
+#~ msgid "Show delay [ms]"
+#~ msgstr "Затрымка пры зьяўленьні [мс]"
+
+#~ msgid "Hide delay [ms]"
+#~ msgstr "Затрымка перад схаваньнем [мс]"
+
+#~ msgid "Application based intellihide"
+#~ msgstr "Разумнае аўтаскрыцьцё залежыць ад праграмаў"
+
+#~ msgid "Show the dock on following monitor (if attached)"
+#~ msgstr "Паказваць док на дадатковым дысплэі (калі падлучаны)"
+
+#~ msgid "Primary (default)"
+#~ msgstr "Галоўны (па змаўчаньні)"
+
+#~ msgid "Max height"
+#~ msgstr "Максымальная вышыня+"
+
+#~ msgid "Expand (experimental and buggy)"
+#~ msgstr "Расьцягнуць (экспэрымэнтальна і няўстойліва)"
+
+#~ msgid "Maximum icon size"
+#~ msgstr "Максымальны памер абразка"
+
+#~ msgid "Optional features"
+#~ msgstr "Дадатковыя функцыі"
+
+#~ msgid "Deadtime between each workspace switching [ms]"
+#~ msgstr "Затрымка між кожным пераключэньнем працоўных прастораў [мс]"
+
+#~ msgid "Only a 1px wide area close to the screen edge is active"
+#~ msgstr "Актыўная вобласьць - 1 піксэль ад мяжы экрана"
+
+#~ msgid "All the area of the dock is active"
+#~ msgstr "Уся вобласьць дока актыўная"
+
+#~ msgid "Customize actions on mouse click"
+#~ msgstr "Наладзіць дзеяньні пры націсканьні мышы"
+
+#~ msgid "Action on clicking on running app"
+#~ msgstr "Дзеяньне пры націсканьні на абразок запушчанай праграмы"
+
+#~ msgid "Minimize window on shift+click (double click for all app windows)"
+#~ msgstr ""
+#~ "Мінімізаваць акно пры націску shift+click (падвойны клік хавае ўсе вокны "
+#~ "праграмаў)"
+
+#~ msgid "Make message tray insensitive to mouse events"
+#~ msgstr "Зрабіць трэй паведамленьняў неадчувальным для падзеяў мышы"
+
+#~ msgid "Appearence and Themes"
+#~ msgstr "Вонкавы выгляд і тэмы"
+
+#~ msgid ""
+#~ "A customized theme is built in the extension. This is meant to work with "
+#~ "the default Adwaita theme: the dash is shrunk to save space, its "
+#~ "background transparency reduced, and custom indicators for the number of "
+#~ "windows of each application are added."
+#~ msgstr ""
+#~ "Тэма ўбудаваная ў пашырэньне. Гэта значыць, што яна працуе з прадвызначанай тэмай Adwaita па "
+#~ "змаўчаньні: Док паменшаны, каб захаваць прастору, празрыстасьць фону абмежаваная,"
+#~ "і дадазеныя карыстальніцкія нумары вокнаў кожнай праграмы."
+
+#~ msgid ""
+#~ "Alternatively, for a better integration with custom themes, each "
+#~ "customization can be applied indipendently"
+#~ msgstr ""
+#~ "Альтэрнатыўна, для лепшай інтэграцыі з карыстальніцкімі тэмамі, кожны "
+#~ "парамэтар можна наладзіць незалежна"
+
+#~ msgid "Shrink the dash size by reducing padding"
+#~ msgstr "Паменшыць док празь зьмяншэньне водступаў"
