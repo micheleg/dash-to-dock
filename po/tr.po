@@ -660,6 +660,10 @@ msgstr "Konsola İliştir"
 msgid "Add to Favorites"
 msgstr "Gözdelere Ekle"
 
+#: appIcons.js:1183
+msgid "Pin to Dock"
+msgstr "Konsola İliştir"
+
 #: appIcons.js:1152
 msgid "Show Details"
 msgstr "Ayrıntıları Göster"
