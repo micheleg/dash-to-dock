@@ -664,6 +664,10 @@ msgstr "Gözdelere Ekle"
 msgid "Show Details"
 msgstr "Ayrıntıları Göster"
 
+#: appIcons.js:1183
+msgid "Pin to Dock"
+msgstr "Konsola İliştir"
+
 #: appIcons.js:1203
 #, javascript-format
 msgid "Quit %d Windows"
