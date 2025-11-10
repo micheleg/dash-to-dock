@@ -28,7 +28,7 @@ export SASS=ruby
 
 Clone the repository or download the branch from github. A simple Makefile is included.
 
-Next use `make` to install the extension into your home directory. A Shell reload is required `Alt+F2 r Enter` under Xorg or under Wayland you may have to logout and login. The extension has to be enabled  with *gnome-extensions-app* (GNOME Extensions) or with *dconf*.
+Next use `make` to install the extension into your home directory. A Shell reload is required <kbd>Alt+<kbd>F2</kbd> <kbd>r</kbd> <kbd>Enter</kbd> under Xorg or under Wayland you may have to logout and login. The extension has to be enabled  with *gnome-extensions-app* (GNOME Extensions) or with *dconf*.
 
 ```bash
 git clone https://github.com/micheleg/dash-to-dock.git
