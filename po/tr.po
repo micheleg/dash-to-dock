@@ -16,40 +16,43 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dash-to-dock master\n"
-"Report-Msgid-Bugs-To: https://github.com/micheleg/dash-to-dock/issues\n"
-"POT-Creation-Date: 2023-05-21 02:32+0300\n"
-"PO-Revision-Date: 2023-05-21 02:34+0300\n"
-"Last-Translator: Sabri Ünal <libreajans@gmail.com>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-15 18:58+0300\n"
+"PO-Revision-Date: 2025-11-15 18:58+0300\n"
+"Last-Translator: Sabri Ünal <yakushabb@gmail.com>\n"
 "Language-Team: Turkish <gnome-turk@gnome.org>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.8\n"
 "X-Project-Style: gnome\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: _;N_;__;N__\n"
-"X-Poedit-SearchPath-0: appIconIndicators.js\n"
-"X-Poedit-SearchPath-1: appIcons.js\n"
-"X-Poedit-SearchPath-2: appSpread.js\n"
-"X-Poedit-SearchPath-3: dash.js\n"
-"X-Poedit-SearchPath-4: dbusmenuUtils.js\n"
-"X-Poedit-SearchPath-5: desktopIconsIntegration.js\n"
-"X-Poedit-SearchPath-6: docking.js\n"
-"X-Poedit-SearchPath-7: extension.js\n"
-"X-Poedit-SearchPath-8: fileManager1API.js\n"
-"X-Poedit-SearchPath-9: intellihide.js\n"
-"X-Poedit-SearchPath-10: launcherAPI.js\n"
-"X-Poedit-SearchPath-11: locations.js\n"
-"X-Poedit-SearchPath-12: locationsWorker.js\n"
-"X-Poedit-SearchPath-13: metadata.json\n"
-"X-Poedit-SearchPath-14: notificationsMonitor.js\n"
-"X-Poedit-SearchPath-15: prefs.js\n"
-"X-Poedit-SearchPath-16: Settings.ui\n"
-"X-Poedit-SearchPath-17: theming.js\n"
-"X-Poedit-SearchPath-18: utils.js\n"
-"X-Poedit-SearchPath-19: windowPreview.js\n"
+"X-Poedit-SearchPath-0: Settings.ui\n"
+"X-Poedit-SearchPath-1: appIconIndicators.js\n"
+"X-Poedit-SearchPath-2: appIcons.js\n"
+"X-Poedit-SearchPath-3: appIconsDecorator.js\n"
+"X-Poedit-SearchPath-4: appSpread.js\n"
+"X-Poedit-SearchPath-5: dash.js\n"
+"X-Poedit-SearchPath-6: dbusmenuUtils.js\n"
+"X-Poedit-SearchPath-7: default.nix\n"
+"X-Poedit-SearchPath-8: desktopIconsIntegration.js\n"
+"X-Poedit-SearchPath-9: docking.js\n"
+"X-Poedit-SearchPath-10: extension.js\n"
+"X-Poedit-SearchPath-11: fileManager1API.js\n"
+"X-Poedit-SearchPath-12: imports.js\n"
+"X-Poedit-SearchPath-13: intellihide.js\n"
+"X-Poedit-SearchPath-14: launcherAPI.js\n"
+"X-Poedit-SearchPath-15: locations.js\n"
+"X-Poedit-SearchPath-16: locationsWorker.js\n"
+"X-Poedit-SearchPath-17: metadata.json\n"
+"X-Poedit-SearchPath-18: notificationsMonitor.js\n"
+"X-Poedit-SearchPath-19: prefs.js\n"
+"X-Poedit-SearchPath-20: theming.js\n"
+"X-Poedit-SearchPath-21: utils.js\n"
+"X-Poedit-SearchPath-22: windowPreview.js\n"
 "X-Poedit-SearchPathExcluded-0: schemas\n"
 
 #: Settings.ui:41
@@ -110,8 +113,8 @@ msgstr "Odaklan, küçült yada önizlemeleri göster"
 msgid "Focus, minimize or app spread"
 msgstr "Odaklan, küçült yada uygulama yay"
 
-#: Settings.ui:84 Settings.ui:156 Settings.ui:228 appIcons.js:1189
-#: appIcons.js:1201
+#: Settings.ui:84 Settings.ui:156 Settings.ui:228 appIcons.js:1250
+#: appIcons.js:1262
 msgid "Quit"
 msgstr "Çık"
 
@@ -172,7 +175,7 @@ msgstr "Tüm ekranlarda göster"
 msgid "Position on screen"
 msgstr "Ekrandaki konumu"
 
-#: Settings.ui:569 prefs.js:472
+#: Settings.ui:569 prefs.js:435
 msgid "Left"
 msgstr "Sol"
 
@@ -184,7 +187,7 @@ msgstr "Alt"
 msgid "Top"
 msgstr "Üst"
 
-#: Settings.ui:597 prefs.js:471
+#: Settings.ui:597 prefs.js:434
 msgid "Right"
 msgstr "Sağ"
 
@@ -417,7 +420,7 @@ msgstr "Yerleşik temayı kullan"
 msgid "Customize windows counter indicators"
 msgstr "Pencere sayı göstergelerini özelleştir"
 
-#: Settings.ui:2065 Settings.ui:2229
+#: Settings.ui:2065 Settings.ui:2230
 msgid "Default"
 msgstr "Varsayılan"
 
@@ -453,88 +456,93 @@ msgstr "Metro"
 msgid "Binary"
 msgstr "İkili"
 
-#: Settings.ui:2106
+#: Settings.ui:2074
+msgid "Dot"
+msgstr "Nokta"
+
+#: Settings.ui:2107
 msgid "Set the background color for the dash."
 msgstr "Panel arkaplan rengini ayarla."
 
-#: Settings.ui:2124
+#: Settings.ui:2125
 msgid "Customize the dash color"
 msgstr "Panel rengini özelleştir"
 
-#: Settings.ui:2180
+#: Settings.ui:2181
 msgid "Tune the dash background opacity."
 msgstr "Panel arkaplan matlığını ayarla."
 
-#: Settings.ui:2196 prefs.js:1120
+#: Settings.ui:2197 prefs.js:1079
 msgid "Customize opacity"
 msgstr "Matlığı özelleştir"
 
-#: Settings.ui:2230
+#: Settings.ui:2231
 msgid "Fixed"
 msgstr "Sabit"
 
-#: Settings.ui:2231
+#: Settings.ui:2232
 msgid "Dynamic"
 msgstr "Dinamik"
 
-#: Settings.ui:2255
+#: Settings.ui:2256
 msgid "Opacity"
 msgstr "Matlık"
 
-#: Settings.ui:2292
+#: Settings.ui:2293
 msgid "Appearance"
 msgstr "Görünüm"
 
-#: Settings.ui:2331
+#: Settings.ui:2332
 msgid "version: "
 msgstr "sürüm: "
 
-#: Settings.ui:2346
+#: Settings.ui:2347
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "Paneli genel görünümden taşır ve rıhtımʼa dönüştürür"
 
 # Çeviri anlamlı olması için : eklendi
-#: Settings.ui:2360
+#: Settings.ui:2361
 msgid "Created by"
 msgstr "Oluşturan:"
 
-#: Settings.ui:2373
+#: Settings.ui:2374
 msgid "Webpage"
 msgstr "Web sitesi"
 
-#: Settings.ui:2384
+#: Settings.ui:2385
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
-"See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0."
-"html\">GNU General Public License, version 2 or later</a> for details.</span>"
+"See the <a href=\"https://www.gnu.org/licenses/old-licenses/"
+"gpl-2.0.html\">GNU General Public License, version 2 or later</a> for "
+"details.</span>"
 msgstr ""
 "<span size=\"small\">Bu program kesinlikle hiçbir garanti vermiyor..\n"
-"Ayrıntılar için <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0."
-"html\">GNU Genel Kamu Lisansı, sürüm 2 veya üstü</a> bağlantısına bakın</"
-"span>"
+"Ayrıntılar için <a href=\"https://www.gnu.org/licenses/old-licenses/"
+"gpl-2.0.html\">GNU Genel Kamu Lisansı, sürüm 2 veya üstü</a> bağlantısına "
+"bakın</span>"
 
-#: Settings.ui:2397
+#: Settings.ui:2398
 msgid "About"
 msgstr "Hakkında"
 
 # minimum and maximum değerleri çevrilmedi
-#: Settings.ui:2455
+#: Settings.ui:2456
 msgid "Customize minimum and maximum opacity values"
 msgstr "Matlık değerlerini özelleştir"
 
-#: Settings.ui:2477
+#: Settings.ui:2478
 msgid "Minimum opacity"
 msgstr "Asgari matlık"
 
-#: Settings.ui:2507
+#: Settings.ui:2508
 msgid "Maximum opacity"
 msgstr "Azami matlık"
 
-#: Settings.ui:2588
+#: Settings.ui:2589
 msgid "Number overlay"
 msgstr "Sayı yerleşimi"
 
-#: Settings.ui:2599
+#: Settings.ui:2600
 msgid ""
 "Temporarily show the application numbers over the icons, corresponding to "
 "the shortcut."
@@ -542,11 +550,11 @@ msgstr ""
 "Uygulama numaralarını, karşılık gelen simgelere göre geçici olarak göster "
 "kısayol."
 
-#: Settings.ui:2645
+#: Settings.ui:2646
 msgid "Show the dock if it is hidden"
 msgstr "Gizlenmişse rıhtımʼı göster"
 
-#: Settings.ui:2656
+#: Settings.ui:2657
 msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
@@ -554,218 +562,216 @@ msgstr ""
 "Otomatik gizleme kullanıyorsanız, kısayol tetiklendiğinde rıhtım kısa bir "
 "süre için görünür."
 
-#: Settings.ui:2699
+#: Settings.ui:2700
 msgid "Shortcut for the options above"
 msgstr "Yukarıdaki seçenekler için kısayol"
 
-#: Settings.ui:2710
+#: Settings.ui:2711
 msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
 msgstr "Sözdizimi: <Shift>, <Ctrl>, <Alt>, <Super>"
 
-#: Settings.ui:2757 Settings.ui:3055
+#: Settings.ui:2758 Settings.ui:3056
 msgid "Hide timeout (s)"
 msgstr "Gizleme zaman aşımı (s)"
 
-#: Settings.ui:2814
+#: Settings.ui:2815
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "Fare ekran köşeleri üzerindeyken rıhtımʼı göster."
 
-#: Settings.ui:2831
+#: Settings.ui:2832
 msgid "Autohide"
 msgstr "Otomatik gizle"
 
 # Anlaşılması kolay olsun diye, pressure burada etki olarak çevrilmiştir
-#: Settings.ui:2852
+#: Settings.ui:2853
 msgid "Push to show: require pressure to show the dock"
 msgstr "Göstermek için it: Rıhtımʼın gösterilmesi için etki gerekir"
 
-#: Settings.ui:2863
+#: Settings.ui:2864
 msgid "Enable in fullscreen mode"
 msgstr "Tam ekran kipinde etkinleştir"
 
-#: Settings.ui:2875
+#: Settings.ui:2876
 msgid "Show dock for urgent notifications"
 msgstr "Acil bildirimler için rıhtımı göster"
 
-#: Settings.ui:2904
+#: Settings.ui:2905
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Uygulama penceresine engel olmadığında rıhtımı göster."
 
-#: Settings.ui:2921
+#: Settings.ui:2922
 msgid "Dodge windows"
 msgstr "Pencelereleri atlat"
 
-#: Settings.ui:2946
+#: Settings.ui:2947
 msgid "All windows"
 msgstr "Tüm pencereler"
 
-#: Settings.ui:2954
+#: Settings.ui:2955
 msgid "Only focused application's windows"
 msgstr "Sadece odaklanılan uygulamanın pencereleri"
 
-#: Settings.ui:2961
+#: Settings.ui:2962
 msgid "Only maximized windows"
 msgstr "Sadece büyütülen pencereler"
 
-#: Settings.ui:2968
+#: Settings.ui:2969
 msgid "Always on top"
 msgstr "Her zaman üstte"
 
-#: Settings.ui:3011
+#: Settings.ui:3012
 msgid "Animation duration (s)"
 msgstr "Canlandırma süresi (s)"
 
-#: Settings.ui:3067
+#: Settings.ui:3068
 msgid "Show timeout (s)"
 msgstr "Gösterim zaman aşımı (s)"
 
 # Anlaşılması kolay olsun diye, pressure burada etki olarak çevrilmiştir
-#: Settings.ui:3079
+#: Settings.ui:3080
 msgid "Pressure threshold"
 msgstr "Etki eşiği"
 
-#: appIcons.js:1051
+#: appIcons.js:755 appIconsDecorator.js:106
+#, javascript-format
+msgid "%s is updating, try again later"
+msgstr "%s güncelleniyor, lütfen daha sonra tekrar deneyin"
+
+#: appIcons.js:1087
+#, javascript-format
+msgid "%s is being updated…"
+msgstr "%s güncelleniyor…"
+
+#: appIcons.js:1098
 msgid "All Windows"
 msgstr "Tüm Pencereler"
 
-#: appIcons.js:1063
+#: appIcons.js:1110
 msgid "Open Windows"
 msgstr "Pencereleri Aç"
 
-#: appIcons.js:1083
+#: appIcons.js:1130
 msgid "New Window"
 msgstr "Yeni Pencere"
 
-#: appIcons.js:1101
+#: appIcons.js:1149
 msgid "Launch using Integrated Graphics Card"
 msgstr "Tümleşik Ekran Kartıyla Başlat"
 
-#: appIcons.js:1102
+#: appIcons.js:1150
 msgid "Launch using Discrete Graphics Card"
 msgstr "Ayrık Ekran Kartıyla Başlat"
 
-#: appIcons.js:1131
+#: appIcons.js:1177 docking.js:2530
 msgid "Unpin"
 msgstr "Çıkar"
 
-#: appIcons.js:1132
-msgid "Remove from Favorites"
-msgstr "Gözdelerden Kaldır"
-
-#: appIcons.js:1139
-msgid "Pin to Dash"
+#: appIcons.js:1183 docking.js:2530
+msgid "Pin to Dock"
 msgstr "Konsola İliştir"
 
-#: appIcons.js:1140
-msgid "Add to Favorites"
-msgstr "Gözdelere Ekle"
+#: appIcons.js:1195 appIcons.js:1221
+msgid "App Details"
+msgstr "Uygulama Ayrıntıları"
 
-#: appIcons.js:1152
-msgid "Show Details"
-msgstr "Ayrıntıları Göster"
-
-#: appIcons.js:1203
+#: appIcons.js:1265
 #, javascript-format
-msgid "Quit %d Windows"
-msgstr "%d Pencereden Çık"
+msgid "Quit %d Window"
+msgid_plural "Quit %d Windows"
+msgstr[0] "%d Pencereden Çık"
 
-#: appIcons.js:1442
-#, javascript-format
-msgid "Dash to Dock %s"
-msgstr "Dash to Dock %sı"
+#: appIcons.js:1549
+msgid "Dash to Dock"
+msgstr "Dash to Dock"
 
-#: appIcons.js:1442
+#: appIcons.js:1551
 msgid "Settings"
 msgstr "Ayarlar"
 
-#: docking.js:1263
+#: docking.js:1289
 msgid "Dash"
 msgstr "Rıhtım"
 
-#: locations.js:529
+#: locations.js:539
 msgid "Mount"
 msgstr "Bağla"
 
-#: locations.js:531
+#: locations.js:541
 msgid "Unmount"
 msgstr "Bağı Kaldır"
 
-#: locations.js:533
+#: locations.js:543
 msgid "Eject"
 msgstr "Çıkar"
 
-#: locations.js:592
+#: locations.js:603
 #, javascript-format
 msgid "Failed to mount “%s”"
 msgstr "“%s” bağlanamadı."
 
-#: locations.js:595
+#: locations.js:608
 #, javascript-format
 msgid "Failed to unmount “%s”"
 msgstr "“%s” bağı kaldırılamadı"
 
-#: locations.js:598
+#: locations.js:613
 #, javascript-format
 msgid "Failed to eject “%s”"
 msgstr "“%s” çıkartılamadı"
 
-#: locations.js:610
+#: locations.js:626
 msgid "Mount operation already in progress"
 msgstr "Bağla işlemi zaten sürüyor"
 
-#: locations.js:613
+#: locations.js:631
 msgid "Unmount operation already in progress"
 msgstr "Bağı kaldır işlemi zaten sürüyor"
 
-#: locations.js:616
+#: locations.js:636
 msgid "Eject operation already in progress"
 msgstr "Çıkart işlemi zaten sürüyor"
 
-#: locations.js:695
+#: locations.js:762
 msgid "Trash"
 msgstr "Çöp"
 
-#: locations.js:736
+#: locations.js:803
 msgid "Empty Trash"
 msgstr "Çöpü Boşalt"
 
-#: locations.js:1003
+#: locations.js:1073
 #, javascript-format
 msgid "Failed to launch “%s”"
 msgstr "“%s” başlatılamadı"
 
-#: prefs.js:242
-msgid "Show favorite applications"
-msgstr "Sık kullanılan uygulamaları göster"
-
-#: prefs.js:419
+#: prefs.js:382
 msgid "Primary monitor: "
 msgstr "Birincil ekran: "
 
-#: prefs.js:425
+#: prefs.js:388
 msgid "Secondary monitor "
 msgstr "İkincil ekran "
 
-#: prefs.js:527
+#: prefs.js:490
 msgid "Intelligent autohide customization"
 msgstr "Akıllı otomatik gizleme özelleştirmeleri"
 
-#: prefs.js:535 prefs.js:857 prefs.js:916
+#: prefs.js:498 prefs.js:816 prefs.js:875
 msgid "Reset to defaults"
 msgstr "Öntanımlı Değerlere Sıfırla"
 
-#: prefs.js:686
+#: prefs.js:649
 msgid "Managed by GNOME Multitasking's Application Switching setting."
 msgstr "GNOME Çoklu Görevʼin Uygulama Değiştirme ayarı tarafından yönetilir."
 
-#: prefs.js:849
+#: prefs.js:808
 msgid "Show dock and application numbers"
 msgstr "Rıhtımı ve uygulama sayılarını göster"
 
-#: prefs.js:908
+#: prefs.js:867
 msgid "Customize middle-click behavior"
 msgstr "Orta tık davranışını özelleştir"
 
-#: prefs.js:1005
+#: prefs.js:964
 msgid "Customize running indicators"
 msgstr "Çalışan göstergeleri özelleştir"
