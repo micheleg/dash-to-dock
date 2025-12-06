@@ -710,6 +710,14 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('hide_tooltip_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-previews-hover',
+            this._builder.get_object('preview_hover_switch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('preview-animation-style',
+            this._builder.get_object('preview_animation_combo'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-icons-emblems',
             this._builder.get_object('show_icons_emblems_switch'),
             'active',

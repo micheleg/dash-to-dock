@@ -286,6 +286,10 @@ export const DockDash = GObject.registerClass({
             Main.overview,
             'window-drag-end',
             this._onWindowDragEnd.bind(this),
+        ], [
+            Docking.DockManager.settings,
+            'changed::show-previews-hover',
+            this._togglePreviewHover.bind(this),
         ]);
 
         this.connect('destroy', this._onDestroy.bind(this));
@@ -599,6 +603,67 @@ export const DockDash = GObject.registerClass({
         });
 
         return appIcons;
+    }
+
+    _togglePreviewHover() {
+        if (Docking.DockManager.settings.showPreviewsHover)
+            this._enableHover();
+        else
+            this._disableHover();
+    }
+
+    _enableHover() {
+        const appIcons = this.getAppIcons();
+        appIcons.forEach(appIcon => {
+            appIcon.enableHover(appIcons);
+        });
+
+        // Close all preview menus when mouse leaves the dash
+        this._dashLeaveId = this.connect('leave-event', () => {
+            // Use a small timeout to allow moving from icon to menu
+            if (this._dashLeaveTimeoutId)
+                GLib.source_remove(this._dashLeaveTimeoutId);
+
+            this._dashLeaveTimeoutId = GLib.timeout_add(
+                GLib.PRIORITY_DEFAULT,
+                100,
+                () => {
+                    const appIcons = this.getAppIcons();
+                    appIcons.forEach(appIcon => {
+                        if (appIcon._previewMenu?.isOpen) {
+                            if (appIcon._previewMenu.fromHover) {
+                                // Manually close hover menus
+                                appIcon._previewMenu._boxPointer.close(BoxPointer.PopupAnimation.FADE, () => {
+                                    appIcon._previewMenu.actor.hide();
+                                    appIcon._previewMenu.isOpen = false;
+                                });
+                            } else {
+                                appIcon._previewMenu.close(BoxPointer.PopupAnimation.FADE);
+                            }
+                        }
+                    });
+                    this._dashLeaveTimeoutId = null;
+                    return GLib.SOURCE_REMOVE;
+                }
+            );
+        });
+    }
+
+    _disableHover() {
+        if (this._dashLeaveId) {
+            this.disconnect(this._dashLeaveId);
+            this._dashLeaveId = null;
+        }
+
+        if (this._dashLeaveTimeoutId) {
+            GLib.source_remove(this._dashLeaveTimeoutId);
+            this._dashLeaveTimeoutId = null;
+        }
+
+        const appIcons = this.getAppIcons();
+        appIcons.forEach(appIcon => {
+            appIcon.disableHover();
+        });
     }
 
     _itemMenuStateChanged(item, opened) {
@@ -973,6 +1038,9 @@ export const DockDash = GObject.registerClass({
         this._updateNumberOverlay();
 
         this.updateShowAppsButton();
+
+        // Connect windows previews to hover events if enabled
+        this._togglePreviewHover();
     }
 
     _updateNumberOverlay() {

@@ -796,11 +796,19 @@ const DockedDash = GObject.registerClass({
     _onMenuClosed() {
         this._ignoreHover = false;
         this._box.sync_hover();
+        this._hoverChanged();
         this._updateDashVisibility();
     }
 
     _hoverChanged() {
-        if (!this._ignoreHover) {
+        // Check if any preview menus are open
+        let hasOpenPreviewMenu = false;
+        this.dash.getAppIcons().forEach(appIcon => {
+            if (appIcon._previewMenu?.isOpen)
+                hasOpenPreviewMenu = true;
+        });
+
+        if (!this._ignoreHover && !hasOpenPreviewMenu) {
             // Skip if dock is not in autohide mode for instance because it is shown
             // by intellihide.
             if (this._autohideIsEnabled) {
