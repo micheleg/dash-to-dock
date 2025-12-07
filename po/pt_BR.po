@@ -625,3 +625,39 @@ msgstr "Mostrar tempo limite [s]"
 #: Settings.ui.h:118
 msgid "Pressure threshold"
 msgstr "Limite de pressão"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Mostrar pré-visualizações de janelas ao passar o mouse"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Estilo de animação de pré-visualização"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Instantâneo"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Desvanecer"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Deslizar"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Escalar"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Expandir"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Dissolver"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Cascata"

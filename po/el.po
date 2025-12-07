@@ -442,3 +442,39 @@ msgstr "Χρονικό όριο εμφάνισης"
 #: Settings.ui.h:90
 msgid "Pressure threshold"
 msgstr "Ελάχιστη πίεση"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Εμφάνιση προεπισκοπήσεων παραθύρων κατά την αιώρηση του ποντικιού"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Στυλ κινούμενων σχεδίων προεπισκόπησης"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Άμεσο"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Ξεθώριασμα"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Ολίσθηση"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Κλίμακα"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Επέκταση"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Διάλυση"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Καταρράκτης"

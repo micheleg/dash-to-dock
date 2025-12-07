@@ -769,3 +769,39 @@ msgstr "Orta tık davranışını özelleştir"
 #: prefs.js:1005
 msgid "Customize running indicators"
 msgstr "Çalışan göstergeleri özelleştir"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Fare üzerine geldiğinde pencere önizlemelerini göster"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Önizleme animasyon stili"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Anında"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Solma"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Kayma"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Ölçeklendirme"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Genişletme"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Çözünme"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Basamaklı"

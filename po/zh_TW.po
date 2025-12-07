@@ -668,3 +668,39 @@ msgstr "壓力閾值"
 
 #~ msgid "0.000"
 #~ msgstr "0.000"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "滑鼠懸停時顯示視窗預覽"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "預覽動畫樣式"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "瞬間"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "淡入淡出"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "滑動"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "縮放"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "展開"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "溶解"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "層疊"

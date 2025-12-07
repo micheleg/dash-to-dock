@@ -679,3 +679,39 @@ msgstr "Časovni zamik prikaza [s]"
 #: Settings.ui.h:130
 msgid "Pressure threshold"
 msgstr "Prag pritiska"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Prikaži predoglede oken ob prehodu miške"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Slog animacije predogleda"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Takojšen"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Zbledeti"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Drsenje"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Merilo"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Razširiti"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Raztopiti"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Kaskada"
