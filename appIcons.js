@@ -27,6 +27,7 @@ import {
 
 import {
     AppIconIndicators,
+    BounceAnimation,
     DBusMenuUtils,
     Docking,
     Locations,
@@ -234,6 +235,16 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     _onDestroy() {
+        // Stop any running bounce animation to ensure clip flags get restored
+        try {
+            if (this._bounceHandle) {
+                this._bounceHandle.stop();
+                this._bounceHandle = null;
+            }
+        } catch (e) {
+            logError(e);
+        }
+
         super._onDestroy();
 
         // This is necessary due to an upstream bug
@@ -483,6 +494,11 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     activate(button) {
+        // Prevent any action while bounce animation is in progress
+        if (this._bounceHandle?.isActive) {
+            return;
+        }
+
         const event = Clutter.get_current_event();
         let modifiers = event ? event.get_state() : 0;
 
@@ -860,6 +876,79 @@ const DockAbstractAppIcon = GObject.registerClass({
         for (let i = windows.length - 1; i >= 0; i--) {
             if (windows[i].get_workspace()?.index() === activeWorkspace)
                 Main.activateWindow(windows[i]);
+        }
+    }
+
+    /**
+     * animateLaunch - Override to add bounce animation
+     */
+    animateLaunch() {
+        // Prevent launching while bounce animation is in progress
+        if (this._bounceHandle?.isActive) {
+            return;
+        }
+
+        // Call parent class animateLaunch if it exists
+        if (super.animateLaunch) {
+            super.animateLaunch();
+        }
+
+        // Add our bounce animation to the icon
+        if (this.icon && this.icon._iconBin) {
+
+            // Stop any previous bounce animation for this icon
+            try {
+                if (this._bounceHandle) {
+                    this._bounceHandle.stop();
+                    this._bounceHandle = null;
+                }
+            } catch (e) {
+                logError(e);
+                this._bounceHandle = null;
+            }
+
+            // Start a new bounce and keep the handle so we can stop it later
+            if (Docking.DockManager.settings.bounceIcons) {
+                this._bounceHandle = BounceAnimation.startBounceAnimation(this.icon._iconBin);
+            }
+
+            // Add a temporary signal listener that stops the bounce once the app is RUNNING
+            const bounceLabel = Symbol('bounce-animation');
+            const stopOnRunning = () => {
+                try {
+                    if (this.app.state === Shell.AppState.RUNNING) {
+                        if (this._bounceHandle) {
+                            this._bounceHandle.stop();
+                            this._bounceHandle = null;
+                        }
+                        // remove this listener
+                        this._signalsHandler.removeWithLabel(bounceLabel);
+                    }
+                } catch (e) {
+                    logError(e);
+                    // Clean up on error
+                    if (this._bounceHandle) {
+                        this._bounceHandle = null;
+                    }
+                }
+            };
+            try {
+                this._signalsHandler.addWithLabel(bounceLabel, this.app, 'notify::state', stopOnRunning);
+            } catch (e) {
+                logError(e);
+                // Fallback: if addWithLabel fails, use generic add
+                try {
+                    this._signalsHandler.add(this.app, 'notify::state', stopOnRunning);
+                } catch (e2) {
+                    logError(e2);
+                    // If both attempts fail, clean up the bounce handle
+                    if (this._bounceHandle) {
+                        this._bounceHandle.stop();
+                        this._bounceHandle = null;
+                    }
+                }
+            }
+        } else {
         }
     }
 
