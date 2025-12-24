@@ -454,6 +454,20 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             cancellable,
         });
 
+        // Cache volume identifiers for safe lookup after disposal.
+        // This allows us to look up the volume from VolumeMonitor
+        // instead of holding a direct reference that can become invalid.
+        this._volumeIdentifiers = {
+            uuid: volume.get_uuid(),
+            device: volume.get_identifier('unix-device'),
+            name: volume.get_name(),
+        };
+        // Cache the ID string for use in error handlers where we can't
+        // safely access the volume.
+        this._cachedId = this._volumeIdentifiers.uuid
+            ? 'mountable-volume:%s'.format(this._volumeIdentifiers.uuid)
+            : super.vfunc_get_id();
+
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         const updateAndMonitor = () => {
@@ -463,7 +477,8 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         updateAndMonitor();
         this._mountChanged = this.connect('notify::mount', updateAndMonitor);
 
-        if (!this.mount && this.volume.get_identifier('class') === 'network') {
+        const safeVolume = this._safeVolume;
+        if (!this.mount && safeVolume?.get_identifier?.('class') === 'network') {
             // For some devices the mount point isn't advertised promptly
             // even if it's already existing, and there's no signaling about
             this._lazyUpdater = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
@@ -482,6 +497,63 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         return this._currentAction;
     }
 
+    /**
+     * Safe accessor for volume that looks up from VolumeMonitor by cached identifiers.
+     * Returns null if volume is no longer available (removed/disposed).
+     * This avoids holding a direct reference that can become invalid when gvfs
+     * disposes the GProxyVolume object.
+     */
+    get _safeVolume() {
+        // If identifiers were cleared (volume removed), return null
+        if (!this._volumeIdentifiers)
+            return null;
+
+        const {uuid, device} = this._volumeIdentifiers;
+
+        // No identifiers to look up by
+        if (!uuid && !device)
+            return null;
+
+        const monitor = Gio.VolumeMonitor.get();
+        const volumes = monitor.get_volumes();
+
+        // Try to find by UUID first (most reliable)
+        if (uuid) {
+            const byUuid = volumes.find(v => v.get_uuid() === uuid);
+            if (byUuid)
+                return byUuid;
+        }
+
+        // Fall back to device path
+        if (device) {
+            const byDevice = volumes.find(v =>
+                v.get_identifier('unix-device') === device);
+            if (byDevice)
+                return byDevice;
+        }
+
+        // Volume not found in monitor - it's been removed
+        return null;
+    }
+
+    /**
+     * Safe accessor for mount. Just returns the stored mount if non-null.
+     * Mount is managed separately and nulled out on unmount.
+     */
+    get _safeMount() {
+        return this.mount ?? null;
+    }
+
+    /**
+     * Called when the volume is being removed. Clears cached identifiers
+     * so subsequent lookups will return null instead of finding a stale volume.
+     */
+    invalidateVolume() {
+        this._volumeIdentifiers = null;
+        this._signalsHandler.destroy();
+        this.mount = null;
+    }
+
     destroy() {
         if (this._lazyUpdater) {
             GLib.source_remove(this._lazyUpdater);
@@ -495,19 +567,24 @@ class MountableVolumeAppInfo extends LocationAppInfo {
     }
 
     vfunc_dup() {
+        const safeVolume = this._safeVolume;
+        if (!safeVolume)
+            return null;
         return new MountableVolumeAppInfo({
-            volume: this.volume,
+            volume: safeVolume,
             cancellable: this.cancellable,
         });
     }
 
     vfunc_get_id() {
-        const uuid = this.mount?.get_uuid() ?? this.volume.get_uuid();
-        return uuid ? 'mountable-volume:%s'.format(uuid) : super.vfunc_get_id();
+        // Use cached ID to avoid accessing potentially disposed volume
+        return this._cachedId ?? super.vfunc_get_id();
     }
 
     vfunc_equal(other) {
-        if (this.volume === other?.volume && this.mount === other?.mount)
+        const safeVolume = this._safeVolume;
+        const otherVolume = other?._safeVolume;
+        if (safeVolume && safeVolume === otherVolume && this.mount === other?.mount)
             return true;
 
         return this.get_id() === other?.get_id();
@@ -515,20 +592,24 @@ class MountableVolumeAppInfo extends LocationAppInfo {
 
     list_actions() {
         const actions = [];
-        const {mount} = this;
+        const safeMount = this._safeMount;
+        const safeVolume = this._safeVolume;
 
-        if (mount) {
-            if (this.mount.can_unmount())
+        if (safeMount) {
+            if (safeMount.can_unmount?.())
                 actions.push(RemovableAction.UNMOUNT);
-            if (this.mount.can_eject())
+            if (safeMount.can_eject?.())
                 actions.push(RemovableAction.EJECT);
 
             return actions;
         }
 
-        if (this.volume.can_mount())
+        if (!safeVolume)
+            return actions;
+
+        if (safeVolume.can_mount?.())
             actions.push(RemovableAction.MOUNT);
-        if (this.volume.can_eject())
+        if (safeVolume.can_eject?.())
             actions.push(RemovableAction.EJECT);
 
         return actions;
@@ -556,14 +637,21 @@ class MountableVolumeAppInfo extends LocationAppInfo {
     }
 
     _update() {
-        this.mount = this.volume.get_mount();
+        const safeVolume = this._safeVolume;
+        if (!safeVolume) {
+            // Volume no longer available, skip update
+            return;
+        }
 
-        const removable = this.mount ?? this.volume;
-        this.name = removable.get_name();
-        this.icon = removable.get_icon();
+        this.mount = safeVolume.get_mount?.();
 
-        this.location = this.mount?.get_default_location() ??
-            this.volume.get_activation_root();
+        const safeMount = this._safeMount;
+        const removable = safeMount ?? safeVolume;
+        this.name = removable.get_name?.() ?? this._volumeIdentifiers?.name ?? 'Unknown';
+        this.icon = removable.get_icon?.();
+
+        this.location = safeMount?.get_default_location?.() ??
+            safeVolume.get_activation_root?.();
 
         this._updateLocationIcon({custom: true});
     }
@@ -571,12 +659,18 @@ class MountableVolumeAppInfo extends LocationAppInfo {
     _monitorChanges() {
         this._signalsHandler.destroy();
 
-        const removable = this.mount ?? this.volume;
+        const safeMount = this._safeMount;
+        const safeVolume = this._safeVolume;
+        const removable = safeMount ?? safeVolume;
+
+        if (!removable)
+            return;
+
         this._signalsHandler.add(removable, 'changed', () => this._update());
 
-        if (this.mount) {
-            this._signalsHandler.add(this.mount, 'pre-unmount', () => this._update());
-            this._signalsHandler.add(this.mount, 'unmounted', () => this._update());
+        if (safeMount) {
+            this._signalsHandler.add(safeMount, 'pre-unmount', () => this._update());
+            this._signalsHandler.add(safeMount, 'unmounted', () => this._update());
         }
     }
 
@@ -588,38 +682,38 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             await this.launchAction(RemovableAction.MOUNT);
             if (!this.mount) {
                 throw new Error('No mounted location to open for %s'.format(
-                    this.get_id()));
+                    this._cachedId));
             }
 
             return super.vfunc_launch(files, context);
         } catch (e) {
-            logError(e, 'Mount and launch %s'.format(this.get_id()));
+            // Use cached ID to avoid accessing potentially disposed volume
+            logError(e, 'Mount and launch %s'.format(this._cachedId));
             return false;
         }
     }
 
     _notifyActionError(action, message) {
+        // Use cached name to avoid accessing potentially disposed volume
+        const name = this.name ?? this._volumeIdentifiers?.name ?? 'device';
         switch (action) {
         case RemovableAction.MOUNT:
-            global.notify_error(__('Failed to mount “%s”'.format(
-                this.get_name())), message);
+            global.notify_error(__('Failed to mount "%s"'.format(name)), message);
             break;
 
         case RemovableAction.UNMOUNT:
-            global.notify_error(__('Failed to unmount “%s”'.format(
-                this.get_name())), message);
+            global.notify_error(__('Failed to unmount "%s"'.format(name)), message);
             break;
 
         case RemovableAction.EJECT:
-            global.notify_error(__('Failed to eject “%s”'.format(
-                this.get_name())), message);
+            global.notify_error(__('Failed to eject "%s"'.format(name)), message);
             break;
         }
     }
 
     async launchAction(action) {
         if (!this.list_actions().includes(action))
-            throw new Error('Action %s is not supported by %s', action, this);
+            throw new Error('Action %s is not supported by %s', action, this._cachedId);
 
         switch (this._currentAction) {
         case RemovableAction.MOUNT:
@@ -640,23 +734,34 @@ class MountableVolumeAppInfo extends LocationAppInfo {
         default:
             if (this._currentAction) {
                 throw new Error('Another action %s is being performed in %s'.format(
-                    this._currentAction, this));
+                    this._currentAction, this._cachedId));
             }
+        }
+
+        const safeMount = this._safeMount;
+        const safeVolume = this._safeVolume;
+        const removable = safeMount ?? safeVolume;
+
+        if (!removable) {
+            throw new Error('Volume/mount no longer available for action %s'.format(action));
         }
 
         this._currentAction = action;
         this.notify('busy');
-        const removable = this.mount ?? this.volume;
         const operation = new ShellMountOperation.ShellMountOperation(removable);
         try {
             switch (action) {
             case RemovableAction.MOUNT:
-                await this.volume.mount(Gio.MountMountFlags.NONE, operation.mountOp,
+                if (!safeVolume)
+                    throw new Error('Volume no longer available for mount');
+                await safeVolume.mount(Gio.MountMountFlags.NONE, operation.mountOp,
                     this.cancellable);
                 return true;
 
             case RemovableAction.UNMOUNT:
-                await this.mount.unmount_with_operation(Gio.MountUnmountFlags.FORCE,
+                if (!safeMount)
+                    throw new Error('Mount no longer available for unmount');
+                await safeMount.unmount_with_operation(Gio.MountUnmountFlags.FORCE,
                     operation.mountOp, this.cancellable);
                 return true;
 
@@ -666,8 +771,9 @@ class MountableVolumeAppInfo extends LocationAppInfo {
                 return true;
 
             default:
-                logError(new Error(), 'No action %s on removable %s'.format(action,
-                    removable.get_name()));
+                // Use cached name for logging
+                const name = this.name ?? this._volumeIdentifiers?.name ?? 'unknown';
+                logError(new Error(), 'No action %s on removable %s'.format(action, name));
                 return false;
             }
         } catch (e) {
@@ -688,8 +794,9 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             }
 
             if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
-                logError(e, 'Impossible to %s removable %s'.format(action,
-                    removable.get_name()));
+                // Use cached name for error logging
+                const name = this.name ?? this._volumeIdentifiers?.name ?? 'unknown';
+                logError(e, 'Impossible to %s removable %s'.format(action, name));
             }
 
             return false;
@@ -1475,8 +1582,11 @@ export class Removables {
             appInfo.volume === volume);
         if (volumeIndex !== -1) {
             const [volumeApp] = this._volumeApps.splice(volumeIndex, 1);
-            // We don't care about cancelling the ongoing operations from now on.
-            volumeApp.appInfo.cancellable = null;
+            // Invalidate volume reference FIRST to prevent any subsequent access
+            // to the potentially disposed GProxyVolume object
+            volumeApp.appInfo.invalidateVolume();
+            // Cancel ongoing operations
+            volumeApp.appInfo.cancellable?.cancel();
             volumeApp.destroy();
             this.emit('changed');
         }
