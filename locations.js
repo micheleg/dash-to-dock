@@ -2,7 +2,6 @@
 
 import {
     Gio,
-    GioUnix,
     GLib,
     GObject,
     Shell,
@@ -111,7 +110,7 @@ export const LocationAppInfo = GObject.registerClass({
             GObject.ParamFlags.READWRITE,
             Gio.Cancellable.$gtype),
     },
-}, class LocationAppInfo extends GioUnix.DesktopAppInfo {
+}, class LocationAppInfo extends Gio.DesktopAppInfo {
     static get GJS_BINARY_PATH() {
         if (!this._gjsBinaryPath)
             this._gjsBinaryPath = GLib.find_program_in_path('gjs');
