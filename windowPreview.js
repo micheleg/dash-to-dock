@@ -558,6 +558,16 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
                         this._previewBox.destroy();
                         this._previewBox = null;
                     }
+
+                    // Force dock autohide check when preview closes
+                    // This ensures the dock hides when the mouse moves from preview to window area
+                    Docking.DockManager.allDocks.forEach(dock => {
+                        if (dock._intellihideIsEnabled && dock._intellihide) {
+                            debugLog(`[PREVIEW] hoverClose() triggering intellihide update for dock on monitor ${dock.monitorIndex}`);
+                            dock._intellihide.forceUpdate();
+                        }
+                    });
+
                     debugLog(`[PREVIEW] hoverClose() closed hover menu for ${this._app.get_name()}, emitting menu-closed`);
                     this.emit('menu-closed');
                 });
