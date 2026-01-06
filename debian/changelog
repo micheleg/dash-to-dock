@@ -1,3 +1,16 @@
+gnome-shell-extension-ubuntu-dock (102ubuntu2) resolute; urgency=medium
+
+  [ Daniel van Vugt ]
+  * metadata.json: Declare support for GNOME 50
+
+  [ Peter Gao ]
+  * Update zh_CN.po, 修正笔误
+
+  [ Marco Trevisan (Treviño) ]
+  * locations: Use DesktopAppinfo from GioUnix (LP: #2125719)
+
+ -- Daniel van Vugt <daniel.van.vugt@canonical.com>  Tue, 06 Jan 2026 17:32:06 +0800
+
 gnome-shell-extension-ubuntu-dock (102ubuntu1) questing; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
