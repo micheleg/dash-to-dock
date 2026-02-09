@@ -440,8 +440,8 @@ msgid ""
 "When enabled application icons will show notification counters and progress-"
 "bars (if Unity API is used)."
 msgstr ""
-"Si activé, les icônes d’application afficheront des compteurs de "
-"notification et des barres de progression (si l’API Unity est utilsée)."
+"Si activé, les icônes d'application afficheront des compteurs de "
+"notification et des barres de progression (si l'API Unity est utilisée)."
 
 #: Settings.ui.h:63
 msgid "Show the number of unread notifications"
