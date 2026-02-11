@@ -1096,7 +1096,7 @@ export class UnityIndicator extends IndicatorBase {
     }
 
     setUrgent(urgent) {
-        if (urgent || this._isUrgent !== undefined)
+        if (this._source && (urgent || this._isUrgent !== undefined))
             this._source.urgent = urgent;
 
         if (urgent)
@@ -1106,7 +1106,8 @@ export class UnityIndicator extends IndicatorBase {
     }
 
     setUpdating(updating) {
-        this._source.updating = updating;
+        if (this._source)
+            this._source.updating = updating;
     }
 
     _updateIconStyle() {
