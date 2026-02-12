@@ -453,11 +453,15 @@ const DockedDash = GObject.registerClass({
 
     _trackDock() {
         if (DockManager.settings.dockFixed) {
+            if (this.get_parent())
+                Main.layoutManager.removeChrome(this);
             Main.layoutManager.addChrome(this, {
                 trackFullscreen: true,
                 affectsStruts: true,
             });
         } else {
+            if (this.get_parent())
+                Main.layoutManager.removeChrome(this);
             Main.layoutManager.addChrome(this);
         }
     }
