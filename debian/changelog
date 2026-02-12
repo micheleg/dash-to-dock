@@ -1,3 +1,31 @@
+gnome-shell-extension-ubuntu-dock (103ubuntu1) UNRELEASED; urgency=medium
+
+  [ github-actions[bot] ]
+  * fix: correct French translation typo in Unity API description
+
+  [ Pacu ]
+  * po: add Bulgarian translation
+
+  [ Pixelcrafter ]
+  * Fix Autohide Location calculation bug (Issue #2413)
+
+  [ Sabri Ünal ]
+  * Update Turkish translation
+
+  [ Łasačka ]
+  * Add Belarusian translation
+
+  [ Benjamin Loison ]
+  * Use keyboard formatting in `README.md`
+
+  [ Marco Trevisan (Treviño) ]
+  * metadata: Release dash-to-dock v103
+  * appIcons: Do not handle removal of PopupManager.ignoreRelease()
+  * docking: Correctly handle add/removing a dock
+  * dash, appIcons: Ensure Dash const values are defined
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 12 Feb 2026 06:01:10 +0100
+
 gnome-shell-extension-ubuntu-dock (102ubuntu2) resolute; urgency=medium
 
   [ Daniel van Vugt ]
