@@ -27,10 +27,10 @@ import {
     Utils,
 } from './imports.js';
 
-// module "Dash" does not export DASH_ANIMATION_TIME
+// module "Dash" did not export DASH_ANIMATION_TIME in old versions
 // so we just define it like it is defined in Dash;
 // taken from https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/main/js/ui/dash.js
-const DASH_ANIMATION_TIME = 200;
+const DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME ?? 200;
 const DASH_VISIBILITY_TIMEOUT = 3;
 
 const Labels = Object.freeze({
