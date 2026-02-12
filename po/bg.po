@@ -1,0 +1,281 @@
+# dash-to-dock Bulgarian translation
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: dash-to-dock\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-08-30 10:20+0300\n"
+"PO-Revision-Date: 2024-08-30 10:34+0300\n"
+"Last-Translator: \n"
+"Language-Team: Bulgarian\n"
+"Language: bg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 46.1\n"
+
+#: prefs.js:382
+msgid "Primary monitor: "
+msgstr "Основен монитор: "
+
+#: prefs.js:388
+msgid "Secondary monitor "
+msgstr "Вторичен монитор "
+
+#: prefs.js:434 Settings.ui.h:32
+msgid "Right"
+msgstr "Отдясно"
+
+#: prefs.js:435 Settings.ui.h:29
+msgid "Left"
+msgstr "Отляво"
+
+#: prefs.js:490
+msgid "Intelligent autohide customization"
+msgstr "Настройки за интелигентно скриване"
+
+#: prefs.js:498 prefs.js:816 prefs.js:875
+msgid "Reset to defaults"
+msgstr "Връщане към настройките по подразбиране"
+
+#: prefs.js:649
+msgid "Managed by GNOME Multitasking's Application Switching setting."
+msgstr "Управлява се от настройката за превключване на приложения в „Многозадачност“ на GNOME."
+
+#: prefs.js:808
+msgid "Show dock and application numbers"
+msgstr "Показване на номерата на приложенията"
+
+#: prefs.js:867
+msgid "Customize middle-click behavior"
+msgstr "Настройка на действието при среден клик"
+
+#: prefs.js:964
+msgid "Customize running indicators"
+msgstr "Настройка на индикаторите за работещи приложения"
+
+#: prefs.js:1079 Settings.ui.h:96
+msgid "Customize opacity"
+msgstr "Настройка на прозрачността"
+
+#: docking.js:1273
+msgid "Dash"
+msgstr "Панел"
+
+#: docking.js:2514 appIcons.js:1172
+msgid "Unpin"
+msgstr "Откачи"
+
+#: docking.js:2514 appIcons.js:1178
+msgid "Pin to Dock"
+msgstr "Закрепи в дока"
+
+#: appIcons.js:754 appIconsDecorator.js:105
+#, javascript-format
+msgid "%s is currently updating, cannot launch it!"
+msgstr "%s в момента се актуализира и не може да бъде стартирано!"
+
+#: appIcons.js:1082
+#, javascript-format
+msgid "%s is being updated..."
+msgstr "%s се актуализира..."
+
+#: appIcons.js:1093
+msgid "All Windows"
+msgstr "Всички прозорци"
+
+#: appIcons.js:1105
+msgid "Open Windows"
+msgstr "Отворени прозорци"
+
+#: appIcons.js:1125
+msgid "New Window"
+msgstr "Нов прозорец"
+
+#: appIcons.js:1144
+msgid "Launch using Integrated Graphics Card"
+msgstr "Стартирай с интегрираната видеокарта"
+
+#: appIcons.js:1145
+msgid "Launch using Discrete Graphics Card"
+msgstr "Стартирай с отделната видеокарта"
+
+#: appIcons.js:1189
+msgid "App Details"
+msgstr "Информация за приложението"
+
+#: appIcons.js:1226 appIcons.js:1238 Settings.ui.h:14
+msgid "Quit"
+msgstr "Изход"
+
+#: appIcons.js:1241
+#, javascript-format
+msgid "Quit %d Window"
+msgid_plural "Quit %d Windows"
+msgstr[0] "Затвори %d прозорец"
+msgstr[1] "Затвори %d прозореца"
+
+#: appIcons.js:1489
+#, javascript-format
+msgid "Dash to Dock %s"
+msgstr "Dash to Dock %s"
+
+#: appIcons.js:1489
+msgid "Settings"
+msgstr "Настройки"
+
+#: locations.js:533
+msgid "Mount"
+msgstr "Монтиране"
+
+#: locations.js:535
+msgid "Unmount"
+msgstr "Демонтиране"
+
+#: locations.js:537
+msgid "Eject"
+msgstr "Изваждане"
+
+#: locations.js:596
+#, javascript-format
+msgid "Failed to mount “%s”"
+msgstr "Неуспешно монтиране на „%s“"
+
+#: locations.js:599
+#, javascript-format
+msgid "Failed to unmount “%s”"
+msgstr "Неуспешно демонтиране на „%s“"
+
+#: locations.js:602
+#, javascript-format
+msgid "Failed to eject “%s”"
+msgstr "Неуспешно изваждане на „%s“"
+
+#: locations.js:614
+msgid "Mount operation already in progress"
+msgstr "Операцията по монтиране вече е в ход"
+
+#: locations.js:617
+msgid "Unmount operation already in progress"
+msgstr "Операцията по демонтиране вече е в ход"
+
+#: locations.js:620
+msgid "Eject operation already in progress"
+msgstr "Операцията по изваждане вече е в ход"
+
+#: locations.js:738
+msgid "Trash"
+msgstr "Кошче"
+
+#: locations.js:779
+msgid "Empty Trash"
+msgstr "Изпразни кошчето"
+
+#: locations.js:1049
+#, javascript-format
+msgid "Failed to launch “%s”"
+msgstr "Неуспешно стартиране на „%s“"
+
+#~ msgid "Show favorite applications"
+#~ msgstr "Показване на любимите приложения"
+
+#~ msgid "Adaptive"
+#~ msgstr "Адаптивна"
+
+#~ msgid "Show a dot for each windows of the application."
+#~ msgstr "Показвай точка за всеки прозорец на приложението."
+
+#~ msgid ""
+#~ "With fixed icon size, only the edge of the dock and the <i>Show "
+#~ "Applications</i> icon are active."
+#~ msgstr ""
+#~ "При фиксиран размер на иконите активни са само ръбът на дока и иконата "
+#~ "<i>Покажи приложения</i>."
+
+#~ msgid "Switch workspace by scrolling on the dock"
+#~ msgstr "Смяна на работното пространство чрез превъртане върху дока"
+
+#~ msgid "Only consider windows of the focused application"
+#~ msgstr "Вземане предвид само прозорците на фокусираното приложение"
+
+#~ msgid "Dock Position"
+#~ msgstr "Позиция на дока"
+
+#~ msgid "Dock is fixed and always visible"
+#~ msgstr "Докът е фиксиран и винаги видим"
+
+#~ msgid "Show delay [ms]"
+#~ msgstr "Забавяне при показване [мс]"
+
+#~ msgid "Hide delay [ms]"
+#~ msgstr "Забавяне при скриване [мс]"
+
+#~ msgid "Application based intellihide"
+#~ msgstr "Интелигентно скриване според приложението"
+
+#~ msgid "Show the dock on following monitor (if attached)"
+#~ msgstr "Показвай дока на следния монитор (ако е свързан)"
+
+#~ msgid "Primary (default)"
+#~ msgstr "Основен (по подразбиране)"
+
+#~ msgid "Max height"
+#~ msgstr "Максимална височина"
+
+#~ msgid "Expand (experimental and buggy)"
+#~ msgstr "Разширяване (експериментално и нестабилно)"
+
+#~ msgid "Maximum icon size"
+#~ msgstr "Максимален размер на иконите"
+
+#~ msgid "Optional features"
+#~ msgstr "Допълнителни функции"
+
+#~ msgid "Deadtime between each workspace switching [ms]"
+#~ msgstr "Пауза между смяната на работни пространства [мс]"
+
+#~ msgid "Only a 1px wide area close to the screen edge is active"
+#~ msgstr "Активна е само област с ширина 1 пиксел до ръба на екрана"
+
+#~ msgid "All the area of the dock is active"
+#~ msgstr "Цялата област на дока е активна"
+
+#~ msgid "Customize actions on mouse click"
+#~ msgstr "Настрой действията при щракване с мишката"
+
+#~ msgid "Action on clicking on running app"
+#~ msgstr "Действие при щракване върху работещо приложение"
+
+#~ msgid "Minimize window on shift+click (double click for all app windows)"
+#~ msgstr ""
+#~ "Минимизирай прозореца при Shift+клик (двойният клик минимизира всички "
+#~ "прозорци на приложението)"
+
+#~ msgid "Make message tray insensitive to mouse events"
+#~ msgstr "Направи областта за съобщения нечувствителна към мишката"
+
+#~ msgid "Appearence and Themes"
+#~ msgstr "Външен вид и теми"
+
+#~ msgid ""
+#~ "A customized theme is built in the extension. This is meant to work with "
+#~ "the default Adwaita theme: the dash is shrunk to save space, its "
+#~ "background transparency reduced, and custom indicators for the number of "
+#~ "windows of each application are added."
+#~ msgstr ""
+#~ "Разширението включва персонализирана тема, предназначена за работа с "
+#~ "темата по подразбиране Adwaita: докът е свит за пестене на пространство, "
+#~ "прозрачността на фона е намалена и са добавени индикатори за броя прозорци "
+#~ "на всяко приложение."
+
+#~ msgid ""
+#~ "Alternatively, for a better integration with custom themes, each "
+#~ "customization can be applied indipendently"
+#~ msgstr ""
+#~ "Алтернативно за по-добра интеграция с персонализирани теми всяка "
+#~ "настройка може да бъде прилагана независимо"
+
+#~ msgid "Shrink the dash size by reducing padding"
+#~ msgstr "Свий размера на дока чрез намаляване на отстоянията"
+

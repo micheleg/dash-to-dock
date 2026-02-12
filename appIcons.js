@@ -72,6 +72,9 @@ const scrollAction = Object.freeze({
     SWITCH_WORKSPACE: 2,
 });
 
+// module "Dash" did not export DASH_ITEM_LABEL_SHOW_TIME, so let's define it.
+const DASH_ITEM_LABEL_SHOW_TIME = Dash.DASH_ITEM_LABEL_SHOW_TIME ?? 150;
+
 let recentlyClickedAppLoopId = 0;
 let recentlyClickedApp = null;
 let recentlyClickedAppWindows = null;
@@ -488,7 +491,8 @@ const DockAbstractAppIcon = GObject.registerClass({
 
         this.set_hover(true);
         this._menu.popup();
-        this._menuManager.ignoreRelease();
+        // Removed in GNOME 50.
+        this._menuManager.ignoreRelease?.();
         this.emit('sync-tooltip');
 
         return false;
@@ -1580,7 +1584,8 @@ export const DockShowAppsIcon = GObject.registerClass({
 
         this.toggleButton.set_hover(true);
         this._menu.popup();
-        this._menuManager.ignoreRelease();
+        // Removed in GNOME 50.
+        this._menuManager.ignoreRelease?.();
         this.emit('sync-tooltip');
 
         return false;
@@ -1672,7 +1677,7 @@ export function itemShowLabel() {
     this.label.set_position(x, y);
     this.label.ease({
         opacity: 255,
-        duration: Dash.DASH_ITEM_LABEL_SHOW_TIME,
+        duration: DASH_ITEM_LABEL_SHOW_TIME,
         mode: Clutter.AnimationMode.EASE_OUT_QUAD,
     });
     /* eslint-enable no-invalid-this */
