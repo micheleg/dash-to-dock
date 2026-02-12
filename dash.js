@@ -803,7 +803,7 @@ export const DockDash = GObject.registerClass({
 
             // Second: add the new apps
             running.forEach(app => {
-                if (!showFavorites || !(app.get_id() in favorites))
+                if ((!showFavorites || !(app.get_id() in favorites)) && !(app.get_windows()[0].get_title() === 'wl-clipboard'))
                     newApps.push(app);
             });
         }
