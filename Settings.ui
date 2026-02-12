@@ -779,6 +779,46 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkListBoxRow" id="dock_margin_size_listboxrow">
+                        <property name="child">
+                          <object class="GtkGrid" id="dock_margin_size_grid">
+                            <property name="can_focus">0</property>
+                            <property name="margin_start">12</property>
+                            <property name="margin_end">12</property>
+                            <property name="margin_top">12</property>
+                            <property name="margin_bottom">12</property>
+                            <property name="column_spacing">32</property>
+                            <child>
+                              <object class="GtkLabel" id="dock_margin_size_label">
+                                <property name="can_focus">0</property>
+                                <property name="label" translatable="yes">Dock margin size</property>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">0</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkScale" id="dock_margin_size_scale">
+                                <property name="draw-value">1</property>
+                                <property name="valign">baseline</property>
+                                <property name="hexpand">1</property>
+                                <property name="adjustment">dock_margin_size_adjustment</property>
+                                <property name="round_digits">0</property>
+                                <property name="digits">0</property>
+                                <property name="value_pos">right</property>
+                                <signal name="value-changed" handler="dock_margin_size_value_changed_cb" />
+                                <layout>
+                                  <property name="column">1</property>
+                                  <property name="row">0</property>
+                                </layout>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkListBoxRow" id="icon_size_listboxrow">
                         <property name="child">
                           <object class="GtkGrid" id="icon_size_grid">
@@ -2401,6 +2441,12 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
       </object>
     </child>
   </object>
+  <object class="GtkAdjustment" id="dock_margin_size_adjustment">
+  <property name="lower">0</property>
+  <property name="upper">300</property>
+  <property name="step-increment">1</property>
+  <property name="page-increment">10</property>
+</object>
   <object class="GtkAdjustment" id="max_opacity_adjustement">
     <property name="upper">1</property>
     <property name="step-increment">0.01</property>
