@@ -913,6 +913,8 @@ const DockAbstractAppIcon = GObject.registerClass({
         const window = recentlyClickedAppWindows[index];
 
         Main.activateWindow(window);
+        if (window.get_monitor() != this.monitorIndex)
+            window.move_to_monitor(this.monitorIndex);
     }
 
     _resetRecentlyClickedApp() {
