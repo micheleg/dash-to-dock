@@ -476,7 +476,8 @@ const DockAbstractAppIcon = GObject.registerClass({
 
         this.set_hover(true);
         this._menu.popup();
-        this._menuManager.ignoreRelease();
+        // Removed in GNOME 50.
+        this._menuManager.ignoreRelease?.();
         this.emit('sync-tooltip');
 
         return false;
@@ -1531,7 +1532,8 @@ export const DockShowAppsIcon = GObject.registerClass({
 
         this.toggleButton.set_hover(true);
         this._menu.popup();
-        this._menuManager.ignoreRelease();
+        // Removed in GNOME 50.
+        this._menuManager.ignoreRelease?.();
         this.emit('sync-tooltip');
 
         return false;
