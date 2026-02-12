@@ -579,6 +579,11 @@ const DockedDash = GObject.registerClass({
             Utils.SignalsHandlerFlags.CONNECT_AFTER,
         ], [
             settings,
+            'changed::bounce-icons',
+            () => this.dash.resetAppIcons(),
+            Utils.SignalsHandlerFlags.CONNECT_AFTER,
+        ], [
+            settings,
             'changed::show-running',
             () => {
                 this.dash.resetAppIcons();
