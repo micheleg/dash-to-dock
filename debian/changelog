@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (103ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (103ubuntu1) resolute; urgency=medium
 
   [ github-actions[bot] ]
   * fix: correct French translation typo in Unity API description
@@ -24,7 +24,7 @@ gnome-shell-extension-ubuntu-dock (103ubuntu1) UNRELEASED; urgency=medium
   * docking: Correctly handle add/removing a dock
   * dash, appIcons: Ensure Dash const values are defined
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 12 Feb 2026 06:01:10 +0100
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 12 Feb 2026 06:01:57 +0100
 
 gnome-shell-extension-ubuntu-dock (102ubuntu2) resolute; urgency=medium
 
