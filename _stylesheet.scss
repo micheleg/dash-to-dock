@@ -241,21 +241,6 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
             }
         }
 
-        &.fixed {
-            #dash {
-                .dash-background {
-                    margin-#{opposite($side)}: $fixed_inner_margin;
-                }
-
-                .dash-item-container {
-
-                    .app-well-app,
-                    .show-apps {
-                        padding-#{opposite($side)}: $padding + $fixed_inner_margin;
-                    }
-                }
-            }
-        }
     }
 }
 
