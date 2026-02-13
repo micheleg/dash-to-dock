@@ -241,6 +241,12 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
             }
         }
 
+        &.fixed {
+            #dash {
+                margin-#{opposite($side)}: $fixed_inner_margin;
+            }
+        }
+
     }
 }
 
