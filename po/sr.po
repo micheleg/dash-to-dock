@@ -468,3 +468,39 @@ msgstr "Праг притиска"
 
 #~ msgid "Only consider windows of the focused application"
 #~ msgstr "Разматрај само прозор фокусираног програма"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Прикажи прегледе прозора при преласку мишем"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Стил анимације прегледа"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Тренутно"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Бледи"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Клизање"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Размера"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Проширење"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Растварање"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Каскада"

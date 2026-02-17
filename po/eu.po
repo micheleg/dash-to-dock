@@ -541,3 +541,39 @@ msgstr "Erakusteko denbora-muga (s)"
 #: Settings.ui.h:109
 msgid "Pressure threshold"
 msgstr "Presio-atalasea"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Erakutsi leiho-aurrebistak saguaren gainean"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Aurrebistaren animazio-estiloa"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Berehala"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Iraungitzea"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Irristatu"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Eskala"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Zabaldu"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Disolbatu"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Kaskada"

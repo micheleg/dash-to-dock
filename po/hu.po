@@ -673,3 +673,39 @@ msgstr "Megjelenítési időkorlát (mp)"
 #: Settings.ui.h:130
 msgid "Pressure threshold"
 msgstr "Nyomás küszöbszintje"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Ablak-előnézetek megjelenítése egérmutatóval"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Előnézet animáció stílusa"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Azonnali"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Elhalványulás"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Csúszás"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Méretezés"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Kiterjesztés"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Feloldás"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Lépcsőzetes"

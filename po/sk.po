@@ -444,3 +444,39 @@ msgstr "Medza tlaku"
 
 #~ msgid "Switch workspace by scrolling on the dock"
 #~ msgstr "Prepínať pracovné priestory rolovaním na doku"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Zobraziť náhľady okien pri prejdení myšou"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Štýl animácie náhľadu"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Okamžite"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Zoslabnúť"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Posunúť"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Mierka"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Rozbaliť"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Rozpustiť"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Kaskáda"

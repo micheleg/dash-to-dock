@@ -582,3 +582,39 @@ msgstr "Soglia pressione"
 
 #~ msgid "Adaptive"
 #~ msgstr "Adattivo"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Mostra anteprime finestre al passaggio del mouse"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Stile animazione anteprima"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Istantaneo"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Dissolvenza"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Scorrimento"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Scala"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Espansione"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Dissoluzione"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Cascata"

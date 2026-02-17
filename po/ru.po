@@ -837,3 +837,39 @@ msgstr "Порог давления"
 
 #~ msgid "Shrink the dash size by reducing padding"
 #~ msgstr "Уменьшить Док за счёт промежутков"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Показывать превью окон при наведении мыши"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Стиль анимации превью"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Мгновенно"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Затухание"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Скольжение"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Масштаб"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Расширение"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Растворение"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Каскад"

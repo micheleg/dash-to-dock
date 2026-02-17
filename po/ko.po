@@ -713,3 +713,39 @@ msgstr "타임아웃 표시 (초)"
 #: Settings.ui.h:130
 msgid "Pressure threshold"
 msgstr "압력 임계값"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "마우스를 올렸을 때 창 미리보기 표시"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "미리보기 애니메이션 스타일"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "즉시"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "페이드"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "슬라이드"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "크기 조정"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "확장"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "용해"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "계단식"
