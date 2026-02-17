@@ -27,7 +27,6 @@ import {
     Utils,
 } from './imports.js';
 
-const PREVIEW_MAX_WIDTH = 250;
 const PREVIEW_MAX_HEIGHT = 150;
 
 const PREVIEW_ANIMATION_DURATION = 250;
@@ -41,9 +40,6 @@ const MENU_MARGINS = 10;
  */
 const DEBUG_ENABLED = false;  // Set to true only for debugging
 const LOG_FILE = `/tmp/dash-to-dock-${new Date().toISOString().split('T')[0]}.log`;
-
-// Cache file handle for async writing
-let logFileStream = null;
 
 function debugLog(message) {
     if (!DEBUG_ENABLED)
@@ -61,7 +57,7 @@ function debugLog(message) {
         const stream = file.append_to(Gio.FileCreateFlags.NONE, null);
         stream.write(logLine, null);
         stream.close(null);
-    } catch (e) {
+    } catch {
         // Silently fail file writes
     }
 }
@@ -70,7 +66,6 @@ function debugLog(message) {
  * Timeouts for the hovering events
  */
 const HOVER_ENTER_TIMEOUT = 300;
-const HOVER_LEAVE_TIMEOUT = 1000;  // Long delay to prevent accidental closes
 const HOVER_MENU_LEAVE_TIMEOUT = 300;
 const WINDOW_INIT_TIMEOUT = 200;  // Delay for window to initialize before showing preview
 
@@ -292,7 +287,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
 
             this._source.emit('sync-tooltip');
         }
-        debugLog(`[PREVIEW] popup() EXIT`);
+        debugLog('[PREVIEW] popup() EXIT');
     }
 
     _needsRedisplay(currentWindows) {
@@ -327,7 +322,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
         // For hover menus, we handle closing ourselves via hover events, so we need to
         // disable the manager's interference
         if (menuManager) {
-            debugLog(`[PREVIEW] enableHover() disabling menu manager event capture`);
+            debugLog('[PREVIEW] enableHover() disabling menu manager event capture');
             // Remove this menu from the manager's tracking so it doesn't auto-close on outside clicks
             menuManager.removeMenu(this);
             // Store reference so we can re-add it later when disabling hover
@@ -341,19 +336,19 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
         // Disable pointer event interception on the BoxPointer container
         this._boxPointer.set_reactive(false);
         this._boxPointer.set_track_hover(false);
-        debugLog(`[PREVIEW] enableHover() set BoxPointer reactive=false, track_hover=false`);
+        debugLog('[PREVIEW] enableHover() set BoxPointer reactive=false, track_hover=false');
 
         // Also disable on the actor wrapper if it exists
         if (this._boxPointer.actor) {
             this._boxPointer.actor.set_reactive(false);
             this._boxPointer.actor.set_track_hover(false);
-            debugLog(`[PREVIEW] enableHover() set BoxPointer.actor reactive=false, track_hover=false`);
+            debugLog('[PREVIEW] enableHover() set BoxPointer.actor reactive=false, track_hover=false');
         }
 
         // The bin (menu content) should still be reactive for clicking windows
         this._boxPointer.bin.set_reactive(true);
         this._boxPointer.bin.set_track_hover(true);
-        debugLog(`[PREVIEW] enableHover() set BoxPointer.bin reactive=true, track_hover=true`);
+        debugLog('[PREVIEW] enableHover() set BoxPointer.bin reactive=true, track_hover=true');
 
         this._enterSourceId = this._source.connect('enter-event', () => this._onEnter());
         this._leaveSourceId = this._source.connect('leave-event', () => this._onLeave());
@@ -366,7 +361,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
         // Listen for windows appearing while hovering (e.g., after launching an app)
         this._windowsChangedId = this._app.connect('windows-changed', () => this._onWindowsChanged());
 
-        debugLog(`[PREVIEW] enableHover() event handlers connected`);
+        debugLog('[PREVIEW] enableHover() event handlers connected');
     }
 
     disableHover() {
@@ -374,7 +369,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
 
         // Re-add menu to PopupMenuManager if we removed it
         if (this._menuManager) {
-            debugLog(`[PREVIEW] disableHover() re-enabling menu manager`);
+            debugLog('[PREVIEW] disableHover() re-enabling menu manager');
             this._menuManager.addMenu(this);
             this._menuManager = null;
         }
@@ -425,9 +420,8 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
                 const previewIsOpen = appIcon._previewMenu?.isOpen || false;
                 const previewFromHover = appIcon._previewMenu?.fromHover || false;
 
-                if (hasPreview && (previewIsOpen || previewFromHover)) {
+                if (hasPreview && (previewIsOpen || previewFromHover))
                     debugLog(`[PREVIEW] _onEnter() checking ${appIcon.app.get_name()}: isSelf=${isSelf}, hasPreview=${hasPreview}, isOpen=${previewIsOpen}, fromHover=${previewFromHover}`);
-                }
 
                 // Close ANY hover preview on other icons, regardless of isOpen state
                 // This handles cases where preview was created but didn't open due to no windows
@@ -441,9 +435,9 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
                     }
                 }
             });
-            debugLog(`[PREVIEW] _onEnter() finished iterating`);
+            debugLog('[PREVIEW] _onEnter() finished iterating');
         } else {
-            debugLog(`[PREVIEW] _onEnter() no appIconsHoverList!`);
+            debugLog('[PREVIEW] _onEnter() no appIconsHoverList!');
         }
 
         this.cancelOpen();
@@ -453,7 +447,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
             GLib.PRIORITY_DEFAULT,
             HOVER_ENTER_TIMEOUT,
             () => {
-                debugLog(`[PREVIEW] _onEnter() timeout fired, calling hoverOpen()`);
+                debugLog('[PREVIEW] _onEnter() timeout fired, calling hoverOpen()');
                 this.hoverOpen();
                 return GLib.SOURCE_REMOVE;
             }
@@ -469,15 +463,16 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
 
         this.cancelOpen();
 
-        // Check if pointer is on the menu bin or still on the source icon - if so, this is a spurious leave event
-        // caused by the menu appearing over the icon, not the user actually leaving
+        // Check if pointer is on the menu bin or still on the source
+        // icon - if so, this is a spurious leave event caused by the
+        // menu appearing over the icon, not the user actually leaving
         // Since we made BoxPointer non-reactive, check the bin instead of actor
         if (binHasPointer) {
-            debugLog(`[PREVIEW] _onLeave() EXIT - Ignoring spurious leave - pointer is on menu bin`);
+            debugLog('[PREVIEW] _onLeave() EXIT - Ignoring spurious leave - pointer is on menu bin');
             return;
         }
         if (this._source.has_pointer) {
-            debugLog(`[PREVIEW] _onLeave() EXIT - Ignoring spurious leave - pointer still on source icon`);
+            debugLog('[PREVIEW] _onLeave() EXIT - Ignoring spurious leave - pointer still on source icon');
             return;
         }
 
@@ -488,7 +483,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
             GLib.PRIORITY_DEFAULT,
             HOVER_MENU_LEAVE_TIMEOUT,  // 300ms - enough time to move to menu
             () => {
-                debugLog(`[PREVIEW] _onLeave() timeout fired, calling hoverClose()`);
+                debugLog('[PREVIEW] _onLeave() timeout fired, calling hoverClose()');
                 this.hoverClose();
                 return GLib.SOURCE_REMOVE;
             }
@@ -502,7 +497,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
             GLib.source_remove(this._hoverOpenTimeoutId);
             this._hoverOpenTimeoutId = null;
         } else {
-            debugLog(`[PREVIEW] cancelOpen() no timeout to cancel`);
+            debugLog('[PREVIEW] cancelOpen() no timeout to cancel');
         }
     }
 
@@ -512,7 +507,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
             GLib.source_remove(this._hoverCloseTimeoutId);
             this._hoverCloseTimeoutId = null;
         } else {
-            debugLog(`[PREVIEW] cancelClose() no timeout to cancel`);
+            debugLog('[PREVIEW] cancelClose() no timeout to cancel');
         }
     }
 
@@ -522,13 +517,13 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
         const timestamp = new Date().toISOString();
         debugLog(`[PREVIEW] hoverOpen() ENTRY - app: ${this._app.get_name()}, isOpen: ${this.isOpen}, fromHover: ${this.fromHover}, timestamp: ${timestamp}`);
         if (!this.isOpen) {
-            debugLog(`[PREVIEW] hoverOpen() calling popup()`);
+            debugLog('[PREVIEW] hoverOpen() calling popup()');
             this.popup();
             debugLog(`[PREVIEW] hoverOpen() popup() returned, isOpen now: ${this.isOpen}`);
         } else {
             debugLog(`[PREVIEW] hoverOpen() skipped popup because isOpen=${this.isOpen}`);
         }
-        debugLog(`[PREVIEW] hoverOpen() EXIT`);
+        debugLog('[PREVIEW] hoverOpen() EXIT');
     }
 
     hoverClose() {
@@ -540,7 +535,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
 
         // Safety check: Don't close if mouse is still on the preview or source icon
         if (menuHasPointer || this._source.has_pointer) {
-            debugLog(`[PREVIEW] hoverClose() ABORT - mouse still present on menu or source`);
+            debugLog('[PREVIEW] hoverClose() ABORT - mouse still present on menu or source');
             return;
         }
 
@@ -549,12 +544,12 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
             if (this.fromHover) {
                 debugLog(`[PREVIEW] hoverClose() closing hover menu for ${this._app.get_name()}`);
                 this._boxPointer.close(BoxPointer.PopupAnimation.FADE, () => {
-                    debugLog(`[PREVIEW] hoverClose() boxPointer.close callback - hiding actor`);
+                    debugLog('[PREVIEW] hoverClose() boxPointer.close callback - hiding actor');
                     this.actor.hide();
                     this.isOpen = false;
                     // Destroy preview box so it's recreated fresh on next hover with current animation style
                     if (this._previewBox) {
-                        debugLog(`[PREVIEW] hoverClose() destroying preview box`);
+                        debugLog('[PREVIEW] hoverClose() destroying preview box');
                         this._previewBox.destroy();
                         this._previewBox = null;
                     }
@@ -572,13 +567,13 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
                     this.emit('menu-closed');
                 });
             } else {
-                debugLog(`[PREVIEW] hoverClose() closing click menu`);
+                debugLog('[PREVIEW] hoverClose() closing click menu');
                 this.close(BoxPointer.PopupAnimation.FADE);
             }
         } else {
             debugLog(`[PREVIEW] hoverClose() skipped because isOpen=${this.isOpen}`);
         }
-        debugLog(`[PREVIEW] hoverClose() EXIT`);
+        debugLog('[PREVIEW] hoverClose() EXIT');
     }
 
     _onMenuEnter() {
@@ -589,7 +584,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
 
         // Cancel close timeout when mouse enters the preview menu
         // Since we made the BoxPointer non-reactive, we check the bin instead
-        debugLog(`[PREVIEW] _onMenuEnter() canceling close timeout - mouse entered preview`);
+        debugLog('[PREVIEW] _onMenuEnter() canceling close timeout - mouse entered preview');
         this.cancelClose();
     }
 
@@ -611,7 +606,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
             GLib.PRIORITY_DEFAULT,
             HOVER_MENU_LEAVE_TIMEOUT,
             () => {
-                debugLog(`[PREVIEW] _onMenuLeave() timeout fired, calling hoverClose()`);
+                debugLog('[PREVIEW] _onMenuLeave() timeout fired, calling hoverClose()');
                 this.hoverClose();
                 return GLib.SOURCE_REMOVE;
             }
@@ -632,7 +627,7 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
         // 3. There are windows to show
         // 4. The user is still hovering over the source icon
         if (this.fromHover && !this.isOpen && windows.length > 0 && this._source.has_pointer) {
-            debugLog(`[PREVIEW] _onWindowsChanged() windows appeared while hovering - scheduling preview`);
+            debugLog('[PREVIEW] _onWindowsChanged() windows appeared while hovering - scheduling preview');
             // Cancel any pending timeouts
             this.cancelOpen();
             this.cancelClose();
@@ -645,10 +640,10 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
                 () => {
                     // Verify user is still hovering before opening
                     if (this._source.has_pointer) {
-                        debugLog(`[PREVIEW] _onWindowsChanged() timeout - opening preview`);
+                        debugLog('[PREVIEW] _onWindowsChanged() timeout - opening preview');
                         this.popup();
                     } else {
-                        debugLog(`[PREVIEW] _onWindowsChanged() timeout - user left, not opening`);
+                        debugLog('[PREVIEW] _onWindowsChanged() timeout - user left, not opening');
                     }
                     this._hoverOpenTimeoutId = null;
                     return GLib.SOURCE_REMOVE;
@@ -719,11 +714,11 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
     _queueRedisplay() {
         // Don't queue redisplays for hover menus to avoid interrupting animations
         if (this._isHoverMenu) {
-            debugLog(`[PREVIEW] _queueRedisplay() ignored for hover menu`);
+            debugLog('[PREVIEW] _queueRedisplay() ignored for hover menu');
             return;
         }
 
-        debugLog(`[PREVIEW] _queueRedisplay() called`);
+        debugLog('[PREVIEW] _queueRedisplay() called');
         Main.queueDeferredWork(this._redisplayId);
     }
 
@@ -1317,7 +1312,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
 
         if (!animate || !animConfig) {
             // No animation - just show immediately
-            debugLog(`[PREVIEW] show() - no animation, setting opacity=255`);
+            debugLog('[PREVIEW] show() - no animation, setting opacity=255');
             this.opacity = 255;
             return;
         }
@@ -1342,10 +1337,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
                 this.ease({
                     opacity: 255,
                     duration: animConfig.itemDuration,
-                    delay: delay,
+                    delay,
                     mode: animConfig.itemMode,
                     onComplete: () => {
-                        debugLog(`[PREVIEW] FADE animation completed`);
+                        debugLog('[PREVIEW] FADE animation completed');
                     },
                 });
             };
@@ -1353,10 +1348,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             if (this.mapped) {
                 startAnimation();
             } else {
-                debugLog(`[PREVIEW] FADE waiting for actor to be mapped before starting animation`);
+                debugLog('[PREVIEW] FADE waiting for actor to be mapped before starting animation');
                 this._mappedSignalId = this.connect('notify::mapped', () => {
                     if (this.mapped) {
-                        debugLog(`[PREVIEW] FADE actor now mapped, starting animation`);
+                        debugLog('[PREVIEW] FADE actor now mapped, starting animation');
                         this.disconnect(this._mappedSignalId);
                         this._mappedSignalId = 0;
                         startAnimation();
@@ -1376,10 +1371,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
                     opacity: 255,
                     translationY: 0,
                     duration: animConfig.itemDuration,
-                    delay: delay,
+                    delay,
                     mode: animConfig.itemMode,
                     onComplete: () => {
-                        debugLog(`[PREVIEW] SLIDE animation completed`);
+                        debugLog('[PREVIEW] SLIDE animation completed');
                     },
                 });
             };
@@ -1387,10 +1382,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             if (this.mapped) {
                 startAnimation();
             } else {
-                debugLog(`[PREVIEW] SLIDE waiting for actor to be mapped before starting animation`);
+                debugLog('[PREVIEW] SLIDE waiting for actor to be mapped before starting animation');
                 this._mappedSignalId = this.connect('notify::mapped', () => {
                     if (this.mapped) {
-                        debugLog(`[PREVIEW] SLIDE actor now mapped, starting animation`);
+                        debugLog('[PREVIEW] SLIDE actor now mapped, starting animation');
                         this.disconnect(this._mappedSignalId);
                         this._mappedSignalId = 0;
                         startAnimation();
@@ -1411,10 +1406,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
                     scaleX: 1.0,
                     scaleY: 1.0,
                     duration: animConfig.itemDuration,
-                    delay: delay,
+                    delay,
                     mode: animConfig.itemMode,
                     onComplete: () => {
-                        debugLog(`[PREVIEW] SCALE animation completed`);
+                        debugLog('[PREVIEW] SCALE animation completed');
                     },
                 });
             };
@@ -1422,10 +1417,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             if (this.mapped) {
                 startAnimation();
             } else {
-                debugLog(`[PREVIEW] SCALE waiting for actor to be mapped before starting animation`);
+                debugLog('[PREVIEW] SCALE waiting for actor to be mapped before starting animation');
                 this._mappedSignalId = this.connect('notify::mapped', () => {
                     if (this.mapped) {
-                        debugLog(`[PREVIEW] SCALE actor now mapped, starting animation`);
+                        debugLog('[PREVIEW] SCALE actor now mapped, starting animation');
                         this.disconnect(this._mappedSignalId);
                         this._mappedSignalId = 0;
                         startAnimation();
@@ -1445,10 +1440,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
                     opacity: 255,
                     width: fullWidth,
                     duration: animConfig.itemDuration,
-                    delay: delay,
+                    delay,
                     mode: animConfig.itemMode,
                     onComplete: () => {
-                        debugLog(`[PREVIEW] EXPAND animation completed`);
+                        debugLog('[PREVIEW] EXPAND animation completed');
                     },
                 });
             };
@@ -1456,10 +1451,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             if (this.mapped) {
                 startAnimation();
             } else {
-                debugLog(`[PREVIEW] EXPAND waiting for actor to be mapped before starting animation`);
+                debugLog('[PREVIEW] EXPAND waiting for actor to be mapped before starting animation');
                 this._mappedSignalId = this.connect('notify::mapped', () => {
                     if (this.mapped) {
-                        debugLog(`[PREVIEW] EXPAND actor now mapped, starting animation`);
+                        debugLog('[PREVIEW] EXPAND actor now mapped, starting animation');
                         this.disconnect(this._mappedSignalId);
                         this._mappedSignalId = 0;
                         startAnimation();
@@ -1480,10 +1475,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
                     scaleX: 1.0,
                     scaleY: 1.0,
                     duration: animConfig.itemDuration,
-                    delay: delay,
+                    delay,
                     mode: animConfig.itemMode,
                     onComplete: () => {
-                        debugLog(`[PREVIEW] DISSOLVE animation completed`);
+                        debugLog('[PREVIEW] DISSOLVE animation completed');
                     },
                 });
             };
@@ -1491,10 +1486,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             if (this.mapped) {
                 startAnimation();
             } else {
-                debugLog(`[PREVIEW] DISSOLVE waiting for actor to be mapped before starting animation`);
+                debugLog('[PREVIEW] DISSOLVE waiting for actor to be mapped before starting animation');
                 this._mappedSignalId = this.connect('notify::mapped', () => {
                     if (this.mapped) {
-                        debugLog(`[PREVIEW] DISSOLVE actor now mapped, starting animation`);
+                        debugLog('[PREVIEW] DISSOLVE actor now mapped, starting animation');
                         this.disconnect(this._mappedSignalId);
                         this._mappedSignalId = 0;
                         startAnimation();
@@ -1512,10 +1507,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
                 this.ease({
                     opacity: 255,
                     duration: animConfig.itemDuration,
-                    delay: delay,
+                    delay,
                     mode: animConfig.itemMode,
                     onComplete: () => {
-                        debugLog(`[PREVIEW] CASCADE animation completed`);
+                        debugLog('[PREVIEW] CASCADE animation completed');
                     },
                 });
             };
@@ -1523,10 +1518,10 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             if (this.mapped) {
                 startAnimation();
             } else {
-                debugLog(`[PREVIEW] CASCADE waiting for actor to be mapped before starting animation`);
+                debugLog('[PREVIEW] CASCADE waiting for actor to be mapped before starting animation');
                 this._mappedSignalId = this.connect('notify::mapped', () => {
                     if (this.mapped) {
-                        debugLog(`[PREVIEW] CASCADE actor now mapped, starting animation`);
+                        debugLog('[PREVIEW] CASCADE actor now mapped, starting animation');
                         this.disconnect(this._mappedSignalId);
                         this._mappedSignalId = 0;
                         startAnimation();

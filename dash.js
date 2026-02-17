@@ -11,6 +11,7 @@ import {
 
 import {
     AppFavorites,
+    BoxPointer,
     Dash,
     DND,
     Main,
@@ -628,8 +629,8 @@ export const DockDash = GObject.registerClass({
                 GLib.PRIORITY_DEFAULT,
                 100,
                 () => {
-                    const appIcons = this.getAppIcons();
-                    appIcons.forEach(appIcon => {
+                    const icons = this.getAppIcons();
+                    icons.forEach(appIcon => {
                         if (appIcon._previewMenu?.isOpen) {
                             if (appIcon._previewMenu.fromHover) {
                                 // Manually close hover menus
