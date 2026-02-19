@@ -258,8 +258,9 @@ const DockedDash = GObject.registerClass({
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.Intellihide(this.monitorIndex);
 
-        // initialize dock state
-        this._dockState = State.HIDDEN;
+        // initialize dock state - must be consistent with slide_x initial value
+        // If not starting up, slide_x is 1 (visible), so state should be SHOWN
+        this._dockState = Main.layoutManager._startingUp ? State.HIDDEN : State.SHOWN;
 
         // Put dock on the required monitor
         this._monitor = Main.layoutManager.monitors[this.monitorIndex];
@@ -393,6 +394,8 @@ const DockedDash = GObject.registerClass({
         this.dash._container.connect('notify::allocation', this._updateStaticBox.bind(this));
         this._slider.connect(this._isHorizontal ? 'notify::x' : 'notify::y',
             this._updateStaticBox.bind(this));
+        this._slider.connect('notify::slide-x',
+            Main.layoutManager._queueUpdateRegions.bind(Main.layoutManager));
 
         // Load optional features that need to be activated for one dock only
         if (this.isMain)
@@ -473,6 +476,9 @@ const DockedDash = GObject.registerClass({
 
         // Apply custom css class according to the settings
         this._themeManager.updateCustomTheme();
+
+        // Ensure staticBox is updated before visibility mode
+        this._updateStaticBox();
 
         this._updateVisibilityMode();
 
@@ -714,10 +720,13 @@ const DockedDash = GObject.registerClass({
             this._intellihideIsEnabled = settings.intellihide;
         }
 
-        if (this._autohideIsEnabled)
+        if (this._autohideIsEnabled) {
             this.add_style_class_name('autohide');
-        else
+            // Reset ignore hover when autohide is enabled
+            this._ignoreHover = false;
+        } else {
             this.remove_style_class_name('autohide');
+        }
 
         if (this._intellihideIsEnabled) {
             this._intellihide.enable();
@@ -786,12 +795,17 @@ const DockedDash = GObject.registerClass({
     }
 
     _onOverviewHiding() {
+        this._ignoreHover = false;
         this._intellihide.enable();
         this._updateDashVisibility();
     }
 
     _onOverviewHidden() {
         this.remove_style_class_name('overview');
+        this._box.sync_hover();
+        // Force intellihide to recheck overlap after overview is hidden
+        if (this._intellihideIsEnabled)
+            this._intellihide.forceUpdate();
         this._updateDashVisibility();
     }
 
@@ -1251,12 +1265,42 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateStaticBox() {
-        const [absX, absY] = this._box.get_transformed_position();
+        // We need to calculate the position where the dock WOULD BE when fully visible,
+        // not its current position (which may be off-screen when hidden).
+        // This is crucial for intellihide to correctly detect window overlap.
+        
+        let staticX, staticY;
+        const width = this._box.width;
+        const height = this._box.height;
+        
+        // Calculate the position based on dock position and monitor
+        switch (this._position) {
+        case St.Side.LEFT:
+            staticX = this._monitor.x;
+            staticY = this.y;
+            break;
+        case St.Side.RIGHT:
+            staticX = this._monitor.x + this._monitor.width - width;
+            staticY = this.y;
+            break;
+        case St.Side.TOP:
+            staticX = this.x;
+            staticY = this._monitor.y;
+            break;
+        case St.Side.BOTTOM:
+            staticX = this.x;
+            staticY = this._monitor.y + this._monitor.height - height;
+            break;
+        default:
+            // Fallback to transformed position
+            [staticX, staticY] = this._box.get_transformed_position();
+        }
+        
         this.staticBox.init_rect(
-            absX,
-            absY,
-            this._box.width,
-            this._box.height
+            staticX,
+            staticY,
+            width,
+            height
         );
 
         this._intellihide.updateTargetBox(this.staticBox);
