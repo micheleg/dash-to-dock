@@ -2444,8 +2444,12 @@ export class DockManager {
             const hadOverview = Main.sessionMode.hasOverview;
 
             // Convince LayoutManager to use the legacy startup animation:
-            if (this._settings.disableOverviewOnStartup)
+            // Reset overview controls state to HIDDEN, as skipping the startup
+            // overview leaves it stuck at WINDOW_PICKER
+            if (this._settings.disableOverviewOnStartup) {
                 Main.sessionMode.hasOverview = false;
+                Main.overview._overview.controls._stateAdjustment.value = OverviewControls.ControlsState.HIDDEN;
+            }
 
             this._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
                 Main.layoutManager, 'startup-complete', () => {
