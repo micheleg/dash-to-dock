@@ -878,6 +878,8 @@ const DockedDash = GObject.registerClass({
                 } else {
                     this._hide();
                 }
+                
+                this._updateStaticBox()
             },
         });
     }
