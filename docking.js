@@ -1252,9 +1252,12 @@ const DockedDash = GObject.registerClass({
 
     _updateStaticBox() {
         const [absX, absY] = this._box.get_transformed_position();
+        // Cancelling out the offset due to slider animation
+        let absOffsetX = this._position == St.Side.LEFT || this._position == St.Side.RIGHT ? (1 - this._slider.slideX) * this._box.width : 0;
+        let absOffsetY = this._position == St.Side.BOTTOM || this._position == St.Side.TOP ? (1 - this._slider.slideX) * this._box.height : 0;
         this.staticBox.init_rect(
-            absX,
-            absY,
+            absX + absOffsetX * (this._position == St.Side.RIGHT ? 1 : -1),
+            absY + absOffsetY * (this._position == St.Side.TOP ? 1 : -1),
             this._box.width,
             this._box.height
         );
