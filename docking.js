@@ -1347,15 +1347,20 @@ const DockedDash = GObject.registerClass({
     }
 
     /**
-     * Handle the beginning of a dock drag (Super+click).
+     * Handle the beginning of a dock drag.
+     * Only triggers when clicking on the empty area of the dock (not on an icon).
      */
     _onDragBeginPosition(_actor, event) {
-        // Only start drag on Super + left click
-        const modifiers = event.get_state();
         const button = event.get_button();
-        const superPressed = (modifiers & Clutter.ModifierType.MOD4_MASK) !== 0;
 
-        if (button !== Clutter.BUTTON_PRIMARY || !superPressed)
+        // Only left click
+        if (button !== Clutter.BUTTON_PRIMARY)
+            return Clutter.EVENT_PROPAGATE;
+
+        // Only start drag if clicking on the dock background (empty area),
+        // not on an app icon or other child widget
+        const source = event.get_source();
+        if (source !== this._box)
             return Clutter.EVENT_PROPAGATE;
 
         this._dragging = true;
