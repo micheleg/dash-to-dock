@@ -2,8 +2,8 @@
 
 import {
     Clutter,
-    GLib,
     Gio,
+    GLib,
     GObject,
     Meta,
     Shell,
@@ -11,8 +11,8 @@ import {
 } from './dependencies/gi.js';
 
 import {
-    AppMenu,
     AppDisplay,
+    AppMenu,
     Layout,
     Main,
     OverviewControls,
@@ -29,8 +29,8 @@ import {
 import {
     AppIconsDecorator,
     AppSpread,
-    DockDash,
     DesktopIconsIntegration,
+    DockDash,
     FileManager1API,
     Intellihide,
     LauncherAPI,
@@ -40,7 +40,7 @@ import {
     Utils,
 } from './imports.js';
 
-import {Extension} from './dependencies/shell/extensions/extension.js';
+import { Extension } from './dependencies/shell/extensions/extension.js';
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
@@ -308,6 +308,12 @@ const DockedDash = GObject.registerClass({
         });
         this._box.connect('notify::hover', this._hoverChanged.bind(this));
 
+        // Free positioning: drag state
+        this._dragging = false;
+        this._dragStartCoord = 0;
+        this._dragStartOffset = 0;
+        this._setupDragHandler();
+
         // Connect global signals
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._bindSettingsChanges();
@@ -510,6 +516,20 @@ const DockedDash = GObject.registerClass({
             PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
             this._dockWatch = null;
         }
+
+        // Remove drag handler
+        if (this._dragPressId) {
+            this._box.disconnect(this._dragPressId);
+            this._dragPressId = 0;
+        }
+        if (this._dragMotionId) {
+            this._box.disconnect(this._dragMotionId);
+            this._dragMotionId = 0;
+        }
+        if (this._dragReleaseId) {
+            this._box.disconnect(this._dragReleaseId);
+            this._dragReleaseId = 0;
+        }
     }
 
     _updateAutoHideBarriers() {
@@ -661,6 +681,17 @@ const DockedDash = GObject.registerClass({
             settings,
             'changed::height-fraction',
             this._resetPosition.bind(this),
+        ], [
+            settings,
+            'changed::dock-offset',
+            this._resetPosition.bind(this),
+        ], [
+            settings,
+            'changed::free-position',
+            () => {
+                this._resetPosition();
+                this._setupDragHandler();
+            },
         ], [
             settings,
             'changed::always-center-icons',
@@ -1196,6 +1227,13 @@ const DockedDash = GObject.registerClass({
         else if ((fraction < 0) || (fraction > 1))
             fraction = 0.95;
 
+        // Free positioning: use saved offset instead of centering
+        const freePosition = DockManager.settings.freePosition;
+        let offset = DockManager.settings.dockOffset;
+        if (!freePosition || offset === undefined)
+            offset = 0.5; // default: centered
+        offset = Math.max(0, Math.min(1, offset));
+
         if (this._isHorizontal) {
             this.width = Math.round(fraction * workArea.width);
 
@@ -1203,7 +1241,13 @@ const DockedDash = GObject.registerClass({
             if (this._position === St.Side.BOTTOM)
                 posY += this._monitor.height;
 
-            this.x = workArea.x + Math.round((1 - fraction) / 2 * workArea.width);
+            if (freePosition && !extendHeight) {
+                // Use offset to position along the horizontal edge
+                const availableSlide = workArea.width - this.width;
+                this.x = workArea.x + Math.round(offset * availableSlide);
+            } else {
+                this.x = workArea.x + Math.round((1 - fraction) / 2 * workArea.width);
+            }
             this.y = posY;
 
             if (extendHeight) {
@@ -1221,7 +1265,13 @@ const DockedDash = GObject.registerClass({
                 posX += this._monitor.width;
 
             this.x = posX;
-            this.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
+            if (freePosition && !extendHeight) {
+                // Use offset to position along the vertical edge
+                const availableSlide = workArea.height - this.height;
+                this.y = workArea.y + Math.round(offset * availableSlide);
+            } else {
+                this.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
+            }
 
             if (extendHeight) {
                 this.dash._container.set_height(this.height);
@@ -1263,6 +1313,116 @@ const DockedDash = GObject.registerClass({
 
     _removeAnimations() {
         this._slider.remove_all_transitions();
+    }
+
+    /**
+     * Set up the drag handler for free positioning along the dock edge.
+     * Uses Super+click to start dragging, so it doesn't interfere with
+     * normal icon clicks.
+     */
+    _setupDragHandler() {
+        // Remove any previous handlers
+        if (this._dragPressId) {
+            this._box.disconnect(this._dragPressId);
+            this._dragPressId = 0;
+        }
+        if (this._dragMotionId) {
+            this._box.disconnect(this._dragMotionId);
+            this._dragMotionId = 0;
+        }
+        if (this._dragReleaseId) {
+            this._box.disconnect(this._dragReleaseId);
+            this._dragReleaseId = 0;
+        }
+
+        if (!DockManager.settings.freePosition)
+            return;
+
+        this._dragPressId = this._box.connect('button-press-event',
+            (actor, event) => this._onDragBeginPosition(actor, event));
+        this._dragReleaseId = this._box.connect('button-release-event',
+            (actor, event) => this._onDragEndPosition(actor, event));
+        this._dragMotionId = this._box.connect('motion-event',
+            (actor, event) => this._onDragMotionPosition(actor, event));
+    }
+
+    /**
+     * Handle the beginning of a dock drag (Super+click).
+     */
+    _onDragBeginPosition(_actor, event) {
+        // Only start drag on Super + left click
+        const modifiers = event.get_state();
+        const button = event.get_button();
+        const superPressed = (modifiers & Clutter.ModifierType.MOD4_MASK) !== 0;
+
+        if (button !== Clutter.BUTTON_PRIMARY || !superPressed)
+            return Clutter.EVENT_PROPAGATE;
+
+        this._dragging = true;
+        const [absX, absY] = event.get_coords();
+        this._dragStartCoord = this._isHorizontal ? absX : absY;
+        this._dragStartOffset = DockManager.settings.dockOffset ?? 0.5;
+
+        return Clutter.EVENT_STOP;
+    }
+
+    /**
+     * Handle mouse motion during dock drag.
+     */
+    _onDragMotionPosition(_actor, event) {
+        if (!this._dragging)
+            return Clutter.EVENT_PROPAGATE;
+
+        const [absX, absY] = event.get_coords();
+        const workArea = Main.layoutManager.getWorkAreaForMonitor(this.monitorIndex);
+
+        let newOffset;
+        if (this._isHorizontal) {
+            const availableSlide = workArea.width - this.width;
+            if (availableSlide <= 0)
+                return Clutter.EVENT_STOP;
+            const delta = absX - this._dragStartCoord;
+            newOffset = this._dragStartOffset + delta / availableSlide;
+        } else {
+            const availableSlide = workArea.height - this.height;
+            if (availableSlide <= 0)
+                return Clutter.EVENT_STOP;
+            const delta = absY - this._dragStartCoord;
+            newOffset = this._dragStartOffset + delta / availableSlide;
+        }
+
+        // Clamp to [0, 1]
+        newOffset = Math.max(0, Math.min(1, newOffset));
+
+        // Update position in real-time without saving to settings yet
+        if (this._isHorizontal) {
+            const availableSlide = workArea.width - this.width;
+            this.x = workArea.x + Math.round(newOffset * availableSlide);
+        } else {
+            const availableSlide = workArea.height - this.height;
+            this.y = workArea.y + Math.round(newOffset * availableSlide);
+        }
+
+        this._currentDragOffset = newOffset;
+        return Clutter.EVENT_STOP;
+    }
+
+    /**
+     * Handle the end of a dock drag — save the new offset to GSettings.
+     */
+    _onDragEndPosition(_actor, _event) {
+        if (!this._dragging)
+            return Clutter.EVENT_PROPAGATE;
+
+        this._dragging = false;
+
+        // Save the final offset to GSettings
+        if (this._currentDragOffset !== undefined) {
+            DockManager.settings.set_double('dock-offset', this._currentDragOffset);
+            delete this._currentDragOffset;
+        }
+
+        return Clutter.EVENT_STOP;
     }
 
     _onDragStart() {
