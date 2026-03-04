@@ -125,15 +125,15 @@ export class AppSpread {
                 activitiesButton.remove_accessible_state(Atk.StateType.CHECKED);
             });
 
-            let has_vfunc_event;
+            let hasEventVFunc;
             try {
-                has_vfunc_event = 'vfunc_event' in activitiesButton.constructor.prototype
+                hasEventVFunc = 'vfunc_event' in activitiesButton.constructor.prototype;
             } catch {
                 /* The getter actually raises an exception if unimplemented */
-                has_vfunc_event = false
+                hasEventVFunc = false;
             }
 
-            if (has_vfunc_event) {
+            if (hasEventVFunc) {
                 this._vfuncInjections.add([
                     activitiesButton.constructor.prototype,
                     'event',
@@ -162,7 +162,7 @@ export class AppSpread {
                 activitiesButton.constructor.prototype,
                 'key_release_event',
                 function (keyEvent) {
-                    const {keyval} = keyEvent;
+                    const keyval = keyEvent.get_key_symbol?.() || keyEvent.keyval;
                     if (keyval === Clutter.KEY_Return || keyval === Clutter.KEY_space) {
                         if (Main.overview.shouldToggleByCornerOrButton())
                             appSpread._restoreDefaultOverview();
