@@ -159,7 +159,7 @@ export class AppSpread {
                 activitiesButton.constructor.prototype,
                 'key_release_event',
                 function (keyEvent) {
-                    const {keyval} = keyEvent;
+                    const keyval = keyEvent.get_key_symbol?.() ?? keyEvent.keyval;
                     if (keyval === Clutter.KEY_Return || keyval === Clutter.KEY_space) {
                         if (Main.overview.shouldToggleByCornerOrButton())
                             appSpread._restoreDefaultOverview();
