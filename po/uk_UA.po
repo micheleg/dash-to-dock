@@ -729,3 +729,39 @@ msgstr "Затримка появи (сек.)"
 #: Settings.ui.h:131
 msgid "Pressure threshold"
 msgstr "Поріг притискання"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Показувати попередній перегляд вікон при наведенні миші"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Стиль анімації попереднього перегляду"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Миттєво"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Згасання"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Ковзання"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Масштаб"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Розширення"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Розчинення"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Каскад"

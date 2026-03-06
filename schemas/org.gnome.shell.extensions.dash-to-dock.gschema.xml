@@ -640,5 +640,24 @@
       <summary>Wether the application-provioded counter via Unity API should override the notifications or be summed to it</summary>
       <description>If an application provides a counter through the Unity API, then such value will be used. Otherwise the counter will be summed with the unread notification numbers (if enabled)</description>
     </key>
+    <key name="show-previews-hover" type="b">
+      <default>false</default>
+      <summary>Show window previews on mouse hover</summary>
+      <description>Display window previews when hovering over application icons in the dock</description>
+    </key>
+    <key name="preview-animation-style" type="i">
+      <default>4</default>
+      <summary>Window preview animation style</summary>
+      <description>
+        Animation style for window previews:
+        0: Instant (no animation)
+        1: Fade
+        2: Slide
+        3: Scale (zoom)
+        4: Expand (default)
+        5: Dissolve
+        6: Cascade (staggered)
+      </description>
+    </key>
   </schema>
 </schemalist>

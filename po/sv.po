@@ -729,3 +729,39 @@ msgstr "Tröskelvärde för tryck"
 
 #~ msgid "Show favorite applications"
 #~ msgstr "Visa favoritprogram"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Visa förhandsvisningar av fönster vid musövergång"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Förhandsvisningsanimationsstil"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Omedelbar"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Tona"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Glida"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Skala"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Expandera"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Upplösa"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Kaskad"

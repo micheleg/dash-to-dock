@@ -747,3 +747,39 @@ msgstr "Stoßschwellenwert"
 
 #~ msgid "Add to Favorites"
 #~ msgstr "Zu Favoriten hinzufügen"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Fenstervorschauen beim Darüberfahren mit der Maus anzeigen"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Vorschau-Animationsstil"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Sofort"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Ausblenden"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Gleiten"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Skalieren"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Erweitern"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Auflösen"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Kaskade"

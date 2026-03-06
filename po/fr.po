@@ -746,3 +746,39 @@ msgstr "Seuil de pression"
 
 #~ msgid "0.000"
 #~ msgstr "0.000"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Afficher les aperçus de fenêtres au survol de la souris"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Style d'animation de l'aperçu"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Instantané"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Fondu"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Glissement"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Échelle"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Expansion"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Dissolution"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Cascade"

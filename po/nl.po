@@ -660,3 +660,39 @@ msgstr "Drukwaarde"
 #~ msgstr ""
 #~ "Benutzerdefiniertes Theme verwenden (funktioniert nur mit dem Standard-"
 #~ "Adwaita-Theme)"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Venstervoorbeelden tonen bij muisaanwijzer"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Voorbeeldanimatiestijl"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Direct"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Vervagen"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Schuiven"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Schalen"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Uitbreiden"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Oplossen"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Cascade"
