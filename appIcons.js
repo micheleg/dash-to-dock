@@ -119,11 +119,12 @@ const DockAbstractAppIcon = GObject.registerClass({
     },
 }, class DockAbstractAppIcon extends Dash.DashIcon {
     // settings are required inside.
-    _init(app, monitorIndex, iconAnimator) {
+    _init(app, monitorIndex, iconAnimator, window = null) {
         super._init(app);
 
         // a prefix is required to avoid conflicting with the parent class variable
         this.monitorIndex = monitorIndex;
+        this.window = window;
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this.iconAnimator = iconAnimator;
         this._indicator = new AppIconIndicators.AppIconIndicator(this);
@@ -247,6 +248,9 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     ownsWindow(window) {
+        if (this.window)
+            return this.window === window;
+
         return this.app === tracker.get_window_app(window);
     }
 
@@ -342,7 +346,9 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     _updateFocusState() {
-        this.focused = tracker.focus_app === this.app && this.running;
+        this.focused = (this.window
+            ? global.display.focus_window === this.window
+            : tracker.focus_app === this.app) && this.running;
     }
 
     _updateUrgentWindows(interestingWindows) {
@@ -928,6 +934,9 @@ const DockAbstractAppIcon = GObject.registerClass({
     }
 
     getWindows() {
+        if (this.window)
+            return this.window.get_compositor_private() ? [this.window] : [];
+
         return this.app.get_windows();
     }
 
@@ -950,10 +959,15 @@ const DockAbstractAppIcon = GObject.registerClass({
 
 const DockAppIcon = GObject.registerClass({
 }, class DockAppIcon extends DockAbstractAppIcon {
-    _init(app, monitorIndex, iconAnimator) {
-        super._init(app, monitorIndex, iconAnimator);
+    _init(app, monitorIndex, iconAnimator, window = null) {
+        super._init(app, monitorIndex, iconAnimator, window);
 
-        this._signalsHandler.add(tracker, 'notify::focus-app', () => this._updateFocusState());
+        if (window) {
+            this._signalsHandler.add(global.display, 'notify::focus-window',
+                () => this._updateFocusState());
+        } else {
+            this._signalsHandler.add(tracker, 'notify::focus-app', () => this._updateFocusState());
+        }
     }
 });
 
@@ -994,11 +1008,11 @@ const DockLocationAppIcon = GObject.registerClass({
  * @param monitorIndex
  * @param iconAnimator
  */
-export function makeAppIcon(app, monitorIndex, iconAnimator) {
+export function makeAppIcon(app, monitorIndex, iconAnimator, window = null) {
     if (app.appInfo instanceof Locations.LocationAppInfo)
         return new DockLocationAppIcon(app, monitorIndex, iconAnimator);
 
-    return new DockAppIcon(app, monitorIndex, iconAnimator);
+    return new DockAppIcon(app, monitorIndex, iconAnimator, window);
 }
 
 /**

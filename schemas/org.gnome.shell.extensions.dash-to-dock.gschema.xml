@@ -221,6 +221,11 @@
       <summary>Show running apps</summary>
       <description>Show or hide running applications icons in the dash</description>
     </key>
+    <key type="b" name="group-apps">
+      <default>true</default>
+      <summary>Group applications</summary>
+      <description>Group application windows under a single icon in the dash</description>
+    </key>
     <key type="b" name="isolate-workspaces">
       <default>false</default>
       <summary>Provide workspace isolation</summary>

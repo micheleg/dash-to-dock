@@ -634,6 +634,10 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('show_running_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('group-apps',
+            this._builder.get_object('ungroup_applications_button'),
+            'active',
+            Gio.SettingsBindFlags.INVERT_BOOLEAN);
         const applicationButtonIsolationButton =
             this._builder.get_object('application_button_isolation_button');
         this._settings.bind('isolate-workspaces',
