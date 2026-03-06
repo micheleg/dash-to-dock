@@ -7,6 +7,7 @@ import {
     GObject,
     Meta,
     Mtk,
+    Pango,
     Shell,
     St,
 } from './dependencies/gi.js';
@@ -1584,6 +1585,7 @@ export function itemShowLabel() {
         return;
 
     this.label.set_text(this._labelText);
+    this.label.set_width(-1);
     this.label.opacity = 0;
     this.label.show();
 
@@ -1593,6 +1595,11 @@ export function itemShowLabel() {
     const itemWidth  = this.allocation.x2 - this.allocation.x1;
     const itemHeight = this.allocation.y2 - this.allocation.y1;
 
+    const monitor = Main.layoutManager.findMonitorForActor(this);
+    const maxLabelWidth = Math.floor(monitor.width * 0.6);
+    const naturalLabelWidth = this.label.get_width();
+    this.label.clutter_text.ellipsize = Pango.EllipsizeMode.END;
+    this.label.set_width(naturalLabelWidth > maxLabelWidth ? maxLabelWidth : -1);
     const labelWidth = this.label.get_width();
     const labelHeight = this.label.get_height();
 
@@ -1632,7 +1639,6 @@ export function itemShowLabel() {
 
     // Leave a few pixel gap
     const gap = 5;
-    const monitor = Main.layoutManager.findMonitorForActor(this);
     if (x - monitor.x < gap)
         x += monitor.x - x + labelOffset;
     else if (x + labelWidth > monitor.x + monitor.width - gap)

@@ -557,6 +557,20 @@ export const DockDash = GObject.registerClass({
         // accessible_name is set at DashItemContainer.setLabelText
         appIcon.label_actor = null;
         item.setLabelText(window?.title || app.get_name());
+        if (window) {
+            const titleChangedId = window.connect('notify::title', () => {
+                if (window.get_compositor_private())
+                    item.setLabelText(window.title || app.get_name());
+                else
+                    item.setLabelText(app.get_name());
+
+                appIcon.emit('sync-tooltip');
+            });
+            item.connect('destroy', () => {
+                if (titleChangedId && window)
+                    window.disconnect(titleChangedId);
+            });
+        }
 
         appIcon.icon.setIconSize(this.iconSize);
         this._hookUpLabel(item, appIcon);
