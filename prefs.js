@@ -714,6 +714,15 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('hide_tooltip_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        const tooltipMaxWidthSpin = this._builder.get_object('tooltip_max_width_spinbutton');
+        tooltipMaxWidthSpin.set_value(this._settings.get_int('tooltip-max-width-percent'));
+        tooltipMaxWidthSpin.connect('value-changed', widget => {
+            this._settings.set_int('tooltip-max-width-percent', widget.get_value_as_int());
+        });
+        this._settings.bind('hide-tooltip',
+            this._builder.get_object('tooltip_max_width_row'),
+            'sensitive',
+            Gio.SettingsBindFlags.INVERT_BOOLEAN);
         this._settings.bind('show-icons-emblems',
             this._builder.get_object('show_icons_emblems_switch'),
             'active',

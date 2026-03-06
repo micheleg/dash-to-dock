@@ -630,6 +630,11 @@
       <summary>Hide application tooltip</summary>
       <description>Hide tooltip when hovering application in the dash.</description>
     </key>
+    <key name="tooltip-max-width-percent" type="i">
+      <default>60</default>
+      <summary>Maximum tooltip width in percent</summary>
+      <description>Maximum tooltip label width as a percentage of the monitor width.</description>
+    </key>
     <key name="show-icons-emblems" type="b">
       <default>true</default>
       <summary>Show application icons emblems</summary>

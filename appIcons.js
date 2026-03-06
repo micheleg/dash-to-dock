@@ -41,6 +41,7 @@ import {Extension} from './dependencies/shell/extensions/extension.js';
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
 const {gettext: __, ngettext} = Extension;
+const MAX_TOOLTIP_LABEL_WIDTH_PX = 700;
 
 const DBusMenu = await DBusMenuUtils.haveDBusMenu();
 
@@ -1596,7 +1597,11 @@ export function itemShowLabel() {
     const itemHeight = this.allocation.y2 - this.allocation.y1;
 
     const monitor = Main.layoutManager.findMonitorForActor(this);
-    const maxLabelWidth = Math.floor(monitor.width * 0.6);
+    const widthPercent = Math.max(20, Math.min(100,
+        Docking.DockManager.settings.tooltipMaxWidthPercent || 60));
+    const maxLabelWidth = Math.min(
+        Math.floor(monitor.width * widthPercent / 100),
+        MAX_TOOLTIP_LABEL_WIDTH_PX);
     const naturalLabelWidth = this.label.get_width();
     this.label.clutter_text.ellipsize = Pango.EllipsizeMode.END;
     this.label.set_width(naturalLabelWidth > maxLabelWidth ? maxLabelWidth : -1);
