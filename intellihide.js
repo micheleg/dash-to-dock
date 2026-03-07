@@ -224,9 +224,9 @@ export class Intellihide {
                         const rect = win.get_frame_rect();
 
                         const test = (rect.x < this._targetBox.x2) &&
-                                   (rect.x + rect.width > this._targetBox.x1) &&
+                                   (rect.x + rect.width >= this._targetBox.x1) &&
                                    (rect.y < this._targetBox.y2) &&
-                                   (rect.y + rect.height > this._targetBox.y1);
+                                   (rect.y + rect.height >= this._targetBox.y1);
 
                         if (test) {
                             overlaps = OverlapStatus.TRUE;
