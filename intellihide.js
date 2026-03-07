@@ -129,7 +129,11 @@ export class Intellihide {
 
     _windowCreated(display, metaWindow) {
         this._addWindowSignals(metaWindow.get_compositor_private());
-        this._doCheckOverlap();
+        // Don't check overlap immediately — the new window's frame rect
+        // is still 0x0 at this point, which causes a false "no overlap"
+        // result and briefly shows the dock.  The notify::allocation
+        // signal connected in _addWindowSignals will trigger a recheck
+        // once the window has a real geometry.
     }
 
     _addWindowSignals(wa) {
@@ -222,6 +226,10 @@ export class Intellihide {
 
                     if (win) {
                         const rect = win.get_frame_rect();
+
+                        // Skip windows whose geometry hasn't been set yet
+                        if (rect.width === 0 || rect.height === 0)
+                            continue;
 
                         const test = (rect.x < this._targetBox.x2) &&
                                    (rect.x + rect.width > this._targetBox.x1) &&
