@@ -286,6 +286,11 @@
       <summary>Wiggle urgent applications</summary>
       <description>Wiggle urgent application icons in the dash</description>
     </key>
+    <key type="b" name="bounce-icons">
+      <default>true</default>
+      <summary>Bounce icons when launching</summary>
+      <description>Bounce icons when launching applications</description>
+    </key>
     <key type="b" name="show-show-apps-button">
       <default>true</default>
       <summary>Show applications button</summary>

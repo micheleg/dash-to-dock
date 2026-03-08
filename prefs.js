@@ -706,6 +706,10 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('wiggle_urgent_applications_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('bounce-icons',
+            this._builder.get_object('bounce_icons_switch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('hide-tooltip',
             this._builder.get_object('hide_tooltip_switch'),
             'active',
