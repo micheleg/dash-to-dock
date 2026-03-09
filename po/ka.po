@@ -1,0 +1,728 @@
+# Georgian translation for dashtodock.
+# Copyright (C) 2026 dashtodock's authors.
+# This file is distributed under the same license as the dashtodock package.
+# Ekaterine Papava <papava.e@gtu.ge>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: dashtodock\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-23 13:11+0100\n"
+"PO-Revision-Date: 2026-02-23 15:25+0100\n"
+"Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
+"Language-Team: Georgian <(nothing)>\n"
+"Language: ka\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.8\n"
+
+#. Translators: This will be followed by Display Name - Connector.
+#: prefs.js:382
+msgid "Primary monitor: "
+msgstr "ძირითადი ეკრანი: "
+
+#. Translators: Followed by monitor index, Display Name - Connector.
+#: prefs.js:388
+msgid "Secondary monitor "
+msgstr "დამხმარე ეკრანი "
+
+#: prefs.js:434 Settings.ui.h:32
+msgid "Right"
+msgstr "მარჯვენა"
+
+#: prefs.js:435 Settings.ui.h:29
+msgid "Left"
+msgstr "მარცხენა"
+
+#: prefs.js:490
+msgid "Intelligent autohide customization"
+msgstr "ავტოდამალვის მორგება"
+
+#: prefs.js:498 prefs.js:816 prefs.js:875
+msgid "Reset to defaults"
+msgstr "ნაგულისხმევზე ჩამოყრა"
+
+#: prefs.js:649
+msgid "Managed by GNOME Multitasking's Application Switching setting."
+msgstr "იმართება GNOME-ის მრავალამოცანიანობის აპლიკაციის გადართვის პარამეტრით."
+
+#: prefs.js:808
+msgid "Show dock and application numbers"
+msgstr "აპლიკაციის ნომრების ჩვენება"
+
+#: prefs.js:867
+msgid "Customize middle-click behavior"
+msgstr "შუა წკაპის ქცევის მორგება"
+
+#: prefs.js:964
+msgid "Customize running indicators"
+msgstr "გაშვებული პროგრამის მაჩვენებლების მორგება"
+
+#: prefs.js:1079 Settings.ui.h:96
+msgid "Customize opacity"
+msgstr "გაუმჭვირვალობის მორგება"
+
+#: docking.js:1294
+msgid "Dash"
+msgstr "პანელი"
+
+#: docking.js:2535 appIcons.js:1181
+msgid "Unpin"
+msgstr "მოხსნა"
+
+#: docking.js:2535 appIcons.js:1187
+msgid "Pin to Dock"
+msgstr "დოკზე მიმაგრება"
+
+#: appIcons.js:759 appIconsDecorator.js:106
+#, javascript-format
+msgid "%s is updating, try again later"
+msgstr "მიმდინარეობს %s-ის განახლება. მოგვიანებით სცადეთ"
+
+#: appIcons.js:1091
+#, javascript-format
+msgid "%s is being updated…"
+msgstr "მიმდინარეობს “%s”-ის განახლება…"
+
+#: appIcons.js:1102
+msgid "All Windows"
+msgstr "ყველა ფანჯარა"
+
+#. Translators: This is the heading of a list of open windows
+#: appIcons.js:1114
+msgid "Open Windows"
+msgstr "ფანჯრების გახსნა"
+
+#: appIcons.js:1134
+msgid "New Window"
+msgstr "ახალი ფანჯარა"
+
+#: appIcons.js:1153
+msgid "Launch using Integrated Graphics Card"
+msgstr "ჩაშენებული ვიდეობარათით გაშვება"
+
+#: appIcons.js:1154
+msgid "Launch using Discrete Graphics Card"
+msgstr "დისკრეტული ვიდეობარათით გაშვება"
+
+#: appIcons.js:1199 appIcons.js:1225
+msgid "App Details"
+msgstr "აპის დეტალები"
+
+#: appIcons.js:1254 appIcons.js:1266 Settings.ui.h:14
+msgid "Quit"
+msgstr "გასვლა"
+
+#: appIcons.js:1269
+#, javascript-format
+msgid "Quit %d Window"
+msgid_plural "Quit %d Windows"
+msgstr[0] "%d ფანჯრიდან გასვლა"
+msgstr[1] "%d ფანჯრიდან გასვლა"
+
+#: appIcons.js:1554
+msgid "Dash to Dock"
+msgstr "Dash to Dock"
+
+#: appIcons.js:1556
+msgid "Settings"
+msgstr "მორგება"
+
+#: locations.js:540
+msgid "Mount"
+msgstr "მიმაგრება"
+
+#: locations.js:542
+msgid "Unmount"
+msgstr "მოხსნა"
+
+#: locations.js:544
+msgid "Eject"
+msgstr "გამოღება"
+
+#: locations.js:604
+#, javascript-format
+msgid "Failed to mount “%s”"
+msgstr "\"%s\"-ის დამაგრება ჩავარდა"
+
+#: locations.js:609
+#, javascript-format
+msgid "Failed to unmount “%s”"
+msgstr "\"%s\"-ის მოხსნა ჩავარდა"
+
+#: locations.js:614
+#, javascript-format
+msgid "Failed to eject “%s”"
+msgstr "\"%s\"-ის გამოღება ჩავარდა"
+
+#: locations.js:627
+msgid "Mount operation already in progress"
+msgstr "მიმაგრების ოპერაცია უკვე მიმდინარეობს"
+
+#: locations.js:632
+msgid "Unmount operation already in progress"
+msgstr "მოხსნის ოპერაცია უკვე მიმდინარეობს"
+
+#: locations.js:637
+msgid "Eject operation already in progress"
+msgstr "ამოღების ოპერაცია უკვე მიმდინარეობს"
+
+#: locations.js:763
+msgid "Trash"
+msgstr "ნაგვის ყუთი"
+
+#: locations.js:804
+msgid "Empty Trash"
+msgstr "ნაგვის ყუთის დაცარიელება"
+
+#: locations.js:1074
+#, javascript-format
+msgid "Failed to launch “%s”"
+msgstr "%s-ის გაშვების შეცდომა"
+
+#: Settings.ui.h:1
+msgid ""
+"When set to minimize, double clicking minimizes all the windows of the "
+"application."
+msgstr ""
+"როცა დაყენებულია ჩაკეცვაზე, ორმაგი წკაპი აპლიკაციის ყველა ფანჯარას ჩაკეცავს."
+
+#: Settings.ui.h:2
+msgid "Shift+Click action"
+msgstr "Shift+წკაპის ქმედება"
+
+#: Settings.ui.h:3
+msgid "Raise window"
+msgstr "ფანჯრის აწევა"
+
+#: Settings.ui.h:4
+msgid "Minimize window"
+msgstr "ფანჯრის ჩაკეცვა"
+
+#: Settings.ui.h:5
+msgid "Launch new instance"
+msgstr "ახალი გაშვებული ასლის გაშვება"
+
+#: Settings.ui.h:6
+msgid "Cycle through windows"
+msgstr "წრიული გადართვა ფანჯრებში"
+
+#: Settings.ui.h:7
+msgid "Minimize or overview"
+msgstr "ჩაკეცვა, ან მიმოხილვა"
+
+#: Settings.ui.h:8
+msgid "Show window previews"
+msgstr "ფანჯრის მინიატურების ჩვენება"
+
+#: Settings.ui.h:9
+msgid "Minimize or show previews"
+msgstr "ჩაკეცვა, ან მინიატურების ჩვენება"
+
+#: Settings.ui.h:10
+msgid "Focus or show previews"
+msgstr "ფოკუსი, ან მინიატურების ჩვენება"
+
+#: Settings.ui.h:11
+msgid "Focus or app spread"
+msgstr "აპის ფანჯრების ფოკუსი, ან მიმოხილვა"
+
+#: Settings.ui.h:12
+msgid "Focus, minimize or show previews"
+msgstr "ფოკუსი, ჩაკეცვა, ან მინიატურების ჩვენება"
+
+#: Settings.ui.h:13
+msgid "Focus, minimize or app spread"
+msgstr "ფოკუსი, მინიმიზაცია და აპის ფანჯრების მიმოხილვა"
+
+#: Settings.ui.h:15
+msgid "Behavior for Middle-Click."
+msgstr "შუა წკაპის ქცევის მორგება."
+
+#: Settings.ui.h:16
+msgid "Middle-Click action"
+msgstr "შუა-წკაპის ქმედება"
+
+#: Settings.ui.h:17
+msgid "Behavior for Shift+Middle-Click."
+msgstr "ქცევა Shift+შუაწკაპისთვის."
+
+#: Settings.ui.h:18
+msgid "Shift+Middle-Click action"
+msgstr "Shift+შუაწკაპის ქმედება"
+
+#: Settings.ui.h:19
+msgid "Enable Unity7 like glossy backlit items"
+msgstr "Unity7-ის მსგავსი გამოკვეთილი ელემენტების ჩართვა"
+
+#: Settings.ui.h:20
+msgid "Apply glossy effect."
+msgstr "სიპრიალის ეფექტის გამოყენება."
+
+#: Settings.ui.h:21
+msgid "Use dominant color"
+msgstr "დომინანტი ფერის გამოყენება"
+
+#: Settings.ui.h:22
+msgid "Customize indicator style"
+msgstr "მაჩვენებლის სტილის მორგება"
+
+#: Settings.ui.h:23
+msgid "Color"
+msgstr "ფერი"
+
+#: Settings.ui.h:24
+msgid "Border color"
+msgstr "საზღვრის ფერი"
+
+#: Settings.ui.h:25
+msgid "Border width"
+msgstr "საზღვრის სიგანე"
+
+#: Settings.ui.h:26
+msgid "Show the dock on"
+msgstr "დოკის ჩვენება რაზე"
+
+#: Settings.ui.h:27
+msgid "Show on all monitors"
+msgstr "ყველა ეკრანზე ჩვენება"
+
+#: Settings.ui.h:28
+msgid "Position on screen"
+msgstr "მდებარეობა ეკრანზე"
+
+#: Settings.ui.h:30
+msgid "Bottom"
+msgstr "ქვემო"
+
+#: Settings.ui.h:31
+msgid "Top"
+msgstr "ზედა"
+
+#: Settings.ui.h:33
+msgid ""
+"Hide the dock when it obstructs a window of the current application. More "
+"refined settings are available."
+msgstr ""
+"დოკის დამალვა, როცა ის მიმდინარე აპლიკაციის ფანჯარას ეფარება. ასევე "
+"ხელმისაწვდომია უფრო დაწვრილებითი პარამეტრებიც."
+
+#: Settings.ui.h:34
+msgid "Intelligent autohide"
+msgstr "ჭკვიანი ავტოდამალვა"
+
+#: Settings.ui.h:35
+msgid "Dock size limit"
+msgstr "დოკის ზომის ეფექტი"
+
+#: Settings.ui.h:36
+msgid "Panel mode: extend to the screen edge"
+msgstr "პანელის რეჟიმი: გაფართოება ეკრანის წიბომდე"
+
+#: Settings.ui.h:37
+msgid "Place icons to the center"
+msgstr "ხატულების ცენტრში მოთავსება"
+
+#: Settings.ui.h:38
+msgid "Icon size limit"
+msgstr "ხატულას ზომის ლიმიტი"
+
+#: Settings.ui.h:39
+msgid "Fixed icon size: scroll to reveal other icons"
+msgstr "სიქსირებული ხატულას ზომა: გადაახვიეთ სხვა ხატულების გამოსაჩენად"
+
+#: Settings.ui.h:40
+msgid "Preview size scale"
+msgstr "მინიატურის ზომის მასშტაბი"
+
+#: Settings.ui.h:41
+msgid "Position and size"
+msgstr "მდებარეობა და ზომა"
+
+#: Settings.ui.h:42
+msgid "Show pinned applications"
+msgstr "ამაგრებული აპლიკაციების ჩვენება"
+
+#: Settings.ui.h:43
+msgid "Show running applications"
+msgstr "გაშვებული აპლიკაციების ჩვენება"
+
+#: Settings.ui.h:44
+msgid "Isolate workspaces"
+msgstr "სამუშაო სივრცეების იზოლაცია"
+
+#: Settings.ui.h:45
+msgid "Show urgent windows despite current workspace"
+msgstr "გადაუდებელი ფანჯრების ჩვენება მიმდინარე სამუშაო სივრცის დამოუკიდებლად"
+
+#: Settings.ui.h:46
+msgid "Isolate monitors"
+msgstr "ეკრანების იზოლაცია"
+
+#: Settings.ui.h:47
+msgid "Show open windows' previews"
+msgstr "ღია ფანჯრების მინიატურის ჩვენება"
+
+#: Settings.ui.h:48
+msgid "Keep the focused application always visible in the dash"
+msgstr "ფოკუსის მქონე აპლიკაცია ყოველთვის ხილული იქნება დოკზე"
+
+#: Settings.ui.h:49
+msgid ""
+"If disabled, these settings are accessible from gnome-tweak-tool or the "
+"extension website."
+msgstr ""
+"თუ გამორთულია, ეს პარამეტრები წვდომადია gnome-tweak-tool-იდან, ან აპლიკაციის "
+"საიტიდან."
+
+#: Settings.ui.h:50
+msgid "Show <i>Applications</i> icon"
+msgstr "<i>აპლიკაციის</i> ხატულას ჩვენება"
+
+#: Settings.ui.h:51
+msgid "Move at beginning of the dock"
+msgstr "დოკის დასაწყისში გადატანა"
+
+#: Settings.ui.h:52
+msgid "Animate <i>Show Applications</i>"
+msgstr "<i>აპლიკაციების ჩვენების</i> ანიმაცია"
+
+#: Settings.ui.h:53
+msgid "Put <i>Show Applications</i> in a dock edge when using Panel mode"
+msgstr ""
+"<i>აპლიკაციების ჩვენების</i> მოთავსება დოკის წიბოში პანელის რეჟიმის "
+"გამოყენებისას"
+
+#: Settings.ui.h:54
+msgid "Show trash can"
+msgstr "ნაგვის ყუთის ჩვენება"
+
+#: Settings.ui.h:55
+msgid "Show volumes and devices"
+msgstr "ტომებისა და მოწყობილობების ჩვენება"
+
+#: Settings.ui.h:56
+msgid "Only if mounted"
+msgstr "მხოლოდ, თუ მიმაგრებულია"
+
+#: Settings.ui.h:57
+msgid "Include network volumes"
+msgstr "ქსელური ტომების ჩასმა"
+
+#: Settings.ui.h:58
+msgid "Isolate volumes, devices and trash windows from file manager"
+msgstr ""
+"ტომების, მოწყობილობებისა და ნაგვის ყუთის ფანჯრების იზოლაცია ფაილების "
+"მმართველიდან"
+
+#: Settings.ui.h:59
+msgid "Wiggle urgent applications"
+msgstr "გადაუდებელი აპლიკაციების შენჯღრევა"
+
+#: Settings.ui.h:60
+msgid "Hide application tooltip"
+msgstr "აპლიკაციის მინიშნების დამალვა"
+
+#: Settings.ui.h:61
+msgid "Show icons emblems"
+msgstr "ხატულას ემბლემების ჩვენება"
+
+#: Settings.ui.h:62
+msgid ""
+"When enabled application icons will show notification counters and progress-"
+"bars (if Unity API is used)."
+msgstr ""
+"როცა ჩართულია, აპლიკაციის ხატულები გაფრთხილებების რაოდენობას და "
+"მიმდინარეობის ზოლებს აჩვენებნ (თუ გამოიყენება Unity-ის API)."
+
+#: Settings.ui.h:63
+msgid "Show the number of unread notifications"
+msgstr "წაუკითხავი შეტყობინებების რაოდენობის ჩვენება"
+
+#: Settings.ui.h:64
+msgid "Application-provided counter overrides the notifications counter"
+msgstr "აპლიკაციის მოწოდებული მთვლელი გადაფარავს გაფრთხილებების მთვლელს"
+
+#: Settings.ui.h:65
+msgid "Launchers"
+msgstr "გამშვებები"
+
+#: Settings.ui.h:66
+msgid ""
+"Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
+"together with Shift and Ctrl."
+msgstr ""
+"Super+(0-0) მალსახმობების გამოყენება აპების გასააქტიურებლად. ისინი Shift და "
+"Ctrl ღილაკთან ერთადაც შეგიძლიათ, გამოიყენოთ."
+
+#: Settings.ui.h:67
+msgid "Use keyboard shortcuts to activate apps"
+msgstr "კლავიატურის მალსახმობების გამოყენება აპლიკაციების გასააქტიურებლად"
+
+#: Settings.ui.h:68
+msgid "Behaviour when clicking on the icon of a running application."
+msgstr "ქცევა გაშვებული აპლიკაციის ხატულაზე დაწკაპუნებისას."
+
+#: Settings.ui.h:69
+msgid "Click action"
+msgstr "წკაპის ქმედება"
+
+#: Settings.ui.h:70
+msgid "Minimize"
+msgstr "ჩაკეცვა"
+
+#: Settings.ui.h:71
+msgid "Behaviour when scrolling on the icon of an application."
+msgstr "ქცევა აპლიკაციის ხატულაზე გადახვევისას."
+
+#: Settings.ui.h:72
+msgid "Scroll action"
+msgstr "გადახვევის ქმედება"
+
+#: Settings.ui.h:73
+msgid "Do nothing"
+msgstr "არაფრის გაკეთება"
+
+#: Settings.ui.h:74
+msgid "Switch workspace"
+msgstr "სამუშაო სივრცის გადართვა"
+
+#: Settings.ui.h:75
+msgid "Behavior"
+msgstr "ქცევა"
+
+#: Settings.ui.h:76
+msgid "Save space reducing padding and border radius."
+msgstr "ადგილის შენარჩუნება შევსებისა და საზღვრის რადიუსის შემცირებით."
+
+#: Settings.ui.h:77
+msgid "Shrink the dash"
+msgstr "დოკის შევიწროვება"
+
+#: Settings.ui.h:78
+msgid "Force straight corner"
+msgstr "ნაძალადევი სწორი კუთხე"
+
+#: Settings.ui.h:79
+msgid "Show overview on startup"
+msgstr "მიმოხილვის ჩვენება გაშვებისას"
+
+#: Settings.ui.h:80
+msgid ""
+"Few customizations meant to integrate the dock with the default GNOME theme. "
+"Alternatively, specific options can be enabled below."
+msgstr ""
+"რამდენიმე ცვლილება დოკის GNOME-ის ნაგულისხმევ თემაში ინტეგრაციისთვის. "
+"სპეციფიკური პარამეტრების ჩართვა ქვემოთ შეგიძლიათ."
+
+#: Settings.ui.h:81
+msgid "Use built-in theme"
+msgstr "ჩაშენებული თემის გამოყენება"
+
+#: Settings.ui.h:82
+msgid "Customize windows counter indicators"
+msgstr "ფანჯრის მთვლელის მაჩვენებლების მროგება"
+
+#: Settings.ui.h:83
+msgid "Default"
+msgstr "ნაგულისხმევი"
+
+#: Settings.ui.h:84
+msgid "Dots"
+msgstr "წერტილები"
+
+#: Settings.ui.h:85
+msgid "Squares"
+msgstr "კვარატები"
+
+#: Settings.ui.h:86
+msgid "Dashes"
+msgstr "ტირეები"
+
+#: Settings.ui.h:87
+msgid "Segmented"
+msgstr "დაყოფილი"
+
+#: Settings.ui.h:88
+msgid "Solid"
+msgstr "მყარი"
+
+#: Settings.ui.h:89
+msgid "Ciliora"
+msgstr "ხაზი წერტილებით"
+
+#: Settings.ui.h:90
+msgid "Metro"
+msgstr "მეტრო"
+
+#: Settings.ui.h:91
+msgid "Binary"
+msgstr "ორობითი"
+
+#: Settings.ui.h:92
+msgid "Dot"
+msgstr "წერტილი"
+
+#: Settings.ui.h:93
+msgid "Set the background color for the dash."
+msgstr "დოკის ფონის ფერის დაყენება"
+
+#: Settings.ui.h:94
+msgid "Customize the dash color"
+msgstr "დოკის ფერის მორგება"
+
+#: Settings.ui.h:95
+msgid "Tune the dash background opacity."
+msgstr "დოკის ფონის გაუმჭვირვალობის მროგება."
+
+#: Settings.ui.h:97
+msgid "Fixed"
+msgstr "ფიქსირებული"
+
+#: Settings.ui.h:98
+msgid "Dynamic"
+msgstr "დინამიკური"
+
+#: Settings.ui.h:99
+msgid "Opacity"
+msgstr "გაუმჭვირვალობა"
+
+#: Settings.ui.h:100
+msgid "Appearance"
+msgstr "გარეგნობა"
+
+#: Settings.ui.h:101
+msgid "version: "
+msgstr "ვერსია: "
+
+#: Settings.ui.h:102
+msgid "Moves the dash out of the overview transforming it in a dock"
+msgstr "გადართავს პანელს გადახედვის რეჟიმიდან დოკზე"
+
+#: Settings.ui.h:103
+msgid "Created by"
+msgstr "ავტორი"
+
+#: Settings.ui.h:104
+msgid "Webpage"
+msgstr "ვებ-გვერდი"
+
+#: Settings.ui.h:105
+msgid ""
+"<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
+"See the <a href=\"https://www.gnu.org/licenses/old-licenses/"
+"gpl-2.0.html\">GNU General Public License, version 2 or later</a> for "
+"details.</span>"
+msgstr ""
+"<span size=\"small\">ამ პროგრამას აბსოლუტურად არანაირი გარანტია არ "
+"მოჰყვება.\n"
+"დეტალებისთვის იხილეთ <a href=\"https://www.gnu.org/licenses/old-licenses/"
+"gpl-2.0.html\">GNU General Public License, version 2, ან უფრო ახალი</a>.</"
+"span>"
+
+#: Settings.ui.h:107
+msgid "About"
+msgstr "შესახებ"
+
+#: Settings.ui.h:108
+msgid "Customize minimum and maximum opacity values"
+msgstr "მინიმალური და მაქსიმალური გაუმჭვირვალობის დონის მორგება"
+
+#: Settings.ui.h:109
+msgid "Minimum opacity"
+msgstr "მინიმალური გაუმჭვირვალობა"
+
+#: Settings.ui.h:110
+msgid "Maximum opacity"
+msgstr "მაქსიმალური გაუმჭვირვალობა"
+
+#: Settings.ui.h:111
+msgid "Number overlay"
+msgstr "ციფრების გადაფარვა"
+
+#: Settings.ui.h:112
+msgid ""
+"Temporarily show the application numbers over the icons, corresponding to "
+"the shortcut."
+msgstr "აპლიკაციის ნომრების დროებით ჩვენება ხატულების მალსახმობების დაჭერისას."
+
+#: Settings.ui.h:113
+msgid "Show the dock if it is hidden"
+msgstr "დოკის ჩვენება, თუ ის დამალულია"
+
+#: Settings.ui.h:114
+msgid ""
+"If using autohide, the dock will appear for a short time when triggering the "
+"shortcut."
+msgstr ""
+"თუ გამოიყენება ავტოდამალვა, დოკი ცოტა ხნით გამოჩნდება მალსახმობის დაჭერისას."
+
+#: Settings.ui.h:115
+msgid "Shortcut for the options above"
+msgstr "მალსახმობი ზემო პარამეტრებისთვის"
+
+#: Settings.ui.h:116
+msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
+msgstr "სინტაქსი: <Shift>, <Ctrl>, <Alt>, <Super>"
+
+#: Settings.ui.h:117
+msgid "Hide timeout (s)"
+msgstr "დამალვის დაყოვნება (წმ)"
+
+#: Settings.ui.h:118
+msgid "Show the dock by mouse hover on the screen edge."
+msgstr "დოკის ჩვენება თაგუნას კურსორის ეკრანის წიბოზე გაჩერებისას."
+
+#: Settings.ui.h:119
+msgid "Autohide"
+msgstr "ავტომატური დამალვა"
+
+#: Settings.ui.h:120
+msgid "Push to show: require pressure to show the dock"
+msgstr "საჩვენებლად დაჭერა: დაჭერის მოთხოვნა დოკის საჩვენებლად"
+
+#: Settings.ui.h:121
+msgid "Enable in fullscreen mode"
+msgstr "ჩართვა სრულეკრანიან რეჟიმში"
+
+#: Settings.ui.h:122
+msgid "Show dock for urgent notifications"
+msgstr "დოკის ჩვენება გადაუდებელი შეტყობინებებისთვის"
+
+#: Settings.ui.h:123
+msgid "Show the dock when it doesn't obstruct application windows."
+msgstr "დოკის ჩვენება, როცა ის აპლიკაციის ფანჯრებს არ ეფარება."
+
+#: Settings.ui.h:124
+msgid "Dodge windows"
+msgstr "ფანჯრების აცილება"
+
+#: Settings.ui.h:125
+msgid "All windows"
+msgstr "ყველა ფანჯარა"
+
+#: Settings.ui.h:126
+msgid "Only focused application's windows"
+msgstr "მხოლოდ ფოკუსის მქონე აპლიკაციის ფანჯრები"
+
+#: Settings.ui.h:127
+msgid "Only maximized windows"
+msgstr "მხოლოდ მთელ ეკრანზე გაშლილი ფანჯრები"
+
+#: Settings.ui.h:128
+msgid "Always on top"
+msgstr "ყოველთვის ყველა ფანჯარაზე ზემოდან"
+
+#: Settings.ui.h:129
+msgid "Animation duration (s)"
+msgstr "ანიმაციის ხანგრძლივობა (წმ)"
+
+#: Settings.ui.h:130
+msgid "Show timeout (s)"
+msgstr "ჩვენების დრო (წმ)"
+
+#: Settings.ui.h:131
+msgid "Pressure threshold"
+msgstr "დაწოლის ზღვარი"
