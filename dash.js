@@ -142,6 +142,7 @@ export const DockDash = GObject.registerClass({
         this._shownInitially = false;
         this._initializeIconSize(this.iconSize);
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
+        this._appIconSignals = [];
 
         this._separator = null;
 
@@ -313,6 +314,16 @@ export const DockDash = GObject.registerClass({
 
     _onDestroy() {
         this.iconAnimator.destroy();
+
+        // Disconnect scrollView-related signals to prevent access to disposed objects
+        for (const signal of this._appIconSignals) {
+            try {
+                signal.obj.disconnect(signal.id);
+            } catch (e) {
+                // appIcon may already be destroyed
+            }
+        }
+        this._appIconSignals = [];
 
         if (this._requiresVisibilityTimeout) {
             GLib.source_remove(this._requiresVisibilityTimeout);
@@ -524,11 +535,11 @@ export const DockDash = GObject.registerClass({
         item.setChild(appIcon);
 
         appIcon.connect('notify::hover', a => this._ensureItemVisibility(a));
-        appIcon.connect('clicked', actor => {
+        const clickedId = appIcon.connect('clicked', actor => {
             ensureActorVisibleInScrollView(this._scrollView, actor);
         });
 
-        appIcon.connect('key-focus-in', actor => {
+        const keyFocusId = appIcon.connect('key-focus-in', actor => {
             const [xShift, yShift] = ensureActorVisibleInScrollView(this._scrollView, actor);
 
             // This signal is triggered also by mouse click. The popup menu is opened at the original
@@ -539,19 +550,26 @@ export const DockDash = GObject.registerClass({
             }
         });
 
-        appIcon.connect('notify::focused', () => {
+        const focusedId = appIcon.connect('notify::focused', () => {
             const {settings} = Docking.DockManager;
             if (appIcon.focused && settings.scrollToFocusedApplication)
                 ensureActorVisibleInScrollView(this._scrollView, item);
         });
 
-        appIcon.connect('notify::urgent', () => {
+        const urgentId = appIcon.connect('notify::urgent', () => {
             if (appIcon.urgent) {
                 ensureActorVisibleInScrollView(this._scrollView, item);
                 if (Docking.DockManager.settings.showDockUrgentNotify)
                     this._requireVisibility();
             }
         });
+
+        this._appIconSignals.push(
+            {obj: appIcon, id: clickedId},
+            {obj: appIcon, id: keyFocusId},
+            {obj: appIcon, id: focusedId},
+            {obj: appIcon, id: urgentId}
+        );
 
         // Override default AppIcon label_actor, now the
         // accessible_name is set at DashItemContainer.setLabelText
@@ -1116,6 +1134,15 @@ export const DockDash = GObject.registerClass({
  * @param actor
  */
 function ensureActorVisibleInScrollView(scrollView, actor) {
+    // Guard against disposed scrollView (e.g. when alt-tab extensions trigger
+    // notify::focused after the dash has been destroyed)
+    if (!scrollView || !actor)
+        return [0, 0];
+    try {
+        scrollView.vadjustment;
+    } catch (e) {
+        return [0, 0];
+    }
     // access to scrollView.[hv]scroll was deprecated in gnome 46
     // instead, adjustment can be accessed directly
     // keep old way for backwards compatibility (gnome <= 45)
