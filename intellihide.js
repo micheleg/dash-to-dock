@@ -62,7 +62,7 @@ export class Intellihide {
         this._topApp = null; // The application whose window is on top on the monitor with the dock.
 
         this._isEnabled = false;
-        this.status = OverlapStatus.UNDEFINED;
+        this._status = OverlapStatus.UNDEFINED;
         this._targetBox = null;
 
         this._checkOverlapTimeoutContinue = false;
