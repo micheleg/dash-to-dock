@@ -1408,7 +1408,7 @@ const DockedDash = GObject.registerClass({
 
                 // Do not show workspaceSwitcher in overview
                 if (!Main.overview.visible)
-                    Main.wm._workspaceSwitcherPopup.display(direction, ws.index());
+                    Main.wm._workspaceSwitcherPopup.display(ws.index());
 
                 return true;
             } else {
