@@ -1,0 +1,745 @@
+# Romanian translation for Dash to Dock.
+# Copyright (C) 2026
+# This file is distributed under the same license as the PACKAGE package.
+# Rajat Jain <rajatjain01970@gmail.com>, 2026.
+msgid ""
+msgstr ""
+"Project-Id-Version: Dash to Dock\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-27 06:14+0200\n"
+"PO-Revision-Date: 2026-03-21 16:50+0530\n"
+"Last-Translator: Rajat Jain <rajatjain01970@gmail.com>\n"
+"Language-Team: Romanian\n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
+
+#. Translators: This will be followed by Display Name - Connector.
+#: prefs.js:382
+msgid "Primary monitor: "
+msgstr "Monitorul principal: "
+
+#. Translators: Followed by monitor index, Display Name - Connector.
+#: prefs.js:388
+msgid "Secondary monitor "
+msgstr "Monitor secundar "
+
+#: prefs.js:434 Settings.ui.h:32
+msgid "Right"
+msgstr "Dreapta"
+
+#: prefs.js:435 Settings.ui.h:29
+msgid "Left"
+msgstr "Stânga"
+
+#: prefs.js:490
+msgid "Intelligent autohide customization"
+msgstr "Personalizarea ascunderii automate inteligente"
+
+#: prefs.js:498 prefs.js:816 prefs.js:875
+msgid "Reset to defaults"
+msgstr "Restabilire la valorile implicite"
+
+#: prefs.js:649
+msgid "Managed by GNOME Multitasking's Application Switching setting."
+msgstr "Gestionat de setarea de comutare a aplicațiilor din GNOME Multitasking."
+
+#: prefs.js:808
+msgid "Show dock and application numbers"
+msgstr "Afișează dock-ul și numerele aplicațiilor"
+
+#: prefs.js:867
+msgid "Customize middle-click behavior"
+msgstr "Personalizarea comportamentului la clic mijlociu"
+
+#: prefs.js:964
+msgid "Customize running indicators"
+msgstr "Personalizarea indicatorilor de rulare"
+
+#: prefs.js:1079 Settings.ui.h:96
+msgid "Customize opacity"
+msgstr "Personalizarea opacității"
+
+#: docking.js:1273
+msgid "Dash"
+msgstr "Dash"
+
+#: docking.js:2514 appIcons.js:1177
+msgid "Unpin"
+msgstr "Anulează fixarea"
+
+#: docking.js:2514 appIcons.js:1183
+msgid "Pin to Dock"
+msgstr "Fixează în Dock"
+
+#: appIcons.js:755 appIconsDecorator.js:105
+#, javascript-format
+msgid "%s is updating, try again later"
+msgstr "%s se actualizează, încercați din nou mai târziu"
+
+#: appIcons.js:1087
+#, javascript-format
+msgid "%s is being updated…"
+msgstr "%s se actualizează…"
+
+#: appIcons.js:1098
+msgid "All Windows"
+msgstr "Toate ferestrele"
+
+#. Translators: This is the heading of a list of open windows
+#: appIcons.js:1110
+msgid "Open Windows"
+msgstr "Ferestre deschise"
+
+#: appIcons.js:1130
+msgid "New Window"
+msgstr "Fereastră nouă"
+
+#: appIcons.js:1149
+msgid "Launch using Integrated Graphics Card"
+msgstr "Lansează folosind placa grafică integrată"
+
+#: appIcons.js:1150
+msgid "Launch using Discrete Graphics Card"
+msgstr "Lansează folosind placa grafică dedicată"
+
+#: appIcons.js:1195 appIcons.js:1221
+msgid "App Details"
+msgstr "Detalii aplicație"
+
+#: appIcons.js:1250 appIcons.js:1262 Settings.ui.h:14
+msgid "Quit"
+msgstr "Închide"
+
+#: appIcons.js:1265
+#, javascript-format
+msgid "Quit %d Window"
+msgid_plural "Quit %d Windows"
+msgstr[0] "Închide %d fereastră"
+msgstr[1] "Închide %d ferestre"
+msgstr[2] "Închide %d de ferestre"
+
+#. Translators: %s is "Settings", which is automatically translated. You
+#. can also translate the full message if this fits better your language.
+#: appIcons.js:1513
+#, javascript-format
+msgid "Dash to Dock %s"
+msgstr "Dash to Dock %s"
+
+#: appIcons.js:1513
+msgid "Settings"
+msgstr "Setări"
+
+#: locations.js:533
+msgid "Mount"
+msgstr "Montează"
+
+#: locations.js:535
+msgid "Unmount"
+msgstr "Demontează"
+
+#: locations.js:537
+msgid "Eject"
+msgstr "Ejectează"
+
+#: locations.js:596
+#, javascript-format
+msgid "Failed to mount “%s”"
+msgstr "Montarea “%s” a eșuat"
+
+#: locations.js:599
+#, javascript-format
+msgid "Failed to unmount “%s”"
+msgstr "Demontarea “%s” a eșuat"
+
+#: locations.js:602
+#, javascript-format
+msgid "Failed to eject “%s”"
+msgstr "Ejectarea “%s” a eșuat"
+
+#: locations.js:614
+msgid "Mount operation already in progress"
+msgstr "Operațiunea de montare este deja în curs"
+
+#: locations.js:617
+msgid "Unmount operation already in progress"
+msgstr "Operațiunea de demontare este deja în curs"
+
+#: locations.js:620
+msgid "Eject operation already in progress"
+msgstr "Operațiunea de ejectare este deja în curs"
+
+#: locations.js:738
+msgid "Trash"
+msgstr "Coș de gunoi"
+
+#: locations.js:779
+msgid "Empty Trash"
+msgstr "Golește coșul de gunoi"
+
+#: locations.js:1049
+#, javascript-format
+msgid "Failed to launch “%s”"
+msgstr "Lansarea “%s” a eșuat"
+
+#: Settings.ui.h:1
+msgid ""
+"When set to minimize, double clicking minimizes all the windows of the "
+"application."
+msgstr ""
+"Când este setat pe Minimizare, dublu clic minimizează toate ferestrele "
+"aplicației."
+
+#: Settings.ui.h:2
+msgid "Shift+Click action"
+msgstr "Acțiune Shift+Clic"
+
+#: Settings.ui.h:3
+msgid "Raise window"
+msgstr "Ridică fereastra"
+
+#: Settings.ui.h:4
+msgid "Minimize window"
+msgstr "Minimizează fereastra"
+
+#: Settings.ui.h:5
+msgid "Launch new instance"
+msgstr "Lansează o instanță nouă"
+
+#: Settings.ui.h:6
+msgid "Cycle through windows"
+msgstr "Ciclare prin ferestre"
+
+#: Settings.ui.h:7
+msgid "Minimize or overview"
+msgstr "Minimizare sau prezentare generală"
+
+#: Settings.ui.h:8
+msgid "Show window previews"
+msgstr "Afișează previzualizările ferestrelor"
+
+#: Settings.ui.h:9
+msgid "Minimize or show previews"
+msgstr "Minimizare sau afișare previzualizări"
+
+#: Settings.ui.h:10
+msgid "Focus or show previews"
+msgstr "Focalizare sau afișare previzualizări"
+
+#: Settings.ui.h:11
+msgid "Focus or app spread"
+msgstr "Focalizare sau răspândire aplicație"
+
+#: Settings.ui.h:12
+msgid "Focus, minimize or show previews"
+msgstr "Focalizare, minimizare sau afișare previzualizări"
+
+#: Settings.ui.h:13
+msgid "Focus, minimize or app spread"
+msgstr "Focalizare, minimizare sau răspândire aplicație"
+
+#: Settings.ui.h:15
+msgid "Behavior for Middle-Click."
+msgstr "Comportament pentru clic mijlociu."
+
+#: Settings.ui.h:16
+msgid "Middle-Click action"
+msgstr "Acțiune clic mijlociu"
+
+#: Settings.ui.h:17
+msgid "Behavior for Shift+Middle-Click."
+msgstr "Comportament pentru Shift+Clic mijlociu."
+
+#: Settings.ui.h:18
+msgid "Shift+Middle-Click action"
+msgstr "Acțiune Shift+Clic mijlociu"
+
+#: Settings.ui.h:19
+msgid "Enable Unity7 like glossy backlit items"
+msgstr "Activează elemente lucioase retroiluminate în stil Unity7"
+
+#: Settings.ui.h:20
+msgid "Apply glossy effect."
+msgstr "Aplică efect lucios."
+
+#: Settings.ui.h:21
+msgid "Use dominant color"
+msgstr "Folosește culoarea dominantă"
+
+#: Settings.ui.h:22
+msgid "Customize indicator style"
+msgstr "Personalizează stilul indicatorului"
+
+#: Settings.ui.h:23
+msgid "Color"
+msgstr "Culoare"
+
+#: Settings.ui.h:24
+msgid "Border color"
+msgstr "Culoarea marginii"
+
+#: Settings.ui.h:25
+msgid "Border width"
+msgstr "Lățimea marginii"
+
+#: Settings.ui.h:26
+msgid "Show the dock on"
+msgstr "Afișează dock-ul pe"
+
+#: Settings.ui.h:27
+msgid "Show on all monitors"
+msgstr "Afișează pe toate monitoarele"
+
+#: Settings.ui.h:28
+msgid "Position on screen"
+msgstr "Poziție pe ecran"
+
+#: Settings.ui.h:30
+msgid "Bottom"
+msgstr "Jos"
+
+#: Settings.ui.h:31
+msgid "Top"
+msgstr "Sus"
+
+#: Settings.ui.h:33
+msgid ""
+"Hide the dock when it obstructs a window of the current application. More "
+"refined settings are available."
+msgstr ""
+"Ascunde dock-ul când obstrucționează o fereastră a aplicației curente. Sunt "
+"disponibile setări mai detaliate."
+
+#: Settings.ui.h:34
+msgid "Intelligent autohide"
+msgstr "Ascundere automată inteligentă"
+
+#: Settings.ui.h:35
+msgid "Dock size limit"
+msgstr "Limita dimensiunii dock-ului"
+
+#: Settings.ui.h:36
+msgid "Panel mode: extend to the screen edge"
+msgstr "Mod panou: extindere până la marginea ecranului"
+
+#: Settings.ui.h:37
+msgid "Place icons to the center"
+msgstr "Plasează pictogramele în centru"
+
+#: Settings.ui.h:38
+msgid "Icon size limit"
+msgstr "Limita dimensiunii pictogramelor"
+
+#: Settings.ui.h:39
+msgid "Fixed icon size: scroll to reveal other icons"
+msgstr "Dimensiune fixă a pictogramelor: derulați pentru a vedea celelalte pictograme"
+
+#: Settings.ui.h:40
+msgid "Preview size scale"
+msgstr "Scala dimensiunii previzualizării"
+
+#: Settings.ui.h:41
+msgid "Position and size"
+msgstr "Poziție și dimensiune"
+
+#: Settings.ui.h:42
+msgid "Show pinned applications"
+msgstr "Afișează aplicațiile fixate"
+
+#: Settings.ui.h:43
+msgid "Show running applications"
+msgstr "Afișează aplicațiile în execuție"
+
+#: Settings.ui.h:44
+msgid "Isolate workspaces"
+msgstr "Izolează spațiile de lucru"
+
+#: Settings.ui.h:45
+msgid "Show urgent windows despite current workspace"
+msgstr "Afișează ferestrele urgente indiferent de spațiul de lucru curent"
+
+#: Settings.ui.h:46
+msgid "Isolate monitors"
+msgstr "Izolează monitoarele"
+
+#: Settings.ui.h:47
+msgid "Show open windows' previews"
+msgstr "Afișează previzualizările ferestrelor deschise"
+
+#: Settings.ui.h:48
+msgid "Keep the focused application always visible in the dash"
+msgstr "Păstrează aplicația focalizată întotdeauna vizibilă în dash"
+
+#: Settings.ui.h:49
+msgid ""
+"If disabled, these settings are accessible from gnome-tweak-tool or the "
+"extension website."
+msgstr ""
+"Dacă este dezactivat, aceste setări sunt accesibile din gnome-tweak-tool sau "
+"de pe site-ul extensiei."
+
+#: Settings.ui.h:50
+msgid "Show <i>Applications</i> icon"
+msgstr "Afișează pictograma <i>Aplicații</i>"
+
+#: Settings.ui.h:51
+msgid "Move at beginning of the dock"
+msgstr "Mută la începutul dock-ului"
+
+#: Settings.ui.h:52
+msgid "Animate <i>Show Applications</i>"
+msgstr "Animează <i>Afișare Aplicații</i>"
+
+#: Settings.ui.h:53
+msgid "Put <i>Show Applications</i> in a dock edge when using Panel mode"
+msgstr ""
+"Plasează <i>Afișare Aplicații</i> la marginea dock-ului când se folosește "
+"modul panou"
+
+#: Settings.ui.h:54
+msgid "Show trash can"
+msgstr "Afișează coșul de gunoi"
+
+#: Settings.ui.h:55
+msgid "Show volumes and devices"
+msgstr "Afișează volumele și dispozitivele"
+
+#: Settings.ui.h:56
+msgid "Only if mounted"
+msgstr "Doar dacă sunt montate"
+
+#: Settings.ui.h:57
+msgid "Include network volumes"
+msgstr "Include volumele de rețea"
+
+#: Settings.ui.h:58
+msgid "Isolate volumes, devices and trash windows from file manager"
+msgstr ""
+"Izolează volumele, dispozitivele și ferestrele coșului de gunoi de "
+"managerul de fișiere"
+
+#: Settings.ui.h:59
+msgid "Wiggle urgent applications"
+msgstr "Agită aplicațiile urgente"
+
+#: Settings.ui.h:60
+msgid "Hide application tooltip"
+msgstr "Ascunde indicatorul aplicației"
+
+#: Settings.ui.h:61
+msgid "Show icons emblems"
+msgstr "Afișează emblemele pictogramelor"
+
+#: Settings.ui.h:62
+msgid ""
+"When enabled application icons will show notification counters and progress-"
+"bars (if Unity API is used)."
+msgstr ""
+"Când este activat, pictogramele aplicațiilor vor afișa contoare de "
+"notificări și bare de progres (dacă se folosește API-ul Unity)."
+
+#: Settings.ui.h:63
+msgid "Show the number of unread notifications"
+msgstr "Afișează numărul de notificări necitite"
+
+#: Settings.ui.h:64
+msgid "Application-provided counter overrides the notifications counter"
+msgstr ""
+"Contorul furnizat de aplicație înlocuiește contorul de notificări"
+
+#: Settings.ui.h:65
+msgid "Launchers"
+msgstr "Lansatoare"
+
+#: Settings.ui.h:66
+msgid ""
+"Enable Super+(0-9) as shortcuts to activate apps. It can also be used "
+"together with Shift and Ctrl."
+msgstr ""
+"Activează Super+(0-9) ca scurtături pentru activarea aplicațiilor. Poate fi "
+"folosit și împreună cu Shift și Ctrl."
+
+#: Settings.ui.h:67
+msgid "Use keyboard shortcuts to activate apps"
+msgstr "Folosește scurtături de tastatură pentru a activa aplicațiile"
+
+#: Settings.ui.h:68
+msgid "Behaviour when clicking on the icon of a running application."
+msgstr "Comportament la clic pe pictograma unei aplicații în execuție."
+
+#: Settings.ui.h:69
+msgid "Click action"
+msgstr "Acțiune clic"
+
+#: Settings.ui.h:70
+msgid "Minimize"
+msgstr "Minimizare"
+
+#: Settings.ui.h:71
+msgid "Behaviour when scrolling on the icon of an application."
+msgstr "Comportament la derulare pe pictograma unei aplicații."
+
+#: Settings.ui.h:72
+msgid "Scroll action"
+msgstr "Acțiune derulare"
+
+#: Settings.ui.h:73
+msgid "Do nothing"
+msgstr "Nu face nimic"
+
+#: Settings.ui.h:74
+msgid "Switch workspace"
+msgstr "Comută spațiul de lucru"
+
+#: Settings.ui.h:75
+msgid "Behavior"
+msgstr "Comportament"
+
+#: Settings.ui.h:76
+msgid "Save space reducing padding and border radius."
+msgstr "Economisește spațiu reducând spațierea interioară și raza marginii."
+
+#: Settings.ui.h:77
+msgid "Shrink the dash"
+msgstr "Micșorează dash-ul"
+
+#: Settings.ui.h:78
+msgid "Force straight corner"
+msgstr "Forțează colțuri drepte"
+
+#: Settings.ui.h:79
+msgid "Show overview on startup"
+msgstr "Afișează prezentarea generală la pornire"
+
+#: Settings.ui.h:80
+msgid ""
+"Few customizations meant to integrate the dock with the default GNOME theme. "
+"Alternatively, specific options can be enabled below."
+msgstr ""
+"Câteva personalizări menite să integreze dock-ul cu tema GNOME implicită. "
+"Alternativ, pot fi activate opțiuni specifice mai jos."
+
+#: Settings.ui.h:81
+msgid "Use built-in theme"
+msgstr "Folosește tema încorporată"
+
+#: Settings.ui.h:82
+msgid "Customize windows counter indicators"
+msgstr "Personalizează indicatorii contoarelor de ferestre"
+
+#: Settings.ui.h:83
+msgid "Default"
+msgstr "Implicit"
+
+#: Settings.ui.h:84
+msgid "Dots"
+msgstr "Puncte"
+
+#: Settings.ui.h:85
+msgid "Squares"
+msgstr "Pătrate"
+
+#: Settings.ui.h:86
+msgid "Dashes"
+msgstr "Liniuțe"
+
+#: Settings.ui.h:87
+msgid "Segmented"
+msgstr "Segmentat"
+
+#: Settings.ui.h:88
+msgid "Solid"
+msgstr "Solid"
+
+#: Settings.ui.h:89
+msgid "Ciliora"
+msgstr "Ciliora"
+
+#: Settings.ui.h:90
+msgid "Metro"
+msgstr "Metro"
+
+#: Settings.ui.h:91
+msgid "Binary"
+msgstr "Binar"
+
+#: Settings.ui.h:92
+msgid "Dot"
+msgstr "Punct"
+
+#: Settings.ui.h:93
+msgid "Set the background color for the dash."
+msgstr "Setează culoarea de fundal pentru dash."
+
+#: Settings.ui.h:94
+msgid "Customize the dash color"
+msgstr "Personalizează culoarea dash-ului"
+
+#: Settings.ui.h:95
+msgid "Tune the dash background opacity."
+msgstr "Ajustează opacitatea fundalului dash-ului."
+
+#: Settings.ui.h:97
+msgid "Fixed"
+msgstr "Fix"
+
+#: Settings.ui.h:98
+msgid "Dynamic"
+msgstr "Dinamic"
+
+#: Settings.ui.h:99
+msgid "Opacity"
+msgstr "Opacitate"
+
+#: Settings.ui.h:100
+msgid "Appearance"
+msgstr "Aspect"
+
+#: Settings.ui.h:101
+msgid "version: "
+msgstr "versiunea: "
+
+#: Settings.ui.h:102
+msgid "Moves the dash out of the overview transforming it in a dock"
+msgstr "Mută dash-ul din prezentarea generală, transformându-l într-un dock"
+
+#: Settings.ui.h:103
+msgid "Created by"
+msgstr "Creat de"
+
+#: Settings.ui.h:104
+msgid "Webpage"
+msgstr "Pagină web"
+
+#: Settings.ui.h:105
+msgid ""
+"<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
+"See the <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0."
+"html\">GNU General Public License, version 2 or later</a> for details.</span>"
+msgstr ""
+"<span size=\"small\">Acest program este furnizat FĂRĂ ABSOLUT NICIO GARANȚIE.\n"
+"Consultați <a href=\"https://www.gnu.org/licenses/old-licenses/gpl-2.0."
+"html\">Licența Publică Generală GNU, versiunea 2 sau ulterioară</a> pentru "
+"detalii.</span>"
+
+#: Settings.ui.h:107
+msgid "About"
+msgstr "Despre"
+
+#: Settings.ui.h:108
+msgid "Customize minimum and maximum opacity values"
+msgstr "Personalizează valorile minime și maxime ale opacității"
+
+#: Settings.ui.h:109
+msgid "Minimum opacity"
+msgstr "Opacitate minimă"
+
+#: Settings.ui.h:110
+msgid "Maximum opacity"
+msgstr "Opacitate maximă"
+
+#: Settings.ui.h:111
+msgid "Number overlay"
+msgstr "Suprapunere numere"
+
+#: Settings.ui.h:112
+msgid ""
+"Temporarily show the application numbers over the icons, corresponding to "
+"the shortcut."
+msgstr ""
+"Afișează temporar numerele aplicațiilor peste pictograme, corespunzător "
+"scurtăturii."
+
+#: Settings.ui.h:113
+msgid "Show the dock if it is hidden"
+msgstr "Afișează dock-ul dacă este ascuns"
+
+#: Settings.ui.h:114
+msgid ""
+"If using autohide, the dock will appear for a short time when triggering the "
+"shortcut."
+msgstr ""
+"Dacă se folosește ascunderea automată, dock-ul va apărea pentru scurt timp "
+"la activarea scurtăturii."
+
+#: Settings.ui.h:115
+msgid "Shortcut for the options above"
+msgstr "Scurtătură pentru opțiunile de mai sus"
+
+#: Settings.ui.h:116
+msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
+msgstr "Sintaxă: <Shift>, <Ctrl>, <Alt>, <Super>"
+
+#: Settings.ui.h:117
+msgid "Hide timeout (s)"
+msgstr "Timp de ascundere (s)"
+
+#: Settings.ui.h:118
+msgid "Show the dock by mouse hover on the screen edge."
+msgstr "Afișează dock-ul prin trecerea cursorului peste marginea ecranului."
+
+#: Settings.ui.h:119
+msgid "Autohide"
+msgstr "Ascundere automată"
+
+#: Settings.ui.h:120
+msgid "Push to show: require pressure to show the dock"
+msgstr "Împinge pentru a afișa: necesită presiune pentru a afișa dock-ul"
+
+#: Settings.ui.h:121
+msgid "Enable in fullscreen mode"
+msgstr "Activează în modul ecran complet"
+
+#: Settings.ui.h:122
+msgid "Show dock for urgent notifications"
+msgstr "Afișează dock-ul pentru notificări urgente"
+
+#: Settings.ui.h:123
+msgid "Show the dock when it doesn't obstruct application windows."
+msgstr "Afișează dock-ul când nu obstrucționează ferestrele aplicațiilor."
+
+#: Settings.ui.h:124
+msgid "Dodge windows"
+msgstr "Evită ferestrele"
+
+#: Settings.ui.h:125
+msgid "All windows"
+msgstr "Toate ferestrele"
+
+#: Settings.ui.h:126
+msgid "Only focused application's windows"
+msgstr "Doar ferestrele aplicației focalizate"
+
+#: Settings.ui.h:127
+msgid "Only maximized windows"
+msgstr "Doar ferestrele maximizate"
+
+#: Settings.ui.h:128
+msgid "Always on top"
+msgstr "Întotdeauna deasupra"
+
+#: Settings.ui.h:129
+msgid "Animation duration (s)"
+msgstr "Durata animației (s)"
+
+#: Settings.ui.h:130
+msgid "Show timeout (s)"
+msgstr "Timp de afișare (s)"
+
+#: Settings.ui.h:131
+msgid "Pressure threshold"
+msgstr "Pragul de presiune"
+
+#~ msgid "Show favorite applications"
+#~ msgstr "Afișează aplicațiile favorite"
+
+#~ msgid "Adaptive"
+#~ msgstr "Adaptiv"
+
+#~ msgid "Show a dot for each windows of the application."
+#~ msgstr "Afișează un punct pentru fiecare fereastră a aplicației."
+
+#~ msgid "0.000"
+#~ msgstr "0.000"
