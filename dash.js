@@ -516,19 +516,19 @@ export const DockDash = GObject.registerClass({
             });
         }
 
-        appIcon.connect('menu-state-changed', (_, opened) => {
+        appIcon.connectObject('menu-state-changed', (_, opened) => {
             this._itemMenuStateChanged(item, opened);
-        });
+        }, this);
 
         const item = new DockDashItemContainer(this._position);
         item.setChild(appIcon);
 
-        appIcon.connect('notify::hover', a => this._ensureItemVisibility(a));
-        appIcon.connect('clicked', actor => {
+        appIcon.connectObject('notify::hover', a => this._ensureItemVisibility(a), this);
+        appIcon.connectObject('clicked', actor => {
             ensureActorVisibleInScrollView(this._scrollView, actor);
-        });
+        }, this);
 
-        appIcon.connect('key-focus-in', actor => {
+        appIcon.connectObject('key-focus-in', actor => {
             const [xShift, yShift] = ensureActorVisibleInScrollView(this._scrollView, actor);
 
             // This signal is triggered also by mouse click. The popup menu is opened at the original
@@ -537,21 +537,21 @@ export const DockDash = GObject.registerClass({
                 appIcon._menu._boxPointer.xOffset = -xShift;
                 appIcon._menu._boxPointer.yOffset = -yShift;
             }
-        });
+        }, this);
 
-        appIcon.connect('notify::focused', () => {
+        appIcon.connectObject('notify::focused', () => {
             const {settings} = Docking.DockManager;
             if (appIcon.focused && settings.scrollToFocusedApplication)
                 ensureActorVisibleInScrollView(this._scrollView, item);
-        });
+        }, this);
 
-        appIcon.connect('notify::urgent', () => {
+        appIcon.connectObject('notify::urgent', () => {
             if (appIcon.urgent) {
                 ensureActorVisibleInScrollView(this._scrollView, item);
                 if (Docking.DockManager.settings.showDockUrgentNotify)
                     this._requireVisibility();
             }
-        });
+        }, this);
 
         // Override default AppIcon label_actor, now the
         // accessible_name is set at DashItemContainer.setLabelText
@@ -561,8 +561,8 @@ export const DockDash = GObject.registerClass({
         appIcon.icon.setIconSize(this.iconSize);
         this._hookUpLabel(item, appIcon);
 
-        item.connect('notify::position', () => appIcon.updateIconGeometry());
-        item.connect('notify::size', () => appIcon.updateIconGeometry());
+        item.connectObject('notify::position', () => appIcon.updateIconGeometry(), appIcon);
+        item.connectObject('notify::size', () => appIcon.updateIconGeometry(), appIcon);
 
         return item;
     }
