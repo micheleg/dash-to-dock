@@ -585,6 +585,12 @@ const DockedDash = GObject.registerClass({
             },
         ], [
             settings,
+            'changed::group-apps',
+            () => {
+                this.dash.resetAppIcons();
+            },
+        ], [
+            settings,
             'changed::show-apps-always-in-the-edge',
             () => {
                 this.dash.updateShowAppsButton();
