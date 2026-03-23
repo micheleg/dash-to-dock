@@ -2447,7 +2447,8 @@ export class DockManager {
             // overview leaves it stuck at WINDOW_PICKER
             if (this._settings.disableOverviewOnStartup) {
                 Main.sessionMode.hasOverview = false;
-                Main.overview._overview.controls._stateAdjustment.value = OverviewControls.ControlsState.HIDDEN;
+                Main.overview._overview.controls._stateAdjustment.value =
+                    OverviewControls.ControlsState.HIDDEN;
             }
 
             this._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
