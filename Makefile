@@ -36,13 +36,6 @@ EXTRA_MEDIA = logo.svg \
               highlight_stacked_bg_h.svg \
               $(NULL)
 
-TOLOCALIZE =  prefs.js \
-			  docking.js \
-              appIcons.js \
-              appIconsDecorator.js \
-              locations.js \
-              $(NULL)
-
 MSGSRC = $(wildcard po/*.po)
 ifeq ($(strip $(DESTDIR)),)
 	INSTALLTYPE = local
@@ -84,11 +77,8 @@ mergepo: potfile
 		msgmerge -U $$l ./po/dashtodock.pot; \
 	done;
 
-./po/dashtodock.pot: $(TOLOCALIZE) Settings.ui
-	mkdir -p po
-	xgettext --keyword=__ --keyword=N__ --add-comments='Translators:' -o po/dashtodock.pot --package-name "Dash to Dock" --from-code=utf-8 $(TOLOCALIZE)
-	intltool-extract --type=gettext/glade Settings.ui
-	xgettext --keyword=_ --keyword=N_ --join-existing -o po/dashtodock.pot Settings.ui.h
+./po/dashtodock.pot: ./po/POTFILES.in
+	xgettext --keyword=__ --keyword=N__ --add-comments='Translators:' -o po/dashtodock.pot --package-name "Dash to Dock" --from-code=utf-8 --files-from=$<
 
 ./po/%.mo: ./po/%.po
 	msgfmt -c $< -o $@
