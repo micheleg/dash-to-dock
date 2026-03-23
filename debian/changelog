@@ -1,3 +1,48 @@
+gnome-shell-extension-ubuntu-dock (104ubuntu1) resolute; urgency=medium
+
+  [ Alessandro Astone ]
+  * Revert "Fix Autohide Location calculation bug (Issue #2413)"
+  * appSpread: Fix override of mouse input in Panel.ActivitiesButton
+  * appSpread: Fix override of keyboard input on Panel.ActivitiesButton
+
+  [ mers ]
+  * added the missing </kbd> tag for the shell reload key sequence under the
+    "Building" section
+
+  [ Rajat-XR ]
+  * po: Add Romanian translation
+
+  [ Marco Trevisan (Treviño) ]
+  * build: Use POTFILES.in to define translatable files
+  * ci: Generate potfile
+  * dash: Track icon's signals using connectObject
+  * docking: Adjust syntax to meet eslint rules
+  * metadata: Release dash-to-dock v104
+
+  [ Armatura98 ]
+  * Fix typo in OverlapStatus assignment: this.status -> this._status
+
+  [ Daniel-Escamilla ]
+  * docking: drop direction argument from workspaceSwitcherPopup.display()
+    (LP: #1966681)
+
+  [ Ēriks Remess ]
+  * Initial Latvian translation
+
+  [ Ekaterine Papava ]
+  * po: Add Georgian translation
+
+  [ Baurzhan Muftakhidinov ]
+  * Add Kazakh translation
+
+  [ mimimikyu778 ]
+  * intellihide: Fix dock not hiding when windows touch dock edge
+
+  [ Vadim Maksimushkin ]
+  * Fix overview state stuck at WINDOW_PICKER when disableOverviewOnStartup is enabled
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 23 Mar 2026 22:38:14 +0100
+
 gnome-shell-extension-ubuntu-dock (103ubuntu1) resolute; urgency=medium
 
   [ github-actions[bot] ]
