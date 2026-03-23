@@ -1119,6 +1119,7 @@ function makeLocationApp(params) {
     shellApp._setDtdData({
         location: () => shellApp.appInfo.location,
         isTrash: shellApp.appInfo instanceof TrashAppInfo,
+        isMountableVolume: shellApp.appInfo instanceof MountableVolumeAppInfo,
     }, {getter: true, enumerable: true});
 
     shellApp._mi('toString', defaultToString =>
