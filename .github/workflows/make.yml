@@ -30,3 +30,6 @@ jobs:
 
       - name: Make Install
         run: make install
+
+      - name: Generate translations
+        run: make potfile
