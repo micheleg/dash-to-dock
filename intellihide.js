@@ -62,7 +62,7 @@ export class Intellihide {
         this._topApp = null; // The application whose window is on top on the monitor with the dock.
 
         this._isEnabled = false;
-        this.status = OverlapStatus.UNDEFINED;
+        this._status = OverlapStatus.UNDEFINED;
         this._targetBox = null;
 
         this._checkOverlapTimeoutContinue = false;
@@ -224,9 +224,9 @@ export class Intellihide {
                         const rect = win.get_frame_rect();
 
                         const test = (rect.x < this._targetBox.x2) &&
-                                   (rect.x + rect.width > this._targetBox.x1) &&
+                                   (rect.x + rect.width >= this._targetBox.x1) &&
                                    (rect.y < this._targetBox.y2) &&
-                                   (rect.y + rect.height > this._targetBox.y1);
+                                   (rect.y + rect.height >= this._targetBox.y1);
 
                         if (test) {
                             overlaps = OverlapStatus.TRUE;

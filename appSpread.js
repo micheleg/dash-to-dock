@@ -9,6 +9,8 @@ import {
 
 import {Utils} from './imports.js';
 
+const APP_SPREAD_RESTORE_ACTION = 'dock-app-spread-restore';
+
 export class AppSpread {
     constructor() {
         this.app = null;
@@ -123,23 +125,41 @@ export class AppSpread {
                 activitiesButton.remove_accessible_state(Atk.StateType.CHECKED);
             });
 
+            let hasEventVFunc = false;
+            try {
+                hasEventVFunc = !!activitiesButton.constructor.prototype.vfunc_event;
+            } catch {}
+
+            if (hasEventVFunc) {
+                this._vfuncInjections.add([
+                    activitiesButton.constructor.prototype,
+                    'event',
+                    function (event) {
+                        if (event.type() === Clutter.EventType.TOUCH_END ||
+                            event.type() === Clutter.EventType.BUTTON_RELEASE) {
+                            if (Main.overview.shouldToggleByCornerOrButton())
+                                appSpread._restoreDefaultOverview();
+                        }
+                        return Clutter.EVENT_PROPAGATE;
+                    },
+                ]);
+            } else {
+                /* Shell >= 50 uses gestures on the activities button */
+                const click = new Clutter.ClickGesture();
+                click.set_recognize_on_press(true);
+                click.set_enabled(true);
+                click.connect('recognize', () => {
+                    if (Main.overview.shouldToggleByCornerOrButton())
+                        appSpread._restoreDefaultOverview();
+                });
+                activitiesButton.add_action_with_name(APP_SPREAD_RESTORE_ACTION, click);
+            }
+
             this._vfuncInjections.add([
-                activitiesButton.constructor.prototype,
-                'event',
-                function (event) {
-                    if (event.type() === Clutter.EventType.TOUCH_END ||
-                        event.type() === Clutter.EventType.BUTTON_RELEASE) {
-                        if (Main.overview.shouldToggleByCornerOrButton())
-                            appSpread._restoreDefaultOverview();
-                    }
-                    return Clutter.EVENT_PROPAGATE;
-                },
-            ],
-            [
                 activitiesButton.constructor.prototype,
                 'key_release_event',
                 function (keyEvent) {
-                    const {keyval} = keyEvent;
+                    const keyval = keyEvent.get_key_symbol?.() ?? keyEvent.keyval;
                     if (keyval === Clutter.KEY_Return || keyval === Clutter.KEY_space) {
                         if (Main.overview.shouldToggleByCornerOrButton())
                             appSpread._restoreDefaultOverview();
@@ -183,6 +203,7 @@ export class AppSpread {
         this._methodInjections.clear();
         this._signalHandlers.clear();
         this._vfuncInjections.clear();
+        Main.panel.statusArea?.activities.remove_action_by_name(APP_SPREAD_RESTORE_ACTION);
 
         // Check reason for leaving AppSpread was closing app windows and only one window left...
         if (this.windows.length === 1)

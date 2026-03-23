@@ -294,7 +294,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
             break;
         }
 
-        this._area.connect('repaint', this._updateIndicator.bind(this));
+        this._area.connectObject('repaint', this._updateIndicator.bind(this), this);
         this._source._iconContainer.add_child(this._area);
 
         const keys = ['custom-theme-running-dots-color',

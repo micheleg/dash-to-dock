@@ -1249,10 +1249,9 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateStaticBox() {
-        const [absX, absY] = this._box.get_transformed_position();
         this.staticBox.init_rect(
-            absX,
-            absY,
+            this.x + this._slider.x - (this._position === St.Side.RIGHT ? this._box.width : 0),
+            this.y + this._slider.y - (this._position === St.Side.BOTTOM ? this._box.height : 0),
             this._box.width,
             this._box.height
         );
@@ -1408,7 +1407,7 @@ const DockedDash = GObject.registerClass({
 
                 // Do not show workspaceSwitcher in overview
                 if (!Main.overview.visible)
-                    Main.wm._workspaceSwitcherPopup.display(direction, ws.index());
+                    Main.wm._workspaceSwitcherPopup.display(ws.index());
 
                 return true;
             } else {
@@ -2444,8 +2443,13 @@ export class DockManager {
             const hadOverview = Main.sessionMode.hasOverview;
 
             // Convince LayoutManager to use the legacy startup animation:
-            if (this._settings.disableOverviewOnStartup)
+            // Reset overview controls state to HIDDEN, as skipping the startup
+            // overview leaves it stuck at WINDOW_PICKER
+            if (this._settings.disableOverviewOnStartup) {
                 Main.sessionMode.hasOverview = false;
+                Main.overview._overview.controls._stateAdjustment.value =
+                    OverviewControls.ControlsState.HIDDEN;
+            }
 
             this._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
                 Main.layoutManager, 'startup-complete', () => {
