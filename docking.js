@@ -48,6 +48,7 @@ const {gettext: __} = Extension;
 
 const {signals: Signals} = imports;
 
+const DOCK_DWELL_EDGE_PX = 2
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 const ICON_ANIMATOR_DURATION = 3000;
 const STARTUP_ANIMATION_TIME = 500;
@@ -923,18 +924,18 @@ const DockedDash = GObject.registerClass({
         const workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index);
         let shouldDwell;
         // Check for the correct screen edge, extending the sensitive area to the whole workarea,
-        // minus 1 px to avoid conflicting with other active corners.
+        // minus DOCK_DWELL_EDGE_PX to avoid conflicting with other active corners.
         if (this._position === St.Side.LEFT) {
-            shouldDwell = (x === this._monitor.x) && (y > workArea.y) &&
+            shouldDwell = (x <= this._monitor.x + DOCK_DWELL_EDGE_PX) && (y > workArea.y) &&
                 (y < workArea.y + workArea.height);
         } else if (this._position === St.Side.RIGHT) {
-            shouldDwell = (x === this._monitor.x + this._monitor.width - 1) &&
+            shouldDwell = (x >= this._monitor.x + this._monitor.width - DOCK_DWELL_EDGE_PX) &&
                 (y > workArea.y) && (y < workArea.y + workArea.height);
         } else if (this._position === St.Side.TOP) {
-            shouldDwell = (y === this._monitor.y) && (x > workArea.x) &&
+            shouldDwell = (y <= this._monitor.y + DOCK_DWELL_EDGE_PX) && (x > workArea.x) &&
                 (x < workArea.x + workArea.width);
         } else if (this._position === St.Side.BOTTOM) {
-            shouldDwell = (y === this._monitor.y + this._monitor.height - 1) &&
+            shouldDwell = (y >= this._monitor.y + this._monitor.height - DOCK_DWELL_EDGE_PX) &&
                 (x > workArea.x) && (x < workArea.x + workArea.width);
         }
 
@@ -1121,8 +1122,8 @@ const DockedDash = GObject.registerClass({
         }
 
         // Create new barrier
-        // The barrier extends to the whole workarea, minus 1 px to avoid
-        // conflicting with other active corners
+        // The barrier extends to the whole workarea, minus DOCK_DWELL_EDGE_PX
+        // to avoid conflicting with other active corners
         // Note: dash in fixed position doesn't use pressure barrier.
         if (this._canUsePressure && this._autohideIsEnabled &&
             DockManager.settings.requirePressureToShow) {
@@ -1131,27 +1132,27 @@ const DockedDash = GObject.registerClass({
                 this._monitor.index);
 
             if (this._position === St.Side.LEFT) {
-                x1 = this._monitor.x + 1;
+                x1 = this._monitor.x + DOCK_DWELL_EDGE_PX;
                 x2 = x1;
-                y1 = workArea.y + 1;
-                y2 = workArea.y + workArea.height - 1;
+                y1 = workArea.y + DOCK_DWELL_EDGE_PX;
+                y2 = workArea.y + workArea.height - DOCK_DWELL_EDGE_PX;
                 direction = Meta.BarrierDirection.POSITIVE_X;
             } else if (this._position === St.Side.RIGHT) {
-                x1 = this._monitor.x + this._monitor.width - 1;
+                x1 = this._monitor.x + this._monitor.width - DOCK_DWELL_EDGE_PX;
                 x2 = x1;
-                y1 = workArea.y + 1;
-                y2 = workArea.y + workArea.height - 1;
+                y1 = workArea.y + DOCK_DWELL_EDGE_PX;
+                y2 = workArea.y + workArea.height - DOCK_DWELL_EDGE_PX;
                 direction = Meta.BarrierDirection.NEGATIVE_X;
             } else if (this._position === St.Side.TOP) {
-                x1 = workArea.x + 1;
-                x2 = workArea.x + workArea.width - 1;
-                y1 = this._monitor.y;
+                x1 = workArea.x + DOCK_DWELL_EDGE_PX;
+                x2 = workArea.x + workArea.width - DOCK_DWELL_EDGE_PX;
+                y1 = this._monitor.y + DOCK_DWELL_EDGE_PX;
                 y2 = y1;
                 direction = Meta.BarrierDirection.POSITIVE_Y;
             } else if (this._position === St.Side.BOTTOM) {
-                x1 = workArea.x + 1;
-                x2 = workArea.x + workArea.width - 1;
-                y1 = this._monitor.y + this._monitor.height;
+                x1 = workArea.x + DOCK_DWELL_EDGE_PX;
+                x2 = workArea.x + workArea.width - DOCK_DWELL_EDGE_PX;
+                y1 = this._monitor.y + this._monitor.height - DOCK_DWELL_EDGE_PX;
                 y2 = y1;
                 direction = Meta.BarrierDirection.NEGATIVE_Y;
             }
