@@ -107,6 +107,11 @@ export class Intellihide {
     enable() {
         this._isEnabled = true;
         this._status = OverlapStatus.UNDEFINED;
+        this._checkOverlapTimeoutContinue = false;
+        if (this._checkOverlapTimeoutId > 0) {
+            GLib.source_remove(this._checkOverlapTimeoutId);
+            this._checkOverlapTimeoutId = 0;
+        }
         global.get_window_actors().forEach(function (wa) {
             this._addWindowSignals(wa);
         }, this);
@@ -128,11 +133,15 @@ export class Intellihide {
     }
 
     _windowCreated(display, metaWindow) {
-        this._addWindowSignals(metaWindow.get_compositor_private());
+        const dominated = metaWindow.get_compositor_private();
+        if (dominated)
+            this._addWindowSignals(dominated);
         this._doCheckOverlap();
     }
 
     _addWindowSignals(wa) {
+        if (this._trackedWindows.has(wa))
+            return;
         if (!this._handledWindow(wa))
             return;
         const signalId = wa.connect('notify::allocation', this._checkOverlap.bind(this));
@@ -175,7 +184,11 @@ export class Intellihide {
 
         this._checkOverlapTimeoutId = GLib.timeout_add(
             GLib.PRIORITY_DEFAULT, INTELLIHIDE_CHECK_INTERVAL, () => {
-                this._doCheckOverlap();
+                try {
+                    this._doCheckOverlap();
+                } catch (e) {
+                    logError(e, 'intellihide overlap check failed');
+                }
                 if (this._checkOverlapTimeoutContinue) {
                     this._checkOverlapTimeoutContinue = false;
                     return GLib.SOURCE_CONTINUE;
@@ -248,8 +261,12 @@ export class Intellihide {
     // Optionally skip windows of other applications
     _intellihideFilterInteresting(wa) {
         const metaWin = wa.get_meta_window();
+        if (!metaWin)
+            return false;
         const currentWorkspace = global.workspace_manager.get_active_workspace_index();
         const workspace = metaWin.get_workspace();
+        if (!workspace)
+            return false;
         const workspaceIndex = workspace.index();
 
         // Depending on the intellihide mode, exclude non-relevent windows
