@@ -550,3 +550,39 @@ msgstr "Míra tlaku (px)"
 
 #~ msgid "Adaptive"
 #~ msgstr "Adaptivní"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Zobrazit náhledy oken při najetí myší"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Styl animace náhledu"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Okamžitě"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Slábnutí"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Posun"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Měřítko"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Rozbalit"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Rozpustit"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Kaskáda"

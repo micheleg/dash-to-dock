@@ -448,3 +448,39 @@ msgstr "Ambang tekanan"
 
 #~ msgid "Switch workspace by scrolling on the dock"
 #~ msgstr "Cambia spazio di lavoro scorrendo sulla dock"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Tampilkan pratinjau jendela saat kursor melayang"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Gaya animasi pratinjau"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Seketika"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Memudar"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Geser"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Skala"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Perluas"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Larut"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Bertingkat"

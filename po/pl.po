@@ -564,3 +564,39 @@ msgstr "Przywrócenie, zminima. lub podgląd okna"
 
 #~ msgid "Adaptive"
 #~ msgstr "Adaptacyjna"
+
+#: Settings.ui.h:61
+msgid "Show window previews on mouse hover"
+msgstr "Pokaż podglądy okien po najechaniu myszą"
+
+#: Settings.ui.h:62
+msgid "Preview animation style"
+msgstr "Styl animacji podglądu"
+
+#: Settings.ui.h:63
+msgid "Instant"
+msgstr "Natychmiastowy"
+
+#: Settings.ui.h:64
+msgid "Fade"
+msgstr "Zanikanie"
+
+#: Settings.ui.h:65
+msgid "Slide"
+msgstr "Przesuwanie"
+
+#: Settings.ui.h:66
+msgid "Scale"
+msgstr "Skalowanie"
+
+#: Settings.ui.h:67
+msgid "Expand"
+msgstr "Rozszerzanie"
+
+#: Settings.ui.h:68
+msgid "Dissolve"
+msgstr "Rozpuszczanie"
+
+#: Settings.ui.h:69
+msgid "Cascade"
+msgstr "Kaskada"
