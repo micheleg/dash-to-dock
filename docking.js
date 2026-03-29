@@ -1265,35 +1265,25 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateStaticBox() {
-        // We need to calculate the position where the dock WOULD BE when fully visible,
-        // not its current position (which may be off-screen when hidden).
-        // This is crucial for intellihide to correctly detect window overlap.
-        
-        let staticX, staticY;
+        // Base the static box on transformed coordinates, then normalize only the
+        // sliding axis so overlap checks always use the fully visible dock edge.
+        let [staticX, staticY] = this._box.get_transformed_position();
         const width = this._box.width;
         const height = this._box.height;
-        
-        // Calculate the position based on dock position and monitor
+
         switch (this._position) {
         case St.Side.LEFT:
             staticX = this._monitor.x;
-            staticY = this.y;
             break;
         case St.Side.RIGHT:
             staticX = this._monitor.x + this._monitor.width - width;
-            staticY = this.y;
             break;
         case St.Side.TOP:
-            staticX = this.x;
             staticY = this._monitor.y;
             break;
         case St.Side.BOTTOM:
-            staticX = this.x;
             staticY = this._monitor.y + this._monitor.height - height;
             break;
-        default:
-            // Fallback to transformed position
-            [staticX, staticY] = this._box.get_transformed_position();
         }
         
         this.staticBox.init_rect(
