@@ -15,9 +15,9 @@ export const Utils = {
             this._entries = [];
         }
 
-        add(...args) {}
-        addWithLabel(...args) {}
-        removeWithLabel(...args) {}
+        add(..._args) {}
+        addWithLabel(..._args) {}
+        removeWithLabel(..._args) {}
         destroy() {}
         block() {}
         unblock() {}
