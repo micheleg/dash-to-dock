@@ -97,9 +97,9 @@ describe('Intellihide', () => {
     beforeEach(() => {
         clearAllTimeouts();
         resetTracker();
-        global.get_window_actors = () => [];
-        global.display.get_focus_window = () => null;
-        global.workspace_manager.get_active_workspace_index = () => 0;
+        globalThis.global.get_window_actors = () => [];
+        globalThis.global.display.get_focus_window = () => null;
+        globalThis.global.workspace_manager.get_active_workspace_index = () => 0;
         Docking.DockManager.settings.intellihideMode = 0;
         getTracker().focus_app = null;
         getTracker().get_window_app = () => null;
