@@ -147,5 +147,5 @@ endif
 test:
 	node --experimental-test-module-mocks --test tests/*.test.js
 
-check:
+check: test
 	ESLINT_USE_FLAT_CONFIG=false $(ESLINT) $(ESLINT_ARGS) .
