@@ -144,5 +144,8 @@ ifneq ($(strip $(ESLINT_TAP)),)
     ESLINT_ARGS = -f tap
 endif
 
+test:
+	node --experimental-test-module-mocks --test tests/*.test.js
+
 check:
 	ESLINT_USE_FLAT_CONFIG=false $(ESLINT) $(ESLINT_ARGS) .

@@ -67,6 +67,7 @@ export class Intellihide {
 
         this._checkOverlapTimeoutContinue = false;
         this._checkOverlapTimeoutId = 0;
+        this._deferredCheckId = 0;
 
         this._trackedWindows = new Map();
 
@@ -102,6 +103,7 @@ export class Intellihide {
 
         // Remove  residual windows signals
         this.disable();
+        this._cancelDeferredCheck();
     }
 
     enable() {
@@ -111,6 +113,22 @@ export class Intellihide {
             this._addWindowSignals(wa);
         }, this);
         this._doCheckOverlap();
+
+        // Deferred re-check: during startup or session restore, some window
+        // actors (especially XWayland) may not be fully ready yet, causing
+        // the initial overlap check to miss them. Re-scan after a delay to
+        // pick up any windows that became ready after the initial check.
+        this._cancelDeferredCheck();
+        this._deferredCheckId = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, 500, () => {
+                this._deferredCheckId = 0;
+                global.get_window_actors().forEach(function (wa) {
+                    if (!this._trackedWindows.has(wa))
+                        this._addWindowSignals(wa);
+                }, this);
+                this._doCheckOverlap();
+                return GLib.SOURCE_REMOVE;
+            });
     }
 
     disable() {
@@ -125,10 +143,21 @@ export class Intellihide {
             GLib.source_remove(this._checkOverlapTimeoutId);
             this._checkOverlapTimeoutId = 0;
         }
+
+        this._cancelDeferredCheck();
+    }
+
+    _cancelDeferredCheck() {
+        if (this._deferredCheckId > 0) {
+            GLib.source_remove(this._deferredCheckId);
+            this._deferredCheckId = 0;
+        }
     }
 
     _windowCreated(display, metaWindow) {
-        this._addWindowSignals(metaWindow.get_compositor_private());
+        const wa = metaWindow.get_compositor_private();
+        if (wa)
+            this._addWindowSignals(wa);
         this._doCheckOverlap();
     }
 
