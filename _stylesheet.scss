@@ -352,6 +352,14 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
     border-radius: 0px;
 }
 
+#dashtodockContainer.extended.dock-margin #dash .dash-background {
+    border-radius: $dash_border_radius;
+}
+
+#dashtodockContainer.extended.shrink.dock-margin #dash .dash-background {
+    border-radius: shrink_light($dash_border_radius);
+}
+
 /* Scrollview style */
 .bottom #dashtodockDashScrollview,
 .top #dashtodockDashScrollview {

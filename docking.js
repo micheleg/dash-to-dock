@@ -541,7 +541,6 @@ const DockedDash = GObject.registerClass({
             settings, 
             "changed::dock-margin-size", 
             this._resetPosition.bind(this)
-
         ], [
             settings,
             'changed::show-favorites',
@@ -1226,6 +1225,11 @@ const DockedDash = GObject.registerClass({
                 this.remove_style_class_name('extended');
             }
         }
+
+        if (margin > 0)
+            this.add_style_class_name('dock-margin');
+        else
+            this.remove_style_class_name('dock-margin');
     }
 
     _updateVisibleDesktop() {
