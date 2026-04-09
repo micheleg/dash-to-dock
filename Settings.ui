@@ -807,7 +807,6 @@
                                 <property name="round_digits">0</property>
                                 <property name="digits">0</property>
                                 <property name="value_pos">right</property>
-                                <signal name="value-changed" handler="dock_margin_size_value_changed_cb" />
                                 <layout>
                                   <property name="column">1</property>
                                   <property name="row">0</property>

@@ -285,14 +285,6 @@ const DockSettings = GObject.registerClass({
             });
     }
 
-    dock_margin_size_value_changed_cb(scale) {
-        // Get the current value of the scale
-        const value = scale.get_value();
-  
-        // Update the GSettings key
-        this._settings.set_int("dock-margin-size", value);
-      }
-
     icon_size_scale_value_changed_cb(scale) {
         // Avoid settings the size consinuosly
         if (this._icon_size_timeout > 0)
@@ -595,26 +587,18 @@ const DockSettings = GObject.registerClass({
         });
         this._builder.get_object('preview_size_scale').set_value(
             this._settings.get_double('preview-size-scale'));
-        
 
         // Dock Margin Size
         const dockMarginSizeScale = this._builder.get_object(
             "dock_margin_size_scale"
         );
-        dockMarginSizeScale.set_range(0, 300); // Set the range for the margin size
-        dockMarginSizeScale.set_value(this._settings.get_int("dock-margin-size")); // Initialize with the current value
         dockMarginSizeScale.set_format_value_func((_, value) => {
             return `${value} px`; // Display the value in pixels
         });
 
-        dockMarginSizeScale.connect("value-changed", (scale) => {
-            // Update the GSettings key when the value changes
-            this._settings.set_int("dock-margin-size", scale.get_value());
-        });
-
         this._settings.bind(
             "dock-margin-size",
-            dockMarginSizeScale,
+            this._builder.get_object("dock_margin_size_adjustment"),
             "value",
             Gio.SettingsBindFlags.DEFAULT
         );
