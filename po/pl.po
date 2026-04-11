@@ -559,6 +559,14 @@ msgstr "Wymuś ostre rogi  na pasku"
 msgid "Focus, minimize or show previews"
 msgstr "Przywrócenie, zminima. lub podgląd okna"
 
+#: docking.js:2539 appIcons.js:1181
+msgid "Unpin"
+msgstr "Odepnij"
+
+#: docking.js:2539 appIcons.js:1187
+msgid "Pin to Dock"
+msgstr "Przypnij"
+
 #~ msgid "Show a dot for each windows of the application."
 #~ msgstr "Wyświetla kropkę dla każdego okna programu"
 
