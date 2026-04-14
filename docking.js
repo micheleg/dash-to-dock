@@ -1709,10 +1709,11 @@ export class DockManager {
             !this._notificationsMonitor.dndMode && this._settings.showIconsEmblems;
 
         const ensureRemoteModel = () => {
-            if (needsRemoteModel && !this._remoteModel) {
+            const shouldHaveRemoteModel = needsRemoteModel();
+            if (shouldHaveRemoteModel && !this._remoteModel) {
                 this._remoteModel = new LauncherAPI.LauncherEntryRemoteModel();
                 this._appIconsDecorator = new AppIconsDecorator.AppIconsDecorator();
-            } else if (!needsRemoteModel) {
+            } else if (!shouldHaveRemoteModel) {
                 this._remoteModel?.destroy();
                 delete this._remoteModel;
                 this._appIconsDecorator?.destroy();
