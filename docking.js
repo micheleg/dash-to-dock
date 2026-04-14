@@ -1720,8 +1720,10 @@ export class DockManager {
         };
         ensureRemoteModel();
 
-        this._notificationsMonitor.connect('changed', ensureRemoteModel);
-        this._settings.connect('changed::show-icons-emblems', ensureRemoteModel);
+        this._signalsHandler.add(this._notificationsMonitor, 'changed',
+            () => ensureRemoteModel());
+        this._signalsHandler.add(this._settings, 'changed::show-icons-emblems',
+            () => ensureRemoteModel());
 
         if (this._discreteGpuAvailable === undefined) {
             const updateDiscreteGpuAvailable = () => {
