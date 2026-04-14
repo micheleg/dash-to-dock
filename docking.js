@@ -1317,15 +1317,10 @@ const DockedDash = GObject.registerClass({
             }
         };
 
-        DockManager.settings.connect('changed::scroll-action', () => {
-            if (isEnabled())
-                enable();
-            else
-                disable();
-        });
-
         if (isEnabled())
             enable();
+        else
+            disable();
 
         // This was inspired to desktop-scroller@obsidien.github.com
         const onScrollEvent = event => {
