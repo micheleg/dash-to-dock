@@ -2636,7 +2636,7 @@ export class IconAnimator {
         this._settingsChangedId = St.Settings.get().connect('notify',
             () => this._updateSettings());
 
-        this._timeline.connect('new-frame', () => {
+        this._newFrameID = this._timeline.connect('new-frame', () => {
             const progress = this._timeline.get_progress();
             const wiggleRotation = progress < 1 / 6 ? 15 * Math.sin(progress * 24 * Math.PI) : 0;
             const wigglers = this._animations.wiggle;
@@ -2652,8 +2652,9 @@ export class IconAnimator {
 
     destroy() {
         St.Settings.get().disconnect(this._settingsChangedId);
+        this._timeline.disconnect(this._newFrameID);
         this._timeline.stop();
-        this._timeline = null;
+        delete this._timeline;
         for (const pairs of Object.values(this._animations)) {
             for (let i = 0, iMax = pairs.length; i < iMax; i++) {
                 const pair = pairs[i];
