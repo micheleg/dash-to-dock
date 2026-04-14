@@ -1281,7 +1281,9 @@ const DockedDash = GObject.registerClass({
     /**
      * Show dock and give key focus to it
      */
-    _onAccessibilityFocus() {
+    _onAccessibilityFocus(timestamp) {
+        if (!Main.overview.visible)
+            global.display.unset_input_focus(timestamp);
         this._box.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
         this._animateIn(DockManager.settings.animationTime, 0);
     }
