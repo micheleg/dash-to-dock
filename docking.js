@@ -1795,7 +1795,7 @@ export class DockManager {
     }
 
     get mainDock() {
-        return this._allDocks.length ? this._allDocks[0] : null;
+        return this._allDocks[0] ?? null;
     }
 
     get removables() {
@@ -2070,15 +2070,10 @@ export class DockManager {
 
 
         // First we create the main Dock, to get the extra features to bind to this one
-        let dock = new DockedDash({
+        this._createDock({
             monitorIndex: this._preferredMonitorIndex,
             isMain: true,
         });
-        this._allDocks.push(dock);
-
-        // connect app icon into the view selector
-        dock.dash.showAppsButton.connect('notify::checked',
-            this._onShowAppsButtonToggled.bind(this));
 
         // Make the necessary changes to Main.overview.dash
         this._prepareMainDash();
@@ -2091,11 +2086,8 @@ export class DockManager {
             for (let iMon = 0; iMon < nMon; iMon++) {
                 if (iMon === this._preferredMonitorIndex)
                     continue;
-                dock = new DockedDash({monitorIndex: iMon});
-                this._allDocks.push(dock);
-                // connect app icon into the view selector
-                dock.dash.showAppsButton.connect('notify::checked',
-                    this._onShowAppsButtonToggled.bind(this));
+
+                this._createDock({monitorIndex: iMon});
             }
         }
 
@@ -2105,6 +2097,24 @@ export class DockManager {
         this._keyboardShortcuts = new KeyboardShortcuts();
 
         this.emit('docks-ready');
+    }
+
+    _createDock(params) {
+        const dock = new DockedDash(params);
+        this._allDocks.push(dock);
+
+        // connect app icon into the view selector
+        dock.dash.showAppsButton.connectObject('notify::checked',
+            button => this._onShowAppsButtonToggled(button), dock);
+
+        const id = dock.connect('destroy', () => {
+            dock.disconnect(id);
+            const index = this._allDocks.indexOf(dock);
+            if (index !== -1)
+                this._allDocks.splice(index, 1);
+        });
+
+        return dock;
     }
 
     _prepareStartupAnimation() {
@@ -2456,17 +2466,13 @@ export class DockManager {
     }
 
     _deleteDocks() {
-        if (!this._allDocks.length)
-            return;
-
         // Remove extra features
-        this._workspaceIsolation.destroy();
-        this._keyboardShortcuts.destroy();
-        this._desktopIconsUsableArea.resetMargins();
+        this._workspaceIsolation?.destroy();
+        this._keyboardShortcuts?.destroy();
+        this._desktopIconsUsableArea?.resetMargins();
 
         // Delete all docks
         this._allDocks.forEach(d => d.destroy());
-        this._allDocks = [];
 
         this.emit('docks-destroyed');
     }
