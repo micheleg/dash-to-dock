@@ -1626,23 +1626,22 @@ const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
         this._disable();
 
         DockManager.allDocks.forEach(dock => {
-            this._signalsHandler.addWithLabel(
-                Labels.ISOLATION,
-                [global.display, 'restacked', () => dock.dash._queueRedisplay()],
-                [global.display, 'window-marked-urgent', () => dock.dash._queueRedisplay()],
-                [global.display, 'window-demands-attention', () => dock.dash._queueRedisplay()],
-                [global.window_manager, 'switch-workspace', () => dock.dash._queueRedisplay()]
-            );
+            global.display.connectObject('restacked',
+                () => dock.dash._queueRedisplay(), dock.dash);
+            global.display.connectObject('window-marked-urgent',
+                () => dock.dash._queueRedisplay(), dock.dash);
+            global.display.connectObject('window-demands-attention',
+                () => dock.dash._queueRedisplay(), dock.dash);
+            global.window_manager.connectObject('switch-workspace',
+                () => dock.dash._queueRedisplay(), dock.dash);
 
             // This last signal is only needed for monitor isolation, as windows
             // might migrate from one monitor to another without triggering 'restacked'
             if (DockManager.settings.isolateMonitors) {
-                this._signalsHandler.addWithLabel(Labels.ISOLATION,
-                    global.display,
-                    'window-entered-monitor',
-                    dock.dash._queueRedisplay.bind(dock.dash));
+                global.display.connectObject('window-entered-monitor',
+                    () => dock.dash._queueRedisplay(), dock.dash);
             }
-        }, this);
+        });
 
         /**
          * here this is the Shell.App
@@ -1666,11 +1665,15 @@ const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
     }
 
     _disable() {
-        this._signalsHandler.removeWithLabel(Labels.ISOLATION);
+        DockManager.allDocks.forEach(dock => {
+            global.display.disconnectObject(dock.dash);
+            global.window_manager.disconnectObject(dock.dash);
+        });
         this._injectionsHandler.removeWithLabel(Labels.ISOLATION);
     }
 
     destroy() {
+        this._disable();
         this._signalsHandler.destroy();
         this._injectionsHandler.destroy();
     }
