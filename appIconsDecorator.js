@@ -28,6 +28,7 @@ export class AppIconsDecorator {
             null, {allowNewProperty: true});
         this._indicators = new Set();
         this._resultIndicators = new Set();
+        this._updatingIcons = new WeakSet();
 
         this._patchAppIcons();
         this._decorateIcons();
@@ -44,6 +45,7 @@ export class AppIconsDecorator {
         this._clearIndicators(Labels.RESULTS);
         delete this._indicators;
         delete this._resultIndicators;
+        delete this._updatingIcons;
     }
 
     _indicatorsSet(label) {
@@ -129,16 +131,19 @@ export class AppIconsDecorator {
         appIconsTypes.forEach(type =>
             this._propertyInjections.add(type.prototype, 'updating', {
                 get() {
-                    return !!this.__d2dUpdating;
+                    return self._updatingIcons.has(this);
                 },
                 set(updating) {
                     if (this.updating === updating)
                         return;
-                    this.__d2dUpdating = updating;
-                    if (updating)
+
+                    if (updating) {
+                        self._updatingIcons.add(this);
                         this.add_style_class_name('updating');
-                    else
+                    } else {
+                        self._updatingIcons.delete(this);
                         this.remove_style_class_name('updating');
+                    }
                 },
             }));
 
