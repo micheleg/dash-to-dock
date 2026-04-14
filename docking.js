@@ -1390,8 +1390,9 @@ const DockedDash = GObject.registerClass({
                 // clicks events from reaching the dash actor. I can't see a reason
                 // why it should be reactive.
                 Main.wm._workspaceSwitcherPopup.reactive = false;
-                Main.wm._workspaceSwitcherPopup.connect('destroy', () => {
-                    Main.wm._workspaceSwitcherPopup = null;
+                Main.wm._workspaceSwitcherPopup.connect('destroy', actor => {
+                    if (Main.wm._workspaceSwitcherPopup === actor)
+                        delete Main.wm._workspaceSwitcherPopup;
                 });
 
                 // If Workspace Grid is installed, let them handle the scroll behavior.
