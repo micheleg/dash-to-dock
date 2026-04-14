@@ -411,9 +411,6 @@ const DockedDash = GObject.registerClass({
         this._slider.set_child(this._box);
         this._box.add_child(this.dash);
 
-        // Add aligning container without tracking it for input region
-        this._trackDock();
-
         // Create and apply height/width constraint to the dash.
         if (this._isHorizontal) {
             this.connect('notify::width', () => {
@@ -2129,6 +2126,8 @@ export class DockManager {
         DockManager.allDocks.forEach(dock => {
             const {dash} = dock;
 
+            dock._trackDock();
+
             switch (dock.position) {
             case St.Side.LEFT:
                 dash.translation_x = -dash.width;
@@ -2457,6 +2456,8 @@ export class DockManager {
                     Main.sessionMode.hasOverview = hadOverview;
                     this._runStartupAnimation();
                 });
+        } else {
+            DockManager.allDocks.forEach(dock => dock._trackDock());
         }
     }
 
