@@ -93,7 +93,7 @@ let recentlyClickedAppMonitor = -1;
  * - Update minimization animation target
  * - Update menu if open on windows change
  */
-const DockAbstractAppIcon = GObject.registerClass({
+export const DockAbstractAppIcon = GObject.registerClass({
     GTypeFlags: GObject.TypeFlags.ABSTRACT,
     Properties: {
         'focused': GObject.ParamSpec.boolean(
@@ -429,6 +429,14 @@ const DockAbstractAppIcon = GObject.registerClass({
         // it called by the parent constructor.
     }
 
+    notifyAppIconUpdating(monitorIndex) {
+        const icon = Gio.Icon.new_for_string('action-unavailable-symbolic');
+        const {osdWindowManager} = Main;
+        const showOsd = osdWindowManager.showOne ?? osdWindowManager.show;
+        showOsd.call(osdWindowManager, monitorIndex ?? this.monitorIndex, icon,
+            _('%s is updating, try again later').format(this.name), null);
+    }
+
     popupMenu() {
         this._removeMenuTimeout?.();
         this.fake_release();
@@ -754,19 +762,7 @@ const DockAbstractAppIcon = GObject.registerClass({
     // the existing window instead.
     launchNewWindow() {
         if (this.updating) {
-            const icon = Gio.Icon.new_for_string('action-unavailable-symbolic');
-            const osdShowArgs = [
-                Main.layoutManager.primaryMonitor.index,
-                icon,
-                _('%s is updating, try again later').format(this.name),
-                null,
-            ];
-
-            if (Main.osdWindowManager.showOne)
-                Main.osdWindowManager.showOne(...osdShowArgs);
-            else
-                Main.osdWindowManager.show(...osdShowArgs);
-
+            this.notifyAppIconUpdating();
             return;
         }
 

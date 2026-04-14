@@ -2,14 +2,11 @@
 
 
 import {
-    Docking,
     AppIconIndicators,
+    AppIcons,
+    Docking,
     Utils,
 } from './imports.js';
-
-import {
-    Gio,
-} from './dependencies/gi.js';
 
 import {
     AppMenu,
@@ -115,19 +112,9 @@ export class AppIconsDecorator {
             'activate', function (originalFunction, ...args) {
                 /* eslint-disable no-invalid-this */
                 if (this.updating) {
-                    const icon = Gio.Icon.new_for_string('action-unavailable-symbolic');
-                    const osdShowArgs = [
-                        Main.layoutManager.primaryMonitor.index,
-                        icon,
-                        _('%s is updating, try again later').format(this.name),
-                        null,
-                    ];
-
-                    if (Main.osdWindowManager.showOne)
-                        Main.osdWindowManager.showOne(...osdShowArgs);
-                    else
-                        Main.osdWindowManager.show(...osdShowArgs);
-
+                    const {notifyAppIconUpdating} = AppIcons.DockAbstractAppIcon.prototype;
+                    notifyAppIconUpdating.call(this,
+                        Main.layoutManager.primaryMonitor.index);
                     return;
                 }
 
