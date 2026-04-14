@@ -135,14 +135,17 @@ export class Intellihide {
     _addWindowSignals(wa) {
         if (!this._handledWindow(wa))
             return;
-        const signalId = wa.connect('notify::allocation', this._checkOverlap.bind(this));
-        this._trackedWindows.set(wa, signalId);
-        wa.connect('destroy', this._removeWindowSignals.bind(this));
+
+        this._trackedWindows.set(wa, [
+            wa.connect('notify::allocation', () => this._checkOverlap()),
+            wa.connect('destroy', () => this._removeWindowSignals(wa)),
+        ]);
     }
 
     _removeWindowSignals(wa) {
-        if (this._trackedWindows.get(wa)) {
-            wa.disconnect(this._trackedWindows.get(wa));
+        const signalIds = this._trackedWindows.get(wa);
+        if (signalIds) {
+            signalIds.forEach(id => wa.disconnect(id));
             this._trackedWindows.delete(wa);
         }
     }
