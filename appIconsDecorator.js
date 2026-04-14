@@ -116,9 +116,18 @@ export class AppIconsDecorator {
                 /* eslint-disable no-invalid-this */
                 if (this.updating) {
                     const icon = Gio.Icon.new_for_string('action-unavailable-symbolic');
-                    Main.osdWindowManager.show(-1, icon,
+                    const osdShowArgs = [
+                        Main.layoutManager.primaryMonitor.index,
+                        icon,
                         _('%s is updating, try again later').format(this.name),
-                        null);
+                        null,
+                    ];
+
+                    if (Main.osdWindowManager.showOne)
+                        Main.osdWindowManager.showOne(...osdShowArgs);
+                    else
+                        Main.osdWindowManager.show(...osdShowArgs);
+
                     return;
                 }
 
