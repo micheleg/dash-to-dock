@@ -1461,7 +1461,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
         DockManager.allDocks.forEach(dock => {
             if (dock._numberOverlayTimeoutId) {
                 GLib.source_remove(dock._numberOverlayTimeoutId);
-                dock._numberOverlayTimeoutId = 0;
+                delete dock._numberOverlayTimeoutId;
             }
         });
 
