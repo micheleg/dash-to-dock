@@ -400,21 +400,23 @@ const DockedDash = GObject.registerClass({
         // Load optional features that need to be activated once per dock
         this._optionalScrollWorkspaceSwitch();
 
+        // Delay operations that require the shell to be fully loaded and with
+        // user theme applied.
         if (Main.layoutManager._startingUp) {
             this._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
                 Main.layoutManager, 'startup-complete', () => {
                     this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
                     this._trackDock();
+                    this._initialize();
                 });
         } else {
             this._trackDock();
+            this._signalsHandler.addWithLabel(Labels.INITIALIZE, global.stage,
+                'after-paint', () => {
+                    this._signalsHandler.removeWithLabel(Labels.INITIALIZE);
+                    this._initialize();
+                });
         }
-
-        // Delay operations that require the shell to be fully loaded and with
-        // user theme applied.
-
-        this._signalsHandler.addWithLabel(Labels.INITIALIZE, global.stage,
-            'after-paint', () => this._initialize());
 
         // Add dash container actor and the container to the Chrome.
         this.set_child(this._slider);
@@ -455,8 +457,6 @@ const DockedDash = GObject.registerClass({
     }
 
     _initialize() {
-        this._signalsHandler.removeWithLabel(Labels.INITIALIZE);
-
         // Create and apply height/width constraint to the dash.
         this.dash.setMaxSize(this.width, this.height);
         if (this._isHorizontal) {
