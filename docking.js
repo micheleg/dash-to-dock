@@ -400,6 +400,11 @@ const DockedDash = GObject.registerClass({
         // Load optional features that need to be activated once per dock
         this._optionalScrollWorkspaceSwitch();
 
+        // Add dash container actor and the container to the Chrome.
+        this.set_child(this._slider);
+        this._slider.set_child(this._box);
+        this._box.add_child(this.dash);
+
         // Delay operations that require the shell to be fully loaded and with
         // user theme applied.
         if (Main.layoutManager._startingUp) {
@@ -417,11 +422,6 @@ const DockedDash = GObject.registerClass({
                     this._initialize();
                 });
         }
-
-        // Add dash container actor and the container to the Chrome.
-        this.set_child(this._slider);
-        this._slider.set_child(this._box);
-        this._box.add_child(this.dash);
 
         this.connect('destroy', this._onDestroy.bind(this));
     }
