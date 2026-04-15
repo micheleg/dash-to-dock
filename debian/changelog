@@ -1,3 +1,69 @@
+gnome-shell-extension-ubuntu-dock (105ubuntu1) UNRELEASED; urgency=medium
+
+  [ AsciiWolf ]
+  * Update Czech translation.
+  * Do not mark the whole Kazakh translation as fuzzy
+
+  [ Daniel van Vugt ]
+  * docking: Avoid inserting ("tracking") docks during the login animation
+    (LP: #2146516)
+
+  [ Marco Trevisan (Treviño) ]
+  * docking: Unfocus currently focused window when getting the a11y focus
+    (LP: #2147922)
+  * docking: Cleanup accessibility focus callback handling
+  * docking: Correctly check for remote model need
+  * appIconsDecorator: Keep track of icons and results appIcons separately
+    (LP: #2146632)
+  * appIcons[Decorator]: Adjust to GNOME 49 API to show OSD (LP: #2148313)
+  * appIconsDecorator: Factorize the appIcon updating notification code
+  * appIconsDecorator: Track updating icons externally
+  * docking: Do not connect multiple times to the same global signal
+  * docking: Simplify the creation and destruction of the docks
+  * docking: Disconnect from signals on docks destruction (LP: #2148339)
+  * docking: Remove workspace switcher pop-up only if matching
+  * docking: Disconnect from remote model settings changes
+  * docking: Disconnect from timeline new-frame signal on destroy
+  * docking: Remove number overlay timeout from properties
+  * intellihide: Also disconnect from window destroy signal
+  * menuClient: Disconnect from previous menu client signal
+  * docking: Move back dock tracking to the DockedDash
+  * docking: Reset position as part of dock tracking
+  * docking: Bind dock position only after initialization
+  * docking: Only initialize the dock after the startup has completed
+  * docking: Move the docked dash definition earlier than signal connections
+  * theming: Only update the theme actor style when the actor is mapped
+  * theming: Ensure the overview style is set on startup
+  * docking: Iterate over a docks snapshot on destruction
+  * docking: Remove deprecated code for older gjs
+  * docking: Do not update the custom theme twice
+  * dash: Skip a workaround in newer shell versions
+  * dash: Expose the max-width/height values as properties
+  * docking: Use bindings to sync the dock/dash sizes
+  * docking: Only show the dock once fully initialized (LP: #2035304)
+  * docking: Remove dead code since GNOME Shell 42
+  * metadata: Release dash-to-dock v105
+  * utils: Ensure that destroy arguments are passed to the callback
+  * appIcons: Use the signals handler to track source destruction
+  * desktopIconsIntegration: Use the current extension UUID
+  * docking: Unset the static box on destruction
+  * appIconIndicators: Untrack the destroyed area
+  * docking: Remove scroll timeout on destruction
+  * docking: Disconnect from pressure barrier signals on destruction
+  * docking: Only track the workspace popup we manage
+  * utils: Disconnect from all signals if destroy is tracked
+  * Makefile: Do not ship settings schema on zip file
+  * docking: Use default showAppsButton behavior when used in Ctrl+Alt+Tab.
+    (LP: #2148513)
+
+  [ DawidNet ]
+  * Add Polish translations for 'Unpin' and 'Pin to Dock'
+
+  [ Gabriel Ayala ]
+  * po: improve pt_BR translations
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 15 Apr 2026 18:20:57 +0200
+
 gnome-shell-extension-ubuntu-dock (104ubuntu1) resolute; urgency=medium
 
   [ Alessandro Astone ]
