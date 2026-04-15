@@ -2488,7 +2488,7 @@ export class DockManager {
         this._desktopIconsUsableArea?.resetMargins();
 
         // Delete all docks
-        this._allDocks.forEach(d => d.destroy());
+        [...this._allDocks].forEach(d => d.destroy());
 
         this.emit('docks-destroyed');
     }
