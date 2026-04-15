@@ -194,9 +194,9 @@ export class GlobalSignalsHandler extends BasicHandler {
 
         if (isDestroy && !isParentObject) {
             const originalCallback = callback;
-            callback = () => {
+            callback = (...args) => {
                 this._removeByItem(item);
-                originalCallback();
+                originalCallback(...args);
             };
         }
         const id = connector.call(object, event, callback);
