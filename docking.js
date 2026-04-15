@@ -421,25 +421,6 @@ const DockedDash = GObject.registerClass({
         this._slider.set_child(this._box);
         this._box.add_child(this.dash);
 
-        // Create and apply height/width constraint to the dash.
-        if (this._isHorizontal) {
-            this.connect('notify::width', () => {
-                this.dash.setMaxSize(this.width, this.height);
-            });
-        } else {
-            this.connect('notify::height', () => {
-                this.dash.setMaxSize(this.width, this.height);
-            });
-        }
-
-        if (this._position === St.Side.RIGHT) {
-            this.connect('notify::width', () =>
-                (this.translation_x = -this.width));
-        } else if (this._position === St.Side.BOTTOM) {
-            this.connect('notify::height', () =>
-                (this.translation_y = -this.height));
-        }
-
         this.connect('destroy', this._onDestroy.bind(this));
     }
 
@@ -475,6 +456,26 @@ const DockedDash = GObject.registerClass({
 
     _initialize() {
         this._signalsHandler.removeWithLabel(Labels.INITIALIZE);
+
+        // Create and apply height/width constraint to the dash.
+        this.dash.setMaxSize(this.width, this.height);
+        if (this._isHorizontal) {
+            this.connect('notify::width', () =>
+                this.dash.setMaxSize(this.width, this.height));
+        } else {
+            this.connect('notify::height', () =>
+                this.dash.setMaxSize(this.width, this.height));
+        }
+
+        if (this._position === St.Side.RIGHT) {
+            this.translation_x = -this.width;
+            this.connect('notify::width', () =>
+                (this.translation_x = -this.width));
+        } else if (this._position === St.Side.BOTTOM) {
+            this.translation_y = -this.height;
+            this.connect('notify::height', () =>
+                (this.translation_y = -this.height));
+        }
 
         // Apply custom css class according to the settings
         this._themeManager.updateCustomTheme();
