@@ -84,6 +84,12 @@ export class ThemeManager {
 
         maybeUpdateCustomTheme();
 
+        // Set the initial overview pseudo-class state.
+        if (Main.overview.visible)
+            this._onOverviewShowing();
+        else
+            this._onOverviewHiding();
+
         // destroy themeManager when the managed actor is destroyed (e.g. extension unload)
         // in order to disconnect signals
         this._signalsHandler.add(this._actor, 'destroy', () => this.destroy());
