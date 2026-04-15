@@ -1011,6 +1011,7 @@ const DockedDash = GObject.registerClass({
 
         // Remove existing pressure barrier
         if (this._pressureBarrier) {
+            this._pressureBarrier.disconnectObject(this);
             this._pressureBarrier.destroy();
             this._pressureBarrier = null;
         }
@@ -1026,11 +1027,11 @@ const DockedDash = GObject.registerClass({
             this._pressureBarrier = new Layout.PressureBarrier(
                 pressureThreshold, settings.showDelay * 1000,
                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
-            this._pressureBarrier.connect('trigger', _barrier => {
+            this._pressureBarrier.connectObject('trigger', () => {
                 if (!settings.autohideInFullscreen && this._monitor.inFullscreen)
                     return;
                 this._onPressureSensed();
-            });
+            }, this);
         }
     }
 
