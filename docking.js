@@ -17,6 +17,7 @@ import {
     Main,
     OverviewControls,
     PointerWatcher,
+    SwitcherPopup,
     Workspace,
     WorkspacesView,
     WorkspaceSwitcherPopup,
@@ -2388,6 +2389,24 @@ export class DockManager {
                 return workspaceBoxOriginFixer.call(this, originalFunction, ...args);
                 /* eslint-enable no-invalid-this */
             },
+        ], [
+            // Sadly CtrlAltTabPopup is not exported, so we cannot just patch it.
+            SwitcherPopup.SwitcherPopup.prototype,
+            '_finish',
+            function (originalFunction, ...args) {
+                /* eslint-disable no-invalid-this */
+                if (this.constructor.name === 'CtrlAltTabPopup') {
+                    const dockManager = DockManager.getDefault();
+                    if (dockManager._inCtrlAltTabSwitcher)
+                        return;
+
+                    dockManager._inCtrlAltTabSwitcher = true;
+                    this.constructor.prototype._finish.call(this, ...args);
+                    delete dockManager._inCtrlAltTabSwitcher;
+                }
+                originalFunction.call(this, ...args);
+                /* eslint-enable no-invalid-this */
+            },
         ]);
 
         this._vfuncInjections.addWithLabel(Labels.MAIN_DASH, Workspace.WorkspaceBackground.prototype,
@@ -2516,7 +2535,8 @@ export class DockManager {
         if (!Main.overview.visible) {
             this.mainDock.dash.showAppsButton._fromDesktop = true;
             Main.overview.show(OverviewControls.ControlsState.APP_GRID);
-        } else if (!checked && this.mainDock.dash.showAppsButton._fromDesktop) {
+        } else if (!checked && this.mainDock.dash.showAppsButton._fromDesktop &&
+            !this._inCtrlAltTabSwitcher) {
             Main.overview.hide();
             this.mainDock.dash.showAppsButton._fromDesktop = false;
         } else {
