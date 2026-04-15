@@ -1032,7 +1032,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             if (!source.mapped)
                 this.close();
         });
-        source.connect('destroy', () => this.destroy());
+        this._signalsHandler.add(source, 'destroy', () => this.destroy());
 
         Main.uiGroup.add_child(this.actor);
 
