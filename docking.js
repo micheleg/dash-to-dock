@@ -400,6 +400,16 @@ const DockedDash = GObject.registerClass({
         // Load optional features that need to be activated once per dock
         this._optionalScrollWorkspaceSwitch();
 
+        if (Main.layoutManager._startingUp) {
+            this._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
+                Main.layoutManager, 'startup-complete', () => {
+                    this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
+                    this._trackDock();
+                });
+        } else {
+            this._trackDock();
+        }
+
         // Delay operations that require the shell to be fully loaded and with
         // user theme applied.
 
@@ -2140,8 +2150,6 @@ export class DockManager {
         DockManager.allDocks.forEach(dock => {
             const {dash} = dock;
 
-            dock._trackDock();
-
             switch (dock.position) {
             case St.Side.LEFT:
                 dash.translation_x = -dash.width;
@@ -2470,8 +2478,6 @@ export class DockManager {
                     Main.sessionMode.hasOverview = hadOverview;
                     this._runStartupAnimation();
                 });
-        } else {
-            DockManager.allDocks.forEach(dock => dock._trackDock());
         }
     }
 
