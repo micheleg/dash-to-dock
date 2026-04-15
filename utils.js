@@ -188,19 +188,17 @@ export class GlobalSignalsHandler extends BasicHandler {
                 `found in ${object.constructor.name}`);
         }
 
-        const item = [object];
         const isDestroy = event === 'destroy';
         const isParentObject = object === this._parentObject;
 
         if (isDestroy && !isParentObject) {
             const originalCallback = callback;
             callback = (...args) => {
-                this._removeByItem(item);
+                this._removeForObject(object);
                 originalCallback(...args);
             };
         }
         const id = connector.call(object, event, callback);
-        item.push(id);
 
         if (isDestroy && isParentObject) {
             this._parentObject.disconnect(this._destroyId);
@@ -208,7 +206,17 @@ export class GlobalSignalsHandler extends BasicHandler {
                 this._parentObject.connect('destroy', () => this.destroy());
         }
 
-        return item;
+        return [object, id];
+    }
+
+    _removeForObject(object) {
+        Object.getOwnPropertySymbols(this._storage).forEach(label =>
+            (this._storage[label] = this._storage[label].filter(it => {
+                if (it[0] !== object)
+                    return true;
+                this._remove(it);
+                return false;
+            })));
     }
 
     _remove(item) {
