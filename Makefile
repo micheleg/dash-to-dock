@@ -104,7 +104,7 @@ ifeq ($(INSTALLTYPE),system)
 	# system-wide settings and locale files
 	rm -r $(INSTALLBASE)/$(INSTALLNAME)/schemas $(INSTALLBASE)/$(INSTALLNAME)/locale
 	mkdir -p $(SHARE_PREFIX)/glib-2.0/schemas $(SHARE_PREFIX)/locale
-	cp -r ./schemas/*gschema.* $(SHARE_PREFIX)/glib-2.0/schemas
+	cp -r ./schemas/*.gschema.xml $(SHARE_PREFIX)/glib-2.0/schemas
 	cp -r ./_build/locale/* $(SHARE_PREFIX)/locale
 endif
 	-rm -fR _build
@@ -125,8 +125,7 @@ _build: all
 	mkdir -p _build/media
 	cd media ; cp $(EXTRA_MEDIA) ../_build/media/
 	mkdir -p _build/schemas
-	cp schemas/*.xml _build/schemas/
-	cp schemas/gschemas.compiled _build/schemas/
+	cp schemas/*.gschema.xml _build/schemas/
 	mkdir -p _build/locale
 	for l in $(MSGSRC:.po=.mo) ; do \
 		lf=_build/locale/`basename $$l .mo`; \
