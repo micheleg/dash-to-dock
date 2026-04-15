@@ -17,6 +17,7 @@ import {
     Main,
     OverviewControls,
     PointerWatcher,
+    SwitcherPopup,
     Workspace,
     WorkspacesView,
     WorkspaceSwitcherPopup,
@@ -260,7 +261,7 @@ const DockedDash = GObject.registerClass({
 
         // this store size and the position where the dash is shown;
         // used by intellihide module to check window overlap.
-        this.staticBox = new Clutter.ActorBox();
+        this._staticBox = new Clutter.ActorBox();
 
         // Initialize pressure barrier variables
         this._canUsePressure = false;
@@ -491,6 +492,8 @@ const DockedDash = GObject.registerClass({
         this.dash.destroy();
         this._intellihide.destroy();
         this._themeManager.destroy();
+        this._workspaceSwitcherPopup?.destroy();
+        delete this._staticBox;
 
         if (this._marginLater) {
             Utils.laterRemove(this._marginLater);
@@ -513,6 +516,11 @@ const DockedDash = GObject.registerClass({
         if (this._dockWatch) {
             PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
             this._dockWatch = null;
+        }
+
+        if (this._optionalScrollWorkspaceSwitchDeadTimeId) {
+            GLib.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
+            delete this._optionalScrollWorkspaceSwitchDeadTimeId;
         }
     }
 
@@ -1005,6 +1013,7 @@ const DockedDash = GObject.registerClass({
 
         // Remove existing pressure barrier
         if (this._pressureBarrier) {
+            this._pressureBarrier.disconnectObject(this);
             this._pressureBarrier.destroy();
             this._pressureBarrier = null;
         }
@@ -1020,11 +1029,11 @@ const DockedDash = GObject.registerClass({
             this._pressureBarrier = new Layout.PressureBarrier(
                 pressureThreshold, settings.showDelay * 1000,
                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
-            this._pressureBarrier.connect('trigger', _barrier => {
+            this._pressureBarrier.connectObject('trigger', () => {
                 if (!settings.autohideInFullscreen && this._monitor.inFullscreen)
                     return;
                 this._onPressureSensed();
-            });
+            }, this);
         }
     }
 
@@ -1046,7 +1055,7 @@ const DockedDash = GObject.registerClass({
             let shouldHide = true;
             switch (this._position) {
             case St.Side.LEFT:
-                if (x <= this.staticBox.x2 &&
+                if (x <= this._staticBox.x2 &&
                     x >= this._monitor.x &&
                     y >= this._monitor.y &&
                     y <= this._monitor.y + this._monitor.height)
@@ -1054,7 +1063,7 @@ const DockedDash = GObject.registerClass({
 
                 break;
             case St.Side.RIGHT:
-                if (x >= this.staticBox.x1 &&
+                if (x >= this._staticBox.x1 &&
                     x <= this._monitor.x + this._monitor.width &&
                     y >= this._monitor.y &&
                     y <= this._monitor.y + this._monitor.height)
@@ -1064,7 +1073,7 @@ const DockedDash = GObject.registerClass({
             case St.Side.TOP:
                 if (x >= this._monitor.x &&
                     x <= this._monitor.x + this._monitor.width &&
-                    y <= this.staticBox.y2 &&
+                    y <= this._staticBox.y2 &&
                     y >= this._monitor.y)
                     shouldHide = false;
 
@@ -1072,7 +1081,7 @@ const DockedDash = GObject.registerClass({
             case St.Side.BOTTOM:
                 if (x >= this._monitor.x &&
                     x <= this._monitor.x + this._monitor.width &&
-                    y >= this.staticBox.y1 &&
+                    y >= this._staticBox.y1 &&
                     y <= this._monitor.y + this._monitor.height)
                     shouldHide = false;
             }
@@ -1252,14 +1261,14 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateStaticBox() {
-        this.staticBox.init_rect(
+        this._staticBox.init_rect(
             this.x + this._slider.x - (this._position === St.Side.RIGHT ? this._box.width : 0),
             this.y + this._slider.y - (this._position === St.Side.BOTTOM ? this._box.height : 0),
             this._box.width,
             this._box.height
         );
 
-        this._intellihide.updateTargetBox(this.staticBox);
+        this._intellihide.updateTargetBox(this._staticBox);
         this._updateVisibleDesktop();
     }
 
@@ -1389,16 +1398,19 @@ const DockedDash = GObject.registerClass({
                             global.workspace_manager.workspace_grid.getWorkspaceSwitcherPopup();
                     } else {
                         Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+                        this._workspaceSwitcherPopup = Main.wm._workspaceSwitcherPopup;
+
+                        this._signalsHandler.add(Main.wm._workspaceSwitcherPopup, 'destroy', actor => {
+                            delete this._workspaceSwitcherPopup;
+                            if (Main.wm._workspaceSwitcherPopup === actor)
+                                delete Main.wm._workspaceSwitcherPopup;
+                        });
                     }
                 }
                 // Set the actor non reactive, so that it doesn't prevent the
                 // clicks events from reaching the dash actor. I can't see a reason
                 // why it should be reactive.
                 Main.wm._workspaceSwitcherPopup.reactive = false;
-                Main.wm._workspaceSwitcherPopup.connect('destroy', actor => {
-                    if (Main.wm._workspaceSwitcherPopup === actor)
-                        delete Main.wm._workspaceSwitcherPopup;
-                });
 
                 // If Workspace Grid is installed, let them handle the scroll behavior.
                 if (global.workspace_manager.workspace_grid !== undefined)
@@ -1703,7 +1715,7 @@ export class DockManager {
 
         this._iconTheme = new St.IconTheme();
 
-        this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass();
+        this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass(extension);
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
         this._appSpread = new AppSpread.AppSpread();
@@ -2377,6 +2389,24 @@ export class DockManager {
                 return workspaceBoxOriginFixer.call(this, originalFunction, ...args);
                 /* eslint-enable no-invalid-this */
             },
+        ], [
+            // Sadly CtrlAltTabPopup is not exported, so we cannot just patch it.
+            SwitcherPopup.SwitcherPopup.prototype,
+            '_finish',
+            function (originalFunction, ...args) {
+                /* eslint-disable no-invalid-this */
+                if (this.constructor.name === 'CtrlAltTabPopup') {
+                    const dockManager = DockManager.getDefault();
+                    if (dockManager._inCtrlAltTabSwitcher)
+                        return;
+
+                    dockManager._inCtrlAltTabSwitcher = true;
+                    this.constructor.prototype._finish.call(this, ...args);
+                    delete dockManager._inCtrlAltTabSwitcher;
+                }
+                originalFunction.call(this, ...args);
+                /* eslint-enable no-invalid-this */
+            },
         ]);
 
         this._vfuncInjections.addWithLabel(Labels.MAIN_DASH, Workspace.WorkspaceBackground.prototype,
@@ -2505,7 +2535,8 @@ export class DockManager {
         if (!Main.overview.visible) {
             this.mainDock.dash.showAppsButton._fromDesktop = true;
             Main.overview.show(OverviewControls.ControlsState.APP_GRID);
-        } else if (!checked && this.mainDock.dash.showAppsButton._fromDesktop) {
+        } else if (!checked && this.mainDock.dash.showAppsButton._fromDesktop &&
+            !this._inCtrlAltTabSwitcher) {
             Main.overview.hide();
             this.mainDock.dash.showAppsButton._fromDesktop = false;
         } else {

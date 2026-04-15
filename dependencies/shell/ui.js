@@ -12,6 +12,7 @@ export * as PointerWatcher from 'resource:///org/gnome/shell/ui/pointerWatcher.j
 export * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 export * as SearchController from 'resource:///org/gnome/shell/ui/searchController.js';
 export * as ShellMountOperation from 'resource:///org/gnome/shell/ui/shellMountOperation.js';
+export * as SwitcherPopup from 'resource:///org/gnome/shell/ui/switcherPopup.js';
 export * as Workspace from 'resource:///org/gnome/shell/ui/workspace.js';
 export * as WorkspaceSwitcherPopup from 'resource:///org/gnome/shell/ui/workspaceSwitcherPopup.js';
 export * as WorkspaceThumbnail from 'resource:///org/gnome/shell/ui/workspaceThumbnail.js';
