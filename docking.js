@@ -491,6 +491,7 @@ const DockedDash = GObject.registerClass({
         this.dash.destroy();
         this._intellihide.destroy();
         this._themeManager.destroy();
+        this._workspaceSwitcherPopup?.destroy();
         delete this._staticBox;
 
         if (this._marginLater) {
@@ -1396,16 +1397,19 @@ const DockedDash = GObject.registerClass({
                             global.workspace_manager.workspace_grid.getWorkspaceSwitcherPopup();
                     } else {
                         Main.wm._workspaceSwitcherPopup = new WorkspaceSwitcherPopup.WorkspaceSwitcherPopup();
+                        this._workspaceSwitcherPopup = Main.wm._workspaceSwitcherPopup;
+
+                        this._signalsHandler.add(Main.wm._workspaceSwitcherPopup, 'destroy', actor => {
+                            delete this._workspaceSwitcherPopup;
+                            if (Main.wm._workspaceSwitcherPopup === actor)
+                                delete Main.wm._workspaceSwitcherPopup;
+                        });
                     }
                 }
                 // Set the actor non reactive, so that it doesn't prevent the
                 // clicks events from reaching the dash actor. I can't see a reason
                 // why it should be reactive.
                 Main.wm._workspaceSwitcherPopup.reactive = false;
-                Main.wm._workspaceSwitcherPopup.connect('destroy', actor => {
-                    if (Main.wm._workspaceSwitcherPopup === actor)
-                        delete Main.wm._workspaceSwitcherPopup;
-                });
 
                 // If Workspace Grid is installed, let them handle the scroll behavior.
                 if (global.workspace_manager.workspace_grid !== undefined)
