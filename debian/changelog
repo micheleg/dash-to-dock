@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (105ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (105ubuntu1) resolute; urgency=medium
 
   [ AsciiWolf ]
   * Update Czech translation.
@@ -62,7 +62,7 @@ gnome-shell-extension-ubuntu-dock (105ubuntu1) UNRELEASED; urgency=medium
   [ Gabriel Ayala ]
   * po: improve pt_BR translations
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Wed, 15 Apr 2026 18:20:57 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 16 Apr 2026 01:49:45 +0200
 
 gnome-shell-extension-ubuntu-dock (104ubuntu1) resolute; urgency=medium
 
