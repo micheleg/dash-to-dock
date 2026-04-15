@@ -17,6 +17,7 @@ import {
 } from './dependencies/shell/ui.js';
 
 import {
+    Config,
     Util,
 } from './dependencies/shell/misc.js';
 
@@ -1074,10 +1075,13 @@ export const DockDash = GObject.registerClass({
         const notifiedProperties = [];
         const showAppsContainer = settings.showAppsAlwaysInTheEdge || !settings.dockExtended
             ? this._dashContainer : this._boxContainer;
+        const needsFirstLastChildWorkaround = Config.PACKAGE_VERSION.split('.')[0] < 49;
 
-        this._signalsHandler.addWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND,
-            showAppsContainer, 'notify',
-            (_obj, pspec) => notifiedProperties.push(pspec.name));
+        if (needsFirstLastChildWorkaround) {
+            this._signalsHandler.addWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND,
+                showAppsContainer, 'notify',
+                (_obj, pspec) => notifiedProperties.push(pspec.name));
+        }
 
         if (this._showAppsIcon.get_parent() !== showAppsContainer) {
             this._showAppsIcon.get_parent()?.remove_child(this._showAppsIcon);
@@ -1092,16 +1096,18 @@ export const DockDash = GObject.registerClass({
             showAppsContainer.set_child_above_sibling(this._showAppsIcon, null);
         }
 
-        this._signalsHandler.removeWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND);
+        if (needsFirstLastChildWorkaround) {
+            this._signalsHandler.removeWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND);
 
-        // This is indeed ugly, but we need to ensure that the last and first
-        // visible widgets are re-computed by St, that is buggy because of a
-        // mutter issue that is being fixed:
-        // https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/2047
-        if (!notifiedProperties.includes('first-child'))
-            showAppsContainer.notify('first-child');
-        if (!notifiedProperties.includes('last-child'))
-            showAppsContainer.notify('last-child');
+            // This is indeed ugly, but we need to ensure that the last and first
+            // visible widgets are re-computed by St, that is buggy because of a
+            // mutter issue that is being fixed:
+            // https://gitlab.gnome.org/GNOME/mutter/-/merge_requests/2047
+            if (!notifiedProperties.includes('first-child'))
+                showAppsContainer.notify('first-child');
+            if (!notifiedProperties.includes('last-child'))
+                showAppsContainer.notify('last-child');
+        }
     }
 });
 
