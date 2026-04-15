@@ -452,13 +452,12 @@ const DockedDash = GObject.registerClass({
 
     _initialize() {
         // Create and apply height/width constraint to the dash.
-        this.dash.setMaxSize(this.width, this.height);
         if (this._isHorizontal) {
-            this.connect('notify::width', () =>
-                this.dash.setMaxSize(this.width, this.height));
+            this.bind_property('width', this.dash, 'max-width',
+                GObject.BindingFlags.SYNC_CREATE);
         } else {
-            this.connect('notify::height', () =>
-                this.dash.setMaxSize(this.width, this.height));
+            this.bind_property('height', this.dash, 'max-height',
+                GObject.BindingFlags.SYNC_CREATE);
         }
 
         if (this._position === St.Side.RIGHT) {
