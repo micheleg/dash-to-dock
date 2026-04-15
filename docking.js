@@ -471,9 +471,6 @@ const DockedDash = GObject.registerClass({
                 (this.translation_y = -this.height));
         }
 
-        // Apply custom css class according to the settings
-        this._themeManager.updateCustomTheme();
-
         this._updateVisibilityMode();
 
         // In case we are already inside the overview when the extension is loaded,
