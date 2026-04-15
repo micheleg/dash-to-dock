@@ -515,6 +515,11 @@ const DockedDash = GObject.registerClass({
             PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
             this._dockWatch = null;
         }
+
+        if (this._optionalScrollWorkspaceSwitchDeadTimeId) {
+            GLib.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
+            delete this._optionalScrollWorkspaceSwitchDeadTimeId;
+        }
     }
 
     _updateAutoHideBarriers() {
