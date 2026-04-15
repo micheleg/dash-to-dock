@@ -440,9 +440,6 @@ const DockedDash = GObject.registerClass({
                 (this.translation_y = -this.height));
         }
 
-        // Set initial position
-        this._resetPosition();
-
         this.connect('destroy', this._onDestroy.bind(this));
     }
 
@@ -471,6 +468,9 @@ const DockedDash = GObject.registerClass({
                 Main.layoutManager.removeChrome(this);
             Main.layoutManager.addChrome(this);
         }
+
+        // Set the initial position.
+        this._resetPosition();
     }
 
     _initialize() {
@@ -619,7 +619,6 @@ const DockedDash = GObject.registerClass({
                 this._untrackDock();
                 this._trackDock();
 
-                this._resetPosition();
                 this._updateAutoHideBarriers();
                 this._updateVisibilityMode();
             },
