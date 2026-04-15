@@ -260,7 +260,7 @@ const DockedDash = GObject.registerClass({
 
         // this store size and the position where the dash is shown;
         // used by intellihide module to check window overlap.
-        this.staticBox = new Clutter.ActorBox();
+        this._staticBox = new Clutter.ActorBox();
 
         // Initialize pressure barrier variables
         this._canUsePressure = false;
@@ -491,6 +491,7 @@ const DockedDash = GObject.registerClass({
         this.dash.destroy();
         this._intellihide.destroy();
         this._themeManager.destroy();
+        delete this._staticBox;
 
         if (this._marginLater) {
             Utils.laterRemove(this._marginLater);
@@ -1046,7 +1047,7 @@ const DockedDash = GObject.registerClass({
             let shouldHide = true;
             switch (this._position) {
             case St.Side.LEFT:
-                if (x <= this.staticBox.x2 &&
+                if (x <= this._staticBox.x2 &&
                     x >= this._monitor.x &&
                     y >= this._monitor.y &&
                     y <= this._monitor.y + this._monitor.height)
@@ -1054,7 +1055,7 @@ const DockedDash = GObject.registerClass({
 
                 break;
             case St.Side.RIGHT:
-                if (x >= this.staticBox.x1 &&
+                if (x >= this._staticBox.x1 &&
                     x <= this._monitor.x + this._monitor.width &&
                     y >= this._monitor.y &&
                     y <= this._monitor.y + this._monitor.height)
@@ -1064,7 +1065,7 @@ const DockedDash = GObject.registerClass({
             case St.Side.TOP:
                 if (x >= this._monitor.x &&
                     x <= this._monitor.x + this._monitor.width &&
-                    y <= this.staticBox.y2 &&
+                    y <= this._staticBox.y2 &&
                     y >= this._monitor.y)
                     shouldHide = false;
 
@@ -1072,7 +1073,7 @@ const DockedDash = GObject.registerClass({
             case St.Side.BOTTOM:
                 if (x >= this._monitor.x &&
                     x <= this._monitor.x + this._monitor.width &&
-                    y >= this.staticBox.y1 &&
+                    y >= this._staticBox.y1 &&
                     y <= this._monitor.y + this._monitor.height)
                     shouldHide = false;
             }
@@ -1252,14 +1253,14 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateStaticBox() {
-        this.staticBox.init_rect(
+        this._staticBox.init_rect(
             this.x + this._slider.x - (this._position === St.Side.RIGHT ? this._box.width : 0),
             this.y + this._slider.y - (this._position === St.Side.BOTTOM ? this._box.height : 0),
             this._box.width,
             this._box.height
         );
 
-        this._intellihide.updateTargetBox(this.staticBox);
+        this._intellihide.updateTargetBox(this._staticBox);
         this._updateVisibleDesktop();
     }
 
