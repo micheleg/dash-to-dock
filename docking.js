@@ -410,10 +410,16 @@ const DockedDash = GObject.registerClass({
                 });
         } else {
             this._trackDock();
+            // Show the dock only once fully initialized. This workarounds a
+            // resize glitch we are seeing if the dock is initialized without
+            // an animation.
+            // $SOMETHING seems to resize it, but it's yet unclear what it is.
+            this.opacity = 0;
             this._signalsHandler.addWithLabel(Labels.INITIALIZE, global.stage,
                 'after-paint', () => {
                     this._signalsHandler.removeWithLabel(Labels.INITIALIZE);
                     this._initialize();
+                    this.opacity = 255;
                 });
         }
 
