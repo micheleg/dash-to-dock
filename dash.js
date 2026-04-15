@@ -121,6 +121,14 @@ export const DockDash = GObject.registerClass({
             'requires-visibility', 'requires-visibility', 'requires-visibility',
             GObject.ParamFlags.READWRITE,
             false),
+        'max-width': GObject.ParamSpec.int(
+            'max-width', 'max-width', 'max-width',
+            GObject.ParamFlags.READWRITE,
+            -1, GLib.MAXINT32, -1),
+        'max-height': GObject.ParamSpec.int(
+            'max-height', 'max-height', 'max-height',
+            GObject.ParamFlags.READWRITE,
+            -1, GLib.MAXINT32, -1),
     },
     Signals: {
         'menu-opened': {},
@@ -1055,6 +1063,22 @@ export const DockDash = GObject.registerClass({
 
     hideShowAppsButton() {
         this._showAppsIcon.visible = false;
+    }
+
+    get maxWidth() {
+        return this._maxWidth;
+    }
+
+    get maxHeight() {
+        return this._maxHeight;
+    }
+
+    set maxWidth(maxWidth) {
+        this.setMaxSize(maxWidth, this._maxHeight);
+    }
+
+    set maxHeight(maxHeight) {
+        this.setMaxSize(this._maxWidth, maxHeight);
     }
 
     setMaxSize(maxWidth, maxHeight) {
