@@ -30,6 +30,7 @@ const TransparencyMode = {
 
 const Labels = Object.freeze({
     TRANSPARENCY: Symbol('transparency'),
+    THEME_CHANGED: Symbol('theme-changed'),
 });
 
 export const PositionStyleClass = Object.freeze([
@@ -55,11 +56,6 @@ export class ThemeManager {
         this._transparency = new Transparency(dock);
 
         this._signalsHandler.add([
-            // When theme changes re-obtain default background color
-            St.ThemeContext.get_for_stage(global.stage),
-            'changed',
-            this.updateCustomTheme.bind(this),
-        ], [
             // update :overview pseudoclass
             Main.overview,
             'showing',
@@ -70,7 +66,29 @@ export class ThemeManager {
             this._onOverviewHiding.bind(this),
         ]);
 
-        this._updateCustomStyleClasses();
+        this._signalsHandler.addWithLabel(Labels.THEME_CHANGED,
+            St.ThemeContext.get_for_stage(global.stage), 'changed',
+            () => this.updateCustomTheme());
+
+        const maybeUpdateCustomTheme = () => {
+            if (this._actor.mapped) {
+                this._signalsHandler.unblockWithLabel(Labels.THEME_CHANGED);
+                this.updateCustomTheme();
+            } else {
+                this._signalsHandler.blockWithLabel(Labels.THEME_CHANGED);
+            }
+        };
+
+        this._signalsHandler.add(this._actor, 'notify::mapped',
+            () => maybeUpdateCustomTheme());
+
+        maybeUpdateCustomTheme();
+
+        // Set the initial overview pseudo-class state.
+        if (Main.overview.visible)
+            this._onOverviewShowing();
+        else
+            this._onOverviewHiding();
 
         // destroy themeManager when the managed actor is destroyed (e.g. extension unload)
         // in order to disconnect signals
@@ -122,11 +140,6 @@ export class ThemeManager {
     }
 
     _getDefaultColors() {
-        // Prevent shell crash if the actor is not on the stage.
-        // It happens enabling/disabling repeatedly the extension
-        if (!this._dash._background.get_stage())
-            return [null, null];
-
         // Remove custom style
         const oldStyle = this._dash._background.get_style();
         this._dash._background.set_style(null);
@@ -237,11 +250,6 @@ export class ThemeManager {
      * Reimported back and adapted from atomdock
      */
     _adjustTheme() {
-        // Prevent shell crash if the actor is not on the stage.
-        // It happens enabling/disabling repeatedly the extension
-        if (!this._dash._background.get_stage())
-            return;
-
         const {settings} = Docking.DockManager;
 
         // Remove prior style edits
@@ -307,7 +315,7 @@ export class ThemeManager {
             'extend-height',
             'force-straight-corner'];
 
-        this._signalsHandler.add(...keys.map(key => [
+        this._signalsHandler.addWithLabel(Labels.THEME_CHANGED, ...keys.map(key => [
             Docking.DockManager.settings,
             `changed::${key}`,
             () => this.updateCustomTheme(),

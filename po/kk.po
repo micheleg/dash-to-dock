@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the dashtodock package.
 # Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2026.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"

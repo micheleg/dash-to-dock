@@ -123,6 +123,7 @@ export class LauncherEntryRemoteModel {
                     remote.quicklist = null;
                     let menuClient = remote._quicklistMenuClient;
                     if (menuClient) {
+                        menuClient.disconnect(menuClient._rootChangedHandlerId);
                         menuClient.dbus_object = quicklistPath;
                     } else {
                         // This property should not be enumerable
@@ -144,7 +145,8 @@ export class LauncherEntryRemoteModel {
                             }
                         }
                     };
-                    menuClient.connect(DBusMenu.CLIENT_SIGNAL_ROOT_CHANGED, handler);
+                    menuClient._rootChangedHandlerId =
+                        menuClient.connect(DBusMenu.CLIENT_SIGNAL_ROOT_CHANGED, handler);
                 }
             } else {
                 remote[name] = properties[name].unpack();

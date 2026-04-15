@@ -2,14 +2,11 @@
 
 
 import {
-    Docking,
     AppIconIndicators,
+    AppIcons,
+    Docking,
     Utils,
 } from './imports.js';
-
-import {
-    Gio,
-} from './dependencies/gi.js';
 
 import {
     AppMenu,
@@ -19,7 +16,7 @@ import {
 } from './dependencies/shell/ui.js';
 
 const Labels = Object.freeze({
-    GENERIC: Symbol('generic'),
+    RESULTS: Symbol('results'),
     ICONS: Symbol('icons'),
 });
 
@@ -30,6 +27,8 @@ export class AppIconsDecorator {
         this._propertyInjections = new Utils.PropertyInjectionsHandler(
             null, {allowNewProperty: true});
         this._indicators = new Set();
+        this._resultIndicators = new Set();
+        this._updatingIcons = new WeakSet();
 
         this._patchAppIcons();
         this._decorateIcons();
@@ -42,28 +41,42 @@ export class AppIconsDecorator {
         delete this._methodInjections;
         this._propertyInjections?.destroy();
         delete this._propertyInjections;
-        this._indicators?.forEach(i => i.destroy());
-        this._indicators?.clear();
+        this._clearIndicators(Labels.ICONS);
+        this._clearIndicators(Labels.RESULTS);
         delete this._indicators;
+        delete this._resultIndicators;
+        delete this._updatingIcons;
     }
 
-    _decorateIcon(parentIcon, signalLabel = Labels.GENERIC) {
+    _indicatorsSet(label) {
+        return {
+            [Labels.ICONS]: this._indicators,
+            [Labels.RESULTS]: this._resultIndicators,
+        }[label];
+    }
+
+    _clearIndicators(label) {
+        const indicatorsSet = this._indicatorsSet(label);
+        indicatorsSet.forEach(i => i.destroy());
+        indicatorsSet.clear();
+    }
+
+    _decorateIcon(parentIcon, signalLabel) {
         const indicator = new AppIconIndicators.UnityIndicator(parentIcon);
-        this._indicators.add(indicator);
+        const indicatorsSet = this._indicatorsSet(signalLabel);
+        indicatorsSet.add(indicator);
         this._signals.addWithLabel(signalLabel, parentIcon, 'destroy', () => {
-            this._indicators.delete(indicator);
+            indicatorsSet.delete(indicator);
             indicator.destroy();
         });
-        return indicator;
     }
 
     _decorateIcons() {
         const {appDisplay} = Docking.DockManager.getDefault().overviewControls;
 
         const decorateAppIcons = () => {
-            this._indicators.forEach(i => i.destroy());
-            this._indicators.clear();
             this._signals.removeWithLabel(Labels.ICONS);
+            this._clearIndicators(Labels.ICONS);
 
             const decorateViewIcons = view => {
                 const items = view.getAllItems();
@@ -92,7 +105,7 @@ export class AppIconsDecorator {
                 /* eslint-disable no-invalid-this */
                 const result = originalFunction.call(this, ...args);
                 if (result instanceof AppDisplay.AppIcon)
-                    self._decorateIcon(result);
+                    self._decorateIcon(result, Labels.RESULTS);
                 return result;
                 /* eslint-enable no-invalid-this */
             });
@@ -101,10 +114,9 @@ export class AppIconsDecorator {
             'activate', function (originalFunction, ...args) {
                 /* eslint-disable no-invalid-this */
                 if (this.updating) {
-                    const icon = Gio.Icon.new_for_string('action-unavailable-symbolic');
-                    Main.osdWindowManager.show(-1, icon,
-                        _('%s is updating, try again later').format(this.name),
-                        null);
+                    const {notifyAppIconUpdating} = AppIcons.DockAbstractAppIcon.prototype;
+                    notifyAppIconUpdating.call(this,
+                        Main.layoutManager.primaryMonitor.index);
                     return;
                 }
 
@@ -119,16 +131,19 @@ export class AppIconsDecorator {
         appIconsTypes.forEach(type =>
             this._propertyInjections.add(type.prototype, 'updating', {
                 get() {
-                    return !!this.__d2dUpdating;
+                    return self._updatingIcons.has(this);
                 },
                 set(updating) {
                     if (this.updating === updating)
                         return;
-                    this.__d2dUpdating = updating;
-                    if (updating)
+
+                    if (updating) {
+                        self._updatingIcons.add(this);
                         this.add_style_class_name('updating');
-                    else
+                    } else {
+                        self._updatingIcons.delete(this);
                         this.remove_style_class_name('updating');
+                    }
                 },
             }));
 
