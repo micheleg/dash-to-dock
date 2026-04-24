@@ -92,7 +92,7 @@
       <description>FIXED: constant transparency. DYNAMIC: dock takes the opaque style only when windows are close to it.</description>
     </key>
     <key name="running-indicator-style" enum="org.gnome.shell.extensions.dash-to-dock.running-indicator-style">
-      <default>'DEFAULT'</default>
+      <default>'DOTS'</default>
       <summary>...</summary>
       <description>DEFAULT: .... DOTS: ....</description>
     </key>
