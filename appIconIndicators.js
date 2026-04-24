@@ -235,6 +235,7 @@ class RunningIndicatorBase extends IndicatorBase {
 
 // We add a css class so third parties themes can limit their indicator customization
 // to the case we do nothing
+/* eslint-disable no-unused-vars */
 class RunningIndicatorDefault extends RunningIndicatorBase {
     constructor(source) {
         super(source);
@@ -246,6 +247,7 @@ class RunningIndicatorDefault extends RunningIndicatorBase {
         super.destroy();
     }
 }
+/* eslint-enable no-unused-vars */
 
 const IndicatorDrawingArea = GObject.registerClass(
 class IndicatorDrawingArea extends St.DrawingArea {
