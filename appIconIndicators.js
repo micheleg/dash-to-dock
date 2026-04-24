@@ -58,11 +58,13 @@ export class AppIconIndicator {
             this._indicators.push(unityIndicator);
         }
 
-        switch (runningIndicatorStyle) {
-        case RunningIndicatorStyle.DEFAULT:
-            runningIndicator = new RunningIndicatorDefault(source);
-            break;
+        if (runningIndicatorStyle === RunningIndicatorStyle.DEFAULT) {
+            // If DEFAULT is choosen, use the GSettings default value
+            const defaultValue = settings.get_default_value('running-indicator-style');
+            runningIndicatorStyle = RunningIndicatorStyle[defaultValue.get_string()[0]];
+        }
 
+        switch (runningIndicatorStyle) {
         case RunningIndicatorStyle.DOTS:
             runningIndicator = new RunningIndicatorDots(source);
             break;
