@@ -363,6 +363,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
         super._updateDotStyle();
         const themeNode = this._dot.get_theme_node();
         this._dot.translationX = themeNode.get_length('offset-x');
+        this._dot.translationY = 0;
     }
 
     _addUrgentWindow(window) {
