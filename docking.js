@@ -2515,7 +2515,7 @@ export class DockManager {
     }
 
     _restoreDash() {
-        if (!this._oldDash)
+        if (!this._oldDash || this.overviewControls.dash === this._oldDash)
             return;
 
         this._signalsHandler.removeWithLabel(Labels.OLD_DASH_CHANGES);
