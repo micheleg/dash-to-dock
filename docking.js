@@ -2184,20 +2184,17 @@ export class DockManager {
     }
 
     _prepareMainDash() {
+        this._propertyInjections.removeWithLabel(Labels.MAIN_DASH);
+
         // Ensure Main.overview.dash is set to our dash in dummy mode
         // while just use the default getter otherwise.
-        // The getter must be dynamic and not set only when we've a dummy
-        // overview because the mode can change dynamically.
-        this._propertyInjections.removeWithLabel(Labels.MAIN_DASH);
-        const defaultDashGetter = Object.getOwnPropertyDescriptor(
-            Main.overview.constructor.prototype, 'dash').get;
-        this._propertyInjections.addWithLabel(Labels.MAIN_DASH, Main.overview, 'dash', {
-            get: () => Main.overview.isDummy
-                ? this.mainDock.dash : defaultDashGetter.call(Main.overview),
-        });
+        if (Main.overview.isDummy) {
+            this._propertyInjections.addWithLabel(Labels.MAIN_DASH, Main.overview, 'dash', {
+                get: () => this.mainDock.dash,
+            });
 
-        if (Main.overview.isDummy)
             return;
+        }
 
         // Hide usual Dash
         this._oldDash.hide();
