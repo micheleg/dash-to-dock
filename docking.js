@@ -2222,8 +2222,10 @@ export class DockManager {
 
         // Pretend I'm the dash: meant to make app grid swarm animation come from
         // the right position of the appShowButton.
-        this.overviewControls.dash = this.mainDock.dash;
-        this.searchController._showAppsButton = this.mainDock.dash.showAppsButton;
+        const replaceMainDash = () => {
+            this.overviewControls.dash = this.mainDock.dash;
+            this.searchController._showAppsButton = this.mainDock.dash.showAppsButton;
+        };
 
         // We also need to ignore max-size changes
         this._methodInjections.addWithLabel(Labels.MAIN_DASH, this._oldDash,
@@ -2482,12 +2484,24 @@ export class DockManager {
                     OverviewControls.ControlsState.HIDDEN;
             }
 
+            // Use a dummy actor as dash during the startup animation, until
+            // we're done with it, so that nothing is really shown or modified
+            // during the upstream startup animation, that still requires to
+            // have a valid actor.
+            const dummyDash = new Clutter.Actor({visible: false, opacity: 0});
+            this.overviewControls.dash = dummyDash;
+            Main.uiGroup.add_child(dummyDash);
+
             this._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
                 Main.layoutManager, 'startup-complete', () => {
                     this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
                     Main.sessionMode.hasOverview = hadOverview;
+                    replaceMainDash();
+                    dummyDash.destroy();
                     this._runStartupAnimation();
                 });
+        } else {
+            replaceMainDash();
         }
     }
 
