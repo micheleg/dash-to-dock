@@ -80,7 +80,7 @@ msgstr "Ainguratu atrakean"
 #: appIcons.js:438
 #, javascript-format
 msgid "%s is updating, try again later"
-msgstr "% eguneratzen ari da, saiatu berriro geroago"
+msgstr "%s eguneratzen ari da, saiatu berriro geroago"
 
 #: appIcons.js:1097
 #, javascript-format
