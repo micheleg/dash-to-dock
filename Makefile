@@ -107,6 +107,7 @@ ifeq ($(INSTALLTYPE),system)
 	cp -r ./schemas/*.gschema.xml $(SHARE_PREFIX)/glib-2.0/schemas
 	cp -r ./_build/locale/* $(SHARE_PREFIX)/locale
 endif
+	cp schemas/gschemas.compiled $(INSTALLBASE)/$(INSTALLNAME)/schemas/
 	-rm -fR _build
 	echo done
 
