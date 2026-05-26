@@ -1738,7 +1738,7 @@ export class DockManager {
         };
         ensureRemoteModel();
 
-        this._signalsHandler.add(this._notificationsMonitor, 'changed',
+        this._signalsHandler.add(this._notificationsMonitor, 'state-changed',
             () => ensureRemoteModel());
         this._signalsHandler.add(this._settings, 'changed::show-icons-emblems',
             () => ensureRemoteModel());
