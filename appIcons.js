@@ -56,14 +56,14 @@ const clickAction = Object.freeze({
     MINIMIZE: 1,
     LAUNCH: 2,
     CYCLE_WINDOWS: 3,
-    CYCLE_OR_MINIMIZE: 4,
-    MINIMIZE_OR_OVERVIEW: 5,
-    PREVIEWS: 6,
-    MINIMIZE_OR_PREVIEWS: 7,
-    FOCUS_OR_PREVIEWS: 8,
-    FOCUS_OR_APP_SPREAD: 9,
-    FOCUS_MINIMIZE_OR_PREVIEWS: 10,
-    FOCUS_MINIMIZE_OR_APP_SPREAD: 11,
+    MINIMIZE_OR_OVERVIEW: 4,
+    PREVIEWS: 5,
+    MINIMIZE_OR_PREVIEWS: 6,
+    FOCUS_OR_PREVIEWS: 7,
+    FOCUS_OR_APP_SPREAD: 8,
+    FOCUS_MINIMIZE_OR_PREVIEWS: 9,
+    FOCUS_MINIMIZE_OR_APP_SPREAD: 10,
+    CYCLE_OR_MINIMIZE: 11,
     QUIT: 12,
 });
 
@@ -604,28 +604,23 @@ export const DockAbstractAppIcon = GObject.registerClass({
                 break;
 
             case clickAction.CYCLE_WINDOWS:
-                if (!Main.overview.visible) {
-                    if (this.focused && !hasUrgentWindows) {
-                        this._cycleThroughWindows();
-                    } else {
-                        // Activate the first window
-                        const [w] = windows;
-                        Main.activateWindow(w);
-                    }
-                } else {
-                    this.app.activate();
-                }
-                break;
+            case clickAction.CYCLE_OR_MINIMIZE: {
+                const shouldMinimize = buttonAction === clickAction.CYCLE_OR_MINIMIZE;
 
-            case clickAction.CYCLE_OR_MINIMIZE:
+                const shouldCycle =
+                    this.focused ||
+                        (
+                            shouldMinimize &&
+                            recentlyClickedApp === this.app &&
+                            recentlyClickedAppWindows[
+                                recentlyClickedAppIndex %
+                                recentlyClickedAppWindows.length
+                            ] === 'MINIMIZE'
+                        );
+
                 if (!Main.overview.visible) {
-                    if (this.focused ||
-                        (recentlyClickedApp === this.app &&
-                            recentlyClickedAppWindows[recentlyClickedAppIndex % recentlyClickedAppWindows.length] === 'MINIMIZE'
-                        ) &&
-                        !hasUrgentWindows) {
-                        // reversed=false, shouldMinimize=true
-                        this._cycleThroughWindows(false, true);
+                    if (shouldCycle && !hasUrgentWindows) {
+                        this._cycleThroughWindows(false, shouldMinimize);
                     } else {
                         // Activate the first window
                         const [w] = windows;
@@ -635,6 +630,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
                     this.app.activate();
                 }
                 break;
+            }
 
             case clickAction.FOCUS_OR_PREVIEWS:
                 if (this.focused && !hasUrgentWindows &&
