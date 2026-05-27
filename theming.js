@@ -142,7 +142,7 @@ export class ThemeManager {
     _getDefaultColors() {
         // Remove custom style
         const oldStyle = this._dash._background.get_style();
-        this._dash._background.set_style(null);
+        this._dash._background.set_style('');
 
         const themeNode = this._dash._background.get_theme_node();
         this._dash._background.set_style(oldStyle);
@@ -253,7 +253,7 @@ export class ThemeManager {
         const {settings} = Docking.DockManager;
 
         // Remove prior style edits
-        this._dash._background.set_style(null);
+        this._dash._background.set_style('');
         this._transparency.disable();
 
         // If built-in theme is enabled do nothing else

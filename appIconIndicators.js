@@ -217,14 +217,15 @@ class RunningIndicatorBase extends IndicatorBase {
     }
 
     _disableBacklight() {
-        this._source._iconContainer.set_style(null);
+        this._source._iconContainer.set_style('');
     }
 
     destroy() {
         this._disableBacklight();
         // Remove glossy background if the children still exists
-        if (this._source._iconContainer.get_children().length > 1)
-            this._source._iconContainer.get_children()[1].set_style(null);
+        const children = this._source._iconContainer.get_children();
+        if (children.length > 1)
+            children[1].set_style('');
         this._restoreDefaultDot();
 
         super.destroy();
@@ -328,16 +329,21 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         if (!Docking.DockManager.settings.applyCustomTheme &&
             Docking.DockManager.settings.unityBacklitItems) {
             const [icon] = this._source._iconContainer.get_children();
-            icon.set_style(
-                Docking.DockManager.settings.applyGlossyEffect
-                    ? this._glossyBackgroundStyle : null);
+            if (icon) {
+                icon.set_style(
+                    Docking.DockManager.settings.applyGlossyEffect &&
+                    this._glossyBackgroundStyle
+                        ? this._glossyBackgroundStyle : '');
+            }
             if (this._source.running)
                 this._enableBacklight();
             else
                 this._disableBacklight();
         } else {
             this._disableBacklight();
-            this._source._iconContainer.get_children()[1].set_style(null);
+            const children = this._source._iconContainer.get_children();
+            if (children.length > 1)
+                children[1].set_style('');
         }
 
         if (this._area)
