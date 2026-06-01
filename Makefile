@@ -106,8 +106,9 @@ ifeq ($(INSTALLTYPE),system)
 	mkdir -p $(SHARE_PREFIX)/glib-2.0/schemas $(SHARE_PREFIX)/locale
 	cp -r ./schemas/*.gschema.xml $(SHARE_PREFIX)/glib-2.0/schemas
 	cp -r ./_build/locale/* $(SHARE_PREFIX)/locale
-endif
+else
 	cp schemas/gschemas.compiled $(INSTALLBASE)/$(INSTALLNAME)/schemas/
+endif
 	-rm -fR _build
 	echo done
 
