@@ -665,7 +665,7 @@ export const DockDash = GObject.registerClass({
         const {child: firstIcon} = firstButton?.icon ?? {child: null};
 
         // if no icons there's nothing to adjust
-        if (!firstIcon)
+        if (!firstIcon || !firstIcon.icon)
             return;
 
         // Enforce valid spacings during the size request

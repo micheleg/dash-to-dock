@@ -556,14 +556,27 @@ class MountableVolumeAppInfo extends LocationAppInfo {
     }
 
     _update() {
-        this.mount = this.volume.get_mount();
+        let mount;
+        try {
+            mount = this.volume.get_mount();
+        } catch (e) {
+            this.mount = null;
+            return;
+        }
+        this.mount = mount;
 
-        const removable = this.mount ?? this.volume;
-        this.name = removable.get_name();
-        this.icon = removable.get_icon();
+        try {
+            const removable = this.mount ?? this.volume;
+            this.name = removable.get_name();
+            this.icon = removable.get_icon();
 
-        this.location = this.mount?.get_default_location() ??
-            this.volume.get_activation_root();
+            this.location = this.mount?.get_default_location() ??
+                this.volume.get_activation_root();
+        } catch (e) {
+            this.mount = null;
+            return;
+        }
+
 
         this._updateLocationIcon({custom: true});
     }
@@ -1393,15 +1406,24 @@ export class Removables {
         this._signalsHandler.add([
             this._monitor,
             'volume-added',
-            (_, volume) => this._onVolumeAdded(volume),
+            (_, volume) => {
+                this._onVolumeAdded(volume);
+                this._queueVolumesUpdate();
+            },
         ], [
             this._monitor,
             'volume-removed',
-            (_, volume) => this._onVolumeRemoved(volume),
+            (_, volume) => {
+                this._onVolumeRemoved(volume);
+                this._queueVolumesUpdate();
+            },
         ], [
             this._monitor,
             'mount-added',
-            (_, mount) => this._onMountAdded(mount),
+            (_, mount) => {
+                this._onMountAdded(mount);
+                this._queueVolumesUpdate();
+            },
         ], [
             Docking.DockManager.settings,
             'changed::show-mounts-only-mounted',
@@ -1419,7 +1441,44 @@ export class Removables {
         this._cancellable.cancel();
         this._cancellable = null;
         this._signalsHandler.destroy();
+        if (this._volumesUpdateTimeoutId) {
+            GLib.source_remove(this._volumesUpdateTimeoutId);
+            this._volumesUpdateTimeoutId = 0;
+        }
+        if (this._dockRedisplayTimeoutId) {
+            GLib.source_remove(this._dockRedisplayTimeoutId);
+            this._dockRedisplayTimeoutId = 0;
+        }
         this._monitor = null;
+    }
+
+    _queueVolumesUpdate() {
+        if (this._volumesUpdateTimeoutId)
+            GLib.source_remove(this._volumesUpdateTimeoutId);
+
+        this._volumesUpdateTimeoutId = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT,
+            500,
+            () => {
+                this._volumesUpdateTimeoutId = 0;
+                this._updateVolumes();
+                return GLib.SOURCE_REMOVE;
+            });
+    }
+
+    _queueDockRedisplay() {
+        if (this._dockRedisplayTimeoutId)
+            GLib.source_remove(this._dockRedisplayTimeoutId);
+
+        this._dockRedisplayTimeoutId = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT,
+            100,
+            () => {
+                this._dockRedisplayTimeoutId = 0;
+                Docking.DockManager.getDefault().allDocks.forEach(dock =>
+                    dock.dash.resetAppIcons());
+                return GLib.SOURCE_REMOVE;
+            });
     }
 
     _updateVolumes() {
@@ -1427,7 +1486,9 @@ export class Removables {
         this._volumeApps = [];
         this.emit('changed');
 
-        this._monitor.get_volumes().forEach(v => this._onVolumeAdded(v));
+        const volumes = this._monitor.get_volumes();
+        volumes.forEach(v => this._onVolumeAdded(v));
+        this._queueDockRedisplay();
     }
 
     _onVolumeAdded(volume) {
@@ -1468,6 +1529,7 @@ export class Removables {
 
         this._volumeApps.push(volumeApp);
         this.emit('changed');
+        this._queueDockRedisplay();
     }
 
     _onVolumeRemoved(volume) {
@@ -1479,6 +1541,7 @@ export class Removables {
             volumeApp.appInfo.cancellable = null;
             volumeApp.destroy();
             this.emit('changed');
+            this._queueDockRedisplay();
         }
     }
 
