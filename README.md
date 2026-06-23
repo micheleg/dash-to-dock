@@ -1,53 +1,87 @@
-# Dash to Dock
+# Dash to Dock — Community Edition
+
 ![screenshot](https://github.com/micheleg/dash-to-dock/raw/master/media/screenshot.jpg)
 
-## A dock for the GNOME Shell
-This extension enhances the dash moving it out of the overview and transforming it in a dock for an easier launching of applications and a faster switching between windows and desktops without having to leave the desktop view.
+> A maintained fork of [dash-to-dock](https://github.com/micheleg/dash-to-dock) incorporating community bug fixes and feature contributions that have been awaiting review upstream.
 
-[<img src="https://micheleg.github.io/dash-to-dock/media/get-it-on-ego.png" height="100">](https://extensions.gnome.org/extension/307/dash-to-dock)
+## What's different here
 
-For additional installation instructions and more information visit [https://micheleg.github.io/dash-to-dock/](https://micheleg.github.io/dash-to-dock/).
+This fork merges the most impactful open pull requests from the upstream project. Changes are focused on stability on GNOME 48/49 and quality-of-life improvements.
+
+### Bug fixes merged
+
+| PR | Description | Status |
+|----|-------------|--------|
+| [#2552](https://github.com/micheleg/dash-to-dock/pull/2552) | `intellihide`: Fix overlap check permanently stuck after null workspace on GNOME 48 | ✅ Merged |
+| [#2511](https://github.com/micheleg/dash-to-dock/pull/2511) | Fix autohide not working when panel mode is disabled | ✅ Merged |
+| [#2506](https://github.com/micheleg/dash-to-dock/pull/2506) | Fix 2–4 px icon offset in fixed dock mode | ✅ Merged |
+| [#2467](https://github.com/micheleg/dash-to-dock/pull/2467) | Fix crash in Metro indicator (`Clutter.Color.shade` removed in GNOME 49) | ✅ Merged |
+| [#2244](https://github.com/micheleg/dash-to-dock/pull/2244) | Prevent `wl-clipboard` from appearing in the dock on Wayland | ✅ Merged |
+
+### Features merged
+
+| PR | Description | Status |
+|----|-------------|--------|
+| [#2390](https://github.com/micheleg/dash-to-dock/pull/2390) | **Dock margin size** — new slider in settings (0–300 px) to add space between the dock and the screen edge when using extended/panel mode | ✅ Merged |
+
+## GNOME Shell compatibility
+
+| GNOME | Status |
+|-------|--------|
+| 45–50 | ✅ Supported |
 
 ## Installation from source
 
-The extension can be installed directly from source, either for the convenience of using git or to test the latest development version. Clone the desired branch with git
-
-### Build Dependencies
-
-To compile the stylesheet you'll need an implementation of SASS. Dash to Dock supports `dart-sass` (`sass`), `sassc`, and `ruby-sass`. Every distro should have at least one of these implementations, we recommend using `dart-sass` (`sass`) or `sassc` over `ruby-sass` as `ruby-sass` is deprecated.
-
-By default, Dash to Dock will attempt to build with `sassc`. To change this behavior set the `SASS` environment variable to either `dart` or `ruby`.
-
 ```bash
-export SASS=dart
-# or...
-export SASS=ruby
-```
-
-### Building
-
-Clone the repository or download the branch from github. A simple Makefile is included.
-
-Next use `make` to install the extension into your home directory. A Shell reload is required <kbd>Alt</kbd> + <kbd>F2</kbd> <kbd>r</kbd> <kbd>Enter</kbd> under Xorg or under Wayland you may have to logout and login. The extension has to be enabled  with *gnome-extensions-app* (GNOME Extensions) or with *dconf*.
-
-```bash
-git clone https://github.com/micheleg/dash-to-dock.git
+git clone https://github.com/YOUR_USERNAME/dash-to-dock.git
 make -C dash-to-dock install
 ```
 
-If `msgfmt` is not available on your system, you will see an error message like the following:
+Then reload GNOME Shell:
+- **Xorg**: <kbd>Alt</kbd>+<kbd>F2</kbd> → type `r` → <kbd>Enter</kbd>
+- **Wayland**: Log out and log back in
+
+Enable the extension with *GNOME Extensions* app or with:
 
 ```bash
-make: msgfmt: No such file or directory
+gnome-extensions enable dash-to-dock@micxgx.gmail.com
 ```
 
-In this case install the `gettext` package from your distribution's repository.
+### Build dependencies
 
+You need one of: `dart-sass` (`sass`), `sassc`, or `ruby-sass` to compile the stylesheet.
 
-## Bug Reporting
+```bash
+# Arch
+sudo pacman -S sassc
 
-Bugs should be reported to the Github bug tracker [https://github.com/micheleg/dash-to-dock/issues](https://github.com/micheleg/dash-to-dock/issues).
+# Ubuntu / Debian
+sudo apt install sassc
+
+# Fedora
+sudo dnf install sassc
+```
+
+If `msgfmt` is missing, install `gettext` from your distribution.
+
+## Reporting issues
+
+Please open issues on this repository. When reporting a bug, include:
+
+- GNOME Shell version (`gnome-shell --version`)
+- Extension version (visible in GNOME Extensions app)
+- Steps to reproduce
+- Any errors from `journalctl -f -o cat /usr/bin/gnome-shell` while reproducing
+
+## Contributing
+
+Pull requests are welcome. If you want to include an upstream PR that has been waiting for a while, link it in the PR description so we can track attribution.
+
+## Credits
+
+- Original author: [Michele G (micheleg)](https://github.com/micheleg)
+- All upstream contributors whose PRs are merged here (see table above)
 
 ## License
-Dash to Dock Gnome Shell extension is distributed under the terms of the GNU General Public License,
-version 2 or later. See the COPYING file for details.
+
+GPL-2.0 — see [COPYING](COPYING).

@@ -248,19 +248,10 @@ $dock_style_modes: null, shrink, extended, extended-shrink;
 
         &.fixed {
             #dash {
-                .dash-background {
-                    margin-#{opposite($side)}: $fixed_inner_margin;
-                }
-
-                .dash-item-container {
-
-                    .app-well-app,
-                    .show-apps {
-                        padding-#{opposite($side)}: $padding + $fixed_inner_margin;
-                    }
-                }
+                margin-#{opposite($side)}: $fixed_inner_margin;
             }
         }
+
     }
 }
 
@@ -355,6 +346,14 @@ $dock_style_modes: null, shrink, extended, extended-shrink;
 #dashtodockContainer.straight-corner #dash .dash-background,
 #dashtodockContainer.shrink.straight-corner #dash .dash-background {
     border-radius: 0px;
+}
+
+#dashtodockContainer.extended.dock-margin #dash .dash-background {
+    border-radius: $dash_border_radius;
+}
+
+#dashtodockContainer.extended.shrink.dock-margin #dash .dash-background {
+    border-radius: shrink_light($dash_border_radius);
 }
 
 /* Scrollview style */
