@@ -2476,9 +2476,11 @@ export class DockManager {
             // Reset overview controls state to HIDDEN, as skipping the startup
             // overview leaves it stuck at WINDOW_PICKER
             if (this._settings.disableOverviewOnStartup) {
-                Main.sessionMode.hasOverview = false;
-                Main.overview._overview.controls._stateAdjustment.value =
-                    OverviewControls.ControlsState.HIDDEN;
+                const {OverviewAdjustment} = OverviewControls;
+                this._propertyInjections.addWithLabel(Labels.STARTUP_ANIMATION,
+                    OverviewAdjustment.prototype, 'value', {
+                        get: () => OverviewControls.ControlsState.HIDDEN,
+                    });
             }
 
             // Use a dummy actor as dash during the startup animation, until
@@ -2496,6 +2498,11 @@ export class DockManager {
                     replaceMainDash();
                     dummyDash.destroy();
                     this._runStartupAnimation();
+                    if (this._settings.disableOverviewOnStartup) {
+                        this._propertyInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
+                        Main.overview._overview.controls._stateAdjustment.value =
+                            OverviewControls.ControlsState.HIDDEN;
+                    }
                 });
         } else {
             replaceMainDash();
