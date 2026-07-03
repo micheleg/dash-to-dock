@@ -758,6 +758,144 @@ export const DockAbstractAppIcon = GObject.registerClass({
         return false;
     }
 
+    // Replace the upstream zoom-out-and-fade launch animation with a bounce:
+    // the icon jumps away from the dock edge by half its height, falls back
+    // and slightly bounces before settling. The animation runs on a clone in
+    // Main.uiGroup so it is not clipped by the dash scrollview.
+    animateLaunch() {
+        if (this._launchBounceClone)
+            return;
+
+        const iconActor = this.icon;
+        const [width, height] = iconActor.get_transformed_size();
+        if (!iconActor.get_stage() || !width || !height) {
+            super.animateLaunch();
+            return;
+        }
+
+        const [x, y] = iconActor.get_transformed_position();
+        const clone = new Clutter.Clone({source: iconActor, reactive: false});
+        clone.set_size(width, height);
+        clone.set_position(x, y);
+        Main.uiGroup.add_child(clone);
+
+        this._launchBounceClone = clone;
+        const previousIconOpacity = iconActor.opacity;
+        iconActor.opacity = 0;
+
+        // The indicators reset the icon opacity on style-changed (e.g. when
+        // the app turns running or on hover) which would show the original
+        // icon next to the animating clone; keep it hidden until we're done.
+        const opacityId = iconActor.connect('notify::opacity', () => {
+            if (iconActor.opacity !== 0)
+                iconActor.opacity = 0;
+        });
+
+        const destroyId = this.connect('destroy', () => {
+            this._launchBounceClone = null;
+            clone.destroy();
+        });
+        clone.connect('destroy', () => {
+            if (this._launchBounceClone !== clone)
+                return;
+            this._launchBounceClone = null;
+            this.disconnect(destroyId);
+            iconActor.disconnect(opacityId);
+            iconActor.opacity = previousIconOpacity;
+        });
+
+        let axis = 'translation_y';
+        let alongScale = 'scale_y';
+        let acrossScale = 'scale_x';
+        let direction = -1;
+        let pivot = [0.5, 1];
+        switch (Utils.getPosition()) {
+        case St.Side.TOP:
+            direction = 1;
+            pivot = [0.5, 0];
+            break;
+        case St.Side.LEFT:
+            axis = 'translation_x';
+            alongScale = 'scale_x';
+            acrossScale = 'scale_y';
+            direction = 1;
+            pivot = [0, 0.5];
+            break;
+        case St.Side.RIGHT:
+            axis = 'translation_x';
+            alongScale = 'scale_x';
+            acrossScale = 'scale_y';
+            direction = -1;
+            pivot = [1, 0.5];
+            break;
+        }
+
+        // Anchor scaling at the dock edge, so the squash presses the icon
+        // onto the dock and the stretch grows away from it.
+        clone.set_pivot_point(...pivot);
+
+        const jump = direction * height / 2;
+        // After-bounce heights as a fraction of the jump height. Durations
+        // scale with the square root of the height, like real gravity.
+        const bounces = [0.35, 0.18, 0.09];
+        const fallTime = 130;
+        // Squash & stretch: elongation while jumping up, compression when
+        // hitting the dock. Impact strength follows the fall velocity.
+        const stretch = 0.25;
+        const squash = 0.3;
+
+        const stretchedShape = {
+            [alongScale]: 1 + stretch,
+            [acrossScale]: 1 - stretch * 0.6,
+        };
+        const normalShape = {[alongScale]: 1, [acrossScale]: 1};
+        const squashedShape = s => ({
+            [alongScale]: 1 - s,
+            [acrossScale]: 1 + s * 0.7,
+        });
+
+        const steps = [
+            // stretched launch
+            {props: {[axis]: jump, ...stretchedShape},
+                duration: 75, mode: Clutter.AnimationMode.EASE_OUT_QUAD},
+            // fall back, ending squashed on the dock
+            {props: {[axis]: 0, ...squashedShape(squash)},
+                duration: fallTime, mode: Clutter.AnimationMode.EASE_IN_QUAD},
+        ];
+        for (const amplitude of bounces) {
+            const duration = Math.round(fallTime * Math.sqrt(amplitude));
+            steps.push(
+                // bounce up, recovering the shape
+                {props: {[axis]: jump * amplitude, ...normalShape},
+                    duration, mode: Clutter.AnimationMode.EASE_OUT_QUAD},
+                {props: {[axis]: 0, ...squashedShape(squash * Math.sqrt(amplitude))},
+                    duration, mode: Clutter.AnimationMode.EASE_IN_QUAD});
+        }
+        // relax from the last small squash back to the normal shape
+        steps.push({props: {[axis]: 0, ...normalShape},
+            duration: 60, mode: Clutter.AnimationMode.EASE_OUT_QUAD});
+
+        const runStep = index => {
+            if (index >= steps.length) {
+                clone.destroy();
+                return;
+            }
+            const {props, duration, mode} = steps[index];
+            clone.ease({
+                ...props,
+                duration,
+                mode,
+                onStopped: isFinished => {
+                    if (isFinished)
+                        runStep(index + 1);
+                    else
+                        clone.destroy();
+                },
+            });
+        };
+        runStep(0);
+    }
+
     // Try to do the right thing when attempting to launch a new window of an app. In
     // particular, if the application doesn't allow to launch a new window, activate
     // the existing window instead.
