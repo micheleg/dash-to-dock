@@ -839,6 +839,11 @@ export const DockAbstractAppIcon = GObject.registerClass({
         // scale with the square root of the height, like real gravity.
         const bounces = [0.35, 0.18, 0.09];
         const fallTime = 130;
+        // Time scale of the after-bounces: physically it would equal
+        // fallTime, but at these small amplitudes the strictly physical
+        // timing reads as hectic jitter; a slower time base lets each
+        // bounce visibly calm down after the first fall.
+        const bounceTime = 210;
         // Squash & stretch: elongation while jumping up, compression when
         // hitting the dock. Impact strength follows the fall velocity.
         const stretch = 0.25;
@@ -863,7 +868,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
                 duration: fallTime, mode: Clutter.AnimationMode.EASE_IN_QUAD},
         ];
         for (const amplitude of bounces) {
-            const duration = Math.round(fallTime * Math.sqrt(amplitude));
+            const duration = Math.round(bounceTime * Math.sqrt(amplitude));
             steps.push(
                 // bounce up, recovering the shape
                 {props: {[axis]: jump * amplitude, ...normalShape},
