@@ -149,7 +149,7 @@ class RunningIndicatorBase extends IndicatorBase {
     constructor(source) {
         super(source);
 
-        this._side = Utils.getPosition();
+        this._side = Utils.getPosition(this._source.monitorIndex);
         this._dominantColorExtractor = new DominantColorExtractor(this._source.app);
         this._signalsHandler.add(this._source, 'notify::running', () => this.update());
         this._signalsHandler.add(this._source, 'notify::focused', () => this.update());

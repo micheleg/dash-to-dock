@@ -222,7 +222,7 @@ const DockedDash = GObject.registerClass({
     },
 }, class DashToDock extends St.Bin {
     _init(params) {
-        this._position = Utils.getPosition();
+        this._position = Utils.getPosition(params?.monitorIndex);
 
         // This is the centering actor
         super._init({
@@ -2008,6 +2008,10 @@ export class DockManager {
         ], [
             this._settings,
             'changed::multi-monitor',
+            this._toggle.bind(this),
+        ], [
+            this._settings,
+            'changed::monitor-positions',
             this._toggle.bind(this),
         ], [
             this._settings,

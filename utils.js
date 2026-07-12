@@ -451,9 +451,39 @@ export class PropertyInjectionsHandler extends BasicHandler {
 }
 
 /**
- * Return the actual position reverseing left and right in rtl
+ * Return the position override configured for a monitor in the
+ * monitor-positions setting, or null if the monitor has none.
+ *
+ * @param monitorIndex the monitor to look up
  */
-export function getPosition() {
+function getMonitorPositionOverride(monitorIndex) {
+    // -1 means "no monitor": never match it against an override whose
+    // connector is currently unplugged (get_monitor_for_connector also
+    // returns -1 for those)
+    if (monitorIndex < 0)
+        return null;
+    const {monitorPositions} = Docking.DockManager.settings;
+    const monitorManager = getMonitorManager();
+    for (const [connector, side] of Object.entries(monitorPositions)) {
+        if (monitorManager.get_monitor_for_connector(connector) === monitorIndex)
+            return St.Side[side] ?? null;
+    }
+    return null;
+}
+
+/**
+ * Return the actual position reverseing left and right in rtl
+ *
+ * @param monitorIndex optional monitor to return the position for, honoring
+ *                     its monitor-positions override if one is set
+ */
+export function getPosition(monitorIndex) {
+    if (monitorIndex !== undefined && monitorIndex !== null) {
+        // Explicit per-monitor overrides are used as-is, without rtl flipping
+        const override = getMonitorPositionOverride(monitorIndex);
+        if (override !== null)
+            return override;
+    }
     const position = Docking.DockManager.settings.dockPosition;
     if (Clutter.get_default_text_direction() === Clutter.TextDirection.RTL) {
         if (position === St.Side.LEFT)
