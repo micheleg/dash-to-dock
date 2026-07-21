@@ -46,6 +46,12 @@ const handledWindowTypes = [
 // List of applications, ignore windows of these applications in considering intellihide
 const ignoreApps = ['com.rastersoft.ding', 'com.desktop.ding'];
 
+// Clipboard tools like wl-clipboard map a short-lived invisible window on
+// every clipboard access; it briefly becomes the top/focused window, which
+// made the dock flash whenever an application polled the selection. Ignore
+// such helper windows entirely.
+const ignoreWMClasses = ['io.github.bugaevc.wl-clipboard'];
+
 /**
  * A rough and ugly implementation of the intellihide behaviour.
  * Intallihide object: emit 'status-changed' signal when the overlap of windows
@@ -318,6 +324,9 @@ export class Intellihide {
         // so we match its window by application id and window property.
         const wmApp = metaWindow.get_gtk_application_id();
         if (ignoreApps.includes(wmApp) && metaWindow.is_skip_taskbar())
+            return false;
+
+        if (ignoreWMClasses.includes(metaWindow.get_wm_class()))
             return false;
 
         // The DropDownTerminal extension uses the POPUP_MENU window type hint
