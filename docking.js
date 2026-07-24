@@ -1717,6 +1717,7 @@ export class DockManager {
 
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass(extension);
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
+        this._signalsHandler.add(this._oldDash, 'destroy', () => (this._oldDash = null));
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
         this._appSpread = new AppSpread.AppSpread();
         this._notificationsMonitor = new NotificationsMonitor.NotificationsMonitor();
