@@ -2501,7 +2501,7 @@ export class DockManager {
                     this._runStartupAnimation();
                     if (this._settings.disableOverviewOnStartup) {
                         this._propertyInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
-                        Main.overview._overview.controls._stateAdjustment.value =
+                        this.overviewControls._stateAdjustment.value =
                             OverviewControls.ControlsState.HIDDEN;
                     }
                 });
