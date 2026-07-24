@@ -221,6 +221,8 @@ export class GlobalSignalsHandler extends BasicHandler {
         if (isDestroy && isParentObject) {
             this._parentObject.disconnect(this._destroyId);
             this._connectToParentDestroy();
+        } else if (!isParentObject && !isDestroy) {
+            this._monitorDestruction(object);
         }
 
         return [object, id];
