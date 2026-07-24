@@ -2480,6 +2480,7 @@ export class DockManager {
                 this._propertyInjections.addWithLabel(Labels.STARTUP_ANIMATION,
                     OverviewAdjustment.prototype, 'value', {
                         get: () => OverviewControls.ControlsState.HIDDEN,
+                        set: () => {},
                     });
             }
 
