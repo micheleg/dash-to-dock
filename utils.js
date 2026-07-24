@@ -591,16 +591,11 @@ export function splitHandler(handler) {
  */
 export function getWindowsByObjectPath() {
     const windowsByObjectPath = new Map();
-    const {workspaceManager} = global;
-    const workspaces = [...new Array(workspaceManager.nWorkspaces)].map(
-        (_c, i) => workspaceManager.get_workspace_by_index(i));
 
-    workspaces.forEach(ws => {
-        ws.list_windows().forEach(w => {
-            const path = w.get_gtk_window_object_path();
-            if (path)
-                windowsByObjectPath.set(path, w);
-        });
+    global.display.list_all_windows().forEach(w => {
+        const path = w.get_gtk_window_object_path();
+        if (path)
+            windowsByObjectPath.set(path, w);
     });
 
     return windowsByObjectPath;
