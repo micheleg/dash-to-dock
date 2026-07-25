@@ -2493,6 +2493,11 @@ export class DockManager {
             // during the upstream startup animation, that still requires to
             // have a valid actor.
             const dummyDash = new Clutter.Actor({visible: false, opacity: 0});
+            dummyDash.showAppsButton = {};
+            Object.defineProperty(dummyDash.showAppsButton, 'checked', {
+                get: () => false,
+                set: () => {},
+            });
             this.overviewControls.dash = dummyDash;
             Main.uiGroup.add_child(dummyDash);
 
