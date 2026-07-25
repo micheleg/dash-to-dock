@@ -2222,6 +2222,14 @@ export class DockManager {
         const replaceMainDash = () => {
             this.overviewControls.dash = this.mainDock.dash;
             this.searchController._showAppsButton = this.mainDock.dash.showAppsButton;
+
+            // And to return the preferred height depending on the state
+            this._methodInjections.addWithLabel(Labels.MAIN_DASH, this._oldDash,
+                'get_preferred_height', (_originalMethod, ...args) => {
+                    if (this.mainDock.isHorizontal && !this.settings.dockFixed)
+                        return this.mainDock.get_preferred_height(...args);
+                    return [0, 0];
+                });
         };
 
         // We also need to ignore max-size changes
@@ -2231,11 +2239,7 @@ export class DockManager {
             'allocate', () => {});
         // And to return the preferred height depending on the state
         this._methodInjections.addWithLabel(Labels.MAIN_DASH, this._oldDash,
-            'get_preferred_height', (_originalMethod, ...args) => {
-                if (this.mainDock.isHorizontal && !this.settings.dockFixed)
-                    return this.mainDock.get_preferred_height(...args);
-                return [0, 0];
-            });
+            'get_preferred_height', () => [0, 0]);
 
         // FIXME: https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2890
         // const { ControlsManagerLayout } = OverviewControls;
