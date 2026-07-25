@@ -400,6 +400,11 @@ const DockSettings = GObject.registerClass({
             dockMonitorCombo.set_active(primaryIndex);
     }
 
+    _update_scroll_action_warning() {
+        const sensitive = !this._builder.get_object('icon_size_fixed_checkbutton').get_active();
+        this._builder.get_object('note_about_fixed_size_icon').set_visible(!sensitive);
+    }
+
     _bindSettings() {
         // Position and size panel
 
@@ -785,6 +790,11 @@ const DockSettings = GObject.registerClass({
         this._builder.get_object('click_action_combo').connect('changed', widget => {
             this._settings.set_enum('click-action', widget.get_active());
         });
+
+        this._builder.get_object('icon_size_fixed_checkbutton').connect('toggled', () => {
+            this._update_scroll_action_warning();
+        });
+        this._update_scroll_action_warning();
 
         this._builder.get_object('scroll_action_combo').set_active(this._settings.get_enum('scroll-action'));
         this._builder.get_object('scroll_action_combo').connect('changed', widget => {

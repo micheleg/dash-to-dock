@@ -386,8 +386,7 @@ const DockedDash = GObject.registerClass({
         // Since Clutter has no longer ClutterAllocationFlags,
         // "allocation-changed" signal has been removed. MR !1245
         this.dash._container.connect('notify::allocation', this._updateStaticBox.bind(this));
-        this._slider.connect(this._isHorizontal ? 'notify::x' : 'notify::y',
-            this._updateStaticBox.bind(this));
+        this._slider.connect('notify::allocation', () => this._updateStaticBox());
 
         // Load optional features that need to be activated for one dock only
         if (this.isMain)
@@ -1717,6 +1716,7 @@ export class DockManager {
 
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass(extension);
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
+        this._signalsHandler.add(this._oldDash, 'destroy', () => (this._oldDash = null));
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
         this._appSpread = new AppSpread.AppSpread();
         this._notificationsMonitor = new NotificationsMonitor.NotificationsMonitor();
@@ -1738,7 +1738,7 @@ export class DockManager {
         };
         ensureRemoteModel();
 
-        this._signalsHandler.add(this._notificationsMonitor, 'changed',
+        this._signalsHandler.add(this._notificationsMonitor, 'state-changed',
             () => ensureRemoteModel());
         this._signalsHandler.add(this._settings, 'changed::show-icons-emblems',
             () => ensureRemoteModel());
@@ -2184,20 +2184,17 @@ export class DockManager {
     }
 
     _prepareMainDash() {
+        this._propertyInjections.removeWithLabel(Labels.MAIN_DASH);
+
         // Ensure Main.overview.dash is set to our dash in dummy mode
         // while just use the default getter otherwise.
-        // The getter must be dynamic and not set only when we've a dummy
-        // overview because the mode can change dynamically.
-        this._propertyInjections.removeWithLabel(Labels.MAIN_DASH);
-        const defaultDashGetter = Object.getOwnPropertyDescriptor(
-            Main.overview.constructor.prototype, 'dash').get;
-        this._propertyInjections.addWithLabel(Labels.MAIN_DASH, Main.overview, 'dash', {
-            get: () => Main.overview.isDummy
-                ? this.mainDock.dash : defaultDashGetter.call(Main.overview),
-        });
+        if (Main.overview.isDummy) {
+            this._propertyInjections.addWithLabel(Labels.MAIN_DASH, Main.overview, 'dash', {
+                get: () => this.mainDock.dash,
+            });
 
-        if (Main.overview.isDummy)
             return;
+        }
 
         // Hide usual Dash
         this._oldDash.hide();
@@ -2222,8 +2219,10 @@ export class DockManager {
 
         // Pretend I'm the dash: meant to make app grid swarm animation come from
         // the right position of the appShowButton.
-        this.overviewControls.dash = this.mainDock.dash;
-        this.searchController._showAppsButton = this.mainDock.dash.showAppsButton;
+        const replaceMainDash = () => {
+            this.overviewControls.dash = this.mainDock.dash;
+            this.searchController._showAppsButton = this.mainDock.dash.showAppsButton;
+        };
 
         // We also need to ignore max-size changes
         this._methodInjections.addWithLabel(Labels.MAIN_DASH, this._oldDash,
@@ -2477,17 +2476,37 @@ export class DockManager {
             // Reset overview controls state to HIDDEN, as skipping the startup
             // overview leaves it stuck at WINDOW_PICKER
             if (this._settings.disableOverviewOnStartup) {
-                Main.sessionMode.hasOverview = false;
-                Main.overview._overview.controls._stateAdjustment.value =
-                    OverviewControls.ControlsState.HIDDEN;
+                const {OverviewAdjustment} = OverviewControls;
+                this._propertyInjections.addWithLabel(Labels.STARTUP_ANIMATION,
+                    OverviewAdjustment.prototype, 'value', {
+                        get: () => OverviewControls.ControlsState.HIDDEN,
+                        set: () => {},
+                    });
             }
+
+            // Use a dummy actor as dash during the startup animation, until
+            // we're done with it, so that nothing is really shown or modified
+            // during the upstream startup animation, that still requires to
+            // have a valid actor.
+            const dummyDash = new Clutter.Actor({visible: false, opacity: 0});
+            this.overviewControls.dash = dummyDash;
+            Main.uiGroup.add_child(dummyDash);
 
             this._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
                 Main.layoutManager, 'startup-complete', () => {
                     this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
                     Main.sessionMode.hasOverview = hadOverview;
+                    replaceMainDash();
+                    dummyDash.destroy();
                     this._runStartupAnimation();
+                    if (this._settings.disableOverviewOnStartup) {
+                        this._propertyInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
+                        this.overviewControls._stateAdjustment.value =
+                            OverviewControls.ControlsState.HIDDEN;
+                    }
                 });
+        } else {
+            replaceMainDash();
         }
     }
 
@@ -2504,7 +2523,7 @@ export class DockManager {
     }
 
     _restoreDash() {
-        if (!this._oldDash)
+        if (!this._oldDash || this.overviewControls.dash === this._oldDash)
             return;
 
         this._signalsHandler.removeWithLabel(Labels.OLD_DASH_CHANGES);

@@ -40,9 +40,19 @@ const BasicHandler = class DashToDockBasicHandler {
             if (!(parentObject instanceof GObject.Object) ||
                 GObject.signal_lookup('destroy', parentObject.constructor.$gtype)) {
                 this._parentObject = parentObject;
-                this._destroyId = parentObject.connect('destroy', () => this.destroy());
+                this._connectToParentDestroy();
             }
         }
+    }
+
+    _connectToParentDestroy() {
+        const parentObject = this._parentObject;
+        this._destroyId = parentObject.connect('destroy', () => {
+            this._onParentDestroy(parentObject);
+            this._parentObject = null;
+            this._destroyId = 0;
+            this.destroy();
+        });
     }
 
     add(...args) {
@@ -57,10 +67,18 @@ const BasicHandler = class DashToDockBasicHandler {
     }
 
     destroy() {
-        this._parentObject?.disconnect(this._destroyId);
+        const parentObject = this._parentObject;
+        const destroyId = this._destroyId;
         this._parentObject = null;
+        this._destroyId = 0;
+
+        if (destroyId)
+            parentObject.disconnect(destroyId);
 
         this.clear();
+    }
+
+    _onParentDestroy(_parentObject) {
     }
 
     block() {
@@ -202,21 +220,55 @@ export class GlobalSignalsHandler extends BasicHandler {
 
         if (isDestroy && isParentObject) {
             this._parentObject.disconnect(this._destroyId);
-            this._destroyId =
-                this._parentObject.connect('destroy', () => this.destroy());
+            this._connectToParentDestroy();
+        } else if (!isParentObject && !isDestroy) {
+            this._monitorDestruction(object);
         }
 
         return [object, id];
     }
 
-    _removeForObject(object) {
+    _monitorDestruction(object) {
+        if (!(object instanceof GObject.Object) ||
+            !GObject.signal_lookup('destroy', object.constructor.$gtype))
+            return;
+
+        this._destroyHandlersIds ??= new Map();
+        if (this._destroyHandlersIds.has(object))
+            return;
+
+        const connector = object.connect_after ?? object.connect;
+        const id = connector.call(object, 'destroy',
+            () => this._removeForObject(object, false));
+        this._destroyHandlersIds.set(object, id);
+    }
+
+    _removeForObject(object, disconnect = true) {
         Object.getOwnPropertySymbols(this._storage).forEach(label =>
             (this._storage[label] = this._storage[label].filter(it => {
                 if (it[0] !== object)
                     return true;
-                this._remove(it);
+                if (disconnect)
+                    this._remove(it);
                 return false;
             })));
+
+        const monitorId = this._destroyHandlersIds?.get(object);
+        if (monitorId) {
+            this._destroyHandlersIds.delete(object);
+            if (disconnect)
+                object.disconnect(monitorId);
+        }
+    }
+
+    clear() {
+        super.clear();
+        this._destroyHandlersIds?.forEach((id, object) => object.disconnect(id));
+        this._destroyHandlersIds?.clear();
+    }
+
+    _onParentDestroy(parentObject) {
+        this._removeForObject(parentObject, false);
     }
 
     _remove(item) {
@@ -539,16 +591,11 @@ export function splitHandler(handler) {
  */
 export function getWindowsByObjectPath() {
     const windowsByObjectPath = new Map();
-    const {workspaceManager} = global;
-    const workspaces = [...new Array(workspaceManager.nWorkspaces)].map(
-        (_c, i) => workspaceManager.get_workspace_by_index(i));
 
-    workspaces.forEach(ws => {
-        ws.list_windows().forEach(w => {
-            const path = w.get_gtk_window_object_path();
-            if (path)
-                windowsByObjectPath.set(path, w);
-        });
+    global.display.list_all_windows().forEach(w => {
+        const path = w.get_gtk_window_object_path();
+        if (path)
+            windowsByObjectPath.set(path, w);
     });
 
     return windowsByObjectPath;

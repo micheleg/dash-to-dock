@@ -139,8 +139,8 @@ $dock_icons_distance: 4px;
     }
 }
 
-$dock_sides: [bottom, top, left, right];
-$dock_style_modes: [null, shrink, extended, extended-shrink];
+$dock_sides: bottom, top, left, right;
+$dock_style_modes: null, shrink, extended, extended-shrink;
 
 @mixin dock-container-style($side, $style_mode, $parameters) {
     $style_selector: '';
@@ -194,6 +194,11 @@ $dock_style_modes: [null, shrink, extended, extended-shrink];
                 padding: if($is_extended, 0, $padding);
                 padding-#{$side}: 0;
                 padding-#{opposite($side)}: 0;
+
+                > #dashtodockDashScrollview {
+                    @include set-internal-children-property($side, margin,
+                        0, $dock_icons_distance / 2);
+                }
 
                 @if ($is_extended) {
                     @include padded-dash-edge-items($side, $edge_items_padding);

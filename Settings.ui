@@ -1763,6 +1763,20 @@
                               </object>
                             </child>
                             <child>
+                              <object class="GtkLabel" id="note_about_fixed_size_icon">
+                                <property name="margin_top">5</property>
+                                <property name="can_focus">0</property>
+                                <property name="hexpand">1</property>
+                                <property name="halign">start</property>
+                                <property name="label" translatable="yes">Won't work over icons because 'Fixed icon size' is enabled.</property>
+
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">2</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
                               <object class="GtkBox" id="click_box_scroll">
                                 <property name="can_focus">0</property>
                                 <property name="spacing">6</property>
