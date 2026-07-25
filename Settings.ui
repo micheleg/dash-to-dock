@@ -6,6 +6,13 @@
     <property name="step-increment">0.050000000000000003</property>
     <property name="page-increment">0.25</property>
   </object>
+  <object class="GtkAdjustment" id="tooltip_max_width_adjustment">
+    <property name="lower">20</property>
+    <property name="upper">100</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">5</property>
+    <property name="value">60</property>
+  </object>
   <object class="GtkBox" id="box_middle_click_options">
     <property name="can_focus">0</property>
     <property name="margin_start">12</property>
@@ -1032,6 +1039,17 @@
                                 </layout>
                               </object>
                             </child>
+                            <child>
+                              <object class="GtkCheckButton" id="ungroup_applications_button">
+                                <property name="margin_top">3</property>
+                                <property name="label" translatable="yes">Ungroup applications</property>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">5</property>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
                           </object>
                         </property>
                       </object>
@@ -1384,6 +1402,45 @@
                                 <property name="halign">start</property>
                                 <property name="label" translatable="yes">Hide application tooltip</property>
 
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">0</property>
+                                </layout>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkListBoxRow" id="tooltip_max_width_row">
+                        <property name="child">
+                          <object class="GtkGrid">
+                            <property name="can_focus">0</property>
+                            <property name="margin_start">12</property>
+                            <property name="margin_end">12</property>
+                            <property name="margin_top">12</property>
+                            <property name="margin_bottom">12</property>
+                            <property name="column_spacing">32</property>
+                            <child>
+                              <object class="GtkSpinButton" id="tooltip_max_width_spinbutton">
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="width_request">90</property>
+                                <property name="adjustment">tooltip_max_width_adjustment</property>
+                                <property name="digits">0</property>
+                                <layout>
+                                  <property name="column">1</property>
+                                  <property name="row">0</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="can_focus">0</property>
+                                <property name="hexpand">1</property>
+                                <property name="halign">start</property>
+                                <property name="label" translatable="yes">Tooltip max width (%)</property>
                                 <layout>
                                   <property name="column">0</property>
                                   <property name="row">0</property>
