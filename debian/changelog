@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (106ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (106ubuntu1) stonking; urgency=medium
 
   [ Sergio Costas Rodriguez ]
   * CSS: fix syntax style
@@ -41,7 +41,7 @@ gnome-shell-extension-ubuntu-dock (106ubuntu1) UNRELEASED; urgency=medium
   [ Gabriele Turelli ]
   * docking: Update static box on slider allocation
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Sat, 25 Jul 2026 03:29:02 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Sat, 25 Jul 2026 05:40:43 +0200
 
 gnome-shell-extension-ubuntu-dock (105ubuntu1) resolute; urgency=medium
 
