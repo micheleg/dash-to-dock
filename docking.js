@@ -2265,6 +2265,9 @@ export class DockManager {
         };
 
         const maybeAdjustBoxToDock = (state, box, spacing) => {
+            if (Main.layoutManager._startingUp)
+                return box;
+
             maybeAdjustBoxSize(state, box, spacing);
 
             if (this.mainDock.isHorizontal || this.settings.dockFixed)
