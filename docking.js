@@ -13,6 +13,7 @@ import {
 import {
     AppMenu,
     AppDisplay,
+    AppFavorites,
     Layout,
     Main,
     OverviewControls,
@@ -1829,6 +1830,256 @@ export class DockManager {
         return this._trash;
     }
 
+    get categoryIcons() {
+        return this._categoryIcons ?? [];
+    }
+
+    // ── User-Category Management ────────────────────────────────────────────
+
+    // ── dock-order: single authoritative order list ─────────────────────────
+
+    getDockOrder() {
+        let order = this._settings.get_strv('dock-order');
+        if (order.length === 0) {
+            order = this._buildInitialDockOrder();
+            this._settings.set_strv('dock-order', order);
+        }
+        return order;
+    }
+
+    setDockOrder(order) {
+        this._settings.set_strv('dock-order', order);
+    }
+
+    /** Builds dock-order on first run from legacy user-categories positions + favorites. */
+    _buildInitialDockOrder() {
+        const configs = this._readUserCategories();
+        const catIds = new Set(configs.flatMap(c => c.apps));
+        const favs = AppFavorites.getAppFavorites().getFavorites()
+            .filter(a => !catIds.has(a.get_id()))
+            .map(a => a.get_id());
+
+        // Insert category IDs at their legacy position
+        const order = [...favs];
+        const sorted = [...configs].sort((a, b) => (a.position ?? -1) - (b.position ?? -1));
+        for (const cfg of sorted) {
+            const pos = cfg.position >= 0 ? Math.min(cfg.position, order.length) : order.length;
+            order.splice(pos, 0, cfg.id);
+        }
+        return order;
+    }
+
+    /**
+     * Keeps dock-order in sync after an external change to favorite-apps.
+     * Only appends newly pinned favorites — never removes entries.
+     * Explicit removals happen in createUserCategory / removeAppFromUserCategory /
+     * mergeUserCategories and in the drag-drop acceptDrop (setDockOrder).
+     * Pruning here would race with mid-operation states where an app is already
+     * in dock-order but not yet registered as a favorite.
+     */
+    _syncDockOrderWithFavorites() {
+        const order = this._settings.get_strv('dock-order');
+        if (order.length === 0) return; // not yet migrated, will be built on first getDockOrder()
+
+        const catAppIds = new Set(this._readUserCategories().flatMap(c => c.apps));
+        const validFavIds = new Set(
+            AppFavorites.getAppFavorites().getFavorites()
+                .filter(a => !catAppIds.has(a.get_id()))
+                .map(a => a.get_id())
+        );
+
+        let changed = false;
+        for (const id of validFavIds) {
+            if (!order.includes(id)) {
+                order.push(id);
+                changed = true;
+            }
+        }
+
+        if (changed)
+            this._settings.set_strv('dock-order', order);
+    }
+
+    // ───────────────────────────────────────────────────────────────────────
+
+    _readUserCategories() {
+        try {
+            const parsed = JSON.parse(this._settings.get_string('user-categories'));
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (_e) {
+            return [];
+        }
+    }
+
+    _writeUserCategories(configs) {
+        this._settings.set_string('user-categories', JSON.stringify(configs));
+    }
+
+    /**
+     * Bereinigt user-categories: ungültige Einträge entfernen, Apps die gleichzeitig
+     * in favorite-apps stehen aus den Favoriten löschen (verhindert wilde Neuordnung).
+     * Gibt die bereinigten Configs zurück und schreibt sie bei Bedarf zurück.
+     */
+    _repairUserCategories(configs) {
+        const appSystem = Shell.AppSystem.get_default();
+
+        // Sanitize: ensure each entry has valid types (position field no longer needed)
+        const cleaned = configs
+            .filter(c => c && typeof c.id === 'string' && Array.isArray(c.apps))
+            .map(c => ({
+                id: c.id,
+                apps: c.apps.filter(a => typeof a === 'string' && appSystem.lookup_app(a) !== null),
+            }))
+            .filter(c => c.apps.length >= 2);
+
+        const configsChanged = JSON.stringify(cleaned) !== JSON.stringify(configs);
+        if (configsChanged)
+            this._writeUserCategories(cleaned);
+
+        // Remove from favorites any app that belongs to a category
+        const categorizedIds = new Set(cleaned.flatMap(c => c.apps));
+        if (categorizedIds.size > 0) {
+            const favs = AppFavorites.getAppFavorites();
+            const favMap = favs.getFavoriteMap();
+            let favChanged = false;
+            for (const appId of categorizedIds) {
+                if (appId in favMap) {
+                    favs.removeFavorite(appId);
+                    favChanged = true;
+                }
+            }
+            if (favChanged)
+                log('dash2dock: self-repair removed categorized apps from favorites');
+        }
+
+        return cleaned;
+    }
+
+    /**
+     * Erstellt eine neue Kategorie mit zwei Apps an der angegebenen Dock-Position.
+     * position = Anzahl der dock-order-Einträge vor der Kategorie.
+     */
+    createUserCategory(appId1, appId2, dockInsertIdx) {
+        const newId = Locations.generateCategoryId();
+        const configs = this._readUserCategories();
+        configs.push({id: newId, apps: [appId1, appId2]});
+        this._writeUserCategories(configs);
+
+        // Update dock-order: remove the two app IDs, insert the category ID
+        const order = this.getDockOrder();
+        const filtered = order.filter(id => id !== appId1 && id !== appId2);
+        const insertAt = dockInsertIdx != null
+            ? Math.min(dockInsertIdx, filtered.length)
+            : filtered.length;
+        filtered.splice(insertAt, 0, newId);
+        this.setDockOrder(filtered);
+    }
+
+    /**
+     * Fügt eine App zu einer bestehenden Kategorie hinzu (falls nicht bereits drin).
+     */
+    addAppToUserCategory(categoryId, appId) {
+        const configs = this._readUserCategories();
+        const cat = configs.find(c => c.id === categoryId);
+        if (!cat) return;
+        if (!cat.apps.includes(appId))
+            cat.apps.push(appId);
+        this._writeUserCategories(configs);
+    }
+
+    /**
+     * Entfernt eine App aus einer Kategorie.
+     * Hat die Kategorie danach < 2 Apps, wird sie aufgelöst:
+     *   – die verbleibende App wird als Favorit an der Kategorieposition eingefügt.
+     *   – die Kategorie wird gelöscht.
+     * Gibt zurück ob die Kategorie aufgelöst wurde.
+     */
+    removeAppFromUserCategory(categoryId, appId) {
+        const configs = this._readUserCategories();
+        const idx = configs.findIndex(c => c.id === categoryId);
+        if (idx < 0) return false;
+
+        const cat = configs[idx];
+        cat.apps = cat.apps.filter(id => id !== appId);
+
+        if (cat.apps.length < 2) {
+            // Kategorie auflösen
+            const remaining = cat.apps[0] ?? null;
+            configs.splice(idx, 1);
+            this._writeUserCategories(configs);
+
+            // dock-order: replace category ID with remaining app ID (or just remove)
+            const order = this._settings.get_strv('dock-order');
+            if (order.length > 0) {
+                const catPos = order.indexOf(categoryId);
+                if (catPos >= 0) {
+                    if (remaining)
+                        order.splice(catPos, 1, remaining);
+                    else
+                        order.splice(catPos, 1);
+                    this._settings.set_strv('dock-order', order);
+                }
+            }
+
+            if (remaining) {
+                const favs = AppFavorites.getAppFavorites();
+                if (!(remaining in favs.getFavoriteMap())) {
+                    // favPos = number of dock-order favorites before remaining's position
+                    const newOrder = this._settings.get_strv('dock-order');
+                    const catAppIds = new Set(configs.flatMap(c => c.apps));
+                    let favPos = 0;
+                    for (const id of newOrder) {
+                        if (id === remaining) break;
+                        if (!new Set(configs.map(c => c.id)).has(id) && !catAppIds.has(id))
+                            favPos++;
+                    }
+                    favs.addFavoriteAtPos(remaining, favPos);
+                }
+            }
+            return true;
+        }
+
+        this._writeUserCategories(configs);
+        return false;
+    }
+
+    /**
+     * Verschmilzt zwei Kategorien – Apps der Quell-Kategorie werden in die
+     * Ziel-Kategorie übernommen, die Quell-Kategorie wird gelöscht.
+     */
+    mergeUserCategories(sourceCategoryId, targetCategoryId) {
+        if (sourceCategoryId === targetCategoryId) return;
+        const configs = this._readUserCategories();
+        const src = configs.find(c => c.id === sourceCategoryId);
+        const tgt = configs.find(c => c.id === targetCategoryId);
+        if (!src || !tgt) return;
+
+        for (const appId of src.apps) {
+            if (!tgt.apps.includes(appId))
+                tgt.apps.push(appId);
+        }
+
+        configs.splice(configs.indexOf(src), 1);
+        this._writeUserCategories(configs);
+
+        // Remove source category ID from dock-order
+        const order = this._settings.get_strv('dock-order');
+        const pos = order.indexOf(sourceCategoryId);
+        if (pos >= 0) {
+            order.splice(pos, 1);
+            this._settings.set_strv('dock-order', order);
+        }
+    }
+
+    /**
+     * Gibt alle App-IDs zurück, die sich in einer Benutzerkategorie befinden.
+     */
+    getCategorizedAppIds() {
+        return new Set(this._readUserCategories().flatMap(c => c.apps));
+    }
+
+    // ───────────────────────────────────────────────────────────────────────
+
     get desktopIconsUsableArea() {
         return this._desktopIconsUsableArea;
     }
@@ -1873,6 +2124,33 @@ export class DockManager {
             this._trash.destroy();
             this._trash = null;
         }
+
+        // ── User Category Icons ─────────────────────────────────────
+        if (!this._categoryIcons)
+            this._categoryIcons = [];
+
+        let configs = [];
+        try {
+            configs = JSON.parse(this._settings.get_string('user-categories'));
+        } catch (_e) {}
+        if (!Array.isArray(configs))
+            configs = [];
+
+        // Self-repair: sanitize configs and remove cross-contamination with favorites
+        configs = this._repairUserCategories(configs);
+
+        // Destroy surplus icons
+        while (this._categoryIcons.length > configs.length)
+            this._categoryIcons.pop().destroy();
+
+        // Update existing / create new
+        for (let i = 0; i < configs.length; i++) {
+            if (this._categoryIcons[i])
+                this._categoryIcons[i].updateConfig(configs[i]);
+            else
+                this._categoryIcons[i] = new Locations.CategoryIcon(configs[i]);
+        }
+        // ───────────────────────────────────────────────────────────
 
         Locations.unWrapFileManagerApp();
         [this._methodInjections, this._propertyInjections].forEach(
@@ -2040,6 +2318,17 @@ export class DockManager {
             this._settings,
             'changed::isolate-locations',
             () => this._ensureLocations(),
+        ], [
+            this._settings,
+            'changed::user-categories',
+            () => {
+                this._ensureLocations();
+                DockManager.allDocks.forEach(dock => dock.dash._queueRedisplay());
+            },
+        ], [
+            AppFavorites.getAppFavorites(),
+            'changed',
+            () => this._syncDockOrderWithFavorites(),
         ], [
             this._settings,
             'changed::intellihide',
@@ -2605,6 +2894,8 @@ export class DockManager {
         this._appSpread.destroy();
         this._trash?.destroy();
         this._trash = null;
+        this._categoryIcons?.forEach(ci => ci.destroy());
+        this._categoryIcons = [];
         Locations.unWrapFileManagerApp();
         this._removables?.destroy();
         this._removables = null;

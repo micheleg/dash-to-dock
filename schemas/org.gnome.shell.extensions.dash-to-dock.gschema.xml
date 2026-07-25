@@ -640,5 +640,15 @@
       <summary>Wether the application-provioded counter via Unity API should override the notifications or be summed to it</summary>
       <description>If an application provides a counter through the Unity API, then such value will be used. Otherwise the counter will be summed with the unread notification numbers (if enabled)</description>
     </key>
+    <key name="user-categories" type="s">
+      <default>''</default>
+      <summary>User-defined app categories</summary>
+      <description>JSON array of category configurations with id and apps list</description>
+    </key>
+    <key name="dock-order" type="as">
+      <default>[]</default>
+      <summary>Dock icon order</summary>
+      <description>Ordered list of app IDs and category IDs defining the persistent dock sequence</description>
+    </key>
   </schema>
 </schemalist>

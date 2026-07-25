@@ -451,6 +451,14 @@ $dock_style_modes: null, shrink, extended, extended-shrink;
     height: 1px;
 }
 
+/* Drop-target highlight: shown when dragging an icon over another icon to merge into a category */
+#dashtodockContainer #dash .app-well-app.drop-target .overview-icon,
+#dashtodockContainer #dash .app-well-app.drop-target {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    transition-duration: 100ms;
+}
+
 /*
  * This is applied to a dummy actor. Only the alpha value for the background and border color
  * and the transition-duration are used

@@ -1,6 +1,7 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 import {
+    Clutter,
     Gio,
     GioUnix,
     GLib,
@@ -9,10 +10,15 @@ import {
     St,
 } from './dependencies/gi.js';
 
-import {ShellMountOperation} from './dependencies/shell/ui.js';
+import {
+    Main,
+    ShellMountOperation,
+} from './dependencies/shell/ui.js';
 
 import {
+    AppIcons,
     Docking,
+    Theming,
     Utils,
 } from './imports.js';
 
@@ -1217,6 +1223,8 @@ function makeLocationApp(params) {
         },
 
         _updateWindows() {
+            if (!fm1Client)
+                return;
             const windows = fm1Client.getWindows(this.location?.get_uri()).sort(
                 Utils.shellWindowsCompare);
             const {windowsChanged} = this._setWindows(windows);
@@ -1234,8 +1242,10 @@ function makeLocationApp(params) {
         },
     }, {readOnly: false});
 
-    shellApp._signalConnections.add(fm1Client, 'windows-changed', () =>
-        shellApp._updateWindows());
+    if (fm1Client) {
+        shellApp._signalConnections.add(fm1Client, 'windows-changed', () =>
+            shellApp._updateWindows());
+    }
     shellApp._signalConnections.add(shellApp.appInfo, 'notify::icon', () =>
         shellApp.notify('icon'));
     shellApp._signalConnections.add(global.workspaceManager,
@@ -1349,6 +1359,569 @@ export class Trash {
         return this._trashApp;
     }
 }
+
+// ── Category Icon ─────────────────────────────────────────────────────────────
+
+/**
+ * Erzeugt eine eindeutige ID für eine neue Benutzerkategorie.
+ */
+export function generateCategoryId() {
+    return `cat_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+}
+
+/**
+ * Berechnet den Kategorie-Label aus den ersten vier App-Namen (durch Komma getrennt).
+ */
+export function getCategoryLabel(appIds) {
+    const appSystem = Shell.AppSystem.get_default();
+    return appIds
+        .map(id => appSystem.lookup_app(id))
+        .filter(a => a !== null)
+        .sort((a, b) => a.get_name().localeCompare(b.get_name()))
+        .slice(0, 4)
+        .map(a => a.get_name())
+        .join(', ');
+}
+
+/**
+ * 2×2 Composite-Icon Widget das bis zu vier App-Icons verkleinert anzeigt.
+ */
+const CategoryCompositeIcon = GObject.registerClass(
+class CategoryCompositeIcon extends St.Widget {
+    constructor(appIds, iconSize) {
+        super({layout_manager: new Clutter.BinLayout()});
+        this._appIds = appIds ?? [];
+        this._iconSize = iconSize ?? 48;
+        this._build();
+    }
+
+    update(appIds, iconSize) {
+        if (appIds !== undefined)
+            this._appIds = appIds;
+        if (iconSize !== undefined)
+            this._iconSize = iconSize;
+        this._build();
+    }
+
+    _build() {
+        this.destroy_all_children();
+        const appSystem = Shell.AppSystem.get_default();
+        const apps = this._appIds
+            .map(id => appSystem.lookup_app(id))
+            .filter(a => a !== null)
+            .sort((a, b) => a.get_name().localeCompare(b.get_name()))
+            .slice(0, 4);
+
+        if (apps.length === 0)
+            return;
+
+        const size = this._iconSize;
+        this.set_size(size, size);
+
+        if (apps.length === 1) {
+            this.add_child(apps[0].create_icon_texture(size));
+            return;
+        }
+
+        const subSize = Math.floor((size - 2) / 2);
+        const rows = apps.length <= 2 ? 1 : 2;
+        const grid = new St.BoxLayout({vertical: true});
+        grid.style = 'spacing: 2px;';
+
+        for (let r = 0; r < rows; r++) {
+            const row = new St.BoxLayout({vertical: false});
+            row.style = 'spacing: 2px;';
+            for (let i = r * 2; i < Math.min(r * 2 + 2, apps.length); i++) {
+                row.add_child(apps[i].create_icon_texture(subSize));
+            }
+            grid.add_child(row);
+        }
+        this.add_child(grid);
+    }
+});
+
+/**
+ * Ein Icon-Grid-Panel das über dem Dock erscheint,
+ * wenn auf das Category Icon geklickt wird.
+ * Zeigt Apps aus der Benutzerkategorie (explizite App-Liste), alphabetisch sortiert.
+ */
+class CategoryPanel {
+    constructor(sourceActor, categoryData, onClose) {
+        this._sourceActor = sourceActor;
+        this._categoryData = categoryData;
+        this._onClose = onClose;
+
+        const mainDock = Docking.DockManager.getDefault().mainDock;
+        this._iconSize = mainDock?.dash?.iconSize ?? 48;
+        this._position = Utils.getPosition();
+
+        // Äußerster Container – spiegelt #dashtodockContainer wider,
+        // damit alle CSS-Selektoren aus _stylesheet.scss greifen.
+        this.actor = new St.Widget({
+            name: 'dashtodockContainer',
+            style_class: Theming.PositionStyleClass[this._position],
+            offscreen_redirect: Clutter.OffscreenRedirect.ALWAYS,
+            layout_manager: new Clutter.BinLayout(),
+            reactive: true,
+            visible: false,
+        });
+
+        // Innerer #dash-Actor – entspricht dem DockDash-Widget
+        this._dashActor = new St.Widget({
+            name: 'dash',
+            layout_manager: new Clutter.BinLayout(),
+            x_expand: true,
+            y_expand: true,
+        });
+
+        // dashtodockDashContainer – wie in DockDash
+        this._dashContainer = new St.BoxLayout({
+            name: 'dashtodockDashContainer',
+            x_align: Clutter.ActorAlign.CENTER,
+            y_align: Clutter.ActorAlign.CENTER,
+            vertical: true,
+            x_expand: true,
+            y_expand: true,
+        });
+
+        // dashtodockBoxContainer – wie in DockDash, mit Positions-Klasse
+        this._boxContainer = new St.BoxLayout({
+            name: 'dashtodockBoxContainer',
+            x_align: Clutter.ActorAlign.FILL,
+            y_align: Clutter.ActorAlign.FILL,
+            vertical: true,
+        });
+        this._boxContainer.add_style_class_name(Theming.PositionStyleClass[this._position]);
+
+        // dash-background – wie in DockDash
+        this._background = new St.Widget({
+            style_class: 'dash-background',
+            x_expand: true,
+            y_expand: true,
+        });
+
+        const sizerBox = new Clutter.Actor();
+        sizerBox.add_constraint(new Clutter.BindConstraint({
+            source: this._dashContainer,
+            coordinate: Clutter.BindCoordinate.HEIGHT,
+        }));
+        sizerBox.add_constraint(new Clutter.BindConstraint({
+            source: this._dashContainer,
+            coordinate: Clutter.BindCoordinate.WIDTH,
+        }));
+        this._background.add_child(sizerBox);
+
+        this._buildGrid(mainDock);
+
+        this._dashContainer.add_child(this._boxContainer);
+        this._dashActor.add_child(this._background);
+        this._dashActor.add_child(this._dashContainer);
+        this.actor.add_child(this._dashActor);
+
+        Main.uiGroup.add_child(this.actor);
+    }
+
+    _buildGrid(mainDock) {
+        const categoryId = this._categoryData?.id;
+        const appSystem = Shell.AppSystem.get_default();
+        const apps = (this._categoryData?.apps ?? [])
+            .map(id => appSystem.lookup_app(id))
+            .filter(a => a !== null)
+            .sort((a, b) => a.get_name().localeCompare(b.get_name()));
+
+        const appCount = apps.length;
+        if (appCount === 0)
+            return;
+
+        const columns = Math.ceil(Math.sqrt(appCount));
+        const rows = Math.ceil(appCount / columns);
+        const dash = mainDock.dash;
+
+        for (let r = 0; r < rows; r++) {
+            const rowBox = new St.BoxLayout({
+                vertical: false,
+                style_class: 'app-grid-row',
+            });
+
+            for (let c = 0; c < columns; c++) {
+                const index = r * columns + c;
+                const app = apps[index];
+
+                if (app) {
+                    const item = dash.createPanelItem(app);
+                    // Panel-Items sind drag-fähig – kein fakeRelease() mehr.
+                    // Drag-begin schließt das Panel (damit der Dock den Drop empfangen kann).
+                    if (item.child?._draggable) {
+                        item.child._d2dInCategoryId = categoryId;
+                        item.child._draggable.connect('drag-begin', () => {
+                            // Panel visuell verstecken, aber isOpen=true lassen damit
+                            // requiresVisibility=true bleibt und der Dock sichtbar bleibt
+                            this.actor.hide();
+                            if (this._overlay)
+                                this._overlay.hide();
+                        });
+                        item.child._draggable.connect('drag-end', () => {
+                            // Jetzt erst wirklich schließen (gibt requiresVisibility frei)
+                            this.actor.show();
+                            this.close();
+                        });
+                    }
+                    item.show(false);
+                    // CSS-Transitions deaktivieren (verhindert Squish-Effekt beim Öffnen)
+                    item.set_style('transition-duration: 0ms;');
+                    if (item.child)
+                        item.child.set_style('transition-duration: 0ms;');
+                    item.child?.connectObject('clicked', () => this.close(), this.actor);
+                    rowBox.add_child(item);
+                } else {
+                    rowBox.add_child(new St.Bin({
+                        width: this._iconSize + 16,
+                        height: this._iconSize + 16,
+                    }));
+                }
+            }
+            this._boxContainer.add_child(rowBox);
+        }
+    }
+
+    _syncTheme() {
+        const mainDock = Docking.DockManager.getDefault().mainDock;
+        if (!mainDock)
+            return;
+
+        // Stil-Klassen des Dock-Containers auf unseren äußeren Actor übertragen,
+        // damit CSS-Selektoren wie .dashtodock, .shrink, .straight-corner greifen.
+        const positionClasses = new Set(Theming.PositionStyleClass);
+        const dockClasses = (mainDock.style_class ?? '').split(/\s+/).filter(Boolean);
+
+        // Alte gesyncte Klassen entfernen
+        if (this._syncedClasses) {
+            this._syncedClasses.forEach(c => this.actor.remove_style_class_name(c));
+        }
+        // Neue Klassen (ohne Positions-Klassen, die wir selbst setzen) übernehmen
+        this._syncedClasses = dockClasses.filter(c => !positionClasses.has(c));
+        this._syncedClasses.forEach(c => this.actor.add_style_class_name(c));
+
+        // Inline-Style vom Dock-Hintergrund kopieren (enthält Farbe, Transparenz, Border)
+        const bgStyle = mainDock.dash._background.get_style();
+        this._background.set_style(bgStyle ?? null);
+    }
+
+    open() {
+        this.isOpen = true;
+
+        // Dock sichtbar halten solange Panel offen ist
+        this._dash = Docking.DockManager.getDefault().mainDock?.dash;
+        if (this._dash)
+            this._dash.requiresVisibility = true;
+
+        this._syncTheme();
+
+        // Pivot-Point Richtung Dock, damit das Panel aus dem Icon herauswächst
+        switch (this._position) {
+        case St.Side.BOTTOM:
+            this.actor.set_pivot_point(0.5, 1.0); break;
+        case St.Side.TOP:
+            this.actor.set_pivot_point(0.5, 0.0); break;
+        case St.Side.LEFT:
+            this.actor.set_pivot_point(0.0, 0.5); break;
+        case St.Side.RIGHT:
+            this.actor.set_pivot_point(1.0, 0.5); break;
+        default:
+            this.actor.set_pivot_point(0.5, 1.0);
+        }
+        // scale=0 ist CSS-immun: CSS kann opacity überschreiben, aber nicht scale.
+        // Bei scale=0 ist der Actor unsichtbar unabhängig von opacity.
+        // Off-screen extra-Sicherheit während des ersten Layout-Passes.
+        this.actor.set({scale_x: 0, scale_y: 0});
+        this.actor.set_position(-10000, -10000);
+        this.actor.show();
+
+        // notify::allocation: erster Layout-Pass unseres Actors.
+        // Der sizerBox-BindConstraint (background ↔ dashContainer) erzeugt aber
+        // zwingend einen ZWEITEN Layout-Pass. Deshalb warten wir danach auf
+        // after-paint – erst dann sind alle Layout-Passes abgeschlossen und
+        // get_preferred_size() liefert stabile Werte.
+        const allocationId = this.actor.connect('notify::allocation', () => {
+            this.actor.disconnect(allocationId);
+            if (!this.isOpen)
+                return;
+            this._reposition();
+
+            const paintId = global.stage.connect('after-paint', () => {
+                global.stage.disconnect(paintId);
+                if (!this.isOpen)
+                    return;
+                this._reposition();
+                // Größe einfrieren: verhindert dass externe Relayouts (Dock-Animation,
+                // CSS-Transitions, Shell.Stack-Reallokation) die Panel-Größe nachträglich
+                // verändern und den Squish-Effekt erzeugen.
+                const [, , w, h] = this.actor.get_preferred_size();
+                this.actor.set_size(w, h);
+                this.actor.ease({
+                    scale_x: 1.0,
+                    scale_y: 1.0,
+                    duration: 220,
+                    mode: Clutter.AnimationMode.EASE_OUT_EXPO,
+                    onComplete: () => this._reposition(),
+                });
+            });
+        });
+
+        // Labels der Dock-Icons über unser Panel heben (z-order Fix)
+        Main.uiGroup.get_children().forEach(child => {
+            if (child.style_class?.includes('dash-label'))
+                Main.uiGroup.set_child_above_sibling(child, this.actor);
+        });
+
+        // Panel schließen wenn das Dock ausblendet –
+        // Handler mit Verzögerung verbinden damit das initiale Hide
+        // direkt nach dem Klick ignoriert wird
+        const mainDock = Docking.DockManager.getDefault().mainDock;
+        if (mainDock) {
+            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 600, () => {
+                if (!this.isOpen)
+                    return GLib.SOURCE_REMOVE;
+                this._dockHidingId = mainDock.connect('hiding', () => this.close());
+                return GLib.SOURCE_REMOVE;
+            });
+        }
+
+        // Transparenter Overlay über dem gesamten Bildschirm – fängt alle
+        // Klicks außerhalb des Panels ab (gleiche Technik wie PopupMenuManager)
+        GLib.idle_add(GLib.PRIORITY_DEFAULT, () => {
+            if (!this.isOpen)
+                return GLib.SOURCE_REMOVE;
+
+            const monitor = Main.layoutManager.primaryMonitor;
+            this._overlay = new Clutter.Actor({
+                reactive: true,
+                x: monitor.x,
+                y: monitor.y,
+                width: monitor.width,
+                height: monitor.height,
+                opacity: 0,
+            });
+            this._overlay.connect('button-press-event', (_actor, event) => {
+                const [ex, ey] = event.get_coords();
+                const [ax, ay] = this.actor.get_transformed_position();
+                const aw = this.actor.get_width();
+                const ah = this.actor.get_height();
+                // Innerhalb des Panels → Event durchlassen
+                if (ex >= ax && ex <= ax + aw && ey >= ay && ey <= ay + ah) {
+                    this._overlay.reactive = false;
+                    return Clutter.EVENT_PROPAGATE;
+                }
+                this.close();
+                return Clutter.EVENT_STOP;
+            });
+            // Overlay unter dem Panel einfügen
+            Main.uiGroup.insert_child_below(this._overlay, this.actor);
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
+    _reposition() {
+        if (!this.actor || !this._sourceActor)
+            return;
+
+        const [stageX, stageY] = this._sourceActor.get_transformed_position();
+        const iconW = this._sourceActor.get_width();
+        const iconH = this._sourceActor.get_height();
+        const monitor = Main.layoutManager.findMonitorForActor(this._sourceActor);
+        const [, , panelW, panelH] = this.actor.get_preferred_size();
+
+        const gap = 6;
+        let panelX, panelY;
+
+        switch (this._position) {
+        case St.Side.BOTTOM:
+            panelX = Math.round(stageX + (iconW / 2) - (panelW / 2));
+            panelY = Math.round(stageY - panelH - gap);
+            panelX = Math.max(monitor.x + gap,
+                Math.min(panelX, monitor.x + monitor.width - panelW - gap));
+            break;
+        case St.Side.TOP:
+            panelX = Math.round(stageX + (iconW / 2) - (panelW / 2));
+            panelY = Math.round(stageY + iconH + gap);
+            panelX = Math.max(monitor.x + gap,
+                Math.min(panelX, monitor.x + monitor.width - panelW - gap));
+            break;
+        case St.Side.LEFT:
+            panelX = Math.round(stageX + iconW + gap);
+            panelY = Math.round(stageY + (iconH / 2) - (panelH / 2));
+            panelY = Math.max(monitor.y + gap,
+                Math.min(panelY, monitor.y + monitor.height - panelH - gap));
+            break;
+        case St.Side.RIGHT:
+            panelX = Math.round(stageX - panelW - gap);
+            panelY = Math.round(stageY + (iconH / 2) - (panelH / 2));
+            panelY = Math.max(monitor.y + gap,
+                Math.min(panelY, monitor.y + monitor.height - panelH - gap));
+            break;
+        default:
+            panelX = Math.round(stageX + (iconW / 2) - (panelW / 2));
+            panelY = Math.round(stageY - panelH - gap);
+        }
+
+        this.actor.set_position(panelX, panelY);
+    }
+
+    close() {
+        if (!this.isOpen)
+            return;
+        this.isOpen = false;
+
+        // Dock wieder normal ausblenden lassen
+        if (this._dash) {
+            this._dash.requiresVisibility = false;
+            this._dash = null;
+        }
+
+        if (this._dockHidingId) {
+            Docking.DockManager.getDefault().mainDock?.disconnect(this._dockHidingId);
+            this._dockHidingId = null;
+        }
+        if (this._overlay) {
+            this._overlay.destroy();
+            this._overlay = null;
+        }
+        this._onClose?.();
+        this.actor?.ease({
+            scale_x: 0,
+            scale_y: 0,
+            duration: 150,
+            mode: Clutter.AnimationMode.EASE_IN_BACK,
+            onComplete: () => this.destroy(),
+        });
+    }
+
+    destroy() {
+        if (this._dockHidingId) {
+            Docking.DockManager.getDefault().mainDock?.disconnect(this._dockHidingId);
+            this._dockHidingId = null;
+        }
+        if (this._overlay) {
+            this._overlay.destroy();
+            this._overlay = null;
+        }
+        this.actor?.destroy();
+        this.actor = null;
+    }
+}
+
+/**
+ * Hält ein Shell.App-Objekt für ein Benutzerkategorie-Icon.
+ * config: {id, apps: [appId, ...], position}
+ *
+ * Das Icon zeigt ein 2×2 Composite aus den ersten vier App-Icons.
+ * Der Label setzt sich automatisch aus den Namen der ersten vier Apps zusammen.
+ */
+export class CategoryIcon {
+    constructor(config) {
+        this._config = config ?? {id: generateCategoryId(), apps: [], position: -1};
+    }
+
+    get position() {
+        return this._config.position ?? -1;
+    }
+
+    get config() {
+        return this._config;
+    }
+
+    updateConfig(config) {
+        const appsChanged = JSON.stringify(config.apps) !== JSON.stringify(this._config.apps);
+        this._config = config;
+        if (appsChanged) {
+            // Composite-Icon neu rendern
+            if (this._baseIcon)
+                this._baseIcon._createIconTexture(this._baseIcon.iconSize);
+            // App-Label neu setzen
+            if (this._app) {
+                const newLabel = getCategoryLabel(config.apps);
+                this._app.appInfo._name = newLabel;
+                // Kategorie-Daten auf dem App-Objekt aktualisieren
+                if (this._app._categoryData)
+                    this._app._categoryData.apps = [...config.apps];
+            }
+        }
+    }
+
+    destroy() {
+        this._panel?.destroy();
+        this._panel = null;
+        this._baseIcon = null;
+        this._app?.destroy();
+        this._app = null;
+    }
+
+    _ensureApp() {
+        if (this._app)
+            return;
+
+        const label = getCategoryLabel(this._config.apps);
+        const appInfo = new LocationAppInfo({
+            name: label || 'Kategorie',
+            icon: Gio.ThemedIcon.new('view-grid-symbolic'),
+            cancellable: new Gio.Cancellable(),
+        });
+
+        this._app = makeLocationApp({
+            appInfo,
+            fallbackIconName: 'view-grid-symbolic',
+        });
+
+        this._app._setDtdData({isCustom: true}, {getter: true, enumerable: true});
+        // Kategorie-Daten für Drag&Drop-Handler zugänglich machen
+        this._app._setDtdData({
+            _categoryData: {id: this._config.id, apps: [...this._config.apps]},
+        }, {getter: true, enumerable: true});
+        // Rück-Referenz auf das CategoryIcon-Objekt (für Composite-Icon-Rendering)
+        this._app._categoryIconInstance = this;
+
+        this._app._mi('can_open_new_window', () => false);
+        this._app._mi('open_new_window', () => {});
+
+        // activate() → Panel öffnen/schließen
+        const self = this;
+        this._app._mi('activate', () => {
+            if (self._sourceActor)
+                self.togglePanel(self._sourceActor);
+        });
+    }
+
+    getApp() {
+        this._ensureApp();
+        return this._app;
+    }
+
+    /**
+     * Erstellt ein frisches CategoryCompositeIcon (kein Caching,
+     * da BaseIcon das vorherige Icon via destroy() entsorgt).
+     */
+    createCompositeIcon(iconSize) {
+        return new CategoryCompositeIcon(this._config.apps, iconSize);
+    }
+
+    /**
+     * Wird vom AppIcon aufgerufen wenn auf das Icon geklickt wird.
+     * Öffnet/schließt das Panel über dem Dock.
+     */
+    togglePanel(sourceActor) {
+        if (this._panel) {
+            this._panel.close();
+            this._panel = null;
+            return;
+        }
+
+        this._panel = new CategoryPanel(sourceActor, this._config, () => {
+            this._panel = null;
+        });
+        this._panel.open();
+    }
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 /**
  * This class maintains Shell.App representations for removable devices
