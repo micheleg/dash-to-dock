@@ -29,6 +29,7 @@ import {
     AppIconIndicators,
     DBusMenuUtils,
     Docking,
+    FolderStack,
     Locations,
     Theming,
     Utils,
@@ -745,10 +746,10 @@ export const DockAbstractAppIcon = GObject.registerClass({
     /**
      * Toggle one of this icon's auxiliary popups, building it on first use.
      *
-     * These popups are not the icon's context menu: they are lazily created,
-     * chained to the overview hiding, and report their state to the dash so it
-     * does not auto-hide out from under them. That bookkeeping is the same
-     * whichever popup it is.
+     * These popups (the window previews, the folder stack) are not the icon's
+     * context menu: they are lazily created, chained to the overview hiding,
+     * and report their state to the dash so it does not auto-hide out from
+     * under them. That bookkeeping is the same whichever popup it is.
      *
      * @param {string} kind which popup, so each keeps its own instance
      * @param {Function} createMenu builds the popup on first use
@@ -1028,12 +1029,89 @@ const DockLocationAppIcon = GObject.registerClass({
     }
 });
 
+const DockFolderAppIcon = GObject.registerClass({
+}, class DockFolderAppIcon extends DockLocationAppIcon {
+    _init(app, monitorIndex, iconAnimator) {
+        if (!(app.appInfo instanceof Locations.FolderAppInfo))
+            throw new Error('Provided application %s is not a folder'.format(app));
+
+        super._init(app, monitorIndex, iconAnimator);
+
+        this._signalsHandler.add(this.app.appInfo, 'items-changed', () => {
+            this._stack?.queueRedisplay();
+            this.icon.update();
+        });
+
+        // popup() rebuilds from the current setting, so closing is enough to
+        // make the next open pick up a new layout.
+        this._signalsHandler.add(Docking.DockManager.settings,
+            'changed::downloads-stack-view', () => this._stack?.close());
+
+        this._signalsHandler.add(Docking.DockManager.settings,
+            'changed::downloads-icon-display', () => this.icon.update());
+    }
+
+    /**
+     * Preview the folder's newest contents on the dock icon itself.
+     *
+     * This overrides the icon rather than the app's create_icon_texture on
+     * purpose: appIconIndicators.js calls create_icon_texture(16).get_gicon()
+     * for Unity7 backlit colours, so that has to keep returning a plain
+     * St.Icon.
+     *
+     * @param {number} iconSize the size the dash wants
+     * @returns {Clutter.Actor} the icon actor
+     */
+    _createIcon(iconSize) {
+        const items = this.app.appInfo.items ?? [];
+
+        if (items.length && Docking.DockManager.settings.downloadsIconDisplay ===
+            FolderStack.IconDisplay.STACK)
+            return FolderStack.makeStackIcon(items, iconSize);
+
+        return this.app.create_icon_texture(iconSize);
+    }
+
+    /**
+     * Unlike every other dock icon, a plain left-click here opens the stack
+     * instead of launching the app. Modifiers and the other buttons keep the
+     * inherited behaviour, so middle-click still opens the file manager.
+     *
+     * @param {number} button the pressed button, undefined for the keyboard
+     */
+    activate(button) {
+        const event = Clutter.get_current_event();
+        let modifiers = event ? event.get_state() : 0;
+        modifiers &= Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CONTROL_MASK;
+
+        if (!modifiers && (!button || button === 1)) {
+            this.toggleStack();
+            return;
+        }
+
+        super.activate(button);
+    }
+
+    get _stack() {
+        return this._auxMenu('stack');
+    }
+
+    toggleStack() {
+        return this._toggleAuxMenu('stack',
+            () => new FolderStack.FolderStackMenu(this));
+    }
+});
+
 /**
  * @param app
  * @param monitorIndex
  * @param iconAnimator
  */
 export function makeAppIcon(app, monitorIndex, iconAnimator) {
+    // Checked before LocationAppInfo: FolderAppInfo is a subclass of it.
+    if (app.appInfo instanceof Locations.FolderAppInfo)
+        return new DockFolderAppIcon(app, monitorIndex, iconAnimator);
+
     if (app.appInfo instanceof Locations.LocationAppInfo)
         return new DockLocationAppIcon(app, monitorIndex, iconAnimator);
 
