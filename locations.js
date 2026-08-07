@@ -30,7 +30,30 @@ const FILE_MANAGER_DESKTOP_APP_ID = 'org.gnome.Nautilus.desktop';
 const ATTRIBUTE_METADATA_CUSTOM_ICON = 'metadata::custom-icon';
 const TRASH_URI = 'trash://';
 const UPDATE_TRASH_DELAY = 1000;
+// Downloads churns more than the trash does, so wait a little longer before
+// re-reading the directory.
+const UPDATE_FOLDER_DELAY = 1500;
+// Beyond this the stack popup is unusable anyway, and the overflow stays
+// reachable through the "open folder" action.
+const MAX_FOLDER_ITEMS = 100;
 const LAUNCH_HANDLER_MAX_WAIT = 200;
+
+// Everything the stack popup needs about a folder entry, fetched in a single
+// enumeration pass.
+const FOLDER_ITEM_ATTRIBUTES = [
+    Gio.FILE_ATTRIBUTE_STANDARD_NAME,
+    Gio.FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
+    Gio.FILE_ATTRIBUTE_STANDARD_ICON,
+    Gio.FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+    Gio.FILE_ATTRIBUTE_STANDARD_TYPE,
+    Gio.FILE_ATTRIBUTE_STANDARD_IS_HIDDEN,
+    Gio.FILE_ATTRIBUTE_STANDARD_IS_BACKUP,
+    Gio.FILE_ATTRIBUTE_STANDARD_SIZE,
+    Gio.FILE_ATTRIBUTE_TIME_MODIFIED,
+    Gio.FILE_ATTRIBUTE_THUMBNAIL_PATH,
+    Gio.FILE_ATTRIBUTE_THUMBNAIL_IS_VALID,
+    Gio.FILE_ATTRIBUTE_THUMBNAILING_FAILED,
+].join(',');
 
 const NautilusFileOperations2Interface = '<node>\
     <interface name="org.gnome.Nautilus.FileOperations2">\
@@ -880,6 +903,208 @@ class TrashAppInfo extends LocationAppInfo {
     }
 });
 
+const FOLDER_ACTION_OPEN = 'open-folder';
+const FALLBACK_FOLDER_ICON = 'folder';
+
+const FOLDER_ENUMERATION_BATCH = 50;
+
+export const FolderAppInfo = GObject.registerClass({
+    Implements: [Gio.AppInfo],
+    Signals: {
+        'items-changed': {},
+    },
+},
+class FolderAppInfo extends LocationAppInfo {
+    static initPromises(file) {
+        if (FolderAppInfo._promisified)
+            return;
+
+        const fileProto = file.constructor.prototype;
+        Gio._promisify(Gio.FileEnumerator.prototype, 'close_async', 'close_finish');
+        Gio._promisify(Gio.FileEnumerator.prototype, 'next_files_async', 'next_files_finish');
+        Gio._promisify(fileProto, 'enumerate_children_async', 'enumerate_children_finish');
+        Gio._promisify(fileProto, 'query_info_async', 'query_info_finish');
+        FolderAppInfo._promisified = true;
+    }
+
+    _init(location, {cancellable = null, iconName = FALLBACK_FOLDER_ICON} = {}) {
+        super._init({
+            location,
+            name: location.get_basename(),
+            icon: Gio.ThemedIcon.new(iconName),
+            cancellable,
+        });
+        FolderAppInfo.initPromises(this.location);
+
+        this._items = [];
+        this._truncated = false;
+
+        try {
+            // Watching moves matters here: downloads typically land as a
+            // temporary file that is renamed into place once complete.
+            this._monitor = this.location.monitor_directory(
+                Gio.FileMonitorFlags.WATCH_MOVES, this.cancellable);
+            this._schedUpdateId = 0;
+            this._monitorChangedId = this._monitor.connect('changed', () =>
+                this._onFolderChange());
+        } catch (e) {
+            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
+                return;
+            logError(e, 'Impossible to monitor %s'.format(location.get_uri()));
+        }
+
+        this._updateFolder();
+        this._updateLocationIcon();
+    }
+
+    destroy() {
+        if (this._schedUpdateId) {
+            GLib.source_remove(this._schedUpdateId);
+            this._schedUpdateId = 0;
+        }
+        this._updateFolderCancellable?.cancel();
+        this._monitor?.disconnect(this._monitorChangedId);
+        this._monitor = null;
+        this._items = [];
+
+        super.destroy();
+    }
+
+    /**
+     * The folder contents, newest first, capped to MAX_FOLDER_ITEMS.
+     */
+    get items() {
+        return this._items;
+    }
+
+    /**
+     * Whether the cap above actually dropped anything.
+     */
+    get truncated() {
+        return this._truncated;
+    }
+
+    list_actions() {
+        return [FOLDER_ACTION_OPEN];
+    }
+
+    get_action_name(action) {
+        return action === FOLDER_ACTION_OPEN ? __('Open in File Manager') : null;
+    }
+
+    launchAction(action, timestamp, workspace = -1) {
+        if (action !== FOLDER_ACTION_OPEN)
+            throw new Error('Action %s is not supported by %s'.format(action, this));
+
+        this.launch([], global.create_app_launch_context(timestamp, workspace));
+    }
+
+    _onFolderChange() {
+        if (this._schedUpdateId) {
+            GLib.source_remove(this._schedUpdateId);
+            this._schedUpdateId = 0;
+        }
+
+        if (this._monitor.is_cancelled())
+            return;
+
+        this._schedUpdateId = GLib.timeout_add(GLib.PRIORITY_LOW,
+            UPDATE_FOLDER_DELAY, () => {
+                this._schedUpdateId = 0;
+                this._updateFolder();
+                return GLib.SOURCE_REMOVE;
+            });
+    }
+
+    _makeItem(info) {
+        const name = info.get_name();
+        const file = this.location.get_child(name);
+        // GIO only reports a path once the cached thumbnail is up to date, so
+        // is-valid and a non-null path always travel together.
+        const thumbnailPath =
+            info.get_attribute_boolean(Gio.FILE_ATTRIBUTE_THUMBNAIL_IS_VALID)
+                ? info.get_attribute_byte_string(Gio.FILE_ATTRIBUTE_THUMBNAIL_PATH)
+                : null;
+
+        return {
+            file,
+            uri: file.get_uri(),
+            displayName: info.get_display_name(),
+            contentType: info.get_content_type(),
+            icon: info.get_icon(),
+            isDirectory: info.get_file_type() === Gio.FileType.DIRECTORY,
+            size: info.get_size(),
+            modified: info.get_attribute_uint64(Gio.FILE_ATTRIBUTE_TIME_MODIFIED),
+            thumbnailPath,
+            thumbnailFailed: info.get_attribute_boolean(
+                Gio.FILE_ATTRIBUTE_THUMBNAILING_FAILED),
+        };
+    }
+
+    async _updateFolder() {
+        const priority = GLib.PRIORITY_LOW;
+        this._updateFolderCancellable?.cancel();
+        const cancellable = new Utils.CancellableChild(this.cancellable);
+        this._updateFolderCancellable = cancellable;
+
+        const items = [];
+
+        try {
+            const enumerator = await this.location.enumerate_children_async(
+                FOLDER_ITEM_ATTRIBUTES, Gio.FileQueryInfoFlags.NONE,
+                priority, cancellable);
+
+            for (;;) {
+                // eslint-disable-next-line no-await-in-loop
+                const infos = await enumerator.next_files_async(
+                    FOLDER_ENUMERATION_BATCH, priority, cancellable);
+
+                if (!infos.length)
+                    break;
+
+                infos.forEach(info => {
+                    if (info.get_is_hidden() || info.get_is_backup())
+                        return;
+
+                    items.push(this._makeItem(info));
+                });
+            }
+
+            await enumerator.close_async(priority, null);
+        } catch (e) {
+            if (!e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
+                logError(e, 'Impossible to enumerate %s'.format(
+                    this.location.get_uri()));
+            }
+            return;
+        } finally {
+            cancellable.cancel();
+            if (this._updateFolderCancellable === cancellable)
+                delete this._updateFolderCancellable;
+        }
+
+        // Newest first, matching the macOS "Date Added" default for Downloads.
+        items.sort((a, b) => b.modified - a.modified);
+
+        const truncated = items.length > MAX_FOLDER_ITEMS;
+        const capped = items.slice(0, MAX_FOLDER_ITEMS);
+
+        // A file monitor fires for plenty of things that leave the listing
+        // identical, and every emission costs a dock icon rebuild plus, if the
+        // stack is open, a popup rebuild. Only report an actual change.
+        const changed = truncated !== this._truncated ||
+            capped.length !== this._items.length ||
+            capped.some((item, i) => item.uri !== this._items[i].uri ||
+                item.modified !== this._items[i].modified);
+
+        this._truncated = truncated;
+        this._items = capped;
+
+        if (changed)
+            this.emit('items-changed');
+    }
+});
+
 /**
  * @param shellApp
  */
@@ -1119,6 +1344,7 @@ function makeLocationApp(params) {
     shellApp._setDtdData({
         location: () => shellApp.appInfo.location,
         isTrash: shellApp.appInfo instanceof TrashAppInfo,
+        isFolder: shellApp.appInfo instanceof FolderAppInfo,
     }, {getter: true, enumerable: true});
 
     shellApp._mi('toString', defaultToString =>
