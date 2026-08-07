@@ -29,6 +29,7 @@ import {
     AppIconIndicators,
     DBusMenuUtils,
     Docking,
+    FolderStack,
     Locations,
     Theming,
     Utils,
@@ -128,6 +129,8 @@ export const DockAbstractAppIcon = GObject.registerClass({
         this.iconAnimator = iconAnimator;
         this._indicator = new AppIconIndicators.AppIconIndicator(this);
         this._urgentWindows = new Set();
+        // Lazily-built popups that are not the context menu, keyed by kind.
+        this._auxMenus = new Map();
 
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
@@ -231,9 +234,6 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         this._updateState();
         this._numberOverlay();
-
-        this._previewMenuManager = null;
-        this._previewMenu = null;
     }
 
     _onDestroy() {
@@ -724,38 +724,72 @@ export const DockAbstractAppIcon = GObject.registerClass({
     }
 
     shouldShowTooltip() {
-        return super.shouldShowTooltip() && !this._previewMenu?.isOpen &&
+        return super.shouldShowTooltip() && !this._isAuxMenuOpen() &&
             !Docking.DockManager.settings.hideTooltip;
     }
 
-    _windowPreviews() {
-        if (!this._previewMenu) {
-            this._previewMenuManager = new PopupMenu.PopupMenuManager(this);
+    /**
+     * One of this icon's auxiliary popups, if it has been built.
+     *
+     * @param {string} kind which popup
+     * @returns {PopupMenu.PopupMenu | undefined} the popup
+     */
+    _auxMenu(kind) {
+        return this._auxMenus.get(kind)?.menu;
+    }
 
-            this._previewMenu = new WindowPreview.WindowPreviewMenu(this);
+    /** Whether any of this icon's auxiliary popups is up. */
+    _isAuxMenuOpen() {
+        return [...this._auxMenus.values()].some(({menu}) => menu.isOpen);
+    }
 
-            this._previewMenuManager.addMenu(this._previewMenu);
+    /**
+     * Toggle one of this icon's auxiliary popups, building it on first use.
+     *
+     * These popups (the window previews, the folder stack) are not the icon's
+     * context menu: they are lazily created, chained to the overview hiding,
+     * and report their state to the dash so it does not auto-hide out from
+     * under them. That bookkeeping is the same whichever popup it is.
+     *
+     * @param {string} kind which popup, so each keeps its own instance
+     * @param {Function} createMenu builds the popup on first use
+     * @returns {boolean} always false, so callers can return it directly
+     */
+    _toggleAuxMenu(kind, createMenu) {
+        let menu = this._auxMenu(kind);
 
-            this._previewMenu.connect('open-state-changed', (menu, isPoppedUp) => {
+        if (!menu) {
+            // The manager is kept alongside the menu so it stays alive for as
+            // long as the menu it arbitrates.
+            const menuManager = new PopupMenu.PopupMenuManager(this);
+            menu = createMenu();
+            this._auxMenus.set(kind, {menu, menuManager});
+            menuManager.addMenu(menu);
+
+            menu.connect('open-state-changed', (_menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
             });
-            const id = Main.overview.connect('hiding', () => {
-                this._previewMenu.close();
-            });
-            this._previewMenu.actor.connect('destroy', () => {
+            const id = Main.overview.connect('hiding', () => menu.close());
+            menu.actor.connect('destroy', () => {
                 Main.overview.disconnect(id);
+                this._auxMenus.delete(kind);
             });
         }
 
-        this.emit('menu-state-changed', !this._previewMenu.isOpen);
+        this.emit('menu-state-changed', !menu.isOpen);
 
-        if (this._previewMenu.isOpen)
-            this._previewMenu.close();
+        if (menu.isOpen)
+            menu.close();
         else
-            this._previewMenu.popup();
+            menu.popup();
 
         return false;
+    }
+
+    _windowPreviews() {
+        return this._toggleAuxMenu('previews',
+            () => new WindowPreview.WindowPreviewMenu(this));
     }
 
     // Try to do the right thing when attempting to launch a new window of an app. In
@@ -995,12 +1029,89 @@ const DockLocationAppIcon = GObject.registerClass({
     }
 });
 
+const DockFolderAppIcon = GObject.registerClass({
+}, class DockFolderAppIcon extends DockLocationAppIcon {
+    _init(app, monitorIndex, iconAnimator) {
+        if (!(app.appInfo instanceof Locations.FolderAppInfo))
+            throw new Error('Provided application %s is not a folder'.format(app));
+
+        super._init(app, monitorIndex, iconAnimator);
+
+        this._signalsHandler.add(this.app.appInfo, 'items-changed', () => {
+            this._stack?.queueRedisplay();
+            this.icon.update();
+        });
+
+        // popup() rebuilds from the current setting, so closing is enough to
+        // make the next open pick up a new layout.
+        this._signalsHandler.add(Docking.DockManager.settings,
+            'changed::downloads-stack-view', () => this._stack?.close());
+
+        this._signalsHandler.add(Docking.DockManager.settings,
+            'changed::downloads-icon-display', () => this.icon.update());
+    }
+
+    /**
+     * Preview the folder's newest contents on the dock icon itself.
+     *
+     * This overrides the icon rather than the app's create_icon_texture on
+     * purpose: appIconIndicators.js calls create_icon_texture(16).get_gicon()
+     * for Unity7 backlit colours, so that has to keep returning a plain
+     * St.Icon.
+     *
+     * @param {number} iconSize the size the dash wants
+     * @returns {Clutter.Actor} the icon actor
+     */
+    _createIcon(iconSize) {
+        const items = this.app.appInfo.items ?? [];
+
+        if (items.length && Docking.DockManager.settings.downloadsIconDisplay ===
+            FolderStack.IconDisplay.STACK)
+            return FolderStack.makeStackIcon(items, iconSize);
+
+        return this.app.create_icon_texture(iconSize);
+    }
+
+    /**
+     * Unlike every other dock icon, a plain left-click here opens the stack
+     * instead of launching the app. Modifiers and the other buttons keep the
+     * inherited behaviour, so middle-click still opens the file manager.
+     *
+     * @param {number} button the pressed button, undefined for the keyboard
+     */
+    activate(button) {
+        const event = Clutter.get_current_event();
+        let modifiers = event ? event.get_state() : 0;
+        modifiers &= Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CONTROL_MASK;
+
+        if (!modifiers && (!button || button === 1)) {
+            this.toggleStack();
+            return;
+        }
+
+        super.activate(button);
+    }
+
+    get _stack() {
+        return this._auxMenu('stack');
+    }
+
+    toggleStack() {
+        return this._toggleAuxMenu('stack',
+            () => new FolderStack.FolderStackMenu(this));
+    }
+});
+
 /**
  * @param app
  * @param monitorIndex
  * @param iconAnimator
  */
 export function makeAppIcon(app, monitorIndex, iconAnimator) {
+    // Checked before LocationAppInfo: FolderAppInfo is a subclass of it.
+    if (app.appInfo instanceof Locations.FolderAppInfo)
+        return new DockFolderAppIcon(app, monitorIndex, iconAnimator);
+
     if (app.appInfo instanceof Locations.LocationAppInfo)
         return new DockLocationAppIcon(app, monitorIndex, iconAnimator);
 
@@ -1076,6 +1187,52 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         const item = new PopupMenu.PopupMenuItem(labelText, params);
         this.addMenuItem(item);
         return item;
+    }
+
+    /**
+     * A radio group backed by an enum setting, as a submenu.
+     *
+     * @param {string} title the submenu label
+     * @param {string} key the gschema key holding the enum
+     * @param {Array<{value: number, label: string}>} choices the options
+     */
+    _appendEnumSubMenu(title, key, choices) {
+        const {settings} = Docking.DockManager;
+        const submenu = new PopupMenu.PopupSubMenuMenuItem(title);
+
+        choices.forEach(({value, label}) => {
+            const item = new PopupMenu.PopupMenuItem(label);
+            item.setOrnament(settings.get_enum(key) === value
+                ? PopupMenu.Ornament.DOT
+                : PopupMenu.Ornament.NONE);
+            item.connect('activate', () => {
+                settings.set_enum(key, value);
+                this.emit('activate-window', null);
+            });
+            submenu.menu.addMenuItem(item);
+        });
+
+        this.addMenuItem(submenu);
+    }
+
+    /**
+     * The macOS-style "View content as" and "Display as" choices, shown only on
+     * a folder stack icon.
+     */
+    _appendFolderStackItems() {
+        this._appendSeparator();
+
+        this._appendEnumSubMenu(__('View content as'), 'downloads-stack-view', [
+            {value: FolderStack.ViewMode.AUTOMATIC, label: __('Automatic')},
+            {value: FolderStack.ViewMode.FAN, label: __('Fan')},
+            {value: FolderStack.ViewMode.GRID, label: __('Grid')},
+            {value: FolderStack.ViewMode.LIST, label: __('List')},
+        ]);
+
+        this._appendEnumSubMenu(__('Display as'), 'downloads-icon-display', [
+            {value: FolderStack.IconDisplay.STACK, label: __('Stack')},
+            {value: FolderStack.IconDisplay.FOLDER, label: __('Folder')},
+        ]);
     }
 
     popup(_activatingButton) {
@@ -1174,6 +1331,9 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                     this.emit('activate-window', null);
                 });
             }
+
+            if (this.sourceActor instanceof DockFolderAppIcon)
+                this._appendFolderStackItems();
 
             const canFavorite = global.settings.is_writable('favorite-apps') &&
                 (this.sourceActor instanceof DockAppIcon) &&
