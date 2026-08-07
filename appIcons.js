@@ -128,6 +128,8 @@ export const DockAbstractAppIcon = GObject.registerClass({
         this.iconAnimator = iconAnimator;
         this._indicator = new AppIconIndicators.AppIconIndicator(this);
         this._urgentWindows = new Set();
+        // Lazily-built popups that are not the context menu, keyed by kind.
+        this._auxMenus = new Map();
 
         // Monitor windows-changes instead of app state.
         // Keep using the same Id and function callback (that is extended)
@@ -231,9 +233,6 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         this._updateState();
         this._numberOverlay();
-
-        this._previewMenuManager = null;
-        this._previewMenu = null;
     }
 
     _onDestroy() {
@@ -724,38 +723,72 @@ export const DockAbstractAppIcon = GObject.registerClass({
     }
 
     shouldShowTooltip() {
-        return super.shouldShowTooltip() && !this._previewMenu?.isOpen &&
+        return super.shouldShowTooltip() && !this._isAuxMenuOpen() &&
             !Docking.DockManager.settings.hideTooltip;
     }
 
-    _windowPreviews() {
-        if (!this._previewMenu) {
-            this._previewMenuManager = new PopupMenu.PopupMenuManager(this);
+    /**
+     * One of this icon's auxiliary popups, if it has been built.
+     *
+     * @param {string} kind which popup
+     * @returns {PopupMenu.PopupMenu | undefined} the popup
+     */
+    _auxMenu(kind) {
+        return this._auxMenus.get(kind)?.menu;
+    }
 
-            this._previewMenu = new WindowPreview.WindowPreviewMenu(this);
+    /** Whether any of this icon's auxiliary popups is up. */
+    _isAuxMenuOpen() {
+        return [...this._auxMenus.values()].some(({menu}) => menu.isOpen);
+    }
 
-            this._previewMenuManager.addMenu(this._previewMenu);
+    /**
+     * Toggle one of this icon's auxiliary popups, building it on first use.
+     *
+     * These popups are not the icon's context menu: they are lazily created,
+     * chained to the overview hiding, and report their state to the dash so it
+     * does not auto-hide out from under them. That bookkeeping is the same
+     * whichever popup it is.
+     *
+     * @param {string} kind which popup, so each keeps its own instance
+     * @param {Function} createMenu builds the popup on first use
+     * @returns {boolean} always false, so callers can return it directly
+     */
+    _toggleAuxMenu(kind, createMenu) {
+        let menu = this._auxMenu(kind);
 
-            this._previewMenu.connect('open-state-changed', (menu, isPoppedUp) => {
+        if (!menu) {
+            // The manager is kept alongside the menu so it stays alive for as
+            // long as the menu it arbitrates.
+            const menuManager = new PopupMenu.PopupMenuManager(this);
+            menu = createMenu();
+            this._auxMenus.set(kind, {menu, menuManager});
+            menuManager.addMenu(menu);
+
+            menu.connect('open-state-changed', (_menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
             });
-            const id = Main.overview.connect('hiding', () => {
-                this._previewMenu.close();
-            });
-            this._previewMenu.actor.connect('destroy', () => {
+            const id = Main.overview.connect('hiding', () => menu.close());
+            menu.actor.connect('destroy', () => {
                 Main.overview.disconnect(id);
+                this._auxMenus.delete(kind);
             });
         }
 
-        this.emit('menu-state-changed', !this._previewMenu.isOpen);
+        this.emit('menu-state-changed', !menu.isOpen);
 
-        if (this._previewMenu.isOpen)
-            this._previewMenu.close();
+        if (menu.isOpen)
+            menu.close();
         else
-            this._previewMenu.popup();
+            menu.popup();
 
         return false;
+    }
+
+    _windowPreviews() {
+        return this._toggleAuxMenu('previews',
+            () => new WindowPreview.WindowPreviewMenu(this));
     }
 
     // Try to do the right thing when attempting to launch a new window of an app. In
