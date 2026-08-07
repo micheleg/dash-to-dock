@@ -2,5 +2,6 @@ prefs.js
 docking.js
 appIcons.js
 appIconsDecorator.js
+folderStack.js
 locations.js
 Settings.ui

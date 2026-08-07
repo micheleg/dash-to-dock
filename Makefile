@@ -15,6 +15,7 @@ EXTRA_MODULES = \
 				appIconsDecorator.js \
                 appIconIndicators.js \
                 fileManager1API.js \
+                folderStack.js \
                 imports.js \
                 launcherAPI.js \
                 locations.js \
