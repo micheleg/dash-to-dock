@@ -580,6 +580,13 @@ const DockedDash = GObject.registerClass({
             Utils.SignalsHandlerFlags.CONNECT_AFTER,
         ], [
             settings,
+            'changed::show-downloads',
+            () => {
+                this.dash.resetAppIcons();
+            },
+            Utils.SignalsHandlerFlags.CONNECT_AFTER,
+        ], [
+            settings,
             'changed::isolate-locations',
             () => this.dash.resetAppIcons(),
             Utils.SignalsHandlerFlags.CONNECT_AFTER,
@@ -1830,6 +1837,10 @@ export class DockManager {
         return this._trash;
     }
 
+    get downloads() {
+        return this._downloads;
+    }
+
     get desktopIconsUsableArea() {
         return this._desktopIconsUsableArea;
     }
@@ -1851,9 +1862,10 @@ export class DockManager {
     }
 
     _ensureLocations() {
-        const {showMounts, showTrash} = this.settings;
+        const {showMounts, showTrash, showDownloads} = this.settings;
+        const anyLocation = showTrash || showMounts || showDownloads;
 
-        if (showTrash || showMounts) {
+        if (anyLocation) {
             if (!this._fm1Client)
                 this._fm1Client = new FileManager1API.FileManager1Client();
         } else if (this._fm1Client) {
@@ -1875,11 +1887,18 @@ export class DockManager {
             this._trash = null;
         }
 
+        if (showDownloads && !this._downloads) {
+            this._downloads = new Locations.Downloads();
+        } else if (!showDownloads && this._downloads) {
+            this._downloads.destroy();
+            this._downloads = null;
+        }
+
         Locations.unWrapFileManagerApp();
         [this._methodInjections, this._propertyInjections].forEach(
             injections => injections.removeWithLabel(Labels.LOCATIONS));
 
-        if (showMounts || showTrash) {
+        if (anyLocation) {
             if (this.settings.isolateLocations) {
                 const fileManagerApp = Locations.wrapFileManagerApp();
 
@@ -2036,6 +2055,10 @@ export class DockManager {
         ], [
             this._settings,
             'changed::show-mounts',
+            () => this._ensureLocations(),
+        ], [
+            this._settings,
+            'changed::show-downloads',
             () => this._ensureLocations(),
         ], [
             this._settings,
