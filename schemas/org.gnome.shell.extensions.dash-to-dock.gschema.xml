@@ -50,6 +50,16 @@
     <value value='8' nick='BINARY'/>
     <value value='9' nick='DOT'/>
   </enum>
+  <enum id='org.gnome.shell.extensions.dash-to-dock.downloads-stack-view'>
+    <value value='0' nick='AUTOMATIC'/>
+    <value value='1' nick='FAN'/>
+    <value value='2' nick='GRID'/>
+    <value value='3' nick='LIST'/>
+  </enum>
+  <enum id='org.gnome.shell.extensions.dash-to-dock.downloads-icon-display'>
+    <value value='0' nick='STACK'/>
+    <value value='1' nick='FOLDER'/>
+  </enum>
   <schema path="/org/gnome/shell/extensions/dash-to-dock/" id="org.gnome.shell.extensions.dash-to-dock">
     <key name="dock-position" enum="org.gnome.shell.extensions.dash-to-dock.position">
       <default>'BOTTOM'</default>
@@ -260,6 +270,27 @@
       <default>true</default>
       <summary>Show trash can</summary>
       <description>Show or hide the trash can icon in the dash</description>
+    </key>
+    <key type="b" name="show-downloads">
+      <default>false</default>
+      <summary>Show the Downloads folder</summary>
+      <description>Show or hide the Downloads folder icon in the dash</description>
+    </key>
+    <key name="downloads-stack-view" enum="org.gnome.shell.extensions.dash-to-dock.downloads-stack-view">
+      <default>'AUTOMATIC'</default>
+      <summary>How the Downloads stack shows its contents</summary>
+      <description>
+        Lay the folder contents out as a fan, a grid or a list. Automatic picks
+        a fan for a handful of files and a grid for more.
+      </description>
+    </key>
+    <key name="downloads-icon-display" enum="org.gnome.shell.extensions.dash-to-dock.downloads-icon-display">
+      <default>'STACK'</default>
+      <summary>How the Downloads dock icon looks</summary>
+      <description>
+        Show the plain folder icon, or preview the most recent contents on top
+        of it as a stack.
+      </description>
     </key>
     <key type="b" name="show-mounts">
       <default>true</default>
