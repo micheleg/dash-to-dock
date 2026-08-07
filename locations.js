@@ -26,6 +26,7 @@ const {signals: Signals} = imports;
 
 const FALLBACK_REMOVABLE_MEDIA_ICON = 'drive-removable-media';
 const FALLBACK_TRASH_ICON = 'user-trash';
+const FALLBACK_DOWNLOADS_ICON = 'folder-download';
 const FILE_MANAGER_DESKTOP_APP_ID = 'org.gnome.Nautilus.desktop';
 const ATTRIBUTE_METADATA_CUSTOM_ICON = 'metadata::custom-icon';
 const TRASH_URI = 'trash://';
@@ -1577,6 +1578,61 @@ export class Trash {
 }
 
 /**
+ * Resolve the user's Downloads directory, falling back to the conventional
+ * path when XDG has nothing configured.
+ *
+ * @returns {Gio.File | null} the directory, or null when it does not exist
+ */
+function getDownloadsLocation() {
+    const path = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_DOWNLOAD) ??
+        GLib.build_filenamev([GLib.get_home_dir(), 'Downloads']);
+
+    if (!GLib.file_test(path, GLib.FileTest.IS_DIR))
+        return null;
+
+    return Gio.File.new_for_path(path);
+}
+
+/**
+ * This class maintains a Shell.App representing the Downloads folder, so that
+ * it can be shown in the dash as a macOS-like stack.
+ */
+export class Downloads {
+    destroy() {
+        this._downloadsApp?.destroy();
+        this._downloadsApp = null;
+    }
+
+    _ensureApp() {
+        if (this._downloadsApp)
+            return;
+
+        const location = getDownloadsLocation();
+        if (!location)
+            return;
+
+        this._downloadsApp = makeLocationApp({
+            appInfo: new FolderAppInfo(location, {
+                cancellable: new Gio.Cancellable(),
+                iconName: FALLBACK_DOWNLOADS_ICON,
+            }),
+            fallbackIconName: FALLBACK_DOWNLOADS_ICON,
+        });
+    }
+
+    /**
+     * Zero or one app, the way Removables reports zero or more: the folder may
+     * not exist, and that is not something every caller should have to check.
+     *
+     * @returns {Shell.App[]} the Downloads app, or nothing
+     */
+    getApps() {
+        this._ensureApp();
+        return this._downloadsApp ? [this._downloadsApp] : [];
+    }
+}
+
+/**
  * This class maintains Shell.App representations for removable devices
  * plugged into the system, and keeps the list of Apps up-to-date as
  * devices come and go and are mounted and unmounted.
@@ -1742,6 +1798,9 @@ function getApps() {
 
     if (dockManager.trash)
         locationApps.push(dockManager.trash.getApp());
+
+    if (dockManager.downloads)
+        locationApps.push(...dockManager.downloads.getApps());
 
     return locationApps;
 }
