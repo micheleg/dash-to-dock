@@ -1189,6 +1189,52 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         return item;
     }
 
+    /**
+     * A radio group backed by an enum setting, as a submenu.
+     *
+     * @param {string} title the submenu label
+     * @param {string} key the gschema key holding the enum
+     * @param {Array<{value: number, label: string}>} choices the options
+     */
+    _appendEnumSubMenu(title, key, choices) {
+        const {settings} = Docking.DockManager;
+        const submenu = new PopupMenu.PopupSubMenuMenuItem(title);
+
+        choices.forEach(({value, label}) => {
+            const item = new PopupMenu.PopupMenuItem(label);
+            item.setOrnament(settings.get_enum(key) === value
+                ? PopupMenu.Ornament.DOT
+                : PopupMenu.Ornament.NONE);
+            item.connect('activate', () => {
+                settings.set_enum(key, value);
+                this.emit('activate-window', null);
+            });
+            submenu.menu.addMenuItem(item);
+        });
+
+        this.addMenuItem(submenu);
+    }
+
+    /**
+     * The macOS-style "View content as" and "Display as" choices, shown only on
+     * a folder stack icon.
+     */
+    _appendFolderStackItems() {
+        this._appendSeparator();
+
+        this._appendEnumSubMenu(__('View content as'), 'downloads-stack-view', [
+            {value: FolderStack.ViewMode.AUTOMATIC, label: __('Automatic')},
+            {value: FolderStack.ViewMode.FAN, label: __('Fan')},
+            {value: FolderStack.ViewMode.GRID, label: __('Grid')},
+            {value: FolderStack.ViewMode.LIST, label: __('List')},
+        ]);
+
+        this._appendEnumSubMenu(__('Display as'), 'downloads-icon-display', [
+            {value: FolderStack.IconDisplay.STACK, label: __('Stack')},
+            {value: FolderStack.IconDisplay.FOLDER, label: __('Folder')},
+        ]);
+    }
+
     popup(_activatingButton) {
         this._rebuildMenu();
         this.open(BoxPointer.PopupAnimation.FULL);
@@ -1285,6 +1331,9 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                     this.emit('activate-window', null);
                 });
             }
+
+            if (this.sourceActor instanceof DockFolderAppIcon)
+                this._appendFolderStackItems();
 
             const canFavorite = global.settings.is_writable('favorite-apps') &&
                 (this.sourceActor instanceof DockAppIcon) &&
