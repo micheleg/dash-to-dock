@@ -1221,6 +1221,123 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkListBoxRow" id="show_downloads_row">
+                        <property name="child">
+                          <object class="GtkGrid" id="shrink_dash6">
+                            <property name="can_focus">0</property>
+                            <property name="margin_start">12</property>
+                            <property name="margin_end">12</property>
+                            <property name="margin_top">12</property>
+                            <property name="margin_bottom">12</property>
+                            <property name="column_spacing">32</property>
+                            <child>
+                              <object class="GtkSwitch" id="show_downloads_switch">
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <layout>
+                                  <property name="column">1</property>
+                                  <property name="row">0</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="shrink_dash_label6">
+                                <property name="can_focus">0</property>
+                                <property name="hexpand">1</property>
+                                <property name="halign">start</property>
+                                <property name="label" translatable="yes">Show Downloads folder</property>
+
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">0</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="show_downloads_description">
+                                <property name="can_focus">0</property>
+                                <property name="hexpand">1</property>
+                                <property name="halign">start</property>
+                                <property name="wrap">1</property>
+                                <property name="label" translatable="yes">Click the icon to see the folder contents in a stack</property>
+                                <style>
+                                  <class name="dim-label"/>
+                                </style>
+
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">1</property>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="downloads_stack_view_label">
+                                <property name="can_focus">0</property>
+                                <property name="hexpand">1</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">12</property>
+                                <property name="label" translatable="yes">View content as</property>
+
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">2</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="downloads_stack_view_combo">
+                                <property name="can_focus">0</property>
+                                <property name="valign">center</property>
+                                <property name="margin_top">12</property>
+                                <items>
+                                  <item translatable="yes">Automatic</item>
+                                  <item translatable="yes">Fan</item>
+                                  <item translatable="yes">Grid</item>
+                                  <item translatable="yes">List</item>
+                                </items>
+
+                                <layout>
+                                  <property name="column">1</property>
+                                  <property name="row">2</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="downloads_icon_display_label">
+                                <property name="can_focus">0</property>
+                                <property name="hexpand">1</property>
+                                <property name="halign">start</property>
+                                <property name="margin_top">12</property>
+                                <property name="label" translatable="yes">Display as</property>
+
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">3</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="downloads_icon_display_combo">
+                                <property name="can_focus">0</property>
+                                <property name="valign">center</property>
+                                <property name="margin_top">12</property>
+                                <items>
+                                  <item translatable="yes">Stack</item>
+                                  <item translatable="yes">Folder</item>
+                                </items>
+
+                                <layout>
+                                  <property name="column">1</property>
+                                  <property name="row">3</property>
+                                </layout>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkListBoxRow" id="listboxrow19">
                         <property name="child">
                           <object class="GtkGrid" id="shrink_dash5">
