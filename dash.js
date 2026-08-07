@@ -826,7 +826,17 @@ export const DockDash = GObject.registerClass({
                     newApps.push(removable);
             });
         } else {
-            oldApps = oldApps.filter(app => !app.location || app.isTrash);
+            oldApps = oldApps.filter(app =>
+                !app.location || app.isTrash || app.isFolder);
+        }
+
+        if (dockManager.downloads) {
+            dockManager.downloads.getApps().forEach(downloadsApp => {
+                if (!newApps.includes(downloadsApp))
+                    newApps.push(downloadsApp);
+            });
+        } else {
+            oldApps = oldApps.filter(app => !app.isFolder);
         }
 
         if (dockManager.trash) {
