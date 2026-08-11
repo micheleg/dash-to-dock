@@ -56,14 +56,15 @@ const clickAction = Object.freeze({
     MINIMIZE: 1,
     LAUNCH: 2,
     CYCLE_WINDOWS: 3,
-    MINIMIZE_OR_OVERVIEW: 4,
-    PREVIEWS: 5,
-    MINIMIZE_OR_PREVIEWS: 6,
-    FOCUS_OR_PREVIEWS: 7,
-    FOCUS_OR_APP_SPREAD: 8,
-    FOCUS_MINIMIZE_OR_PREVIEWS: 9,
-    FOCUS_MINIMIZE_OR_APP_SPREAD: 10,
-    QUIT: 11,
+    CYCLE_MINIMIZE: 4,
+    MINIMIZE_OR_OVERVIEW: 5,
+    PREVIEWS: 6,
+    MINIMIZE_OR_PREVIEWS: 7,
+    FOCUS_OR_PREVIEWS: 8,
+    FOCUS_OR_APP_SPREAD: 9,
+    FOCUS_MINIMIZE_OR_PREVIEWS: 10,
+    FOCUS_MINIMIZE_OR_APP_SPREAD: 11,
+    QUIT: 12,
 });
 
 const scrollAction = Object.freeze({
@@ -616,6 +617,13 @@ export const DockAbstractAppIcon = GObject.registerClass({
                 }
                 break;
 
+            case clickAction.CYCLE_MINIMIZE:
+                if (!Main.overview.visible)
+                    this._cycleThroughWindowsAndMinimize();
+                else
+                    this.app.activate();
+                break;
+
             case clickAction.FOCUS_OR_PREVIEWS:
                 if (this.focused && !hasUrgentWindows &&
                     (windows.length > 1 || modifiers || button !== 1)) {
@@ -919,6 +927,43 @@ export const DockAbstractAppIcon = GObject.registerClass({
         const window = recentlyClickedAppWindows[index];
 
         Main.activateWindow(window);
+    }
+
+    _cycleThroughWindowsAndMinimize(reversed) {
+        // getWindows() is the AppIcon accessor for the app's unfiltered window
+        // list. Sort by stable Mutter window IDs rather than MRU order.
+        const windows = [...this.getWindows()]
+            .sort((a, b) => a.get_id() - b.get_id());
+        if (!windows.length)
+            return;
+
+        const focusedWindow = windows.find(w => w.has_focus());
+
+        if (windows.length === 1) {
+            if (focusedWindow)
+                focusedWindow.minimize();
+            else
+                Main.activateWindow(windows[0]);
+            return;
+        }
+
+        // If this app is not focused, start its cycle at the appropriate end.
+        if (!focusedWindow) {
+            Main.activateWindow(windows[reversed ? windows.length - 1 : 0]);
+            return;
+        }
+
+        const focusedIndex = windows.indexOf(focusedWindow);
+        const nextIndex = focusedIndex + (reversed ? -1 : 1);
+        if (nextIndex >= 0 && nextIndex < windows.length) {
+            Main.activateWindow(windows[nextIndex]);
+            return;
+        }
+
+        // Minimize the focused window last: minimizing it first can cause
+        // GNOME to raise background windows during the animation.
+        windows.filter(w => w !== focusedWindow).forEach(w => w.minimize());
+        focusedWindow.minimize();
     }
 
     _resetRecentlyClickedApp() {
