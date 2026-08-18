@@ -1265,8 +1265,7 @@ const DockedDash = GObject.registerClass({
             (this._position === St.Side.RIGHT ? this._box.width : 0);
         const y = this.y + this._slider.y -
             (this._position === St.Side.BOTTOM ? this._box.height : 0);
-        const width = this._box.width;
-        const height = this._box.height;
+        const {width, height} = this._box;
         const geometry = this._staticBoxGeometry;
 
         if (geometry && geometry.x === x && geometry.y === y &&
