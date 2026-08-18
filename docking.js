@@ -262,6 +262,7 @@ const DockedDash = GObject.registerClass({
         // this store size and the position where the dash is shown;
         // used by intellihide module to check window overlap.
         this._staticBox = new Clutter.ActorBox();
+        this._staticBoxGeometry = null;
 
         // Initialize pressure barrier variables
         this._canUsePressure = false;
@@ -1260,12 +1261,20 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateStaticBox() {
-        this._staticBox.init_rect(
-            this.x + this._slider.x - (this._position === St.Side.RIGHT ? this._box.width : 0),
-            this.y + this._slider.y - (this._position === St.Side.BOTTOM ? this._box.height : 0),
-            this._box.width,
-            this._box.height
-        );
+        const x = this.x + this._slider.x -
+            (this._position === St.Side.RIGHT ? this._box.width : 0);
+        const y = this.y + this._slider.y -
+            (this._position === St.Side.BOTTOM ? this._box.height : 0);
+        const width = this._box.width;
+        const height = this._box.height;
+        const geometry = this._staticBoxGeometry;
+
+        if (geometry && geometry.x === x && geometry.y === y &&
+            geometry.width === width && geometry.height === height)
+            return;
+
+        this._staticBoxGeometry = {x, y, width, height};
+        this._staticBox.init_rect(x, y, width, height);
 
         this._intellihide.updateTargetBox(this._staticBox);
         this._updateVisibleDesktop();
