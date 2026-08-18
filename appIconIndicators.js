@@ -15,7 +15,10 @@ import {
     Utils,
 } from './imports.js';
 
+import {Extension} from './dependencies/shell/extensions/extension.js';
+
 const {cairo: Cairo} = imports;
+const {ngettext} = Extension;
 
 const RunningIndicatorStyle = Object.freeze({
     DEFAULT: 0,
@@ -790,6 +793,7 @@ export class UnityIndicator extends IndicatorBase {
     destroy() {
         this._notificationBadgeBin?.destroy();
         this._notificationBadgeBin = null;
+        this._updateNotificationAccessibility(0);
         this._hideProgressOverlay();
         this.setUrgent(false);
         this.setUpdating(false);
@@ -905,6 +909,30 @@ export class UnityIndicator extends IndicatorBase {
         ]);
     }
 
+    _updateNotificationAccessibility(count) {
+        const appName = this._source.app?.get_name();
+        if (!appName)
+            return;
+
+        const accessibleName = count > 0
+            ? ngettext('%s, %d unread notification', '%s, %d unread notifications', count)
+                .format(appName, count)
+            : appName;
+
+        if (this._source.label_actor === null) {
+            // Dock: name owned by parent DashItemContainer, see dash.js
+            const itemContainer = this._source.get_parent?.();
+            if (itemContainer)
+                itemContainer.accessible_name = accessibleName;
+            this._source.accessible_name = accessibleName;
+        } else {
+            // Overview: no per-icon parent, update icon and label directly
+            this._source.accessible_name = accessibleName;
+            if (this._source.label_actor)
+                this._source.label_actor.accessible_name = accessibleName;
+        }
+    }
+
     setNotificationCount(count) {
         if (count > 0) {
             const text = this._notificationBadgeCountToText(count);
@@ -914,6 +942,8 @@ export class UnityIndicator extends IndicatorBase {
             this._notificationBadgeBin.destroy();
             this._notificationBadgeBin = null;
         }
+
+        this._updateNotificationAccessibility(count);
     }
 
     _showProgressOverlay() {
