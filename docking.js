@@ -512,7 +512,7 @@ const DockedDash = GObject.registerClass({
 
         // Remove pointer watcher
         if (this._dockWatch) {
-            this._dockWatch.destroy();
+            Utils.getCursorTracker().disconnect(this._dockWatch);
             this._dockWatch = null;
         }
 
@@ -525,7 +525,7 @@ const DockedDash = GObject.registerClass({
     _updateAutoHideBarriers() {
         // Remove pointer watcher
         if (this._dockWatch) {
-            this._dockWatch.destroy();
+            Utils.getCursorTracker().disconnect(this._dockWatch);
             this._dockWatch = null;
         }
 
@@ -920,8 +920,9 @@ const DockedDash = GObject.registerClass({
         if (this._autohideIsEnabled &&
             (!Utils.supportsExtendedBarriers() ||
              !DockManager.settings.requirePressureToShow)) {
-            this._dockWatch = new Utils.PointerWatcher(
-                this._checkDockDwell.bind(this));
+            this._dockWatch = Utils.getCursorTracker().connect(
+                'position-invalidated',
+                () => this._checkDockDwell(...global.get_pointer()));
             this._dockDwelling = false;
             this._dockDwellUserTime = 0;
         }
