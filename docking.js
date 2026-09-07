@@ -16,7 +16,6 @@ import {
     Layout,
     Main,
     OverviewControls,
-    PointerWatcher,
     SwitcherPopup,
     Workspace,
     WorkspacesView,
@@ -49,7 +48,6 @@ const {gettext: __} = Extension;
 
 const {signals: Signals} = imports;
 
-const DOCK_DWELL_CHECK_INTERVAL = 100;
 const ICON_ANIMATOR_DURATION = 3000;
 const STARTUP_ANIMATION_TIME = 500;
 
@@ -514,7 +512,7 @@ const DockedDash = GObject.registerClass({
 
         // Remove pointer watcher
         if (this._dockWatch) {
-            PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
+            this._dockWatch.destroy();
             this._dockWatch = null;
         }
 
@@ -527,7 +525,7 @@ const DockedDash = GObject.registerClass({
     _updateAutoHideBarriers() {
         // Remove pointer watcher
         if (this._dockWatch) {
-            PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
+            this._dockWatch.destroy();
             this._dockWatch = null;
         }
 
@@ -922,9 +920,8 @@ const DockedDash = GObject.registerClass({
         if (this._autohideIsEnabled &&
             (!Utils.supportsExtendedBarriers() ||
              !DockManager.settings.requirePressureToShow)) {
-            const pointerWatcher = PointerWatcher.getPointerWatcher();
-            this._dockWatch = pointerWatcher.addWatch(
-                DOCK_DWELL_CHECK_INTERVAL, this._checkDockDwell.bind(this));
+            this._dockWatch = new Utils.PointerWatcher(
+                this._checkDockDwell.bind(this));
             this._dockDwelling = false;
             this._dockDwellUserTime = 0;
         }

@@ -729,6 +729,19 @@ export function getMonitorManager() {
 }
 
 /**
+ * Gets the cursor tracker, using the API available in the current
+ * Gnome Shell version: `global.backend.get_cursor_tracker()` is only
+ * available since Gnome Shell 48, while older versions require using
+ * `Meta.CursorTracker.get_for_display()`.
+ *
+ * @returns {Meta.CursorTracker} The cursor tracker.
+ */
+export function getCursorTracker() {
+    return global.backend.get_cursor_tracker?.() ??
+        Meta.CursorTracker.get_for_display(global.display);
+}
+
+/**
  * @param laterType
  * @param callback
  */
@@ -784,6 +797,67 @@ export function addActor(element, actor) {
         element.add_actor(actor);
     else
         element.add_child(actor);
+}
+
+/**
+ * Tracks the pointer position, notifying the given callback whenever it
+ * changes.
+ *
+ * This replaces the Gnome Shell `PointerWatcher` module (that polled the
+ * pointer position), which has been removed in Gnome Shell 51 in favor of
+ * the `Meta.CursorTracker` notifications.
+ */
+export class PointerWatcher {
+    constructor(callback) {
+        if (!(callback instanceof Function))
+            throw new TypeError('Not a valid callback');
+
+        this._callback = callback;
+        this._cursorTracker = getCursorTracker();
+        // Avoid unreliably calling the callback for the current position
+        [this._pointerX, this._pointerY] = global.get_pointer();
+        this._positionInvalidatedId = this._cursorTracker.connect(
+            'position-invalidated', () => this._queueUpdate());
+    }
+
+    destroy() {
+        if (this._laterId) {
+            laterRemove(this._laterId);
+            this._laterId = 0;
+        }
+
+        if (this._positionInvalidatedId) {
+            this._cursorTracker.disconnect(this._positionInvalidatedId);
+            this._positionInvalidatedId = 0;
+        }
+
+        this._callback = null;
+    }
+
+    _queueUpdate() {
+        if (this._laterId)
+            return;
+
+        // Coalesce multiple pointer changes happening in the same frame
+        this._laterId = laterAdd(Meta.LaterType.BEFORE_REDRAW, () => {
+            this._laterId = 0;
+            this._updatePointer();
+            return GLib.SOURCE_REMOVE;
+        });
+    }
+
+    _updatePointer() {
+        if (!this._callback)
+            return;
+
+        const [x, y] = global.get_pointer();
+        if (this._pointerX === x && this._pointerY === y)
+            return;
+
+        this._pointerX = x;
+        this._pointerY = y;
+        this._callback(x, y);
+    }
 }
 
 export const clamp = (v, m, M) => Math.min(Math.max(v, m), M);
