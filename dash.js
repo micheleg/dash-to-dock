@@ -170,7 +170,8 @@ export const DockDash = GObject.registerClass({
             name: 'dashtodockDashContainer',
             x_align: Clutter.ActorAlign.CENTER,
             y_align: Clutter.ActorAlign.CENTER,
-            vertical: !this._isHorizontal,
+            orientation: this._isHorizontal ? Clutter.Orientation.HORIZONTAL :
+                Clutter.Orientation.VERTICAL,
             y_expand: this._isHorizontal,
             x_expand: !this._isHorizontal,
         });
@@ -190,13 +191,15 @@ export const DockDash = GObject.registerClass({
             name: 'dashtodockBoxContainer',
             x_align: Clutter.ActorAlign.FILL,
             y_align: Clutter.ActorAlign.FILL,
-            vertical: !this._isHorizontal,
+            orientation: this._isHorizontal ? Clutter.Orientation.HORIZONTAL :
+                Clutter.Orientation.VERTICAL,
         });
         this._boxContainer.add_style_class_name(Theming.PositionStyleClass[this._position]);
 
         const rtl = Clutter.get_default_text_direction() === Clutter.TextDirection.RTL;
         this._box = new St.BoxLayout({
-            vertical: !this._isHorizontal,
+            orientation: this._isHorizontal ? Clutter.Orientation.HORIZONTAL :
+                Clutter.Orientation.VERTICAL,
             clip_to_allocation: false,
             ...!this._isHorizontal ? {layout_manager: new DockDashIconsVerticalLayout()} : {},
             x_align: rtl ? Clutter.ActorAlign.END : Clutter.ActorAlign.START,
