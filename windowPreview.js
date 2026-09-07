@@ -382,10 +382,14 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         });
 
         const box = new St.BoxLayout({
-            vertical: true,
             reactive: true,
             x_expand: true,
         });
+
+        if (box.orientation !== undefined)
+            box.orientation = Clutter.Orientation.VERTICAL;
+        else
+            box.vertical = true;
 
         if (box.add) {
             box.add(overlayGroup);
