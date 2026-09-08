@@ -221,6 +221,11 @@
       <summary>Show running apps</summary>
       <description>Show or hide running applications icons in the dash</description>
     </key>
+    <key type="b" name="group-apps">
+      <default>true</default>
+      <summary>Group applications</summary>
+      <description>Group application windows under a single icon in the dash</description>
+    </key>
     <key type="b" name="isolate-workspaces">
       <default>false</default>
       <summary>Provide workspace isolation</summary>
@@ -624,6 +629,11 @@
       <default>false</default>
       <summary>Hide application tooltip</summary>
       <description>Hide tooltip when hovering application in the dash.</description>
+    </key>
+    <key name="tooltip-max-width-percent" type="i">
+      <default>60</default>
+      <summary>Maximum tooltip width in percent</summary>
+      <description>Maximum tooltip label width as a percentage of the monitor width.</description>
     </key>
     <key name="show-icons-emblems" type="b">
       <default>true</default>
