@@ -1560,8 +1560,19 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
         this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(__('Dash to Dock')));
 
         const item = this._appendMenuItem(_('Settings'));
-        item.connect('activate', () =>
-            Docking.DockManager.extension.openPreferences());
+        item.connect('activate', () => {
+            // The Shell prefs service refuses to open a second prefs dialog
+            // without presenting the existing one, so requesting it again
+            // would silently do nothing: if our prefs window (whose title is
+            // set to the extension name) is already open, focus it instead.
+            const {extension} = Docking.DockManager;
+            const prefsWindow = global.get_window_actors().map(a => a.meta_window)
+                .find(w => w.get_title() === extension.metadata.name);
+            if (prefsWindow)
+                Main.activateWindow(prefsWindow);
+            else
+                extension.openPreferences();
+        });
     }
 }
 
