@@ -63,7 +63,8 @@ const clickAction = Object.freeze({
     FOCUS_OR_APP_SPREAD: 8,
     FOCUS_MINIMIZE_OR_PREVIEWS: 9,
     FOCUS_MINIMIZE_OR_APP_SPREAD: 10,
-    QUIT: 11,
+    CYCLE_OR_MINIMIZE: 11,
+    QUIT: 12,
 });
 
 const scrollAction = Object.freeze({
@@ -603,9 +604,23 @@ export const DockAbstractAppIcon = GObject.registerClass({
                 break;
 
             case clickAction.CYCLE_WINDOWS:
+            case clickAction.CYCLE_OR_MINIMIZE: {
+                const shouldMinimize = buttonAction === clickAction.CYCLE_OR_MINIMIZE;
+
+                const shouldCycle =
+                    this.focused ||
+                        (
+                            shouldMinimize &&
+                            recentlyClickedApp === this.app &&
+                            recentlyClickedAppWindows[
+                                recentlyClickedAppIndex %
+                                recentlyClickedAppWindows.length
+                            ] === 'MINIMIZE'
+                        );
+
                 if (!Main.overview.visible) {
-                    if (this.focused && !hasUrgentWindows) {
-                        this._cycleThroughWindows();
+                    if (shouldCycle && !hasUrgentWindows) {
+                        this._cycleThroughWindows(false, shouldMinimize);
                     } else {
                         // Activate the first window
                         const [w] = windows;
@@ -615,6 +630,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
                     this.app.activate();
                 }
                 break;
+            }
 
             case clickAction.FOCUS_OR_PREVIEWS:
                 if (this.focused && !hasUrgentWindows &&
@@ -880,7 +896,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
         windows.forEach(w => w.delete(time));
     }
 
-    _cycleThroughWindows(reversed) {
+    _cycleThroughWindows(reversed, shouldMinimize) {
         // Store for a little amount of time last clicked app and its windows
         // since the order changes upon window interaction
         const MEMORY_TIME = 3000;
@@ -889,6 +905,8 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         if (appWindows.length < 1)
             return;
+
+        if (shouldMinimize) appWindows.push('MINIMIZE');
 
         if (recentlyClickedAppLoopId > 0)
             GLib.source_remove(recentlyClickedAppLoopId);
@@ -918,7 +936,12 @@ export const DockAbstractAppIcon = GObject.registerClass({
         const index = recentlyClickedAppIndex % recentlyClickedAppWindows.length;
         const window = recentlyClickedAppWindows[index];
 
-        Main.activateWindow(window);
+        if (window === 'MINIMIZE') {
+            const [w] = recentlyClickedAppWindows;
+            this._minimizeWindow(w);
+        } else {
+            Main.activateWindow(window);
+        }
     }
 
     _resetRecentlyClickedApp() {
