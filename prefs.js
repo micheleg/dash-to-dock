@@ -371,9 +371,13 @@ const DockSettings = GObject.registerClass({
         dockMonitorCombo.remove_all();
         let primaryIndex = -1;
 
-        // Add connected monitors
+        // Add connected monitors and retain the selected monitor when inactive
         for (const monitor of this._monitorsConfig.monitors) {
-            if (!monitor.active && monitor.index !== preferredMonitor)
+            const isPreferredMonitor = monitor.index === preferredMonitor ||
+                (preferredMonitor === -2 &&
+                    preferredMonitorByConnector === monitor.connector);
+
+            if (!monitor.active && !isPreferredMonitor)
                 continue;
 
             if (monitor.isPrimary) {
@@ -391,8 +395,7 @@ const DockSettings = GObject.registerClass({
 
             this._monitors.push(monitor);
 
-            if (monitor.index === preferredMonitor ||
-                (preferredMonitor === -2 && preferredMonitorByConnector === monitor.connector))
+            if (isPreferredMonitor)
                 dockMonitorCombo.set_active(this._monitors.length - 1);
         }
 
@@ -415,6 +418,21 @@ const DockSettings = GObject.registerClass({
             () => this._updateMonitorsSettings());
         this._settings.connect('changed::preferred-monitor-by-connector',
             () => this._updateMonitorsSettings());
+
+        const hideUnavailableMonitorButton = new Gtk.CheckButton({
+            label: __('Hide when this monitor is unavailable'),
+            margin_top: 12,
+        });
+        this._builder.get_object('dock_monitor_grid').attach(
+            hideUnavailableMonitorButton, 0, 3, 2, 1);
+        this._settings.bind('hide-if-monitor-unavailable',
+            hideUnavailableMonitorButton,
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('multi-monitor',
+            hideUnavailableMonitorButton,
+            'sensitive',
+            Gio.SettingsBindFlags.INVERT_BOOLEAN);
 
         // Position option
         const position = this._settings.get_enum('dock-position');
