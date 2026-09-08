@@ -461,7 +461,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
                     // scrollable so the minimum height is smaller than the natural height.
                     const monitorIndex = Main.layoutManager.findIndexForActor(this);
                     const workArea = Main.layoutManager.getWorkAreaForMonitor(monitorIndex);
-                    const position = Utils.getPosition();
+                    const position = Utils.getPosition(monitorIndex);
                     const {scaleFactor} = St.ThemeContext.get_for_stage(global.stage);
                     const isHorizontal = position === St.Side.TOP || position === St.Side.BOTTOM;
                     // If horizontal also remove the height of the dash
@@ -1018,7 +1018,7 @@ export function makeAppIcon(app, monitorIndex, iconAnimator) {
  */
 const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
     constructor(source) {
-        super(source, 0.5, Utils.getPosition());
+        super(source, 0.5, Utils.getPosition(source.monitorIndex));
 
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
 
@@ -1590,7 +1590,8 @@ export function itemShowLabel() {
 
     let x, y, xOffset, yOffset;
 
-    const position = Utils.getPosition();
+    const position = Utils.getPosition(
+        this.monitorIndex ?? Main.layoutManager.findIndexForActor(this));
     const labelOffset = node.get_length('-x-offset');
 
     switch (position) {
