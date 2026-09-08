@@ -317,6 +317,11 @@
       <default>false</default>
       <summary>Center icons when dock container is extended to all the available size</summary>
     </key>
+    <key name="dock-margin-size" type="i">
+      <default>0</default>
+      <summary>Dock margin size</summary>
+      <description>The margin size around the dock in pixels.</description>
+    </key>
     <key type="i" name="preferred-monitor">
       <default>-2</default>
       <summary>DEPRECATED: Monitor on which putting the dock (by index)</summary>
