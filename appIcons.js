@@ -565,8 +565,19 @@ export const DockAbstractAppIcon = GObject.registerClass({
                         // minimize all windows on double click and always in
                         // the case of primary click without additional modifiers
                         let clickCount = 0;
-                        if (Clutter.EventType.CLUTTER_BUTTON_PRESS)
-                            clickCount = event.get_click_count();
+                        // Icon activation is driven by St.Button's clicked
+                        // signal, emitted on button release, so the current
+                        // event is a BUTTON_RELEASE: the previous check for
+                        // the non-existent Clutter.EventType.CLUTTER_BUTTON_PRESS
+                        // was always falsy, leaving the click count at zero.
+                        // Read it from press and release events, and call
+                        // get_click_count() optionally since GNOME 50 removed
+                        // it from Clutter.Event (there a plain click still
+                        // minimizes, only double-click detection is skipped).
+                        const eventType = event?.type();
+                        if (eventType === Clutter.EventType.BUTTON_PRESS ||
+                            eventType === Clutter.EventType.BUTTON_RELEASE)
+                            clickCount = event.get_click_count?.() ?? 0;
                         const allWindows = (button === 1 && !modifiers) || clickCount > 1;
                         this._minimizeWindow(allWindows);
                     } else {
