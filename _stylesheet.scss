@@ -502,6 +502,97 @@ $dock_style_modes: null, shrink, extended, extended-shrink;
     border-radius: 0px;
 }
 
+/* Folder stack popup */
+$stack_item_padding: $base_padding;
+$stack_item_radius: $base_border_radius;
+
+.dashtodock-stack-grid {
+    padding: $base_padding * 2;
+    spacing-rows: $base_margin;
+    spacing-columns: $base_margin;
+}
+
+/* The fan floats free, the way it does on macOS. The bubble chrome is split
+ * across two selectors in the shell theme: the arrow and the minimum width sit
+ * on the boxpointer, the visible panel on .popup-menu-content. Both have to go. */
+.dashtodock-stack-menu-bare {
+    -arrow-rise: 0;
+    -arrow-base: 0;
+    min-width: 0;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+
+    .popup-menu-content {
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        background-color: transparent;
+        box-shadow: none;
+    }
+
+    .dashtodock-stack-item {
+        /* Without the panel behind them the tiles need their own backing to
+         * stay readable over an arbitrary wallpaper. */
+        background-color: rgba(0, 0, 0, 0.55);
+        border-radius: $base_border_radius;
+    }
+
+    /* The tile that caps the arc keeps the same dark backing as the file tiles
+     * (a light one washes out over a bright wallpaper and reads as disabled);
+     * its folder icon and label are what set it apart. */
+    .dashtodock-stack-open-tile {
+        background-color: rgba(0, 0, 0, 0.68);
+    }
+}
+
+.dashtodock-stack-item {
+    padding: $stack_item_padding;
+    border-radius: $stack_item_radius;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    transition-duration: 100ms;
+
+    &:hover,
+    &:focus {
+        background-color: $remark_color;
+    }
+
+    &:active {
+        background-color: transparentize($fg_color, 0.75);
+    }
+}
+
+.dashtodock-stack-list {
+    padding: $base_padding;
+}
+
+.dashtodock-stack-item-tile {
+    .dashtodock-stack-item-label {
+        margin-top: $base_margin;
+        max-width: 100px;
+    }
+}
+
+.dashtodock-stack-item-row {
+    padding: $base_margin $base_padding;
+
+    .dashtodock-stack-item-label {
+        margin-left: $base_padding + 2px;
+        max-width: 320px;
+    }
+}
+
+.dashtodock-stack-item-label {
+    font-size: 0.9em;
+}
+
+.dashtodock-stack-empty {
+    padding: $base_padding * 2;
+    font-style: italic;
+}
+
 @for $i from 2 through 4 {
     #dashtodockContainer.bottom .metro.running#{$i}.focused,
     #dashtodockContainer.top .metro.running#{$i}.focused {
