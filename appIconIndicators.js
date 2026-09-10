@@ -404,6 +404,30 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         this._radius = Math.max(this._width / 22, this._borderWidth / 2);
         this._padding = 0; // distance from the margin
         this._spacing = this._radius + this._borderWidth; // separation between the dots
+
+        // Offset indicator actor outward so dots don't overlap the icon
+        const dotExtent = Math.ceil(Math.max(2 * this._radius + this._borderWidth, this._width / 10));
+        const margin = Math.max(2, Math.floor(this._width / 16));
+        const offset = dotExtent + margin;
+
+        switch (this._side) {
+        case St.Side.TOP:
+            this._area.translation_x = 0;
+            this._area.translation_y = -offset;
+            break;
+        case St.Side.BOTTOM:
+            this._area.translation_x = 0;
+            this._area.translation_y = offset;
+            break;
+        case St.Side.LEFT:
+            this._area.translation_x = -offset;
+            this._area.translation_y = 0;
+            break;
+        case St.Side.RIGHT:
+            this._area.translation_x = offset;
+            this._area.translation_y = 0;
+            break;
+        }
     }
 
     _updateIndicator() {
@@ -439,6 +463,8 @@ class RunningIndicatorDots extends RunningIndicatorBase {
     }
 
     destroy() {
+        this._area.translation_x = 0;
+        this._area.translation_y = 0;
         this._area.destroy();
         delete this._area;
         super.destroy();
