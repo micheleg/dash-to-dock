@@ -22,6 +22,44 @@ export const SignalsHandlerFlags = Object.freeze({
 const GENERIC_KEY = Symbol('generic');
 
 /**
+ * Get the scale used by the monitor's coordinate space.
+ *
+ * The St theme context follows the primary monitor, while Mutter keeps the
+ * scale for each logical monitor on Meta.Display.
+ *
+ * @param {number} monitorIndex the logical monitor index
+ * @returns {number} the monitor scale
+ */
+export function getMonitorScale(monitorIndex) {
+    return global.display.get_monitor_scale(monitorIndex);
+}
+
+/**
+ * Get the adjustment needed to make an St widget match a monitor's scale.
+ *
+ * St dimensions use the theme context scale, which follows the primary
+ * monitor. Normalize the target logical monitor's scale by that global scale.
+ *
+ * @param {number} monitorIndex the logical monitor index
+ * @returns {number} the scale adjustment relative to the theme context
+ */
+export function getMonitorScaleAdjustment(monitorIndex) {
+    const themeScale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+    return getMonitorScale(monitorIndex) / themeScale;
+}
+
+/**
+ * Get the CSS class containing the target and theme scale factors.
+ *
+ * @param {number} monitorIndex the logical monitor index
+ * @returns {string} the monitor scale CSS class
+ */
+export function getMonitorScaleClass(monitorIndex) {
+    const themeScale = St.ThemeContext.get_for_stage(global.stage).scale_factor;
+    return `dashtodock-scale-${getMonitorScale(monitorIndex)}-${themeScale}`;
+}
+
+/**
  * Simplify global signals and function injections handling
  * abstract class
  */
