@@ -139,7 +139,7 @@ msgstr "Preferencias"
 msgid "%s, %d unread notification"
 msgid_plural "%s, %d unread notifications"
 msgstr[0] "%s, %d notificación sin leer"
-msgstr[1] "Mostrar el dock si hay notificaciones urgentes"
+msgstr[1] "%s, %d notificaciones sin leer"
 
 #: locations.js:540
 msgid "Mount"
