@@ -5,6 +5,7 @@ import {
     Gio,
     GLib,
     GObject,
+    Meta,
     Shell,
     St,
 } from './dependencies/gi.js';
@@ -33,6 +34,40 @@ import {
 // taken from https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/main/js/ui/dash.js
 const DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME ?? 200;
 const DASH_VISIBILITY_TIMEOUT = 3;
+
+// Magnify-on-hover effect, based on the hover animation code from
+// simple-taskbar. Items only get translated, never resized, so the dash's
+// own layout never sees it happening and can't react to it (resize,
+// re-center, etc). The icon that actually looks bigger is a clone on a
+// separate overlay, positioned each frame to follow the translated item.
+// Falloff is a raised cosine rather than a gaussian or parabola, and sizes
+// are smoothed continuously frame to frame instead of using ease(), driven
+// by Mutter's laters API.
+const MAGNIFY_EXTENT = 7; // falloff radius, iconSize * MAGNIFY_EXTENT / 2
+const MAGNIFY_CONVEXITY = 1; // falloff curve exponent
+const MAGNIFY_SETTLE_MS = 80; // smoothing settle time
+const MAGNIFY_SETTLE_TIME_CONSTANTS = 2;
+const MAGNIFY_EPSILON = 0.01;
+
+// Move actor's properties partway toward targets instead of easing them,
+// so calling this again mid-transition just changes direction smoothly
+// instead of restarting an animation. Returns true once everything is
+// within epsilon of target.
+function applyMagnifySmoothed(actor, targets, smoothing, epsilon) {
+    let settled = true;
+    for (const [property, target] of Object.entries(targets)) {
+        actor.remove_transition(property);
+        const current = actor[property];
+        const next = current + (target - current) * smoothing;
+        if (Math.abs(target - next) < epsilon) {
+            actor[property] = target;
+            continue;
+        }
+        actor[property] = next;
+        settled = false;
+    }
+    return settled;
+}
 
 const Labels = Object.freeze({
     SHOW_MOUNTS: Symbol('show-mounts'),
@@ -215,7 +250,24 @@ export const DockDash = GObject.registerClass({
         }
 
         this._box._delegate = this;
+        this._box.reactive = true;
+        this._box.connect('motion-event', this._onBoxMotionEvent.bind(this));
+        this._box.connect('leave-event', this._onBoxLeaveEvent.bind(this));
+
+        // Magnify-on-hover state. _magnifyClones holds the overlay clone for
+        // each currently-grown item, _magnifyActive tracks whether the
+        // per-frame update loop should keep running.
+        this._magnifyClones = new Map();
+        this._magnifyOverlay = new Clutter.Actor({reactive: false});
+        Main.layoutManager.uiGroup.add_child(this._magnifyOverlay);
+        this._magnifyActive = false;
+        this._magnifyFrameLaterId = 0;
+        this._magnifySmoothingFactor = 0;
+        this._magnifyLastPassTime = 0;
+        this._magnifyPointerPos = null;
+        this._magnifyRestingCenters = null;
         this._boxContainer.add_child(this._box);
+
         Utils.addActor(this._scrollView, this._boxContainer);
         this._dashContainer.add_child(this._scrollView);
 
@@ -305,6 +357,10 @@ export const DockDash = GObject.registerClass({
             Main.overview,
             'window-drag-end',
             this._onWindowDragEnd.bind(this),
+        ], [
+            Docking.DockManager.settings,
+            'changed::magnify-icons',
+            () => this._updateMagnification(null),
         ]);
 
         this.connect('destroy', this._onDestroy.bind(this));
@@ -332,6 +388,10 @@ export const DockDash = GObject.registerClass({
 
     _onDestroy() {
         this.iconAnimator.destroy();
+
+        this._magnifyClones.clear();
+        this._magnifyOverlay.destroy();
+        this._magnifyStopFrames();
 
         if (this._requiresVisibilityTimeout) {
             GLib.source_remove(this._requiresVisibilityTimeout);
@@ -504,6 +564,283 @@ export const DockDash = GObject.registerClass({
             adjustment.set_value(value + delta);
 
         return Clutter.EVENT_STOP;
+    }
+
+    _onBoxMotionEvent(actor, event) {
+        if (!Docking.DockManager.settings.magnifyIcons)
+            return Clutter.EVENT_PROPAGATE;
+
+        const [stageX, stageY] = event.get_coords();
+        const [, x, y] = this._box.transform_stage_point(stageX, stageY);
+        this._magnifyPointerPos = this._isHorizontal ? x : y;
+        this._magnifyStartFrames();
+
+        return Clutter.EVENT_PROPAGATE;
+    }
+
+    _onBoxLeaveEvent(actor) {
+        // Clutter fires a leave-event when the pointer crosses onto or off
+        // a reactive child (an icon button) even though it never actually
+        // left the box. Check the real pointer position before trusting it.
+        const [stageX, stageY] = global.get_pointer();
+        const [success, x, y] = actor.transform_stage_point(stageX, stageY);
+        if (success && actor.get_allocation_box().contains(x, y))
+            return Clutter.EVENT_PROPAGATE;
+
+        this._magnifyPointerPos = null;
+        this._magnifyStartFrames();
+        return Clutter.EVENT_PROPAGATE;
+    }
+
+    // Drives the magnify effect off Mutter's laters API instead of a fixed
+    // timer, so it stays in sync with actual frames. Keeps running while
+    // hovering and for a bit after, to let things settle back down, then
+    // stops itself.
+    _magnifyStartFrames() {
+        if (this._magnifyFrameLaterId)
+            return;
+
+        this._magnifyFrameLaterId = global.compositor.get_laters().add(
+            Meta.LaterType.BEFORE_REDRAW, () => {
+                this._updateMagnification(this._magnifyPointerPos);
+
+                if (!this._magnifyActive && this._magnifyClones.size === 0) {
+                    this._magnifyFrameLaterId = 0;
+                    return GLib.SOURCE_REMOVE;
+                }
+
+                return GLib.SOURCE_CONTINUE;
+            });
+    }
+
+    _magnifyStopFrames() {
+        if (this._magnifyFrameLaterId) {
+            global.compositor.get_laters().remove(this._magnifyFrameLaterId);
+            this._magnifyFrameLaterId = 0;
+        }
+    }
+
+    // Recomputes the magnify effect for one frame. pointerPos is the
+    // coordinate along the dock's main axis relative to this._box, or null
+    // to settle everything back to resting size/position.
+    _updateMagnification(pointerPos) {
+        const {settings} = Docking.DockManager;
+        const maxScale = Math.max(1, settings.magnificationFactor);
+
+        const items = this._box.get_children().filter(actor => {
+            return actor.child && actor.child._delegate && actor.child._delegate.icon;
+        });
+
+        this._magnifyActive = pointerPos !== null && settings.magnifyIcons &&
+            maxScale > 1 && items.length > 0;
+        this._magnifyBeginSmoothingPass();
+
+        let pivotX = 0.5, pivotY = 0.5;
+        switch (this._position) {
+        case St.Side.BOTTOM: pivotY = 1; break;
+        case St.Side.TOP: pivotY = 0; break;
+        case St.Side.LEFT: pivotX = 0; break;
+        case St.Side.RIGHT: pivotX = 1; break;
+        }
+
+        if (!this._magnifyActive) {
+            // Keep using the cached resting sizes for the whole fade back
+            // down - not just the first settle frame - and only drop the
+            // cache once nothing is left transitioning.
+            for (const item of items) {
+                const restSize = this._magnifyRestingCenters?.get(item)?.restSize;
+                this._magnifySetItem(item, 0, restSize, maxScale, pivotX, pivotY);
+            }
+            for (const item of [...this._magnifyClones.keys()]) {
+                if (!items.includes(item)) {
+                    const restSize = this._magnifyRestingCenters?.get(item)?.restSize;
+                    this._magnifySetItem(item, 0, restSize, maxScale, pivotX, pivotY);
+                }
+            }
+            if (this._magnifyClones.size === 0)
+                this._magnifyRestingCenters = null;
+            return;
+        }
+
+        // other chrome can get re-stacked above ours while a hover session
+        // is still going, so keep raising it every frame instead of only
+        // when a clone is first created
+        this._magnifyOverlay.get_parent()?.set_child_above_sibling(
+            this._magnifyOverlay, null);
+
+        // Distances are measured against each item's resting position,
+        // cached once when a hover session starts and left alone until it
+        // ends. Reading live positions here would feed back on itself:
+        // resizing an item shifts its neighbours, which changes their
+        // distance to the pointer, which resizes them again next frame.
+        if (!this._magnifyRestingCenters) {
+            this._magnifyRestingCenters = new Map();
+            items.forEach(item => {
+                const box = item.get_allocation_box();
+                const center = this._isHorizontal
+                    ? (box.x1 + box.x2) / 2
+                    : (box.y1 + box.y2) / 2;
+                // The item's own resting size, not this.iconSize - a dash
+                // item is a bit bigger than its icon (padding, borders),
+                // so pinning it down to icon size alone shrank it a little
+                // every time.
+                const restSize = this._isHorizontal
+                    ? box.x2 - box.x1
+                    : box.y2 - box.y1;
+                this._magnifyRestingCenters.set(item, {center, restSize});
+            });
+        }
+
+        // Raised-cosine falloff: zero slope at both distance=0 and
+        // distance=radius, so it blends smoothly at the peak and at the
+        // resting edge with no corner in between.
+        const radius = this.iconSize * MAGNIFY_EXTENT / 2;
+        items.forEach(item => {
+            const resting = this._magnifyRestingCenters.get(item);
+            let level = 0;
+            if (resting) {
+                const distance = Math.abs(pointerPos - resting.center);
+                level = distance < radius
+                    ? Math.pow((Math.cos(distance * Math.PI / radius) + 1) / 2, MAGNIFY_CONVEXITY)
+                    : 0;
+            }
+            this._magnifySetItem(item, level, resting?.restSize, maxScale, pivotX, pivotY);
+        });
+
+        // Drop clones for icons that got removed from the dash mid-hover
+        const rowItems = new Set(items);
+        for (const item of [...this._magnifyClones.keys()]) {
+            if (!rowItems.has(item)) {
+                const restSize = this._magnifyRestingCenters?.get(item)?.restSize;
+                this._magnifySetItem(item, 0, restSize, maxScale, pivotX, pivotY);
+            }
+        }
+    }
+
+    // Advances the smoothing factor used by applyMagnifySmoothed() based on
+    // elapsed time since the last pass.
+    _magnifyBeginSmoothingPass() {
+        const now = GLib.get_monotonic_time();
+        const previous = this._magnifyLastPassTime;
+        this._magnifyLastPassTime = now;
+        const timeConstant = MAGNIFY_SETTLE_MS / MAGNIFY_SETTLE_TIME_CONSTANTS;
+        if (!previous || timeConstant <= 0) {
+            this._magnifySmoothingFactor = previous ? 1 : 0;
+            return;
+        }
+
+        this._magnifySmoothingFactor =
+            1 - Math.exp(-(now - previous) / 1000 / timeConstant);
+    }
+
+    _magnifySetItem(item, level, restSize, maxScale, pivotX, pivotY) {
+        const baseIcon = item.child?._delegate?.icon;
+        if (!baseIcon?.icon)
+            return;
+
+        const axisProp = this._isHorizontal ? 'width' : 'height';
+
+        if (level <= MAGNIFY_EPSILON && !this._magnifyClones.has(item) &&
+            restSize !== undefined &&
+            Math.abs(item[axisProp] - restSize) < MAGNIFY_EPSILON) {
+            // Fully settled: let the item size itself naturally again
+            // instead of leaving it pinned to a guessed value, which is
+            // what caused icons to end up a little smaller every time they
+            // got magnified (the guess didn't include the item's own
+            // padding around the icon).
+            item[axisProp] = -1;
+            return;
+        }
+
+        // Real, along-axis-only resize of the item's own cell, relative to
+        // its own resting size (not just the icon's), so this never
+        // undersizes it. This is a real size on a real BoxLayout child, so
+        // the dash actually reflows around it for real, and the dock's
+        // background (bound to the dash container's size) grows and
+        // shrinks right along with it. The cross axis is never touched, so
+        // it can't affect the dock's height.
+        const base = restSize ?? this.iconSize;
+        const targetSize = Math.round(base * (1 + (maxScale - 1) * level));
+        applyMagnifySmoothed(item, {[axisProp]: targetSize},
+            this._magnifySmoothingFactor, MAGNIFY_EPSILON);
+
+        // The icon graphic itself must always stay square at this.iconSize,
+        // whatever its wider/taller cell above is doing, or the clone below
+        // (which mirrors it) ends up mirroring a stretched, blurry image
+        // instead of a sharp square one.
+        if (baseIcon.icon.width !== this.iconSize || baseIcon.icon.height !== this.iconSize)
+            baseIcon.icon.set_size(this.iconSize, this.iconSize);
+
+        let clone = this._magnifyClones.get(item);
+        if (!clone && level <= MAGNIFY_EPSILON)
+            return;
+
+        if (!clone)
+            clone = this._magnifyCreateClone(item, baseIcon, maxScale, pivotX, pivotY);
+        if (!clone)
+            return;
+
+        this._magnifyUpdateCloneGeometry(clone);
+
+        const targetScale = 1 + (maxScale - 1) * level;
+        const settled = applyMagnifySmoothed(clone.actor,
+            {scale_x: targetScale, scale_y: targetScale},
+            this._magnifySmoothingFactor, MAGNIFY_EPSILON);
+
+        if (settled && level <= MAGNIFY_EPSILON &&
+            Math.abs(item[axisProp] - base) < MAGNIFY_EPSILON)
+            this._magnifyDestroyClone(item);
+    }
+
+    _magnifyCreateClone(item, baseIcon, maxScale, pivotX, pivotY) {
+        // Preload the icon at the max size it could be magnified to, once,
+        // so the clone is sourced from a sharp texture instead of a small
+        // one stretched up.
+        const maxPixelSize = Math.round(this.iconSize * maxScale);
+        if ((baseIcon._dtdMagnifyPreloadSize ?? this.iconSize) < maxPixelSize) {
+            // setIconSize() replaces baseIcon.icon, re-fetch it below
+            // (same pattern as _adjustIconSize()).
+            baseIcon.setIconSize(maxPixelSize);
+            baseIcon.icon.set_size(this.iconSize, this.iconSize);
+            baseIcon._dtdMagnifyPreloadSize = maxPixelSize;
+        }
+        const sourceIcon = baseIcon.icon;
+        if (!sourceIcon)
+            return null;
+
+        // dock gets added to chrome after this overlay, so raise it above
+        // the dock each time before it's needed
+        this._magnifyOverlay.get_parent()?.set_child_above_sibling(
+            this._magnifyOverlay, null);
+
+        const actor = new Clutter.Clone({source: sourceIcon, reactive: false});
+        actor.set_pivot_point(pivotX, pivotY);
+        this._magnifyOverlay.add_child(actor);
+
+        // hide the real icon so we don't get two icons showing at once
+        sourceIcon.opacity = 0;
+
+        const clone = {actor, sourceIcon};
+        this._magnifyClones.set(item, clone);
+        return clone;
+    }
+
+    _magnifyUpdateCloneGeometry(clone) {
+        const [x, y] = clone.sourceIcon.get_transformed_position();
+        const [width, height] = clone.sourceIcon.get_transformed_size();
+        clone.actor.set_size(this.iconSize, this.iconSize);
+        clone.actor.set_position(
+            x + (width - this.iconSize) / 2,
+            y + (height - this.iconSize) / 2);
+    }
+
+    _magnifyDestroyClone(item) {
+        const clone = this._magnifyClones.get(item);
+        if (!clone)
+            return;
+        this._magnifyClones.delete(item);
+        clone.actor.destroy();
+        clone.sourceIcon.opacity = 255;
     }
 
     _ensureItemVisibility(actor) {
@@ -727,6 +1064,9 @@ export const DockDash = GObject.registerClass({
             // Set the new size immediately, to keep the icons' sizes
             // in sync with this.iconSize
             icon.setIconSize(this.iconSize);
+            // texture just got reloaded at base size, clear the magnify
+            // preload marker so it reloads at the bigger size next hover
+            delete icon._dtdMagnifyPreloadSize;
 
             // Don't animate the icon size change when the overview
             // is transitioning, not visible or when initially filling
