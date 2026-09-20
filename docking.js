@@ -261,7 +261,6 @@ const DockedDash = GObject.registerClass({
         // this store size and the position where the dash is shown;
         // used by intellihide module to check window overlap.
         this._staticBox = new Clutter.ActorBox();
-        this._staticBoxGeometry = null;
 
         // Initialize pressure barrier variables
         this._canUsePressure = false;
@@ -511,7 +510,11 @@ const DockedDash = GObject.registerClass({
         // Remove existing barrier
         this._removeBarrier();
 
-        this._removeDockWatch();
+        // Remove pointer watcher
+        if (this._dockWatch) {
+            global.backend.get_cursor_tracker().disconnect(this._dockWatch);
+            this._dockWatch = null;
+        }
 
         if (this._optionalScrollWorkspaceSwitchDeadTimeId) {
             GLib.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
@@ -520,7 +523,11 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateAutoHideBarriers() {
-        this._removeDockWatch();
+        // Remove pointer watcher
+        if (this._dockWatch) {
+            global.backend.get_cursor_tracker().disconnect(this._dockWatch);
+            this._dockWatch = null;
+        }
 
         // Setup pressure barrier (GS38+ only)
         this._updatePressureBarrier();
@@ -913,27 +920,17 @@ const DockedDash = GObject.registerClass({
         if (this._autohideIsEnabled &&
             (!Utils.supportsExtendedBarriers() ||
              !DockManager.settings.requirePressureToShow)) {
-            this._dockWatch = Utils.getCursorTracker().connect(
-                'position-invalidated',
-                () => this._checkDockDwellLater(...global.get_pointer()));
+            const cursorTracker = global.backend.get_cursor_tracker();
+            this._dockWatch = cursorTracker.connect('position-changed', () => {
+                const [x, y] = cursorTracker.get_pointer();
+                this._checkDockDwell(x, y);
+            });
             this._dockDwelling = false;
             this._dockDwellUserTime = 0;
         }
     }
 
-    _checkDockDwellLater(x, y) {
-        if (this._checkDockDwellId > 0)
-            return;
-
-        this._checkDockDwellId = GLib.timeout_add(GLib.PRIORITY_DEFAULT,
-            DOCK_DWELL_CHECK_INTERVAL, () => {
-                this._checkDockDwellNow(x, y);
-                this._checkDockDwellId = 0;
-                return GLib.SOURCE_REMOVE;
-            });
-    }
-
-    _checkDockDwellNow(x, y) {
+    _checkDockDwell(x, y) {
         const workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index);
         let shouldDwell;
         // Check for the correct screen edge, extending the sensitive area to the whole workarea,
@@ -1007,18 +1004,6 @@ const DockedDash = GObject.registerClass({
         // Reuse the pressure version function, the logic is the same
         this._onPressureSensed();
         return GLib.SOURCE_REMOVE;
-    }
-
-    _removeDockWatch() {
-        if (this._checkDockDwellId > 0) {
-            GLib.source_remove(this._checkDockDwellId);
-            this._checkDockDwellId = 0;
-        }
-
-        if (this._dockWatch) {
-            Utils.getCursorTracker().disconnect(this._dockWatch);
-            this._dockWatch = null;
-        }
     }
 
     _updatePressureBarrier() {
@@ -1276,19 +1261,12 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateStaticBox() {
-        const x = this.x + this._slider.x -
-            (this._position === St.Side.RIGHT ? this._box.width : 0);
-        const y = this.y + this._slider.y -
-            (this._position === St.Side.BOTTOM ? this._box.height : 0);
-        const {width, height} = this._box;
-        const geometry = this._staticBoxGeometry;
-
-        if (geometry && geometry.x === x && geometry.y === y &&
-            geometry.width === width && geometry.height === height)
-            return;
-
-        this._staticBoxGeometry = {x, y, width, height};
-        this._staticBox.init_rect(x, y, width, height);
+        this._staticBox.init_rect(
+            this.x + this._slider.x - (this._position === St.Side.RIGHT ? this._box.width : 0),
+            this.y + this._slider.y - (this._position === St.Side.BOTTOM ? this._box.height : 0),
+            this._box.width,
+            this._box.height
+        );
 
         this._intellihide.updateTargetBox(this._staticBox);
         this._updateVisibleDesktop();
@@ -2245,14 +2223,6 @@ export class DockManager {
         const replaceMainDash = () => {
             this.overviewControls.dash = this.mainDock.dash;
             this.searchController._showAppsButton = this.mainDock.dash.showAppsButton;
-
-            // And to return the preferred height depending on the state
-            this._methodInjections.addWithLabel(Labels.MAIN_DASH, this._oldDash,
-                'get_preferred_height', (_originalMethod, ...args) => {
-                    if (this.mainDock.isHorizontal && !this.settings.dockFixed)
-                        return this.mainDock.get_preferred_height(...args);
-                    return [0, 0];
-                });
         };
 
         // We also need to ignore max-size changes
@@ -2262,7 +2232,11 @@ export class DockManager {
             'allocate', () => {});
         // And to return the preferred height depending on the state
         this._methodInjections.addWithLabel(Labels.MAIN_DASH, this._oldDash,
-            'get_preferred_height', () => [0, 0]);
+            'get_preferred_height', (_originalMethod, ...args) => {
+                if (this.mainDock.isHorizontal && !this.settings.dockFixed)
+                    return this.mainDock.get_preferred_height(...args);
+                return [0, 0];
+            });
 
         // FIXME: https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2890
         // const { ControlsManagerLayout } = OverviewControls;
@@ -2288,9 +2262,6 @@ export class DockManager {
         };
 
         const maybeAdjustBoxToDock = (state, box, spacing) => {
-            if (Main.layoutManager._startingUp)
-                return box;
-
             maybeAdjustBoxSize(state, box, spacing);
 
             if (this.mainDock.isHorizontal || this.settings.dockFixed)
@@ -2519,11 +2490,6 @@ export class DockManager {
             // during the upstream startup animation, that still requires to
             // have a valid actor.
             const dummyDash = new Clutter.Actor({visible: false, opacity: 0});
-            dummyDash.showAppsButton = {};
-            Object.defineProperty(dummyDash.showAppsButton, 'checked', {
-                get: () => false,
-                set: () => {},
-            });
             this.overviewControls.dash = dummyDash;
             Main.uiGroup.add_child(dummyDash);
 
