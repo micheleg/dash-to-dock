@@ -155,18 +155,26 @@ export class AppSpread {
                 activitiesButton.add_action_with_name(APP_SPREAD_RESTORE_ACTION, click);
             }
 
-            this._vfuncInjections.add([
-                activitiesButton.constructor.prototype,
-                'key_release_event',
-                function (keyEvent) {
-                    const keyval = keyEvent.get_key_symbol?.() ?? keyEvent.keyval;
-                    if (keyval === Clutter.KEY_Return || keyval === Clutter.KEY_space) {
-                        if (Main.overview.shouldToggleByCornerOrButton())
-                            appSpread._restoreDefaultOverview();
-                    }
-                    return Clutter.EVENT_PROPAGATE;
-                },
-            ]);
+            let hasKeyReleaseVFunc = false;
+            try {
+                hasKeyReleaseVFunc =
+                    !!activitiesButton.constructor.prototype.vfunc_key_release_event;
+            } catch {}
+
+            if (hasKeyReleaseVFunc) {
+                this._vfuncInjections.add([
+                    activitiesButton.constructor.prototype,
+                    'key_release_event',
+                    function (keyEvent) {
+                        const keyval = keyEvent.get_key_symbol?.() ?? keyEvent.keyval;
+                        if (keyval === Clutter.KEY_Return || keyval === Clutter.KEY_space) {
+                            if (Main.overview.shouldToggleByCornerOrButton())
+                                appSpread._restoreDefaultOverview();
+                        }
+                        return Clutter.EVENT_PROPAGATE;
+                    },
+                ]);
+            }
         }
 
         this._signalHandlers.add(Main.overview.dash.showAppsButton, 'notify::checked', () => {
