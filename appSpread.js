@@ -144,13 +144,14 @@ export class AppSpread {
                     },
                 ]);
             } else {
-                /* Shell >= 50 uses gestures on the activities button */
+                this._activitiesClickGesture = activitiesButton._clickGesture;
+                this._activitiesClickGesture.set_enabled(false);
+
                 const click = new Clutter.ClickGesture();
-                click.set_recognize_on_press(true);
-                click.set_enabled(true);
                 click.connect('recognize', () => {
-                    if (Main.overview.shouldToggleByCornerOrButton())
-                        appSpread._restoreDefaultOverview();
+                    if (this.isInAppSpread &&
+                        Main.overview.shouldToggleByCornerOrButton())
+                        this.toggle(this.app);
                 });
                 activitiesButton.add_action_with_name(APP_SPREAD_RESTORE_ACTION, click);
             }
@@ -172,6 +173,22 @@ export class AppSpread {
                                 appSpread._restoreDefaultOverview();
                         }
                         return Clutter.EVENT_PROPAGATE;
+                    },
+                ]);
+            } else {
+                this._methodInjections.add([
+                    activitiesButton.constructor.prototype,
+                    '_toggleAction',
+                    function (originalMethod, ...args) {
+                        /* eslint-disable no-invalid-this */
+                        if (appSpread.isInAppSpread &&
+                            Main.overview.shouldToggleByCornerOrButton()) {
+                            appSpread.toggle(appSpread.app);
+                            return Clutter.EVENT_STOP;
+                        }
+
+                        return originalMethod.call(this, ...args);
+                        /* eslint-enable no-invalid-this */
                     },
                 ]);
             }
@@ -212,6 +229,8 @@ export class AppSpread {
         this._signalHandlers.clear();
         this._vfuncInjections.clear();
         Main.panel.statusArea?.activities.remove_action_by_name(APP_SPREAD_RESTORE_ACTION);
+        this._activitiesClickGesture.set_enabled(true);
+        this._activitiesClickGesture = null;
 
         // Check reason for leaving AppSpread was closing app windows and only one window left...
         if (this.windows.length === 1)
