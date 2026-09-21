@@ -233,16 +233,19 @@ export const DockAbstractAppIcon = GObject.registerClass({
         this._previewMenuManager = null;
         this._previewMenu = null;
 
-        const doubleClickGesture = new Clutter.ClickGesture({nClicksRequired: 2});
-        doubleClickGesture.connect('recognize', () => {
-            this._activate({
-                button: doubleClickGesture.get_button(),
-                modifiers: doubleClickGesture.get_state(),
-                clickCount: doubleClickGesture.get_n_presses(),
+        // This requires GNOME 49
+        if (Clutter.ClickGesture) {
+            const doubleClickGesture = new Clutter.ClickGesture({nClicksRequired: 2});
+            doubleClickGesture.connect('recognize', () => {
+                this._activate({
+                    button: doubleClickGesture.get_button(),
+                    modifiers: doubleClickGesture.get_state(),
+                    clickCount: doubleClickGesture.get_n_presses(),
+                });
             });
-        });
-        this.add_action(doubleClickGesture);
-        this._doubleClickGesture = doubleClickGesture;
+            this.add_action(doubleClickGesture);
+            this._doubleClickGesture = doubleClickGesture;
+        }
     }
 
     _onDestroy() {
@@ -254,7 +257,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
         this._menu?.close(false);
         delete this._menu;
 
-        this._doubleClickGesture.cancel();
+        this._doubleClickGesture?.cancel();
         delete this._doubleClickGesture;
     }
 
@@ -703,7 +706,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
             case clickAction.FOCUS_OR_APP_SPREAD:
                 if (this.focused && !singleOrUrgentWindows && !modifiers && button === 1) {
                     shouldHideOverview = false;
-                    this._doubleClickGesture.cancel();
+                    this._doubleClickGesture?.cancel();
                     Docking.DockManager.getDefault().appSpread.toggle(this.app);
                 } else {
                     // Activate the first window
@@ -714,7 +717,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
             case clickAction.FOCUS_MINIMIZE_OR_APP_SPREAD:
                 if (this.focused && !singleOrUrgentWindows && !modifiers && button === 1) {
                     shouldHideOverview = false;
-                    this._doubleClickGesture.cancel();
+                    this._doubleClickGesture?.cancel();
                     Docking.DockManager.getDefault().appSpread.toggle(this.app);
                 } else if (!this.focused) {
                     // Activate the first window
