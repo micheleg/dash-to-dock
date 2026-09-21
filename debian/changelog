@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (107ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (108ubuntu1) UNRELEASED; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * extension: Fix double connection of shutdown ID
@@ -22,6 +22,7 @@ gnome-shell-extension-ubuntu-dock (107ubuntu1) UNRELEASED; urgency=medium
   * appSpread: Override default key and mouse handlers
   * docking: Expose DockStruct API to other extensions
   * metadata: Release dash-to-dock v107
+  * eslintrc: Ignore private fields in dockStruts
 
   [ Paul Geoghegan ]
   * appIconIndicators: Announce unread notification count to screen readers
@@ -42,7 +43,7 @@ gnome-shell-extension-ubuntu-dock (107ubuntu1) UNRELEASED; urgency=medium
   [ mxyp ]
   * po: update Italian translations
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 21 Sep 2026 08:30:24 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 21 Sep 2026 08:50:24 +0200
 
 gnome-shell-extension-ubuntu-dock (106ubuntu1) stonking; urgency=medium
 
