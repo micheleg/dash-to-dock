@@ -919,17 +919,15 @@ export class UnityIndicator extends IndicatorBase {
                 .format(appName, count)
             : appName;
 
-        if (this._source.label_actor === null) {
+        if (this._source.labelActor === null) {
             // Dock: name owned by parent DashItemContainer, see dash.js
             const itemContainer = this._source.get_parent?.();
-            if (itemContainer)
-                itemContainer.accessible_name = accessibleName;
-            this._source.accessible_name = accessibleName;
+            itemContainer?.set({accessibleName});
+            this._source.set({accessibleName});
         } else {
             // Overview: no per-icon parent, update icon and label directly
-            this._source.accessible_name = accessibleName;
-            if (this._source.label_actor)
-                this._source.label_actor.accessible_name = accessibleName;
+            this._source.set({accessibleName});
+            this._source.labelActor?.set({accessibleName});
         }
     }
 
