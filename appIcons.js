@@ -513,9 +513,6 @@ export const DockAbstractAppIcon = GObject.registerClass({
         // Only consider SHIFT and CONTROL as modifiers (exclude SUPER, CAPS-LOCK, etc.)
         modifiers &= Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CONTROL_MASK;
 
-        // Only consider SHIFT and CONTROL as modifiers (exclude SUPER, CAPS-LOCK, etc.)
-        modifiers &= Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CONTROL_MASK;
-
         // We don't change the CTRL-click behavior: in such case we just chain
         // up the parent method and return.
         if (modifiers & Clutter.ModifierType.CONTROL_MASK) {
@@ -578,9 +575,6 @@ export const DockAbstractAppIcon = GObject.registerClass({
                         modifiers & Clutter.ModifierType.SHIFT_MASK) {
                         // minimize all windows on double click and always in
                         // the case of primary click without additional modifiers
-                        let clickCount = 0;
-                        if (Clutter.EventType.CLUTTER_BUTTON_PRESS)
-                            clickCount = event.get_click_count();
                         const allWindows = (button === 1 && !modifiers) || clickCount > 1;
                         this._minimizeWindow(allWindows);
                     } else {
