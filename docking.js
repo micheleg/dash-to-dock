@@ -2560,12 +2560,16 @@ export class DockManager {
         if (Main.layoutManager._startingUp) {
             this._prepareStartupAnimation();
 
-            const hadOverview = Main.sessionMode.hasOverview;
-
             // Convince LayoutManager to use the legacy startup animation:
             // Reset overview controls state to HIDDEN, as skipping the startup
             // overview leaves it stuck at WINDOW_PICKER
             if (this._settings.disableOverviewOnStartup) {
+                this._propertyInjections.addWithLabel(Labels.STARTUP_ANIMATION,
+                    Main.sessionMode, 'hasOverview', {
+                        get: () => false,
+                        set: () => console.trace('hasOverview setter blocked'),
+                    });
+
                 const {OverviewAdjustment} = OverviewControls;
                 this._propertyInjections.addWithLabel(Labels.STARTUP_ANIMATION,
                     OverviewAdjustment.prototype, 'value', {
@@ -2590,7 +2594,6 @@ export class DockManager {
             this._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
                 Main.layoutManager, 'startup-complete', () => {
                     this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
-                    Main.sessionMode.hasOverview = hadOverview;
                     replaceMainDash();
                     dummyDash.destroy();
                     this._runStartupAnimation();
@@ -2598,6 +2601,8 @@ export class DockManager {
                         this._propertyInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
                         this.overviewControls._stateAdjustment.value =
                             OverviewControls.ControlsState.HIDDEN;
+                        if (Main.overview.visible)
+                            Main.overview.hide();
                     }
                 });
         } else {
