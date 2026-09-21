@@ -67,22 +67,9 @@ export class ThemeManager {
         ]);
 
         this._signalsHandler.addWithLabel(Labels.THEME_CHANGED,
-            St.ThemeContext.get_for_stage(global.stage), 'changed',
-            () => this.updateCustomTheme());
-
-        const maybeUpdateCustomTheme = () => {
-            if (this._actor.mapped) {
-                this._signalsHandler.unblockWithLabel(Labels.THEME_CHANGED);
-                this.updateCustomTheme();
-            } else {
-                this._signalsHandler.blockWithLabel(Labels.THEME_CHANGED);
-            }
-        };
-
-        this._signalsHandler.add(this._actor, 'notify::mapped',
-            () => maybeUpdateCustomTheme());
-
-        maybeUpdateCustomTheme();
+            this._actor, 'style-changed',
+            () => this.updateCustomTheme(),
+            Utils.SignalsHandlerFlags.CONNECT_AFTER);
 
         // Set the initial overview pseudo-class state.
         if (Main.overview.visible)
@@ -239,6 +226,14 @@ export class ThemeManager {
     updateCustomTheme() {
         if (this._destroyed)
             throw new Error(`Impossible to update a destroyed ${this.constructor.name}`);
+
+        // The style can only be read from a staged actor, and any update done
+        // before that would be recomputed on map anyway: the actor's
+        // style-changed signal (emitted when St recomputes the style of the
+        // newly mapped widget) will take care of applying any pending change.
+        if (!this._actor.mapped)
+            return;
+
         this._updateCustomStyleClasses();
         this._updateDashOpacity();
         this._updateDashColor();
