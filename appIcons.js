@@ -232,6 +232,16 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         this._previewMenuManager = null;
         this._previewMenu = null;
+
+        const doubleClickGesture = new Clutter.ClickGesture({nClicksRequired: 2});
+        doubleClickGesture.connect('recognize', () => {
+            this._activate({
+                button: doubleClickGesture.get_button(),
+                modifiers: doubleClickGesture.get_state(),
+                clickCount: doubleClickGesture.get_n_presses(),
+            });
+        });
+        this.add_action(doubleClickGesture);
     }
 
     _onDestroy() {
@@ -496,7 +506,12 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
     activate(button) {
         const event = Clutter.get_current_event();
-        let modifiers = event ? event.get_state() : 0;
+        this._activate({button, modifiers: event ? event.get_state() : 0});
+    }
+
+    _activate({button, modifiers, clickCount = 1}) {
+        // Only consider SHIFT and CONTROL as modifiers (exclude SUPER, CAPS-LOCK, etc.)
+        modifiers &= Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CONTROL_MASK;
 
         // Only consider SHIFT and CONTROL as modifiers (exclude SUPER, CAPS-LOCK, etc.)
         modifiers &= Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CONTROL_MASK;
