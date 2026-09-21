@@ -1,8 +1,48 @@
-gnome-shell-extension-ubuntu-dock (106ubuntu2) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (107ubuntu1) UNRELEASED; urgency=medium
 
+  [ Marco Trevisan (Treviño) ]
   * extension: Fix double connection of shutdown ID
+  * docking: Avoid accessing to main dock before staging it (LP: #2150429)
+  * docking: Define a dummy showAppsButton on the dummy dash (LP: #2150429)
+  * docking: Avoid adjusting size during startup (LP: #2150429)
+  * cleanup: Use camel-case properties for accessible name
+  * docking: Remove unused docks-destroyed signal
+  * docking: Remove duplicated settings getter
+  * docking: Move windowTracker to dockManager
+  * docking: Cancel dock dwell timeout on destruction
+  * prefs: Adjust APIs to please shexli
+  * theming: Rely on the actor's style-changed to update the theme
+  * theming: Remove destroyed flag
+  * theming: Queue the theme update out of the allocation cycle
+  * dash: Remove queue relayout workaround
+  * appIcons: Detect double clicks with a gesture
+  * windowPreview: Use orientation method on newer GNOME
+  * appIcons: Cancel double click gesture before starting spread
+  * appSpread: Override key release event only if set
+  * appSpread: Override default key and mouse handlers
+  * docking: Expose DockStruct API to other extensions
+  * metadata: Release dash-to-dock v107
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 21 Sep 2026 01:52:16 +0200
+  [ Paul Geoghegan ]
+  * appIconIndicators: Announce unread notification count to screen readers
+
+  [ Sayan Biswas ]
+  * perf: skip redundant dock geometry updates
+  * style: satisfy dock geometry lint rule
+
+  [ copilot-swe-agent[bot] ]
+  * Replace removed shell PointerWatcher with Meta.CursorTracker
+  * Use the orientation property where possible
+
+  [ David Astillero Pérez ]
+  * Updated Spanish translation
+  * Fix missing string
+  * Set Project-Id-Version
+
+  [ mxyp ]
+  * po: update Italian translations
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 21 Sep 2026 08:30:24 +0200
 
 gnome-shell-extension-ubuntu-dock (106ubuntu1) stonking; urgency=medium
 
