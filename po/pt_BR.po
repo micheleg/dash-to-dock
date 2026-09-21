@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-05-24 21:07-0300\n"
-"PO-Revision-Date: 2026-09-21 15:30-0300\n"
+"PO-Revision-Date: 2026-09-21 15:54-0300\n"
 "Last-Translator: Cristiano Fraga G. Nunes <cfgnunes@gmail.com>\n"
 "Language-Team: Português do Brasil <ronaldocosta@oceanica.ufrj.br>\n"
 "Language: pt_BR\n"
@@ -54,9 +54,7 @@ msgstr "Restaurar padrões"
 
 #: prefs.js:621
 msgid "Managed by GNOME Multitasking's Application Switching setting."
-msgstr ""
-"Gerenciado pela configuração de alternância de aplicativos do GNOME "
-"Multitasking."
+msgstr "Gerenciado pela configuração de alternância de aplicativos do GNOME Multitasking."
 
 #: prefs.js:739
 msgid "Show dock and application numbers"
@@ -195,7 +193,7 @@ msgstr "Lixeira"
 
 #: locations.js:620
 msgid "Empty Trash"
-msgstr "Esvaziar a lixeira"
+msgstr "Esvaziar lixeira"
 
 #: locations.js:1049
 #, javascript-format
@@ -444,7 +442,7 @@ msgstr "Incluir volumes de rede"
 
 #: Settings.ui.h:54
 msgid "Isolate volumes, devices and trash windows from file manager"
-msgstr "Isolar as janelas de volumes, dispositivos e da lixeira das janelas do gerenciador de arquivos"
+msgstr "Isolar as janelas de volumes, dispositivos e lixeira das do gerenciador de arquivos"
 
 #: Settings.ui.h:55
 msgid "Launchers"
