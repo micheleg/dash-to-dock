@@ -137,7 +137,13 @@ export const DockAbstractAppIcon = GObject.registerClass({
         }
 
         this._signalsHandler.add(this.app, 'windows-changed', () => this._updateWindows());
-        this._signalsHandler.add(this.app, 'notify::state', () => this._updateRunningState());
+        this._signalsHandler.add(this.app, 'notify::state', () => {
+            this._updateRunningState();
+            // The focus state depends on the running state, and may have
+            // been computed while the app was still starting: recompute it
+            // now that the state changed (e.g. STARTING -> RUNNING).
+            this._updateFocusState();
+        });
         this._signalsHandler.add(global.display, 'window-demands-attention', (_dpy, window) =>
             this._onWindowDemandsAttention(window));
         this._signalsHandler.add(global.display, 'window-marked-urgent', (_dpy, window) =>
@@ -541,6 +547,12 @@ export const DockAbstractAppIcon = GObject.registerClass({
             break;
         }
 
+        // The cached running/focused/urgent state can be stale if the
+        // tracking events arrived in an unlucky order while the app was
+        // starting: recompute it at click time so the action always
+        // matches the actual state (see issues #2377 and #2468).
+        this._updateState();
+
         // We check if the app is running, and that the # of windows is > 0 in
         // case we use workspace isolation.
         const windows = this.getInterestingWindows();
@@ -565,7 +577,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
                         // minimize all windows on double click and always in
                         // the case of primary click without additional modifiers
                         let clickCount = 0;
-                        if (Clutter.EventType.CLUTTER_BUTTON_PRESS)
+                        if (event?.type() === Clutter.EventType.BUTTON_PRESS)
                             clickCount = event.get_click_count();
                         const allWindows = (button === 1 && !modifiers) || clickCount > 1;
                         this._minimizeWindow(allWindows);
