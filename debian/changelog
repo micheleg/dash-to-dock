@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (109ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (109ubuntu1) stonking; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * metadata: Release dash-to-dock v109
@@ -29,7 +29,7 @@ gnome-shell-extension-ubuntu-dock (109ubuntu1) UNRELEASED; urgency=medium
   [ Cristiano Nunes ]
   * Update Brazilian Portuguese translation
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 21 Sep 2026 23:32:50 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 21 Sep 2026 23:34:17 +0200
 
 gnome-shell-extension-ubuntu-dock (108ubuntu1) stonking; urgency=medium
 
