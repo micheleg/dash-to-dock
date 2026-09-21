@@ -466,7 +466,6 @@ const DockedDash = GObject.registerClass({
         }
 
         // Set the initial position.
-        this._resetPosition();
         this._updateStruts();
     }
 
@@ -1224,6 +1223,8 @@ const DockedDash = GObject.registerClass({
                 this._updateBarrier();
             },
         ]);
+
+        this._resetPosition();
     }
 
     vfunc_unmap() {
