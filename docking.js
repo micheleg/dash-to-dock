@@ -76,6 +76,7 @@ const Labels = Object.freeze({
     SETTINGS: Symbol('settings'),
     STARTUP_ANIMATION: Symbol('startup-animation'),
     WORKSPACE_SWITCH_SCROLL: Symbol('workspace-switch-scroll'),
+    DOCKED_DASH_GLOBAL_SIGNALS: Symbol('docked-dash-global-signals'),
 });
 
 /**
@@ -311,7 +312,6 @@ const DockedDash = GObject.registerClass({
 
         // Connect global signals
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
-        this._bindSettingsChanges();
         this._signalsHandler.add([
             // update when workarea changes, for instance if  other extensions modify the struts
             // (like moving th panel at the bottom)
@@ -561,7 +561,7 @@ const DockedDash = GObject.registerClass({
 
     _bindSettingsChanges() {
         const {settings} = DockManager;
-        this._signalsHandler.add([
+        this._signalsHandler.addWithLabel(Labels.DOCKED_DASH_GLOBAL_SIGNALS, [
             settings,
             'changed::scroll-action',
             () => {
@@ -1215,6 +1215,20 @@ const DockedDash = GObject.registerClass({
 
     _isPrimaryMonitor() {
         return this.monitorIndex === Main.layoutManager.primaryIndex;
+    }
+
+    vfunc_map() {
+        super.vfunc_map();
+
+        this._bindSettingsChanges();
+        this.dash.setIconSize(DockManager.settings.dashMaxIconSize);
+
+    }
+
+    vfunc_unmap() {
+        this._signalsHandler.removeWithLabel(Labels.DOCKED_DASH_GLOBAL_SIGNALS);
+
+        super.vfunc_unmap();
     }
 
     _resetPosition() {
