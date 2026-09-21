@@ -510,7 +510,11 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
     activate(button) {
         const event = Clutter.get_current_event();
-        this._activate({button, modifiers: event ? event.get_state() : 0});
+        this._activate({
+            button,
+            modifiers: event?.get_state() ?? 0,
+            clickCount: event?.get_click_count?.() ?? 1,
+        });
     }
 
     _activate({button, modifiers, clickCount = 1}) {
