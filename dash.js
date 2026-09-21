@@ -53,6 +53,10 @@ class DockDashItemContainer extends Dash.DashItemContainer {
         this.label?.add_style_class_name(Theming.PositionStyleClass[position]);
         if (Docking.DockManager.settings.customThemeShrink)
             this.label?.add_style_class_name('shrink');
+
+        // In panel mode keep a full allocation so scale/fade does not shift neighbors.
+        if (Docking.DockManager.settings.dockExtended)
+            this.set({scale_x: 1, scale_y: 1});
     }
 
     showLabel() {
@@ -67,6 +71,10 @@ class DockDashItemContainer extends Dash.DashItemContainer {
         if (this.child == null)
             return;
 
+        const panelMode = Docking.DockManager.settings.dockExtended;
+        if (panelMode)
+            this.set({scale_x: 1, scale_y: 1});
+
         this.ease({
             scale_x: 1,
             scale_y: 1,
@@ -79,6 +87,28 @@ class DockDashItemContainer extends Dash.DashItemContainer {
                 // background
                 this.set_hover(true);
             },
+        });
+    }
+
+    animateOutAndDestroy() {
+        if (!Docking.DockManager.settings.dockExtended) {
+            super.animateOutAndDestroy();
+            return;
+        }
+
+        this.label?.hide();
+        if (this.child == null) {
+            this.destroy();
+            return;
+        }
+
+        // Fade in place so the reserved slot does not shrink and jump neighbors.
+        this.animatingOut = true;
+        this.ease({
+            opacity: 0,
+            duration: DASH_ANIMATION_TIME,
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+            onComplete: () => this.destroy(),
         });
     }
 });
@@ -218,6 +248,7 @@ export const DockDash = GObject.registerClass({
         this._boxContainer.add_child(this._box);
         Utils.addActor(this._scrollView, this._boxContainer);
         this._dashContainer.add_child(this._scrollView);
+        this._updateScrollViewAlignment();
 
         this._showAppsIcon = new AppIcons.DockShowAppsIcon(this._position);
         this._showAppsIcon.show(false);
@@ -305,6 +336,14 @@ export const DockDash = GObject.registerClass({
             Main.overview,
             'window-drag-end',
             this._onWindowDragEnd.bind(this),
+        ], [
+            Docking.DockManager.settings,
+            'changed::extend-height',
+            () => this._updateScrollViewAlignment(),
+        ], [
+            Docking.DockManager.settings,
+            'changed::always-center-icons',
+            () => this._updateScrollViewAlignment(),
         ]);
 
         this.connect('destroy', this._onDestroy.bind(this));
@@ -782,20 +821,6 @@ export const DockDash = GObject.registerClass({
         const dockManager = Docking.DockManager.getDefault();
         const {settings} = dockManager;
 
-        this._scrollView.set({
-            xAlign: Clutter.ActorAlign.FILL,
-            yAlign: Clutter.ActorAlign.FILL,
-        });
-        if (dockManager.settings.dockExtended) {
-            if (!this._isHorizontal) {
-                this._scrollView.yAlign = dockManager.settings.alwaysCenterIcons
-                    ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START;
-            } else {
-                this._scrollView.xAlign = dockManager.settings.alwaysCenterIcons
-                    ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START;
-            }
-        }
-
         if (settings.isolateWorkspaces ||
             settings.isolateMonitors) {
             // When using isolation, we filter out apps that have no windows in
@@ -860,10 +885,15 @@ export const DockDash = GObject.registerClass({
             oldApps = oldApps.filter(app => !app.isTrash);
         }
 
-        // Temporary remove the separator so that we don't compute to position icons
-        const oldSeparatorPos = this._box.get_children().indexOf(this._separator);
-        if (this._separator)
-            this._box.remove_child(this._separator);
+        if (oldApps.length === newApps.length &&
+            oldApps.every((app, i) => app === newApps[i])) {
+            this._adjustIconSize();
+            this._shownInitially = true;
+            return;
+        }
+
+        const oldSeparatorPos = this._separator
+            ? this._box.get_children().indexOf(this._separator) : -1;
 
         // Figure out the actual changes to the list of items; we iterate
         // over both the list of items currently in the dash and the list
@@ -939,9 +969,30 @@ export const DockDash = GObject.registerClass({
             }
         }
 
+        // Update separator
+        const nFavorites = Object.keys(favorites).length;
+        const nIcons = children.length + addedItems.length - removedActors.length;
+        const needsSeparator = nFavorites > 0 && nFavorites < nIcons;
+        let desiredSeparatorPos = -1;
+        if (needsSeparator) {
+            desiredSeparatorPos = nFavorites + this._animatingPlaceholdersCount;
+            if (this._dragPlaceholder)
+                desiredSeparatorPos++;
+            const removedFavorites = removedActors.filter(a =>
+                children.indexOf(a) < oldSeparatorPos);
+            desiredSeparatorPos += removedFavorites.length;
+        }
+        const separatorStays = needsSeparator && this._separator &&
+            oldSeparatorPos === desiredSeparatorPos;
+
+        if (this._separator && !separatorStays)
+            this._box.remove_child(this._separator);
+
         for (let i = 0; i < addedItems.length; i++) {
-            this._box.insert_child_at_index(addedItems[i].item,
-                addedItems[i].pos);
+            let insertPos = addedItems[i].pos;
+            if (separatorStays && insertPos >= oldSeparatorPos)
+                insertPos++;
+            this._box.insert_child_at_index(addedItems[i].item, insertPos);
         }
 
         for (let i = 0; i < removedActors.length; i++) {
@@ -955,10 +1006,7 @@ export const DockDash = GObject.registerClass({
                 item.destroy();
         }
 
-        // Update separator
-        const nFavorites = Object.keys(favorites).length;
-        const nIcons = children.length + addedItems.length - removedActors.length;
-        if (nFavorites > 0 && nFavorites < nIcons) {
+        if (needsSeparator) {
             if (!this._separator) {
                 this._separator = new St.Widget({
                     style_class: 'dash-separator',
@@ -973,13 +1021,8 @@ export const DockDash = GObject.registerClass({
                 });
                 this._separator.connect('notify::hover', a => this._ensureItemVisibility(a));
             }
-            let pos = nFavorites + this._animatingPlaceholdersCount;
-            if (this._dragPlaceholder)
-                pos++;
-            const removedFavorites = removedActors.filter(a =>
-                children.indexOf(a) < oldSeparatorPos);
-            pos += removedFavorites.length;
-            this._box.insert_child_at_index(this._separator, pos);
+            if (!separatorStays)
+                this._box.insert_child_at_index(this._separator, desiredSeparatorPos);
         } else if (this._separator) {
             this._separator.destroy();
             this._separator = null;
@@ -1001,6 +1044,28 @@ export const DockDash = GObject.registerClass({
         this._updateNumberOverlay();
 
         this.updateShowAppsButton();
+    }
+
+    _updateScrollViewAlignment() {
+        const {settings} = Docking.DockManager;
+        let xAlign = Clutter.ActorAlign.FILL;
+        let yAlign = Clutter.ActorAlign.FILL;
+
+        if (settings.dockExtended) {
+            if (this._isHorizontal) {
+                xAlign = settings.alwaysCenterIcons
+                    ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START;
+            } else {
+                yAlign = settings.alwaysCenterIcons
+                    ? Clutter.ActorAlign.CENTER : Clutter.ActorAlign.START;
+            }
+        }
+
+        if (this._scrollView.xAlign === xAlign &&
+            this._scrollView.yAlign === yAlign)
+            return;
+
+        this._scrollView.set({xAlign, yAlign});
     }
 
     _updateNumberOverlay() {
@@ -1115,9 +1180,22 @@ export const DockDash = GObject.registerClass({
             return;
 
         const {settings} = Docking.DockManager;
-        const notifiedProperties = [];
         const showAppsContainer = settings.showAppsAlwaysInTheEdge || !settings.dockExtended
             ? this._dashContainer : this._boxContainer;
+        const parent = this._showAppsIcon.get_parent();
+        const siblings = parent === showAppsContainer
+            ? showAppsContainer.get_children() : [];
+        const isFirst = siblings[0] === this._showAppsIcon;
+        const isLast = siblings.length > 0 &&
+            siblings[siblings.length - 1] === this._showAppsIcon;
+        const wantFirst = settings.showAppsAtTop;
+        const alreadyPlaced = parent === showAppsContainer &&
+            (wantFirst ? isFirst : isLast);
+
+        if (alreadyPlaced)
+            return;
+
+        const notifiedProperties = [];
         const needsFirstLastChildWorkaround = Config.PACKAGE_VERSION.split('.')[0] < 49;
 
         if (needsFirstLastChildWorkaround) {
@@ -1126,14 +1204,14 @@ export const DockDash = GObject.registerClass({
                 (_obj, pspec) => notifiedProperties.push(pspec.name));
         }
 
-        if (this._showAppsIcon.get_parent() !== showAppsContainer) {
-            this._showAppsIcon.get_parent()?.remove_child(this._showAppsIcon);
+        if (parent !== showAppsContainer) {
+            parent?.remove_child(this._showAppsIcon);
 
-            if (Docking.DockManager.settings.showAppsAtTop)
+            if (wantFirst)
                 showAppsContainer.insert_child_below(this._showAppsIcon, null);
             else
                 showAppsContainer.insert_child_above(this._showAppsIcon, null);
-        } else if (settings.showAppsAtTop) {
+        } else if (wantFirst) {
             showAppsContainer.set_child_below_sibling(this._showAppsIcon, null);
         } else {
             showAppsContainer.set_child_above_sibling(this._showAppsIcon, null);
