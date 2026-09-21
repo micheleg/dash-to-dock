@@ -5,6 +5,7 @@ import GObject from 'gi://GObject';
 import Gdk from 'gi://Gdk';
 import Gio from 'gi://Gio';
 import Gtk from 'gi://Gtk';
+import Adw from 'gi://Adw';
 
 import {
     ExtensionPreferences,
@@ -192,11 +193,15 @@ const DockSettings = GObject.registerClass({
             extensionPreferences.metadata['gettext-domain']);
         this._builder.add_from_file(`${extensionPreferences.path}/Settings.ui`);
 
-        this.widget = this._builder.get_object('settings_notebook');
+        const notebook = this._builder.get_object('settings_notebook');
+        const group = new Adw.PreferencesGroup();
+        group.add(notebook);
+        this.page = new Adw.PreferencesPage();
+        this.page.add(group);
 
         // Set a reasonable initial window height
-        this.widget.connect('realize', () => {
-            const rootWindow = this.widget.get_root();
+        this.page.connect('realize', () => {
+            const rootWindow = this.page.get_root();
             rootWindow.set_default_size(-1, 850);
             rootWindow.connect('close-request', () => this._onWindowsClosed());
         });
@@ -493,7 +498,7 @@ const DockSettings = GObject.registerClass({
         this._builder.get_object('intelligent_autohide_button').connect('clicked', () => {
             const dialog = new Gtk.Dialog({
                 title: __('Intelligent autohide customization'),
-                transient_for: this.widget.get_root(),
+                transient_for: this.page.get_root(),
                 use_header_bar: true,
                 modal: true,
             });
@@ -816,7 +821,7 @@ const DockSettings = GObject.registerClass({
         this._builder.get_object('overlay_button').connect('clicked', () => {
             const dialog = new Gtk.Dialog({
                 title: __('Show dock and application numbers'),
-                transient_for: this.widget.get_root(),
+                transient_for: this.page.get_root(),
                 use_header_bar: true,
                 modal: true,
             });
@@ -875,7 +880,7 @@ const DockSettings = GObject.registerClass({
         this._builder.get_object('middle_click_options_button').connect('clicked', () => {
             const dialog = new Gtk.Dialog({
                 title: __('Customize middle-click behavior'),
-                transient_for: this.widget.get_root(),
+                transient_for: this.page.get_root(),
                 use_header_bar: true,
                 modal: true,
             });
@@ -972,7 +977,7 @@ const DockSettings = GObject.registerClass({
         this._builder.get_object('running_indicators_advance_settings_button').connect('clicked', () => {
             const dialog = new Gtk.Dialog({
                 title: __('Customize running indicators'),
-                transient_for: this.widget.get_root(),
+                transient_for: this.page.get_root(),
                 use_header_bar: true,
                 modal: true,
             });
@@ -1087,7 +1092,7 @@ const DockSettings = GObject.registerClass({
         this._builder.get_object('dynamic_opacity_button').connect('clicked', () => {
             const dialog = new Gtk.Dialog({
                 title: __('Customize opacity'),
-                transient_for: this.widget.get_root(),
+                transient_for: this.page.get_root(),
                 use_header_bar: true,
                 modal: true,
             });
@@ -1170,9 +1175,8 @@ const DockSettings = GObject.registerClass({
 });
 
 export default class DockPreferences extends ExtensionPreferences {
-    getPreferencesWidget() {
+    fillPreferencesWindow(window) {
         const settings = new DockSettings(this);
-        const {widget} = settings;
-        return widget;
+        window.add(settings.page);
     }
 }
