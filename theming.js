@@ -489,7 +489,7 @@ class Transparency {
          * */
         let factor = 0;
         if (!Docking.DockManager.settings.dockFixed &&
-            this._dock.getDockState() === Docking.State.HIDDEN)
+            this._dock.dockState === Docking.State.HIDDEN)
             factor = 1;
         const [leftCoord, topCoord] = this._actor.get_transformed_position();
         let threshold;
