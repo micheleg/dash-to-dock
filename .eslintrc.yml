@@ -35,5 +35,10 @@ overrides:
       camelcase: warn
       no-unused-expressions: warn
 
+  - files: dockStruts.js
+    rules:
+      # Ubuntu's eslint does not support this in class fields
+      no-invalid-this: off
+
 parserOptions:
   sourceType: module
