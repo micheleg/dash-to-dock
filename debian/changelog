@@ -1,3 +1,36 @@
+gnome-shell-extension-ubuntu-dock (109ubuntu1) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * metadata: Release dash-to-dock v109
+  * docking: Expose some dock properties as GObject ones
+  * docking: Bind state changes to property changes only
+  * docking: Cleanup the code to manage unredirection
+  * docking: Do not disable unredirect when the dash monitor is full-screen
+  * dash: Remove potential stray upstream timeout
+  * docking: Restore _ignoreHover on drag end
+  * docking: Track positioning reset with lambda functions
+  * docking: Bind to settings changes only after tracking the dock
+  * theming: Do not reload theme at each actor style update
+  * docking: Connect dock to global signals only after mapping
+  * docking: reset position only once mapped
+  * dash: Only redisplay once mapped
+  * utils: Fix property injection when mixing accessors and values
+  * docking: Force hasOverview to false on startup when overview is disabled
+
+  [ Joaquim Campião Arraes ]
+  * appIcons: Forward the click count from button events in activate()
+  * appIcons: Only create the double click gesture when available
+
+  [ Tomasz Bojanowski ]
+  * locations: Translate error messages before formatting them
+  * appIcons: Use the extension gettext domain for strings not in the shell
+  * Update Polish translation
+
+  [ Cristiano Nunes ]
+  * Update Brazilian Portuguese translation
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 21 Sep 2026 23:32:50 +0200
+
 gnome-shell-extension-ubuntu-dock (108ubuntu1) stonking; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
