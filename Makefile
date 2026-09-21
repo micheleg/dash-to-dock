@@ -129,6 +129,7 @@ _build: all
 	cd media ; cp $(EXTRA_MEDIA) ../_build/media/
 	mkdir -p _build/schemas
 	cp schemas/*.gschema.xml _build/schemas/
+	cp schemas/gschemas.compiled _build/schemas/
 	mkdir -p _build/locale
 	for l in $(MSGSRC:.po=.mo) ; do \
 		lf=_build/locale/`basename $$l .mo`; \
