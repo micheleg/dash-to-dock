@@ -253,7 +253,6 @@ const DockedDash = GObject.registerClass({
 
         // Temporary ignore hover events linked to autohide for whatever reason
         this._ignoreHover = false;
-        this._oldIgnoreHover = null;
 
         // This tracks whether this dock disabled unredirection, so that we
         // only balance our own refcounted enable/disable calls.
@@ -1338,9 +1337,11 @@ const DockedDash = GObject.registerClass({
     }
 
     _onDragEnd() {
-        if (this._oldIgnoreHover)
+        if (this._oldIgnoreHover !== undefined) {
             this._ignoreHover = this._oldIgnoreHover;
-        this._oldIgnoreHover = null;
+            delete this._oldIgnoreHover;
+        }
+
         this._box.sync_hover();
         this._updateDashVisibility();
     }
