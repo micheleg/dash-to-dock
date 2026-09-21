@@ -155,7 +155,7 @@ export const DockDash = GObject.registerClass({
         this._separator = null;
 
         this._monitorIndex = monitorIndex;
-        this._position = Utils.getPosition();
+        this._position = Utils.getPosition(this._monitorIndex);
         this._isHorizontal = (this._position === St.Side.TOP) ||
                                (this._position === St.Side.BOTTOM);
 

@@ -36,7 +36,7 @@ const MENU_MARGINS = 10;
 
 export class WindowPreviewMenu extends PopupMenu.PopupMenu {
     constructor(source) {
-        super(source, 0.5, Utils.getPosition());
+        super(source, 0.5, Utils.getPosition(source.monitorIndex));
 
         // We want to keep the item hovered while the menu is up
         this.blockSourceEvents = true;
@@ -105,8 +105,9 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
 
         this.actor.connect('scroll-event', this._onScrollEvent.bind(this));
 
-        const position = Utils.getPosition();
-        this.isHorizontal = position === St.Side.BOTTOM || position === St.Side.TOP;
+        this._position = Utils.getPosition(source.monitorIndex);
+        this.isHorizontal = this._position === St.Side.BOTTOM ||
+            this._position === St.Side.TOP;
         this.box.set_vertical(!this.isHorizontal);
         this.box.set_name('dashtodockWindowList');
         Utils.addActor(this.actor, this.box);
@@ -179,7 +180,7 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
     }
 
     _createPreviewItem(window) {
-        const preview = new WindowPreviewMenuItem(window, Utils.getPosition());
+        const preview = new WindowPreviewMenuItem(window, this._position);
         return preview;
     }
 

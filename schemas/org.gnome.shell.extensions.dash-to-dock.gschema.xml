@@ -332,6 +332,11 @@
       <summary>Enable multi-monitor docks</summary>
       <description>Show a dock on every monitor</description>
     </key>
+    <key type="a{ss}" name="monitor-positions">
+      <default>{}</default>
+      <summary>Per-monitor dock position overrides</summary>
+      <description>Map from monitor connector name (for example 'DP-1') to the side of that monitor the dock is shown on: 'TOP', 'RIGHT', 'BOTTOM' or 'LEFT'. Monitors without an entry follow the 'dock-position' setting. Overrides are applied as-is, without swapping left and right in right-to-left locales.</description>
+    </key>
     <key type="b" name="minimize-shift">
       <default>true</default>
       <summary>Minimize on shift+click</summary>

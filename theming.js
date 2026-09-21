@@ -153,7 +153,7 @@ export class ThemeManager {
         // We want to find the inside border-color of the dock because it is
         // the side most visible to the user. We do this by finding the side
         // opposite the position
-        const position = Utils.getPosition();
+        const position = Utils.getPosition(this._actor.monitorIndex);
         let side = position + 2;
         if (side > 3)
             side = Math.abs(side - 4);
@@ -261,7 +261,7 @@ export class ThemeManager {
             return;
 
         let newStyle = '';
-        const position = Utils.getPosition(settings);
+        const position = Utils.getPosition(this._actor.monitorIndex);
 
         // obtain theme border settings
         const themeNode = this._dash._background.get_theme_node();
@@ -337,7 +337,7 @@ class Transparency {
         this._dockActor = dock;
         this._dock = dock;
         this._panel = Main.panel;
-        this._position = Utils.getPosition();
+        this._position = Utils.getPosition(dock.monitorIndex);
 
         // All these properties are replaced with the ones in the .dummy-opaque
         // and .dummy-transparent css classes
