@@ -1825,10 +1825,6 @@ export class DockManager {
         return DockManager.getDefault().iconTheme;
     }
 
-    get settings() { // eslint-disable-line no-dupe-class-members
-        return this._settings;
-    }
-
     get iconTheme() {
         return this._iconTheme;
     }
