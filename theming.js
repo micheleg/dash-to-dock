@@ -85,7 +85,6 @@ export class ThemeManager {
     destroy() {
         this.emit('destroy');
         this._transparency.destroy();
-        this._destroyed = true;
     }
 
     _onOverviewShowing() {
@@ -224,9 +223,6 @@ export class ThemeManager {
     }
 
     updateCustomTheme() {
-        if (this._destroyed)
-            throw new Error(`Impossible to update a destroyed ${this.constructor.name}`);
-
         // The style can only be read from a staged actor, and any update done
         // before that would be recomputed on map anyway: the actor's
         // style-changed signal (emitted when St recomputes the style of the
