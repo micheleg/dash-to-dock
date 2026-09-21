@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (107ubuntu1) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (107ubuntu1) stonking; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * extension: Fix double connection of shutdown ID
@@ -42,7 +42,7 @@ gnome-shell-extension-ubuntu-dock (107ubuntu1) UNRELEASED; urgency=medium
   [ mxyp ]
   * po: update Italian translations
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 21 Sep 2026 08:30:24 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Mon, 21 Sep 2026 08:31:50 +0200
 
 gnome-shell-extension-ubuntu-dock (106ubuntu1) stonking; urgency=medium
 
