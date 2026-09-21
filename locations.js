@@ -601,18 +601,18 @@ class MountableVolumeAppInfo extends LocationAppInfo {
     _notifyActionError(action, message) {
         switch (action) {
         case RemovableAction.MOUNT:
-            global.notify_error(__('Failed to mount “%s”'.format(
-                this.get_name())), message);
+            global.notify_error(__('Failed to mount “%s”').format(
+                this.get_name()), message);
             break;
 
         case RemovableAction.UNMOUNT:
-            global.notify_error(__('Failed to unmount “%s”'.format(
-                this.get_name())), message);
+            global.notify_error(__('Failed to unmount “%s”').format(
+                this.get_name()), message);
             break;
 
         case RemovableAction.EJECT:
-            global.notify_error(__('Failed to eject “%s”'.format(
-                this.get_name())), message);
+            global.notify_error(__('Failed to eject “%s”').format(
+                this.get_name()), message);
             break;
         }
     }
@@ -1071,8 +1071,8 @@ function wrapWindowsBackedApp(shellApp) {
             } catch (e) {
                 logError(e);
                 this._setState(Shell.AppState.STOPPED);
-                global.notify_error(_('Failed to launch “%s”'.format(
-                    this.get_name())), e.message);
+                global.notify_error(_('Failed to launch “%s”').format(
+                    this.get_name()), e.message);
             }
             break;
         case Shell.AppState.RUNNING:
