@@ -255,8 +255,8 @@ const DockedDash = GObject.registerClass({
         this._ignoreHover = false;
         this._oldIgnoreHover = null;
 
-        // This variable marks if _disableUnredirect() is called
-        // to help restore the original state when intelihide is disabled.
+        // This tracks whether this dock disabled unredirection, so that we
+        // only balance our own refcounted enable/disable calls.
         this._unredirectDisabled = false;
 
         // Create intellihide object to monitor windows overlapping
@@ -391,13 +391,15 @@ const DockedDash = GObject.registerClass({
         });
 
         this.connect('notify::intellihide-enabled', () => {
-            if (this.intellihideEnabled) {
+            if (this.intellihideEnabled)
                 this._intellihide.enable();
-            } else {
+            else
                 this._intellihide.disable();
-                this._restoreUnredirect();
-            }
+
+            this._updateUnredirect();
         });
+
+        this.connect('notify::dock-state', () => this._updateUnredirect());
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
@@ -525,7 +527,8 @@ const DockedDash = GObject.registerClass({
         if (this._triggerTimeoutId)
             GLib.source_remove(this._triggerTimeoutId);
 
-        this._restoreUnredirect();
+        // This also resets the unredirect state.
+        this.dockState = State.HIDDEN;
 
         // Remove barrier timeout
         if (this._removeBarrierTimeoutId > 0)
@@ -705,24 +708,25 @@ const DockedDash = GObject.registerClass({
         ]);
     }
 
-    _disableUnredirect() {
-        if (!this._unredirectDisabled) {
-            if (Meta.disable_unredirect_for_display !== undefined)
-                Meta.disable_unredirect_for_display(global.display);
-            else if (global.compositor.disable_unredirect !== undefined)
-                global.compositor.disable_unredirect();
-            this._unredirectDisabled = true;
-        }
-    }
+    _updateUnredirect() {
+        const disabled = this.intellihideEnabled &&
+            this.dockState !== State.HIDDEN &&
+            this.dockState !== State.HIDING;
 
-    _restoreUnredirect() {
-        if (this._unredirectDisabled) {
-            if (Meta.enable_unredirect_for_display !== undefined)
-                Meta.enable_unredirect_for_display(global.display);
-            else if (global.compositor.enable_unredirect !== undefined)
-                global.compositor.enable_unredirect();
-            this._unredirectDisabled = false;
+        if (disabled === this._unredirectDisabled)
+            return;
+
+        // Unredirection is a refcounted operation in the compositor, so multiple
+        // calls to enable/disable it will be balanced.
+        if (disabled) {
+            Meta.disable_unredirect_for_display?.(global.display);
+            global.compositor.disable_unredirect?.();
+        } else {
+            Meta.enable_unredirect_for_display?.(global.display);
+            global.compositor.enable_unredirect?.();
         }
+
+        this._unredirectDisabled = disabled;
     }
 
     /**
@@ -862,8 +866,6 @@ const DockedDash = GObject.registerClass({
     }
 
     _animateIn(time, delay) {
-        if (this.intellihideIsEnabled)
-            this._disableUnredirect();
         this.dockState = State.SHOWING;
         this.dash.iconAnimator.start();
         this._delayedHide = false;
@@ -901,8 +903,7 @@ const DockedDash = GObject.registerClass({
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             onComplete: () => {
                 this.dockState = State.HIDDEN;
-                if (this.intellihideIsEnabled)
-                    this._restoreUnredirect();
+
                 // Remove queued barrier removal timeout if any
                 if (this._removeBarrierTimeoutId > 0)
                     GLib.source_remove(this._removeBarrierTimeoutId);
