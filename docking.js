@@ -317,7 +317,7 @@ const DockedDash = GObject.registerClass({
             // (like moving th panel at the bottom)
             global.display,
             'workareas-changed',
-            this._resetPosition.bind(this),
+            () => this._resetPosition(),
         ], [
             global.display,
             'in-fullscreen-changed',
@@ -687,11 +687,11 @@ const DockedDash = GObject.registerClass({
         [
             settings,
             'changed::extend-height',
-            this._resetPosition.bind(this),
+            () => this._resetPosition(),
         ], [
             settings,
             'changed::height-fraction',
-            this._resetPosition.bind(this),
+            () => this._resetPosition(),
         ], [
             settings,
             'changed::always-center-icons',
