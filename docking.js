@@ -372,8 +372,6 @@ const DockedDash = GObject.registerClass({
         }
 
         this._themeManager = new Theming.ThemeManager(this);
-        this._signalsHandler.add(this._themeManager, 'updated',
-            () => this.dash.resetAppIcons());
 
         this._signalsHandler.add(DockManager.iconTheme, 'changed',
             () => this.dash.resetAppIcons());
@@ -670,6 +668,14 @@ const DockedDash = GObject.registerClass({
         ], [
             settings,
             'changed::always-center-icons',
+            () => this.dash.resetAppIcons(),
+        ], [
+            settings,
+            'changed::apply-custom-theme',
+            () => this.dash.resetAppIcons(),
+        ], [
+            settings,
+            'changed::custom-theme-shrink',
             () => this.dash.resetAppIcons(),
         ], [
             settings,
