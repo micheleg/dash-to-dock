@@ -2553,8 +2553,6 @@ export class DockManager {
 
         // Delete all docks
         [...this._allDocks].forEach(d => d.destroy());
-
-        this.emit('docks-destroyed');
     }
 
     _restoreDash() {
