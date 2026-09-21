@@ -342,6 +342,11 @@ export const DockDash = GObject.registerClass({
             GLib.source_remove(this._ensureActorVisibilityTimeoutId);
             delete this._ensureActorVisibilityTimeoutId;
         }
+
+        if (this._showLabelTimeoutId) {
+            GLib.source_remove(this._showLabelTimeoutId);
+            this._showLabelTimeoutId = 0;
+        }
     }
 
 
