@@ -383,6 +383,22 @@ const DockedDash = GObject.registerClass({
         this._signalsHandler.add(DockManager.iconTheme, 'changed',
             () => this.dash.resetAppIcons());
 
+        this.connect('notify::autohide-enabled', () => {
+            if (this.autohideEnabled)
+                this.add_style_class_name('autohide');
+            else
+                this.remove_style_class_name('autohide');
+        });
+
+        this.connect('notify::intellihide-enabled', () => {
+            if (this.intellihideEnabled) {
+                this._intellihide.enable();
+            } else {
+                this._intellihide.disable();
+                this._restoreUnredirect();
+            }
+        });
+
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
         // anymore an update of the input regions. Force the update manually.
@@ -720,18 +736,6 @@ const DockedDash = GObject.registerClass({
         } else {
             this.autohideEnabled = settings.autohide;
             this.intellihideEnabled = settings.intellihide;
-        }
-
-        if (this.autohideEnabled)
-            this.add_style_class_name('autohide');
-        else
-            this.remove_style_class_name('autohide');
-
-        if (this.intellihideEnabled) {
-            this._intellihide.enable();
-        } else {
-            this._intellihide.disable();
-            this._restoreUnredirect();
         }
 
         this._updateDashVisibility();
@@ -1206,9 +1210,6 @@ const DockedDash = GObject.registerClass({
     }
 
     _resetPosition() {
-        // Ensure variables linked to settings are updated.
-        this._updateVisibilityMode();
-
         const {dockFixed: fixedIsEnabled, dockExtended: extendHeight} = DockManager.settings;
 
         if (fixedIsEnabled)
