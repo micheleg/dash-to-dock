@@ -572,9 +572,9 @@ export const DockDash = GObject.registerClass({
             }
         }, this);
 
-        // Override default AppIcon label_actor, now the
-        // accessible_name is set at DashItemContainer.setLabelText
-        appIcon.label_actor = null;
+        // Override default AppIcon labelActor, now the
+        // accessibleName is set at DashItemContainer.setLabelText
+        appIcon.labelActor = null;
         item.setLabelText(app.get_name());
 
         appIcon.icon.setIconSize(this.iconSize);
