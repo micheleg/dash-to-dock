@@ -322,7 +322,10 @@ const DockedDash = GObject.registerClass({
         ], [
             global.display,
             'in-fullscreen-changed',
-            this._updateBarrier.bind(this),
+            () => {
+                this._updateUnredirect();
+                this._updateBarrier();
+            },
         ], [
             // Monitor windows overlapping
             this._intellihide,
@@ -714,6 +717,11 @@ const DockedDash = GObject.registerClass({
             this.dockState !== State.HIDING;
 
         if (disabled === this._unredirectDisabled)
+            return;
+
+        // Don't disable it on fullscreen: forcing composition there breaks
+        // VRR/Freesync and the dock isn't shown anyway.
+        if (disabled && this._monitor?.inFullscreen)
             return;
 
         // Unredirection is a refcounted operation in the compositor, so multiple
