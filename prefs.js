@@ -695,11 +695,38 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('show_network_volumes_check'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-downloads',
+            this._builder.get_object('show_downloads_switch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        [
+            ['downloads-stack-view', 'downloads_stack_view_combo'],
+            ['downloads-icon-display', 'downloads_icon_display_combo'],
+        ].forEach(([key, widgetId]) => {
+            // Enum combos are driven by index, so the item order in Settings.ui
+            // has to match the nick order in the gschema.
+            const combo = this._builder.get_object(widgetId);
+            combo.set_active(this._settings.get_enum(key));
+            combo.connect('changed',
+                widget => this._settings.set_enum(key, widget.get_active()));
+        });
+        const downloadsOptions = ['downloads_stack_view_label',
+            'downloads_stack_view_combo', 'downloads_icon_display_label',
+            'downloads_icon_display_combo'];
+        const updateDownloadsOptions = () => {
+            const enabled = this._builder.get_object('show_downloads_switch').active;
+            downloadsOptions.forEach(id =>
+                (this._builder.get_object(id).sensitive = enabled));
+        };
+        updateDownloadsOptions();
+        this._builder.get_object('show_downloads_switch').connect(
+            'notify::active', () => updateDownloadsOptions());
         this._settings.bind('isolate-locations',
             this._builder.get_object('isolate_locations_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
-        const isolateLocationsBindings = ['show_trash_switch', 'show_mounts_switch'];
+        const isolateLocationsBindings = ['show_trash_switch', 'show_mounts_switch',
+            'show_downloads_switch'];
         const updateIsolateLocations = () => {
             this._builder.get_object('isolate_locations_row').sensitive =
                 isolateLocationsBindings.some(s => this._builder.get_object(s).active);

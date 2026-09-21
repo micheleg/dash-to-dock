@@ -3,5 +3,6 @@ docking.js
 appIcons.js
 appIconIndicators.js
 appIconsDecorator.js
+folderStack.js
 locations.js
 Settings.ui
