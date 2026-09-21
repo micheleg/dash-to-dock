@@ -512,6 +512,7 @@ const DockedDash = GObject.registerClass({
         this._removeBarrier();
 
         this._removeDockWatch();
+        this._cancelDockDwell();
 
         if (this._optionalScrollWorkspaceSwitchDeadTimeId) {
             GLib.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
