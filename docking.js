@@ -313,19 +313,6 @@ const DockedDash = GObject.registerClass({
         // Connect global signals
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._signalsHandler.add([
-            // update when workarea changes, for instance if  other extensions modify the struts
-            // (like moving th panel at the bottom)
-            global.display,
-            'workareas-changed',
-            () => this._resetPosition(),
-        ], [
-            global.display,
-            'in-fullscreen-changed',
-            () => {
-                this._updateUnredirect();
-                this._updateBarrier();
-            },
-        ], [
             // Monitor windows overlapping
             this._intellihide,
             'status-changed',
@@ -1223,6 +1210,20 @@ const DockedDash = GObject.registerClass({
         this._bindSettingsChanges();
         this.dash.setIconSize(DockManager.settings.dashMaxIconSize);
 
+        this._signalsHandler.addWithLabel(Labels.DOCKED_DASH_GLOBAL_SIGNALS, [
+            // update when workarea changes, for instance if  other extensions modify the struts
+            // (like moving th panel at the bottom)
+            global.display,
+            'workareas-changed',
+            () => this._resetPosition(),
+        ], [
+            global.display,
+            'in-fullscreen-changed',
+            () => {
+                this._updateUnredirect();
+                this._updateBarrier();
+            },
+        ]);
     }
 
     vfunc_unmap() {
