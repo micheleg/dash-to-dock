@@ -16,7 +16,6 @@ import {
     Layout,
     Main,
     OverviewControls,
-    PointerWatcher,
     SwitcherPopup,
     Workspace,
     WorkspacesView,
@@ -42,6 +41,8 @@ import {
 } from './imports.js';
 
 import {Extension} from './dependencies/shell/extensions/extension.js';
+
+import {StrutsManager} from './dockStruts.js';
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
@@ -262,6 +263,7 @@ const DockedDash = GObject.registerClass({
         // this store size and the position where the dash is shown;
         // used by intellihide module to check window overlap.
         this._staticBox = new Clutter.ActorBox();
+        this._staticBoxGeometry = null;
 
         // Initialize pressure barrier variables
         this._canUsePressure = false;
@@ -454,6 +456,7 @@ const DockedDash = GObject.registerClass({
 
         // Set the initial position.
         this._resetPosition();
+        this._updateStruts();
     }
 
     _initialize() {
@@ -511,11 +514,8 @@ const DockedDash = GObject.registerClass({
         // Remove existing barrier
         this._removeBarrier();
 
-        // Remove pointer watcher
-        if (this._dockWatch) {
-            PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
-            this._dockWatch = null;
-        }
+        this._removeDockWatch();
+        this._cancelDockDwell();
 
         if (this._optionalScrollWorkspaceSwitchDeadTimeId) {
             GLib.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
@@ -524,11 +524,7 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateAutoHideBarriers() {
-        // Remove pointer watcher
-        if (this._dockWatch) {
-            PointerWatcher.getPointerWatcher()._removeWatch(this._dockWatch);
-            this._dockWatch = null;
-        }
+        this._removeDockWatch();
 
         // Setup pressure barrier (GS38+ only)
         this._updatePressureBarrier();
@@ -921,15 +917,27 @@ const DockedDash = GObject.registerClass({
         if (this._autohideIsEnabled &&
             (!Utils.supportsExtendedBarriers() ||
              !DockManager.settings.requirePressureToShow)) {
-            const pointerWatcher = PointerWatcher.getPointerWatcher();
-            this._dockWatch = pointerWatcher.addWatch(
-                DOCK_DWELL_CHECK_INTERVAL, this._checkDockDwell.bind(this));
+            this._dockWatch = Utils.getCursorTracker().connect(
+                'position-invalidated',
+                () => this._checkDockDwellLater(...global.get_pointer()));
             this._dockDwelling = false;
             this._dockDwellUserTime = 0;
         }
     }
 
-    _checkDockDwell(x, y) {
+    _checkDockDwellLater(x, y) {
+        if (this._checkDockDwellId > 0)
+            return;
+
+        this._checkDockDwellId = GLib.timeout_add(GLib.PRIORITY_DEFAULT,
+            DOCK_DWELL_CHECK_INTERVAL, () => {
+                this._checkDockDwellNow(x, y);
+                this._checkDockDwellId = 0;
+                return GLib.SOURCE_REMOVE;
+            });
+    }
+
+    _checkDockDwellNow(x, y) {
         const workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index);
         let shouldDwell;
         // Check for the correct screen edge, extending the sensitive area to the whole workarea,
@@ -1003,6 +1011,18 @@ const DockedDash = GObject.registerClass({
         // Reuse the pressure version function, the logic is the same
         this._onPressureSensed();
         return GLib.SOURCE_REMOVE;
+    }
+
+    _removeDockWatch() {
+        if (this._checkDockDwellId > 0) {
+            GLib.source_remove(this._checkDockDwellId);
+            this._checkDockDwellId = 0;
+        }
+
+        if (this._dockWatch) {
+            Utils.getCursorTracker().disconnect(this._dockWatch);
+            this._dockWatch = null;
+        }
     }
 
     _updatePressureBarrier() {
@@ -1260,15 +1280,41 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateStaticBox() {
-        this._staticBox.init_rect(
-            this.x + this._slider.x - (this._position === St.Side.RIGHT ? this._box.width : 0),
-            this.y + this._slider.y - (this._position === St.Side.BOTTOM ? this._box.height : 0),
-            this._box.width,
-            this._box.height
-        );
+        const x = this.x + this._slider.x -
+            (this._position === St.Side.RIGHT ? this._box.width : 0);
+        const y = this.y + this._slider.y -
+            (this._position === St.Side.BOTTOM ? this._box.height : 0);
+        const {width, height} = this._box;
+        const geometry = this._staticBoxGeometry;
+
+        if (geometry && geometry.x === x && geometry.y === y &&
+            geometry.width === width && geometry.height === height)
+            return;
+
+        this._staticBoxGeometry = {x, y, width, height};
+        this._staticBox.init_rect(x, y, width, height);
 
         this._intellihide.updateTargetBox(this._staticBox);
         this._updateVisibleDesktop();
+        this._updateStruts();
+    }
+
+    _updateStruts() {
+        const {width, height} = this._box;
+        if (width === 0 && height === 0)
+            return;
+
+        const side = this._position;
+        const extent = {
+            side,
+            x: side === St.Side.RIGHT ? this.x - width : this.x,
+            y: side === St.Side.BOTTOM ? this.y - height : this.y,
+            width,
+            height,
+            affectsStruts: DockManager.settings.dockFixed,
+        };
+
+        DockManager.getDefault()?.setDockExtent(this.monitorIndex, extent);
     }
 
     _removeAnimations() {
@@ -1714,12 +1760,14 @@ export class DockManager {
 
         this._iconTheme = new St.IconTheme();
 
+        this._strutsManager = new StrutsManager();
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass(extension);
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
         this._signalsHandler.add(this._oldDash, 'destroy', () => (this._oldDash = null));
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
         this._appSpread = new AppSpread.AppSpread();
         this._notificationsMonitor = new NotificationsMonitor.NotificationsMonitor();
+        this._windowTracker = Shell.WindowTracker.get_default();
 
         const needsRemoteModel = () =>
             !this._notificationsMonitor.dndMode && this._settings.showIconsEmblems;
@@ -1790,6 +1838,10 @@ export class DockManager {
         return DockManager.getDefault().settings;
     }
 
+    static get windowTracker() {
+        return DockManager.getDefault().windowTracker;
+    }
+
     get extension() {
         return this._extension;
     }
@@ -1802,12 +1854,12 @@ export class DockManager {
         return DockManager.getDefault().iconTheme;
     }
 
-    get settings() { // eslint-disable-line no-dupe-class-members
-        return this._settings;
-    }
-
     get iconTheme() {
         return this._iconTheme;
+    }
+
+    get windowTracker() {
+        return this._windowTracker;
     }
 
     get fm1Client() {
@@ -1848,6 +1900,10 @@ export class DockManager {
 
     getDockByMonitor(monitorIndex) {
         return this._allDocks.find(d => d.monitorIndex === monitorIndex);
+    }
+
+    setDockExtent(monitorIndex, extent) {
+        this._strutsManager?.setMonitorExtent(monitorIndex, extent);
     }
 
     _ensureLocations() {
@@ -2527,11 +2583,10 @@ export class DockManager {
         this._workspaceIsolation?.destroy();
         this._keyboardShortcuts?.destroy();
         this._desktopIconsUsableArea?.resetMargins();
+        this._strutsManager?.clear();
 
         // Delete all docks
         [...this._allDocks].forEach(d => d.destroy());
-
-        this.emit('docks-destroyed');
     }
 
     _restoreDash() {
@@ -2627,10 +2682,15 @@ export class DockManager {
         this._appIconsDecorator?.destroy();
         this._settings = null;
         this._appSwitcherSettings = null;
+        this._windowTracker = null;
         this._oldDash = null;
 
         this._desktopIconsUsableArea?.destroy();
         this._desktopIconsUsableArea = null;
+
+        this._strutsManager?.destroy();
+        this._strutsManager = null;
+
         this._extension = null;
         DockManager._singleton = null;
     }

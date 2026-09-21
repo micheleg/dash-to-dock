@@ -43,8 +43,6 @@ const {gettext: __, ngettext} = Extension;
 
 const DBusMenu = await DBusMenuUtils.haveDBusMenu();
 
-const tracker = Shell.WindowTracker.get_default();
-
 const Labels = Object.freeze({
     ISOLATE_MONITORS: Symbol('isolate-monitors'),
     ISOLATE_WORKSPACES: Symbol('isolate-workspaces'),
@@ -234,6 +232,17 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         this._previewMenuManager = null;
         this._previewMenu = null;
+
+        const doubleClickGesture = new Clutter.ClickGesture({nClicksRequired: 2});
+        doubleClickGesture.connect('recognize', () => {
+            this._activate({
+                button: doubleClickGesture.get_button(),
+                modifiers: doubleClickGesture.get_state(),
+                clickCount: doubleClickGesture.get_n_presses(),
+            });
+        });
+        this.add_action(doubleClickGesture);
+        this._doubleClickGesture = doubleClickGesture;
     }
 
     _onDestroy() {
@@ -244,10 +253,13 @@ export const DockAbstractAppIcon = GObject.registerClass({
         // It can be safely removed once it get solved upstream.
         this._menu?.close(false);
         delete this._menu;
+
+        this._doubleClickGesture.cancel();
+        delete this._doubleClickGesture;
     }
 
     ownsWindow(window) {
-        return this.app === tracker.get_window_app(window);
+        return this.app === Docking.DockManager.windowTracker.get_window_app(window);
     }
 
     _onWindowEntered(metaScreen, monitorIndex, metaWin) {
@@ -342,7 +354,8 @@ export const DockAbstractAppIcon = GObject.registerClass({
     }
 
     _updateFocusState() {
-        this.focused = tracker.focus_app === this.app && this.running;
+        this.focused = this.running &&
+            Docking.DockManager.windowTracker.focus_app === this.app;
     }
 
     _updateUrgentWindows(interestingWindows) {
@@ -497,8 +510,10 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
     activate(button) {
         const event = Clutter.get_current_event();
-        let modifiers = event ? event.get_state() : 0;
+        this._activate({button, modifiers: event ? event.get_state() : 0});
+    }
 
+    _activate({button, modifiers, clickCount = 1}) {
         // Only consider SHIFT and CONTROL as modifiers (exclude SUPER, CAPS-LOCK, etc.)
         modifiers &= Clutter.ModifierType.SHIFT_MASK | Clutter.ModifierType.CONTROL_MASK;
 
@@ -564,9 +579,6 @@ export const DockAbstractAppIcon = GObject.registerClass({
                         modifiers & Clutter.ModifierType.SHIFT_MASK) {
                         // minimize all windows on double click and always in
                         // the case of primary click without additional modifiers
-                        let clickCount = 0;
-                        if (Clutter.EventType.CLUTTER_BUTTON_PRESS)
-                            clickCount = event.get_click_count();
                         const allWindows = (button === 1 && !modifiers) || clickCount > 1;
                         this._minimizeWindow(allWindows);
                     } else {
@@ -687,6 +699,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
             case clickAction.FOCUS_OR_APP_SPREAD:
                 if (this.focused && !singleOrUrgentWindows && !modifiers && button === 1) {
                     shouldHideOverview = false;
+                    this._doubleClickGesture.cancel();
                     Docking.DockManager.getDefault().appSpread.toggle(this.app);
                 } else {
                     // Activate the first window
@@ -697,6 +710,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
             case clickAction.FOCUS_MINIMIZE_OR_APP_SPREAD:
                 if (this.focused && !singleOrUrgentWindows && !modifiers && button === 1) {
                     shouldHideOverview = false;
+                    this._doubleClickGesture.cancel();
                     Docking.DockManager.getDefault().appSpread.toggle(this.app);
                 } else if (!this.focused) {
                     // Activate the first window
@@ -959,7 +973,9 @@ const DockAppIcon = GObject.registerClass({
     _init(app, monitorIndex, iconAnimator) {
         super._init(app, monitorIndex, iconAnimator);
 
-        this._signalsHandler.add(tracker, 'notify::focus-app', () => this._updateFocusState());
+        const {windowTracker} = Docking.DockManager;
+        this._signalsHandler.add(windowTracker, 'notify::focus-app',
+            () => this._updateFocusState());
     }
 });
 
@@ -972,7 +988,9 @@ const DockLocationAppIcon = GObject.registerClass({
         super._init(app, monitorIndex, iconAnimator);
 
         if (Docking.DockManager.settings.isolateLocations) {
-            this._signalsHandler.add(tracker, 'notify::focus-app', () => this._updateFocusState());
+            const {windowTracker} = Docking.DockManager;
+            this._signalsHandler.add(windowTracker, 'notify::focus-app',
+                () => this._updateFocusState());
         } else {
             this._signalsHandler.add(global.display, 'notify::focus-window',
                 () => this._updateFocusState());
