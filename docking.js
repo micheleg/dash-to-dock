@@ -372,8 +372,6 @@ const DockedDash = GObject.registerClass({
         }
 
         this._themeManager = new Theming.ThemeManager(this);
-        this._signalsHandler.add(this._themeManager, 'updated',
-            () => this.dash.resetAppIcons());
 
         this._signalsHandler.add(DockManager.iconTheme, 'changed',
             () => this.dash.resetAppIcons());
@@ -670,6 +668,14 @@ const DockedDash = GObject.registerClass({
         ], [
             settings,
             'changed::always-center-icons',
+            () => this.dash.resetAppIcons(),
+        ], [
+            settings,
+            'changed::apply-custom-theme',
+            () => this.dash.resetAppIcons(),
+        ], [
+            settings,
+            'changed::custom-theme-shrink',
             () => this.dash.resetAppIcons(),
         ], [
             settings,
@@ -2535,10 +2541,11 @@ export class DockManager {
 
             const hadOverview = Main.sessionMode.hasOverview;
 
-            // Convince LayoutManager to use the legacy startup animation:
-            // Reset overview controls state to HIDDEN, as skipping the startup
-            // overview leaves it stuck at WINDOW_PICKER
+            // LayoutManager shows the overview on startup when hasOverview is
+            // true. Clear it so GNOME 48 uses the desktop zoom animation
+            // instead. Restore after startup-complete so Super still works.
             if (this._settings.disableOverviewOnStartup) {
+                Main.sessionMode.hasOverview = false;
                 const {OverviewAdjustment} = OverviewControls;
                 this._propertyInjections.addWithLabel(Labels.STARTUP_ANIMATION,
                     OverviewAdjustment.prototype, 'value', {
@@ -2571,6 +2578,8 @@ export class DockManager {
                         this._propertyInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
                         this.overviewControls._stateAdjustment.value =
                             OverviewControls.ControlsState.HIDDEN;
+                        if (Main.overview.visible)
+                            Main.overview.hide();
                     }
                 });
         } else {

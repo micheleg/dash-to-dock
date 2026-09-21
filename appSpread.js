@@ -229,7 +229,7 @@ export class AppSpread {
         this._signalHandlers.clear();
         this._vfuncInjections.clear();
         Main.panel.statusArea?.activities.remove_action_by_name(APP_SPREAD_RESTORE_ACTION);
-        this._activitiesClickGesture.set_enabled(true);
+        this._activitiesClickGesture?.set_enabled(true);
         this._activitiesClickGesture = null;
 
         // Check reason for leaving AppSpread was closing app windows and only one window left...

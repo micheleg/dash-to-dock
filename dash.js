@@ -728,10 +728,11 @@ export const DockDash = GObject.registerClass({
             // in sync with this.iconSize
             icon.setIconSize(this.iconSize);
 
-            // Don't animate the icon size change when the overview
-            // is transitioning, not visible or when initially filling
-            // the dash
-            if (!Main.overview.visible || Main.overview.animationInProgress ||
+            // Don't animate the icon size change when the overview is
+            // visible or transitioning, or when initially filling the dash.
+            // Dash to Dock is already on screen, so a size tween in overview
+            // looks like the icons are pulsing.
+            if (Main.overview.visible || Main.overview.animationInProgress ||
                 !this._shownInitially)
                 continue;
 
