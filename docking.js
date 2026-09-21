@@ -1743,6 +1743,7 @@ export class DockManager {
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
         this._appSpread = new AppSpread.AppSpread();
         this._notificationsMonitor = new NotificationsMonitor.NotificationsMonitor();
+        this._windowTracker = Shell.WindowTracker.get_default();
 
         const needsRemoteModel = () =>
             !this._notificationsMonitor.dndMode && this._settings.showIconsEmblems;
@@ -1813,6 +1814,10 @@ export class DockManager {
         return DockManager.getDefault().settings;
     }
 
+    static get windowTracker() {
+        return DockManager.getDefault().windowTracker;
+    }
+
     get extension() {
         return this._extension;
     }
@@ -1827,6 +1832,10 @@ export class DockManager {
 
     get iconTheme() {
         return this._iconTheme;
+    }
+
+    get windowTracker() {
+        return this._windowTracker;
     }
 
     get fm1Client() {
@@ -2644,6 +2653,7 @@ export class DockManager {
         this._appIconsDecorator?.destroy();
         this._settings = null;
         this._appSwitcherSettings = null;
+        this._windowTracker = null;
         this._oldDash = null;
 
         this._desktopIconsUsableArea?.destroy();

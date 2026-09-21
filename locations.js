@@ -1020,7 +1020,7 @@ function wrapWindowsBackedApp(shellApp) {
         return GLib.SOURCE_REMOVE;
     }));
 
-    const windowTracker = Shell.WindowTracker.get_default();
+    const {windowTracker} = Docking.DockManager;
     shellApp._checkFocused = function () {
         if (this._windows.some(w => w.has_focus())) {
             this.isFocused = true;

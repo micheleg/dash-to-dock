@@ -43,8 +43,6 @@ const {gettext: __, ngettext} = Extension;
 
 const DBusMenu = await DBusMenuUtils.haveDBusMenu();
 
-const tracker = Shell.WindowTracker.get_default();
-
 const Labels = Object.freeze({
     ISOLATE_MONITORS: Symbol('isolate-monitors'),
     ISOLATE_WORKSPACES: Symbol('isolate-workspaces'),
@@ -247,7 +245,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
     }
 
     ownsWindow(window) {
-        return this.app === tracker.get_window_app(window);
+        return this.app === Docking.DockManager.windowTracker.get_window_app(window);
     }
 
     _onWindowEntered(metaScreen, monitorIndex, metaWin) {
@@ -342,7 +340,8 @@ export const DockAbstractAppIcon = GObject.registerClass({
     }
 
     _updateFocusState() {
-        this.focused = tracker.focus_app === this.app && this.running;
+        this.focused = this.running &&
+            Docking.DockManager.windowTracker.focus_app === this.app;
     }
 
     _updateUrgentWindows(interestingWindows) {
@@ -959,7 +958,9 @@ const DockAppIcon = GObject.registerClass({
     _init(app, monitorIndex, iconAnimator) {
         super._init(app, monitorIndex, iconAnimator);
 
-        this._signalsHandler.add(tracker, 'notify::focus-app', () => this._updateFocusState());
+        const {windowTracker} = Docking.DockManager;
+        this._signalsHandler.add(windowTracker, 'notify::focus-app',
+            () => this._updateFocusState());
     }
 });
 
@@ -972,7 +973,9 @@ const DockLocationAppIcon = GObject.registerClass({
         super._init(app, monitorIndex, iconAnimator);
 
         if (Docking.DockManager.settings.isolateLocations) {
-            this._signalsHandler.add(tracker, 'notify::focus-app', () => this._updateFocusState());
+            const {windowTracker} = Docking.DockManager;
+            this._signalsHandler.add(windowTracker, 'notify::focus-app',
+                () => this._updateFocusState());
         } else {
             this._signalsHandler.add(global.display, 'notify::focus-window',
                 () => this._updateFocusState());
