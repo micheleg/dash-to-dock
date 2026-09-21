@@ -68,7 +68,7 @@ export class ThemeManager {
 
         this._signalsHandler.addWithLabel(Labels.THEME_CHANGED,
             this._actor, 'style-changed',
-            () => this.updateCustomTheme(),
+            () => this._queueUpdateCustomTheme(),
             Utils.SignalsHandlerFlags.CONNECT_AFTER);
 
         // Set the initial overview pseudo-class state.
@@ -85,6 +85,21 @@ export class ThemeManager {
     destroy() {
         this.emit('destroy');
         this._transparency.destroy();
+
+        if (this._updateLater) {
+            Utils.laterRemove(this._updateLater);
+            this._updateLater = 0;
+        }
+    }
+
+    _queueUpdateCustomTheme() {
+        if (this._updateLater)
+            return;
+
+        this._updateLater = Utils.laterAdd(Meta.LaterType.BEFORE_REDRAW, () => {
+            this._updateLater = 0;
+            this.updateCustomTheme();
+        });
     }
 
     _onOverviewShowing() {
@@ -223,10 +238,6 @@ export class ThemeManager {
     }
 
     updateCustomTheme() {
-        // The style can only be read from a staged actor, and any update done
-        // before that would be recomputed on map anyway: the actor's
-        // style-changed signal (emitted when St recomputes the style of the
-        // newly mapped widget) will take care of applying any pending change.
         if (!this._actor.mapped)
             return;
 
