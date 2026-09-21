@@ -107,7 +107,10 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
 
         const position = Utils.getPosition();
         this.isHorizontal = position === St.Side.BOTTOM || position === St.Side.TOP;
-        this.box.set_vertical(!this.isHorizontal);
+        // Remove this when can use GNOME 48
+        this.box.set_vertical?.(!this.isHorizontal);
+        this.box.set_orientation?.(this.isHorizontal
+            ? Clutter.Orientation.HORIZONTAL : Clutter.Orientation.VERTICAL);
         this.box.set_name('dashtodockWindowList');
         Utils.addActor(this.actor, this.box);
         this.actor._delegate = this;
