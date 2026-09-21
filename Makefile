@@ -12,8 +12,9 @@ EXTRA_MODULES = \
                 dash.js \
                 docking.js \
                 appIcons.js \
-				appIconsDecorator.js \
+                appIconsDecorator.js \
                 appIconIndicators.js \
+                dockStruts.js \
                 fileManager1API.js \
                 imports.js \
                 launcherAPI.js \
