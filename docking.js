@@ -42,6 +42,8 @@ import {
 
 import {Extension} from './dependencies/shell/extensions/extension.js';
 
+import {StrutsManager} from './dockStruts.js';
+
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
 const {gettext: __} = Extension;
@@ -454,6 +456,7 @@ const DockedDash = GObject.registerClass({
 
         // Set the initial position.
         this._resetPosition();
+        this._updateStruts();
     }
 
     _initialize() {
@@ -1293,6 +1296,25 @@ const DockedDash = GObject.registerClass({
 
         this._intellihide.updateTargetBox(this._staticBox);
         this._updateVisibleDesktop();
+        this._updateStruts();
+    }
+
+    _updateStruts() {
+        const {width, height} = this._box;
+        if (width === 0 && height === 0)
+            return;
+
+        const side = this._position;
+        const extent = {
+            side,
+            x: side === St.Side.RIGHT ? this.x - width : this.x,
+            y: side === St.Side.BOTTOM ? this.y - height : this.y,
+            width,
+            height,
+            affectsStruts: DockManager.settings.dockFixed,
+        };
+
+        DockManager.getDefault()?.setDockExtent(this.monitorIndex, extent);
     }
 
     _removeAnimations() {
@@ -1738,6 +1760,7 @@ export class DockManager {
 
         this._iconTheme = new St.IconTheme();
 
+        this._strutsManager = new StrutsManager();
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass(extension);
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
         this._signalsHandler.add(this._oldDash, 'destroy', () => (this._oldDash = null));
@@ -1877,6 +1900,10 @@ export class DockManager {
 
     getDockByMonitor(monitorIndex) {
         return this._allDocks.find(d => d.monitorIndex === monitorIndex);
+    }
+
+    setDockExtent(monitorIndex, extent) {
+        this._strutsManager?.setMonitorExtent(monitorIndex, extent);
     }
 
     _ensureLocations() {
@@ -2556,6 +2583,7 @@ export class DockManager {
         this._workspaceIsolation?.destroy();
         this._keyboardShortcuts?.destroy();
         this._desktopIconsUsableArea?.resetMargins();
+        this._strutsManager?.clear();
 
         // Delete all docks
         [...this._allDocks].forEach(d => d.destroy());
@@ -2659,6 +2687,10 @@ export class DockManager {
 
         this._desktopIconsUsableArea?.destroy();
         this._desktopIconsUsableArea = null;
+
+        this._strutsManager?.destroy();
+        this._strutsManager = null;
+
         this._extension = null;
         DockManager._singleton = null;
     }
