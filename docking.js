@@ -697,16 +697,16 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateUnredirect() {
-        const disabled = this.intellihideEnabled &&
+        let disabled = this.intellihideEnabled &&
             this.dockState !== State.HIDDEN &&
             this.dockState !== State.HIDING;
 
-        if (disabled === this._unredirectDisabled)
-            return;
-
         // Don't disable it on fullscreen: forcing composition there breaks
         // VRR/Freesync and the dock isn't shown anyway.
-        if (disabled && this._monitor?.inFullscreen)
+        if (this._monitor?.inFullscreen)
+            disabled = false;
+
+        if (disabled === this._unredirectDisabled)
             return;
 
         // Unredirection is a refcounted operation in the compositor, so multiple
