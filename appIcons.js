@@ -451,7 +451,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
         const {osdWindowManager} = Main;
         const showOsd = osdWindowManager.showOne ?? osdWindowManager.show;
         showOsd.call(osdWindowManager, monitorIndex ?? this.monitorIndex, icon,
-            _('%s is updating, try again later').format(this.name), null);
+            __('%s is updating, try again later').format(this.name), null);
     }
 
     popupMenu() {
@@ -1119,7 +1119,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         this.removeAll();
 
         const appItemLabel = this.sourceActor.updating
-            ? _('%s is being updated…').format(this.sourceActor.name)
+            ? __('%s is being updated…').format(this.sourceActor.name)
             : this.sourceActor.name;
         this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(appItemLabel));
 
@@ -1181,8 +1181,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                     ? Shell.AppLaunchGpu.DEFAULT
                     : Shell.AppLaunchGpu.DISCRETE;
                 const gpuMenuItem = this._appendMenuItem(appPrefersNonDefaultGPU
-                    ? _('Launch using Integrated Graphics Card')
-                    : _('Launch using Discrete Graphics Card'));
+                    ? __('Launch using Integrated Graphics Card')
+                    : __('Launch using Discrete Graphics Card'));
                 gpuMenuItem.connect('activate', () => {
                     this.sourceActor.animateLaunch();
                     app.launch(0, -1, gpuPref);
