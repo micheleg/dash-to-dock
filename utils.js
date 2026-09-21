@@ -487,11 +487,24 @@ export class PropertyInjectionsHandler extends BasicHandler {
         const originalPropertyDescriptor = Object.getOwnPropertyDescriptor(prototype, name) ??
             Object.getOwnPropertyDescriptor(instance, name);
 
-        Object.defineProperty(instance, name, {
+        const isAccessor = 'get' in injectedPropertyDescriptor ||
+            'set' in injectedPropertyDescriptor;
+
+        injectedPropertyDescriptor = {
             ...originalPropertyDescriptor,
             ...injectedPropertyDescriptor,
             ...{configurable: true},
-        });
+        };
+
+        if (isAccessor) {
+            delete injectedPropertyDescriptor.value;
+            delete injectedPropertyDescriptor.writable;
+        } else {
+            delete injectedPropertyDescriptor.get;
+            delete injectedPropertyDescriptor.set;
+        }
+
+        Object.defineProperty(instance, name, injectedPropertyDescriptor);
         return [instance, name, originalPropertyDescriptor];
     }
 

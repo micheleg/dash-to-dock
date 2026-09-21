@@ -256,7 +256,7 @@ export const DockDash = GObject.registerClass({
         this.add_child(this._background);
         this.add_child(this._dashContainer);
 
-        this._workId = Main.initializeDeferredWork(this._box, this._redisplay.bind(this));
+        this._workId = Main.initializeDeferredWork(this._box, () => this._redisplay());
 
         this._shellSettings = new Gio.Settings({
             schema_id: 'org.gnome.shell',
@@ -341,6 +341,11 @@ export const DockDash = GObject.registerClass({
         if (this._ensureActorVisibilityTimeoutId) {
             GLib.source_remove(this._ensureActorVisibilityTimeoutId);
             delete this._ensureActorVisibilityTimeoutId;
+        }
+
+        if (this._showLabelTimeoutId) {
+            GLib.source_remove(this._showLabelTimeoutId);
+            this._showLabelTimeoutId = 0;
         }
     }
 
@@ -762,7 +767,15 @@ export const DockDash = GObject.registerClass({
         }
     }
 
+    vfunc_map() {
+        super.vfunc_map();
+        this._queueRedisplay();
+    }
+
     _redisplay() {
+        if (!this.mapped)
+            return;
+
         const favorites = AppFavorites.getAppFavorites().getFavoriteMap();
 
         let running = this._appSystem.get_running();

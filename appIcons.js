@@ -233,16 +233,19 @@ export const DockAbstractAppIcon = GObject.registerClass({
         this._previewMenuManager = null;
         this._previewMenu = null;
 
-        const doubleClickGesture = new Clutter.ClickGesture({nClicksRequired: 2});
-        doubleClickGesture.connect('recognize', () => {
-            this._activate({
-                button: doubleClickGesture.get_button(),
-                modifiers: doubleClickGesture.get_state(),
-                clickCount: doubleClickGesture.get_n_presses(),
+        // This requires GNOME 49
+        if (Clutter.ClickGesture) {
+            const doubleClickGesture = new Clutter.ClickGesture({nClicksRequired: 2});
+            doubleClickGesture.connect('recognize', () => {
+                this._activate({
+                    button: doubleClickGesture.get_button(),
+                    modifiers: doubleClickGesture.get_state(),
+                    clickCount: doubleClickGesture.get_n_presses(),
+                });
             });
-        });
-        this.add_action(doubleClickGesture);
-        this._doubleClickGesture = doubleClickGesture;
+            this.add_action(doubleClickGesture);
+            this._doubleClickGesture = doubleClickGesture;
+        }
     }
 
     _onDestroy() {
@@ -254,7 +257,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
         this._menu?.close(false);
         delete this._menu;
 
-        this._doubleClickGesture.cancel();
+        this._doubleClickGesture?.cancel();
         delete this._doubleClickGesture;
     }
 
@@ -448,7 +451,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
         const {osdWindowManager} = Main;
         const showOsd = osdWindowManager.showOne ?? osdWindowManager.show;
         showOsd.call(osdWindowManager, monitorIndex ?? this.monitorIndex, icon,
-            _('%s is updating, try again later').format(this.name), null);
+            __('%s is updating, try again later').format(this.name), null);
     }
 
     popupMenu() {
@@ -510,7 +513,11 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
     activate(button) {
         const event = Clutter.get_current_event();
-        this._activate({button, modifiers: event ? event.get_state() : 0});
+        this._activate({
+            button,
+            modifiers: event?.get_state() ?? 0,
+            clickCount: event?.get_click_count?.() ?? 1,
+        });
     }
 
     _activate({button, modifiers, clickCount = 1}) {
@@ -699,7 +706,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
             case clickAction.FOCUS_OR_APP_SPREAD:
                 if (this.focused && !singleOrUrgentWindows && !modifiers && button === 1) {
                     shouldHideOverview = false;
-                    this._doubleClickGesture.cancel();
+                    this._doubleClickGesture?.cancel();
                     Docking.DockManager.getDefault().appSpread.toggle(this.app);
                 } else {
                     // Activate the first window
@@ -710,7 +717,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
             case clickAction.FOCUS_MINIMIZE_OR_APP_SPREAD:
                 if (this.focused && !singleOrUrgentWindows && !modifiers && button === 1) {
                     shouldHideOverview = false;
-                    this._doubleClickGesture.cancel();
+                    this._doubleClickGesture?.cancel();
                     Docking.DockManager.getDefault().appSpread.toggle(this.app);
                 } else if (!this.focused) {
                     // Activate the first window
@@ -1112,7 +1119,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         this.removeAll();
 
         const appItemLabel = this.sourceActor.updating
-            ? _('%s is being updated…').format(this.sourceActor.name)
+            ? __('%s is being updated…').format(this.sourceActor.name)
             : this.sourceActor.name;
         this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(appItemLabel));
 
@@ -1174,8 +1181,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                     ? Shell.AppLaunchGpu.DEFAULT
                     : Shell.AppLaunchGpu.DISCRETE;
                 const gpuMenuItem = this._appendMenuItem(appPrefersNonDefaultGPU
-                    ? _('Launch using Integrated Graphics Card')
-                    : _('Launch using Discrete Graphics Card'));
+                    ? __('Launch using Integrated Graphics Card')
+                    : __('Launch using Discrete Graphics Card'));
                 gpuMenuItem.connect('activate', () => {
                     this.sourceActor.animateLaunch();
                     app.launch(0, -1, gpuPref);

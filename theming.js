@@ -67,9 +67,25 @@ export class ThemeManager {
         ]);
 
         this._signalsHandler.addWithLabel(Labels.THEME_CHANGED,
-            this._actor, 'style-changed',
+            St.ThemeContext.get_for_stage(global.stage), 'changed',
             () => this._queueUpdateCustomTheme(),
             Utils.SignalsHandlerFlags.CONNECT_AFTER);
+
+        const maybeUpdateCustomTheme = () => {
+            if (this._actor.mapped) {
+                this._signalsHandler.unblockWithLabel(Labels.THEME_CHANGED);
+                this._queueUpdateCustomTheme();
+            } else {
+                this._dequeueUpdateCustomTheme();
+                this._signalsHandler.blockWithLabel(Labels.THEME_CHANGED);
+            }
+        };
+
+        this._signalsHandler.add(this._actor, 'notify::mapped',
+            () => maybeUpdateCustomTheme(),
+            Utils.SignalsHandlerFlags.CONNECT_AFTER);
+
+        maybeUpdateCustomTheme();
 
         // Set the initial overview pseudo-class state.
         if (Main.overview.visible)
@@ -85,11 +101,7 @@ export class ThemeManager {
     destroy() {
         this.emit('destroy');
         this._transparency.destroy();
-
-        if (this._updateLater) {
-            Utils.laterRemove(this._updateLater);
-            this._updateLater = 0;
-        }
+        this._dequeueUpdateCustomTheme();
     }
 
     _queueUpdateCustomTheme() {
@@ -100,6 +112,14 @@ export class ThemeManager {
             this._updateLater = 0;
             this.updateCustomTheme();
         });
+    }
+
+    _dequeueUpdateCustomTheme() {
+        if (!this._updateLater)
+            return;
+
+        Utils.laterRemove(this._updateLater);
+        delete this._updateLater;
     }
 
     _onOverviewShowing() {
@@ -489,7 +509,7 @@ class Transparency {
          * */
         let factor = 0;
         if (!Docking.DockManager.settings.dockFixed &&
-            this._dock.getDockState() === Docking.State.HIDDEN)
+            this._dock.dockState === Docking.State.HIDDEN)
             factor = 1;
         const [leftCoord, topCoord] = this._actor.get_transformed_position();
         let threshold;
