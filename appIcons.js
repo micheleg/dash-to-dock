@@ -349,6 +349,12 @@ export const DockAbstractAppIcon = GObject.registerClass({
             interestingWindows.forEach(window =>
                 this._signalsHandler.addWithLabel(Labels.ISOLATE_WORKSPACES,
                     window, 'workspace-changed', () => this._updateWindows()));
+
+            if (!this._hasActiveWorkspaceListener) {
+                this._hasActiveWorkspaceListener = true;
+                this._signalsHandler.addWithLabel(Symbol('isolateWorkspacesActive'),
+                    global.workspace_manager, 'active-workspace-changed', () => this._updateWindows());
+            }
         }
     }
 
@@ -1403,7 +1409,9 @@ export function getInterestingWindows(windows, monitorIndex) {
         const showUrgent = settings.workspaceAgnosticUrgentWindows;
         const activeWorkspace = global.workspace_manager.get_active_workspace();
         windows = windows.filter(w => {
-            const inWorkspace = w.get_workspace() === activeWorkspace;
+            const wspace = w.get_workspace();
+            const inWorkspace = (wspace === activeWorkspace) ||
+                (w.is_on_all_workspaces && w.is_on_all_workspaces());
             return inWorkspace || (showUrgent && isWindowUrgent(w));
         });
     }

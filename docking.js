@@ -1785,6 +1785,8 @@ const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
                 () => dock.dash._queueRedisplay(), dock.dash);
             global.window_manager.connectObject('switch-workspace',
                 () => dock.dash._queueRedisplay(), dock.dash);
+            global.workspace_manager.connectObject('active-workspace-changed',
+                () => dock.dash._queueRedisplay(), dock.dash);
 
             // This last signal is only needed for monitor isolation, as windows
             // might migrate from one monitor to another without triggering 'restacked'
