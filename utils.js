@@ -462,9 +462,13 @@ export class VFuncInjectionsHandler extends BasicHandler {
     }
 
     _replaceVFunc(prototype, name, func) {
-        if (Gi.gobject_prototype_symbol && Gi.gobject_prototype_symbol in prototype)
+        // shexli-ci: EGO-I-004 - required to override vfuncs
+        if (Gi.gobject_prototype_symbol && Gi.gobject_prototype_symbol in prototype) {
+            // shexli-ci: EGO-I-004 - override vfuncs
             prototype = prototype[Gi.gobject_prototype_symbol];
+        }
 
+        // shexli-ci: EGO-I-004 - override vfuncs
         return prototype[Gi.hook_up_vfunc_symbol](name, func);
     }
 }
