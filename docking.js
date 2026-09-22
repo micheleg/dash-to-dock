@@ -1357,11 +1357,20 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateStaticBox() {
+        // Use the natural size of the dash to calculate the static bounding box.
+        // During the slide in/out animation, DashSlideContainer continuously squishes
+        // the allocated width/height of its children. Relying on this.dash.width/height
+        // would cause the bounding box to fluctuate, triggering an infinite intellihide
+        // layout invalidation loop on GNOME 47.
+        const [, , natWidth, natHeight] = this.dash.get_preferred_size();
+        const width = natWidth;
+        const height = natHeight;
+
         const x = this.x + this._slider.x -
-            (this._position === St.Side.RIGHT ? this._box.width : 0);
+            (this._position === St.Side.RIGHT ? width : 0);
         const y = this.y + this._slider.y -
-            (this._position === St.Side.BOTTOM ? this._box.height : 0);
-        const {width, height} = this._box;
+            (this._position === St.Side.BOTTOM ? height : 0);
+
         const geometry = this._staticBoxGeometry;
 
         if (geometry && geometry.x === x && geometry.y === y &&
