@@ -13,21 +13,21 @@
       ]
     },
     {
-      "rule_id": "EGO-P-007",
-      "paths": [
-        "locationsWorker.js"
-      ],
-      "snippets": [
-        ""
-      ]
-    },
-    {
       "rule_id": "EGO-L-002",
       "paths": [
         "docking.js"
       ],
       "snippets": [
         "this._staticBox = new Clutter.ActorBox()"
+      ]
+    },
+    {
+      "rule_id": "EGO-P-007",
+      "paths": [
+        "locationsWorker.js"
+      ],
+      "snippets": [
+        ""
       ]
     }
   ]
