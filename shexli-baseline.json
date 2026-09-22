@@ -1,0 +1,34 @@
+{
+  "spec_version": "2026-04-02",
+  "known": [
+    {
+      "rule_id": "EGO-I-004",
+      "paths": [
+        "utils.js"
+      ],
+      "snippets": [
+        "Gi.gobject_prototype_symbol",
+        "Gi.gobject_prototype_symbol",
+        "Gi.hook_up_vfunc_symbol"
+      ]
+    },
+    {
+      "rule_id": "EGO-P-007",
+      "paths": [
+        "locationsWorker.js"
+      ],
+      "snippets": [
+        ""
+      ]
+    },
+    {
+      "rule_id": "EGO-L-002",
+      "paths": [
+        "docking.js"
+      ],
+      "snippets": [
+        "this._staticBox = new Clutter.ActorBox()"
+      ]
+    }
+  ]
+}
