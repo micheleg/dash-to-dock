@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: 55\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-21 08:15+0200\n"
-"PO-Revision-Date: 2026-09-21 16:32+0200\n"
+"PO-Revision-Date: 2026-09-22 13:39+0200\n"
 "Last-Translator: Tomasz Bojanowski <tomasz@bojanowski.me>\n"
 "Language-Team: Polish\n"
 "Language: pl\n"
@@ -52,7 +52,7 @@ msgstr "Przywróć domyślne"
 msgid "Managed by GNOME Multitasking's Application Switching setting."
 msgstr ""
 "Zarządzane przez ustawienie „Przełączanie aplikacji” w sekcji "
-"„Wielozadaniowość” GNOME."
+"„Wielozadaniowość” środowiska GNOME."
 
 #: prefs.js:823
 msgid "Show dock and application numbers"
@@ -161,17 +161,17 @@ msgstr "Wysuń"
 #: locations.js:604
 #, javascript-format
 msgid "Failed to mount “%s”"
-msgstr "Zamontowanie „%s” się nie powiodło"
+msgstr "Nie udało się zamontować „%s”"
 
 #: locations.js:609
 #, javascript-format
 msgid "Failed to unmount “%s”"
-msgstr "Odmontowanie „%s” się nie powiodło"
+msgstr "Nie udało się odmontować „%s”"
 
 #: locations.js:614
 #, javascript-format
 msgid "Failed to eject “%s”"
-msgstr "Wysunięcie „%s” się nie powiodło"
+msgstr "Nie udało się wysunąć „%s”"
 
 #: locations.js:627
 msgid "Mount operation already in progress"
@@ -196,7 +196,7 @@ msgstr "Opróżnij kosz"
 #: locations.js:1074
 #, javascript-format
 msgid "Failed to launch “%s”"
-msgstr "Uruchomienie „%s” się nie powiodło"
+msgstr "Nie udało się uruchomić „%s”"
 
 #: Settings.ui:41
 msgid ""
@@ -225,7 +225,7 @@ msgstr "Otwarcie nowego okna"
 #: Settings.ui:76 Settings.ui:148 Settings.ui:220 Settings.ui:1687
 #: Settings.ui:1789
 msgid "Cycle through windows"
-msgstr "Przełączenie pomiędzy oknami"
+msgstr "Przełączanie między oknami"
 
 #: Settings.ui:77 Settings.ui:149 Settings.ui:221 Settings.ui:1688
 msgid "Minimize or overview"
@@ -257,7 +257,7 @@ msgstr "Przywrócenie, zminimalizowanie lub rozłożenie okien"
 
 #: Settings.ui:113
 msgid "Behavior for Middle-Click."
-msgstr "Konfiguruje działanie kliknięcia środkowym przyciskiem myszy."
+msgstr "Określa działanie kliknięcia środkowym przyciskiem myszy."
 
 #: Settings.ui:131
 msgid "Middle-Click action"
@@ -266,7 +266,7 @@ msgstr "Kliknięcie środkowym przyciskiem"
 #: Settings.ui:185
 msgid "Behavior for Shift+Middle-Click."
 msgstr ""
-"Konfiguruje działanie kliknięcia środkowym przyciskiem myszy z przytrzymanym "
+"Określa działanie kliknięcia środkowym przyciskiem myszy z przytrzymanym "
 "klawiszem Shift."
 
 #: Settings.ui:203
@@ -275,7 +275,7 @@ msgstr "Kliknięcie środkowym przyciskiem + Shift"
 
 #: Settings.ui:305
 msgid "Enable Unity7 like glossy backlit items"
-msgstr "Podświetlenie elementów w stylu Unity7"
+msgstr "Podświetlenie elementów w stylu środowiska Unity7"
 
 #: Settings.ui:318
 msgid "Apply glossy effect."
@@ -307,7 +307,7 @@ msgstr "Ekran wyświetlania doku"
 
 #: Settings.ui:523
 msgid "Show on all monitors"
-msgstr "Na wszystkich ekranach"
+msgstr "Wyświetlanie na wszystkich ekranach"
 
 #: Settings.ui:559
 msgid "Position on screen"
@@ -351,7 +351,7 @@ msgstr "Ograniczenie rozmiaru ikon"
 
 #: Settings.ui:820
 msgid "Fixed icon size: scroll to reveal other icons"
-msgstr "Ustalony rozmiar ikon: odsłanianie ikon przewijaniem"
+msgstr "Ustalony rozmiar ikon: przewijanie pozostałych ikon"
 
 #: Settings.ui:848
 msgid "Preview size scale"
@@ -394,8 +394,8 @@ msgid ""
 "If disabled, these settings are accessible from gnome-tweak-tool or the "
 "extension website."
 msgstr ""
-"Po wyłączeniu te ustawienia są dostępne w narzędziu dostrajania lub na "
-"stronie rozszerzenia."
+"Po wyłączeniu tej funkcji ustawienia są dostępne w narzędziu dostrajania lub "
+"na stronie rozszerzenia."
 
 #: Settings.ui:1118
 msgid "Show <i>Applications</i> icon"
@@ -452,8 +452,8 @@ msgid ""
 "When enabled application icons will show notification counters and progress-"
 "bars (if Unity API is used)."
 msgstr ""
-"Po włączeniu ikony aplikacji wyświetlają liczniki powiadomień i paski "
-"postępu (jeśli aplikacja korzysta z API Unity)."
+"Po włączeniu tej funkcji ikony aplikacji wyświetlają liczniki powiadomień i "
+"paski postępu (jeśli aplikacja korzysta z API Unity)."
 
 #: Settings.ui:1450
 msgid "Show the number of unread notifications"
@@ -502,7 +502,7 @@ msgstr "Działanie przewijania"
 #: Settings.ui:1771
 msgid "Won't work over icons because 'Fixed icon size' is enabled."
 msgstr ""
-"Nie działa nad ikonami, ponieważ włączono opcję „Ustalony rozmiar ikon”."
+"Nie działa nad ikonami, ponieważ włączono funkcję „Ustalony rozmiar ikon”."
 
 #: Settings.ui:1788
 msgid "Do nothing"
@@ -537,8 +537,8 @@ msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
 msgstr ""
-"Integruje dok z domyślnym motywem GNOME przy użyciu kilku ustawień. Zamiast "
-"tego można poniżej włączyć wybrane opcje."
+"Integruje dok z domyślnym motywem środowiska GNOME przy użyciu kilku "
+"ustawień. Zamiast tego można poniżej włączyć wybrane funkcje."
 
 #: Settings.ui:2004
 msgid "Use built-in theme"
@@ -546,7 +546,7 @@ msgstr "Użycie wbudowanego motywu"
 
 #: Settings.ui:2046
 msgid "Customize windows counter indicators"
-msgstr "Wskaźniki liczby okien"
+msgstr "Dostosowanie wskaźników liczby okien"
 
 #: Settings.ui:2079 Settings.ui:2244
 msgid "Default"
@@ -590,7 +590,7 @@ msgstr "Kropka"
 
 #: Settings.ui:2121
 msgid "Set the background color for the dash."
-msgstr "Ustala wybrany kolor tła kokpitu."
+msgstr "Ustala kolor tła kokpitu."
 
 #: Settings.ui:2139
 msgid "Customize the dash color"
@@ -598,7 +598,7 @@ msgstr "Dostosowanie koloru kokpitu"
 
 #: Settings.ui:2195
 msgid "Tune the dash background opacity."
-msgstr "Modyfikuje nieprzejrzystość tła kokpitu."
+msgstr "Dostosowuje nieprzejrzystość tła kokpitu."
 
 #: Settings.ui:2245
 msgid "Fixed"
@@ -663,7 +663,7 @@ msgstr "Maksymalna nieprzejrzystość"
 
 #: Settings.ui:2603
 msgid "Number overlay"
-msgstr "Nakładka z numerem"
+msgstr "Nakładka z numerami"
 
 #: Settings.ui:2614
 msgid ""
@@ -673,17 +673,19 @@ msgstr "Wyświetla chwilowo na ikonach numery aplikacji powiązane ze skrótami.
 
 #: Settings.ui:2660
 msgid "Show the dock if it is hidden"
-msgstr "Wyświetlenie ukrytego doku"
+msgstr "Wyświetlanie ukrytego doku"
 
 #: Settings.ui:2671
 msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
-msgstr "Wyświetla chwilowo dok po wciśnięciu skrótu klawiszowego."
+msgstr ""
+"Przy włączonym automatycznym ukrywaniu dok pojawia się na chwilę po "
+"naciśnięciu skrótu klawiszowego."
 
 #: Settings.ui:2714
 msgid "Shortcut for the options above"
-msgstr "Skrót klawiszowy dla powyższych opcji"
+msgstr "Skrót klawiszowy powyższych opcji"
 
 #: Settings.ui:2725
 msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
