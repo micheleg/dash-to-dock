@@ -12,7 +12,7 @@ name: Make
 
 jobs:
   make:
-    name: Make
+    name: eslint
     runs-on: ubuntu-latest
     steps:
       - name: Check out the codebase.
@@ -37,7 +37,7 @@ jobs:
         run: make potfile
 
   shexli:
-    name: Run shexli
+    name: shexli
     runs-on: ubuntu-latest
     if: >-
       (github.event_name == 'pull_request' &&
