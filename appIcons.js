@@ -1533,8 +1533,19 @@ export const DockShowAppsIcon = GObject.registerClass({
         if (!this._hasPopupMenu())
             return;
 
-        if (!Clutter.LongPressGesture || !Clutter.ClickGesture)
+        if (!Clutter.LongPressGesture || !Clutter.ClickGesture) {
+            const popupAction = new Clutter.ClickAction();
+            popupAction.connect('long-press', (action, actor, state) => {
+                if (state === Clutter.LongPressState.ACTIVATE)
+                    this.popupMenu();
+            });
+            popupAction.connect('clicked', action => {
+                if (action.get_button() === Clutter.BUTTON_SECONDARY)
+                    this.popupMenu();
+            });
+            this.add_action(popupAction);
             return;
+        }
 
         const longPressGesture = new Clutter.LongPressGesture();
         longPressGesture.connect('recognize', () => this.popupMenu());
