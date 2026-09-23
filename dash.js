@@ -50,6 +50,11 @@ class DockDashItemContainer extends Dash.DashItemContainer {
     _init(position) {
         super._init();
 
+        if (position === St.Side.TOP || position === St.Side.BOTTOM)
+            this.xExpand = false;
+        else
+            this.yExpand = false;
+
         this.label?.add_style_class_name(Theming.PositionStyleClass[position]);
         if (Docking.DockManager.settings.customThemeShrink)
             this.label?.add_style_class_name('shrink');
