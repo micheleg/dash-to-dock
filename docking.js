@@ -450,8 +450,15 @@ const DockedDash = GObject.registerClass({
 
         // Since Clutter has no longer ClutterAllocationFlags,
         // "allocation-changed" signal has been removed. MR !1245
-        this.dash._container.connect('notify::allocation', this._updateStaticBox.bind(this));
-        this._slider.connect('notify::allocation', () => this._updateStaticBox());
+        this._signalsHandler.add([
+            this.dash._container,
+            'notify::allocation',
+            this._updateStaticBox.bind(this),
+        ], [
+            this._slider,
+            'notify::allocation',
+            () => this._updateStaticBox(),
+        ]);
 
         // Load optional features that need to be activated for one dock only
         if (this.isMain)

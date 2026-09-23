@@ -1534,7 +1534,7 @@ export const DockShowAppsIcon = GObject.registerClass({
             return;
 
         if (!Clutter.LongPressGesture || !Clutter.ClickGesture) {
-            const popupAction = new Clutter.ClickAction();
+            const popupAction = new Clutter['ClickAction']();
             popupAction.connect('long-press', (action, actor, state) => {
                 if (state === Clutter.LongPressState.ACTIVATE)
                     this.popupMenu();
