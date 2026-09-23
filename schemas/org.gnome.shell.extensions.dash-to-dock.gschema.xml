@@ -151,6 +151,11 @@
       <summary>Pressure threshold</summary>
       <description>Sets how much pressure is needed to show the dash.</description>
     </key>
+    <key type="b" name="restrict-pressure-to-dock">
+      <default>false</default>
+      <summary>Restrict show trigger to the dock area</summary>
+      <description>Only the screen edge segment covered by the dock can reveal it, instead of the whole edge.</description>
+    </key>
     <key type="b" name="autohide-in-fullscreen">
       <default>false</default>
       <summary>Enable autohide in fullscreen mode.</summary>
