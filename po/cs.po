@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dash to Dock\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 21:20+0100\n"
-"PO-Revision-Date: 2026-04-08 14:16+0200\n"
+"POT-Creation-Date: 2026-09-21 23:16+0200\n"
+"PO-Revision-Date: 2026-09-25 01:36+0200\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech\n"
 "Language: cs\n"
@@ -20,104 +20,104 @@ msgstr ""
 "X-Generator: Poedit 3.9\n"
 
 #. Translators: This will be followed by Display Name - Connector.
-#: prefs.js:382
+#: prefs.js:387
 msgid "Primary monitor: "
 msgstr "Primární obrazovka: "
 
 #. Translators: Followed by monitor index, Display Name - Connector.
-#: prefs.js:388
+#: prefs.js:393
 msgid "Secondary monitor "
 msgstr "Sekundární obrazovka "
 
-#: prefs.js:434 Settings.ui:597
+#: prefs.js:444 Settings.ui:597
 msgid "Right"
 msgstr "Vpravo"
 
-#: prefs.js:435 Settings.ui:569
+#: prefs.js:445 Settings.ui:569
 msgid "Left"
 msgstr "Vlevo"
 
-#: prefs.js:490
+#: prefs.js:500
 msgid "Intelligent autohide customization"
 msgstr "Přizpůsobení chytrého skrývání"
 
-#: prefs.js:498 prefs.js:816 prefs.js:875
+#: prefs.js:508 prefs.js:831 prefs.js:890
 msgid "Reset to defaults"
 msgstr "Obnovit výchozí nastavení"
 
-#: prefs.js:649
+#: prefs.js:659
 msgid "Managed by GNOME Multitasking's Application Switching setting."
 msgstr "Spravováno nastavením přepínání aplikací v multitaskingu GNOME."
 
-#: prefs.js:808
+#: prefs.js:823
 msgid "Show dock and application numbers"
 msgstr "Zobrazování doku a čísel aplikací"
 
-#: prefs.js:867
+#: prefs.js:882
 msgid "Customize middle-click behavior"
 msgstr "Nastavit chování prostředního tlačítka"
 
-#: prefs.js:964
+#: prefs.js:979
 msgid "Customize running indicators"
 msgstr "Nastavit indikátory spuštěných aplikací"
 
-#: prefs.js:1079 Settings.ui:2197
+#: prefs.js:1094 Settings.ui:2211
 msgid "Customize opacity"
 msgstr "Přizpůsobení průhlednosti"
 
-#: docking.js:1293
+#: docking.js:1379
 msgid "Dash"
 msgstr "Dok"
 
-#: docking.js:2539 appIcons.js:1181
+#: docking.js:2685 appIcons.js:1212
 msgid "Unpin"
 msgstr "Odebrat z oblíbených"
 
-#: docking.js:2539 appIcons.js:1187
+#: docking.js:2685 appIcons.js:1218
 msgid "Pin to Dock"
 msgstr "Připnout na dok"
 
-#: appIcons.js:759 appIconsDecorator.js:106
+#: appIcons.js:454
 #, javascript-format
 msgid "%s is updating, try again later"
 msgstr "%s se aktualizuje, zkuste to znovu později"
 
-#: appIcons.js:1091
+#: appIcons.js:1122
 #, javascript-format
 msgid "%s is being updated…"
 msgstr "%s se aktualizuje…"
 
-#: appIcons.js:1102
+#: appIcons.js:1133
 msgid "All Windows"
 msgstr "Všechna okna"
 
 #. Translators: This is the heading of a list of open windows
-#: appIcons.js:1114
+#: appIcons.js:1145
 msgid "Open Windows"
 msgstr "Otevřená okna"
 
-#: appIcons.js:1134
+#: appIcons.js:1165
 msgid "New Window"
 msgstr "Nové okno"
 
-#: appIcons.js:1153
+#: appIcons.js:1184
 msgid "Launch using Integrated Graphics Card"
 msgstr "Spustit pomocí integrované grafické karty"
 
-#: appIcons.js:1154
+#: appIcons.js:1185
 msgid "Launch using Discrete Graphics Card"
 msgstr "Spustit pomocí samostatné grafické karty"
 
-#: appIcons.js:1199 appIcons.js:1225
+#: appIcons.js:1230 appIcons.js:1256
 msgid "App Details"
 msgstr "Podrobnosti o aplikaci"
 
-#: appIcons.js:1254 appIcons.js:1266 Settings.ui:84 Settings.ui:156
+#: appIcons.js:1285 appIcons.js:1297 Settings.ui:84 Settings.ui:156
 #: Settings.ui:228
 msgid "Quit"
 msgstr "Ukončit"
 
-#: appIcons.js:1269
+#: appIcons.js:1300
 #, javascript-format
 msgid "Quit %d Window"
 msgid_plural "Quit %d Windows"
@@ -125,13 +125,21 @@ msgstr[0] "Ukončit %d okno"
 msgstr[1] "Ukončit %d okna"
 msgstr[2] "Ukončit %d oken"
 
-#: appIcons.js:1554
+#: appIcons.js:1585
 msgid "Dash to Dock"
 msgstr "Dash to Dock"
 
-#: appIcons.js:1556
+#: appIcons.js:1587
 msgid "Settings"
 msgstr "Nastavení"
+
+#: appIconIndicators.js:918
+#, javascript-format
+msgid "%s, %d unread notification"
+msgid_plural "%s, %d unread notifications"
+msgstr[0] "%s, %d nepřečtené upozornění"
+msgstr[1] "%s, %d nepřečtená upozornění"
+msgstr[2] "%s, %d nepřečtených upozornění"
 
 #: locations.js:540
 msgid "Mount"
@@ -209,7 +217,7 @@ msgid "Launch new instance"
 msgstr "Spustit novou instanci"
 
 #: Settings.ui:76 Settings.ui:148 Settings.ui:220 Settings.ui:1687
-#: Settings.ui:1775
+#: Settings.ui:1789
 msgid "Cycle through windows"
 msgstr "Přepínat mezi okny"
 
@@ -482,35 +490,40 @@ msgstr "Chování při rolování na ikoně běžící aplikace."
 msgid "Scroll action"
 msgstr "Rolování kolečkem myši"
 
-#: Settings.ui:1774
+#: Settings.ui:1771
+msgid "Won't work over icons because 'Fixed icon size' is enabled."
+msgstr ""
+"Nebude fungovat nad ikonami, protože je povolena 'Neměnná velikost ikon'."
+
+#: Settings.ui:1788
 msgid "Do nothing"
 msgstr "Nedělat nic"
 
-#: Settings.ui:1776
+#: Settings.ui:1790
 msgid "Switch workspace"
 msgstr "Přepnout pracovní plochu"
 
-#: Settings.ui:1804
+#: Settings.ui:1818
 msgid "Behavior"
 msgstr "Chování"
 
-#: Settings.ui:1854
+#: Settings.ui:1868
 msgid "Save space reducing padding and border radius."
 msgstr "Prostorově méně náročné zobrazení (zmenšení volného místa kolem ikon)"
 
-#: Settings.ui:1870
+#: Settings.ui:1884
 msgid "Shrink the dash"
 msgstr "Zmenšený dok"
 
-#: Settings.ui:1900
+#: Settings.ui:1914
 msgid "Force straight corner"
 msgstr "Zakázat zaoblené rohy"
 
-#: Settings.ui:1930
+#: Settings.ui:1944
 msgid "Show overview on startup"
 msgstr "Zobrazit přehled při spuštění"
 
-#: Settings.ui:1972
+#: Settings.ui:1986
 msgid ""
 "Few customizations meant to integrate the dock with the default GNOME theme. "
 "Alternatively, specific options can be enabled below."
@@ -518,99 +531,99 @@ msgstr ""
 "Nastavení kvůli integraci doku s výchozím motivem GNOME; jinak lze použít "
 "samostatné předvolby níže."
 
-#: Settings.ui:1990
+#: Settings.ui:2004
 msgid "Use built-in theme"
 msgstr "Použít výchozí motiv doku"
 
-#: Settings.ui:2032
+#: Settings.ui:2046
 msgid "Customize windows counter indicators"
 msgstr "Indikátory počtu otevřených oken"
 
-#: Settings.ui:2065 Settings.ui:2230
+#: Settings.ui:2079 Settings.ui:2244
 msgid "Default"
 msgstr "Výchozí"
 
-#: Settings.ui:2066
+#: Settings.ui:2080
 msgid "Dots"
 msgstr "Tečky"
 
-#: Settings.ui:2067
+#: Settings.ui:2081
 msgid "Squares"
 msgstr "Čtverečky"
 
-#: Settings.ui:2068
+#: Settings.ui:2082
 msgid "Dashes"
 msgstr "Čárky"
 
-#: Settings.ui:2069
+#: Settings.ui:2083
 msgid "Segmented"
 msgstr "Dělená linka"
 
-#: Settings.ui:2070
+#: Settings.ui:2084
 msgid "Solid"
 msgstr "Plná linka"
 
-#: Settings.ui:2071
+#: Settings.ui:2085
 msgid "Ciliora"
 msgstr "Styl Ciliora"
 
-#: Settings.ui:2072
+#: Settings.ui:2086
 msgid "Metro"
 msgstr "Styl Metro"
 
-#: Settings.ui:2073
+#: Settings.ui:2087
 msgid "Binary"
 msgstr "Binární"
 
-#: Settings.ui:2074
+#: Settings.ui:2088
 msgid "Dot"
 msgstr "Tečka"
 
-#: Settings.ui:2107
+#: Settings.ui:2121
 msgid "Set the background color for the dash."
 msgstr "Nastavit barvu pozadí doku."
 
-#: Settings.ui:2125
+#: Settings.ui:2139
 msgid "Customize the dash color"
 msgstr "Vlastní barva doku"
 
-#: Settings.ui:2181
+#: Settings.ui:2195
 msgid "Tune the dash background opacity."
 msgstr "Nastavit průhlednost doku."
 
-#: Settings.ui:2231
+#: Settings.ui:2245
 msgid "Fixed"
 msgstr "Neměnná"
 
-#: Settings.ui:2232
+#: Settings.ui:2246
 msgid "Dynamic"
 msgstr "Dynamická"
 
-#: Settings.ui:2256
+#: Settings.ui:2270
 msgid "Opacity"
 msgstr "Průhlednost"
 
-#: Settings.ui:2293
+#: Settings.ui:2307
 msgid "Appearance"
 msgstr "Vzhled"
 
-#: Settings.ui:2332
+#: Settings.ui:2346
 msgid "version: "
 msgstr "verze: "
 
-#: Settings.ui:2347
+#: Settings.ui:2361
 msgid "Moves the dash out of the overview transforming it in a dock"
 msgstr "Vytvoří dok z přehledu činností a oblíbených aplikací"
 
-#: Settings.ui:2361
+#: Settings.ui:2375
 msgid "Created by"
 msgstr "Autor"
 
-#: Settings.ui:2374
+#: Settings.ui:2388
 msgid "Webpage"
 msgstr "Webová stránka"
 
-#: Settings.ui:2385
+#: Settings.ui:2399
 msgid ""
 "<span size=\"small\">This program comes with ABSOLUTELY NO WARRANTY.\n"
 "See the <a href=\"https://www.gnu.org/licenses/old-licenses/"
@@ -621,37 +634,37 @@ msgstr ""
 "Podrobněji viz <a href=\"https://www.gnu.org/licenses/old-licenses/"
 "gpl-2.0.html\">GNU General Public License, verze 2 nebo pozdější</a>.</span>"
 
-#: Settings.ui:2398
+#: Settings.ui:2412
 msgid "About"
 msgstr "O tomto doplňku"
 
-#: Settings.ui:2456
+#: Settings.ui:2470
 msgid "Customize minimum and maximum opacity values"
 msgstr "Nastavit minimální a maximální hodnoty průhlednosti"
 
-#: Settings.ui:2478
+#: Settings.ui:2492
 msgid "Minimum opacity"
 msgstr "Minimální průhlednost"
 
-#: Settings.ui:2508
+#: Settings.ui:2522
 msgid "Maximum opacity"
 msgstr "Maximální průhlednost"
 
-#: Settings.ui:2589
+#: Settings.ui:2603
 msgid "Number overlay"
 msgstr "Čísla aplikací"
 
-#: Settings.ui:2600
+#: Settings.ui:2614
 msgid ""
 "Temporarily show the application numbers over the icons, corresponding to "
 "the shortcut."
 msgstr "Krátce ukázat čísla aplikací odpovídající klávesové zkratce."
 
-#: Settings.ui:2646
+#: Settings.ui:2660
 msgid "Show the dock if it is hidden"
 msgstr "Zobrazit dok, pokud je skrytý"
 
-#: Settings.ui:2657
+#: Settings.ui:2671
 msgid ""
 "If using autohide, the dock will appear for a short time when triggering the "
 "shortcut."
@@ -659,71 +672,71 @@ msgstr ""
 "Pokud je nastaveno automatické skrývání, stisknutím klávesové zkratky se dok "
 "krátce zobrazí."
 
-#: Settings.ui:2700
+#: Settings.ui:2714
 msgid "Shortcut for the options above"
 msgstr "Klávesová zkratka"
 
-#: Settings.ui:2711
+#: Settings.ui:2725
 msgid "Syntax: <Shift>, <Ctrl>, <Alt>, <Super>"
 msgstr "Syntaxe: <Shift>, <Ctrl>, <Alt>, <Super>"
 
-#: Settings.ui:2758 Settings.ui:3056
+#: Settings.ui:2772 Settings.ui:3070
 msgid "Hide timeout (s)"
 msgstr "Prodleva při skrytí (s)"
 
-#: Settings.ui:2815
+#: Settings.ui:2829
 msgid "Show the dock by mouse hover on the screen edge."
 msgstr "Zobrazit dok najetím myši ke kraji obrazovky."
 
-#: Settings.ui:2832
+#: Settings.ui:2846
 msgid "Autohide"
 msgstr "Automatické skrývání"
 
-#: Settings.ui:2853
+#: Settings.ui:2867
 msgid "Push to show: require pressure to show the dock"
 msgstr "Zobrazit dok až po zatlačení na kraj obrazovky"
 
-#: Settings.ui:2864
+#: Settings.ui:2878
 msgid "Enable in fullscreen mode"
 msgstr "Povolit celoobrazovkový režim"
 
-#: Settings.ui:2876
+#: Settings.ui:2890
 msgid "Show dock for urgent notifications"
 msgstr "Zobrazit dok pro urgentní upozornění"
 
-#: Settings.ui:2905
+#: Settings.ui:2919
 msgid "Show the dock when it doesn't obstruct application windows."
 msgstr "Zobrazit dok pokud nepřekáží oknům aplikací."
 
-#: Settings.ui:2922
+#: Settings.ui:2936
 msgid "Dodge windows"
 msgstr "Uhýbání oknům"
 
-#: Settings.ui:2947
+#: Settings.ui:2961
 msgid "All windows"
 msgstr "Všechna okna"
 
-#: Settings.ui:2955
+#: Settings.ui:2969
 msgid "Only focused application's windows"
 msgstr "Pouze aktivní okna"
 
-#: Settings.ui:2962
+#: Settings.ui:2976
 msgid "Only maximized windows"
 msgstr "Pouze maximalizovaná okna"
 
-#: Settings.ui:2969
+#: Settings.ui:2983
 msgid "Always on top"
 msgstr "Vždy nahoře"
 
-#: Settings.ui:3012
+#: Settings.ui:3026
 msgid "Animation duration (s)"
 msgstr "Trvání animace (s)"
 
-#: Settings.ui:3068
+#: Settings.ui:3082
 msgid "Show timeout (s)"
 msgstr "Prodleva při zobrazení (s)"
 
-#: Settings.ui:3080
+#: Settings.ui:3094
 msgid "Pressure threshold"
 msgstr "Míra tlaku (px)"
 
