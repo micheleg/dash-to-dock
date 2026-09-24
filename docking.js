@@ -207,6 +207,62 @@ const DashSlideContainer = GObject.registerClass({
     }
 });
 
+const DashBox = GObject.registerClass(
+class DashBox extends St.Widget {
+    _init(params = {}) {
+        super._init({
+            ...params,
+            name: 'dashtodockBox',
+            reactive: true,
+            track_hover: true,
+            layout_manager: new Clutter.BinLayout(),
+        });
+        this._dash = null;
+    }
+
+    setDash(dash) {
+        this._dash = dash;
+        if (dash.get_parent() !== this)
+            this.add_child(dash);
+    }
+
+    vfunc_get_preferred_width(forHeight) {
+        let min = 1, nat = 1;
+        const dash = this._dash || this.get_children().find(c => c.name === 'dash');
+        if (dash) {
+            const [dMin, dNat] = dash.get_preferred_width(forHeight);
+            if (!isNaN(dMin) && dMin > 0)
+                min = dMin;
+            if (!isNaN(dNat) && dNat > 0)
+                nat = dNat;
+        }
+        return [min, nat];
+    }
+
+    vfunc_get_preferred_height(forWidth) {
+        let min = 1, nat = 1;
+        const dash = this._dash || this.get_children().find(c => c.name === 'dash');
+        if (dash) {
+            const [dMin, dNat] = dash.get_preferred_height(forWidth);
+            if (!isNaN(dMin) && dMin > 0)
+                min = dMin;
+            if (!isNaN(dNat) && dNat > 0)
+                nat = dNat;
+        }
+        return [min, nat];
+    }
+
+    vfunc_allocate(box) {
+        if (isNaN(box.x1) || isNaN(box.y1) || isNaN(box.x2) || isNaN(box.y2)) {
+            box.x1 = box.x1 || 0;
+            box.y1 = box.y1 || 0;
+            box.x2 = isNaN(box.x2) ? 100 : box.x2;
+            box.y2 = isNaN(box.y2) ? 100 : box.y2;
+        }
+        super.vfunc_allocate(box);
+    }
+});
+
 const DockedDash = GObject.registerClass({
     Properties: {
         'is-main': GObject.ParamSpec.boolean(
@@ -303,11 +359,7 @@ const DockedDash = GObject.registerClass({
         });
 
         // This is the actor whose hover status us tracked for autohide
-        this._box = new St.BoxLayout({
-            name: 'dashtodockBox',
-            reactive: true,
-            track_hover: true,
-        });
+        this._box = new DashBox();
         this._box.connect('notify::hover', this._hoverChanged.bind(this));
 
         // Connect global signals
@@ -398,8 +450,15 @@ const DockedDash = GObject.registerClass({
 
         // Since Clutter has no longer ClutterAllocationFlags,
         // "allocation-changed" signal has been removed. MR !1245
-        this.dash._container.connect('notify::allocation', this._updateStaticBox.bind(this));
-        this._slider.connect('notify::allocation', () => this._updateStaticBox());
+        this._signalsHandler.add([
+            this.dash._container,
+            'notify::allocation',
+            this._updateStaticBox.bind(this),
+        ], [
+            this._slider,
+            'notify::allocation',
+            () => this._updateStaticBox(),
+        ]);
 
         // Load optional features that need to be activated for one dock only
         if (this.isMain)
@@ -410,7 +469,7 @@ const DockedDash = GObject.registerClass({
         // Add dash container actor and the container to the Chrome.
         this.set_child(this._slider);
         this._slider.set_child(this._box);
-        this._box.add_child(this.dash);
+        this._box.setDash(this.dash);
 
         // Delay operations that require the shell to be fully loaded and with
         // user theme applied.
@@ -1305,11 +1364,20 @@ const DockedDash = GObject.registerClass({
     }
 
     _updateStaticBox() {
+        // Use the natural size of the dash to calculate the static bounding box.
+        // During the slide in/out animation, DashSlideContainer continuously squishes
+        // the allocated width/height of its children. Relying on this.dash.width/height
+        // would cause the bounding box to fluctuate, triggering an infinite intellihide
+        // layout invalidation loop on GNOME 47.
+        const [, , natWidth, natHeight] = this.dash.get_preferred_size();
+        const width = natWidth;
+        const height = natHeight;
+
         const x = this.x + this._slider.x -
-            (this._position === St.Side.RIGHT ? this._box.width : 0);
+            (this._position === St.Side.RIGHT ? width : 0);
         const y = this.y + this._slider.y -
-            (this._position === St.Side.BOTTOM ? this._box.height : 0);
-        const {width, height} = this._box;
+            (this._position === St.Side.BOTTOM ? height : 0);
+
         const geometry = this._staticBoxGeometry;
 
         if (geometry && geometry.x === x && geometry.y === y &&
@@ -1723,6 +1791,8 @@ const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
             global.display.connectObject('window-demands-attention',
                 () => dock.dash._queueRedisplay(), dock.dash);
             global.window_manager.connectObject('switch-workspace',
+                () => dock.dash._queueRedisplay(), dock.dash);
+            global.workspace_manager.connectObject('active-workspace-changed',
                 () => dock.dash._queueRedisplay(), dock.dash);
 
             // This last signal is only needed for monitor isolation, as windows
