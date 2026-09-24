@@ -8,7 +8,7 @@ order: 4
 
 
 ## Theming
-The extension aims to be as **theme-friendly** as possible. The dock appearence is inherited from the default dash so basic theme support is always granted. However, some features has to be direclty supported by the theme. There are some [themes supporting the extension](./themes.html).
+The extension aims to be as **theme-friendly** as possible. The dock appearance is inherited from the default dash so basic theme support is always granted. However, some features has to be directly supported by the theme. There are some [themes supporting the extension](./themes.html).
 
 Adding support to a theme for the Dash to Dock extension is easy: the dash is put inside a container actor named <code>#dashtodockContainer</code> so the extended dash can be targeted without conflicting with the default dash. There are some additional css classes that theme writers can exploit in order to support the extension better:
 

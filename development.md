@@ -29,7 +29,7 @@ Here are the [Installation instructions](./download.html#installfromsource).
 4. ensure touch gestures compatibility
 5. In the long term, rewrite and simplify the code.
 
-There aren't mayor features planned altough consider new ideas and suggestions.
+There aren't mayor features planned although consider new ideas and suggestions.
 
 <a name="bugreporting"></a>
 
@@ -47,9 +47,9 @@ Please provide as many details as possible and all the steps to reproduce the bu
 Before reporting a bug:
 
  * Check if the bug persists disabling all other extensions. If not, try to find the conflicting extension by enabling each extension one at a time.
- * Check if there are any relevant errors in Looking Glass (<code>ALt-F2 lg</code>, error panel).
+ * Check if there are any relevant errors in Looking Glass (<code>Alt-F2 lg</code>, error panel).
  * Look for error messages in the logs. Possible place to look for the relevant logs depend on the system log configuration:
-   - Runnning <code>journalctl /usr/bin/gnome-session </code> or <code>journalctl /usr/bin/gnome-shell</code>. This might require to be run as root/with sudo. You can add <code>-f</code>, for instance <code>journalctl /usr/bin/gnome-shell -f</code>, to follow the new messages.
+   - Running <code>journalctl /usr/bin/gnome-session </code> or <code>journalctl /usr/bin/gnome-shell</code>. This might require to be run as root/with sudo. You can add <code>-f</code>, for instance <code>journalctl /usr/bin/gnome-shell -f</code>, to follow the new messages.
    - In the file <code>~/.xsession-errors</code>.
    - In the file <code>~/var/log/syslog </code>.
    - Reloading the shell by typing in a terminal (as normal user) <code>gnome-shell --replace</code> and looking for relevant output in that terminal when the bug appears. Please note that if running on Wayland this will close your session and all running applications.
