@@ -1597,7 +1597,7 @@ export function itemShowLabel() {
     /* eslint-disable no-invalid-this */
     // Check if the label is still present at all. When switching workspace, the
     // item might have been destroyed in between.
-    if (!this._labelText || !this.label.get_stage())
+    if (!this.label || !this._labelText || !this.label.get_stage())
         return;
 
     this.label.set_text(this._labelText);
