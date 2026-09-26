@@ -686,12 +686,21 @@ const DockedDash = GObject.registerClass({
     }
 
     get inhibitsUnredirection() {
-        // Don't disable it on fullscreen: forcing composition there breaks
-        // VRR/Freesync and the dock isn't shown anyway.
-        return this.intellihideEnabled &&
-            this.dockState !== State.HIDDEN &&
-            this.dockState !== State.HIDING &&
-            !this._monitor?.inFullscreen;
+        // Composition is needed while the dock is animating or is shown on top
+        // of a fullscreen window of its monitor.
+        // Otherwise the compositor-wide inhibition would prevent fullscreen
+        // windows in other monitors to run in direct rendering mode.
+        if (!this.visible)
+            return false;
+
+        switch (this.dockState) {
+        case State.SHOWING:
+        case State.HIDING:
+        case State.SHOWN:
+            return !!this._monitor?.inFullscreen;
+        default:
+            return false;
+        }
     }
 
     /**
@@ -2198,7 +2207,7 @@ export class DockManager {
             () => this._updateUnredirect(),
         ], [
             dock,
-            'notify::intellihide-enabled',
+            'notify::visible',
             () => this._updateUnredirect(),
         ]);
 
