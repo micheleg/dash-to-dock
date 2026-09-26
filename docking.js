@@ -407,11 +407,14 @@ const DockedDash = GObject.registerClass({
         // Delay operations that require the shell to be fully loaded and with
         // user theme applied.
         if (Main.layoutManager._startingUp) {
+            this._prepareStartupAnimation();
+
             this._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
                 Main.layoutManager, 'startup-complete', () => {
                     this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
                     this._trackDock();
                     this._initialize();
+                    this._runStartupAnimation();
                 });
         } else {
             this._trackDock();
@@ -521,6 +524,42 @@ const DockedDash = GObject.registerClass({
             GLib.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
             delete this._optionalScrollWorkspaceSwitchDeadTimeId;
         }
+    }
+
+    _prepareStartupAnimation() {
+        this.opacity = 255;
+        this.dash.set({
+            opacity: 0,
+            translation_x: 0,
+            translation_y: 0,
+        });
+    }
+
+    _runStartupAnimation() {
+        const {dash} = this;
+
+        switch (this.position) {
+        case St.Side.LEFT:
+            dash.translation_x = -dash.width;
+            break;
+        case St.Side.RIGHT:
+            dash.translation_x = dash.width;
+            break;
+        case St.Side.BOTTOM:
+            dash.translation_y = dash.height;
+            break;
+        case St.Side.TOP:
+            dash.translation_y = -dash.height;
+            break;
+        }
+
+        dash.ease({
+            opacity: 255,
+            translation_x: 0,
+            translation_y: 0,
+            duration: STARTUP_ANIMATION_TIME,
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+        });
     }
 
     _updateAutoHideBarriers() {
@@ -2240,48 +2279,6 @@ export class DockManager {
         this._unredirectInhibited = inhibit;
     }
 
-    _prepareStartupAnimation() {
-        DockManager.allDocks.forEach(dock => {
-            const {dash} = dock;
-
-            dock.opacity = 255;
-            dash.set({
-                opacity: 0,
-                translation_x: 0,
-                translation_y: 0,
-            });
-        });
-    }
-
-    _runStartupAnimation() {
-        DockManager.allDocks.forEach(dock => {
-            const {dash} = dock;
-
-            switch (dock.position) {
-            case St.Side.LEFT:
-                dash.translation_x = -dash.width;
-                break;
-            case St.Side.RIGHT:
-                dash.translation_x = dash.width;
-                break;
-            case St.Side.BOTTOM:
-                dash.translation_y = dash.height;
-                break;
-            case St.Side.TOP:
-                dash.translation_y = -dash.height;
-                break;
-            }
-
-            dash.ease({
-                opacity: 255,
-                translation_x: 0,
-                translation_y: 0,
-                duration: STARTUP_ANIMATION_TIME,
-                mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-            });
-        });
-    }
-
     _prepareMainDash() {
         this._propertyInjections.removeWithLabel(Labels.MAIN_DASH);
 
@@ -2574,8 +2571,6 @@ export class DockManager {
             });
 
         if (Main.layoutManager._startingUp) {
-            this._prepareStartupAnimation();
-
             // Convince LayoutManager to use the legacy startup animation:
             // Reset overview controls state to HIDDEN, as skipping the startup
             // overview leaves it stuck at WINDOW_PICKER
@@ -2612,7 +2607,6 @@ export class DockManager {
                     this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
                     replaceMainDash();
                     dummyDash.destroy();
-                    this._runStartupAnimation();
                     if (this._settings.disableOverviewOnStartup) {
                         this._propertyInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
                         this.overviewControls._stateAdjustment.value =
