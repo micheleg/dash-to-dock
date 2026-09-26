@@ -1,7 +1,34 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-import {DockManager} from './docking.js';
+import {DockManager as BaseDockManager} from './docking.js';
+import {Utils} from './imports.js';
 import {Extension} from './dependencies/shell/extensions/extension.js';
+
+class DockManager extends BaseDockManager {
+    _bindSettingsChanges() {
+        super._bindSettingsChanges();
+        this._signalsHandler.add(
+            this._settings,
+            'changed::hide-if-monitor-unavailable',
+            this._toggle.bind(this));
+    }
+
+    _createDocks() {
+        if (this.settings.hideIfMonitorUnavailable &&
+            !this.settings.multiMonitor &&
+            this.settings.preferredMonitor === -2 &&
+            this.settings.preferredMonitorByConnector !== 'primary') {
+            const monitorManager = Utils.getMonitorManager();
+            const preferredMonitorIndex = monitorManager.get_monitor_for_connector(
+                this.settings.preferredMonitorByConnector);
+
+            if (preferredMonitorIndex < 0)
+                return;
+        }
+
+        super._createDocks();
+    }
+}
 
 // We export this so it can be accessed by other extensions
 export let dockManager;
