@@ -255,10 +255,6 @@ const DockedDash = GObject.registerClass({
         // Temporary ignore hover events linked to autohide for whatever reason
         this._ignoreHover = false;
 
-        // This tracks whether this dock disabled unredirection, so that we
-        // only balance our own refcounted enable/disable calls.
-        this._unredirectDisabled = false;
-
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.Intellihide(this.monitorIndex);
 
@@ -384,11 +380,7 @@ const DockedDash = GObject.registerClass({
                 this._intellihide.enable();
             else
                 this._intellihide.disable();
-
-            this._updateUnredirect();
         });
-
-        this.connect('notify::dock-state', () => this._updateUnredirect());
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
@@ -514,9 +506,6 @@ const DockedDash = GObject.registerClass({
 
         if (this._triggerTimeoutId)
             GLib.source_remove(this._triggerTimeoutId);
-
-        // This also resets the unredirect state.
-        this.dockState = State.HIDDEN;
 
         // Remove barrier timeout
         if (this._removeBarrierTimeoutId > 0)
@@ -696,30 +685,13 @@ const DockedDash = GObject.registerClass({
         ]);
     }
 
-    _updateUnredirect() {
-        let disabled = this.intellihideEnabled &&
-            this.dockState !== State.HIDDEN &&
-            this.dockState !== State.HIDING;
-
+    get inhibitsUnredirection() {
         // Don't disable it on fullscreen: forcing composition there breaks
         // VRR/Freesync and the dock isn't shown anyway.
-        if (this._monitor?.inFullscreen)
-            disabled = false;
-
-        if (disabled === this._unredirectDisabled)
-            return;
-
-        // Unredirection is a refcounted operation in the compositor, so multiple
-        // calls to enable/disable it will be balanced.
-        if (disabled) {
-            Meta.disable_unredirect_for_display?.(global.display);
-            global.compositor.disable_unredirect?.();
-        } else {
-            Meta.enable_unredirect_for_display?.(global.display);
-            global.compositor.enable_unredirect?.();
-        }
-
-        this._unredirectDisabled = disabled;
+        return this.intellihideEnabled &&
+            this.dockState !== State.HIDDEN &&
+            this.dockState !== State.HIDING &&
+            !this._monitor?.inFullscreen;
     }
 
     /**
@@ -1224,10 +1196,7 @@ const DockedDash = GObject.registerClass({
         ], [
             global.display,
             'in-fullscreen-changed',
-            () => {
-                this._updateUnredirect();
-                this._updateBarrier();
-            },
+            () => this._updateBarrier(),
         ]);
 
         this._resetPosition();
@@ -1846,6 +1815,9 @@ export class DockManager {
 
         /* Array of all the docks created */
         this._allDocks = [];
+        this._unredirectInhibited = false;
+        this._signalsHandler.add(global.display, 'in-fullscreen-changed',
+            () => this._updateUnredirect());
         this._createDocks();
 
         this._overrideAppMenus();
@@ -2220,6 +2192,16 @@ export class DockManager {
         dock.dash.showAppsButton.connectObject('notify::checked',
             button => this._onShowAppsButtonToggled(button), dock);
 
+        this._signalsHandler.add([
+            dock,
+            'notify::dock-state',
+            () => this._updateUnredirect(),
+        ], [
+            dock,
+            'notify::intellihide-enabled',
+            () => this._updateUnredirect(),
+        ]);
+
         const id = dock.connect('destroy', () => {
             dock.disconnect(id);
             const index = this._allDocks.indexOf(dock);
@@ -2228,6 +2210,25 @@ export class DockManager {
         });
 
         return dock;
+    }
+
+    _updateUnredirect() {
+        const inhibit = this._allDocks.some(d => d.inhibitsUnredirection);
+        if (inhibit === this._unredirectInhibited)
+            return;
+
+        // Unredirection is refcounted by the compositor, so hold a single
+        // reference for all the docks: this way it can't be left unbalanced
+        // when docks are destroyed and re-created.
+        if (inhibit) {
+            Meta.disable_unredirect_for_display?.(global.display);
+            global.compositor.disable_unredirect?.();
+        } else {
+            Meta.enable_unredirect_for_display?.(global.display);
+            global.compositor.enable_unredirect?.();
+        }
+
+        this._unredirectInhibited = inhibit;
     }
 
     _prepareStartupAnimation() {
@@ -2625,6 +2626,8 @@ export class DockManager {
 
         // Delete all docks
         [...this._allDocks].forEach(d => d.destroy());
+
+        this._updateUnredirect();
     }
 
     _restoreDash() {
