@@ -859,6 +859,9 @@ const DockedDash = GObject.registerClass({
     }
 
     _animateIn(time, delay) {
+        if (this.dockState === State.SHOWN)
+            return;
+
         this.dockState = State.SHOWING;
         this.dash.iconAnimator.start();
         this._delayedHide = false;
@@ -888,6 +891,9 @@ const DockedDash = GObject.registerClass({
     }
 
     _animateOut(time, delay) {
+        if (this.dockState === State.HIDDEN)
+            return;
+
         this.dockState = State.HIDING;
 
         this._slider.ease_property('slide-x', 0, {
