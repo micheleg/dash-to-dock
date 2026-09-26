@@ -9,6 +9,7 @@ BASE_MODULES = extension.js \
 
 EXTRA_MODULES = \
                 appSpread.js \
+                bounceAnimation.js \
                 dash.js \
                 docking.js \
                 appIcons.js \
