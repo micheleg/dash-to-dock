@@ -615,6 +615,18 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('icon_size_fixed_checkbutton'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('magnify-icons',
+            this._builder.get_object('magnify_icons_checkbutton'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('magnify-icons',
+            this._builder.get_object('magnify_factor_scale'),
+            'sensitive',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('magnification-factor',
+            this._builder.get_object('magnify_factor_adjustment'),
+            'value',
+            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('extend-height',
             this._builder.get_object('dock_size_extend_checkbutton'),
             'active',
