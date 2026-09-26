@@ -2897,6 +2897,17 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         </layout>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkCheckButton" id="restrict_pressure_to_dock_checkbutton">
+                        <property name="label" translatable="yes">Only reveal from the edge area covered by the dock</property>
+
+                        <layout>
+                          <property name="column">0</property>
+                          <property name="row">5</property>
+                          <property name="column-span">2</property>
+                        </layout>
+                      </object>
+                    </child>
                   </object>
                 </property>
               </object>
