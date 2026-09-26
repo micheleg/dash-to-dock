@@ -81,6 +81,7 @@
                           <item translatable="yes">Focus or app spread</item>
                           <item translatable="yes">Focus, minimize or show previews</item>
                           <item translatable="yes">Focus, minimize or app spread</item>
+                          <item translatable="yes">Cycle or minimize</item>
                           <item translatable="yes">Quit</item>
                         </items>
                         <layout>
@@ -153,6 +154,7 @@
                           <item translatable="yes">Focus or app spread</item>
                           <item translatable="yes">Focus, minimize or show previews</item>
                           <item translatable="yes">Focus, minimize or app spread</item>
+                          <item translatable="yes">Cycle or minimize</item>
                           <item translatable="yes">Quit</item>
                         </items>
                         <layout>
@@ -225,6 +227,7 @@
                           <item translatable="yes">Focus or app spread</item>
                           <item translatable="yes">Focus, minimize or show previews</item>
                           <item translatable="yes">Focus, minimize or app spread</item>
+                          <item translatable="yes">Cycle or minimize</item>
                           <item translatable="yes">Quit</item>
                         </items>
                         <layout>
@@ -1692,6 +1695,7 @@
                                       <item translatable="yes">Focus or app spread</item>
                                       <item translatable="yes">Focus, minimize or show previews</item>
                                       <item translatable="yes">Focus, minimize or app spread</item>
+                                      <item translatable="yes">Cycle or minimize</item>
                                     </items>
                                   </object>
                                 </child>
