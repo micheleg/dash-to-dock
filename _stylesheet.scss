@@ -154,6 +154,7 @@ $dock_style_modes: null, shrink, extended, extended-shrink;
     $margin: checked-map-get($parameters, margin);
     $edge_items_padding: checked-map-get($parameters, edge_items_padding);
     $fixed_inner_margin: checked-map-get($parameters, fixed_inner_margin);
+    $icons_distance: checked-map-get($parameters, icons_distance);
 
     @if ($is_extended) {
         $style_selector: $style_selector +'.extended';
@@ -197,7 +198,7 @@ $dock_style_modes: null, shrink, extended, extended-shrink;
 
                 > #dashtodockDashScrollview {
                     @include set-internal-children-property($side, margin,
-                        0, $dock_icons_distance / 2);
+                        0, $icons_distance / 2);
                 }
 
                 @if ($is_extended) {
@@ -210,7 +211,7 @@ $dock_style_modes: null, shrink, extended, extended-shrink;
                 > * {margin: 0;}
 
                 @include set-internal-children-property($side, margin,
-                    0, $dock_icons_distance / 2);
+                    0, $icons_distance / 2);
 
                 .app-well-app,
                 .show-apps,
@@ -297,6 +298,7 @@ $dock_style_modes: null, shrink, extended, extended-shrink;
                 margin: $base_margin,
                 edge_items_padding: $dock_edge_items_padding,
                 fixed_inner_margin: $dock_fixed_inner_margin,
+                icons_distance: $dock_icons_distance,
             );
 
             @if ($is_shrink) {
@@ -344,6 +346,130 @@ $dock_style_modes: null, shrink, extended, extended-shrink;
     .dashtodock-app-well-preview-menu-item.#{$side} {
         @include set-internal-children-property($side, padding,
             0.5em, 0.5em, 1em);
+    }
+}
+
+// St.ThemeContext is global to the Shell stage and follows the primary
+// monitor. Generate the native dimensions required by docks whose monitor
+// scale differs from that context. Mutter currently exposes integer monitor
+// scales, and GNOME Shell supports scale factors up to four.
+$dock_scale_adjustments: (
+    '1-2': 0.5,
+    '1-3': 0.333333,
+    '1-4': 0.25,
+    '2-1': 2,
+    '2-3': 0.666667,
+    '2-4': 0.5,
+    '3-1': 3,
+    '3-2': 1.5,
+    '3-4': 0.75,
+    '4-1': 4,
+    '4-2': 2,
+    '4-3': 1.333333,
+);
+
+@each $scale_name, $scale in $dock_scale_adjustments {
+    @each $side in $dock_sides {
+        @each $style_mode in $dock_style_modes {
+            $is_shrink: str-index(#{$style_mode}, shrink) !=null;
+            $is_extended: str-index(#{$style_mode}, extended) !=null;
+
+            #dashtodockContainer.#{$side}.dashtodock-scale-#{$scale_name} {
+                $parameters: (
+                    is_shrink: $is_shrink,
+                    is_extended: $is_extended,
+                    base_padding: $base_padding * $scale,
+                    spacing: $dock_spacing * $scale,
+                    border_radius: $dash_border_radius * $scale,
+                    side_margin: $dock_side_margin * $scale,
+                    padding: $dash_padding * $scale,
+                    margin: $base_margin * $scale,
+                    edge_items_padding: $dock_edge_items_padding * $scale,
+                    fixed_inner_margin: $dock_fixed_inner_margin * $scale,
+                    icons_distance: $dock_icons_distance * $scale,
+                );
+
+                @if ($is_shrink) {
+                    $parameters: map-merge($parameters, (
+                        base_padding: shrink($base_padding) * $scale,
+                        spacing: shrink($dock_spacing) * $scale,
+                        border_radius: shrink_light($dash_border_radius) * $scale,
+                        side_margin: $dock_side_margin * $scale,
+                        padding: shrink($dash_padding) * $scale,
+                        margin: shrink($base_margin) * $scale,
+                        edge_items_padding: shrink_light($dock_edge_items_padding) * $scale,
+                        fixed_inner_margin: shrink($dock_fixed_inner_margin) * $scale,
+                    ));
+                }
+
+                @if ($is_extended) {
+                    $parameters: map-merge($parameters, (
+                        border_radius: 0,
+                        side_margin: 0,
+                        fixed_inner_margin: 0,
+                    ));
+                }
+
+                @include dock-container-style($side, $style_mode, $parameters);
+            }
+        }
+
+        .dash-label.#{$side}.dashtodock-scale-#{$scale_name} {
+            font-size: $scale * 1em;
+            @if is_horizontal($side) {
+                margin-#{$side}: $dash_padding * $scale;
+                -x-offset: 0;
+                -y-offset: 0;
+            } @else {
+                margin: 0;
+                -x-offset: $dash_padding * $scale;
+                -y-offset: 0;
+            }
+
+            &.shrink {
+                @if is_horizontal($side) {
+                    margin-#{$side}: shrink($dash_padding) * $scale;
+                } @else {
+                    -x-offset: shrink($dash_padding) * $scale;
+                }
+            }
+        }
+    }
+
+    // The overview icon and detached label get these values from the global
+    // Shell theme, so their remaining box metrics must be overridden too.
+    #dashtodockContainer.dashtodock-scale-#{$scale_name} #dash .dash-item-container .overview-icon {
+        padding: $base_padding * $scale;
+    }
+
+    .dash-label.dashtodock-scale-#{$scale_name} {
+        padding: $base_padding * $scale $base_padding * 2 * $scale;
+        border-width: 1px * $scale;
+    }
+
+    #dashtodockContainer.top.shrink.dashtodock-scale-#{$scale_name} #dash .dash-background {
+        margin-top: 4px * $scale;
+    }
+
+    #dashtodockContainer.dashtodock-scale-#{$scale_name} {
+        .number-overlay,
+        .notification-badge {
+            font-size: $scale * 1em;
+        }
+
+        .notification-badge {
+            margin: 2px * $scale;
+        }
+    }
+
+    #dashtodockContainer.bottom.dashtodock-scale-#{$scale_name} #dashtodockDashScrollview,
+    #dashtodockContainer.top.dashtodock-scale-#{$scale_name} #dashtodockDashScrollview {
+        -st-hfade-offset: 24px * $scale;
+    }
+
+    #dashtodockContainer.left.dashtodock-scale-#{$scale_name} #dashtodockDashScrollview,
+    #dashtodockContainer.right.dashtodock-scale-#{$scale_name} #dashtodockDashScrollview {
+        -st-vfade-offset: 24px * $scale;
     }
 }
 

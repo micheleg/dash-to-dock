@@ -264,6 +264,7 @@ const DockedDash = GObject.registerClass({
 
         // Put dock on the required monitor
         this._monitor = Main.layoutManager.monitors[this.monitorIndex];
+        this.add_style_class_name(Utils.getMonitorScaleClass(this.monitorIndex));
 
         // this store size and the position where the dash is shown;
         // used by intellihide module to check window overlap.
