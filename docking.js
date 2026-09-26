@@ -255,10 +255,6 @@ const DockedDash = GObject.registerClass({
         // Temporary ignore hover events linked to autohide for whatever reason
         this._ignoreHover = false;
 
-        // This tracks whether this dock disabled unredirection, so that we
-        // only balance our own refcounted enable/disable calls.
-        this._unredirectDisabled = false;
-
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.Intellihide(this.monitorIndex);
 
@@ -384,11 +380,7 @@ const DockedDash = GObject.registerClass({
                 this._intellihide.enable();
             else
                 this._intellihide.disable();
-
-            this._updateUnredirect();
         });
-
-        this.connect('notify::dock-state', () => this._updateUnredirect());
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
@@ -415,11 +407,14 @@ const DockedDash = GObject.registerClass({
         // Delay operations that require the shell to be fully loaded and with
         // user theme applied.
         if (Main.layoutManager._startingUp) {
+            this._prepareStartupAnimation();
+
             this._signalsHandler.addWithLabel(Labels.STARTUP_ANIMATION,
                 Main.layoutManager, 'startup-complete', () => {
                     this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
                     this._trackDock();
                     this._initialize();
+                    this._runStartupAnimation();
                 });
         } else {
             this._trackDock();
@@ -515,9 +510,6 @@ const DockedDash = GObject.registerClass({
         if (this._triggerTimeoutId)
             GLib.source_remove(this._triggerTimeoutId);
 
-        // This also resets the unredirect state.
-        this.dockState = State.HIDDEN;
-
         // Remove barrier timeout
         if (this._removeBarrierTimeoutId > 0)
             GLib.source_remove(this._removeBarrierTimeoutId);
@@ -532,6 +524,42 @@ const DockedDash = GObject.registerClass({
             GLib.source_remove(this._optionalScrollWorkspaceSwitchDeadTimeId);
             delete this._optionalScrollWorkspaceSwitchDeadTimeId;
         }
+    }
+
+    _prepareStartupAnimation() {
+        this.opacity = 255;
+        this.dash.set({
+            opacity: 0,
+            translation_x: 0,
+            translation_y: 0,
+        });
+    }
+
+    _runStartupAnimation() {
+        const {dash} = this;
+
+        switch (this.position) {
+        case St.Side.LEFT:
+            dash.translation_x = -dash.width;
+            break;
+        case St.Side.RIGHT:
+            dash.translation_x = dash.width;
+            break;
+        case St.Side.BOTTOM:
+            dash.translation_y = dash.height;
+            break;
+        case St.Side.TOP:
+            dash.translation_y = -dash.height;
+            break;
+        }
+
+        dash.ease({
+            opacity: 255,
+            translation_x: 0,
+            translation_y: 0,
+            duration: STARTUP_ANIMATION_TIME,
+            mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+        });
     }
 
     _updateAutoHideBarriers() {
@@ -696,30 +724,22 @@ const DockedDash = GObject.registerClass({
         ]);
     }
 
-    _updateUnredirect() {
-        let disabled = this.intellihideEnabled &&
-            this.dockState !== State.HIDDEN &&
-            this.dockState !== State.HIDING;
+    get inhibitsUnredirection() {
+        // Composition is needed while the dock is animating or is shown on top
+        // of a fullscreen window of its monitor.
+        // Otherwise the compositor-wide inhibition would prevent fullscreen
+        // windows in other monitors to run in direct rendering mode.
+        if (!this.visible)
+            return false;
 
-        // Don't disable it on fullscreen: forcing composition there breaks
-        // VRR/Freesync and the dock isn't shown anyway.
-        if (this._monitor?.inFullscreen)
-            disabled = false;
-
-        if (disabled === this._unredirectDisabled)
-            return;
-
-        // Unredirection is a refcounted operation in the compositor, so multiple
-        // calls to enable/disable it will be balanced.
-        if (disabled) {
-            Meta.disable_unredirect_for_display?.(global.display);
-            global.compositor.disable_unredirect?.();
-        } else {
-            Meta.enable_unredirect_for_display?.(global.display);
-            global.compositor.enable_unredirect?.();
+        switch (this.dockState) {
+        case State.SHOWING:
+        case State.HIDING:
+        case State.SHOWN:
+            return !!this._monitor?.inFullscreen;
+        default:
+            return false;
         }
-
-        this._unredirectDisabled = disabled;
     }
 
     /**
@@ -859,6 +879,9 @@ const DockedDash = GObject.registerClass({
     }
 
     _animateIn(time, delay) {
+        if (this.dockState === State.SHOWN)
+            return;
+
         this.dockState = State.SHOWING;
         this.dash.iconAnimator.start();
         this._delayedHide = false;
@@ -888,6 +911,9 @@ const DockedDash = GObject.registerClass({
     }
 
     _animateOut(time, delay) {
+        if (this.dockState === State.HIDDEN)
+            return;
+
         this.dockState = State.HIDING;
 
         this._slider.ease_property('slide-x', 0, {
@@ -1218,10 +1244,7 @@ const DockedDash = GObject.registerClass({
         ], [
             global.display,
             'in-fullscreen-changed',
-            () => {
-                this._updateUnredirect();
-                this._updateBarrier();
-            },
+            () => this._updateBarrier(),
         ]);
 
         this._resetPosition();
@@ -1840,6 +1863,9 @@ export class DockManager {
 
         /* Array of all the docks created */
         this._allDocks = [];
+        this._unredirectInhibited = false;
+        this._signalsHandler.add(global.display, 'in-fullscreen-changed',
+            () => this._updateUnredirect());
         this._createDocks();
 
         this._overrideAppMenus();
@@ -2214,6 +2240,16 @@ export class DockManager {
         dock.dash.showAppsButton.connectObject('notify::checked',
             button => this._onShowAppsButtonToggled(button), dock);
 
+        this._signalsHandler.add([
+            dock,
+            'notify::dock-state',
+            () => this._updateUnredirect(),
+        ], [
+            dock,
+            'notify::visible',
+            () => this._updateUnredirect(),
+        ]);
+
         const id = dock.connect('destroy', () => {
             dock.disconnect(id);
             const index = this._allDocks.indexOf(dock);
@@ -2224,46 +2260,23 @@ export class DockManager {
         return dock;
     }
 
-    _prepareStartupAnimation() {
-        DockManager.allDocks.forEach(dock => {
-            const {dash} = dock;
+    _updateUnredirect() {
+        const inhibit = this._allDocks.some(d => d.inhibitsUnredirection);
+        if (inhibit === this._unredirectInhibited)
+            return;
 
-            dock.opacity = 255;
-            dash.set({
-                opacity: 0,
-                translation_x: 0,
-                translation_y: 0,
-            });
-        });
-    }
+        // Unredirection is refcounted by the compositor, so hold a single
+        // reference for all the docks: this way it can't be left unbalanced
+        // when docks are destroyed and re-created.
+        if (inhibit) {
+            Meta.disable_unredirect_for_display?.(global.display);
+            global.compositor.disable_unredirect?.();
+        } else {
+            Meta.enable_unredirect_for_display?.(global.display);
+            global.compositor.enable_unredirect?.();
+        }
 
-    _runStartupAnimation() {
-        DockManager.allDocks.forEach(dock => {
-            const {dash} = dock;
-
-            switch (dock.position) {
-            case St.Side.LEFT:
-                dash.translation_x = -dash.width;
-                break;
-            case St.Side.RIGHT:
-                dash.translation_x = dash.width;
-                break;
-            case St.Side.BOTTOM:
-                dash.translation_y = dash.height;
-                break;
-            case St.Side.TOP:
-                dash.translation_y = -dash.height;
-                break;
-            }
-
-            dash.ease({
-                opacity: 255,
-                translation_x: 0,
-                translation_y: 0,
-                duration: STARTUP_ANIMATION_TIME,
-                mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-            });
-        });
+        this._unredirectInhibited = inhibit;
     }
 
     _prepareMainDash() {
@@ -2558,8 +2571,6 @@ export class DockManager {
             });
 
         if (Main.layoutManager._startingUp) {
-            this._prepareStartupAnimation();
-
             // Convince LayoutManager to use the legacy startup animation:
             // Reset overview controls state to HIDDEN, as skipping the startup
             // overview leaves it stuck at WINDOW_PICKER
@@ -2596,7 +2607,6 @@ export class DockManager {
                     this._signalsHandler.removeWithLabel(Labels.STARTUP_ANIMATION);
                     replaceMainDash();
                     dummyDash.destroy();
-                    this._runStartupAnimation();
                     if (this._settings.disableOverviewOnStartup) {
                         this._propertyInjections.removeWithLabel(Labels.STARTUP_ANIMATION);
                         this.overviewControls._stateAdjustment.value =
@@ -2619,6 +2629,8 @@ export class DockManager {
 
         // Delete all docks
         [...this._allDocks].forEach(d => d.destroy());
+
+        this._updateUnredirect();
     }
 
     _restoreDash() {
