@@ -20,7 +20,10 @@ import {
 
 import {Extension} from './dependencies/shell/extensions/extension.js';
 
-import {EventEmitter} from './dependencies/shell/misc.js';
+import {
+    EventEmitter,
+    SignalTracker,
+} from './dependencies/shell/misc.js';
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
@@ -46,11 +49,6 @@ const NautilusFileOperations2Interface = '<node>\
 
 const NautilusFileOperations2ProxyInterface =
     Gio.DBusProxy.makeProxyWrapper(NautilusFileOperations2Interface);
-
-const Labels = Object.freeze({
-    LOCATION_WINDOWS: Symbol('location-windows'),
-    WINDOWS_CHANGED: Symbol('windows-changed'),
-});
 
 Gio._promisify(Gio.File.prototype, 'query_info_async');
 Gio._promisify(Gio.File.prototype, 'query_default_handler_async');
@@ -445,14 +443,13 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             cancellable,
         });
 
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
-
         const updateAndMonitor = () => {
             this._update();
             this._monitorChanges();
         };
         updateAndMonitor();
-        this._mountChanged = this.connect('notify::mount', updateAndMonitor);
+
+        this.connectObject('notify::mount', updateAndMonitor, this);
 
         if (!this.mount && this.volume.get_identifier('class') === 'network') {
             // For some devices the mount point isn't advertised promptly
@@ -478,11 +475,10 @@ class MountableVolumeAppInfo extends LocationAppInfo {
             GLib.source_remove(this._lazyUpdater);
             delete this._lazyUpdater;
         }
-        this.disconnect(this._mountChanged);
-        this.mount = null;
-        this._signalsHandler.destroy();
-
         super.destroy();
+
+        // must stay after super.destroy(), which drops our notify::mount
+        this.mount = null;
     }
 
     vfunc_dup() {
@@ -560,14 +556,18 @@ class MountableVolumeAppInfo extends LocationAppInfo {
     }
 
     _monitorChanges() {
-        this._signalsHandler.destroy();
+        this._changeSignals?.destroy();
+        this._changeSignals = new SignalTracker.TransientSignalHolder(this);
 
         const removable = this.mount ?? this.volume;
-        this._signalsHandler.add(removable, 'changed', () => this._update());
+        removable.connectObject('changed', () => this._update(),
+            this._changeSignals);
 
         if (this.mount) {
-            this._signalsHandler.add(this.mount, 'pre-unmount', () => this._update());
-            this._signalsHandler.add(this.mount, 'unmounted', () => this._update());
+            this.mount.connectObject(
+                'pre-unmount', () => this._update(),
+                'unmounted', () => this._update(),
+                this._changeSignals);
         }
     }
 
@@ -878,6 +878,7 @@ function wrapWindowsBackedApp(shellApp) {
     if (shellApp._dtdData)
         throw new Error('%s has been already wrapped'.format(shellApp));
 
+    const tracker = new SignalTracker.TransientSignalHolder();
     shellApp._dtdData = {
         windows: [],
         state: undefined,
@@ -885,9 +886,10 @@ function wrapWindowsBackedApp(shellApp) {
         isFocused: false,
         proxyProperties: [],
         sources: new Set(),
-        signalConnections: new Utils.GlobalSignalsHandler(),
-        methodInjections: new Utils.InjectionsHandler(),
-        propertyInjections: new Utils.PropertyInjectionsHandler(),
+        tracker,
+        updatingWindows: false,
+        methodInjections: new Utils.InjectionsHandler(tracker),
+        propertyInjections: new Utils.PropertyInjectionsHandler(tracker),
         addProxyProperties(parent, proxyProperties) {
             Object.entries(proxyProperties).forEach(([p, o]) => {
                 const publicProp = o.public ? p : `_${p}`;
@@ -909,9 +911,7 @@ function wrapWindowsBackedApp(shellApp) {
             this.proxyProperties = [];
             this.sources.forEach(s => GLib.source_remove(s));
             this.sources.clear();
-            this.signalConnections.destroy();
-            this.methodInjections.destroy();
-            this.propertyInjections.destroy();
+            this.tracker.destroy();
         },
     };
 
@@ -920,7 +920,6 @@ function wrapWindowsBackedApp(shellApp) {
         state: {},
         startingWorkspace: {},
         isFocused: {public: true},
-        signalConnections: {readOnly: true},
         sources: {readOnly: true},
         checkFocused: {},
         setDtdData: {},
@@ -1023,8 +1022,8 @@ function wrapWindowsBackedApp(shellApp) {
     };
 
     shellApp._checkFocused();
-    shellApp._signalConnections.add(global.display, 'notify::focus-window', () =>
-        shellApp._checkFocused());
+    global.display.connectObject('notify::focus-window',
+        () => shellApp._checkFocused(), shellApp._dtdData.tracker);
 
     // Re-implements shell_app_activate_window for generic activation and alt-tab support
     m('activate_window', function (_om, window, timestamp) {
@@ -1181,8 +1180,8 @@ function makeLocationApp(params) {
             /* eslint-enable no-invalid-this */
         });
         shellApp._pi('busy', {get: () => shellApp.get_busy()});
-        shellApp._signalConnections.add(shellApp.appInfo, 'notify::busy', _ =>
-            shellApp.notify('busy'));
+        shellApp.appInfo.connectObject('notify::busy',
+            _ => shellApp.notify('busy'), shellApp._dtdData.tracker);
     }
 
     shellApp._mi('get_windows', function () {
@@ -1215,22 +1214,22 @@ function makeLocationApp(params) {
             if (!windowsChanged)
                 return;
 
-            this._signalConnections.removeWithLabel(Labels.LOCATION_WINDOWS);
-            windows.forEach(w =>
-                this._signalConnections.addWithLabel(Labels.LOCATION_WINDOWS, w,
-                    'notify::user-time', () => {
-                        if (w !== this._windows[0])
-                            this._windowsOrderChanged();
-                    }));
+            this._dtdData.windowsSignals?.destroy();
+            this._dtdData.windowsSignals =
+                new SignalTracker.TransientSignalHolder(this._dtdData.tracker);
+            windows.forEach(w => w.connectObject('notify::user-time', () => {
+                if (w !== this._windows[0])
+                    this._windowsOrderChanged();
+            }, this._dtdData.windowsSignals));
         },
     }, {readOnly: false});
 
-    shellApp._signalConnections.add(fm1Client, 'windows-changed', () =>
-        shellApp._updateWindows());
-    shellApp._signalConnections.add(shellApp.appInfo, 'notify::icon', () =>
-        shellApp.notify('icon'));
-    shellApp._signalConnections.add(global.workspaceManager,
-        'workspace-switched', () => shellApp._windowsOrderChanged());
+    fm1Client.connectObject('windows-changed',
+        () => shellApp._updateWindows(), shellApp._dtdData.tracker);
+    shellApp.appInfo.connectObject('notify::icon',
+        () => shellApp.notify('icon'), shellApp._dtdData.tracker);
+    global.workspaceManager.connectObject('workspace-switched',
+        () => shellApp._windowsOrderChanged(), shellApp._dtdData.tracker);
 
     return shellApp;
 }
@@ -1257,35 +1256,37 @@ export function wrapFileManagerApp() {
     wrapWindowsBackedApp(fileManagerApp);
 
     const {removables, trash} = Docking.DockManager.getDefault();
-    fileManagerApp._signalConnections.addWithLabel(Labels.WINDOWS_CHANGED,
-        fileManagerApp, 'windows-changed', () => {
-            fileManagerApp.stop_emission_by_name('windows-changed');
-            // Let's wait for the location app to take control before of us
-            const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 50, () => {
-                fileManagerApp._sources.delete(id);
-                fileManagerApp._updateWindows();
-                return GLib.SOURCE_REMOVE;
-            });
-            fileManagerApp._sources.add(id);
-        });
+    const dtdData = fileManagerApp._dtdData;
+    fileManagerApp.connectObject('windows-changed', () => {
+        if (dtdData.updatingWindows)
+            return;
 
-    fileManagerApp._signalConnections.add(global.workspaceManager,
-        'workspace-switched', () => {
-            fileManagerApp._signalConnections.blockWithLabel(Labels.WINDOWS_CHANGED);
-            fileManagerApp.emit('windows-changed');
-            fileManagerApp._signalConnections.unblockWithLabel(Labels.WINDOWS_CHANGED);
+        fileManagerApp.stop_emission_by_name('windows-changed');
+        // Let's wait for the location app to take control before of us
+        const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 50, () => {
+            fileManagerApp._sources.delete(id);
+            fileManagerApp._updateWindows();
+            return GLib.SOURCE_REMOVE;
         });
+        fileManagerApp._sources.add(id);
+    }, dtdData.tracker);
+
+    global.workspaceManager.connectObject('workspace-switched', () => {
+        dtdData.updatingWindows = true;
+        fileManagerApp.emit('windows-changed');
+        dtdData.updatingWindows = false;
+    }, dtdData.tracker);
 
     if (removables) {
-        fileManagerApp._signalConnections.add(removables, 'changed', () =>
-            fileManagerApp._updateWindows());
-        fileManagerApp._signalConnections.add(removables, 'windows-changed', () =>
-            fileManagerApp._updateWindows());
+        removables.connectObject(
+            'changed', () => fileManagerApp._updateWindows(),
+            'windows-changed', () => fileManagerApp._updateWindows(),
+            dtdData.tracker);
     }
 
     if (trash?.getApp()) {
-        fileManagerApp._signalConnections.add(trash.getApp(), 'windows-changed', () =>
-            fileManagerApp._updateWindows());
+        trash.getApp().connectObject('windows-changed',
+            () => fileManagerApp._updateWindows(), dtdData.tracker);
     }
 
     fileManagerApp._updateWindows = function () {
@@ -1294,9 +1295,9 @@ export function wrapFileManagerApp() {
         const windows = originalGetWindows.call(this).filter(w =>
             !locationWindows.includes(w));
 
-        this._signalConnections.blockWithLabel(Labels.WINDOWS_CHANGED);
+        this._dtdData.updatingWindows = true;
         this._setWindows(windows);
-        this._signalConnections.unblockWithLabel(Labels.WINDOWS_CHANGED);
+        this._dtdData.updatingWindows = false;
     };
 
     fileManagerApp._mi('toString', defaultToString =>
@@ -1375,7 +1376,7 @@ export class Removables extends EventEmitter {
     constructor() {
         super();
 
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._signals = new SignalTracker.TransientSignalHolder();
 
         this._monitor = Gio.VolumeMonitor.get();
         this._cancellable = new Gio.Cancellable();
@@ -1383,27 +1384,15 @@ export class Removables extends EventEmitter {
         this._monitor.get_mounts().forEach(m => Removables.initMountPromises(m));
         this._updateVolumes();
 
-        this._signalsHandler.add([
-            this._monitor,
-            'volume-added',
-            (_, volume) => this._onVolumeAdded(volume),
-        ], [
-            this._monitor,
-            'volume-removed',
-            (_, volume) => this._onVolumeRemoved(volume),
-        ], [
-            this._monitor,
-            'mount-added',
-            (_, mount) => this._onMountAdded(mount),
-        ], [
-            Docking.DockManager.settings,
-            'changed::show-mounts-only-mounted',
-            () => this._updateVolumes(),
-        ], [
-            Docking.DockManager.settings,
-            'changed::show-mounts-network',
-            () => this._updateVolumes(),
-        ]);
+        this._monitor.connectObject(
+            'volume-added', (_, volume) => this._onVolumeAdded(volume),
+            'volume-removed', (_, volume) => this._onVolumeRemoved(volume),
+            'mount-added', (_, mount) => this._onMountAdded(mount),
+            this._signals);
+        Docking.DockManager.settings.connectObject(
+            'changed::show-mounts-only-mounted', () => this._updateVolumes(),
+            'changed::show-mounts-network', () => this._updateVolumes(),
+            this._signals);
     }
 
     destroy() {
@@ -1411,7 +1400,7 @@ export class Removables extends EventEmitter {
         this._volumeApps = [];
         this._cancellable.cancel();
         this._cancellable = null;
-        this._signalsHandler.destroy();
+        this._signals.destroy();
         this._monitor = null;
     }
 
@@ -1451,12 +1440,15 @@ export class Removables extends EventEmitter {
             fallbackIconName: FALLBACK_REMOVABLE_MEDIA_ICON,
         });
 
-        volumeApp._signalConnections.add(volumeApp, 'windows-changed',
-            () => this.emit('windows-changed'));
+        const {tracker} = volumeApp._dtdData;
+
+        volumeApp.connectObject('windows-changed',
+            () => this.emit('windows-changed'), tracker);
 
         if (Docking.DockManager.settings.showMountsOnlyMounted) {
-            volumeApp._signalConnections.add(appInfo, 'notify::mount',
-                () => !appInfo.mount && this._onVolumeRemoved(appInfo.volume));
+            appInfo.connectObject('notify::mount',
+                () => !appInfo.mount && this._onVolumeRemoved(appInfo.volume),
+                tracker);
         }
 
         this._volumeApps.push(volumeApp);
