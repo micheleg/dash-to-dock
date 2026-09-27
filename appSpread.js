@@ -1,4 +1,4 @@
-import {Atk, Clutter} from './dependencies/gi.js';
+import {Atk, Clutter, GObject} from './dependencies/gi.js';
 
 import {
     Main,
@@ -7,16 +7,25 @@ import {
     WorkspaceThumbnail,
 } from './dependencies/shell/ui.js';
 
+import {DestroyableObject} from './destroyableObject.js';
+
 import {Utils} from './imports.js';
 
 import {SignalTracker} from './dependencies/shell/misc.js';
 
 const APP_SPREAD_RESTORE_ACTION = 'dock-app-spread-restore';
 
-export class AppSpread {
+export class AppSpread extends DestroyableObject {
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor() {
+        super();
+
         this.app = null;
-        this.supported = true;
         this.windows = [];
 
         // fail early and do nothing, if mandatory gnome shell functions are missing
@@ -25,26 +34,22 @@ export class AppSpread {
             !WorkspaceThumbnail?.WorkspaceThumbnail?.prototype._isOverviewWindow) {
             log('Dash to dock: Unable to temporarily replace shell functions ' +
                 'for app spread - using previews instead');
-            this.supported = false;
             return;
         }
 
-        this._signals = new SignalTracker.TransientSignalHolder();
-        this._methodInjections = new Utils.InjectionsHandler();
-        this._vfuncInjections = new Utils.VFuncInjectionsHandler();
+        this._supported = true;
+        this._signals = new SignalTracker.TransientSignalHolder(this);
+        this._methodInjections = new Utils.InjectionsHandler(this);
+        this._vfuncInjections = new Utils.VFuncInjectionsHandler(this);
+        this.connect('destroy', () => this._hideAppSpread());
+    }
+
+    get supported() {
+        return this._supported ?? false;
     }
 
     get isInAppSpread() {
         return !!this.app;
-    }
-
-    destroy() {
-        if (!this.supported)
-            return;
-        this._hideAppSpread();
-        this._signals.destroy();
-        this._methodInjections.destroy();
-        this._vfuncInjections.destroy();
     }
 
     toggle(app) {
@@ -91,8 +96,8 @@ export class AppSpread {
         // Checked in overview "hide" event handler _hideAppSpread
         this.app = app;
         this._updateWindows();
-        this._signals.destroy();
-        this._signals = new SignalTracker.TransientSignalHolder();
+        this._signals?.destroy();
+        this._signals = new SignalTracker.TransientSignalHolder(this);
 
         // we need to hook into overview 'hidden' like this, in case app spread
         // overview is hidden by choosing another app it should then do its
