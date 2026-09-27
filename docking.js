@@ -508,8 +508,10 @@ const DockedDash = GObject.registerClass({
             GLib.source_remove(this._triggerTimeoutId);
 
         // Remove barrier timeout
-        if (this._removeBarrierTimeoutId > 0)
+        if (this._removeBarrierTimeoutId > 0) {
             GLib.source_remove(this._removeBarrierTimeoutId);
+            delete this._removeBarrierTimeoutId;
+        }
 
         // Remove existing barrier
         this._removeBarrier();
@@ -858,8 +860,10 @@ const DockedDash = GObject.registerClass({
                 // NOTE: Delay needed to keep mouse from moving past dock and
                 // re-hiding dock immediately. This gives users an opportunity
                 // to hover over the dock
-                if (this._removeBarrierTimeoutId > 0)
+                if (this._removeBarrierTimeoutId > 0) {
                     GLib.source_remove(this._removeBarrierTimeoutId);
+                    this._removeBarrierTimeoutId = 0;
+                }
 
                 if (!this._delayedHide) {
                     this._removeBarrierTimeoutId = GLib.timeout_add(
@@ -885,8 +889,11 @@ const DockedDash = GObject.registerClass({
                 this.dockState = State.HIDDEN;
 
                 // Remove queued barrier removal timeout if any
-                if (this._removeBarrierTimeoutId > 0)
+                if (this._removeBarrierTimeoutId > 0) {
                     GLib.source_remove(this._removeBarrierTimeoutId);
+                    this._removeBarrierTimeoutId = 0;
+                }
+
                 this._updateBarrier();
                 this.dash.iconAnimator.pause();
             },
