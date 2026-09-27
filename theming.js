@@ -11,12 +11,14 @@ import {
 import {Main} from './dependencies/shell/ui.js';
 
 import {
+    EventEmitter,
+    SignalTracker,
+} from './dependencies/shell/misc.js';
+
+import {
     Docking,
     Utils,
 } from './imports.js';
-
-import {EventEmitter} from './dependencies/shell/misc.js';
-
 
 /*
  * DEFAULT:  transparency given by theme
@@ -29,10 +31,20 @@ const TransparencyMode = {
     DYNAMIC:  3,
 };
 
-const Labels = Object.freeze({
-    TRANSPARENCY: Symbol('transparency'),
-    THEME_CHANGED: Symbol('theme-changed'),
-});
+const THEME_CHANGED_KEYS = [
+    'transparency-mode',
+    'customize-alphas',
+    'min-alpha',
+    'max-alpha',
+    'background-opacity',
+    'custom-background-color',
+    'background-color',
+    'apply-custom-theme',
+    'custom-theme-shrink',
+    'custom-theme-running-dots',
+    'extend-height',
+    'force-straight-corner',
+];
 
 export const PositionStyleClass = Object.freeze([
     'top',
@@ -48,8 +60,6 @@ export class ThemeManager extends EventEmitter {
     constructor(dock) {
         super();
 
-        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
-        this._bindSettingsChanges();
         this._actor = dock;
         this._dash = dock.dash;
 
@@ -58,37 +68,23 @@ export class ThemeManager extends EventEmitter {
         this._customizedBorder = {red: 0, green: 0, blue: 0, alpha: 0};
         this._transparency = new Transparency(dock);
 
-        this._signalsHandler.add([
-            // update :overview pseudoclass
-            Main.overview,
-            'showing',
-            this._onOverviewShowing.bind(this),
-        ], [
-            Main.overview,
-            'hiding',
-            this._onOverviewHiding.bind(this),
-        ]);
+        this._themeSignals = null;
 
-        this._signalsHandler.addWithLabel(Labels.THEME_CHANGED,
-            St.ThemeContext.get_for_stage(global.stage), 'changed',
-            () => this._queueUpdateCustomTheme(),
-            Utils.SignalsHandlerFlags.CONNECT_AFTER);
-
-        const maybeUpdateCustomTheme = () => {
+        const updateThemeChangedSignals = () => {
             if (this._actor.mapped) {
-                this._signalsHandler.unblockWithLabel(Labels.THEME_CHANGED);
+                this._connectToThemeSignals();
                 this._queueUpdateCustomTheme();
             } else {
                 this._dequeueUpdateCustomTheme();
-                this._signalsHandler.blockWithLabel(Labels.THEME_CHANGED);
+                this._themeSignals?.destroy();
+                this._themeSignals = null;
             }
         };
 
-        this._signalsHandler.add(this._actor, 'notify::mapped',
-            () => maybeUpdateCustomTheme(),
-            Utils.SignalsHandlerFlags.CONNECT_AFTER);
+        this._actor.connectObject('notify::mapped',
+            () => updateThemeChangedSignals(), this);
 
-        maybeUpdateCustomTheme();
+        updateThemeChangedSignals();
 
         // Set the initial overview pseudo-class state.
         if (Main.overview.visible)
@@ -98,13 +94,46 @@ export class ThemeManager extends EventEmitter {
 
         // destroy themeManager when the managed actor is destroyed (e.g. extension unload)
         // in order to disconnect signals
-        this._signalsHandler.add(this._actor, 'destroy', () => this.destroy());
+        this._actor.connectObject('destroy', () => this.destroy(), this);
     }
 
     destroy() {
+        // we are also destroyed by the actor destroy signal, and explicitly
+        // by the dock, so make sure we only do it once
+        if (!this._actor)
+            return;
+
+        this._dash = null;
+
+        this._themeSignals?.destroy();
+        this._themeSignals = null;
+        this._actor.disconnectObject(this);
+        this._actor = null;
+
         this.emit('destroy');
         this._transparency.destroy();
         this._dequeueUpdateCustomTheme();
+    }
+
+    _connectToThemeSignals() {
+        if (this._themeSignals)
+            return;
+
+        this._themeSignals = new SignalTracker.TransientSignalHolder(this._actor);
+
+        St.ThemeContext.get_for_stage(global.stage).connectObject('changed',
+            () => this._queueUpdateCustomTheme(),
+            GObject.ConnectFlags.AFTER, this._themeSignals);
+
+        Docking.DockManager.settings.connectObject(...THEME_CHANGED_KEYS.map(key => [
+            `changed::${key}`, () => this.updateCustomTheme(),
+        ]).flat(), this._themeSignals);
+
+        // update :overview pseudoclass
+        Main.overview.connectObject(
+            'showing', (...args) => this._onOverviewShowing(...args),
+            'hiding', (...args) => this._onOverviewHiding(...args),
+            this._themeSignals);
     }
 
     _queueUpdateCustomTheme() {
@@ -325,27 +354,6 @@ export class ThemeManager extends EventEmitter {
             this._dash._background.set_style(newStyle);
         }
     }
-
-    _bindSettingsChanges() {
-        const keys = ['transparency-mode',
-            'customize-alphas',
-            'min-alpha',
-            'max-alpha',
-            'background-opacity',
-            'custom-background-color',
-            'background-color',
-            'apply-custom-theme',
-            'custom-theme-shrink',
-            'custom-theme-running-dots',
-            'extend-height',
-            'force-straight-corner'];
-
-        this._signalsHandler.addWithLabel(Labels.THEME_CHANGED, ...keys.map(key => [
-            Docking.DockManager.settings,
-            `changed::${key}`,
-            () => this.updateCustomTheme(),
-        ]));
-    }
 }
 
 /**
@@ -376,7 +384,7 @@ class Transparency extends EventEmitter {
         this._opaqueTransition = '0ms';
         this._base_actor_style = '';
 
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._signals = new SignalTracker.TransientSignalHolder();
         this._trackedWindows = new Map();
     }
 
@@ -399,27 +407,20 @@ class Transparency extends EventEmitter {
             removedSignal = 'actor-removed';
         }
 
-        this._signalsHandler.addWithLabel(Labels.TRANSPARENCY, [
-            global.window_group,
-            addedSignal,
-            this._onWindowActorAdded.bind(this),
-        ], [
-            global.window_group,
-            removedSignal,
-            this._onWindowActorRemoved.bind(this),
-        ], [
-            global.window_manager,
-            'switch-workspace',
-            this._updateSolidStyle.bind(this),
-        ], [
-            Main.overview,
-            'hiding',
-            this._updateSolidStyle.bind(this),
-        ], [
-            Main.overview,
-            'showing',
-            this._updateSolidStyle.bind(this),
-        ]);
+        this._signals?.destroy();
+        this._signals = new SignalTracker.TransientSignalHolder();
+
+        global.window_group.connectObject(
+            addedSignal, (...args) => this._onWindowActorAdded(...args),
+            removedSignal, (...args) => this._onWindowActorRemoved(...args),
+            this._signals);
+        global.window_manager.connectObject(
+            'switch-workspace', (...args) => this._updateSolidStyle(...args),
+            this._signals);
+        Main.overview.connectObject(
+            'hiding', (...args) => this._updateSolidStyle(...args),
+            'showing', (...args) => this._updateSolidStyle(...args),
+            this._signals);
 
         // Window signals
         global.window_group.get_children().filter(child => {
@@ -443,7 +444,8 @@ class Transparency extends EventEmitter {
     disable() {
         // ensure I never double-register/inject
         // although it should never happen
-        this._signalsHandler.removeWithLabel(Labels.TRANSPARENCY);
+        this._signals?.destroy();
+        this._signals = null;
 
         for (const key of this._trackedWindows.keys()) {
             this._trackedWindows.get(key).forEach(id => {
@@ -457,7 +459,6 @@ class Transparency extends EventEmitter {
 
     destroy() {
         this.disable();
-        this._signalsHandler.destroy();
     }
 
     _onWindowActorAdded(container, metaWindowActor) {
