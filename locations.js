@@ -11,6 +11,8 @@ import {
 
 import {ShellMountOperation} from './dependencies/shell/ui.js';
 
+import {DestroyableIface} from './destroyableObject.js';
+
 import {
     Docking,
     Utils,
@@ -89,7 +91,7 @@ function makeNautilusFileOperationsProxy() {
 }
 
 export const LocationAppInfo = GObject.registerClass({
-    Implements: [Gio.AppInfo],
+    Implements: [Gio.AppInfo, DestroyableIface],
     Properties: {
         'location': GObject.ParamSpec.object(
             'location', 'location', 'location',
@@ -408,6 +410,8 @@ export const LocationAppInfo = GObject.registerClass({
         this.name = null;
         this._handlerApp = null;
         this.cancellable?.cancel();
+
+        DestroyableIface.prototype.destroy.call(this);
     }
 });
 
