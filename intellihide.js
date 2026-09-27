@@ -10,8 +10,10 @@ import {
     Utils,
 } from './imports.js';
 
-import {EventEmitter} from './dependencies/shell/misc.js';
-
+import {
+    EventEmitter,
+    SignalTracker,
+} from './dependencies/shell/misc.js';
 
 // A good compromise between reactivity and efficiency; to be tuned.
 const INTELLIHIDE_CHECK_INTERVAL = 100;
@@ -58,7 +60,7 @@ export class Intellihide extends EventEmitter {
         // Load settings
         this._monitorIndex = monitorIndex;
 
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._signals = new SignalTracker.TransientSignalHolder();
         this._focusApp = null; // The application whose window is focused.
         this._topApp = null; // The application whose window is on top on the monitor with the dock.
 
@@ -72,34 +74,27 @@ export class Intellihide extends EventEmitter {
         this._trackedWindows = new Map();
 
         // Connect global signals
-        this._signalsHandler.add([
+        global.display.connectObject(
             // Add signals on windows created from now on
-            global.display,
-            'window-created',
-            this._windowCreated.bind(this),
-        ], [
+            'window-created', (...args) => this._windowCreated(...args),
             // triggered for instance when the window list order changes,
             // included when the workspace is switched
-            global.display,
-            'restacked',
-            this._checkOverlap.bind(this),
-        ], [
-            // when windows are alwasy on top, the focus window can change
-            // without the windows being restacked. Thus monitor window focus change.
-            Docking.DockManager.windowTracker,
-            'notify::focus-app',
-            this._checkOverlap.bind(this),
-        ], [
-            // update wne monitor changes, for instance in multimonitor when monitor are attached
-            Utils.getMonitorManager(),
-            'monitors-changed',
-            this._checkOverlap.bind(this),
-        ]);
+            'restacked', (...args) => this._checkOverlap(...args),
+            this._signals);
+
+        // when windows are alwasy on top, the focus window can change
+        // without the windows being restacked. Thus monitor window focus change.
+        Docking.DockManager.windowTracker.connectObject(
+            'notify::focus-app', (...args) => this._checkOverlap(...args), this._signals);
+
+        // update wne monitor changes, for instance in multimonitor when monitor are attached
+        Utils.getMonitorManager().connectObject(
+            'monitors-changed', (...args) => this._checkOverlap(...args), this._signals);
     }
 
     destroy() {
         // Disconnect global signals
-        this._signalsHandler.destroy();
+        this._signals.destroy();
 
         // Remove  residual windows signals
         this.disable();
@@ -339,4 +334,5 @@ export class Intellihide extends EventEmitter {
         return false;
     }
 }
+
 
