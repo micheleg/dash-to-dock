@@ -49,12 +49,8 @@ const Labels = Object.freeze({
     WINDOWS_CHANGED: Symbol('windows-changed'),
 });
 
-const GJS_SUPPORTS_FILE_IFACE_PROMISES = imports.system.version >= 17101;
-
-if (GJS_SUPPORTS_FILE_IFACE_PROMISES) {
-    Gio._promisify(Gio.File.prototype, 'query_info_async');
-    Gio._promisify(Gio.File.prototype, 'query_default_handler_async');
-}
+Gio._promisify(Gio.File.prototype, 'query_info_async');
+Gio._promisify(Gio.File.prototype, 'query_default_handler_async');
 
 
 /**
@@ -267,10 +263,6 @@ export const LocationAppInfo = GObject.registerClass({
 
         let info;
         try {
-            if (!GJS_SUPPORTS_FILE_IFACE_PROMISES) {
-                Gio._promisify(this.location.constructor.prototype,
-                    'query_info_async', 'query_info_finish');
-            }
             info = await this.location.query_info_async(
                 iconsQuery.join(','),
                 Gio.FileQueryInfoFlags.NONE,
@@ -327,12 +319,6 @@ export const LocationAppInfo = GObject.registerClass({
             return null;
 
         try {
-            if (!GJS_SUPPORTS_FILE_IFACE_PROMISES) {
-                Gio._promisify(this.location.constructor.prototype,
-                    'query_default_handler_async',
-                    'query_default_handler_finish');
-            }
-
             return await this.location.query_default_handler_async(
                 GLib.PRIORITY_DEFAULT, cancellable);
         } catch (e) {

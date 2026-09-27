@@ -3,20 +3,11 @@
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
-const GJS_SUPPORTS_FILE_IFACE_PROMISES = imports.system.version >= 17101;
-
-if (GJS_SUPPORTS_FILE_IFACE_PROMISES)
-    Gio._promisify(Gio.File.prototype, 'query_default_handler_async');
+Gio._promisify(Gio.File.prototype, 'query_default_handler_async');
 
 function getHandlerAppAsync(location, cancellable) {
     if (!location)
         return null;
-
-    if (!GJS_SUPPORTS_FILE_IFACE_PROMISES) {
-        Gio._promisify(location.constructor.prototype,
-            'query_default_handler_async',
-            'query_default_handler_finish');
-    }
 
     return location.query_default_handler_async(
         GLib.PRIORITY_DEFAULT, cancellable);
