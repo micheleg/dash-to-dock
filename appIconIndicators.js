@@ -17,6 +17,8 @@ import {
 
 import {Extension} from './dependencies/shell/extensions/extension.js';
 
+import {SignalTracker} from './dependencies/shell/misc.js';
+
 const {cairo: Cairo} = imports;
 const {ngettext} = Extension;
 
@@ -130,16 +132,16 @@ export class AppIconIndicator {
 class IndicatorBase {
     constructor(source) {
         this._source = source;
-        this._signalsHandler = new Utils.GlobalSignalsHandler(this._source);
+        this._signals = new SignalTracker.TransientSignalHolder(source);
     }
 
     update() {
     }
 
     destroy() {
-        this._source = null;
-        this._signalsHandler.destroy();
-        this._signalsHandler = null;
+        this._signals.destroy();
+        delete this._signals;
+        delete this._source;
     }
 }
 
@@ -154,9 +156,11 @@ class RunningIndicatorBase extends IndicatorBase {
 
         this._side = Utils.getPosition();
         this._dominantColorExtractor = new DominantColorExtractor(this._source.app);
-        this._signalsHandler.add(this._source, 'notify::running', () => this.update());
-        this._signalsHandler.add(this._source, 'notify::focused', () => this.update());
-        this._signalsHandler.add(this._source, 'notify::windows-count', () => this._updateCounterClass());
+        this._source.connectObject(
+            'notify::running', () => this.update(),
+            'notify::focused', () => this.update(),
+            'notify::windows-count', () => this._updateCounterClass(),
+            this._signals);
         this.update();
     }
 
@@ -297,7 +301,8 @@ class RunningIndicatorDots extends RunningIndicatorBase {
             break;
         }
 
-        this._area.connectObject('repaint', this._updateIndicator.bind(this), this);
+        this._area.connectObject('repaint',
+            (...args) => this._updateIndicator(...args), this._signals);
         this._source._iconContainer.add_child(this._area);
 
         const keys = ['custom-theme-running-dots-color',
@@ -309,11 +314,8 @@ class RunningIndicatorDots extends RunningIndicatorBase {
             'running-indicator-dominant-color'];
 
         keys.forEach(function (key) {
-            this._signalsHandler.add(
-                Docking.DockManager.settings,
-                `changed::${key}`,
-                this.update.bind(this)
-            );
+            Docking.DockManager.settings.connectObject(
+                `changed::${key}`, (...args) => this.update(...args), this._signals);
         }, this);
 
         // Apply glossy background
@@ -747,8 +749,6 @@ export class UnityIndicator extends IndicatorBase {
         },
     };
 
-    static notificationBadgeSignals = Symbol('notification-badge-signals');
-
     constructor(source) {
         super(source);
 
@@ -756,32 +756,22 @@ export class UnityIndicator extends IndicatorBase {
         const remoteEntry = remoteModel.lookupById(this._source.app.id);
         this._remoteEntry = remoteEntry;
 
-        this._signalsHandler.add([
-            remoteEntry,
-            ['count-changed', 'count-visible-changed'],
-            () => this._updateNotificationsCount(),
-        ], [
-            remoteEntry,
-            ['progress-changed', 'progress-visible-changed'],
+        this._remoteEntry.connectObject(
+            'count-changed', () => this._updateNotificationsCount(),
+            'count-visible-changed', () => this._updateNotificationsCount(),
+            'progress-changed',
             (sender, {progress, progress_visible: progressVisible}) =>
                 this.setProgress(progressVisible ? progress : -1),
-        ], [
-            remoteEntry,
-            'urgent-changed',
-            (sender, {urgent}) => this.setUrgent(urgent),
-        ], [
-            remoteEntry,
-            'updating-changed',
-            (sender, {updating}) => this.setUpdating(updating),
-        ], [
-            notificationsMonitor,
-            'changed',
-            () => this._updateNotificationsCount(),
-        ], [
-            this._source,
-            'style-changed',
-            () => this._updateIconStyle(),
-        ]);
+            'progress-visible-changed',
+            (sender, {progress, progress_visible: progressVisible}) =>
+                this.setProgress(progressVisible ? progress : -1),
+            'urgent-changed', (sender, {urgent}) => this.setUrgent(urgent),
+            'updating-changed', (sender, {updating}) => this.setUpdating(updating),
+            this._signals);
+        notificationsMonitor.connectObject(
+            'changed', () => this._updateNotificationsCount(), this._signals);
+        this._source.connectObject(
+            'style-changed', () => this._updateIconStyle(), this._signals);
 
         this._updateNotificationsCount();
         this.setProgress(this._remoteEntry.progress_visible
@@ -791,13 +781,13 @@ export class UnityIndicator extends IndicatorBase {
     }
 
     destroy() {
+        this._remoteEntry = null;
         this._notificationBadgeBin?.destroy();
         this._notificationBadgeBin = null;
         this._updateNotificationAccessibility(0);
         this._hideProgressOverlay();
         this.setUrgent(false);
         this.setUpdating(false);
-        this._remoteEntry = null;
 
         super.destroy();
     }
@@ -894,19 +884,13 @@ export class UnityIndicator extends IndicatorBase {
         this._updateNotificationBadgeStyle();
 
         const themeContext = St.ThemeContext.get_for_stage(global.stage);
-        this._signalsHandler.addWithLabel(UnityIndicator.notificationBadgeSignals, [
-            themeContext,
-            'changed',
-            () => this._updateNotificationBadgeStyle(),
-        ], [
-            themeContext,
-            'notify::scale-factor',
-            () => this._updateNotificationBadgeStyle(),
-        ], [
-            this._source._iconContainer,
-            'notify::size',
-            () => this._updateNotificationBadgeStyle(),
-        ]);
+        this._badgeSignals = new SignalTracker.TransientSignalHolder(this._signals);
+        themeContext.connectObject(
+            'changed', () => this._updateNotificationBadgeStyle(),
+            'notify::scale-factor', () => this._updateNotificationBadgeStyle(),
+            this._badgeSignals);
+        this._source._iconContainer.connectObject('notify::size',
+            () => this._updateNotificationBadgeStyle(), this._badgeSignals);
     }
 
     _updateNotificationAccessibility(count) {
@@ -936,7 +920,8 @@ export class UnityIndicator extends IndicatorBase {
             const text = this._notificationBadgeCountToText(count);
             this._updateNotificationsBadge(text);
         } else if (this._notificationBadgeBin) {
-            this._signalsHandler.removeWithLabel(UnityIndicator.notificationBadgeSignals);
+            this._badgeSignals?.destroy();
+            delete this._badgeSignals;
             this._notificationBadgeBin.destroy();
             this._notificationBadgeBin = null;
         }
@@ -952,9 +937,9 @@ export class UnityIndicator extends IndicatorBase {
 
         this._progressOverlayArea = new St.DrawingArea({x_expand: true, y_expand: true});
         this._progressOverlayArea.add_style_class_name('progress-bar');
-        this._progressOverlayArea.connect('repaint', () => {
+        this._progressOverlayArea.connectObject('repaint', () => {
             this._drawProgressOverlay(this._progressOverlayArea);
-        });
+        }, this._signals);
 
         this._source._iconContainer.add_child(this._progressOverlayArea);
         this._updateProgressOverlay();
