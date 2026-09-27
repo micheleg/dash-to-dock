@@ -15,7 +15,8 @@ import {
     Utils,
 } from './imports.js';
 
-const {signals: Signals} = imports;
+import {EventEmitter} from './dependencies/shell/misc.js';
+
 
 /*
  * DEFAULT:  transparency given by theme
@@ -43,8 +44,10 @@ export const PositionStyleClass = Object.freeze([
 /**
  * Manage theme customization and custom theme support
  */
-export class ThemeManager {
+export class ThemeManager extends EventEmitter {
     constructor(dock) {
+        super();
+
         this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this._bindSettingsChanges();
         this._actor = dock;
@@ -344,15 +347,16 @@ export class ThemeManager {
         ]));
     }
 }
-Signals.addSignalMethods(ThemeManager.prototype);
 
 /**
  * The following class is based on the following upstream commit:
  * https://git.gnome.org/browse/gnome-shell/commit/?id=447bf55e45b00426ed908b1b1035f472c2466956
  * Transparency when free-floating
  */
-class Transparency {
+class Transparency extends EventEmitter {
     constructor(dock) {
+        super();
+
         this._dash = dock.dash;
         this._actor = this._dash._container;
         this._backgroundActor = this._dash._background;
@@ -599,4 +603,3 @@ class Transparency {
         }
     }
 }
-Signals.addSignalMethods(Transparency.prototype);

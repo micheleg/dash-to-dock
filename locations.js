@@ -18,11 +18,12 @@ import {
 
 import {Extension} from './dependencies/shell/extensions/extension.js';
 
+import {EventEmitter} from './dependencies/shell/misc.js';
+
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
 const {gettext: __} = Extension;
 
-const {signals: Signals} = imports;
 
 const FALLBACK_REMOVABLE_MEDIA_ICON = 'drive-removable-media';
 const FALLBACK_TRASH_ICON = 'user-trash';
@@ -1341,7 +1342,7 @@ export class Trash {
  * plugged into the system, and keeps the list of Apps up-to-date as
  * devices come and go and are mounted and unmounted.
  */
-export class Removables {
+export class Removables extends EventEmitter {
     static initVolumePromises(object) {
         // TODO: This can be simplified using actual interface type when we
         // can depend on gjs 1.72
@@ -1368,6 +1369,8 @@ export class Removables {
     }
 
     constructor() {
+        super();
+
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
         this._monitor = Gio.VolumeMonitor.get();
@@ -1488,7 +1491,6 @@ export class Removables {
         return this._volumeApps;
     }
 }
-Signals.addSignalMethods(Removables.prototype);
 
 /**
  *

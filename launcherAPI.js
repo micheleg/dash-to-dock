@@ -3,6 +3,8 @@
 import {Gio} from './dependencies/gi.js';
 import {DBusMenuUtils} from './imports.js';
 
+import {EventEmitter} from './dependencies/shell/misc.js';
+
 const DBusMenu = await DBusMenuUtils.haveDBusMenu();
 
 export class LauncherEntryRemoteModel {
@@ -168,8 +170,10 @@ const launcherEntryDefaults = Object.freeze({
     'progress-visible': false,
 });
 
-const LauncherEntry = class DashToDockLauncherEntry {
+const LauncherEntry = class DashToDockLauncherEntry extends EventEmitter {
     constructor() {
+        super();
+
         this._connections = new Map();
         this._handlers = new Map();
         this._nextId = 0;

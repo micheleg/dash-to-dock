@@ -10,7 +10,8 @@ import {
     Utils,
 } from './imports.js';
 
-const {signals: Signals} = imports;
+import {EventEmitter} from './dependencies/shell/misc.js';
+
 
 // A good compromise between reactivity and efficiency; to be tuned.
 const INTELLIHIDE_CHECK_INTERVAL = 100;
@@ -50,8 +51,10 @@ const ignoreApps = ['com.rastersoft.ding', 'com.desktop.ding'];
  * Intallihide object: emit 'status-changed' signal when the overlap of windows
  * with the provided targetBoxClutter.ActorBox changes;
  */
-export class Intellihide {
+export class Intellihide extends EventEmitter {
     constructor(monitorIndex) {
+        super();
+
         // Load settings
         this._monitorIndex = monitorIndex;
 
@@ -337,4 +340,3 @@ export class Intellihide {
     }
 }
 
-Signals.addSignalMethods(Intellihide.prototype);

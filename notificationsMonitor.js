@@ -8,14 +8,17 @@ import {
     Utils,
 } from './imports.js';
 
-const {signals: Signals} = imports;
+import {EventEmitter} from './dependencies/shell/misc.js';
+
 
 const Labels = Object.freeze({
     SOURCES: Symbol('sources'),
     NOTIFICATIONS: Symbol('notifications'),
 });
-export class NotificationsMonitor {
+export class NotificationsMonitor extends EventEmitter {
     constructor() {
+        super();
+
         this._settings = new Gio.Settings({
             schema_id: 'org.gnome.desktop.notifications',
         });
@@ -118,4 +121,3 @@ export class NotificationsMonitor {
     }
 }
 
-Signals.addSignalMethods(NotificationsMonitor.prototype);

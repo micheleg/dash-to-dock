@@ -24,6 +24,7 @@ import {
 
 import {
     AnimationUtils,
+    EventEmitter,
 } from './dependencies/shell/misc.js';
 
 import {
@@ -48,7 +49,6 @@ import {StrutsManager} from './dockStruts.js';
 // the shell domain with the default _() and N_()
 const {gettext: __} = Extension;
 
-const {signals: Signals} = imports;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
 const ICON_ANIMATOR_DURATION = 3000;
@@ -1816,8 +1816,10 @@ const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
 };
 
 
-export class DockManager {
+export class DockManager extends EventEmitter {
     constructor(extension) {
+        super();
+
         if (DockManager._singleton)
             throw new Error('DashToDock has been already initialized');
         DockManager._singleton = this;
@@ -2884,7 +2886,6 @@ export class DockManager {
         return !!Main.panel?._rightCorner && !!Main.panel?._leftCorner;
     }
 }
-Signals.addSignalMethods(DockManager.prototype);
 
 // This class drives long-running icon animations, to keep them running in sync
 // with each other, and to save CPU by pausing them when the dock is hidden.
