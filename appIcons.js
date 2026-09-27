@@ -22,6 +22,7 @@ import {
 
 import {
     ParentalControlsManager,
+    SignalTracker,
     Util,
 } from './dependencies/shell/misc.js';
 
@@ -42,12 +43,6 @@ import {Extension} from './dependencies/shell/extensions/extension.js';
 const {gettext: __, ngettext} = Extension;
 
 const DBusMenu = await DBusMenuUtils.haveDBusMenu();
-
-const Labels = Object.freeze({
-    ISOLATE_MONITORS: Symbol('isolate-monitors'),
-    ISOLATE_WORKSPACES: Symbol('isolate-workspaces'),
-    URGENT_WINDOWS: Symbol('urgent-windows'),
-});
 
 const clickAction = Object.freeze({
     SKIP: 0,
@@ -122,7 +117,6 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         // a prefix is required to avoid conflicting with the parent class variable
         this.monitorIndex = monitorIndex;
-        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this.iconAnimator = iconAnimator;
         this._indicator = new AppIconIndicators.AppIconIndicator(this);
         this._urgentWindows = new Set();
@@ -134,24 +128,26 @@ export const DockAbstractAppIcon = GObject.registerClass({
             this._stateChangedId = 0;
         }
 
-        this._signalsHandler.add(this.app, 'windows-changed', () => this._updateWindows());
-        this._signalsHandler.add(this.app, 'notify::state', () => this._updateRunningState());
-        this._signalsHandler.add(global.display, 'window-demands-attention', (_dpy, window) =>
-            this._onWindowDemandsAttention(window));
-        this._signalsHandler.add(global.display, 'window-marked-urgent', (_dpy, window) =>
-            this._onWindowDemandsAttention(window));
+        this.app.connectObject(
+            'windows-changed', () => this._updateWindows(),
+            'notify::state', () => this._updateRunningState(),
+            this);
+        global.display.connectObject(
+            'window-demands-attention', (_dpy, window) =>
+                this._onWindowDemandsAttention(window),
+            'window-marked-urgent', (_dpy, window) =>
+                this._onWindowDemandsAttention(window),
+            this);
 
         // In Wayland sessions, this signal is needed to track the state of windows dragged
         // from one monitor to another. As this is triggered quite often (whenever a new
         // window of any application opened or moved to a different desktop),
-        // we restrict this signal to  the case when Labels.ISOLATE_MONITORS is true,
+        // we restrict this signal to  the case when the monitor isolation is true,
         // and if there are at least 2 monitors.
         if (Docking.DockManager.settings.isolateMonitors &&
             Main.layoutManager.monitors.length > 1) {
-            this._signalsHandler.addWithLabel(Labels.ISOLATE_MONITORS,
-                global.display,
-                'window-entered-monitor',
-                this._onWindowEntered.bind(this));
+            global.display.connectObject('window-entered-monitor',
+                (...args) => this._onWindowEntered(...args), this);
         }
 
         this.connect('notify::running', () => {
@@ -212,19 +208,18 @@ export const DockAbstractAppIcon = GObject.registerClass({
             'show-icons-notifications-counter',
             'application-counter-overrides-notifications',
         ].forEach(key => {
-            this._signalsHandler.add(
-                Docking.DockManager.settings,
+            Docking.DockManager.settings.connectObject(
                 `changed::${key}`, () => {
                     this._indicator.destroy();
                     this._indicator = new AppIconIndicators.AppIconIndicator(this);
-                }
-            );
+                },
+                this);
         });
 
-        this._signalsHandler.add(notificationsMonitor, 'state-changed', () => {
+        notificationsMonitor.connectObject('state-changed', () => {
             this._indicator.destroy();
             this._indicator = new AppIconIndicators.AppIconIndicator(this);
-        });
+        }, this);
 
         this._updateState();
         this._numberOverlay();
@@ -249,6 +244,9 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
     _onDestroy() {
         super._onDestroy();
+
+        this._indicator.destroy();
+        delete this._indicator;
 
         delete this._menu;
 
@@ -332,18 +330,19 @@ export const DockAbstractAppIcon = GObject.registerClass({
     }
 
     _updateState() {
-        this._urgentWindows.clear();
         const interestingWindows = this.getInterestingWindows();
         this.windowsCount = interestingWindows.length;
         this._updateRunningState();
         this._updateFocusState();
         this._updateUrgentWindows(interestingWindows);
 
-        if (Docking.DockManager.settings.isolateWorkspaces) {
-            this._signalsHandler.removeWithLabel(Labels.ISOLATE_WORKSPACES);
+        this._isolatedWindowsSignals?.destroy();
+        delete this._isolatedWindowsSignals;
+        if (Docking.DockManager.settings.isolateWorkspaces && interestingWindows.length) {
+            this._isolatedWindowsSignals = new SignalTracker.TransientSignalHolder(this);
             interestingWindows.forEach(window =>
-                this._signalsHandler.addWithLabel(Labels.ISOLATE_WORKSPACES,
-                    window, 'workspace-changed', () => this._updateWindows()));
+                window.connectObject('workspace-changed',
+                    () => this._updateWindows(), this._isolatedWindowsSignals));
         }
     }
 
@@ -357,10 +356,13 @@ export const DockAbstractAppIcon = GObject.registerClass({
     }
 
     _updateUrgentWindows(interestingWindows) {
-        this._signalsHandler.removeWithLabel(Labels.URGENT_WINDOWS);
+        this._urgentWindowsSignals?.destroy();
+        delete this._urgentWindowsSignals;
         this._urgentWindows.clear();
+
         if (interestingWindows === undefined)
             interestingWindows = this.getInterestingWindows();
+
         interestingWindows.filter(isWindowUrgent).forEach(win => this._addUrgentWindow(win));
         this.urgent = !!this._urgentWindows.size;
     }
@@ -386,6 +388,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
             return;
         }
 
+        this._urgentWindowsSignals ??= new SignalTracker.TransientSignalHolder(this);
         this._urgentWindows.add(window);
         this.urgent = true;
 
@@ -395,19 +398,18 @@ export const DockAbstractAppIcon = GObject.registerClass({
         };
 
         if (window.demandsAttention) {
-            this._signalsHandler.addWithLabel(Labels.URGENT_WINDOWS, window,
-                'notify::demands-attention', () => onDemandsAttentionChanged());
+            window.connectObject('notify::demands-attention',
+                () => onDemandsAttentionChanged(), this._urgentWindowsSignals);
         }
         if (window.urgent) {
-            this._signalsHandler.addWithLabel(Labels.URGENT_WINDOWS, window,
-                'notify::urgent', () => onDemandsAttentionChanged());
+            window.connectObject('notify::urgent',
+                () => onDemandsAttentionChanged(), this._urgentWindowsSignals);
         }
         if (window._manualUrgency) {
-            this._signalsHandler.addWithLabel(Labels.URGENT_WINDOWS, window,
-                'focus', () => {
-                    delete window._manualUrgency;
-                    onDemandsAttentionChanged();
-                });
+            window.connectObject('focus', () => {
+                delete window._manualUrgency;
+                onDemandsAttentionChanged();
+            }, this._urgentWindowsSignals);
         }
     }
 
@@ -976,8 +978,8 @@ const DockAppIcon = GObject.registerClass({
         super._init(app, monitorIndex, iconAnimator);
 
         const {windowTracker} = Docking.DockManager;
-        this._signalsHandler.add(windowTracker, 'notify::focus-app',
-            () => this._updateFocusState());
+        windowTracker.connectObject('notify::focus-app',
+            () => this._updateFocusState(), this);
     }
 });
 
@@ -991,14 +993,14 @@ const DockLocationAppIcon = GObject.registerClass({
 
         if (Docking.DockManager.settings.isolateLocations) {
             const {windowTracker} = Docking.DockManager;
-            this._signalsHandler.add(windowTracker, 'notify::focus-app',
-                () => this._updateFocusState());
+            windowTracker.connectObject('notify::focus-app',
+                () => this._updateFocusState(), this);
         } else {
-            this._signalsHandler.add(global.display, 'notify::focus-window',
-                () => this._updateFocusState());
+            global.display.connectObject('notify::focus-window',
+                () => this._updateFocusState(), this);
         }
 
-        this._signalsHandler.add(this.app, 'notify::icon', () => this.icon.update());
+        this.app.connectObject('notify::icon', () => this.icon.update(), this);
     }
 
     get location() {
@@ -1040,8 +1042,6 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
     constructor(source) {
         super(source, 0.5, Utils.getPosition());
 
-        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
-
         // We want to keep the item hovered while the menu is up
         this.blockSourceEvents = true;
 
@@ -1049,11 +1049,13 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         this.actor.add_style_class_name('dock-app-menu');
 
         // Chain our visibility and lifecycle to that of the source
-        this._signalsHandler.add(source, 'notify::mapped', () => {
-            if (!source.mapped)
-                this.close();
-        });
-        this._signalsHandler.add(source, 'destroy', () => this.destroy());
+        source.connectObject(
+            'notify::mapped', () => {
+                if (!source.mapped)
+                    this.close();
+            },
+            'destroy', () => this.destroy(),
+            this.actor);
 
         Main.uiGroup.add_child(this.actor);
 
@@ -1070,22 +1072,16 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 }
             });
 
-            this._signalsHandler.add([
-                remoteModelApp,
-                'quicklist-changed',
-                onQuickList,
-            ], [
-                this,
-                'dynamic-section-changed',
-                onDynamicSection,
-            ]);
+            remoteModelApp.connectObject(
+                'quicklist-changed', onQuickList, this.actor);
+            this.connectObject('dynamic-section-changed', onDynamicSection,
+                this.actor);
         }
     }
 
     destroy() {
         super.destroy();
         delete this.sourceActor;
-        delete this._signalsHandler;
     }
 
     _appendSeparator() {
