@@ -10,8 +10,6 @@ import {
 
 import {PopupMenu} from './dependencies/shell/ui.js';
 
-import {Utils} from './imports.js';
-
 // Dbusmenu features not (yet) supported:
 //
 //   * The CHILD_DISPLAY property
@@ -67,7 +65,6 @@ export function makePopupMenuItem(dbusmenuItem, deep) {
     // const childDisplay = dbusmenuItem.property_get(Dbusmenu.MENUITEM_PROP_CHILD_DISPLAY);
 
     let item;
-    const signalsHandler = new Utils.GlobalSignalsHandler();
     const wantIcon = itemType === DBusMenu.CLIENT_TYPES_IMAGE;
 
     // If the basic type of the menu item needs to change, call this.
@@ -228,20 +225,13 @@ export function makePopupMenuItem(dbusmenuItem, deep) {
                 item.menu.addMenuItem(makePopupMenuItem(remoteChild, true)));
         };
         updateChildren();
-        signalsHandler.add(
-            [dbusmenuItem, DBusMenu.MENUITEM_SIGNAL_CHILD_ADDED, updateChildren],
-            [dbusmenuItem, DBusMenu.MENUITEM_SIGNAL_CHILD_MOVED, updateChildren],
-            [dbusmenuItem, DBusMenu.MENUITEM_SIGNAL_CHILD_REMOVED, updateChildren]);
+        dbusmenuItem.connectObject(
+            DBusMenu.MENUITEM_SIGNAL_CHILD_ADDED, updateChildren,
+            DBusMenu.MENUITEM_SIGNAL_CHILD_MOVED, updateChildren,
+            DBusMenu.MENUITEM_SIGNAL_CHILD_REMOVED, updateChildren,
+            item);
     } else {
         // Don't make a submenu.
-        if (!deep) {
-            // We only have the potential to get a submenu if we aren't deep.
-            signalsHandler.add(
-                [dbusmenuItem, DBusMenu.MENUITEM_SIGNAL_CHILD_ADDED, recreateItem],
-                [dbusmenuItem, DBusMenu.MENUITEM_SIGNAL_CHILD_MOVED, recreateItem],
-                [dbusmenuItem, DBusMenu.MENUITEM_SIGNAL_CHILD_REMOVED, recreateItem]);
-        }
-
         if (itemType === DBusMenu.CLIENT_TYPES_SEPARATOR) {
             item = new PopupMenu.PopupSeparatorMenuItem();
         } else if (wantIcon) {
@@ -249,6 +239,15 @@ export function makePopupMenuItem(dbusmenuItem, deep) {
             item.icon = item._icon;
         } else {
             item = new PopupMenu.PopupMenuItem(label);
+        }
+
+        if (!deep) {
+            // We only have the potential to get a submenu if we aren't deep.
+            dbusmenuItem.connectObject(
+                DBusMenu.MENUITEM_SIGNAL_CHILD_ADDED, recreateItem,
+                DBusMenu.MENUITEM_SIGNAL_CHILD_MOVED, recreateItem,
+                DBusMenu.MENUITEM_SIGNAL_CHILD_REMOVED, recreateItem,
+                item);
         }
     }
 
@@ -267,14 +266,13 @@ export function makePopupMenuItem(dbusmenuItem, deep) {
         item.icon.icon_size = 16;
 
 
-    signalsHandler.add(dbusmenuItem, DBusMenu.MENUITEM_SIGNAL_PROPERTY_CHANGED, onPropertyChanged);
+    dbusmenuItem.connectObject(
+        DBusMenu.MENUITEM_SIGNAL_PROPERTY_CHANGED, onPropertyChanged, item);
 
-    // Connections on item will be lost when item is disposed; there's no need
-    // to add them to signalsHandler.
+    // Connections on item will be lost when item is disposed.
     item.connect('activate', () =>
         dbusmenuItem.handle_event(DBusMenu.MENUITEM_EVENT_ACTIVATED,
             new GLib.Variant('i', 0), Math.floor(Date.now() / 1000)));
-    item.connect('destroy', () => signalsHandler.destroy());
 
     return item;
 }
