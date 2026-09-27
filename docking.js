@@ -28,6 +28,8 @@ import {
     SignalTracker,
 } from './dependencies/shell/misc.js';
 
+import {DestroyableObject} from './destroyableObject.js';
+
 import {
     AppIconsDecorator,
     AppSpread,
@@ -1435,8 +1437,16 @@ const DockedDash = GObject.registerClass({
  */
 const NUM_HOTKEYS = 10;
 
-const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
+const KeyboardShortcuts = class DashToDockKeyboardShortcuts extends DestroyableObject {
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor() {
+        super();
+
         const {settings} = DockManager;
 
         // Setup keyboard bindings for dash elements
@@ -1482,6 +1492,8 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
 
         if (this._shortcutIsSet)
             Main.wm.removeKeybinding('shortcut');
+
+        super.destroy();
     }
 
     _showOverlay() {
