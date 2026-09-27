@@ -245,7 +245,6 @@ export const DockAbstractAppIcon = GObject.registerClass({
     _onDestroy() {
         super._onDestroy();
 
-        this._indicator.destroy();
         delete this._indicator;
 
         delete this._menu;

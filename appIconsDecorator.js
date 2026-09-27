@@ -1,6 +1,5 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-
 import {
     AppIconIndicators,
     AppIcons,
@@ -15,6 +14,8 @@ import {
     PopupMenu,
 } from './dependencies/shell/ui.js';
 
+import {SignalTracker} from './dependencies/shell/misc.js';
+
 const Labels = Object.freeze({
     RESULTS: Symbol('results'),
     ICONS: Symbol('icons'),
@@ -22,7 +23,7 @@ const Labels = Object.freeze({
 
 export class AppIconsDecorator {
     constructor() {
-        this._signals = new Utils.GlobalSignalsHandler();
+        this._signals = new SignalTracker.TransientSignalHolder();
         this._methodInjections = new Utils.InjectionsHandler();
         this._propertyInjections = new Utils.PropertyInjectionsHandler(
             null, {allowNewProperty: true});
@@ -35,8 +36,8 @@ export class AppIconsDecorator {
     }
 
     destroy() {
-        this._signals?.destroy();
-        delete this._signals;
+        this._icons?.destroy();
+        this._signals.destroy();
         this._methodInjections?.destroy();
         delete this._methodInjections;
         this._propertyInjections?.destroy();
@@ -45,6 +46,7 @@ export class AppIconsDecorator {
         delete this._indicators;
         delete this._resultIndicators;
         delete this._updatingIcons;
+        delete this._appDisplay;
     }
 
     _indicatorsSet(label) {
@@ -64,17 +66,21 @@ export class AppIconsDecorator {
         const indicator = new AppIconIndicators.UnityIndicator(parentIcon);
         const indicatorsSet = this._indicatorsSet(signalLabel);
         indicatorsSet.add(indicator);
-        this._signals.addWithLabel(signalLabel, parentIcon, 'destroy', () => {
+        // the result icons live as long as the decorator, while the app
+        // display ones are decorated again on each view reload
+        const tracker = signalLabel === Labels.ICONS ? this._icons : this._signals;
+        parentIcon.connectObject('destroy', () => {
             indicatorsSet.delete(indicator);
-            indicator.destroy();
-        });
+        }, tracker);
     }
 
     _decorateIcons() {
         const {appDisplay} = Docking.DockManager.getDefault().overviewControls;
+        this._appDisplay = appDisplay;
 
         const decorateAppIcons = () => {
-            this._signals.removeWithLabel(Labels.ICONS);
+            this._icons?.destroy();
+            this._icons = new SignalTracker.TransientSignalHolder(this._signals);
             this._clearIndicators(Labels.ICONS);
 
             const decorateViewIcons = view => {
@@ -84,15 +90,16 @@ export class AppIconsDecorator {
                         this._decorateIcon(i, Labels.ICONS);
                     } else if (i instanceof AppDisplay.FolderIcon) {
                         decorateViewIcons(i.view);
-                        this._signals.addWithLabel(Labels.ICONS, i.view,
-                            'view-loaded', () => decorateAppIcons());
+                        i.view.connectObject('view-loaded',
+                            () => decorateAppIcons(), this._icons);
                     }
                 });
             };
             decorateViewIcons(appDisplay);
         };
 
-        this._signals.add(appDisplay, 'view-loaded', () => decorateAppIcons());
+        appDisplay.connectObject('view-loaded',
+            () => decorateAppIcons(), this._signals);
         decorateAppIcons();
     }
 
