@@ -5,16 +5,13 @@ import {Main} from './dependencies/shell/ui.js';
 
 import {
     Docking,
-    Utils,
 } from './imports.js';
 
-import {EventEmitter} from './dependencies/shell/misc.js';
+import {
+    EventEmitter,
+    SignalTracker,
+} from './dependencies/shell/misc.js';
 
-
-const Labels = Object.freeze({
-    SOURCES: Symbol('sources'),
-    NOTIFICATIONS: Symbol('notifications'),
-});
 export class NotificationsMonitor extends EventEmitter {
     constructor() {
         super();
@@ -24,7 +21,8 @@ export class NotificationsMonitor extends EventEmitter {
         });
 
         this._appNotifications = Object.create(null);
-        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
+        this._signals = new SignalTracker.TransientSignalHolder();
+        this._notificationSignals = new SignalTracker.TransientSignalHolder();
 
         const getIsEnabled = () => !this.dndMode &&
             Docking.DockManager.settings.showIconsNotificationsCounter;
@@ -36,25 +34,29 @@ export class NotificationsMonitor extends EventEmitter {
                 this._isEnabled = isEnabled;
                 this.emit('state-changed');
 
-                this._updateState();
+                this._checkNotifications();
             }
         };
 
         this._dndMode = !this._settings.get_boolean('show-banners');
-        this._signalsHandler.add(this._settings, 'changed::show-banners', () => {
+        this._settings.connectObject('changed::show-banners', () => {
             this._dndMode = !this._settings.get_boolean('show-banners');
             checkIsEnabled();
-        });
-        this._signalsHandler.add(Docking.DockManager.settings,
-            'changed::show-icons-notifications-counter', checkIsEnabled);
+        }, this._signals);
+        Docking.DockManager.settings.connectObject(
+            'changed::show-icons-notifications-counter', checkIsEnabled, this._signals);
+        Main.messageTray.connectObject(
+            'source-added', () => this._onSourcesChanged(),
+            'source-removed', () => this._onSourcesChanged(),
+            this._signals);
 
-        this._updateState();
+        this._checkNotifications();
     }
 
     destroy() {
         this.emit('destroy');
-        this._signalsHandler?.destroy();
-        this._signalsHandler = null;
+        this._signals.destroy();
+        this._notificationSignals.destroy();
         this._appNotifications = null;
         this._settings = null;
     }
@@ -71,27 +73,20 @@ export class NotificationsMonitor extends EventEmitter {
         return this._appNotifications[appId] ?? 0;
     }
 
-    _updateState() {
-        if (this.enabled) {
-            this._signalsHandler.addWithLabel(Labels.SOURCES, Main.messageTray,
-                'source-added', () => this._checkNotifications());
-            this._signalsHandler.addWithLabel(Labels.SOURCES, Main.messageTray,
-                'source-removed', () => this._checkNotifications());
-        } else {
-            this._signalsHandler.removeWithLabel(Labels.SOURCES);
-        }
-
-        this._checkNotifications();
+    _onSourcesChanged() {
+        if (this.enabled)
+            this._checkNotifications();
     }
 
     _checkNotifications() {
         this._appNotifications = Object.create(null);
-        this._signalsHandler.removeWithLabel(Labels.NOTIFICATIONS);
+        this._notificationSignals.destroy();
+        this._notificationSignals = new SignalTracker.TransientSignalHolder();
 
         if (this.enabled) {
             Main.messageTray.getSources().forEach(source => {
-                this._signalsHandler.addWithLabel(Labels.NOTIFICATIONS, source,
-                    'notification-added', () => this._checkNotifications());
+                source.connectObject('notification-added',
+                    () => this._checkNotifications(), this._notificationSignals);
 
                 source.notifications.forEach(notification => {
                     const app = notification.source?.app ?? notification.source?._app;
@@ -102,13 +97,14 @@ export class NotificationsMonitor extends EventEmitter {
                             if (notification.acknowledged)
                                 return;
 
-                            this._signalsHandler.addWithLabel(Labels.NOTIFICATIONS,
-                                notification, 'notify::acknowledged',
-                                () => this._checkNotifications());
+                            notification.connectObject('notify::acknowledged',
+                                () => this._checkNotifications(),
+                                this._notificationSignals);
                         }
 
-                        this._signalsHandler.addWithLabel(Labels.NOTIFICATIONS,
-                            notification, 'destroy', () => this._checkNotifications());
+                        notification.connectObject('destroy',
+                            () => this._checkNotifications(),
+                            this._notificationSignals);
 
                         this._appNotifications[appId] =
                             (this._appNotifications[appId] ?? 0) + 1;
@@ -120,4 +116,5 @@ export class NotificationsMonitor extends EventEmitter {
         this.emit('changed');
     }
 }
+
 
