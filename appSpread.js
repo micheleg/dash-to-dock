@@ -9,6 +9,8 @@ import {
 
 import {Utils} from './imports.js';
 
+import {SignalTracker} from './dependencies/shell/misc.js';
+
 const APP_SPREAD_RESTORE_ACTION = 'dock-app-spread-restore';
 
 export class AppSpread {
@@ -27,7 +29,7 @@ export class AppSpread {
             return;
         }
 
-        this._signalHandlers = new Utils.GlobalSignalsHandler();
+        this._signals = new SignalTracker.TransientSignalHolder();
         this._methodInjections = new Utils.InjectionsHandler();
         this._vfuncInjections = new Utils.VFuncInjectionsHandler();
     }
@@ -40,7 +42,7 @@ export class AppSpread {
         if (!this.supported)
             return;
         this._hideAppSpread();
-        this._signalHandlers.destroy();
+        this._signals.destroy();
         this._methodInjections.destroy();
         this._vfuncInjections.destroy();
     }
@@ -89,11 +91,14 @@ export class AppSpread {
         // Checked in overview "hide" event handler _hideAppSpread
         this.app = app;
         this._updateWindows();
+        this._signals.destroy();
+        this._signals = new SignalTracker.TransientSignalHolder();
 
         // we need to hook into overview 'hidden' like this, in case app spread
         // overview is hidden by choosing another app it should then do its
         // cleanup too
-        this._signalHandlers.add(Main.overview, 'hidden', () => this._hideAppSpread());
+        Main.overview.connectObject('hidden',
+            () => this._hideAppSpread(), this._signals);
 
         const appSpread = this;
         this._methodInjections.add([
@@ -120,10 +125,10 @@ export class AppSpread {
         const activitiesButton = Main.panel.statusArea?.activities;
 
         if (activitiesButton) {
-            this._signalHandlers.add(Main.overview, 'showing', () => {
+            Main.overview.connectObject('showing', () => {
                 activitiesButton.remove_style_pseudo_class('overview');
                 activitiesButton.remove_accessible_state(Atk.StateType.CHECKED);
-            });
+            }, this._signals);
 
             let hasEventVFunc = false;
             try {
@@ -194,19 +199,19 @@ export class AppSpread {
             }
         }
 
-        this._signalHandlers.add(Main.overview.dash.showAppsButton, 'notify::checked', () => {
+        Main.overview.dash.showAppsButton.connectObject('notify::checked', () => {
             if (Main.overview.dash.showAppsButton.checked)
                 this._restoreDefaultOverview();
-        });
+        }, this._signals);
 
         // If closing windows in AppSpread, and only one window left:
         // exit app spread and focus remaining window (handled in _hideAppSpread)
-        this._signalHandlers.add(this.app, 'windows-changed', () => {
+        this.app.connectObject('windows-changed', () => {
             this._updateWindows();
 
             if (this.windows.length <= 1)
                 Main.overview.hide();
-        });
+        }, this._signals);
 
         this._disableSearch();
 
@@ -226,7 +231,7 @@ export class AppSpread {
         this.app = null;
         this._enableSearch();
         this._methodInjections.clear();
-        this._signalHandlers.clear();
+        this._signals.destroy();
         this._vfuncInjections.clear();
         Main.panel.statusArea?.activities.remove_action_by_name(APP_SPREAD_RESTORE_ACTION);
         this._activitiesClickGesture.set_enabled(true);
