@@ -18,6 +18,7 @@ import {
 
 import {
     Config,
+    SignalTracker,
     Util,
 } from './dependencies/shell/misc.js';
 
@@ -33,11 +34,6 @@ import {
 // taken from https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/main/js/ui/dash.js
 const DASH_ANIMATION_TIME = Dash.DASH_ANIMATION_TIME ?? 200;
 const DASH_VISIBILITY_TIMEOUT = 3;
-
-const Labels = Object.freeze({
-    SHOW_MOUNTS: Symbol('show-mounts'),
-    FIRST_LAST_CHILD_WORKAROUND: Symbol('first-last-child-workaround'),
-});
 
 /**
  * Extend DashItemContainer
@@ -155,7 +151,6 @@ export const DockDash = GObject.registerClass({
         this._availableIconSizes = baseIconSizes;
         this._shownInitially = false;
         this._initializeIconSize(this.iconSize);
-        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
 
         this._separator = null;
 
@@ -271,46 +266,25 @@ export const DockDash = GObject.registerClass({
 
         this.iconAnimator = new Docking.IconAnimator(this);
 
-        this._signalsHandler.add([
-            this._appSystem,
-            'installed-changed',
-            () => {
+        this._appSystem.connectObject(
+            'installed-changed', () => {
                 AppFavorites.getAppFavorites().reload();
                 this._queueRedisplay();
             },
-        ], [
-            AppFavorites.getAppFavorites(),
-            'changed',
-            this._queueRedisplay.bind(this),
-        ], [
-            this._appSystem,
-            'app-state-changed',
-            this._queueRedisplay.bind(this),
-        ], [
-            Main.overview,
-            'item-drag-begin',
-            this._onItemDragBegin.bind(this),
-        ], [
-            Main.overview,
-            'item-drag-end',
-            this._onItemDragEnd.bind(this),
-        ], [
-            Main.overview,
-            'item-drag-cancelled',
-            this._onItemDragCancelled.bind(this),
-        ], [
-            Main.overview,
-            'window-drag-begin',
-            this._onWindowDragBegin.bind(this),
-        ], [
-            Main.overview,
-            'window-drag-cancelled',
-            this._onWindowDragEnd.bind(this),
-        ], [
-            Main.overview,
-            'window-drag-end',
-            this._onWindowDragEnd.bind(this),
-        ]);
+            'app-state-changed', (...args) => this._queueRedisplay(...args),
+            this);
+
+        AppFavorites.getAppFavorites().connectObject(
+            'changed', (...args) => this._queueRedisplay(...args), this);
+
+        Main.overview.connectObject(
+            'item-drag-begin', (...args) => this._onItemDragBegin(...args),
+            'item-drag-end', (...args) => this._onItemDragEnd(...args),
+            'item-drag-cancelled', (...args) => this._onItemDragCancelled(...args),
+            'window-drag-begin', (...args) => this._onWindowDragBegin(...args),
+            'window-drag-cancelled', (...args) => this._onWindowDragEnd(...args),
+            'window-drag-end', (...args) => this._onWindowDragEnd(...args),
+            this);
 
         this.connect('destroy', this._onDestroy.bind(this));
     }
@@ -845,10 +819,12 @@ export const DockDash = GObject.registerClass({
             });
         }
 
-        this._signalsHandler.removeWithLabel(Labels.SHOW_MOUNTS);
+        this._showMountsSignals?.destroy();
+        delete this._showMountsSignals;
         if (dockManager.removables) {
-            this._signalsHandler.addWithLabel(Labels.SHOW_MOUNTS,
-                dockManager.removables, 'changed', this._queueRedisplay.bind(this));
+            this._showMountsSignals = new SignalTracker.TransientSignalHolder(this);
+            dockManager.removables.connectObject('changed',
+                (...args) => this._queueRedisplay(...args), this._showMountsSignals);
             dockManager.removables.getApps().forEach(removable => {
                 if (!newApps.includes(removable))
                     newApps.push(removable);
@@ -1124,11 +1100,13 @@ export const DockDash = GObject.registerClass({
         const showAppsContainer = settings.showAppsAlwaysInTheEdge || !settings.dockExtended
             ? this._dashContainer : this._boxContainer;
         const needsFirstLastChildWorkaround = Config.PACKAGE_VERSION.split('.')[0] < 49;
+        let firstLastChildSignals;
 
         if (needsFirstLastChildWorkaround) {
-            this._signalsHandler.addWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND,
-                showAppsContainer, 'notify',
-                (_obj, pspec) => notifiedProperties.push(pspec.name));
+            firstLastChildSignals = new SignalTracker.TransientSignalHolder(this);
+            showAppsContainer.connectObject('notify',
+                (_obj, pspec) => notifiedProperties.push(pspec.name),
+                firstLastChildSignals);
         }
 
         if (this._showAppsIcon.get_parent() !== showAppsContainer) {
@@ -1145,7 +1123,7 @@ export const DockDash = GObject.registerClass({
         }
 
         if (needsFirstLastChildWorkaround) {
-            this._signalsHandler.removeWithLabel(Labels.FIRST_LAST_CHILD_WORKAROUND);
+            firstLastChildSignals.destroy();
 
             // This is indeed ugly, but we need to ensure that the last and first
             // visible widgets are re-computed by St, that is buggy because of a
