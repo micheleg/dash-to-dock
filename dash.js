@@ -819,13 +819,12 @@ export const DockDash = GObject.registerClass({
             });
         }
 
-        this._showMountsSignals?.destroy();
-        delete this._showMountsSignals;
-        if (dockManager.removables) {
-            this._showMountsSignals = new SignalTracker.TransientSignalHolder(this);
-            dockManager.removables.connectObject('changed',
-                (...args) => this._queueRedisplay(...args), this._showMountsSignals);
-            dockManager.removables.getApps().forEach(removable => {
+        this._removables?.disconnectObject(this);
+        this._removables = dockManager.removables;
+        if (this._removables) {
+            this._removables.connectObject('changed',
+                (...args) => this._queueRedisplay(...args), this);
+            this._removables.getApps().forEach(removable => {
                 if (!newApps.includes(removable))
                     newApps.push(removable);
             });

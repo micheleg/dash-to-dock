@@ -11,7 +11,10 @@ import {
 
 import {ShellMountOperation} from './dependencies/shell/ui.js';
 
-import {DestroyableIface} from './destroyableObject.js';
+import {
+    DestroyableIface,
+    DestroyableObject,
+} from './destroyableObject.js';
 
 import {
     Docking,
@@ -20,10 +23,7 @@ import {
 
 import {Extension} from './dependencies/shell/extensions/extension.js';
 
-import {
-    EventEmitter,
-    SignalTracker,
-} from './dependencies/shell/misc.js';
+import {SignalTracker} from './dependencies/shell/misc.js';
 
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
@@ -1347,7 +1347,18 @@ export class Trash {
  * plugged into the system, and keeps the list of Apps up-to-date as
  * devices come and go and are mounted and unmounted.
  */
-export class Removables extends EventEmitter {
+export class Removables extends DestroyableObject {
+    static [GObject.signals] = {
+        'changed': {},
+        'windows-changed': {param_types: [Shell.App]},
+    };
+
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     static initVolumePromises(object) {
         // TODO: This can be simplified using actual interface type when we
         // can depend on gjs 1.72
@@ -1376,8 +1387,6 @@ export class Removables extends EventEmitter {
     constructor() {
         super();
 
-        this._signals = new SignalTracker.TransientSignalHolder();
-
         this._monitor = Gio.VolumeMonitor.get();
         this._cancellable = new Gio.Cancellable();
 
@@ -1388,11 +1397,11 @@ export class Removables extends EventEmitter {
             'volume-added', (_, volume) => this._onVolumeAdded(volume),
             'volume-removed', (_, volume) => this._onVolumeRemoved(volume),
             'mount-added', (_, mount) => this._onMountAdded(mount),
-            this._signals);
+            this);
         Docking.DockManager.settings.connectObject(
             'changed::show-mounts-only-mounted', () => this._updateVolumes(),
             'changed::show-mounts-network', () => this._updateVolumes(),
-            this._signals);
+            this);
     }
 
     destroy() {
@@ -1400,8 +1409,9 @@ export class Removables extends EventEmitter {
         this._volumeApps = [];
         this._cancellable.cancel();
         this._cancellable = null;
-        this._signals.destroy();
         this._monitor = null;
+
+        super.destroy();
     }
 
     _updateVolumes() {
