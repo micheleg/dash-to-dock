@@ -267,8 +267,6 @@ const DockedDash = GObject.registerClass({
         this._ignoreHover = false;
 
         // Create intellihide object to monitor windows overlapping
-        this._intellihide = new Intellihide.Intellihide(this.monitorIndex);
-
         // Put dock on the required monitor
         this._monitor = Main.layoutManager.monitors[this.monitorIndex];
 
@@ -318,8 +316,6 @@ const DockedDash = GObject.registerClass({
         this._box.connect('notify::hover', this._hoverChanged.bind(this));
 
         // Connect global signals
-        this._intellihide.connectObject('status-changed',
-            (...args) => this._updateDashVisibility(...args), this);
         this.dash.connectObject(
             'menu-opened', () => this._onMenuOpened(),
             'menu-closed', () => this._onMenuClosed(),
@@ -351,12 +347,8 @@ const DockedDash = GObject.registerClass({
                 this.remove_style_class_name('autohide');
         });
 
-        this.connect('notify::intellihide-enabled', () => {
-            if (this.intellihideEnabled)
-                this._intellihide.enable();
-            else
-                this._intellihide.disable();
-        });
+        this.connect('notify::intellihide-enabled',
+            () => this._updateIntellihide());
 
         // Since the actor is not a topLevel child and its parent is now not added to the Chrome,
         // the allocation change of the parent container (slide in and slideout) doesn't trigger
@@ -473,7 +465,7 @@ const DockedDash = GObject.registerClass({
     _onDestroy() {
         // The dash, intellihide and themeManager have global signals as well internally
         this.dash.destroy();
-        this._intellihide.destroy();
+        this._disableIntellihide();
         this._themeManager.destroy();
         this._workspaceSwitcherPopup?.destroy();
         delete this._staticBox;
@@ -595,7 +587,7 @@ const DockedDash = GObject.registerClass({
                 this._updateVisibilityMode();
                 this._updateVisibleDesktop();
             },
-            'changed::intellihide-mode', () => this._intellihide.forceUpdate(),
+            'changed::intellihide-mode', () => this._intellihide?.forceUpdate(),
             'changed::autohide', () => {
                 this._updateVisibilityMode();
                 this._updateAutoHideBarriers();
@@ -662,6 +654,28 @@ const DockedDash = GObject.registerClass({
      * autohide
      * overview visibility
      */
+    _updateIntellihide() {
+        if (this.intellihideEnabled && !Main.overview.visibleTarget)
+            this._enableIntellihide();
+        else
+            this._disableIntellihide();
+    }
+
+    _enableIntellihide() {
+        if (this._intellihide)
+            return;
+
+        this._intellihide = new Intellihide.Intellihide(this.monitorIndex);
+        this._intellihide.connectObject('status-changed',
+            (...args) => this._updateDashVisibility(...args), this);
+        this._intellihide.updateTargetBox(this._staticBox);
+    }
+
+    _disableIntellihide() {
+        this._intellihide?.destroy();
+        delete this._intellihide;
+    }
+
     _updateDashVisibility() {
         if (DockManager.settings.manualhide) {
             this._ignoreHover = true;
@@ -679,7 +693,8 @@ const DockedDash = GObject.registerClass({
             this._removeAnimations();
             this._animateIn(settings.animationTime, 0);
         } else if (this.intellihideEnabled) {
-            if (!this.dash.requiresVisibility && this._intellihide.getOverlapStatus()) {
+            if (!this.dash.requiresVisibility &&
+                this._intellihide?.getOverlapStatus()) {
                 this._ignoreHover = false;
                 // Do not hide if autohide is enabled and mouse is hover
                 if (!this._box.hover || !this.autohideEnabled)
@@ -705,13 +720,13 @@ const DockedDash = GObject.registerClass({
         this.add_style_class_name('overview');
 
         this._ignoreHover = true;
-        this._intellihide.disable();
+        this._disableIntellihide();
         this._removeAnimations();
         this._animateIn(DockManager.settings.animationTime, 0);
     }
 
     _onOverviewHiding() {
-        this._intellihide.enable();
+        this._updateIntellihide();
         this._updateDashVisibility();
     }
 
@@ -1231,7 +1246,7 @@ const DockedDash = GObject.registerClass({
         this._staticBoxGeometry = {x, y, width, height};
         this._staticBox.init_rect(x, y, width, height);
 
-        this._intellihide.updateTargetBox(this._staticBox);
+        this._intellihide?.updateTargetBox(this._staticBox);
         this._updateVisibleDesktop();
         this._updateStruts();
     }

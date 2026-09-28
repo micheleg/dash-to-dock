@@ -71,14 +71,11 @@ export class Intellihide extends DestroyableObject {
         this._focusApp = null; // The application whose window is focused.
         this._topApp = null; // The application whose window is on top on the monitor with the dock.
 
-        this._isEnabled = false;
         this._status = OverlapStatus.UNDEFINED;
         this._targetBox = null;
 
         this._checkOverlapTimeoutContinue = false;
         this._checkOverlapTimeoutId = 0;
-
-        this._trackedWindows = new Map();
 
         // Connect global signals
         global.display.connectObject(
@@ -97,32 +94,12 @@ export class Intellihide extends DestroyableObject {
         // update wne monitor changes, for instance in multimonitor when monitor are attached
         Utils.getMonitorManager().connectObject(
             'monitors-changed', (...args) => this._checkOverlap(...args), this);
+
+        // Window signals
+        global.get_window_actors().forEach(wa => this._addWindowSignals(wa));
     }
 
     destroy() {
-        DestroyableObject.prototype.destroy.call(this);
-
-        // Remove  residual windows signals
-        this.disable();
-    }
-
-    enable() {
-        this._isEnabled = true;
-        this._status = OverlapStatus.UNDEFINED;
-        global.get_window_actors().forEach(function (wa) {
-            this._addWindowSignals(wa);
-        }, this);
-        this._doCheckOverlap();
-    }
-
-    disable() {
-        this._isEnabled = false;
-
-        for (const wa of this._trackedWindows.keys())
-            this._removeWindowSignals(wa);
-
-        this._trackedWindows.clear();
-
         if (this._checkOverlapTimeoutId > 0) {
             GLib.source_remove(this._checkOverlapTimeoutId);
             this._checkOverlapTimeoutId = 0;
@@ -140,18 +117,7 @@ export class Intellihide extends DestroyableObject {
         if (!this._handledWindow(wa))
             return;
 
-        this._trackedWindows.set(wa, [
-            wa.connect('notify::allocation', () => this._checkOverlap()),
-            wa.connect('destroy', () => this._removeWindowSignals(wa)),
-        ]);
-    }
-
-    _removeWindowSignals(wa) {
-        const signalIds = this._trackedWindows.get(wa);
-        if (signalIds) {
-            signalIds.forEach(id => wa.disconnect(id));
-            this._trackedWindows.delete(wa);
-        }
+        wa.connectObject('notify::allocation', () => this._checkOverlap(), this);
     }
 
     updateTargetBox(box) {
@@ -169,7 +135,7 @@ export class Intellihide extends DestroyableObject {
     }
 
     _checkOverlap() {
-        if (!this._isEnabled || !this._targetBox)
+        if (!this._targetBox)
             return;
 
         /* Limit the number of calls to the doCheckOverlap function */
@@ -194,7 +160,7 @@ export class Intellihide extends DestroyableObject {
     }
 
     _doCheckOverlap() {
-        if (!this._isEnabled || !this._targetBox)
+        if (!this._targetBox)
             return;
 
         let overlaps = OverlapStatus.FALSE;
@@ -342,5 +308,3 @@ export class Intellihide extends DestroyableObject {
         return false;
     }
 }
-
-
