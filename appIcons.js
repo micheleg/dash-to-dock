@@ -230,13 +230,13 @@ export const DockAbstractAppIcon = GObject.registerClass({
         // This requires GNOME 49
         if (Clutter.ClickGesture) {
             const doubleClickGesture = new Clutter.ClickGesture({nClicksRequired: 2});
-            doubleClickGesture.connect('recognize', () => {
+            doubleClickGesture.connectObject('recognize', () => {
                 this._activate({
                     button: doubleClickGesture.get_button(),
                     modifiers: doubleClickGesture.get_state(),
                     clickCount: doubleClickGesture.get_n_presses(),
                 });
-            });
+            }, this);
             this.add_action(doubleClickGesture);
             this._doubleClickGesture = doubleClickGesture;
         }
@@ -457,15 +457,15 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         if (!this._menu) {
             this._menu = new DockAppIconMenu(this);
-            this._menu.connect('activate-window', (menu, window) => {
+            this._menu.connectObject('activate-window', (menu, window) => {
                 if (window) {
                     Main.activateWindow(window);
                 } else {
                     Main.overview.hide();
                     Main.panel.closeCalendar();
                 }
-            });
-            this._menu.connect('open-state-changed', (menu, isPoppedUp) => {
+            }, this);
+            this._menu.connectObject('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp) {
                     this._onMenuPoppedDown();
                 } else {
@@ -485,13 +485,9 @@ export const DockAbstractAppIcon = GObject.registerClass({
                     this._menu.actor.style = 'max-width: 400px; ' +
                         `max-height: ${Math.round(maxMenuHeight / scaleFactor)}px;`;
                 }
-            });
-            const id = Main.overview.connect('hiding', () => {
-                this._menu.close();
-            });
-            this._menu.actor.connect('destroy', () => {
-                Main.overview.disconnect(id);
-            });
+            }, this);
+            Main.overview.connectObject('hiding', () => this._menu.close(),
+                this._menu.actor);
 
             this._menuManager.addMenu(this._menu);
         }
@@ -753,16 +749,12 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
             this._previewMenuManager.addMenu(this._previewMenu);
 
-            this._previewMenu.connect('open-state-changed', (menu, isPoppedUp) => {
+            this._previewMenu.connectObject('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
-            });
-            const id = Main.overview.connect('hiding', () => {
-                this._previewMenu.close();
-            });
-            this._previewMenu.actor.connect('destroy', () => {
-                Main.overview.disconnect(id);
-            });
+            }, this);
+            Main.overview.connectObject('hiding',
+                () => this._previewMenu.close(), this._previewMenu.actor);
         }
 
         this.emit('menu-state-changed', !this._previewMenu.isOpen);
@@ -1138,9 +1130,9 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             windows.forEach(window => {
                 const title = window.title ? window.title : app.get_name();
                 const item = this._appendMenuItem(title);
-                item.connect('activate', () => {
+                item.connectObject('activate', () => {
                     this.emit('activate-window', window);
-                });
+                }, this.actor);
             });
         }
 
@@ -1153,13 +1145,13 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 app.can_open_new_window() &&
                 actions.indexOf('new-window') === -1) {
                 const newMenuItem = this._appendMenuItem(_('New Window'));
-                newMenuItem.connect('activate', () => {
+                newMenuItem.connectObject('activate', () => {
                     if (app.state === Shell.AppState.STOPPED)
                         this.sourceActor.animateLaunch();
 
                     app.open_new_window(-1);
                     this.emit('activate-window', null);
-                });
+                }, this.actor);
                 this._appendSeparator();
             }
 
@@ -1173,21 +1165,21 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 const gpuMenuItem = this._appendMenuItem(appPrefersNonDefaultGPU
                     ? __('Launch using Integrated Graphics Card')
                     : __('Launch using Discrete Graphics Card'));
-                gpuMenuItem.connect('activate', () => {
+                gpuMenuItem.connectObject('activate', () => {
                     this.sourceActor.animateLaunch();
                     app.launch(0, -1, gpuPref);
                     this.emit('activate-window', null);
-                });
+                }, this.actor);
             }
 
             for (let i = 0; i < actions.length; i++) {
                 const action = actions[i];
                 const item = this._appendMenuItem(appInfo.get_action_name(action));
                 item.sensitive = !appInfo.busy;
-                item.connect('activate', (emitter, event) => {
+                item.connectObject('activate', (emitter, event) => {
                     app.launch_action(action, event.get_time(), -1);
                     this.emit('activate-window', null);
-                });
+                }, this.actor);
             }
 
             const canFavorite = global.settings.is_writable('favorite-apps') &&
@@ -1200,16 +1192,16 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 const isFavorite = AppFavorites.getAppFavorites().isFavorite(app.get_id());
                 if (isFavorite) {
                     const item = this._appendMenuItem(_('Unpin'));
-                    item.connect('activate', () => {
+                    item.connectObject('activate', () => {
                         const favs = AppFavorites.getAppFavorites();
                         favs.removeFavorite(app.get_id());
-                    });
+                    }, this.actor);
                 } else {
                     const item = this._appendMenuItem(__('Pin to Dock'));
-                    item.connect('activate', () => {
+                    item.connectObject('activate', () => {
                         const favs = AppFavorites.getAppFavorites();
                         favs.addFavorite(app.get_id());
-                    });
+                    }, this.actor);
                 }
             }
 
@@ -1218,7 +1210,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 !this.sourceActor.getSnapName()) {
                 this._appendSeparator();
                 const item = this._appendMenuItem(_('App Details'));
-                item.connect('activate', () => {
+                item.connectObject('activate', () => {
                     const id = app.get_id();
                     const args = GLib.Variant.new('(ss)', [id, '']);
                     Gio.DBus.get(Gio.BusType.SESSION, null,
@@ -1232,7 +1224,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                                 null, 0, -1, null, null);
                             Main.overview.hide();
                         });
-                });
+                }, this.actor);
             }
 
             if (this.sourceActor instanceof DockAppIcon) {
@@ -1244,12 +1236,12 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 if (snapStore) {
                     this._appendSeparator();
                     const item = this._appendMenuItem(_('App Details'));
-                    item.connect('activate', (_, event) => {
+                    item.connectObject('activate', (_, event) => {
                         snapStore.activate_full(-1, event.get_time());
                         Util.spawnApp(
                             [...snapStore.appInfo.get_commandline().split(' '), snapName]);
                         Main.overview.hide();
-                    });
+                    }, this.actor);
                 }
             }
         }
@@ -1273,7 +1265,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         // quit menu
         this._appendSeparator();
         this._quitMenuItem = this._appendMenuItem(_('Quit'));
-        this._quitMenuItem.connect('activate', () => this.sourceActor.closeAllWindows());
+        this._quitMenuItem.connectObject('activate',
+            () => this.sourceActor.closeAllWindows(), this.actor);
 
         this.update();
     }
@@ -1354,17 +1347,17 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 const item = new WindowPreview.WindowPreviewMenuItem(window,
                     St.Side.LEFT);
                 this._allWindowsMenuItem.menu.addMenuItem(item);
-                item.connect('activate', () => {
+                item.connectObject('activate', () => {
                     this.emit('activate-window', window);
-                });
+                }, this.actor);
 
                 // This is to achieve a more graceful transition when the last
                 // window is closed.
-                item.connect('destroy', () => {
+                item.connectObject('destroy', () => {
                     // It's still counting the item just going to be destroyed
                     if (this._allWindowsMenuItem.menu._getMenuItems().length === 1)
                         this._allWindowsMenuItem.setSensitive(false);
-                });
+                }, this.actor);
             }
         }
     }
@@ -1430,10 +1423,9 @@ export const DockShowAppsIcon = GObject.registerClass({
         // Re-use appIcon methods
         const {prototype: appIconPrototype} = AppDisplay.AppIcon;
         this.toggleButton.y_expand = false;
-        this.toggleButton.connect('popup-menu', () =>
-            appIconPrototype._onKeyboardPopupMenu.call(this));
-        this.toggleButton.connect('clicked', () =>
-            this._removeMenuTimeout());
+        this.toggleButton.connectObject('popup-menu', () =>
+            appIconPrototype._onKeyboardPopupMenu.call(this),
+        'clicked', () => this._removeMenuTimeout(), this);
 
         this.reactive = true;
         this.toggleButton.popupMenu = (...args) =>
@@ -1519,14 +1511,14 @@ export const DockShowAppsIcon = GObject.registerClass({
             return;
 
         const longPressGesture = new Clutter.LongPressGesture();
-        longPressGesture.connect('recognize', () => this.popupMenu());
+        longPressGesture.connectObject('recognize', () => this.popupMenu(), this);
         this.add_action(longPressGesture);
 
         const rightClickGesture = new Clutter.ClickGesture({
             required_button: Clutter.BUTTON_SECONDARY,
             recognize_on_press: true,
         });
-        rightClickGesture.connect('recognize', () => this.popupMenu());
+        rightClickGesture.connectObject('recognize', () => this.popupMenu(), this);
         this.add_action(rightClickGesture);
     }
 
@@ -1539,16 +1531,12 @@ export const DockShowAppsIcon = GObject.registerClass({
 
         if (!this._menu) {
             this._menu = new DockShowAppsIconMenu(this);
-            this._menu.connect('open-state-changed', (menu, isPoppedUp) => {
+            this._menu.connectObject('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
-            });
-            const id = Main.overview.connect('hiding', () => {
-                this._menu.close();
-            });
-            this._menu.actor.connect('destroy', () => {
-                Main.overview.disconnect(id);
-            });
+            }, this);
+            Main.overview.connectObject('hiding', () => this._menu.close(),
+                this._menu.actor);
             this._menuManager.addMenu(this._menu);
         }
 
@@ -1575,8 +1563,8 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
         this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(__('Dash to Dock')));
 
         const item = this._appendMenuItem(_('Settings'));
-        item.connect('activate', () =>
-            Docking.DockManager.extension.openPreferences());
+        item.connectObject('activate', () =>
+            Docking.DockManager.extension.openPreferences(), this.actor);
     }
 }
 
