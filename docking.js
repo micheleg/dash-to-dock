@@ -2004,8 +2004,6 @@ export class DockManager extends EventEmitter {
         // we need to connect the signals to all dock instances.
         this._updateWorkspaceIsolation();
         this._updateKeyboardShortcuts();
-
-        this.emit('docks-ready');
     }
 
     _createDock(params) {
