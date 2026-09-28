@@ -439,8 +439,6 @@ class Transparency extends EventEmitter {
 
         this._updateStyles();
         this._updateSolidStyle();
-
-        this.emit('transparency-enabled');
     }
 
     disable() {
@@ -448,8 +446,6 @@ class Transparency extends EventEmitter {
         // although it should never happen
         this._signals?.destroy();
         this._signals = null;
-
-        this.emit('transparency-disabled');
     }
 
     destroy() {
@@ -495,8 +491,6 @@ class Transparency extends EventEmitter {
             this._dockActor.remove_style_class_name('opaque');
             this._dockActor.add_style_class_name('transparent');
         }
-
-        this.emit('solid-style-updated', isNear);
     }
 
     _dockIsNear() {
@@ -569,8 +563,6 @@ class Transparency extends EventEmitter {
             `border-color: rgba(${
                 this._backgroundColor},${this._opaqueAlphaBorder});` +
             `transition-duration: ${this._opaqueTransition}ms;`;
-
-        this.emit('styles-updated');
     }
 
     setColor(color) {
