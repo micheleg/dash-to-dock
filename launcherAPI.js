@@ -1,14 +1,24 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-import {Gio} from './dependencies/gi.js';
+import {Gio, GObject} from './dependencies/gi.js';
 import {DBusMenuUtils} from './imports.js';
 
 import {EventEmitter} from './dependencies/shell/misc.js';
 
+import {DestroyableObject} from './destroyableObject.js';
+
 const DBusMenu = await DBusMenuUtils.haveDBusMenu();
 
-export class LauncherEntryRemoteModel {
+export class LauncherEntryRemoteModel extends DestroyableObject {
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor() {
+        super();
+
         this._entrySourceStacks = new Map();
         this._remoteMaps = new Map();
 
@@ -45,6 +55,8 @@ export class LauncherEntryRemoteModel {
 
 
         this._releaseUnityDBus();
+
+        super.destroy();
     }
 
     _lookupStackById(appId) {
