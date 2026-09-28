@@ -2075,7 +2075,7 @@ export class DockManager {
         Object.defineProperty(this.settings, camelMappedKey, {
             get: () => mappedValue() ?? dockPropertyDesc.value,
             set: value => {
-                if (mappedValue())
+                if (mappedValue() === undefined)
                     dockPropertyDesc.value = value;
             },
         });
