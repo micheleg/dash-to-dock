@@ -11,7 +11,6 @@ import {
 import {Main} from './dependencies/shell/ui.js';
 
 import {
-    EventEmitter,
     SignalTracker,
 } from './dependencies/shell/misc.js';
 
@@ -374,7 +373,13 @@ export class ThemeManager extends DestroyableObject {
  * https://git.gnome.org/browse/gnome-shell/commit/?id=447bf55e45b00426ed908b1b1035f472c2466956
  * Transparency when free-floating
  */
-class Transparency extends EventEmitter {
+class Transparency extends DestroyableObject {
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor(dock) {
         super();
 
@@ -417,7 +422,7 @@ class Transparency extends EventEmitter {
             removedSignal = 'actor-removed';
         }
 
-        this._signals = new SignalTracker.TransientSignalHolder();
+        this._signals = new SignalTracker.TransientSignalHolder(this);
 
         global.window_group.connectObject(
             addedSignal, (...args) => this._onWindowActorAdded(...args),
@@ -442,14 +447,13 @@ class Transparency extends EventEmitter {
     }
 
     disable() {
-        // ensure I never double-register/inject
-        // although it should never happen
         this._signals?.destroy();
         this._signals = null;
     }
 
     destroy() {
         this.disable();
+        super.destroy();
     }
 
     _onWindowActorAdded(container, metaWindowActor) {
