@@ -2728,7 +2728,9 @@ export class DockManager {
     _deleteDocks() {
         // Remove extra features
         this._workspaceIsolation?.destroy();
+        delete this._workspaceIsolation;
         this._keyboardShortcuts?.destroy();
+        delete this._keyboardShortcuts;
         this._desktopIconsUsableArea?.resetMargins();
         this._strutsManager?.clear();
 
