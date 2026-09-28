@@ -103,7 +103,8 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
             enable_mouse_scrolling: true,
         });
 
-        this.actor.connect('scroll-event', this._onScrollEvent.bind(this));
+        this.actor.connectObject('scroll-event',
+            (...args) => this._onScrollEvent(...args), this.actor);
 
         const position = Utils.getPosition();
         this.isHorizontal = position === St.Side.BOTTOM || position === St.Side.TOP;
@@ -122,9 +123,8 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
 
         this._redisplayId = Main.initializeDeferredWork(this.actor, this._redisplay.bind(this));
 
-        this.actor.connect('destroy', this._onDestroy.bind(this));
-        this._stateChangedId = this.app.connect('windows-changed',
-            this._queueRedisplay.bind(this));
+        this.app.connectObject('windows-changed',
+            (...args) => this._queueRedisplay(...args), this.actor);
     }
 
     _queueRedisplay() {
@@ -174,11 +174,6 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
         adjustment.set_value(adjustment.get_value() + delta);
 
         return Clutter.EVENT_STOP;
-    }
-
-    _onDestroy() {
-        this.app.disconnect(this._stateChangedId);
-        this._stateChangedId = 0;
     }
 
     _createPreviewItem(window) {
