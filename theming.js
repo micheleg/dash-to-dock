@@ -396,9 +396,6 @@ class Transparency extends EventEmitter {
         this._transparentTransition = '0ms';
         this._opaqueTransition = '0ms';
         this._base_actor_style = '';
-
-        this._signals = new SignalTracker.TransientSignalHolder();
-        this._trackedWindows = new Map();
     }
 
     enable() {
@@ -420,7 +417,6 @@ class Transparency extends EventEmitter {
             removedSignal = 'actor-removed';
         }
 
-        this._signals?.destroy();
         this._signals = new SignalTracker.TransientSignalHolder();
 
         global.window_group.connectObject(
@@ -435,15 +431,8 @@ class Transparency extends EventEmitter {
             'showing', (...args) => this._updateSolidStyle(...args),
             this._signals);
 
-        // Window signals
-        global.window_group.get_children().filter(child => {
-            // An irrelevant window actor ('Gnome-shell') produces an error when the signals are
-            // disconnected, therefore do not add signals to it.
-            return child instanceof Meta.WindowActor &&
-                   child.get_meta_window().get_wm_class() !== 'Gnome-shell';
-        }).forEach(function (win) {
-            this._onWindowActorAdded(null, win);
-        }, this);
+        global.window_group.get_children().forEach(win =>
+            this._onWindowActorAdded(global.window_group, win), this._signals);
 
         if (this._actor.get_stage())
             this._updateSolidStyle();
@@ -460,13 +449,6 @@ class Transparency extends EventEmitter {
         this._signals?.destroy();
         this._signals = null;
 
-        for (const key of this._trackedWindows.keys()) {
-            this._trackedWindows.get(key).forEach(id => {
-                key.disconnect(id);
-            });
-        }
-        this._trackedWindows.clear();
-
         this.emit('transparency-disabled');
     }
 
@@ -475,21 +457,30 @@ class Transparency extends EventEmitter {
     }
 
     _onWindowActorAdded(container, metaWindowActor) {
-        const signalIds = [];
-        ['notify::allocation', 'notify::visible'].forEach(s => {
-            signalIds.push(metaWindowActor.connect(s, this._updateSolidStyle.bind(this)));
-        });
-        this._trackedWindows.set(metaWindowActor, signalIds);
+        metaWindowActor.connectObject('notify::allocation',
+            () => this._updateSolidStyle(),
+            'notify::visible', () => this._updateSolidStyle(),
+            this._signals);
+
+        this._updateStyleForWindow(metaWindowActor);
     }
 
     _onWindowActorRemoved(container, metaWindowActor) {
-        if (!this._trackedWindows.get(metaWindowActor))
+        metaWindowActor.disconnectObject(this._signals);
+
+        this._updateStyleForWindow(metaWindowActor);
+    }
+
+    _updateStyleForWindow(metaWindowActor) {
+        if (!metaWindowActor.visible)
             return;
 
-        this._trackedWindows.get(metaWindowActor).forEach(id => {
-            metaWindowActor.disconnect(id);
-        });
-        this._trackedWindows.delete(metaWindowActor);
+        const {metaWindow} = metaWindowActor;
+        if (!metaWindow.get_workspace()?.active &&
+            metaWindow.get_monitor() !== this._dash.monitorIndex &&
+            metaWindow.get_window_type() !== Meta.WindowType.DESKTOP)
+            return;
+
         this._updateSolidStyle();
     }
 
@@ -509,8 +500,9 @@ class Transparency extends EventEmitter {
     }
 
     _dockIsNear() {
-        if (this._dockActor.has_style_pseudo_class('overview'))
+        if (Main.overview.visibleTarget)
             return false;
+
         /* Get all the windows in the active workspace that are in the primary monitor and visible */
         const activeWorkspace = global.workspace_manager.get_active_workspace();
         const dash = this._dash;
