@@ -53,16 +53,15 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
             `max-height: ${Math.round(workArea.height / scaleFactor) - MENU_MARGINS}px;`);
         this.actor.hide();
 
-        // Chain our visibility and lifecycle to that of the source
-        this._mappedId = this._source.connect('notify::mapped', () => {
+        // Chain our visibility and lifecycle to that of the source, tracking
+        // both with the box pointer, as a PopupMenu is an EventEmitter and
+        // destroying the menu destroys it.
+        this._source.connectObject('notify::mapped', () => {
             if (!this._source.mapped)
                 this.close();
-        });
-        this._destroyId = this._source.connect('destroy', this.destroy.bind(this));
+        }, 'destroy', () => this.destroy(), this.actor);
 
         Utils.addActor(Main.uiGroup, this.actor);
-
-        this.connect('destroy', this._onDestroy.bind(this));
     }
 
     _redisplay() {
@@ -81,14 +80,6 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
             this.actor.navigate_focus(null, St.DirectionType.TAB_FORWARD, false);
             this._source.emit('sync-tooltip');
         }
-    }
-
-    _onDestroy() {
-        if (this._mappedId)
-            this._source.disconnect(this._mappedId);
-
-        if (this._destroyId)
-            this._source.disconnect(this._destroyId);
     }
 }
 
