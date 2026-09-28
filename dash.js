@@ -183,7 +183,8 @@ export const DockDash = GObject.registerClass({
             enable_mouse_scrolling: false,
         });
 
-        this._scrollView.connect('scroll-event', this._onScrollEvent.bind(this));
+        this._scrollView.connectObject('scroll-event',
+            (...args) => this._onScrollEvent(...args), this);
 
         this._boxContainer = new St.BoxLayout({
             name: 'dashtodockBoxContainer',
@@ -224,16 +225,16 @@ export const DockDash = GObject.registerClass({
         this._showAppsIcon.icon.setIconSize(this.iconSize);
         this._showAppsIcon.x_expand = false;
         this._showAppsIcon.y_expand = false;
-        this.showAppsButton.connect('notify::hover', a => {
+        this.showAppsButton.connectObject('notify::hover', a => {
             if (this._showAppsIcon.get_parent() === this._boxContainer)
                 this._ensureItemVisibility(a);
-        });
+        }, this);
         if (!this._isHorizontal)
             this._showAppsIcon.y_align = Clutter.ActorAlign.START;
         this._hookUpLabel(this._showAppsIcon);
-        this._showAppsIcon.connect('menu-state-changed', (_icon, opened) => {
+        this._showAppsIcon.connectObject('menu-state-changed', (_icon, opened) => {
             this._itemMenuStateChanged(this._showAppsIcon, opened);
-        });
+        }, this);
         this.updateShowAppsButton();
 
         this._background = new St.Widget({
@@ -495,12 +496,17 @@ export const DockDash = GObject.registerClass({
     }
 
     _ensureItemVisibility(actor) {
+        // the handler is only needed until the pending scroll is done or
+        // cancelled, so drop the previous one on either path
+        this._visibilitySignals?.destroy();
+        delete this._visibilitySignals;
+
         if (actor?.hover) {
-            const destroyId =
-                actor.connect('destroy', () => this._ensureItemVisibility(null));
+            this._visibilitySignals = new SignalTracker.TransientSignalHolder(this);
+            actor.connectObject('destroy',
+                () => this._ensureItemVisibility(null), this._visibilitySignals);
             this._ensureActorVisibilityTimeoutId = GLib.timeout_add(
                 GLib.PRIORITY_DEFAULT, 100, () => {
-                    actor.disconnect(destroyId);
                     ensureActorVisibleInScrollView(this._scrollView, actor);
                     this._ensureActorVisibilityTimeoutId = 0;
                     return GLib.SOURCE_REMOVE;
@@ -515,12 +521,11 @@ export const DockDash = GObject.registerClass({
         const appIcon = new AppIcons.makeAppIcon(app, this._monitorIndex, this.iconAnimator);
 
         if (appIcon._draggable) {
-            appIcon._draggable.connect('drag-begin', () => {
+            appIcon._draggable.connectObject('drag-begin', () => {
                 appIcon.opacity = 50;
-            });
-            appIcon._draggable.connect('drag-end', () => {
+            }, 'drag-end', () => {
                 appIcon.opacity = 255;
-            });
+            }, appIcon);
         }
 
         appIcon.connectObject('menu-state-changed', (_, opened) => {
@@ -955,7 +960,8 @@ export const DockDash = GObject.registerClass({
                     reactive: true,
                     track_hover: true,
                 });
-                this._separator.connect('notify::hover', a => this._ensureItemVisibility(a));
+                this._separator.connectObject('notify::hover',
+                    a => this._ensureItemVisibility(a), this);
             }
             let pos = nFavorites + this._animatingPlaceholdersCount;
             if (this._dragPlaceholder)
