@@ -2,18 +2,16 @@
 
 import {
     GLib,
+    GObject,
     Meta,
 } from './dependencies/gi.js';
+
+import {DestroyableObject} from './destroyableObject.js';
 
 import {
     Docking,
     Utils,
 } from './imports.js';
-
-import {
-    EventEmitter,
-    SignalTracker,
-} from './dependencies/shell/misc.js';
 
 // A good compromise between reactivity and efficiency; to be tuned.
 const INTELLIHIDE_CHECK_INTERVAL = 100;
@@ -53,14 +51,23 @@ const ignoreApps = ['com.rastersoft.ding', 'com.desktop.ding'];
  * Intallihide object: emit 'status-changed' signal when the overlap of windows
  * with the provided targetBoxClutter.ActorBox changes;
  */
-export class Intellihide extends EventEmitter {
+export class Intellihide extends DestroyableObject {
+    static [GObject.signals] = {
+        'status-changed': {param_types: [GObject.TYPE_INT]},
+    };
+
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor(monitorIndex) {
         super();
 
         // Load settings
         this._monitorIndex = monitorIndex;
 
-        this._signals = new SignalTracker.TransientSignalHolder();
         this._focusApp = null; // The application whose window is focused.
         this._topApp = null; // The application whose window is on top on the monitor with the dock.
 
@@ -80,21 +87,20 @@ export class Intellihide extends EventEmitter {
             // triggered for instance when the window list order changes,
             // included when the workspace is switched
             'restacked', (...args) => this._checkOverlap(...args),
-            this._signals);
+            this);
 
         // when windows are alwasy on top, the focus window can change
         // without the windows being restacked. Thus monitor window focus change.
         Docking.DockManager.windowTracker.connectObject(
-            'notify::focus-app', (...args) => this._checkOverlap(...args), this._signals);
+            'notify::focus-app', (...args) => this._checkOverlap(...args), this);
 
         // update wne monitor changes, for instance in multimonitor when monitor are attached
         Utils.getMonitorManager().connectObject(
-            'monitors-changed', (...args) => this._checkOverlap(...args), this._signals);
+            'monitors-changed', (...args) => this._checkOverlap(...args), this);
     }
 
     destroy() {
-        // Disconnect global signals
-        this._signals.destroy();
+        DestroyableObject.prototype.destroy.call(this);
 
         // Remove  residual windows signals
         this.disable();
@@ -121,6 +127,8 @@ export class Intellihide extends EventEmitter {
             GLib.source_remove(this._checkOverlapTimeoutId);
             this._checkOverlapTimeoutId = 0;
         }
+
+        super.destroy();
     }
 
     _windowCreated(display, metaWindow) {
