@@ -2739,16 +2739,22 @@ export class DockManager {
     }
 
     _restoreDash() {
-        if (!this._oldDash || this.overviewControls.dash === this._oldDash)
+        // the overview is disposed before us when the shell shuts down, and
+        // there is nothing to restore the dash into then
+        const controls = Main.overview._overview?.controls;
+        if (!this._oldDash || !controls?.dash)
+            return;
+
+        if (controls.dash === this._oldDash)
             return;
 
         this._signalsHandler.removeWithLabel(Labels.OLD_DASH_CHANGES);
         [this._methodInjections, this._vfuncInjections, this._propertyInjections].forEach(
             injections => injections.removeWithLabel(Labels.MAIN_DASH));
 
-        this.overviewControls.layout_manager._dash = this._oldDash;
-        this.overviewControls.dash = this._oldDash;
-        this.searchController._showAppsButton = this._oldDash.showAppsButton;
+        controls.layout_manager._dash = this._oldDash;
+        controls.dash = this._oldDash;
+        controls._searchController._showAppsButton = this._oldDash.showAppsButton;
         Main.overview.dash.show();
         Main.overview.dash.set_height(-1); // reset default dash size
         // This force the recalculation of the icon size
