@@ -760,8 +760,8 @@ class TrashAppInfo extends LocationAppInfo {
         try {
             this._monitor = this.location.monitor_directory(0, this.cancellable);
             this._schedUpdateId = 0;
-            this._monitorChangedId = this._monitor.connect('changed', () =>
-                this._onTrashChange());
+            this._monitor.connectObject('changed', () =>
+                this._onTrashChange(), this);
         } catch (e) {
             if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
                 return;
@@ -779,7 +779,6 @@ class TrashAppInfo extends LocationAppInfo {
             this._schedUpdateId = 0;
         }
         this._updateTrashCancellable?.cancel();
-        this._monitor?.disconnect(this._monitorChangedId);
         this._monitor = null;
 
         super.destroy();
