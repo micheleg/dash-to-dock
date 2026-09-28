@@ -1350,7 +1350,7 @@ export class Trash {
 export class Removables extends DestroyableObject {
     static [GObject.signals] = {
         'changed': {},
-        'windows-changed': {param_types: [Shell.App]},
+        'windows-changed': {},
     };
 
     static {
