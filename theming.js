@@ -15,6 +15,8 @@ import {
     SignalTracker,
 } from './dependencies/shell/misc.js';
 
+import {DestroyableObject} from './destroyableObject.js';
+
 import {
     Docking,
     Utils,
@@ -56,7 +58,17 @@ export const PositionStyleClass = Object.freeze([
 /**
  * Manage theme customization and custom theme support
  */
-export class ThemeManager extends EventEmitter {
+export class ThemeManager extends DestroyableObject {
+    static [GObject.signals] = {
+        'updated': {},
+    };
+
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor(dock) {
         super();
 
@@ -110,9 +122,10 @@ export class ThemeManager extends EventEmitter {
         this._actor.disconnectObject(this);
         this._actor = null;
 
-        this.emit('destroy');
         this._transparency.destroy();
         this._dequeueUpdateCustomTheme();
+
+        super.destroy();
     }
 
     _connectToThemeSignals() {
