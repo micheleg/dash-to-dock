@@ -1,18 +1,28 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-import {Gio} from './dependencies/gi.js';
+import {Gio, GObject} from './dependencies/gi.js';
 import {Main} from './dependencies/shell/ui.js';
+
+import {DestroyableObject} from './destroyableObject.js';
 
 import {
     Docking,
 } from './imports.js';
 
-import {
-    EventEmitter,
-    SignalTracker,
-} from './dependencies/shell/misc.js';
+import {SignalTracker} from './dependencies/shell/misc.js';
 
-export class NotificationsMonitor extends EventEmitter {
+export class NotificationsMonitor extends DestroyableObject {
+    static [GObject.signals] = {
+        'changed': {},
+        'state-changed': {},
+    };
+
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor() {
         super();
 
@@ -21,8 +31,7 @@ export class NotificationsMonitor extends EventEmitter {
         });
 
         this._appNotifications = Object.create(null);
-        this._signals = new SignalTracker.TransientSignalHolder();
-        this._notificationSignals = new SignalTracker.TransientSignalHolder();
+        this._notificationSignals = new SignalTracker.TransientSignalHolder(this);
 
         const getIsEnabled = () => !this.dndMode &&
             Docking.DockManager.settings.showIconsNotificationsCounter;
@@ -42,23 +51,22 @@ export class NotificationsMonitor extends EventEmitter {
         this._settings.connectObject('changed::show-banners', () => {
             this._dndMode = !this._settings.get_boolean('show-banners');
             checkIsEnabled();
-        }, this._signals);
+        }, this);
         Docking.DockManager.settings.connectObject(
-            'changed::show-icons-notifications-counter', checkIsEnabled, this._signals);
+            'changed::show-icons-notifications-counter', checkIsEnabled, this);
         Main.messageTray.connectObject(
             'source-added', () => this._onSourcesChanged(),
             'source-removed', () => this._onSourcesChanged(),
-            this._signals);
+            this);
 
         this._checkNotifications();
     }
 
     destroy() {
-        this.emit('destroy');
-        this._signals.destroy();
-        this._notificationSignals.destroy();
         this._appNotifications = null;
         this._settings = null;
+
+        super.destroy();
     }
 
     get enabled() {
@@ -81,7 +89,7 @@ export class NotificationsMonitor extends EventEmitter {
     _checkNotifications() {
         this._appNotifications = Object.create(null);
         this._notificationSignals.destroy();
-        this._notificationSignals = new SignalTracker.TransientSignalHolder();
+        this._notificationSignals = new SignalTracker.TransientSignalHolder(this);
 
         if (this.enabled) {
             Main.messageTray.getSources().forEach(source => {
