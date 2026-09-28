@@ -283,7 +283,6 @@ const DockedDash = GObject.registerClass({
 
         // Initialize dwelling system variables
         this._dockDwelling = false;
-        this._dockWatch = null;
         this._dockDwellUserTime = 0;
         this._dockDwellTimeoutId = 0;
 
@@ -313,7 +312,8 @@ const DockedDash = GObject.registerClass({
             reactive: true,
             track_hover: true,
         });
-        this._box.connect('notify::hover', this._hoverChanged.bind(this));
+        this._box.connectObject('notify::hover',
+            (...args) => this._hoverChanged(...args), this);
 
         // Connect global signals
         this.dash.connectObject(
@@ -358,8 +358,10 @@ const DockedDash = GObject.registerClass({
 
         // Since Clutter has no longer ClutterAllocationFlags,
         // "allocation-changed" signal has been removed. MR !1245
-        this.dash.container.connect('notify::allocation', () => this._updateStaticBox());
-        this._slider.connect('notify::allocation', () => this._updateStaticBox());
+        this.dash.container.connectObject('notify::allocation',
+            (...args) => this._updateStaticBox(...args), this);
+        this._slider.connectObject('notify::allocation',
+            () => this._updateStaticBox(), this);
 
         // Load optional features that need to be activated for one dock only
         if (this.isMain)
@@ -857,9 +859,8 @@ const DockedDash = GObject.registerClass({
         if (this.autohideEnabled &&
             (!Utils.supportsExtendedBarriers() ||
              !DockManager.settings.requirePressureToShow)) {
-            this._dockWatch = Utils.getCursorTracker().connect(
-                'position-invalidated',
-                () => this._checkDockDwellLater(...global.get_pointer()));
+            Utils.getCursorTracker().connectObject('position-invalidated',
+                () => this._checkDockDwellLater(...global.get_pointer()), this);
             this._dockDwelling = false;
             this._dockDwellUserTime = 0;
         }
@@ -959,10 +960,7 @@ const DockedDash = GObject.registerClass({
             this._checkDockDwellId = 0;
         }
 
-        if (this._dockWatch) {
-            Utils.getCursorTracker().disconnect(this._dockWatch);
-            this._dockWatch = null;
-        }
+        Utils.getCursorTracker().disconnectObject(this);
     }
 
     _updatePressureBarrier() {
@@ -1632,7 +1630,6 @@ export class DockManager extends DestroyableObject {
         this._strutsManager = new StrutsManager();
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass(extension);
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
-        this._oldDash?.connectObject('destroy', () => (this._oldDash = null), this);
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
         this._appSpread = new AppSpread.AppSpread();
         this._notificationsMonitor = new NotificationsMonitor.NotificationsMonitor();
@@ -2140,11 +2137,10 @@ export class DockManager extends DestroyableObject {
         // 1 static workspace only)
         this._oldDash.set_height(1);
 
-        this._oldDashSignals = new SignalTracker.TransientSignalHolder(this);
         this._oldDash.connectObject(
             'notify::visible', () => this._oldDash.hide(),
             'notify::height', () => this._oldDash.set_height(1),
-            this._oldDashSignals);
+            this);
 
         // Pretend I'm the dash: meant to make app grid swarm animation come from
         // the right position of the appShowButton.
@@ -2528,8 +2524,7 @@ export class DockManager extends DestroyableObject {
         if (controls.dash === this._oldDash)
             return;
 
-        this._oldDashSignals.destroy();
-        delete this._oldDashSignals;
+        this._oldDash.disconnectObject(this);
         [this._methodInjections, this._vfuncInjections, this._propertyInjections].forEach(
             injections => injections.removeWithLabel(Labels.MAIN_DASH));
 
@@ -2671,6 +2666,7 @@ export class DockManager extends DestroyableObject {
 // with each other, and to save CPU by pausing them when the dock is hidden.
 export class IconAnimator {
     constructor(actor) {
+        this._signals = new SignalTracker.TransientSignalHolder();
         this._count = 0;
         this._started = false;
         this._animations = {
@@ -2683,16 +2679,16 @@ export class IconAnimator {
         });
 
         this._updateSettings();
-        this._settingsChangedId = St.Settings.get().connect('notify',
-            () => this._updateSettings());
+        St.Settings.get().connectObject('notify',
+            () => this._updateSettings(), this._signals);
 
-        this._newFrameID = this._timeline.connect('new-frame', () => {
+        this._timeline.connectObject('new-frame', () => {
             const progress = this._timeline.get_progress();
             const wiggleRotation = progress < 1 / 6 ? 15 * Math.sin(progress * 24 * Math.PI) : 0;
             const wigglers = this._animations.wiggle;
             for (let i = 0, iMax = wigglers.length; i < iMax; i++)
                 wigglers[i].target.rotation_angle_z = wiggleRotation;
-        });
+        }, this._signals);
     }
 
     _updateSettings() {
@@ -2701,16 +2697,9 @@ export class IconAnimator {
     }
 
     destroy() {
-        St.Settings.get().disconnect(this._settingsChangedId);
-        this._timeline.disconnect(this._newFrameID);
+        this._signals.destroy();
         this._timeline.stop();
         delete this._timeline;
-        for (const pairs of Object.values(this._animations)) {
-            for (let i = 0, iMax = pairs.length; i < iMax; i++) {
-                const pair = pairs[i];
-                pair.target.disconnect(pair.targetDestroyId);
-            }
-        }
         this._animations = null;
     }
 
@@ -2729,9 +2718,9 @@ export class IconAnimator {
     }
 
     addAnimation(target, name) {
-        const targetDestroyId = target.connect('destroy',
-            () => this.removeAnimation(target, name));
-        this._animations[name].push({target, targetDestroyId});
+        target.connectObject('destroy',
+            () => this.removeAnimation(target, name), this._signals);
+        this._animations[name].push({target});
         if (this._started && this._count === 0)
             this._timeline.start();
 
@@ -2743,7 +2732,7 @@ export class IconAnimator {
         for (let i = 0, iMax = pairs.length; i < iMax; i++) {
             const pair = pairs[i];
             if (pair.target === target) {
-                target.disconnect(pair.targetDestroyId);
+                target.disconnectObject(this._signals);
                 pairs.splice(i, 1);
                 this._count--;
                 if (this._started && this._count === 0)
