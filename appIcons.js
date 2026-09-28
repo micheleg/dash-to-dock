@@ -251,10 +251,6 @@ export const DockAbstractAppIcon = GObject.registerClass({
     _onDestroy() {
         super._onDestroy();
 
-        // This is necessary due to an upstream bug
-        // https://bugzilla.gnome.org/show_bug.cgi?id=757556
-        // It can be safely removed once it get solved upstream.
-        this._menu?.close(false);
         delete this._menu;
 
         this._doubleClickGesture?.cancel();
