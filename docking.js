@@ -24,7 +24,6 @@ import {
 
 import {
     AnimationUtils,
-    EventEmitter,
     SignalTracker,
 } from './dependencies/shell/misc.js';
 
@@ -1587,7 +1586,17 @@ const WorkspaceIsolation = class DashToDockWorkspaceIsolation extends Destroyabl
 };
 
 
-export class DockManager extends EventEmitter {
+export class DockManager extends DestroyableObject {
+    static [GObject.signals] = {
+        'toggled': {},
+    };
+
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor(extension) {
         super();
 
@@ -1595,7 +1604,6 @@ export class DockManager extends EventEmitter {
             throw new Error('DashToDock has been already initialized');
         DockManager._singleton = this;
         this._extension = extension;
-        this._signals = new SignalTracker.TransientSignalHolder();
         this._methodInjections = new Utils.InjectionsHandler(this);
         this._vfuncInjections = new Utils.VFuncInjectionsHandler(this);
         this._propertyInjections = new Utils.PropertyInjectionsHandler(this);
@@ -1609,7 +1617,7 @@ export class DockManager extends EventEmitter {
         this._strutsManager = new StrutsManager();
         this._desktopIconsUsableArea = new DesktopIconsIntegration.DesktopIconsUsableAreaClass(extension);
         this._oldDash = Main.overview.isDummy ? null : Main.overview.dash;
-        this._oldDash?.connectObject('destroy', () => (this._oldDash = null), this._signals);
+        this._oldDash?.connectObject('destroy', () => (this._oldDash = null), this);
         this._discreteGpuAvailable = AppDisplay.discreteGpuAvailable;
         this._appSpread = new AppSpread.AppSpread();
         this._notificationsMonitor = new NotificationsMonitor.NotificationsMonitor();
@@ -1633,9 +1641,9 @@ export class DockManager extends EventEmitter {
         ensureRemoteModel();
 
         this._notificationsMonitor.connectObject('state-changed',
-            () => ensureRemoteModel(), this._signals);
+            () => ensureRemoteModel(), this);
         this._settings.connectObject('changed::show-icons-emblems',
-            () => ensureRemoteModel(), this._signals);
+            () => ensureRemoteModel(), this);
 
         if (this._discreteGpuAvailable === undefined) {
             const updateDiscreteGpuAvailable = () => {
@@ -1648,7 +1656,7 @@ export class DockManager extends EventEmitter {
                 }
             };
             global.connectObject('notify::switcheroo-control',
-                () => updateDiscreteGpuAvailable(), this._signals);
+                () => updateDiscreteGpuAvailable(), this);
             updateDiscreteGpuAvailable();
         }
 
@@ -1662,7 +1670,7 @@ export class DockManager extends EventEmitter {
 
         this._unredirectInhibited = false;
         global.display.connectObject('in-fullscreen-changed',
-            () => this._updateUnredirect(), this._signals);
+            () => this._updateUnredirect(), this);
 
         this._createDocks();
 
@@ -1881,7 +1889,7 @@ export class DockManager extends EventEmitter {
             this._updatingSettings = true;
             this.settings.emit(`changed::${mappedKey}`, mappedKey);
             this._updatingSettings = false;
-        }, this._signals);
+        }, this);
     }
 
     _mapSettingsValues() {
@@ -1895,7 +1903,7 @@ export class DockManager extends EventEmitter {
                     this.settings[camelKey] = this.settings.get_value(key).recursiveUnpack();
             };
             updateSetting();
-            this.settings.connectObject(`changed::${key}`, updateSetting, this._signals);
+            this.settings.connectObject(`changed::${key}`, updateSetting, this);
             if (key !== camelKey) {
                 Object.defineProperty(this.settings, key,
                     {get: () => this.settings[camelKey]});
@@ -1909,9 +1917,9 @@ export class DockManager extends EventEmitter {
     _bindSettingsChanges() {
         // Connect relevant signals to the toggling function
         Utils.getMonitorManager().connectObject('monitors-changed',
-            (...args) => this._toggle(...args), this._signals);
+            (...args) => this._toggle(...args), this);
         Main.sessionMode.connectObject('updated',
-            (...args) => this._toggle(...args), this._signals);
+            (...args) => this._toggle(...args), this);
 
         this._settings.connectObject(
             'changed::multi-monitor', (...args) => this._toggle(...args),
@@ -2462,7 +2470,7 @@ export class DockManager extends EventEmitter {
             this.overviewControls.dash = dummyDash;
             Main.uiGroup.add_child(dummyDash);
 
-            const startupSignals = new SignalTracker.TransientSignalHolder(this._signals);
+            const startupSignals = new SignalTracker.TransientSignalHolder(this);
             Main.layoutManager.connectObject('startup-complete', () => {
                 startupSignals.destroy();
                 replaceMainDash();
@@ -2569,8 +2577,6 @@ export class DockManager extends EventEmitter {
     }
 
     destroy() {
-        this.emit('destroy');
-        this._signals.destroy();
         if (this._toggleLater) {
             Utils.laterRemove(this._toggleLater);
             delete this._toggleLater;
@@ -2607,6 +2613,10 @@ export class DockManager extends EventEmitter {
 
         this._extension = null;
         DockManager._singleton = null;
+
+        // the docks are gone above, and the handler dropping them from our
+        // list is tracked with us, so announce our own destruction last
+        super.destroy();
     }
 
     /**
