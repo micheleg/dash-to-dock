@@ -1731,35 +1731,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
  */
 const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
     constructor() {
-        const {settings} = DockManager;
-
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._injectionsHandler = new Utils.InjectionsHandler();
-
-        const updateAllDocks = () => {
-            DockManager.allDocks.forEach(dock =>
-                dock.dash.resetAppIcons());
-            if (settings.isolateWorkspaces ||
-                settings.isolateMonitors)
-                this._enable.bind(this)();
-            else
-                this._disable.bind(this)();
-        };
-        this._signalsHandler.add(
-            [settings, 'changed::isolate-workspaces', updateAllDocks],
-            [settings, 'changed::workspace-agnostic-urgent-windows', updateAllDocks],
-            [settings, 'changed::isolate-monitors', updateAllDocks]
-        );
-
-        if (settings.isolateWorkspaces ||
-            settings.isolateMonitors)
-            this._enable();
-    }
-
-    _enable() {
-        // ensure I never double-register/inject
-        // although it should never happen
-        this._disable();
 
         DockManager.allDocks.forEach(dock => {
             global.display.connectObject('restacked',
@@ -1800,17 +1772,11 @@ const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
             IsolatedOverview);
     }
 
-    _disable() {
+    destroy() {
         DockManager.allDocks.forEach(dock => {
             global.display.disconnectObject(dock.dash);
             global.window_manager.disconnectObject(dock.dash);
         });
-        this._injectionsHandler.removeWithLabel(Labels.ISOLATION);
-    }
-
-    destroy() {
-        this._disable();
-        this._signalsHandler.destroy();
         this._injectionsHandler.destroy();
     }
 };
@@ -1888,9 +1854,11 @@ export class DockManager extends EventEmitter {
 
         /* Array of all the docks created */
         this._allDocks = [];
+
         this._unredirectInhibited = false;
-        this._signalsHandler.add(global.display, 'in-fullscreen-changed',
-            () => this._updateUnredirect());
+        global.display.connectObject('in-fullscreen-changed',
+            () => this._updateUnredirect(), this);
+
         this._createDocks();
 
         this._overrideAppMenus();
@@ -2185,6 +2153,18 @@ export class DockManager extends EventEmitter {
                 if (!this._settings.intellihide)
                     this._desktopIconsUsableArea.resetMargins();
             },
+        ], [
+            this._settings,
+            'changed::isolate-workspaces',
+            () => this._updateWorkspaceIsolation(),
+        ], [
+            this._settings,
+            'changed::isolate-monitors',
+            () => this._updateWorkspaceIsolation(),
+        ], [
+            this._settings,
+            'changed::workspace-agnostic-urgent-windows',
+            () => this._updateWorkspaceIsolation(),
         ]);
 
         this._mapExternalSetting(this._appSwitcherSettings, 'current-workspace-only',
@@ -2254,7 +2234,7 @@ export class DockManager extends EventEmitter {
 
         // Load optional features. We load *after* the docks are created, since
         // we need to connect the signals to all dock instances.
-        this._workspaceIsolation = new WorkspaceIsolation();
+        this._updateWorkspaceIsolation();
         this._keyboardShortcuts = new KeyboardShortcuts();
 
         this.emit('docks-ready');
@@ -2305,6 +2285,17 @@ export class DockManager extends EventEmitter {
         }
 
         this._unredirectInhibited = inhibit;
+    }
+
+    _updateWorkspaceIsolation() {
+        this._workspaceIsolation?.destroy();
+        delete this._workspaceIsolation;
+
+        if (this.settings.isolateWorkspaces ||
+            this.settings.isolateMonitors)
+            this._workspaceIsolation = new WorkspaceIsolation();
+
+        this._allDocks.forEach(dock => dock.dash.resetAppIcons());
     }
 
     _runStartupAnimation() {
