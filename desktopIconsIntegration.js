@@ -72,7 +72,7 @@ export class DesktopIconsUsableAreaClass {
         this._extensionManager = Main.extensionManager;
         this._timedMarginsID = 0;
         this._margins = {};
-        this._emID = this._extensionManager.connect('extension-state-changed', (_obj, ext) => {
+        this._extensionManager.connectObject('extension-state-changed', (_obj, ext) => {
             if (!ext)
                 return;
 
@@ -87,7 +87,7 @@ export class DesktopIconsUsableAreaClass {
             // loaded after that extension, those extensions will be disabled
             // and enabled again without notification
             this._changedMargins();
-        });
+        }, this);
     }
 
     /**
@@ -125,14 +125,13 @@ export class DesktopIconsUsableAreaClass {
      * Disconnects all the signals and removes the margins.
      */
     destroy() {
-        if (this._emID) {
-            this._extensionManager.disconnect(this._emID);
-            this._emID = 0;
-        }
         if (this._timedMarginsID) {
             GLib.source_remove(this._timedMarginsID);
             this._timedMarginsID = 0;
         }
+
+        this._extensionManager.disconnectObject(this);
+        this._extensionManager = null;
         this._margins = null;
         this._changedMargins();
     }
