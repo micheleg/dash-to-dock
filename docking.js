@@ -2063,7 +2063,7 @@ export class DockManager {
         });
     }
 
-    _mapExternalSetting(settings, key, mappedKey, mapValueFunction) {
+    _mapExternalSetting(settings, key, mappedKey, mapValueFunction, mapUserValueFunction) {
         const camelMappedKey = mappedKey.replace(/-([a-z\d])/g, k => k[1].toUpperCase());
 
         const dockPropertyDesc = Object.getOwnPropertyDescriptor(this.settings, camelMappedKey);
@@ -2071,9 +2071,12 @@ export class DockManager {
         if (!dockPropertyDesc)
             throw new Error('Setting %s not found in dock'.format(mappedKey));
 
+        mapUserValueFunction ??= value => value;
         const mappedValue = () => mapValueFunction(settings.get_value(key).recursiveUnpack());
+        const dockUserValue = () =>
+            mapUserValueFunction(this.settings.get_user_value(mappedKey)?.recursiveUnpack());
         Object.defineProperty(this.settings, camelMappedKey, {
-            get: () => mappedValue() ?? dockPropertyDesc.value,
+            get: () => dockUserValue() ?? mappedValue() ?? dockPropertyDesc.value,
             set: value => {
                 if (mappedValue() === undefined)
                     dockPropertyDesc.value = value;
