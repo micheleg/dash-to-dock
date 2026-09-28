@@ -10,9 +10,7 @@ import {
 
 import {Main} from './dependencies/shell/ui.js';
 
-import {
-    SignalTracker,
-} from './dependencies/shell/misc.js';
+import {SignalTracker} from './dependencies/shell/misc.js';
 
 import {DestroyableObject} from './destroyableObject.js';
 
@@ -77,7 +75,8 @@ export class ThemeManager extends DestroyableObject {
         // initialize colors with generic values
         this._customizedBackground = {red: 0, green: 0, blue: 0, alpha: 0};
         this._customizedBorder = {red: 0, green: 0, blue: 0, alpha: 0};
-        this._transparency = new Transparency(dock);
+        this._backgroundColor = null;
+        this._transparency = null;
 
         this._themeSignals = null;
 
@@ -121,7 +120,9 @@ export class ThemeManager extends DestroyableObject {
         this._actor.disconnectObject(this);
         this._actor = null;
 
-        this._transparency.destroy();
+        this._transparency?.destroy();
+        this._transparency = null;
+
         this._dequeueUpdateCustomTheme();
 
         super.destroy();
@@ -229,8 +230,8 @@ export class ThemeManager extends DestroyableObject {
     }
 
     _updateDashColor() {
-        // Retrieve the color. If needed we will adjust it before passing it to
-        // this._transparency.
+        // Retrieve the color. If needed we will adjust it before handing it
+        // over to the transparency.
         let [backgroundColor] = this._getDefaultColors();
 
         if (!backgroundColor)
@@ -265,11 +266,11 @@ export class ThemeManager extends DestroyableObject {
             this._customizedBorder = this._customizedBackground;
 
             color.alpha = newAlpha * 255;
-            this._transparency.setColor(color);
-        } else {
-            // backgroundColor is a {Clutter,Cogl}.Color object
-            this._transparency.setColor(backgroundColor);
+            backgroundColor = color;
         }
+
+        this._backgroundColor = backgroundColor;
+        this._transparency?.setColor(backgroundColor);
     }
 
     _updateCustomStyleClasses() {
@@ -317,10 +318,20 @@ export class ThemeManager extends DestroyableObject {
      */
     _adjustTheme() {
         const {settings} = Docking.DockManager;
+        const {transparencyMode} = settings;
+        const defaultTransparency = transparencyMode === TransparencyMode.DEFAULT;
+        const fixedTransparency = transparencyMode === TransparencyMode.FIXED;
 
         // Remove prior style edits
         this._dash._background.set_style(null);
-        this._transparency.disable();
+
+        // Only a dynamic mode needs us, and having one is what enables it
+        if (!settings.applyCustomTheme && !defaultTransparency && !fixedTransparency) {
+            this._transparency ??= new Transparency(this._actor, this._backgroundColor);
+        } else {
+            this._transparency?.destroy();
+            this._transparency = null;
+        }
 
         // If built-in theme is enabled do nothing else
         if (settings.applyCustomTheme)
@@ -355,11 +366,7 @@ export class ThemeManager extends DestroyableObject {
         }
 
         // Customize background
-        const fixedTransparency = settings.transparencyMode === TransparencyMode.FIXED;
-        const defaultTransparency = settings.transparencyMode === TransparencyMode.DEFAULT;
-        if (!defaultTransparency && !fixedTransparency) {
-            this._transparency.enable();
-        } else if (!defaultTransparency || settings.customBackgroundColor) {
+        if (fixedTransparency || settings.customBackgroundColor) {
             newStyle = `${newStyle}background-color:${this._customizedBackground}; ` +
                        `border-color:${this._customizedBorder}; ` +
                        'transition-delay: 0s; transition-duration: 0.250s;';
@@ -380,7 +387,7 @@ class Transparency extends DestroyableObject {
         /* eslint-enable no-invalid-this */
     }
 
-    constructor(dock) {
+    constructor(dock, backgroundColor) {
         super();
 
         this._dash = dock.dash;
@@ -400,18 +407,13 @@ class Transparency extends DestroyableObject {
         this._opaqueAlphaBorder = '0.5';
         this._transparentTransition = '0ms';
         this._opaqueTransition = '0ms';
-        this._base_actor_style = '';
-    }
 
-    enable() {
-        // ensure I never double-register/inject
-        // although it should never happen
-        this.disable();
+        if (backgroundColor) {
+            const {red, green, blue} = backgroundColor;
+            this._backgroundColor = `${red},${green},${blue}`;
+        }
 
-        this._base_actor_style = this._actor.get_style();
-        if (!this._base_actor_style)
-            this._base_actor_style = '';
-
+        this._base_actor_style = this._actor.get_style() || '';
 
         let addedSignal = 'child-added';
         let removedSignal = 'child-removed';
@@ -422,51 +424,36 @@ class Transparency extends DestroyableObject {
             removedSignal = 'actor-removed';
         }
 
-        this._signals = new SignalTracker.TransientSignalHolder(this);
-
         global.window_group.connectObject(
             addedSignal, (...args) => this._onWindowActorAdded(...args),
             removedSignal, (...args) => this._onWindowActorRemoved(...args),
-            this._signals);
+            this);
         global.window_manager.connectObject(
             'switch-workspace', (...args) => this._updateSolidStyle(...args),
-            this._signals);
+            this);
         Main.overview.connectObject(
             'hiding', (...args) => this._updateSolidStyle(...args),
             'showing', (...args) => this._updateSolidStyle(...args),
-            this._signals);
+            this);
 
         global.window_group.get_children().forEach(win =>
-            this._onWindowActorAdded(global.window_group, win), this._signals);
-
-        if (this._actor.get_stage())
-            this._updateSolidStyle();
+            this._onWindowActorAdded(global.window_group, win), this);
 
         this._updateStyles();
         this._updateSolidStyle();
-    }
-
-    disable() {
-        this._signals?.destroy();
-        this._signals = null;
-    }
-
-    destroy() {
-        this.disable();
-        super.destroy();
     }
 
     _onWindowActorAdded(container, metaWindowActor) {
         metaWindowActor.connectObject('notify::allocation',
             () => this._updateSolidStyle(),
             'notify::visible', () => this._updateSolidStyle(),
-            this._signals);
+            this);
 
         this._updateStyleForWindow(metaWindowActor);
     }
 
     _onWindowActorRemoved(container, metaWindowActor) {
-        metaWindowActor.disconnectObject(this._signals);
+        metaWindowActor.disconnectObject(this);
 
         this._updateStyleForWindow(metaWindowActor);
     }
