@@ -2373,8 +2373,6 @@ export class DockManager {
         this._methodInjections.addWithLabel(Labels.MAIN_DASH, this._oldDash,
             'get_preferred_height', () => [0, 0]);
 
-        // FIXME: https://gitlab.gnome.org/GNOME/gnome-shell/-/merge_requests/2890
-        // const { ControlsManagerLayout } = OverviewControls;
         const ControlsManagerLayout = this.overviewControls.layout_manager.constructor;
 
         const maybeAdjustBoxSize = (state, box, spacing) => {
