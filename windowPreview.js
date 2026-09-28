@@ -275,10 +275,6 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
         for (let i = 0; i < addedItems.length; i++)
             addedItems[i].item.show(animate);
 
-        // Workaround for https://bugzilla.gnome.org/show_bug.cgi?id=692744
-        // Without it, StBoxLayout may use a stale size cache
-        this.box.queue_relayout();
-
         if (newWin.length < 1)
             this._getTopMenu().close(~0);
 
