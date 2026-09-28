@@ -182,7 +182,6 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         this.connect('notify::urgent', () => {
             const icon = this.icon._iconBin;
-            this._signalsHandler.removeWithLabel(Labels.URGENT_WINDOWS);
             if (this.urgent) {
                 if (Docking.DockManager.settings.danceUrgentApplications &&
                     notificationsMonitor.enabled) {
