@@ -1533,10 +1533,18 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts extends DestroyableO
  * Some bits are around in other methods of other classes.
  * This class just take care of enabling/disabling the option.
  */
-const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
+const WorkspaceIsolation = class DashToDockWorkspaceIsolation extends DestroyableObject {
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor() {
-        this._injectionsHandler = new Utils.InjectionsHandler();
-        this._isolationSignals = new SignalTracker.TransientSignalHolder();
+        super();
+
+        this._injectionsHandler = new Utils.InjectionsHandler(this);
+        this._isolationSignals = new SignalTracker.TransientSignalHolder(this);
 
         DockManager.allDocks.forEach(dock => {
             global.display.connectObject('restacked',
@@ -1575,11 +1583,6 @@ const WorkspaceIsolation = class DashToDockWorkspaceIsolation {
             Shell.App.prototype,
             'activate',
             IsolatedOverview);
-    }
-
-    destroy() {
-        this._isolationSignals.destroy();
-        this._injectionsHandler.destroy();
     }
 };
 
