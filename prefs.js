@@ -646,24 +646,39 @@ const DockSettings = GObject.registerClass({
             Gio.SettingsBindFlags.DEFAULT);
         const applicationButtonIsolationButton =
             this._builder.get_object('application_button_isolation_button');
-        this._settings.bind('isolate-workspaces',
-            applicationButtonIsolationButton,
-            'active',
-            Gio.SettingsBindFlags.DEFAULT);
-        applicationButtonIsolationButton.connect(
-            'notify::sensitive', check => {
-                if (check.sensitive) {
-                    [check.label] = check.label.split('\n');
-                } else {
-                    check.label += `\n${
-                        __('Managed by GNOME Multitasking\'s Application Switching setting.')}`;
-                }
-            });
-        this._appSwitcherSettings.bind('current-workspace-only',
-            applicationButtonIsolationButton,
-            'sensitive',
-            Gio.SettingsBindFlags.INVERT_BOOLEAN |
-            Gio.SettingsBindFlags.SYNC_CREATE);
+        const applicationButtonIsolationLabel =
+            applicationButtonIsolationButton.label;
+
+        const hasIsolationOverride = () =>
+            this._settings.get_user_value('isolate-workspaces') !== null;
+        const gnomeIsolation = () =>
+            this._appSwitcherSettings.get_boolean('current-workspace-only');
+
+        let updatingIsolationButton = false;
+        const updateIsolationButton = () => {
+            updatingIsolationButton = true;
+            applicationButtonIsolationButton.active = hasIsolationOverride()
+                ? this._settings.get_boolean('isolate-workspaces')
+                : gnomeIsolation();
+            updatingIsolationButton = false;
+            applicationButtonIsolationButton.label = hasIsolationOverride()
+                ? applicationButtonIsolationLabel
+                : `${applicationButtonIsolationLabel}\n${
+                    __('Follows GNOME Multitasking\'s Application Switching setting.')}`;
+        };
+        applicationButtonIsolationButton.connect('notify::active', check => {
+            if (updatingIsolationButton)
+                return;
+            if (check.active === gnomeIsolation())
+                this._settings.reset('isolate-workspaces');
+            else
+                this._settings.set_boolean('isolate-workspaces', check.active);
+        });
+        updateIsolationButton();
+        this._settings.connect('changed::isolate-workspaces',
+            updateIsolationButton);
+        this._appSwitcherSettings.connect('changed::current-workspace-only',
+            updateIsolationButton);
         this._settings.bind('workspace-agnostic-urgent-windows',
             this._builder.get_object('application_button_urgent_button'),
             'active',
