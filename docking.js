@@ -79,6 +79,16 @@ const Labels = Object.freeze({
     DOCKED_DASH_GLOBAL_SIGNALS: Symbol('docked-dash-global-signals'),
 });
 
+const WorkspaceLayout = Object.freeze({
+    // Keep in sync with gnome-shell's WorkspacesView spacing constant.
+    MIN_SPACING: 24,
+
+    // Maximum share of the available width the current workspace may take in
+    // the window picker. Stock GNOME ends up around this ratio by reserving the
+    // bottom dash space, which dash-to-dock removes.
+    MAX_WIDTH_RATIO: 0.80,
+});
+
 /**
  * A simple St.Widget with one child whose allocation takes into account the
  * slide out of its child via the slide-x property ([0:1]).
@@ -2397,6 +2407,33 @@ export class DockManager {
             return box;
         };
 
+        const maybeLimitWorkspaceBoxSize = box => {
+            // Workspaces preserve the monitor work area aspect ratio, so when
+            // the dock reduces the available width we must reduce the height
+            // too, otherwise the current workspace fills the whole box and
+            // pushes the adjacent ones outside of the visible area.
+            const workArea = Main.layoutManager.getWorkAreaForMonitor(
+                Main.layoutManager.primaryIndex);
+            if (workArea.width <= 0 || workArea.height <= 0)
+                return box;
+
+            const {scaleFactor} = St.ThemeContext.get_for_stage(global.stage);
+            const maxWorkspaceWidth = Math.min(
+                box.get_width() - 2 * WorkspaceLayout.MIN_SPACING * scaleFactor,
+                box.get_width() * WorkspaceLayout.MAX_WIDTH_RATIO);
+            const maxHeight = maxWorkspaceWidth * workArea.height / workArea.width;
+
+            if (maxHeight <= 0 || box.get_height() <= maxHeight)
+                return box;
+
+            const centerY = (box.y1 + box.y2) / 2;
+            const height = Math.round(maxHeight);
+            box.y1 = Math.round(centerY - height / 2);
+            box.y2 = box.y1 + height;
+
+            return box;
+        };
+
         const maybeAdjustBoxToDock = (state, box, spacing) => {
             if (Main.layoutManager._startingUp)
                 return box;
@@ -2496,8 +2533,13 @@ export class DockManager {
                 const dock = DockManager.getDefault().getDockByMonitor(Main.layoutManager.primaryIndex);
                 if (!dock)
                     return box;
-                else
-                    return maybeAdjustBoxSize(state, box, spacing);
+
+                const adjustedBox = maybeAdjustBoxSize(state, box, spacing);
+
+                if (state === OverviewControls.ControlsState.WINDOW_PICKER)
+                    return maybeLimitWorkspaceBoxSize(adjustedBox);
+
+                return adjustedBox;
                 /* eslint-enable no-invalid-this */
             },
         ], [
