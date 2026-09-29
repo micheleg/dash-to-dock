@@ -2538,12 +2538,12 @@ export class DockManager {
                     return originalFunction.call(this, state, ...args);
 
                 const box = workspaceBoxOriginFixer.call(this, originalFunction, state, ...args);
-                // GNOME 46 changes "spacing" to "_spacing".
-                const spacing = this.spacing ?? this._spacing;
                 const dock = DockManager.getDefault().getDockByMonitor(Main.layoutManager.primaryIndex);
                 if (!dock)
                     return box;
 
+                // GNOME 46 changes "spacing" to "_spacing".
+                const spacing = this.spacing ?? this._spacing;
                 const adjustedBox = maybeAdjustBoxSize(state, box, spacing);
 
                 if (state === OverviewControls.ControlsState.WINDOW_PICKER) {
@@ -2566,6 +2566,7 @@ export class DockManager {
                 const dock = DockManager.getDefault().getDockByMonitor(this._monitorIndex);
                 if (!dock)
                     return box;
+
                 if (state !== OverviewControls.ControlsState.WINDOW_PICKER)
                     return box;
 
