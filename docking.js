@@ -87,6 +87,12 @@ const WorkspaceLayout = Object.freeze({
     // the window picker. Stock GNOME ends up around this ratio by reserving the
     // bottom dash space, which dash-to-dock removes.
     MAX_WIDTH_RATIO: 0.80,
+
+    // Minimum width share the current workspace keeps on narrow work areas.
+    MIN_WIDTH_RATIO: 0.70,
+
+    // Work area aspect ratio below which the max width ratio starts shrinking.
+    WIDE_ASPECT_RATIO: 1.3,
 });
 
 /**
@@ -2419,10 +2425,15 @@ export class DockManager {
             if (workArea.width <= 0 || workArea.height <= 0)
                 return box;
 
+            const aspectRatio = workArea.width / workArea.height;
+            const maxWidthRatio = Math.clamp(
+                WorkspaceLayout.MAX_WIDTH_RATIO * aspectRatio /
+                    WorkspaceLayout.WIDE_ASPECT_RATIO,
+                WorkspaceLayout.MIN_WIDTH_RATIO, WorkspaceLayout.MAX_WIDTH_RATIO);
             const {scaleFactor} = St.ThemeContext.get_for_stage(global.stage);
             const maxWorkspaceWidth = Math.min(
                 box.get_width() - 2 * WorkspaceLayout.MIN_SPACING * scaleFactor,
-                box.get_width() * WorkspaceLayout.MAX_WIDTH_RATIO);
+                box.get_width() * maxWidthRatio);
             const maxHeight = maxWorkspaceWidth * workArea.height / workArea.width;
 
             if (maxHeight <= 0 || box.get_height() <= maxHeight)
