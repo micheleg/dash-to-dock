@@ -2413,13 +2413,12 @@ export class DockManager {
             return box;
         };
 
-        const maybeLimitWorkspaceBoxSize = box => {
+        const maybeLimitWorkspaceBoxSize = (box, monitorIndex) => {
             // Workspaces preserve the monitor work area aspect ratio, so when
             // the dock reduces the available width we must reduce the height
             // too, otherwise the current workspace fills the whole box and
             // pushes the adjacent ones outside of the visible area.
-            const workArea = Main.layoutManager.getWorkAreaForMonitor(
-                Main.layoutManager.primaryIndex);
+            const workArea = Main.layoutManager.getWorkAreaForMonitor(monitorIndex);
             if (workArea.width <= 0 || workArea.height <= 0)
                 return box;
 
@@ -2547,8 +2546,10 @@ export class DockManager {
 
                 const adjustedBox = maybeAdjustBoxSize(state, box, spacing);
 
-                if (state === OverviewControls.ControlsState.WINDOW_PICKER)
-                    return maybeLimitWorkspaceBoxSize(adjustedBox);
+                if (state === OverviewControls.ControlsState.WINDOW_PICKER) {
+                    return maybeLimitWorkspaceBoxSize(
+                        adjustedBox, Main.layoutManager.primaryIndex);
+                }
 
                 return adjustedBox;
                 /* eslint-enable no-invalid-this */
@@ -2565,12 +2566,15 @@ export class DockManager {
                 const dock = DockManager.getDefault().getDockByMonitor(this._monitorIndex);
                 if (!dock)
                     return box;
-                if (state === OverviewControls.ControlsState.WINDOW_PICKER &&
-                    dock.position === St.Side.BOTTOM) {
+                if (state !== OverviewControls.ControlsState.WINDOW_PICKER)
+                    return box;
+
+                if (dock.position === St.Side.BOTTOM) {
                     const [, preferredHeight] = dock.get_preferred_height(box.get_width());
                     box.y2 -= preferredHeight;
                 }
-                return box;
+
+                return maybeLimitWorkspaceBoxSize(box, this._monitorIndex);
                 /* eslint-enable no-invalid-this */
             },
         ], [
