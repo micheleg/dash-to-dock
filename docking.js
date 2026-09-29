@@ -2414,6 +2414,13 @@ export class DockManager {
         };
 
         const maybeLimitWorkspaceBoxSize = (box, monitorIndex) => {
+            if (!Meta.prefs_get_dynamic_workspaces() &&
+                Meta.prefs_get_num_workspaces() <= 1)
+                return box;
+
+            if (global.workspaceManager.layout_rows === -1)
+                return box;
+
             // Workspaces preserve the monitor work area aspect ratio, so when
             // the dock reduces the available width we must reduce the height
             // too, otherwise the current workspace fills the whole box and
@@ -2574,6 +2581,9 @@ export class DockManager {
                     const [, preferredHeight] = dock.get_preferred_height(box.get_width());
                     box.y2 -= preferredHeight;
                 }
+
+                if (this._workspacesView instanceof WorkspacesView.ExtraWorkspaceView)
+                    return box;
 
                 return maybeLimitWorkspaceBoxSize(box, this._monitorIndex);
                 /* eslint-enable no-invalid-this */
