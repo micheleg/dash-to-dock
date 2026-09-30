@@ -328,7 +328,7 @@ const DockedDash = GObject.registerClass({
             // Monitor windows overlapping
             this._intellihide,
             'status-changed',
-            this._updateDashVisibility.bind(this),
+            () => this.updateDashVisibility(),
         ], [
             this.dash,
             'menu-opened',
@@ -345,7 +345,7 @@ const DockedDash = GObject.registerClass({
         ], [
             this.dash,
             'notify::requires-visibility',
-            () => this._updateDashVisibility(),
+            () => this.updateDashVisibility(),
         ]);
 
         if (!Main.overview.isDummy) {
@@ -773,7 +773,7 @@ const DockedDash = GObject.registerClass({
             this.intellihideEnabled = settings.intellihide;
         }
 
-        this._updateDashVisibility();
+        this.updateDashVisibility();
     }
 
     /**
@@ -784,7 +784,7 @@ const DockedDash = GObject.registerClass({
      * autohide
      * overview visibility
      */
-    _updateDashVisibility() {
+    updateDashVisibility() {
         if (DockManager.settings.manualhide) {
             this._ignoreHover = true;
             this._removeAnimations();
@@ -834,12 +834,12 @@ const DockedDash = GObject.registerClass({
 
     _onOverviewHiding() {
         this._intellihide.enable();
-        this._updateDashVisibility();
+        this.updateDashVisibility();
     }
 
     _onOverviewHidden() {
         this.remove_style_class_name('overview');
-        this._updateDashVisibility();
+        this.updateDashVisibility();
     }
 
     _onMenuOpened() {
@@ -849,7 +849,7 @@ const DockedDash = GObject.registerClass({
     _onMenuClosed() {
         this._ignoreHover = false;
         this._box.sync_hover();
-        this._updateDashVisibility();
+        this.updateDashVisibility();
     }
 
     _hoverChanged() {
@@ -1405,7 +1405,7 @@ const DockedDash = GObject.registerClass({
         }
 
         this._box.sync_hover();
-        this._updateDashVisibility();
+        this.updateDashVisibility();
     }
 
     /**
@@ -1714,7 +1714,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
                     dock._numberOverlayTimeoutId = 0;
                     dock.dash.toggleNumberOverlay(false);
                     // Hide the dock again if necessary
-                    dock._updateDashVisibility();
+                    dock.updateDashVisibility();
                 });
 
             // Show the dock if it is hidden
