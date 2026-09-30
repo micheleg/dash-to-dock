@@ -1547,16 +1547,12 @@ const DockedDash = GObject.registerClass({
         };
     }
 
-    _activateApp(appIndex) {
-        const children = this.dash._box.get_children().filter(actor => {
-            return actor.child &&
-                       actor.child.app;
-        });
+    activateApp(appIndex) {
+        const children = this.dash._box.get_children().filter(
+            actor => !!actor.child?.app);
 
         // Apps currently in the dash
-        const apps = children.map(actor => {
-            return actor.child;
-        });
+        const apps = children.map(actor => actor.child);
 
         // Activate with button = 1, i.e. same as left click
         const button = 1;
@@ -1612,7 +1608,6 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
 
         // Setup keyboard bindings for dash elements
         const keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
-        const {mainDock} = DockManager.getDefault();
         keys.forEach(function (key) {
             for (let i = 0; i < NUM_HOTKEYS; i++) {
                 const appNum = i;
@@ -1620,8 +1615,18 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
                     Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
                     Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                     () => {
-                        mainDock._activateApp(appNum);
-                        this._showOverlay();
+                        const dockManager = DockManager.getDefault();
+                        let dock = dockManager.mainDock;
+
+                        if (Main.layoutManager.monitors.length > 1) {
+                            const monitorIndex =
+                                Main.layoutManager.findMonitorForPoint(...global.get_pointer());
+                            dock = dockManager.getDockByMonitor(monitorIndex) ??
+                                dockManager.mainDock;
+                        }
+
+                        dock.activateApp(appNum);
+                        this._showOverlay({docks: [dock]});
                     });
             }
         }, this);
@@ -1680,7 +1685,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
             Main.wm.addKeybinding('shortcut', DockManager.settings,
                 Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
-                this._showOverlay.bind(this));
+                () => this._showOverlay());
             this._shortcutIsSet = true;
         }
     }
@@ -1692,8 +1697,8 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
         }
     }
 
-    _showOverlay() {
-        for (const dock of DockManager.allDocks) {
+    _showOverlay({docks} = {docks: DockManager.allDocks}) {
+        for (const dock of docks) {
             if (DockManager.settings.hotkeysOverlay)
                 dock.dash.toggleNumberOverlay(true);
 
