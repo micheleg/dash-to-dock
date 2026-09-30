@@ -41,8 +41,7 @@ export class AppIconsDecorator {
         delete this._methodInjections;
         this._propertyInjections?.destroy();
         delete this._propertyInjections;
-        this._clearIndicators(Labels.ICONS);
-        this._clearIndicators(Labels.RESULTS);
+        Object.values(Labels).forEach(label => this._clearIndicators(label));
         delete this._indicators;
         delete this._resultIndicators;
         delete this._updatingIcons;
