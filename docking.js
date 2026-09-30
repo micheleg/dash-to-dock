@@ -1572,43 +1572,7 @@ const NUM_HOTKEYS = 10;
 
 const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     constructor() {
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
-
-        this._hotKeysEnabled = false;
-        if (DockManager.settings.hotKeys)
-            this._enableHotKeys();
-
-        this._signalsHandler.add([
-            DockManager.settings,
-            'changed::hot-keys',
-            () => {
-                if (DockManager.settings.hotKeys)
-                    this._enableHotKeys.bind(this)();
-                else
-                    this._disableHotKeys.bind(this)();
-            },
-        ]);
-
-        this._optionalNumberOverlay();
-    }
-
-    destroy() {
-        DockManager.allDocks.forEach(dock => {
-            if (dock._numberOverlayTimeoutId) {
-                GLib.source_remove(dock._numberOverlayTimeoutId);
-                delete dock._numberOverlayTimeoutId;
-            }
-        });
-
-        // Remove keybindings
-        this._disableHotKeys();
-        this._disableExtraShortcut();
-        this._signalsHandler.destroy();
-    }
-
-    _enableHotKeys() {
-        if (this._hotKeysEnabled)
-            return;
+        const {settings} = DockManager;
 
         // Setup keyboard bindings for dash elements
         const keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
@@ -1626,70 +1590,33 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
             }
         }, this);
 
-        this._hotKeysEnabled = true;
-    }
-
-    _disableHotKeys() {
-        if (!this._hotKeysEnabled)
-            return;
-
-        const keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
-        keys.forEach(key => {
-            for (let i = 0; i < NUM_HOTKEYS; i++)
-                Main.wm.removeKeybinding(key + (i + 1));
-        }, this);
-
-        this._hotKeysEnabled = false;
-    }
-
-    _optionalNumberOverlay() {
-        const {settings} = DockManager;
-        this._shortcutIsSet = false;
         // Enable extra shortcut if either 'overlay' or 'show-dock' are true
-        if (settings.hotKeys &&
-           (settings.hotkeysOverlay || settings.hotkeysShowDock))
-            this._enableExtraShortcut();
-
-        this._signalsHandler.add([
-            settings,
-            'changed::hot-keys',
-            this._checkHotkeysOptions.bind(this),
-        ], [
-            settings,
-            'changed::hotkeys-overlay',
-            this._checkHotkeysOptions.bind(this),
-        ], [
-            settings,
-            'changed::hotkeys-show-dock',
-            this._checkHotkeysOptions.bind(this),
-        ]);
-    }
-
-    _checkHotkeysOptions() {
-        const {settings} = DockManager;
-
-        if (settings.hotKeys &&
-           (settings.hotkeysOverlay || settings.hotkeysShowDock))
-            this._enableExtraShortcut();
-        else
-            this._disableExtraShortcut();
-    }
-
-    _enableExtraShortcut() {
-        if (!this._shortcutIsSet) {
+        this._shortcutIsSet = settings.hotkeysOverlay || settings.hotkeysShowDock;
+        if (this._shortcutIsSet) {
             Main.wm.addKeybinding('shortcut', DockManager.settings,
                 Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                 this._showOverlay.bind(this));
-            this._shortcutIsSet = true;
         }
     }
 
-    _disableExtraShortcut() {
-        if (this._shortcutIsSet) {
+    destroy() {
+        DockManager.allDocks.forEach(dock => {
+            if (dock._numberOverlayTimeoutId) {
+                GLib.source_remove(dock._numberOverlayTimeoutId);
+                delete dock._numberOverlayTimeoutId;
+            }
+        });
+
+        // Remove keybindings
+        const keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
+        keys.forEach(key => {
+            for (let i = 0; i < NUM_HOTKEYS; i++)
+                Main.wm.removeKeybinding(key + (i + 1));
+        });
+
+        if (this._shortcutIsSet)
             Main.wm.removeKeybinding('shortcut');
-            this._shortcutIsSet = false;
-        }
     }
 
     _showOverlay() {
@@ -2167,6 +2094,20 @@ export class DockManager extends EventEmitter {
             () => this._updateWorkspaceIsolation(),
         ]);
 
+        this._signalsHandler.add([
+            this._settings,
+            'changed::hot-keys',
+            () => this._updateKeyboardShortcuts(),
+        ], [
+            this._settings,
+            'changed::hotkeys-overlay',
+            () => this._updateKeyboardShortcuts(),
+        ], [
+            this._settings,
+            'changed::hotkeys-show-dock',
+            () => this._updateKeyboardShortcuts(),
+        ]);
+
         this._mapExternalSetting(this._appSwitcherSettings, 'current-workspace-only',
             'isolate-workspaces', value => value || undefined);
     }
@@ -2235,7 +2176,7 @@ export class DockManager extends EventEmitter {
         // Load optional features. We load *after* the docks are created, since
         // we need to connect the signals to all dock instances.
         this._updateWorkspaceIsolation();
-        this._keyboardShortcuts = new KeyboardShortcuts();
+        this._updateKeyboardShortcuts();
 
         this.emit('docks-ready');
     }
@@ -2296,6 +2237,14 @@ export class DockManager extends EventEmitter {
             this._workspaceIsolation = new WorkspaceIsolation();
 
         this._allDocks.forEach(dock => dock.dash.resetAppIcons());
+    }
+
+    _updateKeyboardShortcuts() {
+        this._keyboardShortcuts?.destroy();
+        delete this._keyboardShortcuts;
+
+        if (this.settings.hotKeys && this.mainDock)
+            this._keyboardShortcuts = new KeyboardShortcuts();
     }
 
     _runStartupAnimation() {
