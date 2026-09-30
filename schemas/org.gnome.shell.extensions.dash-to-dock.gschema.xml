@@ -186,6 +186,16 @@
       <summary>Fixed icon size</summary>
       <description>Keep the icon size fixed by scrolling the dock.</description>
     </key>
+    <key type="b" name="magnify-icons">
+      <default>false</default>
+      <summary>Magnify icons on hover</summary>
+      <description>Enable a macOS-like magnification effect, growing icons as the pointer approaches them.</description>
+    </key>
+    <key type="d" name="magnification-factor">
+      <default>1.7</default>
+      <summary>Magnification factor</summary>
+      <description>Set how much the icon closest to the pointer is magnified. Allowed range: 1.0..3.0.</description>
+    </key>
     <key type="b" name="apply-custom-theme">
       <default>false</default>
       <summary>Apply custom theme</summary>
