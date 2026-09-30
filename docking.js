@@ -1564,9 +1564,10 @@ const DockedDash = GObject.registerClass({
 /*
  * Handle keyboard shortcuts
  */
-const NUM_HOTKEYS = 10;
-
 const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
+    static NUM_HOTKEYS = 10;
+    static KEYS = ['app-hotkey', 'app-shift-hotkey', 'app-ctrl-hotkey'];
+
     constructor() {
         this._signalsHandler = new Utils.GlobalSignalsHandler();
 
@@ -1607,11 +1608,10 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
             return;
 
         // Setup keyboard bindings for dash elements
-        const keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
-        keys.forEach(function (key) {
-            for (let i = 0; i < NUM_HOTKEYS; i++) {
+        KeyboardShortcuts.KEYS.forEach(key => {
+            for (let i = 0; i < KeyboardShortcuts.NUM_HOTKEYS; i++) {
                 const appNum = i;
-                Main.wm.addKeybinding(key + (i + 1), DockManager.settings,
+                Main.wm.addKeybinding(`${key}-${i + 1}`, DockManager.settings,
                     Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
                     Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
                     () => {
@@ -1638,10 +1638,9 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
         if (!this._hotKeysEnabled)
             return;
 
-        const keys = ['app-hotkey-', 'app-shift-hotkey-', 'app-ctrl-hotkey-'];
-        keys.forEach(key => {
-            for (let i = 0; i < NUM_HOTKEYS; i++)
-                Main.wm.removeKeybinding(key + (i + 1));
+        KeyboardShortcuts.KEYS.forEach(key => {
+            for (let i = 0; i < KeyboardShortcuts.NUM_HOTKEYS; i++)
+                Main.wm.removeKeybinding(`${key}-${i + 1}`);
         }, this);
 
         this._hotKeysEnabled = false;
