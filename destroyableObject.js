@@ -24,3 +24,13 @@ export class DestroyableIface extends GObject.Interface {
         this.emit('destroy');
     }
 }
+
+export class DestroyableObject extends GObject.Object {
+    static [GObject.interfaces] = [DestroyableIface];
+
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+}
