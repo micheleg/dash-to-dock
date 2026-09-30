@@ -1593,12 +1593,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     }
 
     destroy() {
-        DockManager.allDocks.forEach(dock => {
-            if (dock._numberOverlayTimeoutId) {
-                GLib.source_remove(dock._numberOverlayTimeoutId);
-                delete dock._numberOverlayTimeoutId;
-            }
-        });
+        this._hideOverlay();
 
         // Remove keybindings
         this._disableHotKeys();
@@ -1700,33 +1695,42 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     }
 
     _showOverlay({docks} = {docks: DockManager.allDocks}) {
-        for (const dock of docks) {
+        // Restart the counting if the shortcut is pressed again
+        if (this._numberOverlayTimeoutId)
+            this._hideOverlay();
+
+        docks.forEach(dock => {
+            const {dash} = dock;
+
             if (DockManager.settings.hotkeysOverlay)
-                dock.dash.toggleNumberOverlay(true);
-
-            // Restart the counting if the shortcut is pressed again
-            if (dock._numberOverlayTimeoutId) {
-                GLib.source_remove(dock._numberOverlayTimeoutId);
-                dock._numberOverlayTimeoutId = 0;
-            }
-
-            // Hide the overlay/dock after the timeout
-            const timeout = DockManager.settings.shortcutTimeout * 1000;
-            dock._numberOverlayTimeoutId = GLib.timeout_add(
-                GLib.PRIORITY_DEFAULT, timeout, () => {
-                    dock._numberOverlayTimeoutId = 0;
-                    dock.dash.toggleNumberOverlay(false);
-                    // Hide the dock again if necessary
-                    dock.updateDashVisibility();
-                });
+                dash.toggleNumberOverlay(true);
 
             // Show the dock if it is hidden
-            if (DockManager.settings.hotkeysShowDock) {
-                const showDock = dock.intellihideEnabled || dock.autohideEnabled;
-                if (showDock)
-                    dock.showDock();
-            }
-        }
+            if (DockManager.settings.hotkeysShowDock)
+                dock.showDock();
+        });
+
+        const {shortcutTimeout} = DockManager.settings;
+        this._numberOverlayTimeoutId = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, shortcutTimeout * 1000, () => {
+                this._hideOverlay({docks});
+                return GLib.SOURCE_REMOVE;
+            });
+    }
+
+    _hideOverlay({docks} = {docks: DockManager.allDocks}) {
+        if (!this._numberOverlayTimeoutId)
+            return;
+
+        GLib.source_remove(this._numberOverlayTimeoutId);
+        delete this._numberOverlayTimeoutId;
+
+        docks.forEach(dock => {
+            dock.dash.toggleNumberOverlay(false);
+
+            // Hide the dock again if necessary
+            dock.updateDashVisibility();
+        });
     }
 };
 
