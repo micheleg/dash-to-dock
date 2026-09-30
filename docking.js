@@ -1580,9 +1580,9 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
             'changed::hot-keys',
             () => {
                 if (DockManager.settings.hotKeys)
-                    this._enableHotKeys.bind(this)();
+                    this._enableHotKeys();
                 else
-                    this._disableHotKeys.bind(this)();
+                    this._disableHotKeys();
             },
         ]);
 
