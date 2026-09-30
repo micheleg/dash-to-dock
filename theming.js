@@ -379,7 +379,7 @@ class Transparency extends EventEmitter {
         super();
 
         this._dash = dock.dash;
-        this._actor = this._dash._container;
+        this._actor = this._dash.container;
         this._backgroundActor = this._dash._background;
         this._dockActor = dock;
         this._dock = dock;
@@ -515,7 +515,7 @@ class Transparency extends EventEmitter {
         const activeWorkspace = global.workspace_manager.get_active_workspace();
         const dash = this._dash;
         const windows = activeWorkspace.list_windows().filter(metaWindow => {
-            return metaWindow.get_monitor() === dash._monitorIndex &&
+            return metaWindow.get_monitor() === dash.monitorIndex &&
                    metaWindow.showing_on_its_workspace() &&
                    metaWindow.get_window_type() !== Meta.WindowType.DESKTOP &&
                    !metaWindow.skip_taskbar;

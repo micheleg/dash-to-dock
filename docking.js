@@ -366,7 +366,7 @@ const DockedDash = GObject.registerClass({
 
         // Since Clutter has no longer ClutterAllocationFlags,
         // "allocation-changed" signal has been removed. MR !1245
-        this.dash._container.connect('notify::allocation', this._updateStaticBox.bind(this));
+        this.dash.container.connect('notify::allocation', () => this._updateStaticBox());
         this._slider.connect('notify::allocation', () => this._updateStaticBox());
 
         // Load optional features that need to be activated for one dock only
@@ -1175,10 +1175,10 @@ const DockedDash = GObject.registerClass({
             this.y = posY;
 
             if (extendHeight) {
-                this.dash._container.set_width(this.width);
+                this.dash.container.set_width(this.width);
                 this.add_style_class_name('extended');
             } else {
-                this.dash._container.set_width(-1);
+                this.dash.container.set_width(-1);
                 this.remove_style_class_name('extended');
             }
         } else {
@@ -1192,10 +1192,10 @@ const DockedDash = GObject.registerClass({
             this.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
 
             if (extendHeight) {
-                this.dash._container.set_height(this.height);
+                this.dash.container.set_height(this.height);
                 this.add_style_class_name('extended');
             } else {
-                this.dash._container.set_height(-1);
+                this.dash.container.set_height(-1);
                 this.remove_style_class_name('extended');
             }
         }

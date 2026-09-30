@@ -289,6 +289,10 @@ export const DockDash = GObject.registerClass({
         this.connect('destroy', this._onDestroy.bind(this));
     }
 
+    get monitorIndex() {
+        return this._monitorIndex;
+    }
+
     vfunc_get_preferred_height(forWidth) {
         const [minHeight, natHeight] = super.vfunc_get_preferred_height.call(this, forWidth);
         if (!this._isHorizontal && this._maxHeight !== -1 && natHeight > this._maxHeight)
@@ -305,7 +309,7 @@ export const DockDash = GObject.registerClass({
             return [minWidth, natWidth];
     }
 
-    get _container() {
+    get container() {
         return this._dashContainer;
     }
 
@@ -636,7 +640,7 @@ export const DockDash = GObject.registerClass({
 
         // Check if the container is present in the stage. This avoids critical
         // errors when unlocking the screen
-        if (!this._container.get_stage())
+        if (!this.container.get_stage())
             return;
 
         const themeNode = this._dashContainer.get_theme_node();
