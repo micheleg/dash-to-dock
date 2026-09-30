@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+#export DH_VERBOSE = 1
+
+%:
+	dh $@ --with translations
+
+override_dh_install:
+	dh_install --fail-missing
+	rm debian/*/usr/share/gnome-shell/extensions/ubuntu-dock@ubuntu.com/COPYING
+	touch $(shell realpath debian/*/usr/share/gnome-shell/extensions/ubuntu-dock@ubuntu.com)/ubuntu.css
+
+override_dh_translations:
+	make ./po/dashtodock.pot
+	dh_translations
+
+override_dh_gencontrol:
+	dh_gencontrol -- \
+		-Vgnome:MinimumVersion=$(shell python3 -c "import json; print(min(int(x) for x in json.load(open('metadata.json', 'rt'))['shell-version']))") \
+		-Vgnome:MaximumVersion=$(shell python3 -c "import json; print(1+max(int(x) for x in json.load(open('metadata.json', 'rt'))['shell-version']))")
+
+override_dh_auto_test:
+	env ESLINT_TAP=1 dh_auto_test

@@ -1,0 +1,5 @@
+# Disable some files that fail in ubuntu
+appIcons.js
+dbusmenuUtils.js
+launcherAPI.js
+
