@@ -1,12 +1,24 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-import {Gio} from './dependencies/gi.js';
+import {Gio, GObject} from './dependencies/gi.js';
 import {DBusMenuUtils} from './imports.js';
+
+import {EventEmitter} from './dependencies/shell/misc.js';
+
+import {DestroyableObject} from './destroyableObject.js';
 
 const DBusMenu = await DBusMenuUtils.haveDBusMenu();
 
-export class LauncherEntryRemoteModel {
+export class LauncherEntryRemoteModel extends DestroyableObject {
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor() {
+        super();
+
         this._entrySourceStacks = new Map();
         this._remoteMaps = new Map();
 
@@ -43,6 +55,8 @@ export class LauncherEntryRemoteModel {
 
 
         this._releaseUnityDBus();
+
+        super.destroy();
     }
 
     _lookupStackById(appId) {
@@ -123,7 +137,7 @@ export class LauncherEntryRemoteModel {
                     remote.quicklist = null;
                     let menuClient = remote._quicklistMenuClient;
                     if (menuClient) {
-                        menuClient.disconnect(menuClient._rootChangedHandlerId);
+                        menuClient.disconnectObject(this);
                         menuClient.dbus_object = quicklistPath;
                     } else {
                         // This property should not be enumerable
@@ -145,8 +159,8 @@ export class LauncherEntryRemoteModel {
                             }
                         }
                     };
-                    menuClient._rootChangedHandlerId =
-                        menuClient.connect(DBusMenu.CLIENT_SIGNAL_ROOT_CHANGED, handler);
+                    menuClient.connectObject(DBusMenu.CLIENT_SIGNAL_ROOT_CHANGED,
+                        handler, this);
                 }
             } else {
                 remote[name] = properties[name].unpack();
@@ -168,8 +182,10 @@ const launcherEntryDefaults = Object.freeze({
     'progress-visible': false,
 });
 
-const LauncherEntry = class DashToDockLauncherEntry {
+const LauncherEntry = class DashToDockLauncherEntry extends EventEmitter {
     constructor() {
+        super();
+
         this._connections = new Map();
         this._handlers = new Map();
         this._nextId = 0;

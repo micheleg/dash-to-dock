@@ -1,19 +1,18 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
-import {GLib, Gio} from './dependencies/gi.js';
-const {signals: Signals} = imports;
+import {GLib, Gio, GObject} from './dependencies/gi.js';
+
+import {DestroyableObject} from './destroyableObject.js';
 
 import {Utils} from './imports.js';
+
+import {SignalTracker} from './dependencies/shell/misc.js';
 
 const FileManager1Iface = '<node><interface name="org.freedesktop.FileManager1">\
                                <property name="OpenWindowsWithLocations" type="a{sas}" access="read"/>\
                            </interface></node>';
 
 const FileManager1Proxy = Gio.DBusProxy.makeProxyWrapper(FileManager1Iface);
-
-const Labels = Object.freeze({
-    WINDOWS: Symbol('windows'),
-});
 
 /**
  * This class implements a client for the org.freedesktop.FileManager1 dbus
@@ -23,9 +22,20 @@ const Labels = Object.freeze({
  * The property is a map from window identifiers to a list of locations open in
  * the window.
  */
-export class FileManager1Client {
+export class FileManager1Client extends DestroyableObject {
+    static [GObject.signals] = {
+        'windows-changed': {},
+    };
+
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor() {
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
+        super();
+
         this._cancellable = new Gio.Cancellable();
 
         this._windowsByPath = new Map();
@@ -44,29 +54,20 @@ export class FileManager1Client {
                 }
             }, this._cancellable);
 
-        this._signalsHandler.add([
-            this._proxy,
-            'g-properties-changed',
-            this._onPropertyChanged.bind(this),
-        ], [
-            // We must additionally listen for Screen events to know when to
-            // rebuild our location map when the set of available windows changes.
-            global.workspaceManager,
-            'workspace-added',
-            () => this._onWindowsChanged(),
-        ], [
-            global.workspaceManager,
-            'workspace-removed',
-            () => this._onWindowsChanged(),
-        ], [
-            global.display,
-            'window-entered-monitor',
-            () => this._onWindowsChanged(),
-        ], [
-            global.display,
-            'window-left-monitor',
-            () => this._onWindowsChanged(),
-        ]);
+        this._proxy.connectObject('g-properties-changed',
+            (...args) => this._onPropertyChanged(...args), this);
+
+        // We must additionally listen for Screen events to know when to
+        // rebuild our location map when the set of available windows changes.
+        global.workspaceManager.connectObject(
+            'workspace-added', () => this._onWindowsChanged(),
+            'workspace-removed', () => this._onWindowsChanged(),
+            this);
+
+        global.display.connectObject(
+            'window-entered-monitor', () => this._onWindowsChanged(),
+            'window-left-monitor', () => this._onWindowsChanged(),
+            this);
     }
 
     destroy() {
@@ -74,11 +75,13 @@ export class FileManager1Client {
             GLib.source_remove(this._windowsUpdateIdle);
             delete this._windowsUpdateIdle;
         }
+
         this._cancellable.cancel();
-        this._signalsHandler.destroy();
         this._windowsByLocation.clear();
         this._windowsByPath.clear();
         this._proxy = null;
+
+        super.destroy();
     }
 
     /**
@@ -161,7 +164,9 @@ export class FileManager1Client {
         const locationsByWindowsPath = this._proxy.OpenWindowsWithLocations;
 
         const windowsByLocation = new Map();
-        this._signalsHandler.removeWithLabel(Labels.WINDOWS);
+
+        this._locationMapSignals?.destroy();
+        this._locationMapSignals = new SignalTracker.TransientSignalHolder(this);
 
         Object.entries(locationsByWindowsPath).forEach(([windowPath, locations]) => {
             locations.forEach(location => {
@@ -180,14 +185,13 @@ export class FileManager1Client {
                     if (windows.size === 1)
                         windowsByLocation.set(location, windows);
 
-                    this._signalsHandler.addWithLabel(Labels.WINDOWS, window,
-                        'unmanaged', () => {
-                            const wins = this._windowsByLocation.get(location);
-                            wins.delete(window);
-                            if (!wins.size)
-                                this._windowsByLocation.delete(location);
-                            this.emit('windows-changed');
-                        });
+                    window.connectObject('unmanaged', () => {
+                        const wins = this._windowsByLocation.get(location);
+                        wins.delete(window);
+                        if (!wins.size)
+                            this._windowsByLocation.delete(location);
+                        this.emit('windows-changed');
+                    }, this._locationMapSignals);
                 });
             });
         });
@@ -198,4 +202,4 @@ export class FileManager1Client {
         }
     }
 }
-Signals.addSignalMethods(FileManager1Client.prototype);
+

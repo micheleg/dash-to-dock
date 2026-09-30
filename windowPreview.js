@@ -53,16 +53,15 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
             `max-height: ${Math.round(workArea.height / scaleFactor) - MENU_MARGINS}px;`);
         this.actor.hide();
 
-        // Chain our visibility and lifecycle to that of the source
-        this._mappedId = this._source.connect('notify::mapped', () => {
+        // Chain our visibility and lifecycle to that of the source, tracking
+        // both with the box pointer, as a PopupMenu is an EventEmitter and
+        // destroying the menu destroys it.
+        this._source.connectObject('notify::mapped', () => {
             if (!this._source.mapped)
                 this.close();
-        });
-        this._destroyId = this._source.connect('destroy', this.destroy.bind(this));
+        }, 'destroy', () => this.destroy(), this.actor);
 
         Utils.addActor(Main.uiGroup, this.actor);
-
-        this.connect('destroy', this._onDestroy.bind(this));
     }
 
     _redisplay() {
@@ -82,14 +81,6 @@ export class WindowPreviewMenu extends PopupMenu.PopupMenu {
             this._source.emit('sync-tooltip');
         }
     }
-
-    _onDestroy() {
-        if (this._mappedId)
-            this._source.disconnect(this._mappedId);
-
-        if (this._destroyId)
-            this._source.disconnect(this._destroyId);
-    }
 }
 
 class WindowPreviewList extends PopupMenu.PopupMenuSection {
@@ -103,7 +94,8 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
             enable_mouse_scrolling: true,
         });
 
-        this.actor.connect('scroll-event', this._onScrollEvent.bind(this));
+        this.actor.connectObject('scroll-event',
+            (...args) => this._onScrollEvent(...args), this.actor);
 
         const position = Utils.getPosition();
         this.isHorizontal = position === St.Side.BOTTOM || position === St.Side.TOP;
@@ -122,9 +114,8 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
 
         this._redisplayId = Main.initializeDeferredWork(this.actor, this._redisplay.bind(this));
 
-        this.actor.connect('destroy', this._onDestroy.bind(this));
-        this._stateChangedId = this.app.connect('windows-changed',
-            this._queueRedisplay.bind(this));
+        this.app.connectObject('windows-changed',
+            (...args) => this._queueRedisplay(...args), this.actor);
     }
 
     _queueRedisplay() {
@@ -174,11 +165,6 @@ class WindowPreviewList extends PopupMenu.PopupMenuSection {
         adjustment.set_value(adjustment.get_value() + delta);
 
         return Clutter.EVENT_STOP;
-    }
-
-    _onDestroy() {
-        this.app.disconnect(this._stateChangedId);
-        this._stateChangedId = 0;
     }
 
     _createPreviewItem(window) {
@@ -327,8 +313,6 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         super._init(params);
 
         this._window = window;
-        this._destroyId = 0;
-        this._windowAddedId = 0;
 
         // We don't want this: it adds spacing on the left of the item.
         this.remove_child(this._ornamentIcon);
@@ -359,7 +343,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             y_align: Clutter.ActorAlign.START,
         });
         Utils.addActor(this.closeButton, new St.Icon({icon_name: 'window-close-symbolic'}));
-        this.closeButton.connect('clicked', () => this._closeWindow());
+        this.closeButton.connectObject('clicked', () => this._closeWindow(), this);
 
         const overlayGroup = new Clutter.Actor({
             layout_manager: new Clutter.BinLayout(),
@@ -376,9 +360,8 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
             x_align: Clutter.ActorAlign.CENTER,
         });
 
-        this._windowTitleId = this._window.connect('notify::title', () => {
-            label.set_text(this._window.get_title());
-        });
+        this._window.connectObject('notify::title',
+            () => label.set_text(this._window.get_title()), this);
 
         const box = new St.BoxLayout({
             reactive: true,
@@ -483,24 +466,15 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
 
         // when the source actor is destroyed, i.e. the window closed, first destroy the clone
         // and then destroy the menu item (do this animating out)
-        this._destroyId = mutterWindow.connect('destroy', () => {
+        mutterWindow.connectObject('destroy', () => {
             clone.destroy();
-            this._destroyId = 0; // avoid to try to disconnect this signal from mutterWindow in _onDestroy(),
-            // as the object was just destroyed
             this._animateOutAndDestroy();
-        });
+        }, this);
 
         this._clone = clone;
-        this._mutterWindow = mutterWindow;
         this._cloneBin.set_child(this._clone);
 
-        this._clone.connect('destroy', () => {
-            if (this._destroyId) {
-                mutterWindow.disconnect(this._destroyId);
-                this._destroyId = 0;
-            }
-            this._clone = null;
-        });
+        this._clone.connectObject('destroy', () => (this._clone = null), this);
     }
 
     _windowCanClose() {
@@ -515,8 +489,8 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         // It forces window activation if the windows don't get closed,
         // for instance because asking user confirmation, by monitoring the opening of
         // such additional confirmation window
-        this._windowAddedId = this._workspace.connect('window-added',
-            this._onWindowAdded.bind(this));
+        this._workspace.connectObject('window-added',
+            (...args) => this._onWindowAdded(...args), this);
 
         this.deleteAllWindows();
     }
@@ -539,8 +513,7 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         const metaWindow = this._window;
 
         if (win.get_transient_for() === metaWindow) {
-            workspace.disconnect(this._windowAddedId);
-            this._windowAddedId = 0;
+            workspace.disconnectObject(this);
 
             // use an idle handler to avoid mapping problems -
             // see comment in Workspace._windowAdded
@@ -661,21 +634,6 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
         if (this._windowAddedLater) {
             Utils.laterRemove(this._windowAddedLater);
             delete this._windowAddedLater;
-        }
-
-        if (this._windowAddedId > 0) {
-            this._workspace.disconnect(this._windowAddedId);
-            this._windowAddedId = 0;
-        }
-
-        if (this._destroyId > 0) {
-            this._mutterWindow.disconnect(this._destroyId);
-            this._destroyId = 0;
-        }
-
-        if (this._windowTitleId > 0) {
-            this._window.disconnect(this._windowTitleId);
-            this._windowTitleId = 0;
         }
     }
 });

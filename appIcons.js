@@ -22,6 +22,7 @@ import {
 
 import {
     ParentalControlsManager,
+    SignalTracker,
     Util,
 } from './dependencies/shell/misc.js';
 
@@ -42,12 +43,6 @@ import {Extension} from './dependencies/shell/extensions/extension.js';
 const {gettext: __, ngettext} = Extension;
 
 const DBusMenu = await DBusMenuUtils.haveDBusMenu();
-
-const Labels = Object.freeze({
-    ISOLATE_MONITORS: Symbol('isolate-monitors'),
-    ISOLATE_WORKSPACES: Symbol('isolate-workspaces'),
-    URGENT_WINDOWS: Symbol('urgent-windows'),
-});
 
 const clickAction = Object.freeze({
     SKIP: 0,
@@ -122,7 +117,6 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         // a prefix is required to avoid conflicting with the parent class variable
         this.monitorIndex = monitorIndex;
-        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
         this.iconAnimator = iconAnimator;
         this._indicator = new AppIconIndicators.AppIconIndicator(this);
         this._urgentWindows = new Set();
@@ -134,24 +128,26 @@ export const DockAbstractAppIcon = GObject.registerClass({
             this._stateChangedId = 0;
         }
 
-        this._signalsHandler.add(this.app, 'windows-changed', () => this._updateWindows());
-        this._signalsHandler.add(this.app, 'notify::state', () => this._updateRunningState());
-        this._signalsHandler.add(global.display, 'window-demands-attention', (_dpy, window) =>
-            this._onWindowDemandsAttention(window));
-        this._signalsHandler.add(global.display, 'window-marked-urgent', (_dpy, window) =>
-            this._onWindowDemandsAttention(window));
+        this.app.connectObject(
+            'windows-changed', () => this._updateWindows(),
+            'notify::state', () => this._updateRunningState(),
+            this);
+        global.display.connectObject(
+            'window-demands-attention', (_dpy, window) =>
+                this._onWindowDemandsAttention(window),
+            'window-marked-urgent', (_dpy, window) =>
+                this._onWindowDemandsAttention(window),
+            this);
 
         // In Wayland sessions, this signal is needed to track the state of windows dragged
         // from one monitor to another. As this is triggered quite often (whenever a new
         // window of any application opened or moved to a different desktop),
-        // we restrict this signal to  the case when Labels.ISOLATE_MONITORS is true,
+        // we restrict this signal to  the case when the monitor isolation is true,
         // and if there are at least 2 monitors.
         if (Docking.DockManager.settings.isolateMonitors &&
             Main.layoutManager.monitors.length > 1) {
-            this._signalsHandler.addWithLabel(Labels.ISOLATE_MONITORS,
-                global.display,
-                'window-entered-monitor',
-                this._onWindowEntered.bind(this));
+            global.display.connectObject('window-entered-monitor',
+                (...args) => this._onWindowEntered(...args), this);
         }
 
         this.connect('notify::running', () => {
@@ -182,7 +178,6 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         this.connect('notify::urgent', () => {
             const icon = this.icon._iconBin;
-            this._signalsHandler.removeWithLabel(Labels.URGENT_WINDOWS);
             if (this.urgent) {
                 if (Docking.DockManager.settings.danceUrgentApplications &&
                     notificationsMonitor.enabled) {
@@ -213,19 +208,18 @@ export const DockAbstractAppIcon = GObject.registerClass({
             'show-icons-notifications-counter',
             'application-counter-overrides-notifications',
         ].forEach(key => {
-            this._signalsHandler.add(
-                Docking.DockManager.settings,
+            Docking.DockManager.settings.connectObject(
                 `changed::${key}`, () => {
                     this._indicator.destroy();
                     this._indicator = new AppIconIndicators.AppIconIndicator(this);
-                }
-            );
+                },
+                this);
         });
 
-        this._signalsHandler.add(notificationsMonitor, 'state-changed', () => {
+        notificationsMonitor.connectObject('state-changed', () => {
             this._indicator.destroy();
             this._indicator = new AppIconIndicators.AppIconIndicator(this);
-        });
+        }, this);
 
         this._updateState();
         this._numberOverlay();
@@ -236,13 +230,13 @@ export const DockAbstractAppIcon = GObject.registerClass({
         // This requires GNOME 49
         if (Clutter.ClickGesture) {
             const doubleClickGesture = new Clutter.ClickGesture({nClicksRequired: 2});
-            doubleClickGesture.connect('recognize', () => {
+            doubleClickGesture.connectObject('recognize', () => {
                 this._activate({
                     button: doubleClickGesture.get_button(),
                     modifiers: doubleClickGesture.get_state(),
                     clickCount: doubleClickGesture.get_n_presses(),
                 });
-            });
+            }, this);
             this.add_action(doubleClickGesture);
             this._doubleClickGesture = doubleClickGesture;
         }
@@ -250,6 +244,8 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
     _onDestroy() {
         super._onDestroy();
+
+        delete this._indicator;
 
         delete this._menu;
 
@@ -333,18 +329,19 @@ export const DockAbstractAppIcon = GObject.registerClass({
     }
 
     _updateState() {
-        this._urgentWindows.clear();
         const interestingWindows = this.getInterestingWindows();
         this.windowsCount = interestingWindows.length;
         this._updateRunningState();
         this._updateFocusState();
         this._updateUrgentWindows(interestingWindows);
 
-        if (Docking.DockManager.settings.isolateWorkspaces) {
-            this._signalsHandler.removeWithLabel(Labels.ISOLATE_WORKSPACES);
+        this._isolatedWindowsSignals?.destroy();
+        delete this._isolatedWindowsSignals;
+        if (Docking.DockManager.settings.isolateWorkspaces && interestingWindows.length) {
+            this._isolatedWindowsSignals = new SignalTracker.TransientSignalHolder(this);
             interestingWindows.forEach(window =>
-                this._signalsHandler.addWithLabel(Labels.ISOLATE_WORKSPACES,
-                    window, 'workspace-changed', () => this._updateWindows()));
+                window.connectObject('workspace-changed',
+                    () => this._updateWindows(), this._isolatedWindowsSignals));
         }
     }
 
@@ -358,10 +355,13 @@ export const DockAbstractAppIcon = GObject.registerClass({
     }
 
     _updateUrgentWindows(interestingWindows) {
-        this._signalsHandler.removeWithLabel(Labels.URGENT_WINDOWS);
+        this._urgentWindowsSignals?.destroy();
+        delete this._urgentWindowsSignals;
         this._urgentWindows.clear();
+
         if (interestingWindows === undefined)
             interestingWindows = this.getInterestingWindows();
+
         interestingWindows.filter(isWindowUrgent).forEach(win => this._addUrgentWindow(win));
         this.urgent = !!this._urgentWindows.size;
     }
@@ -387,6 +387,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
             return;
         }
 
+        this._urgentWindowsSignals ??= new SignalTracker.TransientSignalHolder(this);
         this._urgentWindows.add(window);
         this.urgent = true;
 
@@ -396,19 +397,18 @@ export const DockAbstractAppIcon = GObject.registerClass({
         };
 
         if (window.demandsAttention) {
-            this._signalsHandler.addWithLabel(Labels.URGENT_WINDOWS, window,
-                'notify::demands-attention', () => onDemandsAttentionChanged());
+            window.connectObject('notify::demands-attention',
+                () => onDemandsAttentionChanged(), this._urgentWindowsSignals);
         }
         if (window.urgent) {
-            this._signalsHandler.addWithLabel(Labels.URGENT_WINDOWS, window,
-                'notify::urgent', () => onDemandsAttentionChanged());
+            window.connectObject('notify::urgent',
+                () => onDemandsAttentionChanged(), this._urgentWindowsSignals);
         }
         if (window._manualUrgency) {
-            this._signalsHandler.addWithLabel(Labels.URGENT_WINDOWS, window,
-                'focus', () => {
-                    delete window._manualUrgency;
-                    onDemandsAttentionChanged();
-                });
+            window.connectObject('focus', () => {
+                delete window._manualUrgency;
+                onDemandsAttentionChanged();
+            }, this._urgentWindowsSignals);
         }
     }
 
@@ -457,15 +457,15 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         if (!this._menu) {
             this._menu = new DockAppIconMenu(this);
-            this._menu.connect('activate-window', (menu, window) => {
+            this._menu.connectObject('activate-window', (menu, window) => {
                 if (window) {
                     Main.activateWindow(window);
                 } else {
                     Main.overview.hide();
                     Main.panel.closeCalendar();
                 }
-            });
-            this._menu.connect('open-state-changed', (menu, isPoppedUp) => {
+            }, this);
+            this._menu.connectObject('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp) {
                     this._onMenuPoppedDown();
                 } else {
@@ -485,13 +485,9 @@ export const DockAbstractAppIcon = GObject.registerClass({
                     this._menu.actor.style = 'max-width: 400px; ' +
                         `max-height: ${Math.round(maxMenuHeight / scaleFactor)}px;`;
                 }
-            });
-            const id = Main.overview.connect('hiding', () => {
-                this._menu.close();
-            });
-            this._menu.actor.connect('destroy', () => {
-                Main.overview.disconnect(id);
-            });
+            }, this);
+            Main.overview.connectObject('hiding', () => this._menu.close(),
+                this._menu.actor);
 
             this._menuManager.addMenu(this._menu);
         }
@@ -753,16 +749,12 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
             this._previewMenuManager.addMenu(this._previewMenu);
 
-            this._previewMenu.connect('open-state-changed', (menu, isPoppedUp) => {
+            this._previewMenu.connectObject('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
-            });
-            const id = Main.overview.connect('hiding', () => {
-                this._previewMenu.close();
-            });
-            this._previewMenu.actor.connect('destroy', () => {
-                Main.overview.disconnect(id);
-            });
+            }, this);
+            Main.overview.connectObject('hiding',
+                () => this._previewMenu.close(), this._previewMenu.actor);
         }
 
         this.emit('menu-state-changed', !this._previewMenu.isOpen);
@@ -977,8 +969,8 @@ const DockAppIcon = GObject.registerClass({
         super._init(app, monitorIndex, iconAnimator);
 
         const {windowTracker} = Docking.DockManager;
-        this._signalsHandler.add(windowTracker, 'notify::focus-app',
-            () => this._updateFocusState());
+        windowTracker.connectObject('notify::focus-app',
+            () => this._updateFocusState(), this);
     }
 });
 
@@ -992,14 +984,14 @@ const DockLocationAppIcon = GObject.registerClass({
 
         if (Docking.DockManager.settings.isolateLocations) {
             const {windowTracker} = Docking.DockManager;
-            this._signalsHandler.add(windowTracker, 'notify::focus-app',
-                () => this._updateFocusState());
+            windowTracker.connectObject('notify::focus-app',
+                () => this._updateFocusState(), this);
         } else {
-            this._signalsHandler.add(global.display, 'notify::focus-window',
-                () => this._updateFocusState());
+            global.display.connectObject('notify::focus-window',
+                () => this._updateFocusState(), this);
         }
 
-        this._signalsHandler.add(this.app, 'notify::icon', () => this.icon.update());
+        this.app.connectObject('notify::icon', () => this.icon.update(), this);
     }
 
     get location() {
@@ -1041,8 +1033,6 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
     constructor(source) {
         super(source, 0.5, Utils.getPosition());
 
-        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
-
         // We want to keep the item hovered while the menu is up
         this.blockSourceEvents = true;
 
@@ -1050,11 +1040,13 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         this.actor.add_style_class_name('dock-app-menu');
 
         // Chain our visibility and lifecycle to that of the source
-        this._signalsHandler.add(source, 'notify::mapped', () => {
-            if (!source.mapped)
-                this.close();
-        });
-        this._signalsHandler.add(source, 'destroy', () => this.destroy());
+        source.connectObject(
+            'notify::mapped', () => {
+                if (!source.mapped)
+                    this.close();
+            },
+            'destroy', () => this.destroy(),
+            this.actor);
 
         Main.uiGroup.add_child(this.actor);
 
@@ -1071,22 +1063,16 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 }
             });
 
-            this._signalsHandler.add([
-                remoteModelApp,
-                'quicklist-changed',
-                onQuickList,
-            ], [
-                this,
-                'dynamic-section-changed',
-                onDynamicSection,
-            ]);
+            remoteModelApp.connectObject(
+                'quicklist-changed', onQuickList, this.actor);
+            this.connectObject('dynamic-section-changed', onDynamicSection,
+                this.actor);
         }
     }
 
     destroy() {
         super.destroy();
         delete this.sourceActor;
-        delete this._signalsHandler;
     }
 
     _appendSeparator() {
@@ -1144,9 +1130,9 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
             windows.forEach(window => {
                 const title = window.title ? window.title : app.get_name();
                 const item = this._appendMenuItem(title);
-                item.connect('activate', () => {
+                item.connectObject('activate', () => {
                     this.emit('activate-window', window);
-                });
+                }, this.actor);
             });
         }
 
@@ -1159,13 +1145,13 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 app.can_open_new_window() &&
                 actions.indexOf('new-window') === -1) {
                 const newMenuItem = this._appendMenuItem(_('New Window'));
-                newMenuItem.connect('activate', () => {
+                newMenuItem.connectObject('activate', () => {
                     if (app.state === Shell.AppState.STOPPED)
                         this.sourceActor.animateLaunch();
 
                     app.open_new_window(-1);
                     this.emit('activate-window', null);
-                });
+                }, this.actor);
                 this._appendSeparator();
             }
 
@@ -1179,21 +1165,21 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 const gpuMenuItem = this._appendMenuItem(appPrefersNonDefaultGPU
                     ? __('Launch using Integrated Graphics Card')
                     : __('Launch using Discrete Graphics Card'));
-                gpuMenuItem.connect('activate', () => {
+                gpuMenuItem.connectObject('activate', () => {
                     this.sourceActor.animateLaunch();
                     app.launch(0, -1, gpuPref);
                     this.emit('activate-window', null);
-                });
+                }, this.actor);
             }
 
             for (let i = 0; i < actions.length; i++) {
                 const action = actions[i];
                 const item = this._appendMenuItem(appInfo.get_action_name(action));
                 item.sensitive = !appInfo.busy;
-                item.connect('activate', (emitter, event) => {
+                item.connectObject('activate', (emitter, event) => {
                     app.launch_action(action, event.get_time(), -1);
                     this.emit('activate-window', null);
-                });
+                }, this.actor);
             }
 
             const canFavorite = global.settings.is_writable('favorite-apps') &&
@@ -1206,16 +1192,16 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 const isFavorite = AppFavorites.getAppFavorites().isFavorite(app.get_id());
                 if (isFavorite) {
                     const item = this._appendMenuItem(_('Unpin'));
-                    item.connect('activate', () => {
+                    item.connectObject('activate', () => {
                         const favs = AppFavorites.getAppFavorites();
                         favs.removeFavorite(app.get_id());
-                    });
+                    }, this.actor);
                 } else {
                     const item = this._appendMenuItem(__('Pin to Dock'));
-                    item.connect('activate', () => {
+                    item.connectObject('activate', () => {
                         const favs = AppFavorites.getAppFavorites();
                         favs.addFavorite(app.get_id());
-                    });
+                    }, this.actor);
                 }
             }
 
@@ -1224,7 +1210,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 !this.sourceActor.getSnapName()) {
                 this._appendSeparator();
                 const item = this._appendMenuItem(_('App Details'));
-                item.connect('activate', () => {
+                item.connectObject('activate', () => {
                     const id = app.get_id();
                     const args = GLib.Variant.new('(ss)', [id, '']);
                     Gio.DBus.get(Gio.BusType.SESSION, null,
@@ -1238,7 +1224,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                                 null, 0, -1, null, null);
                             Main.overview.hide();
                         });
-                });
+                }, this.actor);
             }
 
             if (this.sourceActor instanceof DockAppIcon) {
@@ -1250,12 +1236,12 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 if (snapStore) {
                     this._appendSeparator();
                     const item = this._appendMenuItem(_('App Details'));
-                    item.connect('activate', (_, event) => {
+                    item.connectObject('activate', (_, event) => {
                         snapStore.activate_full(-1, event.get_time());
                         Util.spawnApp(
                             [...snapStore.appInfo.get_commandline().split(' '), snapName]);
                         Main.overview.hide();
-                    });
+                    }, this.actor);
                 }
             }
         }
@@ -1279,7 +1265,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
         // quit menu
         this._appendSeparator();
         this._quitMenuItem = this._appendMenuItem(_('Quit'));
-        this._quitMenuItem.connect('activate', () => this.sourceActor.closeAllWindows());
+        this._quitMenuItem.connectObject('activate',
+            () => this.sourceActor.closeAllWindows(), this.actor);
 
         this.update();
     }
@@ -1360,17 +1347,17 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
                 const item = new WindowPreview.WindowPreviewMenuItem(window,
                     St.Side.LEFT);
                 this._allWindowsMenuItem.menu.addMenuItem(item);
-                item.connect('activate', () => {
+                item.connectObject('activate', () => {
                     this.emit('activate-window', window);
-                });
+                }, this.actor);
 
                 // This is to achieve a more graceful transition when the last
                 // window is closed.
-                item.connect('destroy', () => {
+                item.connectObject('destroy', () => {
                     // It's still counting the item just going to be destroyed
                     if (this._allWindowsMenuItem.menu._getMenuItems().length === 1)
                         this._allWindowsMenuItem.setSensitive(false);
-                });
+                }, this.actor);
             }
         }
     }
@@ -1436,10 +1423,9 @@ export const DockShowAppsIcon = GObject.registerClass({
         // Re-use appIcon methods
         const {prototype: appIconPrototype} = AppDisplay.AppIcon;
         this.toggleButton.y_expand = false;
-        this.toggleButton.connect('popup-menu', () =>
-            appIconPrototype._onKeyboardPopupMenu.call(this));
-        this.toggleButton.connect('clicked', () =>
-            this._removeMenuTimeout());
+        this.toggleButton.connectObject('popup-menu', () =>
+            appIconPrototype._onKeyboardPopupMenu.call(this),
+        'clicked', () => this._removeMenuTimeout(), this);
 
         this.reactive = true;
         this.toggleButton.popupMenu = (...args) =>
@@ -1525,14 +1511,14 @@ export const DockShowAppsIcon = GObject.registerClass({
             return;
 
         const longPressGesture = new Clutter.LongPressGesture();
-        longPressGesture.connect('recognize', () => this.popupMenu());
+        longPressGesture.connectObject('recognize', () => this.popupMenu(), this);
         this.add_action(longPressGesture);
 
         const rightClickGesture = new Clutter.ClickGesture({
             required_button: Clutter.BUTTON_SECONDARY,
             recognize_on_press: true,
         });
-        rightClickGesture.connect('recognize', () => this.popupMenu());
+        rightClickGesture.connectObject('recognize', () => this.popupMenu(), this);
         this.add_action(rightClickGesture);
     }
 
@@ -1545,16 +1531,12 @@ export const DockShowAppsIcon = GObject.registerClass({
 
         if (!this._menu) {
             this._menu = new DockShowAppsIconMenu(this);
-            this._menu.connect('open-state-changed', (menu, isPoppedUp) => {
+            this._menu.connectObject('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
                     this._onMenuPoppedDown();
-            });
-            const id = Main.overview.connect('hiding', () => {
-                this._menu.close();
-            });
-            this._menu.actor.connect('destroy', () => {
-                Main.overview.disconnect(id);
-            });
+            }, this);
+            Main.overview.connectObject('hiding', () => this._menu.close(),
+                this._menu.actor);
             this._menuManager.addMenu(this._menu);
         }
 
@@ -1581,8 +1563,8 @@ class DockShowAppsIconMenu extends DockAppIconMenu {
         this.addMenuItem(new PopupMenu.PopupSeparatorMenuItem(__('Dash to Dock')));
 
         const item = this._appendMenuItem(_('Settings'));
-        item.connect('activate', () =>
-            Docking.DockManager.extension.openPreferences());
+        item.connectObject('activate', () =>
+            Docking.DockManager.extension.openPreferences(), this.actor);
     }
 }
 
