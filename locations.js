@@ -1448,7 +1448,7 @@ export class Removables extends EventEmitter {
         });
 
         volumeApp._signalConnections.add(volumeApp, 'windows-changed',
-            () => this.emit('windows-changed', volumeApp));
+            () => this.emit('windows-changed'));
 
         if (Docking.DockManager.settings.showMountsOnlyMounted) {
             volumeApp._signalConnections.add(appInfo, 'notify::mount',
