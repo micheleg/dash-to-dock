@@ -327,6 +327,11 @@
       <summary>Monitor on which putting the dock (by connector)</summary>
       <description>Set on which monitor to put the dock, for example 'DisplayPort-0'. Use 'primary' for primary one. This setting is only used if 'preferred-monitor' is -2.</description>
     </key>
+    <key type="b" name="hide-if-monitor-unavailable">
+      <default>false</default>
+      <summary>Hide dock when the preferred monitor is unavailable</summary>
+      <description>Do not fall back to another monitor when the preferred monitor is disconnected or disabled.</description>
+    </key>
     <key type="b" name="multi-monitor">
       <default>false</default>
       <summary>Enable multi-monitor docks</summary>
