@@ -443,6 +443,11 @@
       </object>
     </child>
   </object>
+  <object class="GtkAdjustment" id="hide_animation_time_adjustment">
+    <property name="upper">1</property>
+    <property name="step-increment">0.025000000000000001</property>
+    <property name="page-increment">0.10000000000000001</property>
+  </object>
   <object class="GtkAdjustment" id="hide_timeout_adjustment">
     <property name="upper">1</property>
     <property name="step-increment">0.050000000000000003</property>
@@ -3039,6 +3044,28 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <layout>
                           <property name="column">1</property>
                           <property name="row">1</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="hide_animation_duration_spinbutton">
+                        <property name="halign">end</property>
+                        <property name="adjustment">hide_animation_time_adjustment</property>
+                        <property name="digits">3</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="row">4</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="hide_animation_duration_label">
+                        <property name="can_focus">0</property>
+                        <property name="hexpand">1</property>
+                        <property name="label" translatable="yes">Hide animation duration (s)</property>
+                        <layout>
+                          <property name="column">0</property>
+                          <property name="row">4</property>
                         </layout>
                       </object>
                     </child>

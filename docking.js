@@ -892,7 +892,7 @@ const DockedDash = GObject.registerClass({
             }
 
             this.emit('hiding');
-            this._animateOut(settings.animationTime, delay);
+            this._animateOut(settings.hideAnimationTime, delay);
         }
     }
 

@@ -71,6 +71,11 @@
       <summary>Show delay</summary>
       <description>Sets the delay after the mouse left the dock before hiding it.</description>
     </key>
+    <key type="d" name="hide-animation-time">
+      <default>0.2</default>
+      <summary>Hide animation time</summary>
+      <description>Sets the duration of the slide-out animation used when the dock auto-hides. Lower values make the dock disappear more responsively once the pointer leaves it.</description>
+    </key>
     <key type="b" name="disable-overview-on-startup">
       <default>false</default>
       <summary>Do not show overview on startup</summary>

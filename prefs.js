@@ -482,6 +482,10 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('hide_timeout_spinbutton'),
             'value',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('hide-animation-time',
+            this._builder.get_object('hide_animation_duration_spinbutton'),
+            'value',
+            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('show-delay',
             this._builder.get_object('show_timeout_spinbutton'),
             'value',
@@ -564,7 +568,8 @@ const DockSettings = GObject.registerClass({
                     const keys = ['intellihide', 'autohide', 'intellihide-mode',
                         'autohide-in-fullscreen', 'show-dock-urgent-notify',
                         'require-pressure-to-show', 'animation-time',
-                        'show-delay', 'hide-delay', 'pressure-threshold'];
+                        'hide-animation-time', 'show-delay', 'hide-delay',
+                        'pressure-threshold'];
                     keys.forEach(function (val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);
