@@ -2601,6 +2601,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Number overlay</property>
+                        <property name="xalign">0</property>
 
                         <layout>
                           <property name="column">0</property>
@@ -2712,6 +2713,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Shortcut for the options above</property>
+                        <property name="xalign">0</property>
 
                         <layout>
                           <property name="column">0</property>
@@ -2770,6 +2772,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Hide timeout (s)</property>
+                        <property name="xalign">0</property>
 
                         <layout>
                           <property name="column">0</property>
