@@ -858,14 +858,14 @@ const DockedDash = GObject.registerClass({
             // by intellihide.
             if (this.autohideEnabled) {
                 if (this._box.hover || Main.overview.visible)
-                    this._show();
+                    this.showDock();
                 else
-                    this._hide();
+                    this.hideDock();
             }
         }
     }
 
-    _show() {
+    showDock() {
         this._delayedHide = false;
         if ((this.dockState === State.HIDDEN) || (this.dockState === State.HIDING)) {
             if (this.dockState === State.HIDING)
@@ -878,7 +878,7 @@ const DockedDash = GObject.registerClass({
         }
     }
 
-    _hide() {
+    hideDock() {
         // If no hiding animation is running or queued
         if ((this.dockState === State.SHOWN) || (this.dockState === State.SHOWING)) {
             const {settings} = DockManager;
@@ -924,7 +924,7 @@ const DockedDash = GObject.registerClass({
                     this._removeBarrierTimeoutId = GLib.timeout_add(
                         GLib.PRIORITY_DEFAULT, 100, this._removeBarrier.bind(this));
                 } else {
-                    this._hide();
+                    this.hideDock();
                 }
             },
         });
@@ -1160,7 +1160,7 @@ const DockedDash = GObject.registerClass({
             }
         });
 
-        this._show();
+        this.showDock();
     }
 
     /**
@@ -1717,7 +1717,7 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
             if (DockManager.settings.hotkeysShowDock) {
                 const showDock = dock.intellihideEnabled || dock.autohideEnabled;
                 if (showDock)
-                    dock._show();
+                    dock.showDock();
             }
         }
     }
