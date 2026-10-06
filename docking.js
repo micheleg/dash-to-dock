@@ -400,6 +400,9 @@ const DockedDash = GObject.registerClass({
         // "allocation-changed" signal has been removed. MR !1245
         this.dash._container.connect('notify::allocation', this._updateStaticBox.bind(this));
         this._slider.connect('notify::allocation', () => this._updateStaticBox());
+        // Keep a dock-restricted reveal barrier aligned with the dock
+        this.dash._background.connect('notify::allocation', () => this._onDockGeometryChanged());
+        this.connect('notify::allocation', () => this._onDockGeometryChanged());
 
         // Load optional features that need to be activated for one dock only
         if (this.isMain)
@@ -693,6 +696,10 @@ const DockedDash = GObject.registerClass({
                 this._updatePressureBarrier();
                 this._updateBarrier();
             },
+        ], [
+            settings,
+            'changed::restrict-pressure-to-dock',
+            this._updateBarrier.bind(this),
         ]);
     }
 
@@ -1197,14 +1204,45 @@ const DockedDash = GObject.registerClass({
 
     /**
      * Span [start, end] along the dock's screen edge that can reveal it:
-     * the whole workarea minus 1 px at each end, to avoid conflicting with
-     * other active corners.
+     * the whole workarea minus 1 px at each end (to avoid conflicting with
+     * other active corners), or just the dock's own extent when
+     * restrict-pressure-to-dock is enabled.
      */
     _getRevealEdgeRange() {
         const workArea = Main.layoutManager.getWorkAreaForMonitor(this._monitor.index);
-        return this._isHorizontal
+        let [start, end] = this._isHorizontal
             ? [workArea.x + 1, workArea.x + workArea.width - 1]
             : [workArea.y + 1, workArea.y + workArea.height - 1];
+
+        if (DockManager.settings.restrictPressureToDock) {
+            // Sliding only moves the dock across the edge, so its extent
+            // along the edge is valid even while hidden.
+            const background = this.dash._background;
+            const [x, y] = background.get_transformed_position();
+            const [width, height] = background.get_transformed_size();
+            const [dockStart, dockEnd] = this._isHorizontal
+                ? [x, x + width] : [y, y + height];
+            // Not allocated yet: keep the full edge until the next allocation
+            if (dockEnd > dockStart) {
+                start = Math.max(start, Math.round(dockStart));
+                end = Math.min(end, Math.round(dockEnd));
+            }
+        }
+
+        return [start, end];
+    }
+
+    _onDockGeometryChanged() {
+        // Only an existing (dock hidden) barrier can be stale; a new one is
+        // built from the current geometry when the dock hides again.
+        if (!this._barrier || !DockManager.settings.restrictPressureToDock)
+            return;
+
+        const [start, end] = this._getRevealEdgeRange();
+        const {x1, x2, y1, y2} = this._barrier;
+        const [barrierStart, barrierEnd] = this._isHorizontal ? [x1, x2] : [y1, y2];
+        if (start !== barrierStart || end !== barrierEnd)
+            this._updateBarrier();
     }
 
     _isPrimaryMonitor() {
