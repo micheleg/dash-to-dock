@@ -78,7 +78,10 @@ mergepo: potfile
 		msgmerge -U $$l ./po/dashtodock.pot; \
 	done;
 
-./po/dashtodock.pot: ./po/POTFILES.in
+POTFILES_IN = po/POTFILES.in
+POTFILES = $(shell cat $(POTFILES_IN))
+
+./po/dashtodock.pot: $(POTFILES_IN) $(POTFILES)
 	xgettext --keyword=__ --keyword=N__:1,2 --add-comments='Translators:' -o po/dashtodock.pot --package-name "Dash to Dock" --from-code=utf-8 --files-from=$<
 
 ./po/%.mo: ./po/%.po
