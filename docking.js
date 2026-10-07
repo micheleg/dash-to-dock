@@ -795,6 +795,9 @@ const DockedDash = GObject.registerClass({
         if (Main.overview.visibleTarget)
             return;
 
+        if (this._menuOpened)
+            return;
+
         const {settings} = DockManager;
 
         if (DockManager.settings.dockFixed) {
@@ -844,10 +847,12 @@ const DockedDash = GObject.registerClass({
 
     _onMenuOpened() {
         this._ignoreHover = true;
+        this._menuOpened = true;
+        this.updateDashVisibility();
     }
 
     _onMenuClosed() {
-        this._ignoreHover = false;
+        delete this._menuOpened;
         this._box.sync_hover();
         this.updateDashVisibility();
     }
