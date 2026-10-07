@@ -183,6 +183,8 @@ export const DockAbstractAppIcon = GObject.registerClass({
         this.connect('notify::urgent', () => {
             const icon = this.icon._iconBin;
             this._signalsHandler.removeWithLabel(Labels.URGENT_WINDOWS);
+            this._updateAccessibleName();
+
             if (this.urgent) {
                 if (Docking.DockManager.settings.danceUrgentApplications &&
                     notificationsMonitor.enabled) {
@@ -1687,6 +1689,7 @@ export function updateIconAccessibleName({
     overlayNumber = -1,
     indicatorCount = 0,
     progress = -1,
+    urgent = icon.urgent,
 }) {
     let accessibleName = icon?.app?.get_name();
     if (!accessibleName)
@@ -1697,6 +1700,11 @@ export function updateIconAccessibleName({
         // overlay is shown, %d is the number of the hot key that launches
         // the app and %s is the name of the app
         accessibleName = __('%d: %s').format(overlayNumber, accessibleName);
+    }
+
+    if (urgent) {
+        // TRANSLATORS: %s is the name of an app requesting attention.
+        accessibleName = __('%s, needs attention').format(accessibleName);
     }
 
     if (indicatorCount > 0) {

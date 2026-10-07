@@ -1139,6 +1139,8 @@ export class UnityIndicator extends IndicatorBase {
             this._isUrgent = urgent;
         else
             delete this._isUrgent;
+
+        this._updateAccessibleName();
     }
 
     setUpdating(updating) {
