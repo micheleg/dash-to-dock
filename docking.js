@@ -1282,7 +1282,10 @@ const DockedDash = GObject.registerClass({
         ], [
             global.display,
             'in-fullscreen-changed',
-            () => this._updateBarrier(),
+            () => {
+                this._resetPosition();
+                this._updateBarrier();
+            },
         ]);
 
         this._resetPosition();
@@ -1305,7 +1308,9 @@ const DockedDash = GObject.registerClass({
         // Note: do not use the workarea coordinates in the direction on which the dock is placed,
         // to avoid a loop [position change -> workArea change -> position change] with
         // fixed dock.
-        const workArea = Main.layoutManager.getWorkAreaForMonitor(this.monitorIndex);
+        const area = this._monitor.inFullscreen
+            ? this._monitor
+            : Main.layoutManager.getWorkAreaForMonitor(this.monitorIndex);
 
         let fraction = DockManager.settings.heightFraction;
         if (extendHeight)
@@ -1314,13 +1319,13 @@ const DockedDash = GObject.registerClass({
             fraction = 0.95;
 
         if (this._isHorizontal) {
-            this.width = Math.round(fraction * workArea.width);
+            this.width = Math.round(fraction * area.width);
 
             let posY = this._monitor.y;
             if (this._position === St.Side.BOTTOM)
                 posY += this._monitor.height;
 
-            this.x = workArea.x + Math.round((1 - fraction) / 2 * workArea.width);
+            this.x = area.x + Math.round((1 - fraction) / 2 * area.width);
             this.y = posY;
 
             if (extendHeight) {
@@ -1331,14 +1336,14 @@ const DockedDash = GObject.registerClass({
                 this.remove_style_class_name('extended');
             }
         } else {
-            this.height = Math.round(fraction * workArea.height);
+            this.height = Math.round(fraction * area.height);
 
             let posX = this._monitor.x;
             if (this._position === St.Side.RIGHT)
                 posX += this._monitor.width;
 
             this.x = posX;
-            this.y = workArea.y + Math.round((1 - fraction) / 2 * workArea.height);
+            this.y = area.y + Math.round((1 - fraction) / 2 * area.height);
 
             if (extendHeight) {
                 this.dash._container.set_height(this.height);
