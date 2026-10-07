@@ -209,7 +209,7 @@ class RunningIndicatorBase extends IndicatorBase {
 
         // Fallback
         if (!colorPalette) {
-            this._source._iconContainer.set_style(
+            this._source.iconContainer.set_style(
                 'border-radius: 5px;' +
                 'background-gradient-direction: vertical;' +
                 'background-gradient-start: #e0e0e0;' +
@@ -219,7 +219,7 @@ class RunningIndicatorBase extends IndicatorBase {
             return;
         }
 
-        this._source._iconContainer.set_style(
+        this._source.iconContainer.set_style(
             `${'border-radius: 5px;' +
             'background-gradient-direction: vertical;' +
             'background-gradient-start: '}${colorPalette.original};` +
@@ -228,14 +228,14 @@ class RunningIndicatorBase extends IndicatorBase {
     }
 
     _disableBacklight() {
-        this._source._iconContainer.set_style(null);
+        this._source.iconContainer.set_style(null);
     }
 
     destroy() {
         this._disableBacklight();
         // Remove glossy background if the children still exists
-        if (this._source._iconContainer.get_children().length > 1)
-            this._source._iconContainer.get_children()[1].set_style(null);
+        if (this._source.iconContainer.get_children().length > 1)
+            this._source.iconContainer.get_children()[1].set_style(null);
         this._restoreDefaultDot();
 
         super.destroy();
@@ -306,7 +306,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         }
 
         this._area.connectObject('repaint', this._updateIndicator.bind(this), this);
-        this._source._iconContainer.add_child(this._area);
+        this._source.iconContainer.add_child(this._area);
 
         const keys = ['custom-theme-running-dots-color',
             'custom-theme-running-dots-border-color',
@@ -338,7 +338,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         // Enable / Disable the backlight of running apps
         if (!Docking.DockManager.settings.applyCustomTheme &&
             Docking.DockManager.settings.unityBacklitItems) {
-            const [icon] = this._source._iconContainer.get_children();
+            const [icon] = this._source.iconContainer.get_children();
             icon.set_style(
                 Docking.DockManager.settings.applyGlossyEffect
                     ? this._glossyBackgroundStyle : null);
@@ -348,7 +348,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
                 this._disableBacklight();
         } else {
             this._disableBacklight();
-            this._source._iconContainer.get_children()[1].set_style(null);
+            this._source.iconContainer.get_children()[1].set_style(null);
         }
 
         if (this._area)
@@ -957,7 +957,7 @@ export class UnityIndicator extends IndicatorBase {
             this._drawProgressOverlay(this._progressOverlayArea);
         });
 
-        this._source._iconContainer.add_child(this._progressOverlayArea);
+        this._source.iconContainer.add_child(this._progressOverlayArea);
         this._updateProgressOverlay();
     }
 

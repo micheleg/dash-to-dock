@@ -262,6 +262,10 @@ export const DockAbstractAppIcon = GObject.registerClass({
         delete this._doubleClickGesture;
     }
 
+    get iconContainer() {
+        return this._iconContainer;
+    }
+
     ownsWindow(window) {
         return this.app === Docking.DockManager.windowTracker.get_window_app(window);
     }
@@ -820,7 +824,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
         this._numberOverlayOrder = -1;
         this._numberOverlayBin.hide();
 
-        this._iconContainer.add_child(this._numberOverlayBin);
+        this.iconContainer.add_child(this._numberOverlayBin);
     }
 
     updateNumberOverlay() {
@@ -830,7 +834,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
         const scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         // Set the font size to something smaller than the whole icon so it is
         // still visible. The border radius is large to make the shape circular
-        const [minWidth_, natWidth] = this._iconContainer.get_preferred_width(-1);
+        const [minWidth_, natWidth] = this.iconContainer.get_preferred_width(-1);
         const fontSize = Math.round(Math.max(12, 0.3 * natWidth) / scaleFactor);
         const size = Math.round(fontSize * 1.2);
         this._numberOverlayLabel.set_style(
