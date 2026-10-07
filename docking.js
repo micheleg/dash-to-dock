@@ -472,9 +472,7 @@ const DockedDash = GObject.registerClass({
     _trackDock() {
         if (this.get_parent())
             Main.layoutManager.removeChrome(this);
-        Main.layoutManager.addChrome(this, {
-            trackFullscreen: DockManager.settings.dockFixed,
-        });
+        Main.layoutManager.addChrome(this);
 
         if (this._strutActor.get_parent())
             Main.layoutManager.removeChrome(this._strutActor);
@@ -817,8 +815,14 @@ const DockedDash = GObject.registerClass({
 
         const {settings} = DockManager;
 
-        if (DockManager.settings.dockFixed) {
-            this.showDock();
+        if (this._monitor.inFullscreen && DockManager.settings.dockFixed) {
+            this._ignoreHover = false;
+            if (this._box.hover || this.dash.requiresVisibility)
+                this._showDock();
+            else
+                this._animateOut(settings.animationTime, 0);
+        } else if (DockManager.settings.dockFixed) {
+            this._showDock();
         } else if (this.intellihideEnabled) {
             if (!this.dash.requiresVisibility && this._intellihide.getOverlapStatus()) {
                 this._ignoreHover = false;
@@ -876,7 +880,8 @@ const DockedDash = GObject.registerClass({
         if (!this._ignoreHover) {
             // Skip if dock is not in autohide mode for instance because it is shown
             // by intellihide.
-            if (this.autohideEnabled) {
+            if (this.autohideEnabled ||
+                (DockManager.settings.dockFixed && this._monitor.inFullscreen)) {
                 if (this._box.hover || Main.overview.visible)
                     this.showDock();
                 else
