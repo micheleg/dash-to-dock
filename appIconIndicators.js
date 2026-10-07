@@ -107,6 +107,11 @@ export class AppIconIndicator {
         this._indicators.push(runningIndicator);
     }
 
+    get notificationsCount() {
+        return this._indicators.reduce((count, indicator) =>
+            count + (indicator.notificationsCount ?? 0), 0);
+    }
+
     update() {
         for (let i = 0; i < this._indicators.length; i++) {
             const indicator = this._indicators[i];
@@ -794,6 +799,7 @@ export class UnityIndicator extends IndicatorBase {
         this._hideProgressOverlay();
         this.setUrgent(false);
         this.setUpdating(false);
+        this._setNotificationCount(0);
         this._remoteEntry = null;
 
         super.destroy();
@@ -852,20 +858,26 @@ export class UnityIndicator extends IndicatorBase {
     }
 
     _updateNotificationsCount() {
-        const remoteCount = this._remoteEntry['count-visible']
-            ? this._remoteEntry.count ?? 0 : 0;
+        this._setNotificationCount(this.notificationsCount);
+    }
+
+    get _remoteCount() {
+        return this._remoteEntry['count-visible']
+            ? this._remoteEntry?.count ?? 0 : 0;
+    }
+
+    get notificationsCount() {
+        const remoteCount = this._remoteCount;
 
         if (remoteCount > 0 &&
-            Docking.DockManager.settings.applicationCounterOverridesNotifications) {
-            this.setNotificationCount(remoteCount);
-            return;
-        }
+            Docking.DockManager.settings.applicationCounterOverridesNotifications)
+            return remoteCount;
 
         const {notificationsMonitor} = Docking.DockManager.getDefault();
         const notificationsCount = notificationsMonitor.getAppNotificationsCount(
             this._source.app.id);
 
-        this.setNotificationCount(remoteCount + notificationsCount);
+        return remoteCount + notificationsCount;
     }
 
     _updateNotificationsBadge(text) {
@@ -906,7 +918,7 @@ export class UnityIndicator extends IndicatorBase {
         ]);
     }
 
-    setNotificationCount(count) {
+    _setNotificationCount(count) {
         if (count > 0) {
             const text = this._notificationBadgeCountToText(count);
             this._updateNotificationsBadge(text);
