@@ -1,6 +1,7 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 import {
+    Atk,
     Clutter,
     Gio,
     GLib,
@@ -1031,6 +1032,17 @@ export const DockDash = GObject.registerClass({
         appIcons.forEach(icon => {
             icon.toggleNumberOverlay(activate);
         });
+
+        if (!activate)
+            return;
+
+        // Announce the shortcuts, as the numbers drawn on the icons are of no
+        // use to whoever cannot see them.
+        const names = appIcons.map(icon => icon.accessibleName).filter(n => n);
+        if (names.length) {
+            this.get_accessible().emit('notification', names.join('\n'),
+                Atk.Live.POLITE);
+        }
     }
 
     _initializeIconSize(maxSize) {
