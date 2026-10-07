@@ -773,9 +773,9 @@ const DockedDash = GObject.registerClass({
         if (settings.manualhide) {
             this.autohideEnabled = false;
             this.intellihideEnabled = false;
-        } else if (this._monitor.inFullscreen) {
+        } else if (this._fullscreenAutohide) {
             this.autohideEnabled = true;
-            this.intellihideEnabled = false;
+            this.intellihideEnabled = !settings.dockFixed && settings.intellihide;
         } else if (settings.dockFixed) {
             this.autohideEnabled = false;
             this.intellihideEnabled = false;
@@ -786,6 +786,18 @@ const DockedDash = GObject.registerClass({
 
         this.updateDashVisibility();
         this._updateAutoHideBarriers();
+    }
+
+    get _fullscreenAutohide() {
+        if (!this._monitor.inFullscreen)
+            return false;
+
+        if (!DockManager.settings.dockFixed)
+            return true;
+
+        const {focusWindow} = global.display;
+        return !!focusWindow?.fullscreen &&
+            focusWindow.get_monitor() === this.monitorIndex;
     }
 
     /**
@@ -1285,6 +1297,11 @@ const DockedDash = GObject.registerClass({
         this._bindSettingsChanges();
         this.dash.setIconSize(DockManager.settings.dashMaxIconSize);
 
+        const updateFullscreenMode = () => {
+            this._resetPosition();
+            this._updateVisibilityMode();
+        };
+
         this._signalsHandler.addWithLabel(Labels.DOCKED_DASH_GLOBAL_SIGNALS, [
             // update when workarea changes, for instance if  other extensions modify the struts
             // (like moving th panel at the bottom)
@@ -1294,10 +1311,11 @@ const DockedDash = GObject.registerClass({
         ], [
             global.display,
             'in-fullscreen-changed',
-            () => {
-                this._resetPosition();
-                this._updateVisibilityMode();
-            },
+            updateFullscreenMode,
+        ], [
+            global.display,
+            'notify::focus-window',
+            updateFullscreenMode,
         ]);
 
         this._resetPosition();
