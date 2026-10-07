@@ -866,6 +866,9 @@ const DockedDash = GObject.registerClass({
     }
 
     showDock() {
+        if (DockManager.settings.manualhide)
+            return;
+
         this._delayedHide = false;
         if ((this.dockState === State.HIDDEN) || (this.dockState === State.HIDING)) {
             if (this.dockState === State.HIDING)
