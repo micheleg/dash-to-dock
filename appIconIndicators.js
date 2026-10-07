@@ -112,6 +112,11 @@ export class AppIconIndicator {
             count + (indicator.notificationsCount ?? 0), 0);
     }
 
+    get progress() {
+        return this._indicators.reduce((progress, indicator) =>
+            Math.max(progress, indicator.progress ?? -1), -1);
+    }
+
     update() {
         for (let i = 0; i < this._indicators.length; i++) {
             const indicator = this._indicators[i];
@@ -928,10 +933,15 @@ export class UnityIndicator extends IndicatorBase {
             this._notificationBadgeBin = null;
         }
 
+        this._updateAccessibleName(count);
+    }
+
+    _updateAccessibleName(indicatorCount = this.notificationsCount) {
         AppIcons.updateIconAccessibleName({
             icon: this._source,
             overlayNumber: this._source.overlayNumber ?? -1,
-            indicatorCount: count,
+            indicatorCount,
+            progress: this.progress,
         });
     }
 
@@ -1113,6 +1123,12 @@ export class UnityIndicator extends IndicatorBase {
             this._progress = Math.min(progress, 1.0);
             this._showProgressOverlay();
         }
+
+        this._updateAccessibleName();
+    }
+
+    get progress() {
+        return this._progressOverlayArea ? this._progress : -1;
     }
 
     setUrgent(urgent) {

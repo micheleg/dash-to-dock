@@ -864,6 +864,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
             icon: this,
             overlayNumber: this.overlayNumber,
             indicatorCount: this._indicator?.notificationsCount,
+            progress: this._indicator?.progress,
         });
     }
 
@@ -1685,6 +1686,7 @@ export function updateIconAccessibleName({
     icon,
     overlayNumber = -1,
     indicatorCount = 0,
+    progress = -1,
 }) {
     let accessibleName = icon?.app?.get_name();
     if (!accessibleName)
@@ -1705,6 +1707,12 @@ export function updateIconAccessibleName({
         accessibleName = N__('%s, %d unread notification',
             '%s, %d unread notifications', indicatorCount)
             .format(accessibleName, indicatorCount);
+    }
+
+    if (progress >= 0) {
+        // TRANSLATORS: %s is the app name and %d is its progress percentage.
+        accessibleName = __('%s, %d%% complete')
+            .format(accessibleName, Math.round(progress * 100));
     }
 
     icon.set({accessibleName});
