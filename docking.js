@@ -24,6 +24,7 @@ import {
 
 import {
     AnimationUtils,
+    Config,
 } from './dependencies/shell/misc.js';
 
 import {
@@ -320,6 +321,11 @@ const DockedDash = GObject.registerClass({
             reactive: true,
             track_hover: true,
         });
+        this._strutActor = new Clutter.Actor({
+            name: 'dashtodockStrut',
+            reactive: false,
+            opacity: 0,
+        });
         this._box.connect('notify::hover', this._hoverChanged.bind(this));
 
         // Connect global signals
@@ -460,15 +466,25 @@ const DockedDash = GObject.registerClass({
 
     _untrackDock() {
         Main.layoutManager.untrackChrome(this);
+        Main.layoutManager.untrackChrome(this._strutActor);
     }
 
     _trackDock() {
         if (this.get_parent())
             Main.layoutManager.removeChrome(this);
         Main.layoutManager.addChrome(this, {
-            affectsStruts: DockManager.settings.dockFixed,
             trackFullscreen: DockManager.settings.dockFixed,
         });
+
+        if (this._strutActor.get_parent())
+            Main.layoutManager.removeChrome(this._strutActor);
+        if (DockManager.settings.dockFixed) {
+            Main.layoutManager.addChrome(this._strutActor, {
+                affectsStruts: true,
+                ...Config.PACKAGE_VERSION.split('.')[0] < 50
+                    ? {affectsInputRegion: false} : {},
+            });
+        }
 
         // Set the initial position.
         this._updateStruts();
@@ -510,6 +526,7 @@ const DockedDash = GObject.registerClass({
         this._intellihide.destroy();
         this._themeManager.destroy();
         this._workspaceSwitcherPopup?.destroy();
+        this._strutActor.destroy();
         delete this._staticBox;
 
         if (this._marginLater) {
@@ -1399,6 +1416,8 @@ const DockedDash = GObject.registerClass({
             affectsStruts: DockManager.settings.dockFixed,
         };
 
+        this._strutActor.set_position(extent.x, extent.y);
+        this._strutActor.set_size(width, height);
         DockManager.getDefault()?.setDockExtent(this.monitorIndex, extent);
     }
 
