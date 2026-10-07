@@ -825,6 +825,10 @@ export const DockAbstractAppIcon = GObject.registerClass({
         this._numberOverlayBin.hide();
 
         this.iconContainer.add_child(this._numberOverlayBin);
+        this._signalsHandler.add(this.iconContainer, 'child-added', () => {
+            this.iconContainer.set_child_above_sibling(
+                this._numberOverlayBin, null);
+        });
     }
 
     updateNumberOverlay() {
