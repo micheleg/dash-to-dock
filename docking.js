@@ -796,7 +796,15 @@ const DockedDash = GObject.registerClass({
             return true;
 
         const {focusWindow} = global.display;
-        return !!focusWindow?.fullscreen &&
+        if (!focusWindow)
+            return true;
+
+        // Should not be needed anymore once DING stops focusing desktop windows:
+        // https://gitlab.com/rastersoft/desktop-icons-ng/-/merge_requests/527
+        if (focusWindow.get_window_type() === Meta.WindowType.DESKTOP)
+            return false;
+
+        return focusWindow.fullscreen &&
             focusWindow.get_monitor() === this.monitorIndex;
     }
 
