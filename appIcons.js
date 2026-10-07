@@ -838,6 +838,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
     setNumberOverlay(number) {
         this._numberOverlayOrder = number;
         this._numberOverlayLabel.set_text(number.toString());
+        this._updateAccessibleName();
     }
 
     toggleNumberOverlay(activate) {
@@ -847,6 +848,23 @@ export const DockAbstractAppIcon = GObject.registerClass({
         } else {
             this._numberOverlayBin.hide();
         }
+
+        this._updateAccessibleName();
+    }
+
+    get overlayNumber() {
+        if (!this._numberOverlayBin?.visible)
+            return -1;
+
+        return this._numberOverlayOrder;
+    }
+
+    _updateAccessibleName() {
+        updateIconAccessibleName({
+            icon: this,
+            overlayNumber: this.overlayNumber,
+            indicatorCount: this._indicator?.notificationsCount,
+        });
     }
 
     _minimizeWindow(param) {
@@ -1663,20 +1681,30 @@ export function itemShowLabel() {
     /* eslint-enable no-invalid-this */
 }
 
-
-export function updateIconAccessibleName({icon, unreadCount = 0}) {
-    let accessibleName = icon.app?.get_name();
+export function updateIconAccessibleName({
+    icon,
+    overlayNumber = -1,
+    indicatorCount = 0,
+}) {
+    let accessibleName = icon?.app?.get_name();
     if (!accessibleName)
         return;
 
-    if (unreadCount > 0) {
+    if (overlayNumber >= 0) {
+        // TRANSLATORS: This is the name of a dash item while the number
+        // overlay is shown, %d is the number of the hot key that launches
+        // the app and %s is the name of the app
+        accessibleName = __('%d: %s').format(overlayNumber, accessibleName);
+    }
+
+    if (indicatorCount > 0) {
         // TRANSLATORS: This is the accessible name for an app icon with
         // unread notifications.
-        // %s is the name of the app and %d the number of unread
-        // notifications.
+        // %s is the name of the app, potentially including the overlay
+        // number, and %d the number of unread notifications.
         accessibleName = N__('%s, %d unread notification',
-            '%s, %d unread notifications', unreadCount)
-            .format(accessibleName, unreadCount);
+            '%s, %d unread notifications', indicatorCount)
+            .format(accessibleName, indicatorCount);
     }
 
     icon.set({accessibleName});

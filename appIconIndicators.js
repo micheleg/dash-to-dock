@@ -930,7 +930,8 @@ export class UnityIndicator extends IndicatorBase {
 
         AppIcons.updateIconAccessibleName({
             icon: this._source,
-            unreadCount: count,
+            overlayNumber: this._source.overlayNumber ?? -1,
+            indicatorCount: count,
         });
     }
 
