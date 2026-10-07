@@ -514,8 +514,6 @@ const DockedDash = GObject.registerClass({
         // for instance on unlocking the screen if it was locked with the overview open.
         if (Main.overview.visibleTarget)
             this._onOverviewShowing();
-
-        this._updateAutoHideBarriers();
     }
 
     _onDestroy() {
@@ -685,7 +683,6 @@ const DockedDash = GObject.registerClass({
                 this._untrackDock();
                 this._trackDock();
 
-                this._updateAutoHideBarriers();
                 this._updateVisibilityMode();
             },
         ], [
@@ -712,7 +709,6 @@ const DockedDash = GObject.registerClass({
             'changed::autohide',
             () => {
                 this._updateVisibilityMode();
-                this._updateAutoHideBarriers();
             },
         ], [
             settings,
@@ -789,6 +785,7 @@ const DockedDash = GObject.registerClass({
         }
 
         this.updateDashVisibility();
+        this._updateAutoHideBarriers();
     }
 
     /**
@@ -815,14 +812,8 @@ const DockedDash = GObject.registerClass({
 
         const {settings} = DockManager;
 
-        if (this._monitor.inFullscreen && DockManager.settings.dockFixed) {
-            this._ignoreHover = false;
-            if (this._box.hover || this.dash.requiresVisibility)
-                this._showDock();
-            else
-                this._animateOut(settings.animationTime, 0);
-        } else if (DockManager.settings.dockFixed) {
-            this._showDock();
+        if (settings.dockFixed && !this.autohideEnabled) {
+            this.showDock();
         } else if (this.intellihideEnabled) {
             if (!this.dash.requiresVisibility && this._intellihide.getOverlapStatus()) {
                 this._ignoreHover = false;
@@ -880,8 +871,7 @@ const DockedDash = GObject.registerClass({
         if (!this._ignoreHover) {
             // Skip if dock is not in autohide mode for instance because it is shown
             // by intellihide.
-            if (this.autohideEnabled ||
-                (DockManager.settings.dockFixed && this._monitor.inFullscreen)) {
+            if (this.autohideEnabled) {
                 if (this._box.hover || Main.overview.visible)
                     this.showDock();
                 else
@@ -1307,7 +1297,6 @@ const DockedDash = GObject.registerClass({
             () => {
                 this._resetPosition();
                 this._updateVisibilityMode();
-                this._updateBarrier();
             },
         ]);
 
