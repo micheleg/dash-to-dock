@@ -1,6 +1,7 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 import {
+    Atk,
     Clutter,
     Gio,
     GLib,
@@ -196,6 +197,8 @@ export const DockAbstractAppIcon = GObject.registerClass({
                     urgentWindows.forEach(w => (w._manualUrgency = true));
                     this._updateUrgentWindows(urgentWindows);
                 }
+                this.get_accessible().emit('notification', this.accessibleName,
+                    Atk.Live.ASSERTIVE);
             } else {
                 this.iconAnimator.removeAnimation(icon, 'wiggle');
                 icon.rotation_angle_z = 0;
