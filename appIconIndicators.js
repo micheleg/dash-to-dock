@@ -18,7 +18,7 @@ import {
 import {Extension} from './dependencies/shell/extensions/extension.js';
 
 const {cairo: Cairo} = imports;
-const {ngettext} = Extension;
+const {ngettext: N__} = Extension;
 
 const RunningIndicatorStyle = Object.freeze({
     DEFAULT: 0,
@@ -915,7 +915,10 @@ export class UnityIndicator extends IndicatorBase {
             return;
 
         const accessibleName = count > 0
-            ? ngettext('%s, %d unread notification', '%s, %d unread notifications', count)
+            // TRANSLATORS: This is the accessible name for an app icon with unread
+            // notifications.
+            // %s is the name of the app and %d the number of unread notifications.
+            ? N__('%s, %d unread notification', '%s, %d unread notifications', count)
                 .format(appName, count)
             : appName;
 
