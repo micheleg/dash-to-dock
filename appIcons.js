@@ -1137,7 +1137,7 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
 
             if (windows.length > 0) {
                 this.addMenuItem(
-                    /* Translators: This is the heading of a list of open windows */
+                    /* TRANSLATORS: This is the heading of a list of open windows */
                     new PopupMenu.PopupSeparatorMenuItem(_('Open Windows')));
             }
 

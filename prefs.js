@@ -383,13 +383,13 @@ const DockSettings = GObject.registerClass({
 
             if (monitor.isPrimary) {
                 dockMonitorCombo.append_text(
-                    /* Translators: This will be followed by Display Name - Connector. */
+                    /* TRANSLATORS: This will be followed by Display Name - Connector. */
                     `${__('Primary monitor: ') + monitor.displayName} - ${
                         monitor.connector}`);
                 primaryIndex = this._monitors.length;
             } else {
                 dockMonitorCombo.append_text(
-                    /* Translators: Followed by monitor index, Display Name - Connector. */
+                    /* TRANSLATORS: Followed by monitor index, Display Name - Connector. */
                     `${__('Secondary monitor ') + (monitor.index + 1)} - ${
                         monitor.displayName} - ${monitor.connector}`);
             }
