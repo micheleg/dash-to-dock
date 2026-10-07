@@ -1662,3 +1662,23 @@ export function itemShowLabel() {
     });
     /* eslint-enable no-invalid-this */
 }
+
+
+export function updateIconAccessibleName({icon, unreadCount = 0}) {
+    let accessibleName = icon.app?.get_name();
+    if (!accessibleName)
+        return;
+
+    if (unreadCount > 0) {
+        // TRANSLATORS: This is the accessible name for an app icon with
+        // unread notifications.
+        // %s is the name of the app and %d the number of unread
+        // notifications.
+        accessibleName = N__('%s, %d unread notification',
+            '%s, %d unread notifications', unreadCount)
+            .format(accessibleName, unreadCount);
+    }
+
+    icon.set({accessibleName});
+    icon.labelActor?.set({accessibleName});
+}

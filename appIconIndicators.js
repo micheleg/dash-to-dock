@@ -11,14 +11,12 @@ import {
 import {Main} from './dependencies/shell/ui.js';
 
 import {
+    AppIcons,
     Docking,
     Utils,
 } from './imports.js';
 
-import {Extension} from './dependencies/shell/extensions/extension.js';
-
 const {cairo: Cairo} = imports;
-const {ngettext: N__} = Extension;
 
 const RunningIndicatorStyle = Object.freeze({
     DEFAULT: 0,
@@ -793,7 +791,6 @@ export class UnityIndicator extends IndicatorBase {
     destroy() {
         this._notificationBadgeBin?.destroy();
         this._notificationBadgeBin = null;
-        this._updateNotificationAccessibility(0);
         this._hideProgressOverlay();
         this.setUrgent(false);
         this.setUpdating(false);
@@ -909,31 +906,6 @@ export class UnityIndicator extends IndicatorBase {
         ]);
     }
 
-    _updateNotificationAccessibility(count) {
-        const appName = this._source.app?.get_name();
-        if (!appName)
-            return;
-
-        const accessibleName = count > 0
-            // TRANSLATORS: This is the accessible name for an app icon with unread
-            // notifications.
-            // %s is the name of the app and %d the number of unread notifications.
-            ? N__('%s, %d unread notification', '%s, %d unread notifications', count)
-                .format(appName, count)
-            : appName;
-
-        if (this._source.labelActor === null) {
-            // Dock: name owned by parent DashItemContainer, see dash.js
-            const itemContainer = this._source.get_parent?.();
-            itemContainer?.set({accessibleName});
-            this._source.set({accessibleName});
-        } else {
-            // Overview: no per-icon parent, update icon and label directly
-            this._source.set({accessibleName});
-            this._source.labelActor?.set({accessibleName});
-        }
-    }
-
     setNotificationCount(count) {
         if (count > 0) {
             const text = this._notificationBadgeCountToText(count);
@@ -944,7 +916,10 @@ export class UnityIndicator extends IndicatorBase {
             this._notificationBadgeBin = null;
         }
 
-        this._updateNotificationAccessibility(count);
+        AppIcons.updateIconAccessibleName({
+            icon: this._source,
+            unreadCount: count,
+        });
     }
 
     _showProgressOverlay() {
