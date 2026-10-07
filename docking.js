@@ -801,8 +801,7 @@ const DockedDash = GObject.registerClass({
         const {settings} = DockManager;
 
         if (DockManager.settings.dockFixed) {
-            this._removeAnimations();
-            this._animateIn(settings.animationTime, 0);
+            this.showDock();
         } else if (this.intellihideEnabled) {
             if (!this.dash.requiresVisibility && this._intellihide.getOverlapStatus()) {
                 this._ignoreHover = false;
@@ -811,14 +810,13 @@ const DockedDash = GObject.registerClass({
                     this._animateOut(settings.animationTime, 0);
             } else {
                 this._ignoreHover = true;
-                this._removeAnimations();
-                this._animateIn(settings.animationTime, 0);
+                this.showDock();
             }
         } else if (this.autohideEnabled) {
             this._ignoreHover = false;
 
             if (this._box.hover || this.dash.requiresVisibility)
-                this._animateIn(settings.animationTime, 0);
+                this.showDock();
             else
                 this._animateOut(settings.animationTime, 0);
         } else {
@@ -908,9 +906,14 @@ const DockedDash = GObject.registerClass({
         if (this.dockState === State.SHOWN)
             return;
 
+        this._delayedHide = false;
+
+        if (this.dockState === State.SHOWING &&
+            this._slider.get_transition('slide-x'))
+            return;
+
         this.dockState = State.SHOWING;
         this.dash.iconAnimator.start();
-        this._delayedHide = false;
 
         this._slider.ease_property('slide-x', 1, {
             duration: time * 1000,
@@ -940,6 +943,10 @@ const DockedDash = GObject.registerClass({
 
     _animateOut(time, delay) {
         if (this.dockState === State.HIDDEN)
+            return;
+
+        if (this.dockState === State.HIDING &&
+            this._slider.get_transition('slide-x'))
             return;
 
         this.dockState = State.HIDING;
