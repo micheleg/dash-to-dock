@@ -152,7 +152,7 @@
       <description>Sets how much pressure is needed to show the dash.</description>
     </key>
     <key type="b" name="autohide-in-fullscreen">
-      <default>false</default>
+      <default>true</default>
       <summary>Enable autohide in fullscreen mode.</summary>
       <description>Enable autohide in fullscreen mode.</description>
     </key>
