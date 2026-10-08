@@ -13,7 +13,6 @@ import {
 import {
     AppMenu,
     AppDisplay,
-    Layout,
     Main,
     OverviewControls,
     SwitcherPopup,
@@ -37,6 +36,7 @@ import {
     LauncherAPI,
     Locations,
     NotificationsMonitor,
+    Barriers,
     Theming,
     Utils,
 } from './imports.js';
@@ -1139,7 +1139,7 @@ const DockedDash = GObject.registerClass({
         // Create new pressure barrier based on pressure threshold setting
         if (this._canUsePressure && this.autohideEnabled &&
             DockManager.settings.requirePressureToShow) {
-            this._pressureBarrier = new Layout.PressureBarrier(
+            this._pressureBarrier = new Barriers.PressureBarrier(
                 pressureThreshold, settings.showDelay * 1000,
                 Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
             this._pressureBarrier.connectObject('trigger', () => {
@@ -1240,10 +1240,7 @@ const DockedDash = GObject.registerClass({
         // Manually reset pressure barrier
         // This is necessary because we remove the pressure barrier when it is
         // triggered to show the dock
-        if (this._pressureBarrier) {
-            this._pressureBarrier._reset();
-            this._pressureBarrier._isTriggered = false;
-        }
+        this._pressureBarrier?.reset();
 
         // Create new barrier
         // The barrier extends to the whole workarea, minus 1 px to avoid
