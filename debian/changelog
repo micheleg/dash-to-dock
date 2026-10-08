@@ -1,4 +1,4 @@
-gnome-shell-extension-ubuntu-dock (109ubuntu2) UNRELEASED; urgency=medium
+gnome-shell-extension-ubuntu-dock (109ubuntu2) stonking; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
   * docking: Don't change the dock state when already shown or hidden
@@ -30,7 +30,7 @@ gnome-shell-extension-ubuntu-dock (109ubuntu2) UNRELEASED; urgency=medium
   * dash: Disable item expansion so icons do not share leftover space
     (LP: #2170248)
 
- -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 08 Oct 2026 22:52:07 +0200
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 08 Oct 2026 23:00:31 +0200
 
 gnome-shell-extension-ubuntu-dock (109ubuntu1) stonking; urgency=medium
 
