@@ -2555,6 +2555,17 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
     <property name="step-increment">5</property>
     <property name="page-increment">25</property>
   </object>
+  <object class="GtkAdjustment" id="fullscreen_pressure_multiplier_adjustment">
+    <property name="lower">1</property>
+    <property name="upper">10</property>
+    <property name="step-increment">0.1</property>
+    <property name="page-increment">0.5</property>
+  </object>
+  <object class="GtkAdjustment" id="fullscreen_pressure_duration_adjustment">
+    <property name="upper">5</property>
+    <property name="step-increment">0.1</property>
+    <property name="page-increment">0.5</property>
+  </object>
   <object class="GtkAdjustment" id="shortcut_time_adjustment">
     <property name="upper">10</property>
     <property name="step-increment">0.25</property>
@@ -2843,10 +2854,24 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                       </object>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="builtin_theme_label2">
+                      <object class="GtkLabel" id="autohide_label">
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Autohide</property>
+                        <property name="xalign">0</property>
+
+                        <layout>
+                          <property name="column">0</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="autohide_fullscreen_label">
+                        <property name="can_focus">0</property>
+                        <property name="hexpand">1</property>
+                        <property name="label" translatable="yes">Autohide in fullscreen</property>
+                        <property name="xalign">0</property>
 
                         <layout>
                           <property name="column">0</property>
@@ -2856,7 +2881,18 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                     </child>
                     <child>
                       <object class="GtkSwitch" id="autohide_switch">
-                        <property name="halign">end</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="row">0</property>
+                          <property name="row-span">2</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSwitch" id="autohide_enable_in_fullscreen_switch">
+                        <property name="halign">start</property>
                         <property name="valign">center</property>
                         <layout>
                           <property name="column">1</property>
@@ -2905,7 +2941,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
               </object>
             </child>
             <child>
-              <object class="GtkListBoxRow" id="listboxrow15">
+              <object class="GtkListBoxRow" id="intellihide_row">
                 <property name="child">
                   <object class="GtkGrid" id="intellihide_grid">
                     <property name="can_focus">0</property>
@@ -2937,6 +2973,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Dodge windows</property>
+                        <property name="xalign">0</property>
 
                         <layout>
                           <property name="column">0</property>
@@ -3027,6 +3064,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Animation duration (s)</property>
+                        <property name="xalign">0</property>
 
                         <layout>
                           <property name="column">0</property>
@@ -3071,6 +3109,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Hide timeout (s)</property>
+                        <property name="xalign">0</property>
 
                         <layout>
                           <property name="column">0</property>
@@ -3083,6 +3122,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Show timeout (s)</property>
+                        <property name="xalign">0</property>
 
                         <layout>
                           <property name="column">0</property>
@@ -3095,10 +3135,59 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
                         <property name="label" translatable="yes">Pressure threshold</property>
+                        <property name="xalign">0</property>
 
                         <layout>
                           <property name="column">0</property>
                           <property name="row">3</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="fullscreen_pressure_multiplier_label">
+                        <property name="can_focus">0</property>
+                        <property name="hexpand">1</property>
+                        <property name="label" translatable="yes">Fullscreen pressure multiplier</property>
+                        <property name="xalign">0</property>
+                        <layout>
+                          <property name="column">0</property>
+                          <property name="row">4</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="fullscreen_pressure_multiplier_spinbutton">
+                        <property name="halign">end</property>
+                        <property name="adjustment">fullscreen_pressure_multiplier_adjustment</property>
+                        <property name="digits">2</property>
+                        <property name="tooltip_text" translatable="yes">Multiply the pressure threshold by this value in fullscreen mode.</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="row">4</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="fullscreen_pressure_duration_label">
+                        <property name="can_focus">0</property>
+                        <property name="hexpand">1</property>
+                        <property name="label" translatable="yes">Fullscreen pressure duration (s)</property>
+                        <property name="xalign">0</property>
+                        <layout>
+                          <property name="column">0</property>
+                          <property name="row">5</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="fullscreen_pressure_duration_spinbutton">
+                        <property name="halign">end</property>
+                        <property name="adjustment">fullscreen_pressure_duration_adjustment</property>
+                        <property name="digits">2</property>
+                        <property name="tooltip_text" translatable="yes">Push against the screen edge, or dwell on it, for this long before revealing the dock in fullscreen.</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="row">5</property>
                         </layout>
                       </object>
                     </child>

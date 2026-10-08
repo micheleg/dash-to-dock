@@ -24,6 +24,7 @@ EXTRA_MODULES = \
                 windowPreview.js \
                 intellihide.js \
                 prefs.js \
+                barriers.js \
                 theming.js \
                 utils.js \
                 dbusmenuUtils.js \
