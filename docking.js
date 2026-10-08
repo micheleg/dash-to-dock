@@ -51,7 +51,6 @@ const {gettext: __} = Extension;
 
 const {signals: Signals} = imports;
 
-const FULLSCREEN_PRESSURE_MULTIPLIER = -10;
 const ICON_ANIMATOR_DURATION = 3000;
 const STARTUP_ANIMATION_TIME = 500;
 
@@ -751,6 +750,13 @@ const DockedDash = GObject.registerClass({
             },
         ], [
             settings,
+            'changed::fullscreen-pressure-multiplier',
+            () => {
+                this._updatePressureBarrier();
+                this._updateBarrier();
+            },
+        ], [
+            settings,
             'changed::fullscreen-pressure-duration',
             () => {
                 this._updatePressureBarrier();
@@ -1066,7 +1072,7 @@ const DockedDash = GObject.registerClass({
             settings.requirePressureToShow &&
             (!this._monitor.inFullscreen || settings.autohideInFullscreen)) {
             const threshold = pressureThreshold *
-                (this._monitor.inFullscreen ? FULLSCREEN_PRESSURE_MULTIPLIER : 1);
+                (this._monitor.inFullscreen ? settings.fullscreenPressureMultiplier : 1);
             const timeout = settings.showDelay * 1000;
             const actionMode = Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW;
 

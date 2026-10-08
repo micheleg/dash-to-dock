@@ -450,10 +450,12 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('intelligent_autohide_switch'),
             'active',
             Gio.SettingsBindFlags.INVERT_BOOLEAN);
-        this._settings.bind('dock-fixed',
-            this._builder.get_object('intelligent_autohide_button'),
-            'sensitive',
-            Gio.SettingsBindFlags.INVERT_BOOLEAN);
+        ['autohide_switch', 'intellihide_row', 'pressure_threshold_spinbutton',
+            'pressure_threshold_label'].forEach(id => {
+            this._settings.bind('dock-fixed', this._builder.get_object(id),
+                'visible', Gio.SettingsBindFlags.GET | Gio.SettingsBindFlags.INVERT_BOOLEAN |
+                    Gio.SettingsBindFlags.NO_SENSITIVITY);
+        });
         this._settings.bind('autohide',
             this._builder.get_object('autohide_switch'),
             'active',
@@ -462,6 +464,28 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('autohide_enable_in_fullscreen_checkbutton'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('autohide-in-fullscreen',
+            this._builder.get_object('autohide_enable_in_fullscreen_switch'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('dock-fixed',
+            this._builder.get_object('autohide_enable_in_fullscreen_switch'),
+            'visible',
+            Gio.SettingsBindFlags.GET | Gio.SettingsBindFlags.NO_SENSITIVITY);
+        this._settings.bind('dock-fixed',
+            this._builder.get_object('autohide_enable_in_fullscreen_checkbutton'),
+            'visible',
+            Gio.SettingsBindFlags.GET | Gio.SettingsBindFlags.INVERT_BOOLEAN |
+                Gio.SettingsBindFlags.NO_SENSITIVITY);
+        this._settings.bind('dock-fixed',
+            this._builder.get_object('autohide_label'),
+            'visible',
+            Gio.SettingsBindFlags.GET | Gio.SettingsBindFlags.INVERT_BOOLEAN |
+                Gio.SettingsBindFlags.NO_SENSITIVITY);
+        this._settings.bind('dock-fixed',
+            this._builder.get_object('autohide_fullscreen_label'),
+            'visible',
+            Gio.SettingsBindFlags.GET | Gio.SettingsBindFlags.NO_SENSITIVITY);
         this._settings.bind('show-dock-urgent-notify',
             this._builder.get_object('show_dock_urgent_notify_checkbutton'),
             'active',
@@ -490,9 +514,29 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('pressure_threshold_spinbutton'),
             'value',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('fullscreen-pressure-multiplier',
+            this._builder.get_object('fullscreen_pressure_multiplier_spinbutton'),
+            'value',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('autohide-in-fullscreen',
+            this._builder.get_object('fullscreen_pressure_multiplier_spinbutton'),
+            'sensitive',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('autohide-in-fullscreen',
+            this._builder.get_object('fullscreen_pressure_multiplier_label'),
+            'sensitive',
+            Gio.SettingsBindFlags.DEFAULT);
         this._settings.bind('fullscreen-pressure-duration',
             this._builder.get_object('fullscreen_pressure_duration_spinbutton'),
             'value',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('autohide-in-fullscreen',
+            this._builder.get_object('fullscreen_pressure_duration_spinbutton'),
+            'sensitive',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('autohide-in-fullscreen',
+            this._builder.get_object('fullscreen_pressure_duration_label'),
+            'sensitive',
             Gio.SettingsBindFlags.DEFAULT);
 
         // this._builder.get_object('animation_duration_spinbutton').set_value(
@@ -514,11 +558,6 @@ const DockSettings = GObject.registerClass({
             const box = this._builder.get_object('intelligent_autohide_advanced_settings_box');
             dialog.get_content_area().append(box);
 
-            this._settings.bind('intellihide',
-                this._builder.get_object('intellihide_mode_box'),
-                'sensitive',
-                Gio.SettingsBindFlags.GET);
-
             // intellihide mode
 
             const intellihideModeRadioButtons = [
@@ -530,46 +569,6 @@ const DockSettings = GObject.registerClass({
 
             intellihideModeRadioButtons[this._settings.get_enum('intellihide-mode')].set_active(true);
 
-            this._settings.bind('autohide',
-                this._builder.get_object('require_pressure_checkbutton'),
-                'sensitive',
-                Gio.SettingsBindFlags.GET);
-
-            this._settings.bind('autohide',
-                this._builder.get_object('autohide_enable_in_fullscreen_checkbutton'),
-                'sensitive',
-                Gio.SettingsBindFlags.GET);
-
-            this._settings.bind('autohide',
-                this._builder.get_object('show_dock_urgent_notify_checkbutton'),
-                'sensitive',
-                Gio.SettingsBindFlags.GET);
-
-            this._settings.bind('require-pressure-to-show',
-                this._builder.get_object('show_timeout_spinbutton'),
-                'sensitive',
-                Gio.SettingsBindFlags.INVERT_BOOLEAN);
-            this._settings.bind('require-pressure-to-show',
-                this._builder.get_object('show_timeout_label'),
-                'sensitive',
-                Gio.SettingsBindFlags.INVERT_BOOLEAN);
-            this._settings.bind('require-pressure-to-show',
-                this._builder.get_object('pressure_threshold_spinbutton'),
-                'sensitive',
-                Gio.SettingsBindFlags.DEFAULT);
-            this._settings.bind('require-pressure-to-show',
-                this._builder.get_object('pressure_threshold_label'),
-                'sensitive',
-                Gio.SettingsBindFlags.DEFAULT);
-            this._settings.bind('require-pressure-to-show',
-                this._builder.get_object('fullscreen_pressure_duration_spinbutton'),
-                'sensitive',
-                Gio.SettingsBindFlags.GET);
-            this._settings.bind('require-pressure-to-show',
-                this._builder.get_object('fullscreen_pressure_duration_label'),
-                'sensitive',
-                Gio.SettingsBindFlags.GET);
-
             dialog.connect('response', (_, id) => {
                 if (id === 1) {
                     // restore default settings for the relevant keys
@@ -577,7 +576,7 @@ const DockSettings = GObject.registerClass({
                         'autohide-in-fullscreen', 'show-dock-urgent-notify',
                         'require-pressure-to-show', 'animation-time',
                         'show-delay', 'hide-delay', 'pressure-threshold',
-                        'fullscreen-pressure-duration'];
+                        'fullscreen-pressure-multiplier', 'fullscreen-pressure-duration'];
                     keys.forEach(function (val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);
