@@ -1,3 +1,37 @@
+gnome-shell-extension-ubuntu-dock (109ubuntu2) UNRELEASED; urgency=medium
+
+  [ Marco Trevisan (Treviño) ]
+  * docking: Don't change the dock state when already shown or hidden
+    (LP: #2168700)
+  * docking: Let the dock manager own the unredirection inhibition
+    (LP: #2168700)
+  * docking: Only inhibit unredirection when needed by the dock visibility
+    (LP: #2168593)
+  * docking: Unset barrier timeout when removing it (LP: #2168700)
+  * docking: Move prepare / running the startup animation to the dock
+    (LP: #2150429)
+  * docking: Fix mapped settings not updating when unmanaged (LP: #2004554)
+  * docking: Let the dock setting override GNOME workspace isolation
+    (LP: #2004554)
+  * prefs: Show effective workspace isolation and allow overriding it
+    (LP: #2004554)
+  * docking: Keep overview workspaces narrow enough to show their neighbours
+    (LP: #2152773)
+  * docking: Scale the workspace max width ratio with the work area aspect ratio
+    (LP: #2152773)
+  * docking: Limit the workspace size on secondary monitors too (LP: #2152773)
+  * docking: Avoid setting a potentially unused variable (LP: #2152773)
+  * docking: Don't limit the workspace size when there are no neighbours
+    (LP: #2152773)
+  * intellihide: Use strict edges in the overlap test (LP: #2169916)
+  * docking: Activate the app of the dock under the pointer (LP: #2155066)
+
+  [ Cristiano Nunes ]
+  * dash: Disable item expansion so icons do not share leftover space
+    (LP: #2170248)
+
+ -- Marco Trevisan (Treviño) <marco@ubuntu.com>  Thu, 08 Oct 2026 22:52:07 +0200
+
 gnome-shell-extension-ubuntu-dock (109ubuntu1) stonking; urgency=medium
 
   [ Marco Trevisan (Treviño) ]
