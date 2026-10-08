@@ -776,7 +776,13 @@ const DockedDash = GObject.registerClass({
      */
     _updateVisibilityMode() {
         const {settings} = DockManager;
-        if (DockManager.settings.dockFixed || DockManager.settings.manualhide) {
+        if (settings.manualhide) {
+            this.autohideEnabled = false;
+            this.intellihideEnabled = false;
+        } else if (this._monitor.inFullscreen) {
+            this.autohideEnabled = true;
+            this.intellihideEnabled = false;
+        } else if (settings.dockFixed) {
             this.autohideEnabled = false;
             this.intellihideEnabled = false;
         } else {
@@ -1295,6 +1301,7 @@ const DockedDash = GObject.registerClass({
             'in-fullscreen-changed',
             () => {
                 this._resetPosition();
+                this._updateVisibilityMode();
                 this._updateBarrier();
             },
         ]);
