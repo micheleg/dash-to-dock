@@ -26,6 +26,7 @@ EXTRA_MODULES = \
                 prefs.js \
                 theming.js \
                 utils.js \
+                destroyableObject.js \
                 dbusmenuUtils.js \
                 desktopIconsIntegration.js \
                 Settings.ui \

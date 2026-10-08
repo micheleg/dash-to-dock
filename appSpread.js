@@ -1,4 +1,4 @@
-import {Atk, Clutter} from './dependencies/gi.js';
+import {Atk, Clutter, GObject} from './dependencies/gi.js';
 
 import {
     Main,
@@ -7,14 +7,25 @@ import {
     WorkspaceThumbnail,
 } from './dependencies/shell/ui.js';
 
+import {DestroyableObject} from './destroyableObject.js';
+
 import {Utils} from './imports.js';
+
+import {SignalTracker} from './dependencies/shell/misc.js';
 
 const APP_SPREAD_RESTORE_ACTION = 'dock-app-spread-restore';
 
-export class AppSpread {
+export class AppSpread extends DestroyableObject {
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor() {
+        super();
+
         this.app = null;
-        this.supported = true;
         this.windows = [];
 
         // fail early and do nothing, if mandatory gnome shell functions are missing
@@ -23,26 +34,22 @@ export class AppSpread {
             !WorkspaceThumbnail?.WorkspaceThumbnail?.prototype._isOverviewWindow) {
             log('Dash to dock: Unable to temporarily replace shell functions ' +
                 'for app spread - using previews instead');
-            this.supported = false;
             return;
         }
 
-        this._signalHandlers = new Utils.GlobalSignalsHandler();
-        this._methodInjections = new Utils.InjectionsHandler();
-        this._vfuncInjections = new Utils.VFuncInjectionsHandler();
+        this._supported = true;
+        this._signals = new SignalTracker.TransientSignalHolder(this);
+        this._methodInjections = new Utils.InjectionsHandler(this);
+        this._vfuncInjections = new Utils.VFuncInjectionsHandler(this);
+        this.connect('destroy', () => this._hideAppSpread());
+    }
+
+    get supported() {
+        return this._supported ?? false;
     }
 
     get isInAppSpread() {
         return !!this.app;
-    }
-
-    destroy() {
-        if (!this.supported)
-            return;
-        this._hideAppSpread();
-        this._signalHandlers.destroy();
-        this._methodInjections.destroy();
-        this._vfuncInjections.destroy();
     }
 
     toggle(app) {
@@ -89,11 +96,14 @@ export class AppSpread {
         // Checked in overview "hide" event handler _hideAppSpread
         this.app = app;
         this._updateWindows();
+        this._signals?.destroy();
+        this._signals = new SignalTracker.TransientSignalHolder(this);
 
         // we need to hook into overview 'hidden' like this, in case app spread
         // overview is hidden by choosing another app it should then do its
         // cleanup too
-        this._signalHandlers.add(Main.overview, 'hidden', () => this._hideAppSpread());
+        Main.overview.connectObject('hidden',
+            () => this._hideAppSpread(), this._signals);
 
         const appSpread = this;
         this._methodInjections.add([
@@ -120,10 +130,10 @@ export class AppSpread {
         const activitiesButton = Main.panel.statusArea?.activities;
 
         if (activitiesButton) {
-            this._signalHandlers.add(Main.overview, 'showing', () => {
+            Main.overview.connectObject('showing', () => {
                 activitiesButton.remove_style_pseudo_class('overview');
                 activitiesButton.remove_accessible_state(Atk.StateType.CHECKED);
-            });
+            }, this._signals);
 
             let hasEventVFunc = false;
             try {
@@ -194,19 +204,19 @@ export class AppSpread {
             }
         }
 
-        this._signalHandlers.add(Main.overview.dash.showAppsButton, 'notify::checked', () => {
+        Main.overview.dash.showAppsButton.connectObject('notify::checked', () => {
             if (Main.overview.dash.showAppsButton.checked)
                 this._restoreDefaultOverview();
-        });
+        }, this._signals);
 
         // If closing windows in AppSpread, and only one window left:
         // exit app spread and focus remaining window (handled in _hideAppSpread)
-        this._signalHandlers.add(this.app, 'windows-changed', () => {
+        this.app.connectObject('windows-changed', () => {
             this._updateWindows();
 
             if (this.windows.length <= 1)
                 Main.overview.hide();
-        });
+        }, this._signals);
 
         this._disableSearch();
 
@@ -226,7 +236,7 @@ export class AppSpread {
         this.app = null;
         this._enableSearch();
         this._methodInjections.clear();
-        this._signalHandlers.clear();
+        this._signals.destroy();
         this._vfuncInjections.clear();
         Main.panel.statusArea?.activities.remove_action_by_name(APP_SPREAD_RESTORE_ACTION);
         this._activitiesClickGesture.set_enabled(true);

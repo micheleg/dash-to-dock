@@ -16,11 +16,6 @@ import {
 // this to monkey them.
 const {_gi: Gi} = imports;
 
-export const SignalsHandlerFlags = Object.freeze({
-    NONE: 0,
-    CONNECT_AFTER: 1,
-});
-
 const GENERIC_KEY = Symbol('generic');
 
 /**
@@ -35,26 +30,19 @@ const BasicHandler = class DashToDockBasicHandler {
     constructor(parentObject) {
         this._storage = Object.create(null);
 
-        if (parentObject) {
-            if (!(parentObject.connect instanceof Function))
-                throw new TypeError('Not a valid parent object');
+        if (!parentObject)
+            return;
 
-            if (!(parentObject instanceof GObject.Object) ||
-                GObject.signal_lookup('destroy', parentObject.constructor.$gtype)) {
-                this._parentObject = parentObject;
-                this._connectToParentDestroy();
-            }
+        if (!(parentObject.connect instanceof Function))
+            throw new TypeError('Not a valid parent object');
+
+        // we can only expect to be dropped along with a parent that has a
+        // destroy signal of its own, so watch for anything else
+        if (!(parentObject instanceof GObject.Object) ||
+            GObject.signal_lookup('destroy', parentObject.constructor.$gtype)) {
+            this._parentObject = parentObject;
+            this._destroyId = parentObject.connect('destroy', () => this.destroy());
         }
-    }
-
-    _connectToParentDestroy() {
-        const parentObject = this._parentObject;
-        this._destroyId = parentObject.connect('destroy', () => {
-            this._onParentDestroy(parentObject);
-            this._parentObject = null;
-            this._destroyId = 0;
-            this.destroy();
-        });
     }
 
     add(...args) {
@@ -71,16 +59,13 @@ const BasicHandler = class DashToDockBasicHandler {
     destroy() {
         const parentObject = this._parentObject;
         const destroyId = this._destroyId;
-        this._parentObject = null;
-        this._destroyId = 0;
+        delete this._parentObject;
+        delete this._destroyId;
 
         if (destroyId)
             parentObject.disconnect(destroyId);
 
         this.clear();
-    }
-
-    _onParentDestroy(_parentObject) {
     }
 
     block() {
@@ -190,108 +175,6 @@ const BasicHandler = class DashToDockBasicHandler {
         return itemA.every((_, idx) => itemA[idx] === itemB[idx]);
     }
 };
-
-/**
- * Manage global signals
- */
-export class GlobalSignalsHandler extends BasicHandler {
-    _create(object, event, callback, flags = SignalsHandlerFlags.NONE) {
-        if (!object)
-            throw new Error('Impossible to connect to an invalid object');
-
-        const after = flags === SignalsHandlerFlags.CONNECT_AFTER;
-        const connector = after ? object.connect_after : object.connect;
-
-        if (!connector) {
-            throw new Error(`Requested to connect to signal '${event}', ` +
-                `but no implementation for 'connect${after ? '_after' : ''}' ` +
-                `found in ${object.constructor.name}`);
-        }
-
-        const isDestroy = event === 'destroy';
-        const isParentObject = object === this._parentObject;
-
-        if (isDestroy && !isParentObject) {
-            const originalCallback = callback;
-            callback = (...args) => {
-                this._removeForObject(object);
-                originalCallback(...args);
-            };
-        }
-        const id = connector.call(object, event, callback);
-
-        if (isDestroy && isParentObject) {
-            this._parentObject.disconnect(this._destroyId);
-            this._connectToParentDestroy();
-        } else if (!isParentObject && !isDestroy) {
-            this._monitorDestruction(object);
-        }
-
-        return [object, id];
-    }
-
-    _monitorDestruction(object) {
-        if (!(object instanceof GObject.Object) ||
-            !GObject.signal_lookup('destroy', object.constructor.$gtype))
-            return;
-
-        this._destroyHandlersIds ??= new Map();
-        if (this._destroyHandlersIds.has(object))
-            return;
-
-        const connector = object.connect_after ?? object.connect;
-        const id = connector.call(object, 'destroy',
-            () => this._removeForObject(object, false));
-        this._destroyHandlersIds.set(object, id);
-    }
-
-    _removeForObject(object, disconnect = true) {
-        Object.getOwnPropertySymbols(this._storage).forEach(label =>
-            (this._storage[label] = this._storage[label].filter(it => {
-                if (it[0] !== object)
-                    return true;
-                if (disconnect)
-                    this._remove(it);
-                return false;
-            })));
-
-        const monitorId = this._destroyHandlersIds?.get(object);
-        if (monitorId) {
-            this._destroyHandlersIds.delete(object);
-            if (disconnect)
-                object.disconnect(monitorId);
-        }
-    }
-
-    clear() {
-        super.clear();
-        this._destroyHandlersIds?.forEach((id, object) => object.disconnect(id));
-        this._destroyHandlersIds?.clear();
-    }
-
-    _onParentDestroy(parentObject) {
-        this._removeForObject(parentObject, false);
-    }
-
-    _remove(item) {
-        const [object, id] = item;
-        object.disconnect(id);
-    }
-
-    _block(item) {
-        const [object, id] = item;
-
-        if (object instanceof GObject.Object)
-            GObject.Object.prototype.block_signal_handler.call(object, id);
-    }
-
-    _unblock(item) {
-        const [object, id] = item;
-
-        if (object instanceof GObject.Object)
-            GObject.Object.prototype.unblock_signal_handler.call(object, id);
-    }
-}
 
 /**
  * Color manipulation utilities

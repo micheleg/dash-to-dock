@@ -2,15 +2,16 @@
 
 import {
     GLib,
+    GObject,
     Meta,
 } from './dependencies/gi.js';
+
+import {DestroyableObject} from './destroyableObject.js';
 
 import {
     Docking,
     Utils,
 } from './imports.js';
-
-const {signals: Signals} = imports;
 
 // A good compromise between reactivity and efficiency; to be tuned.
 const INTELLIHIDE_CHECK_INTERVAL = 100;
@@ -50,79 +51,61 @@ const ignoreApps = ['com.rastersoft.ding', 'com.desktop.ding'];
  * Intallihide object: emit 'status-changed' signal when the overlap of windows
  * with the provided targetBoxClutter.ActorBox changes;
  */
-export class Intellihide {
+export class Intellihide extends DestroyableObject {
+    static [GObject.signals] = {
+        'status-changed': {param_types: [GObject.TYPE_INT]},
+    };
+
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor(monitorIndex) {
+        super();
+
         // Load settings
         this._monitorIndex = monitorIndex;
 
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._focusApp = null; // The application whose window is focused.
         this._topApp = null; // The application whose window is on top on the monitor with the dock.
 
-        this._isEnabled = false;
         this._status = OverlapStatus.UNDEFINED;
         this._targetBox = null;
 
         this._checkOverlapTimeoutContinue = false;
         this._checkOverlapTimeoutId = 0;
 
-        this._trackedWindows = new Map();
-
         // Connect global signals
-        this._signalsHandler.add([
+        global.display.connectObject(
             // Add signals on windows created from now on
-            global.display,
-            'window-created',
-            this._windowCreated.bind(this),
-        ], [
+            'window-created', (...args) => this._windowCreated(...args),
             // triggered for instance when the window list order changes,
             // included when the workspace is switched
-            global.display,
-            'restacked',
-            this._checkOverlap.bind(this),
-        ], [
-            // when windows are alwasy on top, the focus window can change
-            // without the windows being restacked. Thus monitor window focus change.
-            Docking.DockManager.windowTracker,
-            'notify::focus-app',
-            this._checkOverlap.bind(this),
-        ], [
-            // update wne monitor changes, for instance in multimonitor when monitor are attached
-            Utils.getMonitorManager(),
-            'monitors-changed',
-            this._checkOverlap.bind(this),
-        ]);
+            'restacked', (...args) => this._checkOverlap(...args),
+            this);
+
+        // when windows are alwasy on top, the focus window can change
+        // without the windows being restacked. Thus monitor window focus change.
+        Docking.DockManager.windowTracker.connectObject(
+            'notify::focus-app', (...args) => this._checkOverlap(...args), this);
+
+        // update wne monitor changes, for instance in multimonitor when monitor are attached
+        Utils.getMonitorManager().connectObject(
+            'monitors-changed', (...args) => this._checkOverlap(...args), this);
+
+        // Window signals
+        global.get_window_actors().forEach(wa => this._addWindowSignals(wa));
     }
 
     destroy() {
-        // Disconnect global signals
-        this._signalsHandler.destroy();
-
-        // Remove  residual windows signals
-        this.disable();
-    }
-
-    enable() {
-        this._isEnabled = true;
-        this._status = OverlapStatus.UNDEFINED;
-        global.get_window_actors().forEach(function (wa) {
-            this._addWindowSignals(wa);
-        }, this);
-        this._doCheckOverlap();
-    }
-
-    disable() {
-        this._isEnabled = false;
-
-        for (const wa of this._trackedWindows.keys())
-            this._removeWindowSignals(wa);
-
-        this._trackedWindows.clear();
-
         if (this._checkOverlapTimeoutId > 0) {
             GLib.source_remove(this._checkOverlapTimeoutId);
             this._checkOverlapTimeoutId = 0;
         }
+
+        super.destroy();
     }
 
     _windowCreated(display, metaWindow) {
@@ -134,18 +117,7 @@ export class Intellihide {
         if (!this._handledWindow(wa))
             return;
 
-        this._trackedWindows.set(wa, [
-            wa.connect('notify::allocation', () => this._checkOverlap()),
-            wa.connect('destroy', () => this._removeWindowSignals(wa)),
-        ]);
-    }
-
-    _removeWindowSignals(wa) {
-        const signalIds = this._trackedWindows.get(wa);
-        if (signalIds) {
-            signalIds.forEach(id => wa.disconnect(id));
-            this._trackedWindows.delete(wa);
-        }
+        wa.connectObject('notify::allocation', () => this._checkOverlap(), this);
     }
 
     updateTargetBox(box) {
@@ -163,7 +135,7 @@ export class Intellihide {
     }
 
     _checkOverlap() {
-        if (!this._isEnabled || !this._targetBox)
+        if (!this._targetBox)
             return;
 
         /* Limit the number of calls to the doCheckOverlap function */
@@ -188,7 +160,7 @@ export class Intellihide {
     }
 
     _doCheckOverlap() {
-        if (!this._isEnabled || !this._targetBox)
+        if (!this._targetBox)
             return;
 
         let overlaps = OverlapStatus.FALSE;
@@ -336,5 +308,3 @@ export class Intellihide {
         return false;
     }
 }
-
-Signals.addSignalMethods(Intellihide.prototype);

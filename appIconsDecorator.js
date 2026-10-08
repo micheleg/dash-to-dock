@@ -1,5 +1,8 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
+import {GObject} from './dependencies/gi.js';
+
+import {DestroyableObject} from './destroyableObject.js';
 
 import {
     AppIconIndicators,
@@ -15,17 +18,26 @@ import {
     PopupMenu,
 } from './dependencies/shell/ui.js';
 
+import {SignalTracker} from './dependencies/shell/misc.js';
+
 const Labels = Object.freeze({
     RESULTS: Symbol('results'),
     ICONS: Symbol('icons'),
 });
 
-export class AppIconsDecorator {
+export class AppIconsDecorator extends DestroyableObject {
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor() {
-        this._signals = new Utils.GlobalSignalsHandler();
-        this._methodInjections = new Utils.InjectionsHandler();
+        super();
+
+        this._methodInjections = new Utils.InjectionsHandler(this);
         this._propertyInjections = new Utils.PropertyInjectionsHandler(
-            null, {allowNewProperty: true});
+            this, {allowNewProperty: true});
         this._indicators = new Set();
         this._resultIndicators = new Set();
         this._updatingIcons = new WeakSet();
@@ -35,17 +47,15 @@ export class AppIconsDecorator {
     }
 
     destroy() {
-        this._signals?.destroy();
-        delete this._signals;
-        this._methodInjections?.destroy();
         delete this._methodInjections;
-        this._propertyInjections?.destroy();
         delete this._propertyInjections;
-        this._clearIndicators(Labels.ICONS);
-        this._clearIndicators(Labels.RESULTS);
+        Object.values(Labels).forEach(label => this._clearIndicators(label));
         delete this._indicators;
         delete this._resultIndicators;
         delete this._updatingIcons;
+        delete this._appDisplay;
+
+        super.destroy();
     }
 
     _indicatorsSet(label) {
@@ -65,17 +75,21 @@ export class AppIconsDecorator {
         const indicator = new AppIconIndicators.UnityIndicator(parentIcon);
         const indicatorsSet = this._indicatorsSet(signalLabel);
         indicatorsSet.add(indicator);
-        this._signals.addWithLabel(signalLabel, parentIcon, 'destroy', () => {
+        // the result icons live as long as the decorator, while the app
+        // display ones are decorated again on each view reload
+        const tracker = signalLabel === Labels.ICONS ? this._iconsSignals : this;
+        parentIcon.connectObject('destroy', () => {
             indicatorsSet.delete(indicator);
-            indicator.destroy();
-        });
+        }, tracker);
     }
 
     _decorateIcons() {
         const {appDisplay} = Docking.DockManager.getDefault().overviewControls;
+        this._appDisplay = appDisplay;
 
         const decorateAppIcons = () => {
-            this._signals.removeWithLabel(Labels.ICONS);
+            this._iconsSignals?.destroy();
+            this._iconsSignals = new SignalTracker.TransientSignalHolder(this);
             this._clearIndicators(Labels.ICONS);
 
             const decorateViewIcons = view => {
@@ -85,15 +99,16 @@ export class AppIconsDecorator {
                         this._decorateIcon(i, Labels.ICONS);
                     } else if (i instanceof AppDisplay.FolderIcon) {
                         decorateViewIcons(i.view);
-                        this._signals.addWithLabel(Labels.ICONS, i.view,
-                            'view-loaded', () => decorateAppIcons());
+                        i.view.connectObject('view-loaded',
+                            () => decorateAppIcons(), this._iconsSignals);
                     }
                 });
             };
             decorateViewIcons(appDisplay);
         };
 
-        this._signals.add(appDisplay, 'view-loaded', () => decorateAppIcons());
+        appDisplay.connectObject('view-loaded',
+            () => decorateAppIcons(), this);
         decorateAppIcons();
     }
 

@@ -10,12 +10,14 @@ import {
 
 import {Main} from './dependencies/shell/ui.js';
 
+import {SignalTracker} from './dependencies/shell/misc.js';
+
+import {DestroyableObject} from './destroyableObject.js';
+
 import {
     Docking,
     Utils,
 } from './imports.js';
-
-const {signals: Signals} = imports;
 
 /*
  * DEFAULT:  transparency given by theme
@@ -28,10 +30,20 @@ const TransparencyMode = {
     DYNAMIC:  3,
 };
 
-const Labels = Object.freeze({
-    TRANSPARENCY: Symbol('transparency'),
-    THEME_CHANGED: Symbol('theme-changed'),
-});
+const THEME_CHANGED_KEYS = [
+    'transparency-mode',
+    'customize-alphas',
+    'min-alpha',
+    'max-alpha',
+    'background-opacity',
+    'custom-background-color',
+    'background-color',
+    'apply-custom-theme',
+    'custom-theme-shrink',
+    'custom-theme-running-dots',
+    'extend-height',
+    'force-straight-corner',
+];
 
 export const PositionStyleClass = Object.freeze([
     'top',
@@ -43,49 +55,46 @@ export const PositionStyleClass = Object.freeze([
 /**
  * Manage theme customization and custom theme support
  */
-export class ThemeManager {
+export class ThemeManager extends DestroyableObject {
+    static [GObject.signals] = {
+        'updated': {},
+    };
+
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
     constructor(dock) {
-        this._signalsHandler = new Utils.GlobalSignalsHandler(this);
-        this._bindSettingsChanges();
+        super();
+
         this._actor = dock;
         this._dash = dock.dash;
 
         // initialize colors with generic values
         this._customizedBackground = {red: 0, green: 0, blue: 0, alpha: 0};
         this._customizedBorder = {red: 0, green: 0, blue: 0, alpha: 0};
-        this._transparency = new Transparency(dock);
+        this._backgroundColor = null;
+        this._transparency = null;
 
-        this._signalsHandler.add([
-            // update :overview pseudoclass
-            Main.overview,
-            'showing',
-            this._onOverviewShowing.bind(this),
-        ], [
-            Main.overview,
-            'hiding',
-            this._onOverviewHiding.bind(this),
-        ]);
+        this._themeSignals = null;
 
-        this._signalsHandler.addWithLabel(Labels.THEME_CHANGED,
-            St.ThemeContext.get_for_stage(global.stage), 'changed',
-            () => this._queueUpdateCustomTheme(),
-            Utils.SignalsHandlerFlags.CONNECT_AFTER);
-
-        const maybeUpdateCustomTheme = () => {
+        const updateThemeChangedSignals = () => {
             if (this._actor.mapped) {
-                this._signalsHandler.unblockWithLabel(Labels.THEME_CHANGED);
+                this._connectToThemeSignals();
                 this._queueUpdateCustomTheme();
             } else {
                 this._dequeueUpdateCustomTheme();
-                this._signalsHandler.blockWithLabel(Labels.THEME_CHANGED);
+                this._themeSignals?.destroy();
+                this._themeSignals = null;
             }
         };
 
-        this._signalsHandler.add(this._actor, 'notify::mapped',
-            () => maybeUpdateCustomTheme(),
-            Utils.SignalsHandlerFlags.CONNECT_AFTER);
+        this._actor.connectObject('notify::mapped',
+            () => updateThemeChangedSignals(), this);
 
-        maybeUpdateCustomTheme();
+        updateThemeChangedSignals();
 
         // Set the initial overview pseudo-class state.
         if (Main.overview.visible)
@@ -95,13 +104,49 @@ export class ThemeManager {
 
         // destroy themeManager when the managed actor is destroyed (e.g. extension unload)
         // in order to disconnect signals
-        this._signalsHandler.add(this._actor, 'destroy', () => this.destroy());
+        this._actor.connectObject('destroy', () => this.destroy(), this);
     }
 
     destroy() {
-        this.emit('destroy');
-        this._transparency.destroy();
+        // we are also destroyed by the actor destroy signal, and explicitly
+        // by the dock, so make sure we only do it once
+        if (!this._actor)
+            return;
+
+        this._dash = null;
+
+        this._themeSignals?.destroy();
+        this._themeSignals = null;
+        this._actor.disconnectObject(this);
+        this._actor = null;
+
+        this._transparency?.destroy();
+        this._transparency = null;
+
         this._dequeueUpdateCustomTheme();
+
+        super.destroy();
+    }
+
+    _connectToThemeSignals() {
+        if (this._themeSignals)
+            return;
+
+        this._themeSignals = new SignalTracker.TransientSignalHolder(this._actor);
+
+        St.ThemeContext.get_for_stage(global.stage).connectObject('changed',
+            () => this._queueUpdateCustomTheme(),
+            GObject.ConnectFlags.AFTER, this._themeSignals);
+
+        Docking.DockManager.settings.connectObject(...THEME_CHANGED_KEYS.map(key => [
+            `changed::${key}`, () => this.updateCustomTheme(),
+        ]).flat(), this._themeSignals);
+
+        // update :overview pseudoclass
+        Main.overview.connectObject(
+            'showing', (...args) => this._onOverviewShowing(...args),
+            'hiding', (...args) => this._onOverviewHiding(...args),
+            this._themeSignals);
     }
 
     _queueUpdateCustomTheme() {
@@ -185,8 +230,8 @@ export class ThemeManager {
     }
 
     _updateDashColor() {
-        // Retrieve the color. If needed we will adjust it before passing it to
-        // this._transparency.
+        // Retrieve the color. If needed we will adjust it before handing it
+        // over to the transparency.
         let [backgroundColor] = this._getDefaultColors();
 
         if (!backgroundColor)
@@ -221,11 +266,11 @@ export class ThemeManager {
             this._customizedBorder = this._customizedBackground;
 
             color.alpha = newAlpha * 255;
-            this._transparency.setColor(color);
-        } else {
-            // backgroundColor is a {Clutter,Cogl}.Color object
-            this._transparency.setColor(backgroundColor);
+            backgroundColor = color;
         }
+
+        this._backgroundColor = backgroundColor;
+        this._transparency?.setColor(backgroundColor);
     }
 
     _updateCustomStyleClasses() {
@@ -273,10 +318,20 @@ export class ThemeManager {
      */
     _adjustTheme() {
         const {settings} = Docking.DockManager;
+        const {transparencyMode} = settings;
+        const defaultTransparency = transparencyMode === TransparencyMode.DEFAULT;
+        const fixedTransparency = transparencyMode === TransparencyMode.FIXED;
 
         // Remove prior style edits
         this._dash._background.set_style(null);
-        this._transparency.disable();
+
+        // Only a dynamic mode needs us, and having one is what enables it
+        if (!settings.applyCustomTheme && !defaultTransparency && !fixedTransparency) {
+            this._transparency ??= new Transparency(this._actor, this._backgroundColor);
+        } else {
+            this._transparency?.destroy();
+            this._transparency = null;
+        }
 
         // If built-in theme is enabled do nothing else
         if (settings.applyCustomTheme)
@@ -311,50 +366,32 @@ export class ThemeManager {
         }
 
         // Customize background
-        const fixedTransparency = settings.transparencyMode === TransparencyMode.FIXED;
-        const defaultTransparency = settings.transparencyMode === TransparencyMode.DEFAULT;
-        if (!defaultTransparency && !fixedTransparency) {
-            this._transparency.enable();
-        } else if (!defaultTransparency || settings.customBackgroundColor) {
+        if (fixedTransparency || settings.customBackgroundColor) {
             newStyle = `${newStyle}background-color:${this._customizedBackground}; ` +
                        `border-color:${this._customizedBorder}; ` +
                        'transition-delay: 0s; transition-duration: 0.250s;';
             this._dash._background.set_style(newStyle);
         }
     }
-
-    _bindSettingsChanges() {
-        const keys = ['transparency-mode',
-            'customize-alphas',
-            'min-alpha',
-            'max-alpha',
-            'background-opacity',
-            'custom-background-color',
-            'background-color',
-            'apply-custom-theme',
-            'custom-theme-shrink',
-            'custom-theme-running-dots',
-            'extend-height',
-            'force-straight-corner'];
-
-        this._signalsHandler.addWithLabel(Labels.THEME_CHANGED, ...keys.map(key => [
-            Docking.DockManager.settings,
-            `changed::${key}`,
-            () => this.updateCustomTheme(),
-        ]));
-    }
 }
-Signals.addSignalMethods(ThemeManager.prototype);
 
 /**
  * The following class is based on the following upstream commit:
  * https://git.gnome.org/browse/gnome-shell/commit/?id=447bf55e45b00426ed908b1b1035f472c2466956
  * Transparency when free-floating
  */
-class Transparency {
-    constructor(dock) {
+class Transparency extends DestroyableObject {
+    static {
+        /* eslint-disable no-invalid-this */
+        GObject.registerClass(this);
+        /* eslint-enable no-invalid-this */
+    }
+
+    constructor(dock, backgroundColor) {
+        super();
+
         this._dash = dock.dash;
-        this._actor = this._dash._container;
+        this._actor = this._dash.container;
         this._backgroundActor = this._dash._background;
         this._dockActor = dock;
         this._dock = dock;
@@ -370,21 +407,13 @@ class Transparency {
         this._opaqueAlphaBorder = '0.5';
         this._transparentTransition = '0ms';
         this._opaqueTransition = '0ms';
-        this._base_actor_style = '';
 
-        this._signalsHandler = new Utils.GlobalSignalsHandler();
-        this._trackedWindows = new Map();
-    }
+        if (backgroundColor) {
+            const {red, green, blue} = backgroundColor;
+            this._backgroundColor = `${red},${green},${blue}`;
+        }
 
-    enable() {
-        // ensure I never double-register/inject
-        // although it should never happen
-        this.disable();
-
-        this._base_actor_style = this._actor.get_style();
-        if (!this._base_actor_style)
-            this._base_actor_style = '';
-
+        this._base_actor_style = this._actor.get_style() || '';
 
         let addedSignal = 'child-added';
         let removedSignal = 'child-removed';
@@ -395,83 +424,50 @@ class Transparency {
             removedSignal = 'actor-removed';
         }
 
-        this._signalsHandler.addWithLabel(Labels.TRANSPARENCY, [
-            global.window_group,
-            addedSignal,
-            this._onWindowActorAdded.bind(this),
-        ], [
-            global.window_group,
-            removedSignal,
-            this._onWindowActorRemoved.bind(this),
-        ], [
-            global.window_manager,
-            'switch-workspace',
-            this._updateSolidStyle.bind(this),
-        ], [
-            Main.overview,
-            'hiding',
-            this._updateSolidStyle.bind(this),
-        ], [
-            Main.overview,
-            'showing',
-            this._updateSolidStyle.bind(this),
-        ]);
+        global.window_group.connectObject(
+            addedSignal, (...args) => this._onWindowActorAdded(...args),
+            removedSignal, (...args) => this._onWindowActorRemoved(...args),
+            this);
+        global.window_manager.connectObject(
+            'switch-workspace', (...args) => this._updateSolidStyle(...args),
+            this);
+        Main.overview.connectObject(
+            'hiding', (...args) => this._updateSolidStyle(...args),
+            'showing', (...args) => this._updateSolidStyle(...args),
+            this);
 
-        // Window signals
-        global.window_group.get_children().filter(child => {
-            // An irrelevant window actor ('Gnome-shell') produces an error when the signals are
-            // disconnected, therefore do not add signals to it.
-            return child instanceof Meta.WindowActor &&
-                   child.get_meta_window().get_wm_class() !== 'Gnome-shell';
-        }).forEach(function (win) {
-            this._onWindowActorAdded(null, win);
-        }, this);
-
-        if (this._actor.get_stage())
-            this._updateSolidStyle();
+        global.window_group.get_children().forEach(win =>
+            this._onWindowActorAdded(global.window_group, win), this);
 
         this._updateStyles();
         this._updateSolidStyle();
-
-        this.emit('transparency-enabled');
-    }
-
-    disable() {
-        // ensure I never double-register/inject
-        // although it should never happen
-        this._signalsHandler.removeWithLabel(Labels.TRANSPARENCY);
-
-        for (const key of this._trackedWindows.keys()) {
-            this._trackedWindows.get(key).forEach(id => {
-                key.disconnect(id);
-            });
-        }
-        this._trackedWindows.clear();
-
-        this.emit('transparency-disabled');
-    }
-
-    destroy() {
-        this.disable();
-        this._signalsHandler.destroy();
     }
 
     _onWindowActorAdded(container, metaWindowActor) {
-        const signalIds = [];
-        ['notify::allocation', 'notify::visible'].forEach(s => {
-            signalIds.push(metaWindowActor.connect(s, this._updateSolidStyle.bind(this)));
-        });
-        this._trackedWindows.set(metaWindowActor, signalIds);
+        metaWindowActor.connectObject('notify::allocation',
+            () => this._updateSolidStyle(),
+            'notify::visible', () => this._updateSolidStyle(),
+            this);
+
+        this._updateStyleForWindow(metaWindowActor);
     }
 
     _onWindowActorRemoved(container, metaWindowActor) {
-        if (!this._trackedWindows.get(metaWindowActor))
+        metaWindowActor.disconnectObject(this);
+
+        this._updateStyleForWindow(metaWindowActor);
+    }
+
+    _updateStyleForWindow(metaWindowActor) {
+        if (!metaWindowActor.visible)
             return;
 
-        this._trackedWindows.get(metaWindowActor).forEach(id => {
-            metaWindowActor.disconnect(id);
-        });
-        this._trackedWindows.delete(metaWindowActor);
+        const {metaWindow} = metaWindowActor;
+        if (!metaWindow.get_workspace()?.active &&
+            metaWindow.get_monitor() !== this._dash.monitorIndex &&
+            metaWindow.get_window_type() !== Meta.WindowType.DESKTOP)
+            return;
+
         this._updateSolidStyle();
     }
 
@@ -486,18 +482,17 @@ class Transparency {
             this._dockActor.remove_style_class_name('opaque');
             this._dockActor.add_style_class_name('transparent');
         }
-
-        this.emit('solid-style-updated', isNear);
     }
 
     _dockIsNear() {
-        if (this._dockActor.has_style_pseudo_class('overview'))
+        if (Main.overview.visibleTarget)
             return false;
+
         /* Get all the windows in the active workspace that are in the primary monitor and visible */
         const activeWorkspace = global.workspace_manager.get_active_workspace();
         const dash = this._dash;
         const windows = activeWorkspace.list_windows().filter(metaWindow => {
-            return metaWindow.get_monitor() === dash._monitorIndex &&
+            return metaWindow.get_monitor() === dash.monitorIndex &&
                    metaWindow.showing_on_its_workspace() &&
                    metaWindow.get_window_type() !== Meta.WindowType.DESKTOP &&
                    !metaWindow.skip_taskbar;
@@ -559,8 +554,6 @@ class Transparency {
             `border-color: rgba(${
                 this._backgroundColor},${this._opaqueAlphaBorder});` +
             `transition-duration: ${this._opaqueTransition}ms;`;
-
-        this.emit('styles-updated');
     }
 
     setColor(color) {
@@ -599,4 +592,3 @@ class Transparency {
         }
     }
 }
-Signals.addSignalMethods(Transparency.prototype);
