@@ -156,6 +156,12 @@
       <summary>Enable autohide in fullscreen mode.</summary>
       <description>Enable autohide in fullscreen mode.</description>
     </key>
+    <key type="d" name="fullscreen-pressure-duration">
+      <default>1.0</default>
+      <range min="0" max="5"/>
+      <summary>Fullscreen pressure duration</summary>
+      <description>Minimum time in seconds to push against the screen edge or dwell on it before revealing the dock in fullscreen mode.</description>
+    </key>
     <key type="b" name="show-dock-urgent-notify">
       <default>true</default>
       <summary>Show dock for urgent notifications.</summary>

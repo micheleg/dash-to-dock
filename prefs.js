@@ -490,6 +490,10 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('pressure_threshold_spinbutton'),
             'value',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('fullscreen-pressure-duration',
+            this._builder.get_object('fullscreen_pressure_duration_spinbutton'),
+            'value',
+            Gio.SettingsBindFlags.DEFAULT);
 
         // this._builder.get_object('animation_duration_spinbutton').set_value(
         //   this._settings.get_double('animation-time'));
@@ -557,6 +561,14 @@ const DockSettings = GObject.registerClass({
                 this._builder.get_object('pressure_threshold_label'),
                 'sensitive',
                 Gio.SettingsBindFlags.DEFAULT);
+            this._settings.bind('require-pressure-to-show',
+                this._builder.get_object('fullscreen_pressure_duration_spinbutton'),
+                'sensitive',
+                Gio.SettingsBindFlags.GET);
+            this._settings.bind('require-pressure-to-show',
+                this._builder.get_object('fullscreen_pressure_duration_label'),
+                'sensitive',
+                Gio.SettingsBindFlags.GET);
 
             dialog.connect('response', (_, id) => {
                 if (id === 1) {
@@ -564,7 +576,8 @@ const DockSettings = GObject.registerClass({
                     const keys = ['intellihide', 'autohide', 'intellihide-mode',
                         'autohide-in-fullscreen', 'show-dock-urgent-notify',
                         'require-pressure-to-show', 'animation-time',
-                        'show-delay', 'hide-delay', 'pressure-threshold'];
+                        'show-delay', 'hide-delay', 'pressure-threshold',
+                        'fullscreen-pressure-duration'];
                     keys.forEach(function (val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);

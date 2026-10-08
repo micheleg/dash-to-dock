@@ -51,6 +51,7 @@ const {gettext: __} = Extension;
 
 const {signals: Signals} = imports;
 
+const FULLSCREEN_PRESSURE_MULTIPLIER = -10;
 const ICON_ANIMATOR_DURATION = 3000;
 const STARTUP_ANIMATION_TIME = 500;
 
@@ -717,7 +718,7 @@ const DockedDash = GObject.registerClass({
         ], [
             settings,
             'changed::autohide-in-fullscreen',
-            this._updateBarrier.bind(this),
+            () => this._updateVisibilityMode(),
         ], [
             settings,
             'changed::show-dock-urgent-notify',
@@ -744,6 +745,13 @@ const DockedDash = GObject.registerClass({
         ], [
             settings,
             'changed::pressure-threshold',
+            () => {
+                this._updatePressureBarrier();
+                this._updateBarrier();
+            },
+        ], [
+            settings,
+            'changed::fullscreen-pressure-duration',
             () => {
                 this._updatePressureBarrier();
                 this._updateBarrier();
@@ -1020,15 +1028,18 @@ const DockedDash = GObject.registerClass({
     _updateDwellingBarrier() {
         const {settings} = DockManager;
 
-        // If we don't have extended barrier features, then we need to
-        // support the old tray dwelling mechanism.
-        if (!this.autohideEnabled || this._monitor.inFullscreen ||
-            (!Utils.supportsExtendedBarriers() ||
-             !settings.requirePressureToShow))
+        // The dwelling mechanism replaces the pressure barrier where that is
+        // not available, and in fullscreen it is only used when the option
+        // allows the pointer to reveal the dock there as well.
+        if (!this.autohideEnabled || this._pressureBarrier ||
+            (this._monitor.inFullscreen && !settings.autohideInFullscreen))
             return;
 
-        this._dwellingBarrier = new Barriers.DwellingBarrier(this,
-            settings.showDelay * 1000);
+        const timeout = (this._monitor.inFullscreen
+            ? settings.fullscreenPressureDuration
+            : settings.showDelay) * 1000;
+
+        this._dwellingBarrier = new Barriers.DwellingBarrier(this, timeout);
         this._dwellingBarrier.connectObject('trigger', () =>
             this._onPressureSensed(), this);
     }
@@ -1052,15 +1063,20 @@ const DockedDash = GObject.registerClass({
 
         // Create new pressure barrier based on pressure threshold setting
         if (this._canUsePressure && this.autohideEnabled &&
-            DockManager.settings.requirePressureToShow) {
-            this._pressureBarrier = new Barriers.PressureBarrier(
-                pressureThreshold, settings.showDelay * 1000,
-                Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW);
-            this._pressureBarrier.connectObject('trigger', () => {
-                if (!settings.autohideInFullscreen && this._monitor.inFullscreen)
-                    return;
-                this._onPressureSensed();
-            }, this);
+            settings.requirePressureToShow &&
+            (!this._monitor.inFullscreen || settings.autohideInFullscreen)) {
+            const threshold = pressureThreshold *
+                (this._monitor.inFullscreen ? FULLSCREEN_PRESSURE_MULTIPLIER : 1);
+            const timeout = settings.showDelay * 1000;
+            const actionMode = Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW;
+
+            this._pressureBarrier = this._monitor.inFullscreen
+                ? new Barriers.FullscreenPressureBarrier(threshold,
+                    timeout, actionMode, settings.fullscreenPressureDuration * 1000)
+                : new Barriers.PressureBarrier(threshold, timeout, actionMode);
+
+            this._pressureBarrier.connectObject('trigger', () =>
+                this._onPressureSensed(), this);
         }
     }
 
@@ -1145,10 +1161,7 @@ const DockedDash = GObject.registerClass({
         // Remove existing barrier
         this._removeBarrier();
 
-        // The barrier needs to be removed in fullscreen with autohide disabled
-        // otherwise the mouse can get trapped on monitor.
-        if (this._monitor.inFullscreen &&
-            !DockManager.settings.autohideInFullscreen)
+        if (this._monitor.inFullscreen && !this._pressureBarrier)
             return;
 
         // Manually reset pressure barrier
@@ -1159,7 +1172,6 @@ const DockedDash = GObject.registerClass({
         // Create new barrier
         // The barrier extends to the whole workarea, minus 1 px to avoid
         // conflicting with other active corners
-        // Note: dash in fixed position doesn't use pressure barrier.
         if (this._canUsePressure && this.autohideEnabled &&
             DockManager.settings.requirePressureToShow) {
             let x1, x2, y1, y2, direction;

@@ -28,6 +28,78 @@ export class PressureBarrier extends Layout.PressureBarrier {
     }
 }
 
+export class FullscreenPressureBarrier extends PressureBarrier {
+    static PRESSURE_MAX_GAP = 250;
+
+    constructor(threshold, timeout, actionMode, duration) {
+        super(threshold, Math.max(timeout, duration), actionMode);
+        this._duration = duration;
+    }
+
+    _reset() {
+        super._reset();
+
+        if (this._triggerTimeoutId) {
+            GLib.source_remove(this._triggerTimeoutId);
+            delete this._triggerTimeoutId;
+        }
+
+        this._pressureStart = null;
+        this._lastPressureHit = null;
+    }
+
+    _onBarrierHit(barrier, event) {
+        const distance = this._getDistanceAcrossBarrier(barrier, event);
+        if (!this._isTriggered && (this._actionMode & Main.actionMode) &&
+            distance > 0 &&
+            (distance >= this._threshold ||
+                distance >= this._getDistanceAlongBarrier(barrier, event))) {
+            if (this._lastPressureHit !== null &&
+                event.time - this._lastPressureHit >
+                FullscreenPressureBarrier.PRESSURE_MAX_GAP)
+                this._reset();
+
+            this._pressureStart ??= event.time;
+            this._lastPressureHit = event.time;
+        }
+
+        super._onBarrierHit(barrier, event);
+    }
+
+    _trigger() {
+        if (this._pressureStart === null ||
+            this._lastPressureHit - this._pressureStart < this._duration) {
+            this._scheduleTrigger();
+            return;
+        }
+
+        super._trigger();
+    }
+
+    _scheduleTrigger() {
+        if (this._triggerTimeoutId || this._pressureStart === null)
+            return;
+
+        const elapsed = this._lastPressureHit - this._pressureStart;
+        const remaining = this._duration - elapsed;
+
+        if (remaining <= 0)
+            return;
+
+        // The shell only reports motion events, so a push that is held still
+        // does not reach us again: re-check once the hold is long enough.
+        this._triggerTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT,
+            remaining, () => {
+                delete this._triggerTimeoutId;
+
+                if (this._pressureStart !== null)
+                    super._trigger();
+
+                return GLib.SOURCE_REMOVE;
+            });
+    }
+}
+
 export class DwellingBarrier extends Signals.EventEmitter {
     static DOCK_DWELL_CHECK_INTERVAL = 100;
 

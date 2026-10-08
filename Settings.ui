@@ -2555,6 +2555,11 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
     <property name="step-increment">5</property>
     <property name="page-increment">25</property>
   </object>
+  <object class="GtkAdjustment" id="fullscreen_pressure_duration_adjustment">
+    <property name="upper">5</property>
+    <property name="step-increment">0.1</property>
+    <property name="page-increment">0.5</property>
+  </object>
   <object class="GtkAdjustment" id="shortcut_time_adjustment">
     <property name="upper">10</property>
     <property name="step-increment">0.25</property>
@@ -3104,6 +3109,30 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                         <layout>
                           <property name="column">0</property>
                           <property name="row">3</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="fullscreen_pressure_duration_label">
+                        <property name="can_focus">0</property>
+                        <property name="hexpand">1</property>
+                        <property name="label" translatable="yes">Fullscreen pressure duration (s)</property>
+                        <property name="xalign">0</property>
+                        <layout>
+                          <property name="column">0</property>
+                          <property name="row">5</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="fullscreen_pressure_duration_spinbutton">
+                        <property name="halign">end</property>
+                        <property name="adjustment">fullscreen_pressure_duration_adjustment</property>
+                        <property name="digits">2</property>
+                        <property name="tooltip_text" translatable="yes">Push continuously against the screen edge for this long before revealing the dock.</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="row">5</property>
                         </layout>
                       </object>
                     </child>
