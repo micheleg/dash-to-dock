@@ -54,6 +54,8 @@ const DOCK_DWELL_CHECK_INTERVAL = 100;
 const ICON_ANIMATOR_DURATION = 3000;
 const STARTUP_ANIMATION_TIME = 500;
 
+const MUTTER_SCHEMA = 'org.gnome.mutter';
+
 export const State = Object.freeze({
     HIDDEN:  0,
     SHOWING: 1,
@@ -73,6 +75,7 @@ const Labels = Object.freeze({
     LOCATIONS: Symbol('locations'),
     MAIN_DASH: Symbol('main-dash'),
     OLD_DASH_CHANGES: Symbol('old-dash-changes'),
+    OVERVIEW_KEY_LONG_PRESS: Symbol('overview-key-long-press'),
     SETTINGS: Symbol('settings'),
     STARTUP_ANIMATION: Symbol('startup-animation'),
     WORKSPACE_SWITCH_SCROLL: Symbol('workspace-switch-scroll'),
@@ -1739,6 +1742,192 @@ const KeyboardShortcuts = class DashToDockKeyboardShortcuts {
     }
 };
 
+const OverviewKeyLongPress = class DashToDockOverviewKeyLongPress {
+    static OVERLAY_MODIFIERS = new Map([
+        ['Super', Clutter.ModifierType.MOD4_MASK],
+        ['Meta', Clutter.ModifierType.MOD1_MASK],
+        ['Hyper', Clutter.ModifierType.MOD3_MASK],
+    ]);
+
+    // Locks do not make it a shortcut, as mutter ignores them too
+    static IGNORED_MASK = Clutter.ModifierType.LOCK_MASK |
+        Clutter.ModifierType.MOD2_MASK;
+
+    static OVERLAY_KEY = 'overlay-key';
+
+    constructor() {
+        this._signalsHandler = new Utils.GlobalSignalsHandler();
+        this._mutterSettings = new Gio.Settings({schema_id: MUTTER_SCHEMA});
+
+        this._timeoutIds = new Set();
+
+        this._update();
+
+        this._signalsHandler.add(DockManager.settings,
+            'changed::overview-key-long-press', () => this._update(),
+            'changed::hotkeys-show-dock', () => this._update(),
+            'changed::hotkeys-overlay', () => this._update());
+        this._signalsHandler.add(this._mutterSettings,
+            `changed::${OverviewKeyLongPress.OVERLAY_KEY}`, () => this._update());
+    }
+
+    destroy() {
+        delete this._mutterSettings;
+        this._disableFilter();
+        this._signalsHandler.destroy();
+    }
+
+    _update() {
+        const key = this._mutterSettings.get_string(
+            OverviewKeyLongPress.OVERLAY_KEY).split('_', 1).at(0);
+        this._overlayMask = OverviewKeyLongPress.OVERLAY_MODIFIERS.get(key) ?? 0;
+
+        const {settings} = DockManager;
+
+        // A long press has nothing to show without either of the options
+        if (settings.overviewKeyLongPress && this._overlayMask &&
+            (settings.hotkeysShowDock || settings.hotkeysOverlay))
+            this._enableFilter();
+        else
+            this._disableFilter();
+    }
+
+    _cancel() {
+        this._signalsHandler.removeWithLabel(Labels.OVERVIEW_KEY_LONG_PRESS);
+
+        this._clearTimeouts();
+
+        if (this._overlayShown || this._dockRevealed) {
+            DockManager.allDocks.forEach(dock => {
+                if (this._overlayShown)
+                    dock.dash.toggleNumberOverlay(false);
+                dock.updateDashVisibility();
+            });
+        }
+
+        delete this._overlayShown;
+        delete this._dockRevealed;
+        delete this._pressed;
+        delete this._tracking;
+    }
+
+    _enableFilter() {
+        if (this._filterId)
+            return;
+
+        this._filterId = Clutter.Event.add_filter(global.stage, event => {
+            if (event.type() === Clutter.EventType.KEY_STATE)
+                return this._updateState(event.get_state());
+
+            return Clutter.EVENT_PROPAGATE;
+        });
+    }
+
+    _disableFilter() {
+        this._cancel();
+
+        if (this._filterId) {
+            Clutter.Event.remove_filter(this._filterId);
+            this._filterId = 0;
+        }
+    }
+
+    _updateState(state) {
+        const mask = this._overlayMask;
+        const held = state & Clutter.ModifierType.MODIFIER_MASK &
+            ~OverviewKeyLongPress.IGNORED_MASK;
+
+        if (held === mask) {
+            this._press();
+            return Clutter.EVENT_PROPAGATE;
+        }
+
+        // The key was released, or another modifier joined and made it a
+        // shortcut: either way the press is over.
+        this._cancel();
+        return Clutter.EVENT_STOP;
+    }
+
+    _press() {
+        if (this._pressed)
+            return;
+
+        this._pressed = true;
+
+        this._signalsHandler.addWithLabel(Labels.OVERVIEW_KEY_LONG_PRESS,
+            global.display, 'accelerator-activated', () => this._cancel());
+
+        const {settings} = DockManager;
+
+        if (settings.hotkeysShowDock) {
+            this._addTimeout(settings.overviewKeyShowDockDelay * 1000, () => {
+                this._trackPress();
+                this._revealDock();
+                return GLib.SOURCE_REMOVE;
+            });
+        }
+
+        if (settings.hotkeysOverlay) {
+            this._addTimeout(settings.overviewKeyOverlayDelay * 1000, () => {
+                this._trackPress();
+                this._showOverlay();
+                return GLib.SOURCE_REMOVE;
+            });
+        }
+    }
+
+    /**
+     * Watch for the release of the overlay key once the press has shown
+     * something. Mutter reports it through the key binding filter, which is
+     * also what tells it to drop the binding, so cancel the press from there
+     * and keep the overview from being opened over what we showed.
+     */
+    _trackPress() {
+        if (this._tracking)
+            return;
+
+        this._tracking = true;
+
+        this._signalsHandler.addWithLabel(Labels.OVERVIEW_KEY_LONG_PRESS,
+            global.window_manager, 'filter-keybinding', (_wm, binding) => {
+                if (binding.get_name() !== OverviewKeyLongPress.OVERLAY_KEY)
+                    return false;
+
+                this._cancel();
+                return true;
+            });
+    }
+
+    _revealDock() {
+        DockManager.allDocks.filter(dock =>
+            dock.intellihideEnabled || dock.autohideEnabled).forEach(dock => {
+            dock.showDock();
+            this._dockRevealed = true;
+        });
+    }
+
+    _showOverlay() {
+        this._overlayShown = true;
+
+        DockManager.allDocks.forEach(dock =>
+            dock.dash.toggleNumberOverlay(true));
+    }
+
+    _addTimeout(delay, callback) {
+        const id = GLib.timeout_add(GLib.PRIORITY_DEFAULT, delay, () => {
+            this._timeoutIds.delete(id);
+            return callback();
+        });
+
+        this._timeoutIds.add(id);
+    }
+
+    _clearTimeouts() {
+        this._timeoutIds.forEach(id => GLib.source_remove(id));
+        this._timeoutIds.clear();
+    }
+};
+
 /**
  * Isolate overview to open new windows for inactive apps
  * Note: the future implementation is not fully contained here.
@@ -2270,6 +2459,7 @@ export class DockManager {
         // we need to connect the signals to all dock instances.
         this._workspaceIsolation = new WorkspaceIsolation();
         this._keyboardShortcuts = new KeyboardShortcuts();
+        this._overviewKeyLongPress = new OverviewKeyLongPress();
 
         this.emit('docks-ready');
     }
@@ -2745,6 +2935,8 @@ export class DockManager {
         // Remove extra features
         this._workspaceIsolation?.destroy();
         this._keyboardShortcuts?.destroy();
+        this._overviewKeyLongPress?.destroy();
+        delete this._overviewKeyLongPress;
         this._desktopIconsUsableArea?.resetMargins();
         this._strutsManager?.clear();
 

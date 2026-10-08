@@ -873,11 +873,33 @@ const DockSettings = GObject.registerClass({
                 'value',
                 Gio.SettingsBindFlags.DEFAULT);
 
+            const overviewKeyLongPressSwitch = this._builder.get_object('overview_key_long_press_switch');
+            const overviewKeyDelays = this._builder.get_object('listboxrow_overview_key_long_press_delays');
+            this._settings.bind('overview-key-long-press',
+                overviewKeyLongPressSwitch,
+                'active',
+                Gio.SettingsBindFlags.DEFAULT);
+            this._settings.bind('overview-key-show-dock-delay',
+                this._builder.get_object('overview_key_show_dock_delay_spinbutton'),
+                'value',
+                Gio.SettingsBindFlags.DEFAULT);
+            this._settings.bind('overview-key-overlay-delay',
+                this._builder.get_object('overview_key_overlay_delay_spinbutton'),
+                'value',
+                Gio.SettingsBindFlags.DEFAULT);
+
+            overviewKeyLongPressSwitch.connect('notify::active', () => {
+                overviewKeyDelays.sensitive = overviewKeyLongPressSwitch.active;
+            });
+            overviewKeyDelays.sensitive = overviewKeyLongPressSwitch.active;
+
             dialog.connect('response', (_, id) => {
                 if (id === 1) {
                     // restore default settings for the relevant keys
                     const keys = ['shortcut-text', 'hotkeys-overlay',
-                        'hotkeys-show-dock', 'shortcut-timeout'];
+                        'hotkeys-show-dock', 'shortcut-timeout',
+                        'overview-key-long-press', 'overview-key-show-dock-delay',
+                        'overview-key-overlay-delay'];
                     keys.forEach(function (val) {
                         this._settings.set_value(val, this._settings.get_default_value(val));
                     }, this);

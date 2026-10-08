@@ -395,7 +395,31 @@
       <summary>Show the dock when using the hotkeys</summary>
       <description>The dock will be quickly shown so that the number-overlay is visible and app activation is easier</description>
     </key>
-    <key name="app-ctrl-hotkey-1" type="as">
+    <key type="b" name="overview-key-long-press">
+      <default>true</default>
+      <summary>Show the dock when holding the overview key</summary>
+      <description>
+        Take over the stand-alone overview key: a quick tap still toggles the overview, but
+        holding it shows the dock and the number overlay, so that it can be followed by
+        Super+number to launch an application.
+      </description>
+    </key>
+    <key type="d" name="overview-key-show-dock-delay">
+      <default>0.5</default>
+      <summary>Delay to reveal a hidden dock (s)</summary>
+      <description>
+        How long the key needs to be held before an autohiding dock is revealed, before
+        the number overlay is shown.
+      </description>
+    </key>
+    <key type="d" name="overview-key-overlay-delay">
+      <default>1</default>
+      <summary>Delay to show the number overlay (s)</summary>
+      <description>
+        How long the key needs to be held to behave like the shortcut above. Releasing
+        the key afterwards does not toggle the overview.
+      </description>
+    </key>    <key name="app-ctrl-hotkey-1" type="as">
       <default><![CDATA[['<Ctrl><Super>1']]]></default>
       <summary>Keybinding to launch 1st dash app</summary>
       <description>

@@ -2560,6 +2560,12 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
     <property name="step-increment">0.25</property>
     <property name="page-increment">1</property>
   </object>
+  <object class="GtkAdjustment" id="overview_key_delay_adjustment">
+    <property name="lower">0.1</property>
+    <property name="upper">5</property>
+    <property name="step-increment">0.050000000000000003</property>
+    <property name="page-increment">0.25</property>
+  </object>
   <object class="GtkBox" id="box_overlay_shortcut">
     <property name="hexpand">1</property>
     <property name="vexpand">1</property>
@@ -2688,6 +2694,129 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
               </object>
             </child>
             <child>
+              <object class="GtkListBoxRow" id="listboxrow_overview_key_long_press">
+                <property name="width_request">100</property>
+                <property name="height_request">80</property>
+                <property name="child">
+                  <object class="GtkGrid" id="grid_overview_key_long_press">
+                    <property name="can_focus">0</property>
+                    <property name="margin_start">12</property>
+                    <property name="margin_end">12</property>
+                    <property name="margin_top">12</property>
+                    <property name="margin_bottom">12</property>
+                    <property name="column_spacing">32</property>
+                    <child>
+                      <object class="GtkSwitch" id="overview_key_long_press_switch">
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="row">0</property>
+                          <property name="row-span">2</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="overview_key_long_press_label">
+                        <property name="can_focus">0</property>
+                        <property name="hexpand">1</property>
+                        <property name="halign">start</property>
+                        <!-- TRANSLATORS: This label describes the action of holding the Overview key to trigger the same actions of the shortcut keybinding -->
+                        <property name="label" translatable="yes">Trigger the actions by holding the Overview key</property>
+
+                        <layout>
+                          <property name="column">0</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="overview_key_long_press_description">
+                        <property name="can_focus">0</property>
+                        <property name="label" translatable="yes">Holding the overview key reveals the dock and shows the numbers, so the shortcut can be completed with Super+number. A quick tap still opens the overview.</property>
+                        <property name="wrap">1</property>
+                        <property name="xalign">0</property>
+                        <property name="max_width_chars">40</property>
+
+                        <style>
+                          <class name="dim-label"/>
+                        </style>
+                        <layout>
+                          <property name="column">0</property>
+                          <property name="row">1</property>
+                        </layout>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkListBoxRow" id="listboxrow_overview_key_long_press_delays">
+                <property name="child">
+                  <object class="GtkGrid" id="grid_overview_key_long_press_delays">
+                    <property name="margin_start">12</property>
+                    <property name="margin_end">12</property>
+                    <property name="margin_top">12</property>
+                    <property name="margin_bottom">12</property>
+                    <property name="hexpand">1</property>
+                    <property name="row_spacing">6</property>
+                    <property name="column_spacing">32</property>
+                    <child>
+                      <object class="GtkSpinButton" id="overview_key_show_dock_delay_spinbutton">
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="adjustment">overview_key_delay_adjustment</property>
+                        <property name="digits">2</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="overview_key_show_dock_delay_label">
+                        <property name="can_focus">0</property>
+                        <property name="hexpand">1</property>
+                        <property name="label" translatable="yes">Reveal the dock after (s)</property>
+                        <property name="xalign">0</property>
+
+                        <layout>
+                          <property name="column">0</property>
+                          <property name="row">0</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSpinButton" id="overview_key_overlay_delay_spinbutton">
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="adjustment">overview_key_delay_adjustment</property>
+                        <property name="digits">2</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="row">1</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="overview_key_overlay_delay_label">
+                        <property name="can_focus">0</property>
+                        <property name="hexpand">1</property>
+                        <property name="label" translatable="yes">Show the numbers after (s)</property>
+                        <property name="xalign">0</property>
+
+                        <layout>
+                          <property name="column">0</property>
+                          <property name="row">1</property>
+                        </layout>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
               <object class="GtkListBoxRow" id="listboxrow_extra_shortcut">
                 <property name="width_request">100</property>
                 <property name="height_request">80</property>
@@ -2771,6 +2900,7 @@ See the &lt;a href=&quot;https://www.gnu.org/licenses/old-licenses/gpl-2.0.html&
                       <object class="GtkLabel" id="shortcut_timeout_label">
                         <property name="can_focus">0</property>
                         <property name="hexpand">1</property>
+                        <property name="xalign">0</property>
                         <property name="label" translatable="yes">Hide timeout (s)</property>
                         <property name="xalign">0</property>
 
