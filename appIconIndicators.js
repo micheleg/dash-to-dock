@@ -55,8 +55,10 @@ export class AppIconIndicator {
         else
             ({runningIndicatorStyle} = settings);
 
+        const dockManager = Docking.DockManager.getDefault();
         if (settings.showIconsEmblems &&
-            !Docking.DockManager.getDefault().notificationsMonitor.dndMode) {
+            !dockManager.notificationsMonitor.dndMode &&
+            dockManager.remoteModel) {
             const unityIndicator = new UnityIndicator(source);
             this._indicators.push(unityIndicator);
         }
