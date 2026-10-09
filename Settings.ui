@@ -454,6 +454,11 @@
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="dock_edge_margin_adjustment">
+    <property name="upper">128</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">8</property>
+  </object>
   <object class="GtkAdjustment" id="preview_size_adjustment">
     <property name="lower">0.0</property>
     <property name="upper">1</property>
@@ -535,6 +540,33 @@
                             </child>
                             <child>
                               <placeholder/>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkListBoxRow" id="dock_edge_margin_listboxrow">
+                        <property name="child">
+                          <object class="GtkBox">
+                            <property name="margin_start">12</property>
+                            <property name="margin_end">12</property>
+                            <property name="margin_top">12</property>
+                            <property name="margin_bottom">12</property>
+                            <property name="spacing">32</property>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="hexpand">1</property>
+                                <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Distance from screen edge (px)</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="dock_edge_margin_spinbutton">
+                                <property name="valign">center</property>
+                                <property name="numeric">1</property>
+                                <property name="adjustment">dock_edge_margin_adjustment</property>
+                              </object>
                             </child>
                           </object>
                         </property>
