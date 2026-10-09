@@ -1,6 +1,7 @@
 // -*- mode: js; js-indent-level: 4; indent-tabs-mode: nil -*-
 
 import {
+    Atk,
     Clutter,
     Gio,
     GLib,
@@ -183,6 +184,8 @@ export const DockAbstractAppIcon = GObject.registerClass({
         this.connect('notify::urgent', () => {
             const icon = this.icon._iconBin;
             this._signalsHandler.removeWithLabel(Labels.URGENT_WINDOWS);
+            this._updateAccessibleName();
+
             if (this.urgent) {
                 if (Docking.DockManager.settings.danceUrgentApplications &&
                     notificationsMonitor.enabled) {
@@ -194,6 +197,8 @@ export const DockAbstractAppIcon = GObject.registerClass({
                     urgentWindows.forEach(w => (w._manualUrgency = true));
                     this._updateUrgentWindows(urgentWindows);
                 }
+                this.get_accessible().emit('notification', this.accessibleName,
+                    Atk.Live.ASSERTIVE);
             } else {
                 this.iconAnimator.removeAnimation(icon, 'wiggle');
                 icon.rotation_angle_z = 0;
@@ -255,6 +260,10 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         this._doubleClickGesture?.cancel();
         delete this._doubleClickGesture;
+    }
+
+    get iconContainer() {
+        return this._iconContainer;
     }
 
     ownsWindow(window) {
@@ -815,7 +824,11 @@ export const DockAbstractAppIcon = GObject.registerClass({
         this._numberOverlayOrder = -1;
         this._numberOverlayBin.hide();
 
-        this._iconContainer.add_child(this._numberOverlayBin);
+        this.iconContainer.add_child(this._numberOverlayBin);
+        this._signalsHandler.add(this.iconContainer, 'child-added', () => {
+            this.iconContainer.set_child_above_sibling(
+                this._numberOverlayBin, null);
+        });
     }
 
     updateNumberOverlay() {
@@ -825,7 +838,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
         const scaleFactor = St.ThemeContext.get_for_stage(global.stage).scale_factor;
         // Set the font size to something smaller than the whole icon so it is
         // still visible. The border radius is large to make the shape circular
-        const [minWidth_, natWidth] = this._iconContainer.get_preferred_width(-1);
+        const [minWidth_, natWidth] = this.iconContainer.get_preferred_width(-1);
         const fontSize = Math.round(Math.max(12, 0.3 * natWidth) / scaleFactor);
         const size = Math.round(fontSize * 1.2);
         this._numberOverlayLabel.set_style(
@@ -838,6 +851,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
     setNumberOverlay(number) {
         this._numberOverlayOrder = number;
         this._numberOverlayLabel.set_text(number.toString());
+        this._updateAccessibleName();
     }
 
     toggleNumberOverlay(activate) {
@@ -847,6 +861,24 @@ export const DockAbstractAppIcon = GObject.registerClass({
         } else {
             this._numberOverlayBin.hide();
         }
+
+        this._updateAccessibleName();
+    }
+
+    get overlayNumber() {
+        if (!this._numberOverlayBin?.visible)
+            return -1;
+
+        return this._numberOverlayOrder;
+    }
+
+    _updateAccessibleName() {
+        updateIconAccessibleName({
+            icon: this,
+            overlayNumber: this.overlayNumber,
+            indicatorCount: this._indicator?.notificationsCount,
+            progress: this._indicator?.progress,
+        });
     }
 
     _minimizeWindow(param) {
@@ -1661,4 +1693,47 @@ export function itemShowLabel() {
         mode: Clutter.AnimationMode.EASE_OUT_QUAD,
     });
     /* eslint-enable no-invalid-this */
+}
+
+export function updateIconAccessibleName({
+    icon,
+    overlayNumber = -1,
+    indicatorCount = 0,
+    progress = -1,
+    urgent = icon.urgent,
+}) {
+    let accessibleName = icon?.app?.get_name();
+    if (!accessibleName)
+        return;
+
+    if (overlayNumber >= 0) {
+        // TRANSLATORS: This is the name of a dash item while the number
+        // overlay is shown, %d is the number of the hot key that launches
+        // the app and %s is the name of the app
+        accessibleName = __('%d: %s').format(overlayNumber, accessibleName);
+    }
+
+    if (urgent) {
+        // TRANSLATORS: %s is the name of an app requesting attention.
+        accessibleName = __('%s, needs attention').format(accessibleName);
+    }
+
+    if (indicatorCount > 0) {
+        // TRANSLATORS: This is the accessible name for an app icon with
+        // unread notifications.
+        // %s is the name of the app, potentially including the overlay
+        // number, and %d the number of unread notifications.
+        accessibleName = N__('%s, %d unread notification',
+            '%s, %d unread notifications', indicatorCount)
+            .format(accessibleName, indicatorCount);
+    }
+
+    if (progress >= 0) {
+        // TRANSLATORS: %s is the app name and %d is its progress percentage.
+        accessibleName = __('%s, %d%% complete')
+            .format(accessibleName, Math.round(progress * 100));
+    }
+
+    icon.set({accessibleName});
+    icon.labelActor?.set({accessibleName});
 }

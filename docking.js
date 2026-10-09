@@ -1430,7 +1430,9 @@ const DockedDash = GObject.registerClass({
     _enableExtraFeatures() {
         // Restore dash accessibility
         Main.ctrlAltTabManager.addGroup(
-            this.dash, _('Dash'), 'user-bookmarks-symbolic',
+            // TRANSLATORS: this is the name of the dock area on
+            // the ctrl+alt+tab a11y switch.
+            this.dash, __('Dock'), 'shell-focus-dash-symbolic',
             {focusCallback: timestamp => this._onAccessibilityFocus(timestamp)});
     }
 

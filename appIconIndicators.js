@@ -11,14 +11,12 @@ import {
 import {Main} from './dependencies/shell/ui.js';
 
 import {
+    AppIcons,
     Docking,
     Utils,
 } from './imports.js';
 
-import {Extension} from './dependencies/shell/extensions/extension.js';
-
 const {cairo: Cairo} = imports;
-const {ngettext: N__} = Extension;
 
 const RunningIndicatorStyle = Object.freeze({
     DEFAULT: 0,
@@ -107,6 +105,16 @@ export class AppIconIndicator {
         }
 
         this._indicators.push(runningIndicator);
+    }
+
+    get notificationsCount() {
+        return this._indicators.reduce((count, indicator) =>
+            count + (indicator.notificationsCount ?? 0), 0);
+    }
+
+    get progress() {
+        return this._indicators.reduce((progress, indicator) =>
+            Math.max(progress, indicator.progress ?? -1), -1);
     }
 
     update() {
@@ -201,7 +209,7 @@ class RunningIndicatorBase extends IndicatorBase {
 
         // Fallback
         if (!colorPalette) {
-            this._source._iconContainer.set_style(
+            this._source.iconContainer.set_style(
                 'border-radius: 5px;' +
                 'background-gradient-direction: vertical;' +
                 'background-gradient-start: #e0e0e0;' +
@@ -211,7 +219,7 @@ class RunningIndicatorBase extends IndicatorBase {
             return;
         }
 
-        this._source._iconContainer.set_style(
+        this._source.iconContainer.set_style(
             `${'border-radius: 5px;' +
             'background-gradient-direction: vertical;' +
             'background-gradient-start: '}${colorPalette.original};` +
@@ -220,14 +228,14 @@ class RunningIndicatorBase extends IndicatorBase {
     }
 
     _disableBacklight() {
-        this._source._iconContainer.set_style(null);
+        this._source.iconContainer.set_style(null);
     }
 
     destroy() {
         this._disableBacklight();
         // Remove glossy background if the children still exists
-        if (this._source._iconContainer.get_children().length > 1)
-            this._source._iconContainer.get_children()[1].set_style(null);
+        if (this._source.iconContainer.get_children().length > 1)
+            this._source.iconContainer.get_children()[1].set_style(null);
         this._restoreDefaultDot();
 
         super.destroy();
@@ -298,7 +306,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         }
 
         this._area.connectObject('repaint', this._updateIndicator.bind(this), this);
-        this._source._iconContainer.add_child(this._area);
+        this._source.iconContainer.add_child(this._area);
 
         const keys = ['custom-theme-running-dots-color',
             'custom-theme-running-dots-border-color',
@@ -330,7 +338,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         // Enable / Disable the backlight of running apps
         if (!Docking.DockManager.settings.applyCustomTheme &&
             Docking.DockManager.settings.unityBacklitItems) {
-            const [icon] = this._source._iconContainer.get_children();
+            const [icon] = this._source.iconContainer.get_children();
             icon.set_style(
                 Docking.DockManager.settings.applyGlossyEffect
                     ? this._glossyBackgroundStyle : null);
@@ -340,7 +348,7 @@ class RunningIndicatorDots extends RunningIndicatorBase {
                 this._disableBacklight();
         } else {
             this._disableBacklight();
-            this._source._iconContainer.get_children()[1].set_style(null);
+            this._source.iconContainer.get_children()[1].set_style(null);
         }
 
         if (this._area)
@@ -793,10 +801,10 @@ export class UnityIndicator extends IndicatorBase {
     destroy() {
         this._notificationBadgeBin?.destroy();
         this._notificationBadgeBin = null;
-        this._updateNotificationAccessibility(0);
         this._hideProgressOverlay();
         this.setUrgent(false);
         this.setUpdating(false);
+        this._setNotificationCount(0);
         this._remoteEntry = null;
 
         super.destroy();
@@ -855,20 +863,26 @@ export class UnityIndicator extends IndicatorBase {
     }
 
     _updateNotificationsCount() {
-        const remoteCount = this._remoteEntry['count-visible']
-            ? this._remoteEntry.count ?? 0 : 0;
+        this._setNotificationCount(this.notificationsCount);
+    }
+
+    get _remoteCount() {
+        return this._remoteEntry['count-visible']
+            ? this._remoteEntry?.count ?? 0 : 0;
+    }
+
+    get notificationsCount() {
+        const remoteCount = this._remoteCount;
 
         if (remoteCount > 0 &&
-            Docking.DockManager.settings.applicationCounterOverridesNotifications) {
-            this.setNotificationCount(remoteCount);
-            return;
-        }
+            Docking.DockManager.settings.applicationCounterOverridesNotifications)
+            return remoteCount;
 
         const {notificationsMonitor} = Docking.DockManager.getDefault();
         const notificationsCount = notificationsMonitor.getAppNotificationsCount(
             this._source.app.id);
 
-        this.setNotificationCount(remoteCount + notificationsCount);
+        return remoteCount + notificationsCount;
     }
 
     _updateNotificationsBadge(text) {
@@ -909,32 +923,7 @@ export class UnityIndicator extends IndicatorBase {
         ]);
     }
 
-    _updateNotificationAccessibility(count) {
-        const appName = this._source.app?.get_name();
-        if (!appName)
-            return;
-
-        const accessibleName = count > 0
-            // TRANSLATORS: This is the accessible name for an app icon with unread
-            // notifications.
-            // %s is the name of the app and %d the number of unread notifications.
-            ? N__('%s, %d unread notification', '%s, %d unread notifications', count)
-                .format(appName, count)
-            : appName;
-
-        if (this._source.labelActor === null) {
-            // Dock: name owned by parent DashItemContainer, see dash.js
-            const itemContainer = this._source.get_parent?.();
-            itemContainer?.set({accessibleName});
-            this._source.set({accessibleName});
-        } else {
-            // Overview: no per-icon parent, update icon and label directly
-            this._source.set({accessibleName});
-            this._source.labelActor?.set({accessibleName});
-        }
-    }
-
-    setNotificationCount(count) {
+    _setNotificationCount(count) {
         if (count > 0) {
             const text = this._notificationBadgeCountToText(count);
             this._updateNotificationsBadge(text);
@@ -944,7 +933,16 @@ export class UnityIndicator extends IndicatorBase {
             this._notificationBadgeBin = null;
         }
 
-        this._updateNotificationAccessibility(count);
+        this._updateAccessibleName(count);
+    }
+
+    _updateAccessibleName(indicatorCount = this.notificationsCount) {
+        AppIcons.updateIconAccessibleName({
+            icon: this._source,
+            overlayNumber: this._source.overlayNumber ?? -1,
+            indicatorCount,
+            progress: this.progress,
+        });
     }
 
     _showProgressOverlay() {
@@ -959,7 +957,7 @@ export class UnityIndicator extends IndicatorBase {
             this._drawProgressOverlay(this._progressOverlayArea);
         });
 
-        this._source._iconContainer.add_child(this._progressOverlayArea);
+        this._source.iconContainer.add_child(this._progressOverlayArea);
         this._updateProgressOverlay();
     }
 
@@ -1125,6 +1123,12 @@ export class UnityIndicator extends IndicatorBase {
             this._progress = Math.min(progress, 1.0);
             this._showProgressOverlay();
         }
+
+        this._updateAccessibleName();
+    }
+
+    get progress() {
+        return this._progressOverlayArea ? this._progress : -1;
     }
 
     setUrgent(urgent) {
@@ -1135,6 +1139,8 @@ export class UnityIndicator extends IndicatorBase {
             this._isUrgent = urgent;
         else
             delete this._isUrgent;
+
+        this._updateAccessibleName();
     }
 
     setUpdating(updating) {
