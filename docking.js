@@ -407,6 +407,7 @@ const DockedDash = GObject.registerClass({
         // Since Clutter has no longer ClutterAllocationFlags,
         // "allocation-changed" signal has been removed. MR !1245
         this.dash._container.connect('notify::allocation', this._updateStaticBox.bind(this));
+        this._box.connect('notify::allocation', () => this._updateStaticBox());
         this._slider.connect('notify::allocation', () => this._updateStaticBox());
 
         // Load optional features that need to be activated for one dock only
@@ -723,6 +724,10 @@ const DockedDash = GObject.registerClass({
         ], [
             settings,
             'changed::height-fraction',
+            () => this._resetPosition(),
+        ], [
+            settings,
+            'changed::dock-edge-margin',
             () => this._resetPosition(),
         ], [
             settings,
@@ -1289,6 +1294,12 @@ const DockedDash = GObject.registerClass({
 
     _resetPosition() {
         const {dockFixed: fixedIsEnabled, dockExtended: extendHeight} = DockManager.settings;
+
+        // Keep the gap inside the hover and sliding container so edge activation,
+        // auto-hide and reserved space all include it. CSS pixels follow UI scaling.
+        const side = Theming.PositionStyleClass[this._position];
+        const {dockEdgeMargin} = DockManager.settings;
+        this._box.set_style(dockEdgeMargin ? `padding-${side}: ${dockEdgeMargin}px;` : null);
 
         if (fixedIsEnabled)
             this.add_style_class_name('fixed');
