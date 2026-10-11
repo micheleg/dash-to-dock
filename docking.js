@@ -676,8 +676,8 @@ const DockedDash = GObject.registerClass({
                 this._untrackDock();
                 this._trackDock();
 
-                this._updateAutoHideBarriers();
                 this._updateVisibilityMode();
+                this._updateAutoHideBarriers();
             },
         ], [
             settings,
