@@ -744,7 +744,9 @@ const DockedDash = GObject.registerClass({
 
     get inhibitsUnredirection() {
         // Composition is needed while the dock is animating or is shown on top
-        // of a fullscreen window of its monitor.
+        // of a fullscreen window of its monitor, or of a maximized one when
+        // the dock autohides: it reserves no space then, so the window covers
+        // the whole monitor.
         // Otherwise the compositor-wide inhibition would prevent fullscreen
         // windows in other monitors to run in direct rendering mode.
         if (!this.visible)
@@ -754,7 +756,7 @@ const DockedDash = GObject.registerClass({
         case State.SHOWING:
         case State.HIDING:
         case State.SHOWN:
-            return !!this._monitor?.inFullscreen;
+            return !!this._monitor?.inFullscreen || this.autohideEnabled;
         default:
             return false;
         }
