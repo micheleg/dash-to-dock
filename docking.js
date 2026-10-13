@@ -2917,8 +2917,12 @@ export class IconAnimator {
             const progress = this._timeline.get_progress();
             const wiggleRotation = progress < 1 / 6 ? 15 * Math.sin(progress * 24 * Math.PI) : 0;
             const wigglers = this._animations.wiggle;
-            for (let i = 0, iMax = wigglers.length; i < iMax; i++)
-                wigglers[i].target.rotation_angle_z = wiggleRotation;
+            // Setting an unchanged angle still queues a redraw in Clutter.
+            for (let i = 0, iMax = wigglers.length; i < iMax; i++) {
+                const {target} = wigglers[i];
+                if (target.rotation_angle_z !== wiggleRotation)
+                    target.rotation_angle_z = wiggleRotation;
+            }
         });
     }
 
