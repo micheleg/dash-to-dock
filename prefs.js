@@ -580,6 +580,14 @@ const DockSettings = GObject.registerClass({
         });
 
         // size options
+        const dockEdgeMarginSpinButton = this._builder.get_object('dock_edge_margin_spinbutton');
+        this._settings.bind('dock-edge-margin',
+            dockEdgeMarginSpinButton,
+            'value',
+            Gio.SettingsBindFlags.DEFAULT);
+        const dockEdgeMarginLabelClick = new Gtk.GestureClick();
+        dockEdgeMarginLabelClick.connect('released', () => dockEdgeMarginSpinButton.grab_focus());
+        this._builder.get_object('dock_edge_margin_label_box').add_controller(dockEdgeMarginLabelClick);
         const dockSizeScale = this._builder.get_object('dock_size_scale');
         dockSizeScale.set_value(this._settings.get_double('height-fraction'));
         dockSizeScale.add_mark(0.9, Gtk.PositionType.TOP, null);
