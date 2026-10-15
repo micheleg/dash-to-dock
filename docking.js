@@ -732,7 +732,9 @@ const DockedDash = GObject.registerClass({
             this._intellihide.enable();
         } else {
             this._intellihide.disable();
-            this._restoreUnredirect();
+            // Auto-hide also needs compositing while the dock is visible.
+            if (!this._autohideIsEnabled)
+                this._restoreUnredirect();
         }
 
         this._updateDashVisibility();
@@ -863,7 +865,9 @@ const DockedDash = GObject.registerClass({
     }
 
     _animateIn(time, delay) {
-        if (this._intellihideIsEnabled)
+        // With the top bar hidden, a maximized window can cover the monitor.
+        // Keep the dock composited above it in either dynamic visibility mode.
+        if (this._intellihideIsEnabled || this._autohideIsEnabled)
             this._disableUnredirect();
         this._dockState = State.SHOWING;
         this.dash.iconAnimator.start();
@@ -902,8 +906,8 @@ const DockedDash = GObject.registerClass({
             mode: Clutter.AnimationMode.EASE_OUT_QUAD,
             onComplete: () => {
                 this._dockState = State.HIDDEN;
-                if (this._intellihideIsEnabled)
-                    this._restoreUnredirect();
+                // Release our hold even if the visibility mode changed mid-hide.
+                this._restoreUnredirect();
                 // Remove queued barrier removal timeout if any
                 if (this._removeBarrierTimeoutId > 0)
                     GLib.source_remove(this._removeBarrierTimeoutId);
