@@ -51,6 +51,7 @@ const {gettext: __} = Extension;
 const {signals: Signals} = imports;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
+const POINTER_LEAVE_CHECK_INTERVAL = 100;
 const ICON_ANIMATOR_DURATION = 3000;
 const STARTUP_ANIMATION_TIME = 500;
 
@@ -270,6 +271,10 @@ const DockedDash = GObject.registerClass({
 
         // Temporary ignore hover events linked to autohide for whatever reason
         this._ignoreHover = false;
+
+        // Tracks the pointer when a leave event is received while it's still
+        // over the dock, until it actually leaves it.
+        this._pointerLeaveCheckId = 0;
 
         // Create intellihide object to monitor windows overlapping
         this._intellihide = new Intellihide.Intellihide(this.monitorIndex);
@@ -526,6 +531,9 @@ const DockedDash = GObject.registerClass({
         if (this._triggerTimeoutId)
             GLib.source_remove(this._triggerTimeoutId);
 
+        if (this._pointerLeaveCheckId)
+            GLib.source_remove(this._pointerLeaveCheckId);
+
         // Remove barrier timeout
         if (this._removeBarrierTimeoutId > 0) {
             GLib.source_remove(this._removeBarrierTimeoutId);
@@ -744,7 +752,7 @@ const DockedDash = GObject.registerClass({
 
     get inhibitsUnredirection() {
         // Composition is needed while the dock is animating or is shown on top
-        // of a fullscreen window of its monitor.
+        // of a window of its monitor that could be directly scanned out.
         // Otherwise the compositor-wide inhibition would prevent fullscreen
         // windows in other monitors to run in direct rendering mode.
         if (!this.visible)
@@ -754,10 +762,50 @@ const DockedDash = GObject.registerClass({
         case State.SHOWING:
         case State.HIDING:
         case State.SHOWN:
-            return !!this._monitor?.inFullscreen;
+            return this._monitorMayBeScannedOut();
         default:
             return false;
         }
+    }
+
+    _monitorMayBeScannedOut() {
+        if (!this._monitor)
+            return false;
+
+        if (this._monitor.inFullscreen)
+            return true;
+
+        // The compositor can directly scan out any window covering the whole
+        // monitor, not only the fullscreen ones (for example a maximized window
+        // when no panel reserves space in the dock monitor), and in such case
+        // the dock would not be painted anymore once its animations are done.
+        // So check whether the top window of the monitor is covering it.
+        const {x, y, width, height} = this._monitor;
+        const windowActors = global.get_window_actors();
+
+        for (let i = windowActors.length - 1; i >= 0; i--) {
+            const windowActor = windowActors[i];
+            const metaWindow = windowActor.get_meta_window();
+
+            if (!windowActor.visible || !metaWindow)
+                continue;
+
+            const rect = metaWindow.get_buffer_rect();
+            const overlapsMonitor = (rect.x < x + width) &&
+                (rect.x + rect.width > x) &&
+                (rect.y < y + height) &&
+                (rect.y + rect.height > y);
+
+            if (!overlapsMonitor)
+                continue;
+
+            return (rect.x <= x) &&
+                (rect.x + rect.width >= x + width) &&
+                (rect.y <= y) &&
+                (rect.y + rect.height >= y + height);
+        }
+
+        return false;
     }
 
     /**
@@ -861,12 +909,56 @@ const DockedDash = GObject.registerClass({
         if (!this._ignoreHover) {
             // Skip if dock is not in autohide mode for instance because it is shown
             // by intellihide.
+            if (this._box.hover || Main.overview.visible)
+                this._cancelPointerLeaveCheck();
+
             if (this.autohideEnabled) {
                 if (this._box.hover || Main.overview.visible)
                     this.showDock();
+                else if (this._isPointerOverDock())
+                    this._checkPointerLeaveLater();
                 else
                     this.hideDock();
             }
+        }
+    }
+
+    _isPointerOverDock() {
+        if (this.dockState === State.HIDDEN)
+            return false;
+
+        const [x, y] = global.get_pointer();
+        return this._staticBox.contains(x, y);
+    }
+
+    /**
+     * While the dock slides over a window, the pick of the pointer may
+     * briefly hit the surface below it and the dock receives leave events
+     * even though the pointer did not move away from it. Ignore them and keep
+     * tracking the pointer until it really leaves the dock area, since no
+     * further hover change may happen in such case.
+     */
+    _checkPointerLeaveLater() {
+        if (this._pointerLeaveCheckId)
+            return;
+
+        this._pointerLeaveCheckId = GLib.timeout_add(GLib.PRIORITY_DEFAULT,
+            POINTER_LEAVE_CHECK_INTERVAL, () => {
+                if (this._isPointerOverDock())
+                    return GLib.SOURCE_CONTINUE;
+
+                this._pointerLeaveCheckId = 0;
+                this._hoverChanged();
+                return GLib.SOURCE_REMOVE;
+            });
+        GLib.Source.set_name_by_id(this._pointerLeaveCheckId,
+            '[dash-to-dock] this._checkPointerLeaveLater');
+    }
+
+    _cancelPointerLeaveCheck() {
+        if (this._pointerLeaveCheckId) {
+            GLib.source_remove(this._pointerLeaveCheckId);
+            this._pointerLeaveCheckId = 0;
         }
     }
 
@@ -1903,8 +1995,29 @@ export class DockManager {
         /* Array of all the docks created */
         this._allDocks = [];
         this._unredirectInhibited = false;
-        this._signalsHandler.add(global.display, 'in-fullscreen-changed',
-            () => this._updateUnredirect());
+        this._signalsHandler.add([
+            global.display,
+            'in-fullscreen-changed',
+            () => this._updateUnredirect(),
+        ], [
+            // A window may start or stop covering a dock monitor without
+            // changing the monitor fullscreen state, so track these too.
+            global.display,
+            'restacked',
+            () => this._updateUnredirect(),
+        ], [
+            global.display,
+            'window-entered-monitor',
+            () => this._updateUnredirect(),
+        ], [
+            global.window_manager,
+            'size-changed',
+            () => this._updateUnredirect(),
+        ], [
+            global.window_manager,
+            'unminimize',
+            () => this._updateUnredirect(),
+        ]);
         this._createDocks();
 
         this._overrideAppMenus();
