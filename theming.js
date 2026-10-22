@@ -374,6 +374,9 @@ class Transparency {
 
         this._signalsHandler = new Utils.GlobalSignalsHandler();
         this._trackedWindows = new Map();
+
+        this._destroyed = false;
+        dock.connect('destroy', () => (this._destroyed = true));
     }
 
     enable() {
@@ -406,7 +409,7 @@ class Transparency {
         ], [
             global.window_manager,
             'switch-workspace',
-            this._updateSolidStyle.bind(this),
+            this._selfDisconnecting(global.window_manager),
         ], [
             Main.overview,
             'hiding',
@@ -452,8 +455,22 @@ class Transparency {
     }
 
     destroy() {
+        this._destroyed = true;
         this.disable();
         this._signalsHandler.destroy();
+    }
+
+    // A handler that disconnects itself from @instance the first time it
+    // runs after this object (or its dock) has been destroyed, in case it
+    // outlived the cleanup above.
+    _selfDisconnecting(instance) {
+        const handler = () => {
+            if (this._destroyed)
+                GObject.signal_handlers_disconnect_by_func(instance, handler);
+            else
+                this._updateSolidStyle();
+        };
+        return handler;
     }
 
     _onWindowActorAdded(container, metaWindowActor) {
@@ -476,6 +493,9 @@ class Transparency {
     }
 
     _updateSolidStyle() {
+        if (this._destroyed)
+            return;
+
         const isNear = this._dockIsNear();
         if (isNear) {
             this._backgroundActor.set_style(this._opaque_style);
