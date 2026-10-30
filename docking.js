@@ -754,7 +754,9 @@ const DockedDash = GObject.registerClass({
         case State.SHOWING:
         case State.HIDING:
         case State.SHOWN:
-            return !!this._monitor?.inFullscreen;
+            return !!(this._monitor &&
+                this._monitor.index < global.display.get_n_monitors() &&
+                this._monitor.inFullscreen);
         default:
             return false;
         }
@@ -1192,6 +1194,10 @@ const DockedDash = GObject.registerClass({
         // Remove existing barrier
         this._removeBarrier();
 
+        // Monitor removed (e.g. HDMI unplugged): skip until docks are recreated
+        if (!this._monitor || this._monitor.index >= global.display.get_n_monitors())
+            return;
+
         // The barrier needs to be removed in fullscreen with autohide disabled
         // otherwise the mouse can get trapped on monitor.
         if (this._monitor.inFullscreen &&
@@ -1288,6 +1294,10 @@ const DockedDash = GObject.registerClass({
     }
 
     _resetPosition() {
+        // Monitor removed (e.g. HDMI unplugged): skip until docks are recreated
+        if (this.monitorIndex >= global.display.get_n_monitors())
+            return;
+
         const {dockFixed: fixedIsEnabled, dockExtended: extendHeight} = DockManager.settings;
 
         if (fixedIsEnabled)
