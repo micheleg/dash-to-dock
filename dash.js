@@ -820,7 +820,9 @@ export const DockDash = GObject.registerClass({
         // Apps supposed to be in the dash
         const newApps = [];
 
-        const {showFavorites} = settings;
+        const showFavorites = settings.showFavorites &&
+            (!settings.showFavoritesOnlyOnPrimary ||
+             this._monitorIndex === Main.layoutManager.primaryIndex);
         if (showFavorites)
             newApps.push(...Object.values(favorites));
 
