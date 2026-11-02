@@ -699,6 +699,14 @@ const DockSettings = GObject.registerClass({
             this._builder.get_object('show_favorite_switch'),
             'active',
             Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-favorites-only-on-primary',
+            this._builder.get_object('show_favorites_only_on_primary_check'),
+            'active',
+            Gio.SettingsBindFlags.DEFAULT);
+        this._settings.bind('show-favorites',
+            this._builder.get_object('show_favorites_only_on_primary_check'),
+            'sensitive',
+            Gio.SettingsBindFlags.GET);
         this._settings.bind('show-trash',
             this._builder.get_object('show_trash_switch'),
             'active',
