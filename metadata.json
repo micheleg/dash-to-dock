@@ -12,7 +12,7 @@
 "name": "Dash to Dock",
 "description": "A dock for the Gnome Shell. This extension moves the dash out of the overview transforming it in a dock for an easier launching of applications and a faster switching between windows and desktops. Side and bottom placement options are available.",
 "original-author": "micxgx@gmail.com",
-"url": "https://micheleg.github.io/dash-to-dock/",
+"url": "https://ubuntu.github.io/dash-to-dock/",
 "gettext-domain": "dashtodock",
 "version": 110
 }
