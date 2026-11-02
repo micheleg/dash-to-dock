@@ -945,6 +945,17 @@
                                 </layout>
                               </object>
                             </child>
+                            <child>
+                              <object class="GtkCheckButton" id="show_favorites_only_on_primary_check">
+                                <property name="label" translatable="yes">Only on the primary monitor</property>
+                                <property name="margin_top">12</property>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">1</property>
+                                  <property name="column-span">2</property>
+                                </layout>
+                              </object>
+                            </child>
                           </object>
                         </property>
                       </object>

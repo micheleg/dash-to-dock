@@ -256,6 +256,11 @@
       <summary>Show favorites apps</summary>
       <description>Show or hide favorite applications icons in the dash</description>
     </key>
+    <key type="b" name="show-favorites-only-on-primary">
+      <default>false</default>
+      <summary>Show favorites apps only on the primary monitor</summary>
+      <description>When using multi-monitor docks, show favorite applications only on the dock of the primary monitor; the other docks show only running applications</description>
+    </key>
     <key type="b" name="show-trash">
       <default>true</default>
       <summary>Show trash can</summary>

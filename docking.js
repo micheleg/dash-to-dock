@@ -619,6 +619,12 @@ const DockedDash = GObject.registerClass({
             },
         ], [
             settings,
+            'changed::show-favorites-only-on-primary',
+            () => {
+                this.dash.resetAppIcons();
+            },
+        ], [
+            settings,
             'changed::show-trash',
             () => {
                 this.dash.resetAppIcons();
