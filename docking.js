@@ -170,7 +170,8 @@ const DashSlideContainer = GObject.registerClass({
         } else if (this.side === St.Side.TOP) {
             const monitor = Main.layoutManager.monitors[this.monitorIndex];
             let yOffset = 0;
-            if (Main.panel.x === monitor.x && Main.panel.y === monitor.y &&
+            if (Main.layoutManager.panelBox.x === monitor.x &&
+                Main.layoutManager.panelBox.y === monitor.y &&
                 DockManager.settings.dockFixed)
                 yOffset = Main.panel.height;
             childBox.x1 = 0;
@@ -213,7 +214,8 @@ const DashSlideContainer = GObject.registerClass({
 
             if (this.side === St.Side.TOP && DockManager.settings.dockFixed) {
                 const monitor = Main.layoutManager.monitors[this.monitorIndex];
-                if (Main.panel.x === monitor.x && Main.panel.y === monitor.y) {
+                if (Main.layoutManager.panelBox.x === monitor.x &&
+                    Main.layoutManager.panelBox.y === monitor.y) {
                     minHeight += Main.panel.height;
                     natHeight += Main.panel.height;
                 }
