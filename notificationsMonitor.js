@@ -26,6 +26,7 @@ export class NotificationsMonitor {
         const getIsEnabled = () => !this.dndMode &&
             Docking.DockManager.settings.showIconsNotificationsCounter;
 
+        this._dndMode = !this._settings.get_boolean('show-banners');
         this._isEnabled = getIsEnabled();
         const checkIsEnabled = () => {
             const isEnabled = getIsEnabled();
@@ -37,10 +38,19 @@ export class NotificationsMonitor {
             }
         };
 
-        this._dndMode = !this._settings.get_boolean('show-banners');
         this._signalsHandler.add(this._settings, 'changed::show-banners', () => {
-            this._dndMode = !this._settings.get_boolean('show-banners');
+            const dndMode = !this._settings.get_boolean('show-banners');
+            if (dndMode === this._dndMode)
+                return;
+
+            const wasEnabled = this._isEnabled;
+            this._dndMode = dndMode;
             checkIsEnabled();
+
+            // The dock remote model depends on the DND mode as well, so
+            // notify even if the notifications counter state is unchanged.
+            if (this._isEnabled === wasEnabled)
+                this.emit('state-changed');
         });
         this._signalsHandler.add(Docking.DockManager.settings,
             'changed::show-icons-notifications-counter', checkIsEnabled);
