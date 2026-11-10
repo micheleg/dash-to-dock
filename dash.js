@@ -810,10 +810,15 @@ export const DockDash = GObject.registerClass({
                 AppIcons.getInterestingWindows(app.get_windows(), monitorIndex).length);
         }
 
+        // Items which are animating out are going to be destroyed at the end
+        // of the animation, so they must not be considered as being in the
+        // dash, or an app that is running again in the meantime would not get
+        // a new item, and would be missing until the next redisplay.
         const children = this._box.get_children().filter(actor => {
             return actor.child &&
                    actor.child._delegate &&
-                   actor.child._delegate.app;
+                   actor.child._delegate.app &&
+                   !actor.animatingOut;
         });
         // Apps currently in the dash
         let oldApps = children.map(actor => actor.child._delegate.app);
@@ -945,8 +950,17 @@ export const DockDash = GObject.registerClass({
         }
 
         for (let i = 0; i < addedItems.length; i++) {
-            this._box.insert_child_at_index(addedItems[i].item,
-                addedItems[i].pos);
+            // Positions do not account for the items which are animating
+            // out, but these are still in the box, so skip them.
+            const boxChildren = this._box.get_children();
+            let index = 0;
+            for (let pos = addedItems[i].pos; index < boxChildren.length; index++) {
+                if (boxChildren[index].animatingOut)
+                    continue;
+                if (pos-- === 0)
+                    break;
+            }
+            this._box.insert_child_at_index(addedItems[i].item, index);
         }
 
         for (let i = 0; i < removedActors.length; i++) {
