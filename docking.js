@@ -44,6 +44,11 @@ import {Extension} from './dependencies/shell/extensions/extension.js';
 
 import {StrutsManager} from './dockStruts.js';
 
+// X11 needs polling over client windows; newer Wayland-only shells removed PointerWatcher.
+const PointerWatcher = Meta.is_wayland_compositor()
+    ? null
+    : await import('resource:///org/gnome/shell/ui/pointerWatcher.js');
+
 // Use __ () and N__() for the extension gettext domain, and reuse
 // the shell domain with the default _() and N_()
 const {gettext: __} = Extension;
@@ -972,21 +977,25 @@ const DockedDash = GObject.registerClass({
         if (this.autohideEnabled &&
             (!Utils.supportsExtendedBarriers() ||
              !DockManager.settings.requirePressureToShow)) {
-            this._dockWatch = Utils.getCursorTracker().connect(
-                'position-invalidated',
-                () => this._checkDockDwellLater(...global.get_pointer()));
+            if (PointerWatcher) {
+                this._dockWatch = PointerWatcher.getPointerWatcher().addWatch(
+                    DOCK_DWELL_CHECK_INTERVAL, this._checkDockDwellNow.bind(this));
+            } else {
+                this._dockWatch = Utils.getCursorTracker().connect(
+                    'position-invalidated', () => this._checkDockDwellLater());
+            }
             this._dockDwelling = false;
             this._dockDwellUserTime = 0;
         }
     }
 
-    _checkDockDwellLater(x, y) {
+    _checkDockDwellLater() {
         if (this._checkDockDwellId > 0)
             return;
 
         this._checkDockDwellId = GLib.timeout_add(GLib.PRIORITY_DEFAULT,
             DOCK_DWELL_CHECK_INTERVAL, () => {
-                this._checkDockDwellNow(x, y);
+                this._checkDockDwellNow(...global.get_pointer());
                 this._checkDockDwellId = 0;
                 return GLib.SOURCE_REMOVE;
             });
@@ -1075,7 +1084,10 @@ const DockedDash = GObject.registerClass({
         }
 
         if (this._dockWatch) {
-            Utils.getCursorTracker().disconnect(this._dockWatch);
+            if (PointerWatcher)
+                this._dockWatch.remove();
+            else
+                Utils.getCursorTracker().disconnect(this._dockWatch);
             this._dockWatch = null;
         }
     }
