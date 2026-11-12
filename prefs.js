@@ -607,9 +607,10 @@ const DockSettings = GObject.registerClass({
             ['range', value => __('%s icons').replace('%s', value.toFixed(1)), 3],
             ['spread', value => `${Math.round(value * 100)} %`, 1],
             ['speed', value => `${value.toFixed(2)}×`, 1],
+            ['out_speed', value => `${value.toFixed(2)}×`, 1],
         ].forEach(([name, format, defaultMark]) => {
             const scale = this._builder.get_object(`magnification_${name}_scale`);
-            this._settings.bind(`icon-magnification-${name}`,
+            this._settings.bind(`icon-magnification-${name.replace('_', '-')}`,
                 scale.get_adjustment(), 'value', Gio.SettingsBindFlags.DEFAULT);
             scale.set_format_value_func((_, value) => format(value));
             scale.add_mark(defaultMark, Gtk.PositionType.TOP, null);

@@ -760,8 +760,11 @@ msgstr "Breite der Welle"
 msgid "Spread of the icons"
 msgstr "Auseinanderweichen der Icons"
 
-msgid "Animation speed"
-msgstr "Geschwindigkeit der Animation"
+msgid "Growing speed"
+msgstr "Geschwindigkeit beim Aufbauen"
+
+msgid "Shrinking speed"
+msgstr "Geschwindigkeit beim Abbauen"
 
 msgid "%s icons"
 msgstr "%s Icons"

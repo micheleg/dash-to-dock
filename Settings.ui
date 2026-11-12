@@ -478,6 +478,12 @@
     <property name="step_increment">0.05</property>
     <property name="page_increment">0.25</property>
   </object>
+  <object class="GtkAdjustment" id="magnification_out_speed_adjustment">
+    <property name="lower">0.25</property>
+    <property name="upper">4</property>
+    <property name="step_increment">0.05</property>
+    <property name="page_increment">0.25</property>
+  </object>
   <object class="GtkAdjustment" id="preview_size_adjustment">
     <property name="lower">0.0</property>
     <property name="upper">1</property>
@@ -1007,7 +1013,7 @@
                             </child>
                             <child>
                               <object class="GtkLabel" id="magnification_speed_label">
-                                <property name="label" translatable="yes">Animation speed</property>
+                                <property name="label" translatable="yes">Growing speed</property>
                                 <property name="xalign">0</property>
                                 <property name="margin_top">12</property>
                                 <layout>
@@ -1027,6 +1033,31 @@
                                 <layout>
                                   <property name="column">1</property>
                                   <property name="row">4</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="magnification_out_speed_label">
+                                <property name="label" translatable="yes">Shrinking speed</property>
+                                <property name="xalign">0</property>
+                                <property name="margin_top">12</property>
+                                <layout>
+                                  <property name="column">0</property>
+                                  <property name="row">5</property>
+                                </layout>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkScale" id="magnification_out_speed_scale">
+                                <property name="hexpand">1</property>
+                                <property name="draw-value">1</property>
+                                <property name="margin_top">12</property>
+                                <property name="adjustment">magnification_out_speed_adjustment</property>
+                                <property name="digits">2</property>
+                                <property name="value_pos">right</property>
+                                <layout>
+                                  <property name="column">1</property>
+                                  <property name="row">5</property>
                                 </layout>
                               </object>
                             </child>

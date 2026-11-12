@@ -671,7 +671,13 @@
       <range min="0.25" max="4.0"/>
       <default>1.0</default>
       <summary>Speed of the magnification animation</summary>
-      <description>Factor applied to the speed of growing and shrinking the icons when the pointer enters or leaves the dock</description>
+      <description>Factor applied to the speed of growing the icons when the pointer enters the dock</description>
+    </key>
+    <key name="icon-magnification-out-speed" type="d">
+      <range min="0.25" max="4.0"/>
+      <default>1.0</default>
+      <summary>Speed of the shrinking animation</summary>
+      <description>Factor applied to the speed of shrinking the icons back when the pointer leaves the dock</description>
     </key>
     <key name="icon-magnification-spread" type="d">
       <range min="0.0" max="2.0"/>

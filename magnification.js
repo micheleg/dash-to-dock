@@ -289,7 +289,9 @@ export class DockMagnifier {
         if (from === target)
             return;
 
-        const speed = Math.max(Docking.DockManager.settings.iconMagnificationSpeed, 0.1);
+        const {settings} = Docking.DockManager;
+        const speed = Math.max(target > from
+            ? settings.iconMagnificationSpeed : settings.iconMagnificationOutSpeed, 0.1);
         const fullTime = (target > from ? MAGNIFY_IN_TIME : MAGNIFY_OUT_TIME) / speed;
         const duration = Math.round(fullTime * Math.abs(target - from));
 
@@ -473,11 +475,12 @@ export class DockMagnifier {
             item.label.set_position(x, y);
         }
 
-        const clone = item.child._launchBounceClone;
+        const holder = item.child._launchBounceHolder;
         const {icon} = item.child;
-        if (clone && icon) {
-            clone.set_position(...icon.get_transformed_position());
-            clone.set_size(...icon.get_transformed_size());
+        if (holder && icon?.width && icon.height) {
+            const [width, height] = icon.get_transformed_size();
+            holder.set_position(...icon.get_transformed_position());
+            holder.set_scale(width / icon.width, height / icon.height);
         }
     }
 
