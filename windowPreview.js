@@ -34,6 +34,12 @@ const MAX_PREVIEW_GENERATION_ATTEMPTS = 15;
 
 const MENU_MARGINS = 10;
 
+const previewClickAction = Object.freeze({
+    ACTIVATE_WINDOW: 0,
+    CLOSE_WINDOW: 1,
+    MINIMIZE_WINDOW: 2,
+});
+
 export class WindowPreviewMenu extends PopupMenu.PopupMenu {
     constructor(source) {
         super(source, 0.5, Utils.getPosition());
@@ -648,8 +654,39 @@ class WindowPreviewMenuItem extends PopupMenu.PopupBaseMenuItem {
     }
 
     activate() {
-        Main.activateWindow(this._window);
+        const event = Clutter.get_current_event();
+        const button = event ? event.get_button() : 1;
+        const modifiers = event ? event.get_state() : 0;
+
+        let actionType = previewClickAction.ACTIVATE_WINDOW;
+
+        if (button === 2)
+            actionType = Docking.DockManager.settings.previewMiddleClickAction;
+        else if (button === 1 && (modifiers & Clutter.ModifierType.SHIFT_MASK))
+            actionType = Docking.DockManager.settings.previewShiftClickAction;
+        else if (button === 1)
+            actionType = Docking.DockManager.settings.previewClickAction;
+
+        switch (actionType) {
+        case previewClickAction.ACTIVATE_WINDOW:
+            Main.activateWindow(this._window);
+            break;
+        case previewClickAction.CLOSE_WINDOW:
+            this._closeWindow();
+            return;
+        case previewClickAction.MINIMIZE_WINDOW:
+            this._minimizeWindow();
+            break;
+        default:
+            Main.activateWindow(this._window);
+        }
+
         this._getTopMenu().close();
+    }
+
+    _minimizeWindow() {
+        if (this._window.can_minimize())
+            this._window.minimize();
     }
 
     _onDestroy() {
