@@ -78,6 +78,7 @@ let recentlyClickedApp = null;
 let recentlyClickedAppWindows = null;
 let recentlyClickedAppIndex = 0;
 let recentlyClickedAppMonitor = -1;
+let recentlyClickedAppWorkspace = null;
 
 /**
  * Extend AppIcon
@@ -915,13 +916,19 @@ export const DockAbstractAppIcon = GObject.registerClass({
         // If there isn't already a list of windows for the current app,
         // or the stored list is outdated, use the current windows list.
         const monitorIsolation = Docking.DockManager.settings.isolateMonitors;
+        const workspaceIsolation = Docking.DockManager.settings.isolateWorkspaces;
+        const activeWorkspace = workspaceIsolation
+            ? global.workspace_manager.get_active_workspace() : null;
+
         if (!recentlyClickedApp ||
             recentlyClickedApp.get_id() !== this.app.get_id() ||
             recentlyClickedAppWindows.length !== appWindows.length ||
-            (recentlyClickedAppMonitor !== this.monitorIndex && monitorIsolation)) {
+            (recentlyClickedAppMonitor !== this.monitorIndex && monitorIsolation) ||
+            (recentlyClickedAppWorkspace !== activeWorkspace && workspaceIsolation)) {
             recentlyClickedApp = this.app;
             recentlyClickedAppWindows = appWindows;
             recentlyClickedAppMonitor = this.monitorIndex;
+            recentlyClickedAppWorkspace = activeWorkspace;
             recentlyClickedAppIndex = 0;
         }
 
@@ -946,6 +953,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
         recentlyClickedAppWindows = null;
         recentlyClickedAppIndex = 0;
         recentlyClickedAppMonitor = -1;
+        recentlyClickedAppWorkspace = null;
 
         return false;
     }
