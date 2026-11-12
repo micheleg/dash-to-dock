@@ -475,11 +475,12 @@ export class DockMagnifier {
             item.label.set_position(x, y);
         }
 
-        const clone = item.child._launchBounceClone;
+        const holder = item.child._launchBounceHolder;
         const {icon} = item.child;
-        if (clone && icon) {
-            clone.set_position(...icon.get_transformed_position());
-            clone.set_size(...icon.get_transformed_size());
+        if (holder && icon?.width && icon.height) {
+            const [width, height] = icon.get_transformed_size();
+            holder.set_position(...icon.get_transformed_position());
+            holder.set_scale(width / icon.width, height / icon.height);
         }
     }
 

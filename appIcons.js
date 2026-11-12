@@ -795,18 +795,32 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         const iconActor = this.icon;
         const [width, height] = iconActor.get_transformed_size();
-        if (!iconActor.get_stage() || !width || !height) {
+        const [baseWidth, baseHeight] = iconActor.get_size();
+        if (!iconActor.get_stage() || !width || !height || !baseWidth || !baseHeight) {
             super.animateLaunch();
             return;
         }
 
+        // The clone keeps the size of its source: since GNOME 50 a clone
+        // resized to another size scales its source only partially, which
+        // tears the icon apart. Any magnification of the icon is applied by
+        // the holder instead.
         const [x, y] = iconActor.get_transformed_position();
+        const holder = new Clutter.Actor({
+            reactive: false,
+            x, y,
+            width: baseWidth,
+            height: baseHeight,
+            scale_x: width / baseWidth,
+            scale_y: height / baseHeight,
+        });
         const clone = new Clutter.Clone({source: iconActor, reactive: false});
-        clone.set_size(width, height);
-        clone.set_position(x, y);
-        Main.uiGroup.add_child(clone);
+        clone.set_size(baseWidth, baseHeight);
+        holder.add_child(clone);
+        Main.uiGroup.add_child(holder);
 
         this._launchBounceClone = clone;
+        this._launchBounceHolder = holder;
         const previousIconOpacity = iconActor.opacity;
         iconActor.opacity = 0;
 
@@ -820,12 +834,17 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         const destroyId = this.connect('destroy', () => {
             this._launchBounceClone = null;
-            clone.destroy();
+            this._launchBounceHolder = null;
+            holder.destroy();
         });
-        clone.connect('destroy', () => {
-            if (this._launchBounceClone !== clone)
+        // The animation always ends destroying the holder, that takes the
+        // clone along: destroying the holder from the clone destruction
+        // would destroy the clone twice.
+        holder.connect('destroy', () => {
+            if (this._launchBounceHolder !== holder)
                 return;
             this._launchBounceClone = null;
+            this._launchBounceHolder = null;
             this.disconnect(destroyId);
             iconActor.disconnect(opacityId);
             iconActor.opacity = previousIconOpacity;
@@ -861,7 +880,8 @@ export const DockAbstractAppIcon = GObject.registerClass({
         // onto the dock and the stretch grows away from it.
         clone.set_pivot_point(...pivot);
 
-        const jump = direction * height / 2;
+        // In the holder coordinates, so the jump follows the magnification
+        const jump = direction * baseHeight / 2;
         // After-bounce heights as a fraction of the jump height. Durations
         // scale with the square root of the height, like real gravity.
         const bounces = [0.35, 0.18, 0.09];
@@ -909,7 +929,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         const runStep = index => {
             if (index >= steps.length) {
-                clone.destroy();
+                holder.destroy();
                 return;
             }
             const {props, duration, mode} = steps[index];
@@ -921,7 +941,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
                     if (isFinished)
                         runStep(index + 1);
                     else
-                        clone.destroy();
+                        holder.destroy();
                 },
             });
         };
