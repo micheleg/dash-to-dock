@@ -278,6 +278,8 @@ class RunningIndicatorDots extends RunningIndicatorBase {
         // We draw for the bottom case and rotate the canvas for other placements
         // set center of rotations to the center
         this._area.set_pivot_point(0.5, 0.5);
+        // Don't grow the indicators with the magnified icon
+        this._area.keepUnmagnified = true;
 
         switch (this._side) {
         case St.Side.TOP:

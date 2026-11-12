@@ -30,6 +30,7 @@ import {
     DBusMenuUtils,
     Docking,
     Locations,
+    Magnification,
     Theming,
     Utils,
     WindowPreview,
@@ -257,6 +258,10 @@ export const DockAbstractAppIcon = GObject.registerClass({
         delete this._doubleClickGesture;
     }
 
+    _createIcon(iconSize) {
+        return Magnification.createIcon(size => super._createIcon(size), iconSize);
+    }
+
     ownsWindow(window) {
         return this.app === Docking.DockManager.windowTracker.get_window_app(window);
     }
@@ -453,7 +458,7 @@ export const DockAbstractAppIcon = GObject.registerClass({
     popupMenu() {
         this._removeMenuTimeout?.();
         this.fake_release();
-        this._draggable.fakeRelease?.();
+        this._draggable?.fakeRelease?.();
 
         if (!this._menu) {
             this._menu = new DockAppIconMenu(this);
@@ -775,6 +780,174 @@ export const DockAbstractAppIcon = GObject.registerClass({
         return false;
     }
 
+    // Replace the upstream zoom-out-and-fade launch animation with a bounce:
+    // the icon jumps away from the dock edge by half its height, falls back
+    // and slightly bounces before settling. The animation runs on a clone in
+    // Main.uiGroup so it is not clipped by the dash scrollview.
+    animateLaunch() {
+        if (this._launchBounceClone)
+            return;
+
+        // Category icons open their panel instead of launching anything,
+        // with the magnification on they keep standing out as they are.
+        if (this.app._categoryIconInstance && Docking.DockManager.settings.iconMagnification)
+            return;
+
+        const iconActor = this.icon;
+        const [width, height] = iconActor.get_transformed_size();
+        const [baseWidth, baseHeight] = iconActor.get_size();
+        if (!iconActor.get_stage() || !width || !height || !baseWidth || !baseHeight) {
+            super.animateLaunch();
+            return;
+        }
+
+        // The clone keeps the size of its source: since GNOME 50 a clone
+        // resized to another size scales its source only partially, which
+        // tears the icon apart. Any magnification of the icon is applied by
+        // the holder instead.
+        const [x, y] = iconActor.get_transformed_position();
+        const holder = new Clutter.Actor({
+            reactive: false,
+            x, y,
+            width: baseWidth,
+            height: baseHeight,
+            scale_x: width / baseWidth,
+            scale_y: height / baseHeight,
+        });
+        const clone = new Clutter.Clone({source: iconActor, reactive: false});
+        clone.set_size(baseWidth, baseHeight);
+        holder.add_child(clone);
+        Main.uiGroup.add_child(holder);
+
+        this._launchBounceClone = clone;
+        this._launchBounceHolder = holder;
+        const previousIconOpacity = iconActor.opacity;
+        iconActor.opacity = 0;
+
+        // The indicators reset the icon opacity on style-changed (e.g. when
+        // the app turns running or on hover) which would show the original
+        // icon next to the animating clone; keep it hidden until we're done.
+        const opacityId = iconActor.connect('notify::opacity', () => {
+            if (iconActor.opacity !== 0)
+                iconActor.opacity = 0;
+        });
+
+        const destroyId = this.connect('destroy', () => {
+            this._launchBounceClone = null;
+            this._launchBounceHolder = null;
+            holder.destroy();
+        });
+        // The animation always ends destroying the holder, that takes the
+        // clone along: destroying the holder from the clone destruction
+        // would destroy the clone twice.
+        holder.connect('destroy', () => {
+            if (this._launchBounceHolder !== holder)
+                return;
+            this._launchBounceClone = null;
+            this._launchBounceHolder = null;
+            this.disconnect(destroyId);
+            iconActor.disconnect(opacityId);
+            iconActor.opacity = previousIconOpacity;
+        });
+
+        let axis = 'translation_y';
+        let alongScale = 'scale_y';
+        let acrossScale = 'scale_x';
+        let direction = -1;
+        let pivot = [0.5, 1];
+        switch (Utils.getPosition()) {
+        case St.Side.TOP:
+            direction = 1;
+            pivot = [0.5, 0];
+            break;
+        case St.Side.LEFT:
+            axis = 'translation_x';
+            alongScale = 'scale_x';
+            acrossScale = 'scale_y';
+            direction = 1;
+            pivot = [0, 0.5];
+            break;
+        case St.Side.RIGHT:
+            axis = 'translation_x';
+            alongScale = 'scale_x';
+            acrossScale = 'scale_y';
+            direction = -1;
+            pivot = [1, 0.5];
+            break;
+        }
+
+        // Anchor scaling at the dock edge, so the squash presses the icon
+        // onto the dock and the stretch grows away from it.
+        clone.set_pivot_point(...pivot);
+
+        // In the holder coordinates, so the jump follows the magnification
+        const jump = direction * baseHeight / 2;
+        // After-bounce heights as a fraction of the jump height. Durations
+        // scale with the square root of the height, like real gravity.
+        const bounces = [0.35, 0.18, 0.09];
+        const fallTime = 130;
+        // Time scale of the after-bounces: physically it would equal
+        // fallTime, but at these small amplitudes the strictly physical
+        // timing reads as hectic jitter; a slower time base lets each
+        // bounce visibly calm down after the first fall.
+        const bounceTime = 210;
+        // Squash & stretch: elongation while jumping up, compression when
+        // hitting the dock. Impact strength follows the fall velocity.
+        const stretch = 0.25;
+        const squash = 0.3;
+
+        const stretchedShape = {
+            [alongScale]: 1 + stretch,
+            [acrossScale]: 1 - stretch * 0.6,
+        };
+        const normalShape = {[alongScale]: 1, [acrossScale]: 1};
+        const squashedShape = s => ({
+            [alongScale]: 1 - s,
+            [acrossScale]: 1 + s * 0.7,
+        });
+
+        const steps = [
+            // stretched launch
+            {props: {[axis]: jump, ...stretchedShape},
+                duration: 75, mode: Clutter.AnimationMode.EASE_OUT_QUAD},
+            // fall back, ending squashed on the dock
+            {props: {[axis]: 0, ...squashedShape(squash)},
+                duration: fallTime, mode: Clutter.AnimationMode.EASE_IN_QUAD},
+        ];
+        for (const amplitude of bounces) {
+            const duration = Math.round(bounceTime * Math.sqrt(amplitude));
+            steps.push(
+                // bounce up, recovering the shape
+                {props: {[axis]: jump * amplitude, ...normalShape},
+                    duration, mode: Clutter.AnimationMode.EASE_OUT_QUAD},
+                {props: {[axis]: 0, ...squashedShape(squash * Math.sqrt(amplitude))},
+                    duration, mode: Clutter.AnimationMode.EASE_IN_QUAD});
+        }
+        // relax from the last small squash back to the normal shape
+        steps.push({props: {[axis]: 0, ...normalShape},
+            duration: 60, mode: Clutter.AnimationMode.EASE_OUT_QUAD});
+
+        const runStep = index => {
+            if (index >= steps.length) {
+                holder.destroy();
+                return;
+            }
+            const {props, duration, mode} = steps[index];
+            clone.ease({
+                ...props,
+                duration,
+                mode,
+                onStopped: isFinished => {
+                    if (isFinished)
+                        runStep(index + 1);
+                    else
+                        holder.destroy();
+                },
+            });
+        };
+        runStep(0);
+    }
+
     // Try to do the right thing when attempting to launch a new window of an app. In
     // particular, if the application doesn't allow to launch a new window, activate
     // the existing window instead.
@@ -990,16 +1163,30 @@ const DockLocationAppIcon = GObject.registerClass({
 
         super._init(app, monitorIndex, iconAnimator);
 
-        if (Docking.DockManager.settings.isolateLocations) {
-            const {windowTracker} = Docking.DockManager;
-            this._signalsHandler.add(windowTracker, 'notify::focus-app',
-                () => this._updateFocusState());
+        if (app._categoryIconInstance) {
+            this._setupCompositeIcon(app._categoryIconInstance);
+            this.popupMenu = () => {};
         } else {
-            this._signalsHandler.add(global.display, 'notify::focus-window',
-                () => this._updateFocusState());
+            if (Docking.DockManager.settings.isolateLocations) {
+                const {windowTracker} = Docking.DockManager;
+                this._signalsHandler.add(windowTracker, 'notify::focus-app',
+                    () => this._updateFocusState());
+            } else {
+                this._signalsHandler.add(global.display, 'notify::focus-window',
+                    () => this._updateFocusState());
+            }
+            this._signalsHandler.add(this.app, 'notify::icon', () => this.icon.update());
         }
+    }
 
-        this._signalsHandler.add(this.app, 'notify::icon', () => this.icon.update());
+    _setupCompositeIcon(categoryIcon) {
+        // createIcon überschreiben — immer frisch erstellen, da BaseIcon das vorherige destroy()t
+        this.icon.createIcon = size => categoryIcon.createCompositeIcon(size);
+        categoryIcon._baseIcon = this.icon;
+        this.icon._createIconTexture(this.icon.iconSize);
+        // getDragActor überschreiben damit beim Drag das Composite-Icon statt
+        // des generischen App-Icons erscheint
+        this.getDragActor = () => categoryIcon.createCompositeIcon(this.icon.iconSize);
     }
 
     get location() {
@@ -1198,6 +1385,8 @@ const DockAppIconMenu = class DockAppIconMenu extends PopupMenu.PopupMenu {
 
             const canFavorite = global.settings.is_writable('favorite-apps') &&
                 (this.sourceActor instanceof DockAppIcon) &&
+                !this.sourceActor._d2dInCategoryId &&
+                !this.sourceActor._d2dIsTransient &&
                 ParentalControlsManager.getDefault().shouldShowApp(app.appInfo);
 
             if (canFavorite) {
@@ -1463,7 +1652,7 @@ export const DockShowAppsIcon = GObject.registerClass({
     }
 
     _createIcon(size) {
-        this._iconActor = super._createIcon(size);
+        this._iconActor = Magnification.createIcon(s => super._createIcon(s), size);
         this._iconActor.fallbackIconName = this._iconActor.iconName;
         this._iconActor.fallbackGicon = this._iconActor.gicon;
         this._iconActor.iconName = `view-app-grid-${Main.sessionMode.currentMode}-symbolic`;
@@ -1602,7 +1791,27 @@ export function itemShowLabel() {
     this.label.opacity = 0;
     this.label.show();
 
-    const [stageX, stageY] = this.get_transformed_position();
+    const [x, y] = itemLabelPosition.call(this);
+
+    this.label.remove_all_transitions();
+    this.label.set_position(x, y);
+    this.label.ease({
+        opacity: 255,
+        duration: DASH_ITEM_LABEL_SHOW_TIME,
+        mode: Clutter.AnimationMode.EASE_OUT_QUAD,
+    });
+    /* eslint-enable no-invalid-this */
+}
+
+/**
+ * Computes the label position of a dash item, next to its (possibly
+ * magnified) icon.
+ *
+ * @returns {number[]} The label stage coordinates
+ */
+export function itemLabelPosition() {
+    /* eslint-disable no-invalid-this */
+    let [stageX, stageY] = this.get_transformed_position();
     const node = this.label.get_theme_node();
 
     const itemWidth  = this.allocation.x2 - this.allocation.x1;
@@ -1615,6 +1824,19 @@ export function itemShowLabel() {
 
     const position = Utils.getPosition();
     const labelOffset = node.get_length('-x-offset');
+
+    // Follow the magnified icon: it's shifted along the dock and grows away
+    // from the screen edge.
+    if (this._magnification) {
+        const {shift, growth} = this._magnification;
+        if (position === St.Side.LEFT || position === St.Side.RIGHT) {
+            stageY += shift;
+            stageX += position === St.Side.LEFT ? growth : -growth;
+        } else {
+            stageX += shift;
+            stageY += position === St.Side.TOP ? growth : -growth;
+        }
+    }
 
     switch (position) {
     case St.Side.LEFT:
@@ -1653,12 +1875,6 @@ export function itemShowLabel() {
     else if (x + labelWidth > monitor.x + monitor.width - gap)
         x -= x + labelWidth - (monitor.x + monitor.width) + gap;
 
-    this.label.remove_all_transitions();
-    this.label.set_position(x, y);
-    this.label.ease({
-        opacity: 255,
-        duration: DASH_ITEM_LABEL_SHOW_TIME,
-        mode: Clutter.AnimationMode.EASE_OUT_QUAD,
-    });
+    return [Math.round(x), Math.round(y)];
     /* eslint-enable no-invalid-this */
 }

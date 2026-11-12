@@ -1,6 +1,6 @@
 # Basic Makefile
 
-UUID = dash-to-dock@micxgx.gmail.com
+UUID = dash2dock@db0x.de
 BASE_MODULES = extension.js \
                metadata.json \
                COPYING \
@@ -20,6 +20,7 @@ EXTRA_MODULES = \
                 launcherAPI.js \
                 locations.js \
                 locationsWorker.js \
+                magnification.js \
                 notificationsMonitor.js \
                 windowPreview.js \
                 intellihide.js \
@@ -46,7 +47,7 @@ else
 	SHARE_PREFIX = $(DESTDIR)/usr/share
 	INSTALLBASE = $(SHARE_PREFIX)/gnome-shell/extensions
 endif
-INSTALLNAME = dash-to-dock@micxgx.gmail.com
+INSTALLNAME = $(UUID)
 
 # The command line passed variable VERSION is used to set the version string
 # in the metadata and in the generated zip-file. If no VERSION is passed, the

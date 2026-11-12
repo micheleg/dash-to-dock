@@ -598,6 +598,30 @@ const DockSettings = GObject.registerClass({
         this._builder.get_object('preview_size_scale').set_value(
             this._settings.get_double('preview-size-scale'));
 
+        // magnification options
+        this._settings.bind('icon-magnification',
+            this._builder.get_object('magnification_switch'),
+            'active', Gio.SettingsBindFlags.DEFAULT);
+        [
+            ['scale', value => `${value.toFixed(2)}×`, 2],
+            ['range', value => __('%s icons').replace('%s', value.toFixed(1)), 3],
+            ['spread', value => `${Math.round(value * 100)} %`, 1],
+            ['speed', value => `${value.toFixed(2)}×`, 1],
+            ['out_speed', value => `${value.toFixed(2)}×`, 1],
+        ].forEach(([name, format, defaultMark]) => {
+            const scale = this._builder.get_object(`magnification_${name}_scale`);
+            this._settings.bind(`icon-magnification-${name.replace('_', '-')}`,
+                scale.get_adjustment(), 'value', Gio.SettingsBindFlags.DEFAULT);
+            scale.set_format_value_func((_, value) => format(value));
+            scale.add_mark(defaultMark, Gtk.PositionType.TOP, null);
+            if (this._rtl)
+                scale.set_value_pos(Gtk.PositionType.LEFT);
+
+            [scale, this._builder.get_object(`magnification_${name}_label`)].forEach(
+                widget => this._settings.bind('icon-magnification', widget,
+                    'sensitive', Gio.SettingsBindFlags.GET));
+        });
+
         // Corrent for rtl languages
         if (this._rtl) {
             // Flip value position: this is not done automatically

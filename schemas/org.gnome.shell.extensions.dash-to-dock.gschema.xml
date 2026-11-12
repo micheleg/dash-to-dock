@@ -640,5 +640,50 @@
       <summary>Wether the application-provioded counter via Unity API should override the notifications or be summed to it</summary>
       <description>If an application provides a counter through the Unity API, then such value will be used. Otherwise the counter will be summed with the unread notification numbers (if enabled)</description>
     </key>
+    <key name="user-categories" type="s">
+      <default>''</default>
+      <summary>User-defined app categories</summary>
+      <description>JSON array of category configurations with id and apps list</description>
+    </key>
+    <key name="dock-order" type="as">
+      <default>[]</default>
+      <summary>Dock icon order</summary>
+      <description>Ordered list of app IDs and category IDs defining the persistent dock sequence</description>
+    </key>
+    <key name="icon-magnification" type="b">
+      <default>true</default>
+      <summary>Magnify the icons under the pointer</summary>
+      <description>Enlarge the dock icons near the mouse pointer with a wave effect</description>
+    </key>
+    <key name="icon-magnification-scale" type="d">
+      <range min="1.0" max="3.0"/>
+      <default>2.0</default>
+      <summary>Magnification of the icon under the pointer</summary>
+      <description>Scale factor applied to the icon right under the mouse pointer</description>
+    </key>
+    <key name="icon-magnification-range" type="d">
+      <range min="1.0" max="6.0"/>
+      <default>3.0</default>
+      <summary>Width of the magnification wave</summary>
+      <description>Distance from the pointer, in icons, up to which the icons get magnified</description>
+    </key>
+    <key name="icon-magnification-speed" type="d">
+      <range min="0.25" max="4.0"/>
+      <default>1.0</default>
+      <summary>Speed of the magnification animation</summary>
+      <description>Factor applied to the speed of growing the icons when the pointer enters the dock</description>
+    </key>
+    <key name="icon-magnification-out-speed" type="d">
+      <range min="0.25" max="4.0"/>
+      <default>1.0</default>
+      <summary>Speed of the shrinking animation</summary>
+      <description>Factor applied to the speed of shrinking the icons back when the pointer leaves the dock</description>
+    </key>
+    <key name="icon-magnification-spread" type="d">
+      <range min="0.0" max="2.0"/>
+      <default>1.0</default>
+      <summary>How far the magnified icons move apart</summary>
+      <description>At 1 the icons make exactly room for the magnified ones, lower values let them overlap, higher values add gaps</description>
+    </key>
   </schema>
 </schemalist>

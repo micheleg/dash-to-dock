@@ -1,9 +1,11 @@
 .~
 *~
 gschemas.compiled
-dash-to-dock@micxgx.gmail.com.zip
+dash2dock@db0x.de*.zip
 *.mo
 po/dashtodock.pot
 stylesheet.css
 Settings.ui.h
 _build
+.idea
+.vscode/

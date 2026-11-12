@@ -747,3 +747,24 @@ msgstr "Stoßschwellenwert"
 
 #~ msgid "Add to Favorites"
 #~ msgstr "Zu Favoriten hinzufügen"
+
+msgid "Magnify icons under the pointer"
+msgstr "Icons unter dem Mauszeiger vergrößern (Welle)"
+
+msgid "Wave height"
+msgstr "Höhe der Welle"
+
+msgid "Wave width"
+msgstr "Breite der Welle"
+
+msgid "Spread of the icons"
+msgstr "Auseinanderweichen der Icons"
+
+msgid "Growing speed"
+msgstr "Geschwindigkeit beim Aufbauen"
+
+msgid "Shrinking speed"
+msgstr "Geschwindigkeit beim Abbauen"
+
+msgid "%s icons"
+msgstr "%s Icons"

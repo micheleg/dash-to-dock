@@ -451,6 +451,14 @@ $dock_style_modes: null, shrink, extended, extended-shrink;
     height: 1px;
 }
 
+/* Drop-target highlight: shown when dragging an icon over another icon to merge into a category */
+#dashtodockContainer #dash .app-well-app.drop-target .overview-icon,
+#dashtodockContainer #dash .app-well-app.drop-target {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    transition-duration: 100ms;
+}
+
 /*
  * This is applied to a dummy actor. Only the alpha value for the background and border color
  * and the transition-duration are used
@@ -515,5 +523,22 @@ $dock_style_modes: null, shrink, extended, extended-shrink;
         background-image: url("./media/highlight_stacked_bg_h.svg");
         background-position: 0px 0px;
         background-size: contain;
+    }
+}
+
+// No hover and focus highlights with the magnification on, the magnified icon
+// already stands out: the third id outweighs the per-position dock rules.
+#dashtodockContainer #dashtodockBox #dash.magnification .dash-item-container,
+#dashtodockContainer #dashtodockBox #dash.magnifying .dash-item-container {
+    .overview-tile,
+    .show-apps {
+        &, &:hover, &:focus, &:selected, &:checked, &:active, &.focused {
+            &, .overview-icon {
+                background-color: transparent;
+                background-image: none;
+                border-color: transparent;
+                box-shadow: none;
+            }
+        }
     }
 }
