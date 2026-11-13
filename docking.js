@@ -51,6 +51,7 @@ const {gettext: __} = Extension;
 const {signals: Signals} = imports;
 
 const DOCK_DWELL_CHECK_INTERVAL = 100;
+const DOCK_DWELL_EDGE_TOLERANCE = 4;
 const ICON_ANIMATOR_DURATION = 3000;
 const STARTUP_ANIMATION_TIME = 500;
 
@@ -998,16 +999,22 @@ const DockedDash = GObject.registerClass({
         // Check for the correct screen edge, extending the sensitive area to the whole workarea,
         // minus 1 px to avoid conflicting with other active corners.
         if (this._position === St.Side.LEFT) {
-            shouldDwell = (x === this._monitor.x) && (y > workArea.y) &&
+            shouldDwell = (x >= this._monitor.x) &&
+                (x < this._monitor.x + DOCK_DWELL_EDGE_TOLERANCE) &&
+                (y > workArea.y) &&
                 (y < workArea.y + workArea.height);
         } else if (this._position === St.Side.RIGHT) {
-            shouldDwell = (x === this._monitor.x + this._monitor.width - 1) &&
+            shouldDwell = (x <= this._monitor.x + this._monitor.width - 1) &&
+                (x >= this._monitor.x + this._monitor.width - DOCK_DWELL_EDGE_TOLERANCE) &&
                 (y > workArea.y) && (y < workArea.y + workArea.height);
         } else if (this._position === St.Side.TOP) {
-            shouldDwell = (y === this._monitor.y) && (x > workArea.x) &&
+            shouldDwell = (y >= this._monitor.y) &&
+                (y < this._monitor.y + DOCK_DWELL_EDGE_TOLERANCE) &&
+                (x > workArea.x) &&
                 (x < workArea.x + workArea.width);
         } else if (this._position === St.Side.BOTTOM) {
-            shouldDwell = (y === this._monitor.y + this._monitor.height - 1) &&
+            shouldDwell = (y <= this._monitor.y + this._monitor.height - 1) &&
+                (y >= this._monitor.y + this._monitor.height - DOCK_DWELL_EDGE_TOLERANCE) &&
                 (x > workArea.x) && (x < workArea.x + workArea.width);
         }
 
