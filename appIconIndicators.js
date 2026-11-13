@@ -156,7 +156,7 @@ class RunningIndicatorBase extends IndicatorBase {
         this._dominantColorExtractor = new DominantColorExtractor(this._source.app);
         this._signalsHandler.add(this._source, 'notify::running', () => this.update());
         this._signalsHandler.add(this._source, 'notify::focused', () => this.update());
-        this._signalsHandler.add(this._source, 'notify::windows-count', () => this._updateCounterClass());
+        this._signalsHandler.add(this._source, 'notify::windows-count', () => this.update());
         this.update();
     }
 
@@ -401,7 +401,8 @@ class RunningIndicatorDots extends RunningIndicatorBase {
 
         // Define the radius as an arbitrary size, but keep large enough to account
         // for the drawing of the border.
-        this._radius = Math.max(this._width / 22, this._borderWidth / 2);
+        this._radius = Math.max(this._width / 22,
+            Math.min(2, this._width / 11), this._borderWidth / 2);
         this._padding = 0; // distance from the margin
         this._spacing = this._radius + this._borderWidth; // separation between the dots
     }
