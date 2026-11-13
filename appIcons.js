@@ -232,6 +232,41 @@ export const DockAbstractAppIcon = GObject.registerClass({
 
         this._previewMenuManager = null;
         this._previewMenu = null;
+        this._hoverPreviewTimeoutId = 0;
+        this._hoverPreviewCloseTimeoutId = 0;
+        this._signalsHandler.add(Docking.DockManager.settings,
+            'changed::show-previews-hover', () => {
+                if (Docking.DockManager.settings.showPreviewsHover)
+                    return;
+                this._cancelHoverPreviewOpen();
+                this._cancelHoverPreviewClose();
+                this._previewMenu?.close();
+            });
+        this.connect('notify::hover', () => {
+            if (!Docking.DockManager.settings.showPreviewsHover)
+                return;
+
+            if (this.hover) {
+                this._cancelHoverPreviewClose();
+                if (this.windowsCount && !this._hoverPreviewTimeoutId &&
+                    !this._previewMenu?.isOpen &&
+                    !Main.overview.visible && !this._menu?.isOpen) {
+                    this._hoverPreviewTimeoutId = GLib.timeout_add(
+                        GLib.PRIORITY_DEFAULT, 500, () => {
+                            this._hoverPreviewTimeoutId = 0;
+                            if (Docking.DockManager.settings.showPreviewsHover &&
+                                this.hover && this.windowsCount &&
+                                !Main.overview.visible && !this._menu?.isOpen &&
+                                !this._previewMenu?.isOpen)
+                                this._windowPreviews();
+                            return GLib.SOURCE_REMOVE;
+                        });
+                }
+            } else {
+                this._cancelHoverPreviewOpen();
+                this._closeHoverPreviewLater();
+            }
+        });
 
         // This requires GNOME 49
         if (Clutter.ClickGesture) {
@@ -249,12 +284,60 @@ export const DockAbstractAppIcon = GObject.registerClass({
     }
 
     _onDestroy() {
+        this._cancelHoverPreviewOpen();
+        this._cancelHoverPreviewClose();
         super._onDestroy();
 
         delete this._menu;
 
         this._doubleClickGesture?.cancel();
         delete this._doubleClickGesture;
+    }
+
+    _cancelHoverPreviewOpen() {
+        if (this._hoverPreviewTimeoutId) {
+            GLib.source_remove(this._hoverPreviewTimeoutId);
+            this._hoverPreviewTimeoutId = 0;
+        }
+    }
+
+    _cancelHoverPreviewClose() {
+        if (this._hoverPreviewCloseTimeoutId) {
+            GLib.source_remove(this._hoverPreviewCloseTimeoutId);
+            this._hoverPreviewCloseTimeoutId = 0;
+        }
+    }
+
+    _closeHoverPreviewLater() {
+        if (!Docking.DockManager.settings.showPreviewsHover)
+            return;
+        if (!this._previewMenu?.isOpen || this._hoverPreviewCloseTimeoutId)
+            return;
+
+        this._hoverPreviewCloseTimeoutId = GLib.timeout_add(
+            GLib.PRIORITY_DEFAULT, 250, () => {
+                if (!this._previewMenu?.isOpen) {
+                    this._hoverPreviewCloseTimeoutId = 0;
+                    return GLib.SOURCE_REMOVE;
+                }
+
+                const [x, y] = global.get_pointer();
+                const pointerInside = [this, this._previewMenu.actor].some(actor => {
+                    if (!actor.mapped)
+                        return false;
+                    const [actorX, actorY] = actor.get_transformed_position();
+                    const [width, height] = actor.get_transformed_size();
+                    return x >= actorX && x < actorX + width &&
+                        y >= actorY && y < actorY + height;
+                });
+
+                if (pointerInside)
+                    return GLib.SOURCE_CONTINUE;
+
+                this._hoverPreviewCloseTimeoutId = 0;
+                this._previewMenu.close();
+                return GLib.SOURCE_REMOVE;
+            });
     }
 
     ownsWindow(window) {
@@ -451,6 +534,11 @@ export const DockAbstractAppIcon = GObject.registerClass({
     }
 
     popupMenu() {
+        if (Docking.DockManager.settings.showPreviewsHover) {
+            this._cancelHoverPreviewOpen();
+            this._cancelHoverPreviewClose();
+            this._previewMenu?.close();
+        }
         this._removeMenuTimeout?.();
         this.fake_release();
         this._draggable.fakeRelease?.();
@@ -508,6 +596,10 @@ export const DockAbstractAppIcon = GObject.registerClass({
     }
 
     activate(button) {
+        if (Docking.DockManager.settings.showPreviewsHover) {
+            this._cancelHoverPreviewOpen();
+            this._previewMenu?.close();
+        }
         const event = Clutter.get_current_event();
         this._activate({
             button,
@@ -752,6 +844,16 @@ export const DockAbstractAppIcon = GObject.registerClass({
             this._previewMenu = new WindowPreview.WindowPreviewMenu(this);
 
             this._previewMenuManager.addMenu(this._previewMenu);
+
+            this._previewMenu.actor.track_hover = true;
+            this._previewMenu.actor.connect('notify::hover', () => {
+                if (!Docking.DockManager.settings.showPreviewsHover)
+                    return;
+                if (this._previewMenu.actor.hover)
+                    this._cancelHoverPreviewClose();
+                else
+                    this._closeHoverPreviewLater();
+            });
 
             this._previewMenu.connect('open-state-changed', (menu, isPoppedUp) => {
                 if (!isPoppedUp)
