@@ -246,6 +246,11 @@
       <summary>Show preview of the open windows</summary>
       <description>Replace open windows list with windows previews</description>
     </key>
+    <key type="b" name="show-previews-hover">
+      <default>false</default>
+      <summary>Show window previews on hover</summary>
+      <description>Show window previews after hovering over a running application icon</description>
+    </key>
     <key type="b" name="default-windows-preview-to-open">
       <default>false</default>
       <summary>Open windows preview by default</summary>
